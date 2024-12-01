@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
@@ -72,9 +71,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void SetApplicationModelsGrid()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationAPIModel.Name), Header = "API Name" });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = [new GridColView() { Field = nameof(ApplicationAPIModel.Name), Header = "API Name" }]
+            };
             ApplicationModelsGrid.SetAllColumnsDefaultView(view);
             ApplicationModelsGrid.InitViewItems();
             ApplicationModelsGrid.RowChangedEvent -= APIModelSelectionChange;
@@ -90,9 +90,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void SetXMLOptionalValuesTemplatesGrid()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(TemplateFile.FilePath), Header = "File Path" });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = [new GridColView() { Field = nameof(TemplateFile.FilePath), Header = "File Path" }]
+            };
 
             XMLOptionalValuesTemplatesGrid.SetAllColumnsDefaultView(view);
             XMLOptionalValuesTemplatesGrid.InitViewItems();
@@ -124,8 +125,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void BrowseForTemplateFiles()
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-            dlg.Multiselect = true;
+            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog
+            {
+                Multiselect = true
+            };
             if (AddAPIModelWizard.APIType == AddAPIModelWizard.eAPIType.XMLTemplates)
             {
                 dlg.Filter = "XML Files (*.xml)|*.xml" + "|WSDL Files (*.wsdl)|*.wsdl" + "|All Files (*.*)|*.*";

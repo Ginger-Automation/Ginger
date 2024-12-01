@@ -69,7 +69,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eActMultiselectListAction)GetOrCreateInputParam<eActMultiselectListAction>(nameof(ActMultiselectListAction), eActMultiselectListAction.SetSelectedValueByIndex);
+                return GetOrCreateInputParam<eActMultiselectListAction>(nameof(ActMultiselectListAction), eActMultiselectListAction.SetSelectedValueByIndex);
             }
             set
             {

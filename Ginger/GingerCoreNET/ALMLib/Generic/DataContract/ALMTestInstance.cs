@@ -33,7 +33,7 @@ namespace Amdocs.Ginger.CoreNET.ALMLib.DataContract
 
         public ALMTestInstance()
         {
-            ElementsField = new Dictionary<string, object>();
+            ElementsField = [];
         }
 
         public ALMTestInstance ParseXML(XElement fields)

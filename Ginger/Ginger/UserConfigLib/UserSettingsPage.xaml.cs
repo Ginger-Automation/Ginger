@@ -52,14 +52,18 @@ namespace Ginger.User
         {
             WorkSpace.Instance.UserProfile.SaveBackup();
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            Button saveBtn = new Button();
-            saveBtn.Content = "Save";
+            ObservableList<Button> winButtons = [];
+            Button saveBtn = new Button
+            {
+                Content = "Save"
+            };
             saveBtn.Click += new RoutedEventHandler(saveBtn_Click);
             winButtons.Add(saveBtn);
 
-            Button undoBtn = new Button();
-            undoBtn.Content = "Undo & Close";
+            Button undoBtn = new Button
+            {
+                Content = "Undo & Close"
+            };
             undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
             winButtons.Add(undoBtn);
 
@@ -102,11 +106,11 @@ namespace Ginger.User
             {
                 xGeneralExpender.IsExpanded = false;
             }
-            if(currentExpander != xAutoLoadExpender && xAutoLoadExpender != null)
+            if (currentExpander != xAutoLoadExpender && xAutoLoadExpender != null)
             {
                 xAutoLoadExpender.IsExpanded = false;
             }
-            if(currentExpander != xSourceControlExpender && xSourceControlExpender != null)
+            if (currentExpander != xSourceControlExpender && xSourceControlExpender != null)
             {
                 xSourceControlExpender.IsExpanded = false;
             }

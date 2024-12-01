@@ -16,11 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
-using Microsoft.CodeAnalysis;
-using GingerCore.Activities;
 
 namespace Ginger.Configurations
 {
@@ -63,7 +59,7 @@ namespace Ginger.Configurations
                 if (mAccountUrl != value)
                 {
                     mAccountUrl = value;
-                   OnPropertyChanged(nameof(AccountUrl));
+                    OnPropertyChanged(nameof(AccountUrl));
                 }
             }
         }
@@ -137,9 +133,9 @@ namespace Ginger.Configurations
             get { return mToken; }
             set
             {
-                if(mToken != value)
+                if (mToken != value)
                 {
-                    mToken=value;
+                    mToken = value;
                 }
             }
         }

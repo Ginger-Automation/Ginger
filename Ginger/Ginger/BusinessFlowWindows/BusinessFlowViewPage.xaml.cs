@@ -226,7 +226,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void mBusinessFlow_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(BusinessFlow.Description) || e.PropertyName == nameof(BusinessFlow.TargetApplications))
+            if (e.PropertyName is (nameof(BusinessFlow.Description)) or (nameof(BusinessFlow.TargetApplications)))
             {
                 UpdateInfoSection();
             }
@@ -244,7 +244,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     if (mBusinessFlow.Description.Length > 100)
                     {
-                        xDescTextBlockHelper.AddText("Description: " + mBusinessFlow.Description.Substring(0, 99) + "...");
+                        xDescTextBlockHelper.AddText("Description: " + mBusinessFlow.Description[..99] + "...");
                     }
                     else
                     {
@@ -344,7 +344,7 @@ namespace GingerWPF.BusinessFlowsLib
             string title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
             RoutedEventHandler CloseHandler = CloseWinClicked;
             string closeContent = "Undo & Close";
-            ObservableList<Button> winButtons = new ObservableList<Button>();
+            ObservableList<Button> winButtons = [];
             switch (mPageViewMode)
             {
                 //case Ginger.General.eRIPageViewMode.Automation:
@@ -361,11 +361,15 @@ namespace GingerWPF.BusinessFlowsLib
                 case Ginger.General.eRIPageViewMode.Standalone:
                     mBusinessFlow.SaveBackup();
                     title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
-                    Button saveBtn = new Button();
-                    saveBtn.Content = "Save";
+                    Button saveBtn = new Button
+                    {
+                        Content = "Save"
+                    };
                     WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: saveBtn, eventName: nameof(ButtonBase.Click), handler: SaveBtn_Click);
-                    Button undoBtnSr = new Button();
-                    undoBtnSr.Content = "Undo & Close";
+                    Button undoBtnSr = new Button
+                    {
+                        Content = "Undo & Close"
+                    };
                     WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoBtnSr, eventName: nameof(ButtonBase.Click), handler: UndoAndCloseBtn_Click);
                     winButtons.Add(undoBtnSr);
                     winButtons.Add(saveBtn);
@@ -374,8 +378,10 @@ namespace GingerWPF.BusinessFlowsLib
                 case Ginger.General.eRIPageViewMode.View:
                 case Ginger.General.eRIPageViewMode.ViewAndExecute:
                     title = "View " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
-                    Button okBtnView = new Button();
-                    okBtnView.Content = "Ok";
+                    Button okBtnView = new Button
+                    {
+                        Content = "Ok"
+                    };
                     WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtnView, eventName: nameof(ButtonBase.Click), handler: okBtn_Click);
                     winButtons.Add(okBtnView);
                     CloseHandler = new RoutedEventHandler(okBtn_Click);

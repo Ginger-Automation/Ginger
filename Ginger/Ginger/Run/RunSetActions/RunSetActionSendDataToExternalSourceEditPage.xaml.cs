@@ -81,11 +81,15 @@ namespace Ginger.Run.RunSetActions
         }
         private void SetHeadersGridView()
         {
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Parameter Name", WidthWeight = 40 });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Parameter Value", WidthWeight = 40 });
-            defView.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.RequestHeadersGrid.Resources["HeaderValueExpressionButton"] });
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ActInputValue.Param), Header = "Parameter Name", WidthWeight = 40 },
+                new GridColView() { Field = nameof(ActInputValue.Value), Header = "Parameter Value", WidthWeight = 40 },
+                new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.RequestHeadersGrid.Resources["HeaderValueExpressionButton"] },
+            ]
+            };
 
             grdRequestHeaders.SetAllColumnsDefaultView(defView);
             grdRequestHeaders.InitViewItems();
@@ -95,11 +99,15 @@ namespace Ginger.Run.RunSetActions
         }
         private void SetBodyGridView()
         {
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Parameter Name", WidthWeight = 40 });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Parameter Value", WidthWeight = 40 });
-            defView.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.RequestBodyGrid.Resources["BodyValueExpressionButton"] });
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ActInputValue.Param), Header = "Parameter Name", WidthWeight = 40 },
+                new GridColView() { Field = nameof(ActInputValue.Value), Header = "Parameter Value", WidthWeight = 40 },
+                new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.RequestBodyGrid.Resources["BodyValueExpressionButton"] },
+            ]
+            };
 
             grdRequestBody.SetAllColumnsDefaultView(defView);
             grdRequestBody.InitViewItems();

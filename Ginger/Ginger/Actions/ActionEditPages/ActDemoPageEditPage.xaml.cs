@@ -78,19 +78,25 @@ namespace Ginger.Actions
 
         public List<ComboItem> GeneratecomboBoxItemsList()
         {
-            List<ComboItem> comboBoxItemsList = new List<ComboItem>();
+            List<ComboItem> comboBoxItemsList = [];
 
-            ComboItem CBI1 = new ComboItem();
-            CBI1.text = "Value 1";
-            CBI1.Value = "Value1";
+            ComboItem CBI1 = new ComboItem
+            {
+                text = "Value 1",
+                Value = "Value1"
+            };
 
-            ComboItem CBI2 = new ComboItem();
-            CBI2.text = "Value 2";
-            CBI2.Value = "Value2";
+            ComboItem CBI2 = new ComboItem
+            {
+                text = "Value 2",
+                Value = "Value2"
+            };
 
-            ComboItem CBI3 = new ComboItem();
-            CBI3.text = "Value 3";
-            CBI3.Value = "Value3";
+            ComboItem CBI3 = new ComboItem
+            {
+                text = "Value 3",
+                Value = "Value3"
+            };
 
             comboBoxItemsList.Add(CBI1);
             comboBoxItemsList.Add(CBI2);

@@ -38,9 +38,9 @@ namespace Ginger.ALM
     /// </summary>
     public partial class ALMDefectsProfilesPage : Page
     {
-        ObservableList<ALMDefectProfile> mALMDefectProfiles = new ObservableList<ALMDefectProfile>();
-        ObservableList<ExternalItemFieldBase> mALMDefectProfileFields = new ObservableList<ExternalItemFieldBase>();
-        ObservableList<ExternalItemFieldBase> mALMDefectProfileFieldsExisted = new ObservableList<ExternalItemFieldBase>();
+        ObservableList<ALMDefectProfile> mALMDefectProfiles = [];
+        ObservableList<ExternalItemFieldBase> mALMDefectProfileFields = [];
+        ObservableList<ExternalItemFieldBase> mALMDefectProfileFieldsExisted = [];
         bool _manualCheckedEvent = false;
 
         public ObservableList<ALMDefectProfile> ALMDefectProfiles
@@ -88,12 +88,16 @@ namespace Ginger.ALM
             var comboEnumItem = ALMTypes.Cast<GingerCore.GeneralLib.ComboEnumItem>().FirstOrDefault(x => x.text == ALMIntegrationEnums.eALMType.RALLY.ToString());
             ALMTypes.Remove(comboEnumItem);
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ALMDefectProfile.Name), WidthWeight = 30, Header = "Name", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ALMDefectProfile.Description), WidthWeight = 30, Header = "Description", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ALMDefectProfile.AlmType), WidthWeight = 30, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ALMTypes, Header = "ALM Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
-            view.GridColsView.Add(new GridColView() { Field = nameof(OptionalValue.IsDefault), WidthWeight = 10, Header = "Default", StyleType = GridColView.eGridColStyleType.Template, HorizontalAlignment = HorizontalAlignment.Center, CellTemplate = (DataTemplate)this.grdDefectsProfile.Resources["DefaultValueTemplate"] });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ALMDefectProfile.Name), WidthWeight = 30, Header = "Name", HorizontalAlignment = System.Windows.HorizontalAlignment.Center },
+                new GridColView() { Field = nameof(ALMDefectProfile.Description), WidthWeight = 30, Header = "Description", HorizontalAlignment = System.Windows.HorizontalAlignment.Center },
+                new GridColView() { Field = nameof(ALMDefectProfile.AlmType), WidthWeight = 30, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ALMTypes, Header = "ALM Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center },
+                new GridColView() { Field = nameof(OptionalValue.IsDefault), WidthWeight = 10, Header = "Default", StyleType = GridColView.eGridColStyleType.Template, HorizontalAlignment = HorizontalAlignment.Center, CellTemplate = (DataTemplate)this.grdDefectsProfile.Resources["DefaultValueTemplate"] },
+            ]
+            };
 
             grdDefectsProfiles.SetAllColumnsDefaultView(view);
             grdDefectsProfiles.btnEdit.Visibility = Visibility.Visible;
@@ -112,11 +116,15 @@ namespace Ginger.ALM
             grdDefectsProfiles.RowChangedEvent += grdDefectsProfiles_RowChangedEvent;
             grdDefectsProfiles.SetTitleLightStyle = true;
 
-            view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ExternalItemFieldBase.Name), Header = "Defect's Field Name", WidthWeight = 20, ReadOnly = true, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ExternalItemFieldBase.Mandatory), Header = "Field Is Mandatory", WidthWeight = 15, ReadOnly = true, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ExternalItemFieldBase.SelectedValue), Header = "Selected Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ExternalItemFieldBase.Fields.PossibleValues, ExternalItemFieldBase.Fields.SelectedValue, true), WidthWeight = 20 });
+            view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ExternalItemFieldBase.Name), Header = "Defect's Field Name", WidthWeight = 20, ReadOnly = true, AllowSorting = true },
+                new GridColView() { Field = nameof(ExternalItemFieldBase.Mandatory), Header = "Field Is Mandatory", WidthWeight = 15, ReadOnly = true, AllowSorting = true },
+                new GridColView() { Field = nameof(ExternalItemFieldBase.SelectedValue), Header = "Selected Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ExternalItemFieldBase.Fields.PossibleValues, ExternalItemFieldBase.Fields.SelectedValue, true), WidthWeight = 20 },
+            ]
+            };
 
             grdDefectsFields.btnRefresh.Visibility = Visibility.Visible;
             grdDefectsFields.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshgrdDefectsFieldsHandler));
@@ -152,12 +160,14 @@ namespace Ginger.ALM
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button saveButton = new Button();
-            saveButton.Content = "Save";
-            saveButton.ToolTip = "Save 'To Update' fields";
+            Button saveButton = new Button
+            {
+                Content = "Save",
+                ToolTip = "Save 'To Update' fields"
+            };
             saveButton.Click += new RoutedEventHandler(Save);
 
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { saveButton });
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, [saveButton]);
         }
 
         private void DefaultValueRadioButton_SelectionChanged(object sender, RoutedEventArgs e)
@@ -177,8 +187,10 @@ namespace Ginger.ALM
 
         private void AddDefectsProfile(object sender, RoutedEventArgs e)
         {
-            ALMDefectProfile newALMDefectProfile = new ALMDefectProfile();
-            newALMDefectProfile.ToUpdate = true;
+            ALMDefectProfile newALMDefectProfile = new ALMDefectProfile
+            {
+                ToUpdate = true
+            };
             if (mALMDefectProfiles.Count == 0)
             {
                 newALMDefectProfile.IsDefault = true;
@@ -215,13 +227,7 @@ namespace Ginger.ALM
             {
                 if (Reporter.ToUser(eUserMsgKey.AskBeforeDefectProfileDeleting) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
-                    List<ALMDefectProfile> selectedItemsToDelete = new List<ALMDefectProfile>();
-                    foreach (ALMDefectProfile selectedProfile in grdDefectsProfiles.Grid.SelectedItems)
-                    {
-                        selectedItemsToDelete.Add(selectedProfile);
-                    }
-
-                    foreach (ALMDefectProfile profileToDelete in selectedItemsToDelete)
+                    foreach (ALMDefectProfile profileToDelete in grdDefectsProfiles.Grid.SelectedItems)
                     {
                         WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(profileToDelete);
                     }
@@ -236,27 +242,35 @@ namespace Ginger.ALM
 
         private void RefreshgrdDefectsFieldsHandler(object sender, RoutedEventArgs e)
         {
-            ALMDefectProfile AlmDefectProfile = (ALMDefectProfile)grdDefectsProfiles.CurrentItem;
+            try
             {
-                mALMDefectProfileFields = FetchDefectFields(AlmDefectProfile.AlmType);
-                mALMDefectProfileFields.Where(z => z.Mandatory).ToList().ForEach(x => x.SelectedValue = string.Empty);
-                mALMDefectProfileFieldsExisted = new ObservableList<ExternalItemFieldBase>();
-                foreach (ExternalItemFieldBase aLMDefectProfileField in mALMDefectProfileFields)
+                ALMDefectProfile AlmDefectProfile = (ALMDefectProfile)grdDefectsProfiles.CurrentItem;
                 {
-                    ExternalItemFieldBase aLMDefectProfileFieldExisted = (ExternalItemFieldBase)aLMDefectProfileField.CreateCopy();
-                    if (!string.IsNullOrEmpty(aLMDefectProfileField.ExternalID))
+                    mALMDefectProfileFields = FetchDefectFields(AlmDefectProfile.AlmType);
+                    mALMDefectProfileFields.Where(z => z.Mandatory).ToList().ForEach(x => x.SelectedValue = string.Empty);
+                    mALMDefectProfileFieldsExisted = [];
+                    foreach (ExternalItemFieldBase aLMDefectProfileField in mALMDefectProfileFields)
                     {
-                        aLMDefectProfileFieldExisted.ExternalID = string.Copy(aLMDefectProfileField.ExternalID);
+                        ExternalItemFieldBase aLMDefectProfileFieldExisted = (ExternalItemFieldBase)aLMDefectProfileField.CreateCopy();
+                        if (!string.IsNullOrEmpty(aLMDefectProfileField.ExternalID))
+                        {
+                            aLMDefectProfileFieldExisted.ExternalID = string.Copy(aLMDefectProfileField.ExternalID);
+                        }
+                        ExternalItemFieldBase field = AlmDefectProfile.ALMDefectProfileFields.FirstOrDefault(x => x.ID == aLMDefectProfileField.ID);
+                        if (field != null)
+                        {
+                            aLMDefectProfileFieldExisted.SelectedValue = field.SelectedValue;
+                        }
+                        aLMDefectProfileFieldExisted.PossibleValues = aLMDefectProfileField.PossibleValues;
+                        mALMDefectProfileFieldsExisted.Add(aLMDefectProfileFieldExisted);
                     }
-                    ExternalItemFieldBase field = AlmDefectProfile.ALMDefectProfileFields.FirstOrDefault(x => x.ID == aLMDefectProfileField.ID);
-                    if (field != null)
-                    {
-                        aLMDefectProfileFieldExisted.SelectedValue = field.SelectedValue;
-                    }
-                    aLMDefectProfileFieldExisted.PossibleValues = aLMDefectProfileField.PossibleValues;
-                    mALMDefectProfileFieldsExisted.Add(aLMDefectProfileFieldExisted);
+                    AlmDefectProfile.ALMDefectProfileFields = mALMDefectProfileFieldsExisted;
                 }
-                AlmDefectProfile.ALMDefectProfileFields = mALMDefectProfileFieldsExisted;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "No Defect Profile is created");
+                Reporter.ToUser(eUserMsgKey.NoDefectProfileCreated);
             }
         }
         private void FetchgrdDefectsFieldsHandler(object sender, RoutedEventArgs e)

@@ -37,9 +37,8 @@ namespace Ginger.Actions._Common
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             // Add Property changed so grid cell will be updated while editing action
-            if (e.NewValue is ActionDetails)
+            if (e.NewValue is ActionDetails AD)
             {
-                ActionDetails AD = (ActionDetails)e.NewValue;
 
                 // Each action return the info and/or a list of values to show AIVs
                 if (!string.IsNullOrEmpty(AD.Info))
@@ -54,7 +53,7 @@ namespace Ginger.Actions._Common
                 ObservableList<ActionParamInfo> parlist = AD.GetParamsInfo();
                 if (parlist.Count > 0)
                 {
-                    AIVGrid.ItemsSource = (IObservableList)parlist;
+                    AIVGrid.ItemsSource = parlist;
                     AIVGrid.Columns[0].Width = 60;
                     AIVGrid.Columns[1].Width = new DataGridLength(100, DataGridLengthUnitType.Star);
                 }

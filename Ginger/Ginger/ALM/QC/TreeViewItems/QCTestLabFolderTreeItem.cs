@@ -59,7 +59,7 @@ namespace Ginger.ALM.QC.TreeViewItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            CurrentChildrens = new List<ITreeViewItem>();
+            CurrentChildrens = [];
 
             // get the sub items for the root here and return list of Childrens
             // Step #1 add sub folder of current folder
@@ -68,9 +68,11 @@ namespace Ginger.ALM.QC.TreeViewItems
 
             foreach (string sFolder in strParentFolders)
             {
-                QCTestLabFolderTreeItem pfn = new QCTestLabFolderTreeItem();
-                pfn.Folder = sFolder;
-                pfn.Path = Path + @"\" + sFolder;
+                QCTestLabFolderTreeItem pfn = new QCTestLabFolderTreeItem
+                {
+                    Folder = sFolder,
+                    Path = Path + @"\" + sFolder
+                };
                 CurrentChildrens.Add(pfn);
             }
 
@@ -80,10 +82,12 @@ namespace Ginger.ALM.QC.TreeViewItems
             foreach (ALMTestSetSummary tsItem in sTestSets)
             {
                 tsItem.TestSetStatuses = new List<string[]>();
-                QCTestSetTreeItem pfn = new QCTestSetTreeItem();
-                pfn.TestSetID = tsItem.TestSetID.ToString();
-                pfn.TestSetName = tsItem.TestSetName;
-                pfn.Path = Path + @"\" + tsItem.TestSetName;
+                QCTestSetTreeItem pfn = new QCTestSetTreeItem
+                {
+                    TestSetID = tsItem.TestSetID.ToString(),
+                    TestSetName = tsItem.TestSetName,
+                    Path = Path + @"\" + tsItem.TestSetName
+                };
                 ALMTestSetSummary tsItemStatus = ALMIntegration.Instance.GetTSRunStatus(tsItem);
                 pfn.TestSetStatuses = tsItem.TestSetStatuses;
                 pfn.IsTestSetAlreadyImported();

@@ -19,11 +19,9 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.SolutionGeneral;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
-using OpenQA.Selenium;
 using System.Linq;
 
 namespace Ginger.Environments.GingerOpsEnvWizardLib
@@ -32,9 +30,9 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
     {
         public RepositoryFolder<ProjEnvironment> EnvsFolder;
         public ProjEnvironment NewEnvironment = new ProjEnvironment();
-        public ObservableList<EnvApplication> apps = new ObservableList<EnvApplication>();
-        public ObservableList<ProjEnvironment> ImportedEnvs = new ObservableList<ProjEnvironment>();
-        public ObservableList<ApplicationPlatform> tempAppPlat = new ObservableList<ApplicationPlatform>();
+        public ObservableList<EnvApplication> apps = [];
+        public ObservableList<ProjEnvironment> ImportedEnvs = [];
+        public ObservableList<ApplicationPlatform> tempAppPlat = [];
         public override string Title { get { return "Import GingerOps Environment Wizard"; } }
 
         public AddGingerOpsEnvWizard(RepositoryFolder<ProjEnvironment> EnvsFolder)
@@ -56,18 +54,18 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
             bool isSolutionupdated = false;
             foreach (var item in tempAppPlat)
             {
-                bool isExist = WorkSpace.Instance.Solution.ApplicationPlatforms.Any(app => app.AppName == item.AppName && app.GingerOpsAppId ==item.GingerOpsAppId);
+                bool isExist = WorkSpace.Instance.Solution.ApplicationPlatforms.Any(app => app.AppName == item.AppName && app.GingerOpsAppId == item.GingerOpsAppId);
                 if (!isExist)
                 {
                     WorkSpace.Instance.Solution.ApplicationPlatforms.Add(item);
                     isSolutionupdated = true;
                 }
-               
+
             }
 
             if (isSolutionupdated)
             {
-                    WorkSpace.Instance.Solution.SolutionOperations.SaveSolution();
+                WorkSpace.Instance.Solution.SolutionOperations.SaveSolution();
             }
 
             foreach (ProjEnvironment item in ImportedEnvs)
@@ -77,9 +75,9 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
                     //Save the Environment 
                     EnvsFolder.AddRepositoryItem(item);
                 }
-    
+
             }
-            
+
         }
     }
 }

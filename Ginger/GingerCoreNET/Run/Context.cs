@@ -197,7 +197,7 @@ namespace Amdocs.Ginger.Common
 
         public static Context GetAsContext(object contextObj)
         {
-            if (contextObj != null && contextObj is Context)
+            if (contextObj is not null and Context)
             {
                 return (Context)contextObj;
             }

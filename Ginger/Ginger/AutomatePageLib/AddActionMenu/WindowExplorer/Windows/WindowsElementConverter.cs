@@ -29,8 +29,10 @@ namespace Ginger.WindowExplorer.Windows
         {
             if (EI.ElementTypeEnum == eElementType.Button)
             {
-                WindowsButtonTreeItem BTI = new WindowsButtonTreeItem();
-                BTI.UIAElementInfo = (UIAElementInfo)EI;
+                WindowsButtonTreeItem BTI = new WindowsButtonTreeItem
+                {
+                    UIAElementInfo = (UIAElementInfo)EI
+                };
                 BTI.UIAElementInfo.ElementObject = EI.ElementObject;
                 return BTI;
             }

@@ -60,7 +60,7 @@ namespace Ginger.Actions
 
         private void FileActionMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if ((ActReadTextFile.eTextFileActionMode)FileActionMode.SelectedValue == ActReadTextFile.eTextFileActionMode.Append || (ActReadTextFile.eTextFileActionMode)FileActionMode.SelectedValue == ActReadTextFile.eTextFileActionMode.Write)
+            if ((ActReadTextFile.eTextFileActionMode)FileActionMode.SelectedValue is ActReadTextFile.eTextFileActionMode.Append or ActReadTextFile.eTextFileActionMode.Write)
             {
                 PanelToWrite.Visibility = Visibility.Visible;
             }

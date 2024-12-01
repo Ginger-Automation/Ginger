@@ -54,12 +54,15 @@ namespace Ginger.TagsLib
 
         private void SetGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = "Selected", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = "Name", Header = "Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "Description", Header = "Description", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = "Selected", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox },
+                new GridColView() { Field = "Name", Header = "Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = "Description", Header = "Description", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay },
+            ]
+            };
 
             TagsGrid.SetAllColumnsDefaultView(view);
             TagsGrid.InitViewItems();
@@ -68,13 +71,15 @@ namespace Ginger.TagsLib
         private void ShowTags()
         {
             // We create a temp list for selection and mark the selected if exist already
-            list = new ObservableList<SelectedTag>();
+            list = [];
             foreach (RepositoryItemTag t in WorkSpace.Instance.Solution.Tags)
             {
-                SelectedTag st = new SelectedTag();
-                st.Name = t.Name;
-                st.Description = t.Description;
-                st.GUID = t.Guid;
+                SelectedTag st = new SelectedTag
+                {
+                    Name = t.Name,
+                    Description = t.Description,
+                    GUID = t.Guid
+                };
 
                 if (mTags.Contains(t.Guid))
                 {
@@ -89,11 +94,12 @@ namespace Ginger.TagsLib
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool ShowCancelButton = true)
         {
-            Button okBtn = new Button();
-            okBtn.Content = "Ok";
+            Button okBtn = new Button
+            {
+                Content = "Ok"
+            };
             okBtn.Click += new RoutedEventHandler(OKButton_Click);
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(okBtn);
+            ObservableList<Button> winButtons = [okBtn];
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, ShowCancelButton, "Cancel");
         }

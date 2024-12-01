@@ -56,11 +56,11 @@ namespace Ginger.Actions.Locators.ASCF
             //string rc = ASCFDriver.Send("GetFormControls", " ", Path, " ", " ", false);
 
             string rc = string.Empty;
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            List<ITreeViewItem> Childrens = [];
             string controls;
             if (rc.StartsWith("OK"))
             {
-                controls = rc.Substring(3);
+                controls = rc[3..];
             }
             else
             {
@@ -76,49 +76,61 @@ namespace Ginger.Actions.Locators.ASCF
 
                     if (ControlInfo[1] == "class com.amdocs.uif.widgets.TextFieldNative")
                     {
-                        ASCFTextBoxTreeItem ACTI = new ASCFTextBoxTreeItem();
-                        ACTI.Name = ControlInfo[0];
-                        ACTI.Path = ControlInfo[2];
+                        ASCFTextBoxTreeItem ACTI = new ASCFTextBoxTreeItem
+                        {
+                            Name = ControlInfo[0],
+                            Path = ControlInfo[2]
+                        };
                         ACTI.ASCFControlInfo = new ASCFControlInfo() { Name = ACTI.Name, Path = ACTI.Path, ControlType = ASCFControlInfo.eControlType.TextBox };
                         Childrens.Add(ACTI);
                     }
                     else if (ControlInfo[1] == "class com.amdocs.uif.widgets.UifForm")
                     {
-                        ASCFFormTreeItem ACFI = new ASCFFormTreeItem();
-                        ACFI.Name = ControlInfo[0];
-                        ACFI.Path = ControlInfo[2];
-                        ACFI.ASCFDriver = ASCFDriver;
+                        ASCFFormTreeItem ACFI = new ASCFFormTreeItem
+                        {
+                            Name = ControlInfo[0],
+                            Path = ControlInfo[2],
+                            ASCFDriver = ASCFDriver
+                        };
                         Childrens.Add(ACFI);
                     }
                     else if (ControlInfo[1] == "SubForm")
                     {
-                        ASCFFormTreeItem ACFF = new ASCFFormTreeItem();
-                        ACFF.Name = ControlInfo[0];
-                        ACFF.Path = ControlInfo[2];
-                        ACFF.ASCFDriver = ASCFDriver;
+                        ASCFFormTreeItem ACFF = new ASCFFormTreeItem
+                        {
+                            Name = ControlInfo[0],
+                            Path = ControlInfo[2],
+                            ASCFDriver = ASCFDriver
+                        };
                         Childrens.Add(ACFF);
                     }
                     else if (ControlInfo[1] == "class com.amdocs.uif.widgets.BrowserNative")
                     {
-                        ASCFBrowserTreeItem ABTT = new ASCFBrowserTreeItem();
-                        ABTT.Name = ControlInfo[0];
-                        ABTT.Path = ControlInfo[2];
+                        ASCFBrowserTreeItem ABTT = new ASCFBrowserTreeItem
+                        {
+                            Name = ControlInfo[0],
+                            Path = ControlInfo[2]
+                        };
                         ABTT.ASCFControlInfo = new ASCFControlInfo() { Name = ABTT.Name, Path = ABTT.Path, ControlType = ASCFControlInfo.eControlType.Browser };
                         Childrens.Add(ABTT);
                     }
                     else if (ControlInfo[1] == "class com.amdocs.uif.widgets.LabelNative")
                     {
-                        ASCFLabelTreeItem ACTI = new ASCFLabelTreeItem();
-                        ACTI.Name = ControlInfo[0];
-                        ACTI.Path = ControlInfo[2];
+                        ASCFLabelTreeItem ACTI = new ASCFLabelTreeItem
+                        {
+                            Name = ControlInfo[0],
+                            Path = ControlInfo[2]
+                        };
                         ACTI.ASCFControlInfo = new ASCFControlInfo() { Name = ACTI.Name, Path = ACTI.Path, ControlType = ASCFControlInfo.eControlType.Label };
                         Childrens.Add(ACTI);
                     }
                     else if (ControlInfo[1] == "class com.amdocs.uif.widgets.SearchGridNative")
                     {
-                        ASCFGridTreeItem ACTI = new ASCFGridTreeItem();
-                        ACTI.Name = ControlInfo[0];
-                        ACTI.Path = ControlInfo[2];
+                        ASCFGridTreeItem ACTI = new ASCFGridTreeItem
+                        {
+                            Name = ControlInfo[0],
+                            Path = ControlInfo[2]
+                        };
                         ACTI.ASCFControlInfo = new ASCFControlInfo() { Name = ACTI.Name, Path = ACTI.Path, ControlType = ASCFControlInfo.eControlType.Grid };
                         Childrens.Add(ACTI);
                     }
@@ -126,9 +138,11 @@ namespace Ginger.Actions.Locators.ASCF
 
                     else
                     {
-                        ASCFControlTreeItem ACTI = new ASCFControlTreeItem();
-                        ACTI.Name = ControlInfo[0];
-                        ACTI.Path = ControlInfo[2];
+                        ASCFControlTreeItem ACTI = new ASCFControlTreeItem
+                        {
+                            Name = ControlInfo[0],
+                            Path = ControlInfo[2]
+                        };
                         ACTI.ASCFControlInfo = new ASCFControlInfo() { Name = ACTI.Name, Path = ACTI.Path };
                         Childrens.Add(ACTI);
                     }
@@ -159,41 +173,51 @@ namespace Ginger.Actions.Locators.ASCF
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
+            ObservableList<Act> list = [];
 
-            ActWindow a1 = new ActWindow();
-            a1.Description = "Check window exist " + Path;
-            a1.LocateBy = eLocateBy.ByTitle;
-            a1.LocateValue = Path;
-            a1.WindowActionType = ActWindow.eWindowActionType.IsExist;
+            ActWindow a1 = new ActWindow
+            {
+                Description = "Check window exist " + Path,
+                LocateBy = eLocateBy.ByTitle,
+                LocateValue = Path,
+                WindowActionType = ActWindow.eWindowActionType.IsExist
+            };
             list.Add(a1);
 
-            ActWindow a2 = new ActWindow();
-            a2.Description = "Close window " + Path;
-            a2.LocateBy = eLocateBy.ByTitle;
-            a2.LocateValue = Path;
-            a2.WindowActionType = ActWindow.eWindowActionType.Close;
+            ActWindow a2 = new ActWindow
+            {
+                Description = "Close window " + Path,
+                LocateBy = eLocateBy.ByTitle,
+                LocateValue = Path,
+                WindowActionType = ActWindow.eWindowActionType.Close
+            };
             list.Add(a2);
 
-            ActWindow a3 = new ActWindow();
-            a3.Description = "Switch to window " + Path;
-            a3.LocateBy = eLocateBy.ByTitle;
-            a3.LocateValue = Path;
-            a3.WindowActionType = ActWindow.eWindowActionType.Switch;
+            ActWindow a3 = new ActWindow
+            {
+                Description = "Switch to window " + Path,
+                LocateBy = eLocateBy.ByTitle,
+                LocateValue = Path,
+                WindowActionType = ActWindow.eWindowActionType.Switch
+            };
             list.Add(a3);
 
-            ActWindow a4 = new ActWindow();
-            a4.Description = "Minimize window " + Path;
-            a4.LocateBy = eLocateBy.ByTitle;
-            a4.LocateValue = Path;
-            a4.WindowActionType = ActWindow.eWindowActionType.Minimize;
+            ActWindow a4 = new ActWindow
+            {
+                Description = "Minimize window " + Path,
+                LocateBy = eLocateBy.ByTitle,
+                LocateValue = Path,
+                WindowActionType = ActWindow.eWindowActionType.Minimize
+            };
             list.Add(a4);
 
-            ActWindow a5 = new ActWindow();
-            a5.Description = "Maximize window " + Path;
-            a5.LocateBy = eLocateBy.ByTitle;
-            a5.LocateValue = Path;
-            a5.WindowActionType = ActWindow.eWindowActionType.Maximize;
+            ActWindow a5 = new ActWindow
+            {
+                Description = "Maximize window " + Path,
+                LocateBy = eLocateBy.ByTitle,
+                LocateValue = Path,
+                WindowActionType = ActWindow.eWindowActionType.Maximize
+            };
             list.Add(a5);
 
             return list;

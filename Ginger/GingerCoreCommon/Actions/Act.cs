@@ -175,8 +175,8 @@ namespace GingerCore.Actions
         public bool SupportSimulation
         {
             get
-            { 
-                return mSupportSimulation; 
+            {
+                return mSupportSimulation;
             }
             set
             {
@@ -192,13 +192,15 @@ namespace GingerCore.Actions
         /// Gets a value indicating whether automatic screenshot capture is enabled on failure.
         /// </summary>
         private bool mAutoScreenShotOnFailure = true;
-        [IsSerializedForLocalRepository(DefaultValue:true)]
+        [IsSerializedForLocalRepository(DefaultValue: true)]
         public bool AutoScreenShotOnFailure
         {
-            get { 
+            get
+            {
                 return mAutoScreenShotOnFailure;
             }
-            set {
+            set
+            {
 
                 if (mAutoScreenShotOnFailure != value)
                 {
@@ -442,19 +444,19 @@ namespace GingerCore.Actions
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<FlowControl> FlowControls { get; set; } = new ObservableList<FlowControl>();
+        public ObservableList<FlowControl> FlowControls { get; set; } = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> InputValues { get; set; } = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> InputValues { get; set; } = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActReturnValue> ReturnValues { get; set; } = new ObservableList<ActReturnValue>();
+        public ObservableList<ActReturnValue> ReturnValues { get; set; } = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActOutDataSourceConfig> DSOutputConfigParams = new ObservableList<ActOutDataSourceConfig>();
+        public ObservableList<ActOutDataSourceConfig> DSOutputConfigParams = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableDependency> VariablesDependencies { get; set; } = new ObservableList<VariableDependency>();
+        public ObservableList<VariableDependency> VariablesDependencies { get; set; } = [];
 
         // -----------------------------------------------------------------------------------------------------------------------------------------------
         // All serialized Attributes - END
@@ -542,7 +544,7 @@ namespace GingerCore.Actions
         /// </summary>
         public virtual bool IsSelectableAction { get { return true; } }
 
-        public virtual List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>(); } }
+        public virtual List<ePlatformType> LegacyActionPlatformsList { get { return []; } }
 
         //Required to know if to show Locator Configuration fields in Action Edit window
         public abstract bool ObjectLocatorConfigsNeeded { get; }
@@ -552,7 +554,7 @@ namespace GingerCore.Actions
         public virtual string AddActionWizardPage { get { return null; } }
 
         // return all supported platforms of this action, so in add action we show only the relevant
-        protected List<ePlatformType> mPlatforms = new List<ePlatformType>();
+        protected List<ePlatformType> mPlatforms = [];
         public abstract List<ePlatformType> Platforms { get; }
 
         // return all supported LocateBy of this action, so in edit action page we show only the relevant
@@ -571,7 +573,7 @@ namespace GingerCore.Actions
 
         private List<eLocateBy> getAllLocateBy()
         {
-            List<eLocateBy> l = new List<eLocateBy>();
+            List<eLocateBy> l = [];
             foreach (var v in Enum.GetValues(typeof(eLocateBy)))
             {
                 l.Add((eLocateBy)v);
@@ -637,7 +639,7 @@ namespace GingerCore.Actions
                 if (!string.IsNullOrEmpty(mExInfo) && value.Contains(mExInfo) && value.IndexOf(mExInfo) == 0)//meaning act.ExInfo += was used
                 {
                     //add line break
-                    mExInfo = string.Format("{0}{1}{2}", value.Substring(0, mExInfo.Length), Environment.NewLine, value.Substring(mExInfo.Length));
+                    mExInfo = string.Format("{0}{1}{2}", value[..mExInfo.Length], Environment.NewLine, value[mExInfo.Length..]);
                 }
                 else
                 {
@@ -653,11 +655,11 @@ namespace GingerCore.Actions
 
         //Keeping screen shot in memory will eat up the memory - so we save to files and keep file name
 
-        public ObservableList<String> ScreenShots { get; set; } = new ObservableList<String>();
-        public ObservableList<String> ScreenShotsNames = new ObservableList<String>();
+        public ObservableList<String> ScreenShots { get; set; } = [];
+        public ObservableList<String> ScreenShotsNames = [];
 
-        public ObservableList<ArtifactDetails> Artifacts { get; set; } = new ObservableList<ArtifactDetails>();
-        
+        public ObservableList<ArtifactDetails> Artifacts { get; set; } = [];
+
         // No need to back because the list is saved to backup
         [DoNotBackup]
         public string Value
@@ -724,11 +726,13 @@ namespace GingerCore.Actions
         public void AddInputValueParam(string ParamName)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values            
-            ActInputValue AIV = InputValues.FirstOrDefault(aiv=> aiv.Param == ParamName);
+            ActInputValue AIV = InputValues.FirstOrDefault(aiv => aiv.Param == ParamName);
             if (AIV == null)
             {
-                AIV = new ActInputValue();
-                AIV.Param = ParamName;
+                AIV = new ActInputValue
+                {
+                    Param = ParamName
+                };
                 InputValues.Add(AIV);
                 AIV.Value = "";
             }
@@ -736,16 +740,16 @@ namespace GingerCore.Actions
 
         public void RemoveInputParam(string ParamName)
         {
-            InputValues.Remove(InputValues.FirstOrDefault(aiv=> aiv.Param == ParamName));
+            InputValues.Remove(InputValues.FirstOrDefault(aiv => aiv.Param == ParamName));
         }
         public void AddOrUpdateOutDataSourceParam(string DSName, string DSTable, string OutputType, string ColName = "", string Active = "", List<string> mColNames = null, string OutDSParamType = "ParamToRow")
         {
             bool isActive = true;
             // check if param already exist then update as it can be saved and loaded + keep other values
             ActOutDataSourceConfig ADCS = DSOutputConfigParams
-                .FirstOrDefault(param => 
-                    string.Equals(param.DSName, DSName) && 
-                    string.Equals(param.DSTable, DSTable) && 
+                .FirstOrDefault(param =>
+                    string.Equals(param.DSName, DSName) &&
+                    string.Equals(param.DSTable, DSTable) &&
                     string.Equals(param.OutputType, OutputType));
 
             if (ADCS == null)
@@ -771,9 +775,11 @@ namespace GingerCore.Actions
                 DSOutputConfigParams.Remove(ADCS);
             }
 
-            ADCS = new ActOutDataSourceConfig();
-            ADCS.DSName = DSName;
-            ADCS.DSTable = DSTable;
+            ADCS = new ActOutDataSourceConfig
+            {
+                DSName = DSName,
+                DSTable = DSTable
+            };
             ADCS.PossibleValues.Add(ColName);
             ADCS.StartDirtyTracking();
             ADCS.OnDirtyStatusChanged += this.RaiseDirtyChanged;
@@ -801,7 +807,7 @@ namespace GingerCore.Actions
 
         public void RemoveAllButOneInputParam(string Param)
         {
-            if (!InputValues.Any(aiv=> aiv.Param == Param))
+            if (!InputValues.Any(aiv => aiv.Param == Param))
             {
                 InputValues.Clear();
             }
@@ -817,11 +823,13 @@ namespace GingerCore.Actions
         public void AddOrUpdateInputParamValue(string Param, string Value)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = InputValues.FirstOrDefault(aiv=> aiv.Param == Param);
+            ActInputValue AIV = InputValues.FirstOrDefault(aiv => aiv.Param == Param);
             if (AIV == null)
             {
-                AIV = new ActInputValue();
-                AIV.Param = Param;
+                AIV = new ActInputValue
+                {
+                    Param = Param
+                };
                 InputValues.Add(AIV);
                 AIV.StartDirtyTracking();
                 AIV.OnDirtyStatusChanged += this.RaiseDirtyChanged;
@@ -831,7 +839,7 @@ namespace GingerCore.Actions
                 //Remove duplicate ActInputValues from the InputValues                
                 while (InputValues.Count(aiv => aiv.Param == Param) > 1)
                 {
-                    InputValues.Remove(InputValues.LastOrDefault(aiv=> aiv.Param == Param));
+                    InputValues.Remove(InputValues.LastOrDefault(aiv => aiv.Param == Param));
                 }
             }
             AIV.Value = Value;
@@ -840,7 +848,7 @@ namespace GingerCore.Actions
         public string GetInputParamValue(string Param)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = InputValues.FirstOrDefault(aiv=>aiv != null && aiv.Param == Param);
+            ActInputValue AIV = InputValues.FirstOrDefault(aiv => aiv != null && aiv.Param == Param);
             if (AIV == null)
             {
                 return null;
@@ -853,7 +861,7 @@ namespace GingerCore.Actions
 
         public ActInputValue GetOrCreateInputParam(string Param, string DefaultValue = null)
         {
-            ActInputValue AIV = InputValues.FirstOrDefault(aiv=> aiv != null && aiv.Param == Param);
+            ActInputValue AIV = InputValues.FirstOrDefault(aiv => aiv != null && aiv.Param == Param);
             if (AIV == null)
             {
                 AIV = new ActInputValue() { Param = Param, Value = DefaultValue };
@@ -892,11 +900,13 @@ namespace GingerCore.Actions
         public void AddOrUpdateInputParamCalculatedValue(string Param, string calculatedValue)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = InputValues.FirstOrDefault(aiv=> aiv.Param == Param);
+            ActInputValue AIV = InputValues.FirstOrDefault(aiv => aiv.Param == Param);
             if (AIV == null)
             {
-                AIV = new ActInputValue();
-                AIV.Param = Param;
+                AIV = new ActInputValue
+                {
+                    Param = Param
+                };
                 InputValues.Add(AIV);
             }
 
@@ -906,11 +916,13 @@ namespace GingerCore.Actions
         public void AddOrUpdateInputParamValueAndCalculatedValue(string Param, string calculatedValue)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = InputValues.FirstOrDefault(aiv=> aiv.Param == Param);
+            ActInputValue AIV = InputValues.FirstOrDefault(aiv => aiv.Param == Param);
             if (AIV == null)
             {
-                AIV = new ActInputValue();
-                AIV.Param = Param;
+                AIV = new ActInputValue
+                {
+                    Param = Param
+                };
                 InputValues.Add(AIV);
             }
 
@@ -921,7 +933,7 @@ namespace GingerCore.Actions
         public string GetInputParamCalculatedValue(string Param, bool decryptValue = true)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = InputValues.FirstOrDefault(aiv=>aiv != null && aiv.Param == Param);
+            ActInputValue AIV = InputValues.FirstOrDefault(aiv => aiv != null && aiv.Param == Param);
             if (AIV == null)
             {
                 return null;
@@ -1014,7 +1026,7 @@ namespace GingerCore.Actions
                 {
                     ScreenShots.Add(SaveScreenshotToTempFile(bmp));
                     ScreenShotsNames.Add(Name);
-                }        
+                }
             }
             catch (Exception ex)
             {
@@ -1028,7 +1040,7 @@ namespace GingerCore.Actions
             byte[] bytes = Convert.FromBase64String(Base64String);
             try
             {
-                
+
                 string filePath = GetScreenShotRandomFileName();
                 using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
                 {
@@ -1045,11 +1057,11 @@ namespace GingerCore.Actions
             }
             finally
             {
-                if(bytes != null)
+                if (bytes != null)
                 {
                     Array.Clear(bytes);
                 }
-                
+
             }
         }
 
@@ -1105,15 +1117,17 @@ namespace GingerCore.Actions
         public static void AddArtifactToAction(string artifactName, Act action, string artifactPath)
         {
             string extension = Path.GetExtension(artifactPath);
-            string artifactOriginalName = artifactName.Length <= 15 ? artifactName : artifactName.Substring(0, 15);
+            string artifactOriginalName = artifactName.Length <= 15 ? artifactName : artifactName[..15];
             var randomFileName = string.Concat(artifactOriginalName, "_", action.Guid, "_", DateTime.UtcNow.ToString("hhmmss.fff"), "_", extension);
 
-            ArtifactDetails artifact = new ArtifactDetails();
-            artifact.ArtifactOriginalName = artifactName;
-            artifact.ArtifactOriginalPath = Path.GetFullPath(artifactPath);
-            artifact.ArtifactReportStoragePath = Path.GetFullPath(artifactPath);
-            artifact.ArtifactReportStorageName = randomFileName;
-            action.Artifacts.Add(artifact);            
+            ArtifactDetails artifact = new ArtifactDetails
+            {
+                ArtifactOriginalName = artifactName,
+                ArtifactOriginalPath = Path.GetFullPath(artifactPath),
+                ArtifactReportStoragePath = Path.GetFullPath(artifactPath),
+                ArtifactReportStorageName = randomFileName
+            };
+            action.Artifacts.Add(artifact);
         }
 
         public override string GetNameForFileName()
@@ -1125,7 +1139,7 @@ namespace GingerCore.Actions
             {
                 if (fn.Length > 100)
                 {
-                    return fn.Substring(0, 99);
+                    return fn[..99];
                 }
                 else
                 {
@@ -1257,7 +1271,7 @@ namespace GingerCore.Actions
 
         public bool IsInputParamExist(string Param)
         {
-            ActInputValue AIV = InputValues.FirstOrDefault(aiv=> aiv.Param == Param);
+            ActInputValue AIV = InputValues.FirstOrDefault(aiv => aiv.Param == Param);
             if (AIV != null)
             {
                 return true;
@@ -1266,7 +1280,7 @@ namespace GingerCore.Actions
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> Tags = new ObservableList<Guid>();
+        public ObservableList<Guid> Tags = [];
 
         public override bool FilterBy(eFilterBy filterType, object obj)
         {
@@ -1292,9 +1306,11 @@ namespace GingerCore.Actions
             ActReturnValue ARC = ReturnValues.FirstOrDefault(arc => arc.ParamCalculated == ParamName);
             if (ARC == null && (AddNewReturnParams == true || ConfigOutputDS == true))
             {
-                ARC = new ActReturnValue();
-                ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
-                ARC.Active = true;
+                ARC = new ActReturnValue
+                {
+                    Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals,
+                    Active = true
+                };
                 ReturnValues.Add(ARC);
                 ARC.Param = ParamName;
             }
@@ -1317,11 +1333,13 @@ namespace GingerCore.Actions
         public void AddOrUpdateReturnParamExpected(string ParamName, string ExpectedValue)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc=>arc.Param == ParamName);
+            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc => arc.Param == ParamName);
             if (ARC == null && (AddNewReturnParams == true || ConfigOutputDS == true))
             {
-                ARC = new ActReturnValue();
-                ARC.Active = true;
+                ARC = new ActReturnValue
+                {
+                    Active = true
+                };
                 ReturnValues.Add(ARC);
                 ARC.Param = ParamName;
             }
@@ -1340,12 +1358,14 @@ namespace GingerCore.Actions
             {
                 sPath = string.Empty;
             }
-            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc=> arc.ParamCalculated == ParamName && arc.PathCalculated == sPath);
+            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc => arc.ParamCalculated == ParamName && arc.PathCalculated == sPath);
             if (ARC == null && (AddNewReturnParams == true || ConfigOutputDS == true))
             {
-                ARC = new ActReturnValue();
-                ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
-                ARC.Active = true;
+                ARC = new ActReturnValue
+                {
+                    Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals,
+                    Active = true
+                };
                 ReturnValues.Add(ARC);
                 ARC.Param = ParamName;
                 ARC.Path = sPath;
@@ -1365,7 +1385,7 @@ namespace GingerCore.Actions
         public string GetReturnParam(string Param)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc=> arc.Param == Param);
+            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc => arc.Param == Param);
             if (ARC == null)
             {
                 return null;
@@ -1385,7 +1405,7 @@ namespace GingerCore.Actions
         public string GetDataSourceConfigParam(string OutputParam)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActOutDataSourceConfig ADSC = DSOutputConfigParams.FirstOrDefault(arc=> arc.OutputType == OutputParam);
+            ActOutDataSourceConfig ADSC = DSOutputConfigParams.FirstOrDefault(arc => arc.OutputType == OutputParam);
             if (ADSC == null)
             {
                 return null;
@@ -1397,7 +1417,7 @@ namespace GingerCore.Actions
         public string GetCalculatedExpectedParam(string Param)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc=> arc.Param == Param);
+            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc => arc.Param == Param);
             if (ARC == null)
             {
                 return null;
@@ -1432,7 +1452,7 @@ namespace GingerCore.Actions
         public string GetStoreToValueParam(string Param)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc=> arc.Param == Param);
+            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc => arc.Param == Param);
             if (ARC == null)
             {
                 return null;
@@ -1641,7 +1661,7 @@ namespace GingerCore.Actions
 
         public ActReturnValue GetReturnValue(string ParamName)
         {
-            ActReturnValue RC = ReturnValues.FirstOrDefault(x=> x.Param == ParamName);
+            ActReturnValue RC = ReturnValues.FirstOrDefault(x => x.Param == ParamName);
             return RC;
         }
 
@@ -1909,7 +1929,7 @@ namespace GingerCore.Actions
 
 
                 // TODO: we can also create Params for Driver list
-                ObservableList<ActionParamInfo> l = new ObservableList<ActionParamInfo>();
+                ObservableList<ActionParamInfo> l = [];
                 foreach (ActInputValue AIV in this.InputValues)
                 {
                     if (AIV != null && !string.IsNullOrEmpty(AIV.Value))
@@ -1952,9 +1972,9 @@ namespace GingerCore.Actions
                         i = RCValue.IndexOf('=');
                         if (i > 0)
                         {
-                            param = RCValue.Substring(0, i);
+                            param = RCValue[..i];
                             //the rest is the value
-                            value = RCValue.Substring(param.Length + 1);
+                            value = RCValue[(param.Length + 1)..];
                         }
                         else
                         {
@@ -2054,6 +2074,50 @@ namespace GingerCore.Actions
             return "Action";
         }
 
+
+        /// <summary>
+        /// Compares the current Act instance with another Act instance to determine equality.
+        /// </summary>
+        /// <param name="other">The other Act instance to compare with.</param>
+        /// <returns>True if the instances are equal; otherwise, false.</returns>
+        public bool AreEqual(Act other)
+        {
+            if (other == null || this.ActInputValues.Count != other.ActInputValues.Count)
+            {
+                return false;
+            }
+
+            if (this.Description != other.Description ||
+                   this.Platform != other.Platform)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < this.ActInputValues.Count; i++)
+            {
+                if (!this.ActInputValues[i].AreEqual(other.ActInputValues[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Compares the current Act instance with another object to determine equality.
+        /// </summary>
+        /// <param name="obj">The object to compare with.</param>
+        /// <returns>True if the object is an Act instance and is equal to the current instance; otherwise, false.</returns>
+        public bool AreEqual(object obj)
+        {
+            if (obj == null || obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+
+            return Equals(obj as Act);
+        }
 
     }
 }

@@ -56,7 +56,7 @@ namespace Ginger.Reports
             foreach (BusinessFlowReport BFR in BizFlows)
             {
                 string BFResults = "";
-                BusinessFlow BF = (BusinessFlow)BFR.GetBusinessFlow();
+                BusinessFlow BF = BFR.GetBusinessFlow();
                 totalCount = totalCount + BF.Activities.Count;
                 reportClasses = reportClasses + @"
             <class name=""" + BF.Name + @".Ginger Business Flow"">";
@@ -130,7 +130,7 @@ namespace Ginger.Reports
                 }
 
                 //create ungrouped for activities that are not in any group
-                List<Activity> unGroupedAct = new List<Activity>();
+                List<Activity> unGroupedAct = [];
                 foreach (var item in BF.Activities)
                 {
                     if (item.ActivitiesGroupID == string.Empty)
@@ -175,10 +175,10 @@ namespace Ginger.Reports
             {
                 elapsed += item.Elapsed;
             }
-            if (activityList.Any(x => (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed)))
+            if (activityList.Any(x => (x.Status is eRunStatus.Passed or eRunStatus.Failed)))
             {
-                startedAt = activityList.FirstOrDefault(x => (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed)).StartTimeStamp;
-                finishedAt = activityList.LastOrDefault(x => (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed)).EndTimeStamp;
+                startedAt = activityList.FirstOrDefault(x => (x.Status is eRunStatus.Passed or eRunStatus.Failed)).StartTimeStamp;
+                finishedAt = activityList.LastOrDefault(x => (x.Status is eRunStatus.Passed or eRunStatus.Failed)).EndTimeStamp;
             }
 
             return status;
@@ -214,7 +214,7 @@ namespace Ginger.Reports
                  @""" duration-ms=""" + elapsed + @""" started-at=""" + startedAt + @""" description=""" + description + @""" finished-at=""" + finishedAt + @""">
                  </test-method>";
             }
-            else if (status == eRunStatus.Blocked || status == eRunStatus.Pending || status == eRunStatus.Skipped)
+            else if (status is eRunStatus.Blocked or eRunStatus.Pending or eRunStatus.Skipped)
             {
                 blockedCount++;
                 BFResults = BFResults + @"

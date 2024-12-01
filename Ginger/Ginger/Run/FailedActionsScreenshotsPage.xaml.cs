@@ -29,7 +29,7 @@ namespace Ginger.Run
     /// </summary>
     public partial class FailedActionsScreenshotsPage : Page
     {
-        List<string> mFailedActionsScreenshots = new List<string>();
+        List<string> mFailedActionsScreenshots = [];
 
         public List<string> FailedActionsScreenshots
         {

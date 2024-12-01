@@ -68,7 +68,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eButtonAction)GetOrCreateInputParam<eButtonAction>(nameof(ButtonAction), eButtonAction.Click);
+                return GetOrCreateInputParam<eButtonAction>(nameof(ButtonAction), eButtonAction.Click);
             }
             set
             {

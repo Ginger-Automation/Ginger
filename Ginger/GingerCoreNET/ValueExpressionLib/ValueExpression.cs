@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.ValueExpression;
@@ -120,8 +119,10 @@ namespace GingerCore
 
         public static explicit operator ValueExpression(string Value)
         {
-            ValueExpression VE = new ValueExpression(null, null);
-            VE.Value = Value;
+            ValueExpression VE = new ValueExpression(null, null)
+            {
+                Value = Value
+            };
             return VE;
         }
 
@@ -263,7 +264,7 @@ namespace GingerCore
             }
             if (mValueCalculated.StartsWith(@"\~"))
             {
-                mValueCalculated = "~" + mValueCalculated.Substring(2);
+                mValueCalculated = "~" + mValueCalculated[2..];
             }
         }
 
@@ -380,15 +381,17 @@ namespace GingerCore
                 string objStr, functions, Locale;
                 int DatasetStartIndex, DatasetEndIndex, LocaleStartIndex, LocaleEndIndex;
                 MockdataExpressionExtract(MockDataExpression, out objStr, out functions, out Locale, out DatasetStartIndex, out DatasetEndIndex, out LocaleStartIndex, out LocaleEndIndex);
-                Mockdata mockdata = new();
-                mockdata.MockDataDatasets = objStr;
-                mockdata.Locale = Locale;
-                mockdata.Function = functions;
-                mockdata.MockExpression = MockDataExpression;
-                mockdata.DatasetStartIndex = DatasetStartIndex;
-                mockdata.DatasetEndIndex = DatasetEndIndex;
-                mockdata.LocaleStartIndex = LocaleStartIndex;
-                mockdata.LocaleEndIndex = LocaleEndIndex;
+                Mockdata mockdata = new()
+                {
+                    MockDataDatasets = objStr,
+                    Locale = Locale,
+                    Function = functions,
+                    MockExpression = MockDataExpression,
+                    DatasetStartIndex = DatasetStartIndex,
+                    DatasetEndIndex = DatasetEndIndex,
+                    LocaleStartIndex = LocaleStartIndex,
+                    LocaleEndIndex = LocaleEndIndex
+                };
                 return mockdata;
             }
             catch (Exception ex)
@@ -420,11 +423,11 @@ namespace GingerCore
             LocaleStartIndex = MockDataExpression.IndexOf('"');
             LocaleEndIndex = MockDataExpression.IndexOf(')');
             int functionstartindex = MockDataExpression.IndexOf('.');
-            string funsubstring = MockDataExpression.Substring(functionstartindex + 1);
+            string funsubstring = MockDataExpression[(functionstartindex + 1)..];
             int functionendindex = funsubstring.IndexOf('(');
             Locale = MockDataExpression.Substring(LocaleStartIndex + 1, LocaleEndIndex - 2 - LocaleStartIndex);
             objStr = MockDataExpression.Substring(DatasetStartIndex + 1, DatasetEndIndex - 1 - DatasetStartIndex);
-            functions = funsubstring.Substring(0, functionendindex).Replace("\"", "").Trim();
+            functions = funsubstring[..functionendindex].Replace("\"", "").Trim();
         }
 
         private void ReplaceFlowDetails(string flowDetailsExpression)
@@ -588,7 +591,7 @@ namespace GingerCore
                 if (value != null)
                 {
                     // Check if the provided value is an IEnumerable but not a string  
-                    if (value is not string && value is System.Collections.IEnumerable enumerableValue)
+                    if (value is not string and System.Collections.IEnumerable enumerableValue)
                     {
                         // Serialize the enumerable value to JSON using the specified write options  
                         return JsonSerializer.Serialize(enumerableValue, s_writeOptions);
@@ -639,7 +642,7 @@ namespace GingerCore
         private void ReplaceGlobalParameter(string p)
         {
             string VarName = p.Replace("{GlobalAppsModelsParam Name=", "");
-            VarName = VarName.Substring(0, VarName.Length - 1);
+            VarName = VarName[..^1];
 
             ObservableList<GlobalAppModelParameter> ModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
 
@@ -765,7 +768,7 @@ namespace GingerCore
             string iColVal = "";
             DataSourceBase DataSource = null;
 
-            string DSName = p.Substring(9, p.IndexOf(" DST=") - 9);
+            string DSName = p[9..p.IndexOf(" DST=")];
 
             if (DSList == null || !DSList.Any())
             {
@@ -780,7 +783,7 @@ namespace GingerCore
                 }
             }
 
-            p = p.Substring(p.IndexOf(" DST=")).Trim();
+            p = p[p.IndexOf(" DST=")..].Trim();
             if (DataSource == null)
             {
                 // whenever error is to be displayed, do not use Replace,
@@ -813,7 +816,7 @@ namespace GingerCore
                 {
                     DSTable = p.Substring(p.IndexOf("DST=") + 4, p.IndexOf(" ") - 4);
                     mColList = DataSource.GetColumnList(DSTable);
-                    p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                    p = p[p.TrimStart().IndexOf(" ")..].Trim();
 
                     if (p.IndexOf("ACT=") != -1)
                     {
@@ -848,17 +851,17 @@ namespace GingerCore
                         else if (sAct == "ETE") // Export to Excel
                         {
                             Query = "";
-                            p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                            p = p[p.TrimStart().IndexOf(" ")..].Trim();
                         }
                         else
                         {
-                            p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                            p = p[p.TrimStart().IndexOf(" ")..].Trim();
                         }
                     }
                     if (p.IndexOf("EP=") != -1)
                     {
                         ExcelPath = p.Substring(p.IndexOf("EP=") + 3, p.IndexOf(" ES") - 3);
-                        p = p.Substring(p.TrimStart().IndexOf(" ES")).Trim();
+                        p = p[p.TrimStart().IndexOf(" ES")..].Trim();
                         ExcelSheet = p.Substring(p.IndexOf("ES=") + 3, p.IndexOf("}") - 3);
                     }
                     else if (p.IndexOf("KEY=") != -1)
@@ -891,14 +894,14 @@ namespace GingerCore
                     else if (p != "" && (sAct == "MASD" || sAct == "DR" || sAct == ""))
                     {
                         bMarkAsDone = p.Substring(p.IndexOf("MASD=") + 5, p.IndexOf(" ") - 5);
-                        p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                        p = p[p.TrimStart().IndexOf(" ")..].Trim();
                         if (p.IndexOf("MR=") == 0)
                         {
                             bMultiRow = p.Substring(p.IndexOf("MR=") + 3, p.IndexOf(" ") - 3);
-                            p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                            p = p[p.TrimStart().IndexOf(" ")..].Trim();
                         }
                         string DSIden = p.Substring(p.IndexOf("IDEN=") + 5, p.IndexOf(" ") - 5);
-                        p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                        p = p[p.TrimStart().IndexOf(" ")..].Trim();
                         if (DSIden == "Query")
                         {
                             Query = p.Substring(p.IndexOf("QUERY=") + 6, p.Length - 7);
@@ -912,7 +915,7 @@ namespace GingerCore
                             Query = "Select ";
                             iColVal = p.Substring(p.IndexOf("ICOLVAL=") + 8, p.IndexOf("IROW=") - 9);
                             iColVal = "[" + iColVal + "]";
-                            p = p.Substring(p.TrimStart().IndexOf("IROW="));
+                            p = p[p.TrimStart().IndexOf("IROW=")..];
                             if (iColVal != "[]")
                             {
                                 Query = Query + iColVal + ",[GINGER_ID] from " + DSTable;
@@ -936,24 +939,24 @@ namespace GingerCore
                             }
                             else if (IRow == "RowNum")
                             {
-                                p = p.Substring(p.TrimStart().IndexOf("ROWNUM="));
+                                p = p[p.TrimStart().IndexOf("ROWNUM=")..];
                                 rowNum = p.Substring(p.IndexOf("ROWNUM=") + 7, p.IndexOf("}") - 7);
                             }
                             else if (IRow == "Where")
                             {
                                 if (p.TrimStart().IndexOf("COND=") != -1)
                                 {
-                                    p = p.Substring(p.TrimStart().IndexOf("COND="));
+                                    p = p[p.TrimStart().IndexOf("COND=")..];
                                     string Cond = p.Substring(p.IndexOf("COND=") + 5, p.IndexOf("}") - 5);
                                     Query = Query + " Where " + Cond;
                                 }
                                 else if (p.TrimStart().IndexOf("WCOLVAL=") != -1 && p.TrimStart().IndexOf("WOPR=") != -1)
                                 {
-                                    p = p.Substring(p.TrimStart().IndexOf("WCOLVAL="));
+                                    p = p[p.TrimStart().IndexOf("WCOLVAL=")..];
                                     string wColVal = p.Substring(p.IndexOf("WCOLVAL=") + 8, p.IndexOf("WOPR=") - 9);
                                     wColVal = "[" + wColVal + "]";
                                     Query = Query + " Where ";
-                                    p = p.Substring(p.TrimStart().IndexOf("WOPR="));
+                                    p = p[p.TrimStart().IndexOf("WOPR=")..];
                                     string wOpr = "";
                                     string wRowVal = "";
                                     if (p.IndexOf("WROWVAL=") == -1)
@@ -965,9 +968,9 @@ namespace GingerCore
                                         wOpr = p.Substring(p.IndexOf("WOPR=") + 5, p.IndexOf("WROWVAL=") - 6);
                                     }
 
-                                    if (wOpr != "Is Null" && wOpr != "Is Null")
+                                    if (wOpr is not "Is Null" and not "Is Null")
                                     {
-                                        p = p.Substring(p.TrimStart().IndexOf("WROWVAL="));
+                                        p = p[p.TrimStart().IndexOf("WROWVAL=")..];
                                         wRowVal = p.Substring(p.IndexOf("WROWVAL=") + 8, p.IndexOf("}") - 8);
                                     }
                                     if (wOpr == "Equals")
@@ -1077,7 +1080,7 @@ namespace GingerCore
                                 GingerIds += row["GINGER_ID"].ToString() + ",";
                             }
 
-                            GingerIds = GingerIds.Substring(0, GingerIds.Length - 1);
+                            GingerIds = GingerIds[..^1];
                         }
                         else
                         {
@@ -1105,7 +1108,7 @@ namespace GingerCore
                                     updateQuery += "[" + sCol.ColumnName + "]='" + updateValue.Replace("'", "''") + "' ,";
                                 }
                             }
-                            updateQuery = updateQuery.Substring(0, updateQuery.Length - 1);
+                            updateQuery = updateQuery[..^1];
                             if (mColList.Contains("GINGER_LAST_UPDATED_BY"))
                             {
                                 updateQuery = updateQuery + ",GINGER_LAST_UPDATED_BY='" + System.Environment.UserName + "' ";
@@ -1141,8 +1144,10 @@ namespace GingerCore
                 try
                 {
                     //DataBase connection 
-                    GingerCoreNET.DataSource.GingerLiteDB liteDB = new GingerCoreNET.DataSource.GingerLiteDB();
-                    liteDB.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DataSource.FileFullPath);
+                    GingerCoreNET.DataSource.GingerLiteDB liteDB = new GingerCoreNET.DataSource.GingerLiteDB
+                    {
+                        FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DataSource.FileFullPath)
+                    };
 
                     // Getting all values to execute query
                     int rowNumber = 0;
@@ -1358,7 +1363,7 @@ namespace GingerCore
 
         private Dictionary<string, string> GetExtraParam(string p)
         {
-            Dictionary<string, string> extraParamDict = new Dictionary<string, string>();
+            Dictionary<string, string> extraParamDict = [];
             List<Match> matches = rxVarFormulaParams.Matches(p).ToList();
 
             for (int i = 0; i < matches.Count; i++)
@@ -1392,7 +1397,7 @@ namespace GingerCore
 
         private void HandleComplexFormula(string p)
         {
-            string pc = p.Substring(1, p.Length - 2);
+            string pc = p[1..^1];
             string[] a = pc.Split(' ');
             string expressionType = a[0];
 
@@ -1429,7 +1434,7 @@ namespace GingerCore
             try
             {
                 string Expr = p.Replace("\r\n", "vbCrLf");
-                Expr = Expr.Substring(1, Expr.Length - 2);
+                Expr = Expr[1..^1];
                 Expr = Expr.Replace("VBS Eval=", "");
                 //check whether the Expr contains Split.If yes the take user entered number and decreased it to -1
                 if (p.Contains("{VBS Eval"))
@@ -1480,7 +1485,7 @@ namespace GingerCore
         {
 
             AppName = EnvValExp.Replace("\r\n", "vbCrLf");
-            AppName = AppName.Substring(1, AppName.Length - 2);
+            AppName = AppName[1..^1];
             AppName = AppName.Replace("EnvURL App=", "");
         }
 
@@ -1516,8 +1521,8 @@ namespace GingerCore
             string paramStr = " Param=";
             int indxOfApp = EnvValueExp.IndexOf(appStr);
             int indexOfParam = EnvValueExp.IndexOf(paramStr);
-            AppName = EnvValueExp.Substring(indxOfApp + appStr.Length, indexOfParam - (indxOfApp + appStr.Length));
-            GlobalParamName = EnvValueExp.Substring(indexOfParam + paramStr.Length, (EnvValueExp.Length - 1) - (indexOfParam + paramStr.Length));
+            AppName = EnvValueExp[(indxOfApp + appStr.Length)..indexOfParam];
+            GlobalParamName = EnvValueExp[(indexOfParam + paramStr.Length)..^1];
         }
 
         private void ReplaceEnvParamWithValue(string p, string[] a)
@@ -1564,8 +1569,10 @@ namespace GingerCore
                     }
                     else
                     {
-                        ValueExpression VE = new ValueExpression(Env, BF, DSList);
-                        VE.Value = ParamValue;
+                        ValueExpression VE = new ValueExpression(Env, BF, DSList)
+                        {
+                            Value = ParamValue
+                        };
                         ParamValue = VE.ValueCalculated;
                         mValueCalculated = mValueCalculated.Replace(p, ParamValue);
                     }
@@ -1614,7 +1621,7 @@ namespace GingerCore
                         //Remove Function name
                         int firstStringPosition = FunName.IndexOf("(") + 1;
                         int secondStringPosition = FunName.IndexOf(")");
-                        string allParams = FunName.Substring(firstStringPosition, secondStringPosition - firstStringPosition);
+                        string allParams = FunName[firstStringPosition..secondStringPosition];
 
                         List<string> parameters = paramRegEx.Split(allParams.ToString()).ToList<string>();
                         parameters.RemoveAll(y => y.Equals(""));
@@ -1868,8 +1875,10 @@ namespace GingerCore
         public static string Calculate(ProjEnvironment ProjEnvironment, BusinessFlow BusinessFlow, string Value, ObservableList<DataSourceBase> DSList, bool bUpdate = false, string UpdateValue = "")
         {
             //TODO: this is static func, we can later on do cache and other stuff for performence if needed
-            ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList, bUpdate, UpdateValue);
-            VE.Value = Value;
+            ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList, bUpdate, UpdateValue)
+            {
+                Value = Value
+            };
             return VE.ValueCalculated;
         }
 
@@ -1887,8 +1896,10 @@ namespace GingerCore
             {
                 if (IsThisAValueExpression(value))
                 {
-                    ValueExpression valueExpression = new();
-                    valueExpression.DecryptFlag = true;
+                    ValueExpression valueExpression = new()
+                    {
+                        DecryptFlag = true
+                    };
                     value = valueExpression.Calculate(value);
                     valueExpression.DecryptFlag = false;
                     return value;

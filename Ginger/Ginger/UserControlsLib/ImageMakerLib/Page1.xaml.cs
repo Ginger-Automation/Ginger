@@ -30,7 +30,7 @@ namespace GingerWPF.UserControlsLib.ImageMakerLib
     /// </summary>
     public partial class Page1 : Page
     {
-        List<ImageMakerControl> mImageMakerControls = new List<ImageMakerControl>();
+        List<ImageMakerControl> mImageMakerControls = [];
 
         public Page1()
         {
@@ -84,18 +84,24 @@ namespace GingerWPF.UserControlsLib.ImageMakerLib
                     return;
                 }
 
-                StackPanel sp = new StackPanel();
-                sp.Orientation = Orientation.Vertical;
+                StackPanel sp = new StackPanel
+                {
+                    Orientation = Orientation.Vertical
+                };
 
-                ImageMakerControl IMK = new ImageMakerControl();
-                IMK.ImageType = icon;
-                IMK.Width = 32;
-                IMK.Height = 32;
-                IMK.FontSize = 32;
+                ImageMakerControl IMK = new ImageMakerControl
+                {
+                    ImageType = icon,
+                    Width = 32,
+                    Height = 32,
+                    FontSize = 32
+                };
                 sp.Children.Add(IMK);
                 mImageMakerControls.Add(IMK);
-                Label l = new Label();
-                l.Content = icon.ToString();
+                Label l = new Label
+                {
+                    Content = icon.ToString()
+                };
                 sp.Children.Add(l);
 
 

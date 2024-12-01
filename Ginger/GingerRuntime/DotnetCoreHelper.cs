@@ -27,7 +27,6 @@ using Ginger.Reports;
 using Ginger.Reports.GingerExecutionReport;
 using Ginger.Repository;
 using Ginger.Run.RunSetActions;
-using Ginger.SolutionAutoSaveAndRecover;
 using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.ALM;
@@ -90,7 +89,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             {
                 foreach (KeyValuePair<Guid, string> defectOpeningResult in defectsOpeningResults)
                 {
-                    if ((defectOpeningResult.Value != null) && (defectOpeningResult.Value != "0"))
+                    if (defectOpeningResult.Value is not null and not "0")
                     {
                         WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.DefectSuggestionGuid == defectOpeningResult.Key).ToList().ForEach(z => { z.ALMDefectID = defectOpeningResult.Value; z.IsOpenDefectFlagEnabled = false; });
                     }
@@ -149,22 +148,14 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         {
             Agent zAgent = (Agent)agent;
 
-            switch (zAgent.DriverType)
+            return zAgent.DriverType switch
             {
-                case Agent.eDriverType.Selenium:
-                    return (typeof(SeleniumDriver));
-                case eDriverType.Playwright:
-                    return typeof(PlaywrightDriver);
-
-                case Agent.eDriverType.Appium:
-                    return (typeof(GenericAppiumDriver));
-
-                case Agent.eDriverType.WebServices:
-                    return (typeof(WebServicesDriver));
-
-                default:
-                    throw new Exception("GetDriverType: Unknown Driver type " + zAgent.DriverType);
-            }
+                Agent.eDriverType.Selenium => (typeof(SeleniumDriver)),
+                eDriverType.Playwright => typeof(PlaywrightDriver),
+                Agent.eDriverType.Appium => (typeof(GenericAppiumDriver)),
+                Agent.eDriverType.WebServices => (typeof(WebServicesDriver)),
+                _ => throw new Exception("GetDriverType: Unknown Driver type " + zAgent.DriverType),
+            };
         }
 
         public object GetDriverObject(IAgent agent)
@@ -297,7 +288,23 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                     almCore = new OctaneCore();
                     break;
                 case eALMType.Azure:
-                    almCore = new AzureDevOpsCore();                    
+                    almCore = new AzureDevOpsCore();
+                    break;
+                case eALMType.Qtest:
+                    almCore = new QtestCore();
+                    break;
+                case eALMType.QC:
+                    if (CurrentAlmConfigurations.UseRest)
+                    {
+                        almCore = new QCRestAPICore();
+                    }
+                    else
+                    {
+                        almCore = new QCCore();
+                    }
+                    break;
+                case eALMType.RQM:
+                    almCore = new RQMCore();
                     break;
                 default:
                     Reporter.ToLog(eLogLevel.ERROR, $"Invalid ALM Type - {almType}");

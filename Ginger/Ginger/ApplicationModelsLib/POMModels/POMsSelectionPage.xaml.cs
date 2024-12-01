@@ -38,7 +38,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
     /// </summary>
     public partial class POMsSelectionPage : Page
     {
-        public ObservableList<POMBindingObjectHelper> PomModels = new ObservableList<POMBindingObjectHelper>();
+        public ObservableList<POMBindingObjectHelper> PomModels = [];
         SingleItemTreeViewSelectionPage mApplicationPOMSelectionPage = null;
 
         public delegate void POMSelectionEventHandler(object sender, Guid guid);
@@ -76,16 +76,20 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void SetPOMGridView()
         {
             xGridPOMListItems.SetTitleLightStyle = true;
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(POMBindingObjectHelper.ContainingFolder), Header = "Folder", WidthWeight = 100, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(POMBindingObjectHelper.ItemName), Header = "Name", WidthWeight = 150, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(POMBindingObjectHelper.ContainingFolder), Header = "Folder", WidthWeight = 100, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true },
+                new GridColView() { Field = nameof(POMBindingObjectHelper.ItemName), Header = "Name", WidthWeight = 150, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true },
+            ]
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.RemoveHandler(source: xGridPOMListItems.btnAdd, eventName: nameof(ButtonBase.Click), handler: BtnAdd_Click);
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: xGridPOMListItems.btnAdd, eventName: nameof(ButtonBase.Click), handler: BtnAdd_Click);
 
             xGridPOMListItems.SetAllColumnsDefaultView(view);
             xGridPOMListItems.InitViewItems();
-            PomModels = new ObservableList<POMBindingObjectHelper>();
+            PomModels = [];
             xGridPOMListItems.DataSourceList = PomModels;
             xGridPOMListItems.Title = "Selected POM's";
             xGridPOMListItems.ShowTitle = ShowTitle ? Visibility.Visible : Visibility.Collapsed;

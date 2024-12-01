@@ -38,7 +38,7 @@ namespace Ginger.ApplicationModelsLib
         /// <summary>
         /// Gets/Sets ParameterValuesByNameDic
         /// </summary>
-        List<string> mParameterValuesByNameDic = new List<string>();// EXCEL & DB
+        List<string> mParameterValuesByNameDic = [];// EXCEL & DB
         public List<string> ParameterValuesByNameDic
         {
             get { return mParameterValuesByNameDic; }

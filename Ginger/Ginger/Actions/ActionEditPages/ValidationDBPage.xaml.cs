@@ -19,8 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Couchbase;
-using Ginger.ReporterLib;
 using Ginger.UserControls;
 using GingerCore.Actions;
 using GingerCore.Environments;
@@ -63,14 +61,14 @@ namespace Ginger.Actions
             {
                 mAct.AddOrUpdateInputParamValue("SQL", mAct.GetInputParamValue("Value"));
             }
-             
+
             FillAppComboBox();
 
             //New UI Controls:
             //Query Type selection radio button :
             QueryTypeRadioButton.Init(typeof(ActDBValidation.eQueryType), SqlSelection, mAct.GetOrCreateInputParam(ActDBValidation.Fields.QueryTypeRadioButton, ActDBValidation.eQueryType.FreeSQL.ToString()), QueryType_SelectionChanged);
             checkQueryType();
-            
+
             //Free SQL
             //needs to be unmarked when fixed VE issue
             SQLUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActDBValidation.Fields.SQL));
@@ -157,10 +155,12 @@ namespace Ginger.Actions
                     ActInputValue AIV = (from aiv in mAct.QueryParams where aiv.Param == match.Groups[1].Value select aiv).FirstOrDefault();
                     if (AIV == null)
                     {
-                        AIV = new ActInputValue();
-                        // AIV.Active = true;
+                        AIV = new ActInputValue
+                        {
+                            // AIV.Active = true;
 
-                        AIV.Param = match.Groups[1].Value;
+                            Param = match.Groups[1].Value
+                        };
                         mAct.QueryParams.Add(AIV);
                         AIV.Value = "";
                     }
@@ -188,13 +188,16 @@ namespace Ginger.Actions
             QueryParamsGrid.ShowDelete = System.Windows.Visibility.Visible;
 
             //List<GridColView> view = new List<GridColView>();
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["QueryParamExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Value ForDriver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ActInputValue.Param), WidthWeight = 150 },
+                new GridColView() { Field = nameof(ActInputValue.Value), WidthWeight = 150 },
+                new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["QueryParamExpressionButton"] },
+                new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Value ForDriver", WidthWeight = 150, BindingMode = BindingMode.OneWay },
+            ]
+            };
 
             QueryParamsGrid.SetAllColumnsDefaultView(view);
             QueryParamsGrid.InitViewItems();
@@ -417,7 +420,7 @@ namespace Ginger.Actions
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"{db.DatabaseOperations.ToString()} failed to get tables", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, $"{db.DatabaseOperations} failed to get tables", ex);
                     }
                 });
 
@@ -478,11 +481,11 @@ namespace Ginger.Actions
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"{db.DatabaseOperations.ToString()} failed to get tables", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, $"{db.DatabaseOperations} failed to get tables", ex);
                     }
-                });              
-                
-                
+                });
+
+
             }
             else
             {
@@ -824,13 +827,17 @@ namespace Ginger.Actions
 
         private void SetGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Path", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = "...", Header = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.UpdateDbParametersHeadersGrid.Resources["UpdateDbParametersPathValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Value", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = "....", Header = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.UpdateDbParametersHeadersGrid.Resources["UpdateDbParametersValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ActInputValue.Param), Header = "Path", WidthWeight = 150 },
+                new GridColView() { Field = "...", Header = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.UpdateDbParametersHeadersGrid.Resources["UpdateDbParametersPathValueExpressionButton"] },
+                new GridColView() { Field = nameof(ActInputValue.Value), Header = "Value", WidthWeight = 150 },
+                new GridColView() { Field = "....", Header = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.UpdateDbParametersHeadersGrid.Resources["UpdateDbParametersValueExpressionButton"] },
+                new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay },
+            ]
+            };
 
             UpdateDbParametersGrid.SetAllColumnsDefaultView(view);
             UpdateDbParametersGrid.InitViewItems();

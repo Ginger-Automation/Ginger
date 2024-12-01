@@ -31,8 +31,7 @@ namespace Ginger.UserControlsLib.PieChart
         public object Convert(object value, Type targetType,
             object parameter, CultureInfo culture)
         {
-            string formatString = parameter as string;
-            if (formatString != null)
+            if (parameter is string formatString)
             {
                 return string.Format(culture, formatString, value);
             }

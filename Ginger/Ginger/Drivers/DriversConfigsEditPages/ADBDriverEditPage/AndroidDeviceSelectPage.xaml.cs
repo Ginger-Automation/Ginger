@@ -65,9 +65,11 @@ namespace Ginger.Drivers.AndroidDeviceADBLib
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            ObservableList<Button> buttons = new ObservableList<Button>();
-            Button OKButton = new Button();
-            OKButton.Content = "OK";
+            ObservableList<Button> buttons = [];
+            Button OKButton = new Button
+            {
+                Content = "OK"
+            };
             OKButton.Click += OKButton_Click;
             buttons.Add(OKButton);
             GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Select Android Device", this, buttons, true, "Cancel");

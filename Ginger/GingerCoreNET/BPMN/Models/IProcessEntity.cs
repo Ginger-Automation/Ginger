@@ -16,8 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-
 namespace Amdocs.Ginger.CoreNET.BPMN.Models
 {
     public interface IProcessEntity

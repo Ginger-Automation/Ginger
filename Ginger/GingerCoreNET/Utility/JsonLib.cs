@@ -31,8 +31,10 @@ namespace Amdocs.Ginger.CoreNET.Utility
             JsonSerializer mJsonSerializer;
             if (serializer == null)
             {
-                mJsonSerializer = new JsonSerializer();
-                mJsonSerializer.NullValueHandling = NullValueHandling.Ignore;
+                mJsonSerializer = new JsonSerializer
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                };
             }
             else
             {
@@ -52,8 +54,10 @@ namespace Amdocs.Ginger.CoreNET.Utility
             JsonSerializer mJsonSerializer;
             if (serializer == null)
             {
-                mJsonSerializer = new JsonSerializer();
-                mJsonSerializer.NullValueHandling = NullValueHandling.Ignore;
+                mJsonSerializer = new JsonSerializer
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                };
             }
             else
             {

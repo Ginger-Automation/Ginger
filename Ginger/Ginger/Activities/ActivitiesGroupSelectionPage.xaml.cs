@@ -16,12 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
-using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -73,7 +71,7 @@ namespace Ginger.BusinessFlowPages
                 xNoteLable.Visibility = Visibility.Visible;
             }
         }
-        
+
 
         private void XAddGroupBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -100,13 +98,15 @@ namespace Ginger.BusinessFlowPages
         {
             string title = "Configurations";
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            Button selectBtn = new Button();
-            selectBtn.Content = "Select";
+            ObservableList<Button> winButtons = [];
+            Button selectBtn = new Button
+            {
+                Content = "Select"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: selectBtn, eventName: nameof(ButtonBase.Click), handler: SelectBtn_Click);
-            
-            
-            
+
+
+
             winButtons.Add(selectBtn);
 
             this.Height = 200;

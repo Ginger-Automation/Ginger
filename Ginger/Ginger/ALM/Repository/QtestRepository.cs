@@ -148,7 +148,7 @@ namespace Ginger.ALM.Repository
         {
             if (selectedTestSuites != null && selectedTestSuites.Any())
             {
-                ObservableList<QtestSuiteTreeItem> testSuitesItemsToImport = new ObservableList<QtestSuiteTreeItem>();
+                ObservableList<QtestSuiteTreeItem> testSuitesItemsToImport = [];
                 foreach (QtestSuiteTreeItem testSuiteItem in selectedTestSuites)
                 {
                     //check if some of the Test Set was already imported                
@@ -181,9 +181,11 @@ namespace Ginger.ALM.Repository
                     try
                     {
                         Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testSetItemtoImport.Name);
-                        QtestTestSuite TS = new QtestTestSuite();
-                        TS.ID = testSetItemtoImport.ID;
-                        TS.Name = testSetItemtoImport.Name;
+                        QtestTestSuite TS = new QtestTestSuite
+                        {
+                            ID = testSetItemtoImport.ID,
+                            Name = testSetItemtoImport.Name
+                        };
                         TS = ((QtestCore)ALMIntegration.Instance.AlmCore).ImportTestSetData(TS);
 
                         //convert test set into BF
@@ -367,7 +369,7 @@ namespace Ginger.ALM.Repository
                 matchingTC = null;
                 if (!String.IsNullOrEmpty(ag.ExternalID))
                 {
-                    matchingTC = ((QtestCore)ALMIntegration.Instance.AlmCore).GetQtestTest((long)Convert.ToInt32(ag.ExternalID));
+                    matchingTC = ((QtestCore)ALMIntegration.Instance.AlmCore).GetQtestTest(Convert.ToInt32(ag.ExternalID));
                     if (matchingTC != null)
                     {
                         //ask user if want to continue

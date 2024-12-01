@@ -94,7 +94,7 @@ namespace Ginger.WindowExplorer
         private void InitOutputValuesGrid()
         {
             GridViewDef SimView = new GridViewDef(eGridView.All.ToString());
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             SimView.GridColsView = viewCols;
 
             //Simulation view
@@ -415,11 +415,11 @@ namespace Ginger.WindowExplorer
                 }
 
                 //TODO: Remove below  if once one of the field from Value and Value to select is removed
-                if (actUI.ElementAction == ActUIElement.eElementAction.Click
-                    || actUI.ElementAction == ActUIElement.eElementAction.Select
-                    || actUI.ElementAction == ActUIElement.eElementAction.GetControlProperty
-                    || actUI.ElementAction == ActUIElement.eElementAction.AsyncSelect
-                    || actUI.ElementAction == ActUIElement.eElementAction.SelectByIndex)
+                if (actUI.ElementAction is ActUIElement.eElementAction.Click
+                    or ActUIElement.eElementAction.Select
+                    or ActUIElement.eElementAction.GetControlProperty
+                    or ActUIElement.eElementAction.AsyncSelect
+                    or ActUIElement.eElementAction.SelectByIndex)
                 {
                     actUI.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, act.Value);
                 }

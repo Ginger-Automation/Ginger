@@ -50,7 +50,7 @@ namespace Ginger.ALM.Repository
             try
             {
 
-                if (almConnectType == eALMConnectType.SettingsPage || almConnectType == eALMConnectType.Manual)
+                if (almConnectType is eALMConnectType.SettingsPage or eALMConnectType.Manual)
                 {
                     HandleSSO(octaneCore.ALMType);
                 }
@@ -169,26 +169,37 @@ namespace Ginger.ALM.Repository
             if (!String.IsNullOrEmpty(businessFlow.ExternalID))
             {
                 matchingTS = ((OctaneCore)ALMIntegration.Instance.AlmCore).GetTestSuiteById(businessFlow.ExternalID);
-                if (matchingTS != null)
+                if (businessFlow.ALMTestSetLevel.Equals("RunSet", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    //ask user if want to continute
-                    userSelec = Reporter.ToUser(eUserMsgKey.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.Name);
-                    if (userSelec == eUserMsgSelection.Cancel)
+                    if (String.IsNullOrEmpty(testPlanUploadPath))
                     {
-                        return false;
+                        testPlanUploadPath = matchingTS.ParentId;
                     }
-                    else if (userSelec == eUserMsgSelection.No)
+                }
+                else
+                {
+                    if (matchingTS != null)
                     {
-                        matchingTS = null;
-                    }
-                    else
-                    {
-                        if (String.IsNullOrEmpty(testPlanUploadPath))
+                        //ask user if want to continute
+                        userSelec = Reporter.ToUser(eUserMsgKey.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.Name);
+                        if (userSelec == eUserMsgSelection.Cancel)
                         {
-                            testPlanUploadPath = matchingTS.ParentId;
+                            return false;
+                        }
+                        else if (userSelec == eUserMsgSelection.No)
+                        {
+                            matchingTS = null;
+                        }
+                        else
+                        {
+                            if (String.IsNullOrEmpty(testPlanUploadPath))
+                            {
+                                testPlanUploadPath = matchingTS.ParentId;
+                            }
                         }
                     }
                 }
+                
             }
 
 
@@ -255,14 +266,14 @@ namespace Ginger.ALM.Repository
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                     Reporter.HideStatusMessage();
                 }
-                if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
+                if (almConectStyle is not eALMConnectType.Auto and not eALMConnectType.Silence)
                 {
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
                 }
                 return true;
             }
             else
-                if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
+                if (almConectStyle is not eALMConnectType.Auto and not eALMConnectType.Silence)
             {
                 Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
             }
@@ -313,7 +324,7 @@ namespace Ginger.ALM.Repository
         {
             if (selectedTestSets != null && selectedTestSets.Any())
             {
-                ObservableList<QCTestSetTreeItem> testSetsItemsToImport = new ObservableList<QCTestSetTreeItem>();
+                ObservableList<QCTestSetTreeItem> testSetsItemsToImport = [];
                 foreach (QCTestSetTreeItem testSetItem in selectedTestSets)
                 {
                     //check if some of the Test Set was already imported                
@@ -344,10 +355,12 @@ namespace Ginger.ALM.Repository
                     {
                         //import test set data
                         Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testSetItemtoImport.TestSetName);
-                        GingerCore.ALM.QC.ALMTestSet TS = new GingerCore.ALM.QC.ALMTestSet();
-                        TS.TestSetID = testSetItemtoImport.TestSetID;
-                        TS.TestSetName = testSetItemtoImport.TestSetName;
-                        TS.TestSetPath = testSetItemtoImport.Path;
+                        GingerCore.ALM.QC.ALMTestSet TS = new GingerCore.ALM.QC.ALMTestSet
+                        {
+                            TestSetID = testSetItemtoImport.TestSetID,
+                            TestSetName = testSetItemtoImport.TestSetName,
+                            TestSetPath = testSetItemtoImport.Path
+                        };
                         TS = ((OctaneCore)ALMIntegration.Instance.AlmCore).ImportTestSetData(TS);
 
                         //convert test set into BF
@@ -448,7 +461,7 @@ namespace Ginger.ALM.Repository
         }
         private ObservableList<ExternalItemFieldBase> CleanUnrelvantFields(ObservableList<ExternalItemFieldBase> fields, string resourceType)
         {
-            ObservableList<ExternalItemFieldBase> fieldsToReturn = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> fieldsToReturn = [];
 
             //Going through the fields to leave only Test Set fields
             for (int indx = 0; indx < fields.Count; indx++)

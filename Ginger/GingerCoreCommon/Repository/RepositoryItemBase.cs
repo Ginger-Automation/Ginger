@@ -285,7 +285,7 @@ namespace Amdocs.Ginger.Repository
                 }
                 mLocalBackupDic = new ConcurrentDictionary<string, object>();
 
-                var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+                var properties = this.GetType().GetMembers().Where(x => x.MemberType is MemberTypes.Property or MemberTypes.Field);
                 Parallel.ForEach(properties, mi =>
                 {
                     if (IsDoNotBackupAttr(mi))
@@ -314,7 +314,7 @@ namespace Amdocs.Ginger.Repository
                         {
                             //TODO: mark with no backup
                             //TODO: find better way, make it generic
-                            if (mi.Name != nameof(FileName) && mi.Name != nameof(FilePath) && mi.Name != nameof(ObjFolderName) && mi.Name != nameof(ObjFileExt) && mi.Name != nameof(ContainingFolder) && mi.Name != nameof(ContainingFolderFullPath)) // Will cause err to get filename on each repo item
+                            if (mi.Name is not (nameof(FileName)) and not (nameof(FilePath)) and not (nameof(ObjFolderName)) and not (nameof(ObjFileExt)) and not (nameof(ContainingFolder)) and not (nameof(ContainingFolderFullPath))) // Will cause err to get filename on each repo item
                             {
                                 v = PI.GetValue(this);
                             }
@@ -371,23 +371,23 @@ namespace Amdocs.Ginger.Repository
 
         public void BackupList(string Name, IObservableList v, bool isLocalBackup = false)
         {
-                //TODO: if v is Lazy bak the text without drill down
-                List<object> list = new List<object>();
-                foreach (object o in v)
+            //TODO: if v is Lazy bak the text without drill down
+            List<object> list = [];
+            foreach (object o in v)
+            {
+                // Run back on each item, so will drill down the hierarchy
+                if (o is RepositoryItemBase repositoryItemBase)
                 {
-                    // Run back on each item, so will drill down the hierarchy
-                    if (o is RepositoryItemBase repositoryItemBase)
-                    {
-                        repositoryItemBase.CreateBackup(isLocalBackup);
-                    }
-                    list.Add(o);
+                    repositoryItemBase.CreateBackup(isLocalBackup);
                 }
-                // we keep the original list of items in special name like: Activities~List
-                if (!isLocalBackup)
-                {
-                    mBackupDic.TryAdd(Name + "~List", list);
-                }
-                mLocalBackupDic.TryAdd(Name + "~List", list);            
+                list.Add(o);
+            }
+            // we keep the original list of items in special name like: Activities~List
+            if (!isLocalBackup)
+            {
+                mBackupDic.TryAdd(Name + "~List", list);
+            }
+            mLocalBackupDic.TryAdd(Name + "~List", list);
         }
 
         // Item which will not be saved to the XML - for example dynamic activities or temp output values - no expected or store to
@@ -467,7 +467,7 @@ namespace Amdocs.Ginger.Repository
                 }
             }
 
-            var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+            var properties = this.GetType().GetMembers().Where(x => x.MemberType is MemberTypes.Property or MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
                 if (IsDoNotBackupAttr(mi)) continue;
@@ -723,7 +723,7 @@ namespace Amdocs.Ginger.Repository
             Type objType = repoItemToCopy.GetType();
             var targetObj = Activator.CreateInstance(objType) as RepositoryItemBase;
 
-            var objMembers = repoItemToCopy.GetType().GetMembers().Where(x => (x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field));
+            var objMembers = repoItemToCopy.GetType().GetMembers().Where(x => (x.MemberType is MemberTypes.Property or MemberTypes.Field));
 
             repoItemToCopy.PrepareItemToBeCopied();
             //targetObj.PreDeserialization();
@@ -808,8 +808,10 @@ namespace Amdocs.Ginger.Repository
                     RepositoryItemBase RI = CopyRIObject(item as RepositoryItemBase, guidMappingList, setNewGUID, deepCopy);
                     if (setNewGUID)
                     {
-                        GuidMapper mapping = new GuidMapper();
-                        mapping.Original = RI.Guid;
+                        GuidMapper mapping = new GuidMapper
+                        {
+                            Original = RI.Guid
+                        };
                         RI.Guid = Guid.NewGuid();
                         mapping.newGuid = RI.Guid;
                         guidMappingList.Add(mapping);
@@ -836,7 +838,7 @@ namespace Amdocs.Ginger.Repository
             {
                 ItemCopyIsInProgress = true;
 
-                List<GuidMapper> guidMappingList = new List<GuidMapper>();
+                List<GuidMapper> guidMappingList = [];
                 var duplicatedItem = CopyRIObject(this, guidMappingList, setNewGUID, deepCopy);
                 //change the GUID of duplicated item
                 if (duplicatedItem != null)
@@ -919,7 +921,7 @@ namespace Amdocs.Ginger.Repository
                     int startIndx = this.FileName.ToUpper().IndexOf(this.ObjFolderName.ToUpper());
                     int endIndx = this.FileName.LastIndexOf('\\');
                     if (endIndx > startIndx)
-                        containingFolder = this.FileName.Substring(startIndx, endIndx - startIndx) + "\\";
+                        containingFolder = this.FileName[startIndx..endIndx] + "\\";
                 }
                 return containingFolder;
             }
@@ -1054,7 +1056,7 @@ namespace Amdocs.Ginger.Repository
                         // check that path is really valid path to a file contaning both drive at the start & a target with extension, also in order to keep the list unique, check if the value has already been added to the list.
                         if (!String.IsNullOrEmpty(FilePath) && Path.IsPathFullyQualified(FilePath) && !GingerCoreCommonWorkSpace.Instance.SolutionRepository.ModifiedFiles.Contains(this))
                         {
-                            GingerCoreCommonWorkSpace.Instance.SolutionRepository.ModifiedFiles.Add(this); 
+                            GingerCoreCommonWorkSpace.Instance.SolutionRepository.ModifiedFiles.Add(this);
                         }
                     }
                     OnPropertyChanged(nameof(DirtyStatus));
@@ -1126,9 +1128,8 @@ namespace Amdocs.Ginger.Repository
                 {
                     foreach (object obj in e.NewItems)
                     {
-                        if (obj is RepositoryItemBase)
+                        if (obj is RepositoryItemBase repositoryItemBase)
                         {
-                            RepositoryItemBase repositoryItemBase = (RepositoryItemBase)obj;
                             repositoryItemBase.StartDirtyTracking();
                             repositoryItemBase.OnDirtyStatusChanged += this.RaiseDirtyChanged;
                             repositoryItemBase.DirtyStatus = eDirtyStatus.Modified;
@@ -1141,7 +1142,7 @@ namespace Amdocs.Ginger.Repository
                 }
                 #endregion
                 #region Collection Action - Remove Or Move
-                else if (e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Move)
+                else if (e.Action is NotifyCollectionChangedAction.Remove or NotifyCollectionChangedAction.Move)
                 {
                     foreach (object obj in e.OldItems)
                     {
@@ -1202,7 +1203,7 @@ namespace Amdocs.Ginger.Repository
                 return;
             }
 
-            DirtyTrackingFields = new ConcurrentBag<string>();
+            DirtyTrackingFields = [];
             DirtyStatus = eDirtyStatus.NoChange;
             //first track self item changes
             if (PropertyChanged == null)
@@ -1251,7 +1252,7 @@ namespace Amdocs.Ginger.Repository
                     {
                         return;
                     }
-                    TrackObservableList((IObservableList)obj);
+                    TrackObservableList(obj);
                 }
                 // track changes in childern which are RepositoryItemBase
                 if (typeof(RepositoryItemBase).IsAssignableFrom(PI.PropertyType))
@@ -1285,7 +1286,7 @@ namespace Amdocs.Ginger.Repository
                     {
                         return;
                     }
-                    TrackObservableList((IObservableList)obj);
+                    TrackObservableList(obj);
 
                 }
             });
@@ -1295,15 +1296,14 @@ namespace Amdocs.Ginger.Repository
         public void TrackObservableList(IObservableList obj)
         {
             // No need to track items which are lazy load            
-            List<object> items = ((IObservableList)obj).ListItems;
+            List<object> items = obj.ListItems;
 
-            ((INotifyCollectionChanged)obj).CollectionChanged += ((RepositoryItemBase)this).ChildCollectionChanged;
+            obj.CollectionChanged += this.ChildCollectionChanged;
 
             Parallel.ForEach(items, item =>
             {
-                if (item is RepositoryItemBase)
+                if (item is RepositoryItemBase RI)
                 {
-                    RepositoryItemBase RI = ((RepositoryItemBase)item);
                     // Do start tracking only for item which are not already tracked
                     if (RI.DirtyStatus == eDirtyStatus.NoTracked)
                     {

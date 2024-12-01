@@ -17,10 +17,6 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Telemetry
 {
@@ -33,7 +29,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
         public string Account { get; init; }
 
         public required DateTime CreationTimestamp { get; init; }
-        
+
         public required DateTime LastUpdateTimestamp { get; set; }
 
         public required string AppVersion { get; init; }

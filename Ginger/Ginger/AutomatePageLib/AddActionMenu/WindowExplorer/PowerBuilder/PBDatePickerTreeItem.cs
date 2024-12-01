@@ -34,19 +34,19 @@ namespace Ginger.WindowExplorer.PowerBuilder
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Set DatePicker Value " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.SetValue,
-            });
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Get DatePicker Value " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.GetValue,
-            });
+            ObservableList<Act> list =
+            [
+                new ActPBControl()
+                {
+                    Description = "Set DatePicker Value " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActPBControl.eControlAction.SetValue,
+                },
+                new ActPBControl()
+                {
+                    Description = "Get DatePicker Value " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActPBControl.eControlAction.GetValue,
+                },
+            ];
 
             return list;
         }

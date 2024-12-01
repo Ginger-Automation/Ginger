@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Common.WorkSpaceLib;
-using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.BusinessFlowPages;
@@ -76,8 +75,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             SetActionsListView(xPlatformGenericActionsListView, Ginger.General.eRIPageViewMode.Add);
             SetActionsListView(xPlatformLegacyActionListView, Ginger.General.eRIPageViewMode.Add);
 
-            Button addActionBtn = new Button();
-            addActionBtn.Content = "Add Action";
+            Button addActionBtn = new Button
+            {
+                Content = "Add Action"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: addActionBtn, eventName: nameof(ButtonBase.Click), handler: AddActionButton_Click);
         }
 
@@ -93,7 +94,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (this.IsVisible && MainAddActionsNavigationPage.IsPanelExpanded)
             {
-                if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
+                if (e.PropertyName is nameof(mContext.Activity) or nameof(mContext.Target))
                 {
                     FillActionsList();
                 }
@@ -118,7 +119,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void LoadPluginsActions()
         {
             ObservableList<PluginPackage> plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
-            ObservableList<Act> PlugInsActions = new ObservableList<Act>();
+            ObservableList<Act> PlugInsActions = [];
             foreach (PluginPackage pluginPackage in plugins)
             {
                 pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
@@ -129,11 +130,13 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     {
                         foreach (PluginServiceActionInfo pluginServiceAction in pluginServiceInfo.Actions)
                         {
-                            ActPlugIn act = new ActPlugIn();
-                            act.Description = pluginServiceAction.Description;
-                            act.PluginId = pluginPackage.PluginId;
-                            act.ServiceId = pluginServiceInfo.ServiceId;
-                            act.ActionId = pluginServiceAction.ActionId;
+                            ActPlugIn act = new ActPlugIn
+                            {
+                                Description = pluginServiceAction.Description,
+                                PluginId = pluginPackage.PluginId,
+                                ServiceId = pluginServiceInfo.ServiceId,
+                                ActionId = pluginServiceAction.ActionId
+                            };
                             foreach (var v in pluginServiceAction.InputValues)
                             {
                                 if (v.Param == "GA")
@@ -160,9 +163,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void LoadGridData()
         {
             ObservableList<Act> allActions = GetPlatformsActions();
-            ObservableList<Act> platformActions = new ObservableList<Act>();
-            ObservableList<Act> generalActions = new ObservableList<Act>();
-            ObservableList<Act> LegacyActions = new ObservableList<Act>();
+            ObservableList<Act> platformActions = [];
+            ObservableList<Act> generalActions = [];
+            ObservableList<Act> LegacyActions = [];
 
             if (allActions != null)
             {
@@ -215,7 +218,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private ObservableList<Act> GetPlatformsActions(bool ShowAll = false)
         {
-            ObservableList<Act> Acts = new ObservableList<Act>();
+            ObservableList<Act> Acts = [];
             AppDomain.CurrentDomain.Load("GingerCore");
             AppDomain.CurrentDomain.Load("GingerCoreCommon");
             AppDomain.CurrentDomain.Load("GingerCoreNET");
@@ -421,11 +424,13 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (AllActionType == null)
             {
-                AllActionType = new List<Type>();
-                List<Assembly> assemblies = new List<Assembly>();
-                assemblies.Add(typeof(Act).Assembly); // add assembly of GingerCoreCommon
-                assemblies.Add(typeof(RepositoryItem).Assembly); // add assembly of GingerCore
-                                                                 // assemblies.Add(typeof(ActAgentManipulation).Assembly); // add assembly of GingerCoreNET  -- Getting load exception
+                AllActionType = [];
+                List<Assembly> assemblies =
+                [
+                    typeof(Act).Assembly, // add assembly of GingerCoreCommon
+                    typeof(RepositoryItem).Assembly, // add assembly of GingerCore
+                ];
+                // assemblies.Add(typeof(ActAgentManipulation).Assembly); // add assembly of GingerCoreNET  -- Getting load exception
 
                 var subclasses = from assembly in assemblies // not using AppDomain.CurrentDomain.GetAssemblies() because it checks in all assemblies and have load exception
                                  from type in assembly.GetTypes()

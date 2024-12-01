@@ -26,34 +26,63 @@ namespace GingerCore.Drivers
     {
         public static Screenshot GetFullPageScreenshot(this ChromiumDriver driver)
         {
-            //Dictionary will contain the parameters needed to get the full page screen shot
-            Dictionary<string, Object> metrics = new Dictionary<string, Object>();
-            metrics["width"] = driver.ExecuteScript("return Math.max(window.innerWidth,document.body.scrollWidth,document.documentElement.scrollWidth)");
-            metrics["height"] = driver.ExecuteScript("return Math.max(window.innerHeight,document.body.scrollHeight,document.documentElement.scrollHeight)");
+            // Capture the original scroll position           
+            Dictionary<string, object> originalScrollPosition;
+            try
+            {
+                originalScrollPosition = (Dictionary<string, object>)driver.ExecuteScript("return { x: window.pageXOffset, y: window.pageYOffset };")
+                                    ?? new Dictionary<string, object> { ["x"] = 0, ["y"] = 0 };
+            }
+            catch
+            {
+                // Fallback to default values if script execution fails
+                originalScrollPosition = new Dictionary<string, object> { ["x"] = 0, ["y"] = 0 };
+            }
+
+            // Capture page dimensions and device metrics
+            Dictionary<string, Object> metrics = new Dictionary<string, Object>
+            {
+                ["width"] = driver.ExecuteScript("return Math.max(window.innerWidth, document.body.scrollWidth, document.documentElement.scrollWidth)"),
+                ["height"] = driver.ExecuteScript("return Math.max(window.innerHeight, document.body.scrollHeight, document.documentElement.scrollHeight)"),
+                ["mobile"] = driver.ExecuteScript("return typeof window.orientation !== 'undefined'")
+            };
+
             object devicePixelRatio = driver.ExecuteScript("return window.devicePixelRatio");
             if (devicePixelRatio != null)
             {
-                double doubleValue = 0;
-                if (double.TryParse(devicePixelRatio.ToString(), out doubleValue))
+                if (double.TryParse(devicePixelRatio.ToString(), out var doubleValue))
                 {
                     metrics["deviceScaleFactor"] = doubleValue;
                 }
                 else
                 {
-                    long longValue = 0;
-                    if (long.TryParse(devicePixelRatio.ToString(), out longValue))
+                    if (long.TryParse(devicePixelRatio.ToString(), out var longValue))
                     {
                         metrics["deviceScaleFactor"] = longValue;
                     }
                 }
             }
-            metrics["mobile"] = driver.ExecuteScript("return typeof window.orientation !== 'undefined'");
-            //Execute the emulation Chrome Command to change browser to a custom device that is the size of the entire page
-            driver.ExecuteCdpCommand("Emulation.setDeviceMetricsOverride", metrics);
-            //You can then just screenshot it as it thinks everything is visible
-            Screenshot screenshot = driver.GetScreenshot();
-            //This command will return your browser back to a normal, usable form if you need to do anything else with it.
-            driver.ExecuteCdpCommand("Emulation.clearDeviceMetricsOverride", new Dictionary<string, Object>());
+
+            // Execute the emulation Chrome command to change browser to a custom device that is the size of the entire page
+            Screenshot screenshot = null;
+            try
+            {
+                driver.ExecuteCdpCommand("Emulation.setDeviceMetricsOverride", metrics);
+                screenshot = driver.GetScreenshot();
+            }
+            finally
+            {
+                try
+                {
+                    // Always attempt to restore original state
+                    driver.ExecuteCdpCommand("Emulation.clearDeviceMetricsOverride", []);
+                    driver.ExecuteScript($"window.scrollTo({{ top: {originalScrollPosition["y"]}, left: {originalScrollPosition["x"]}, behavior: 'instant' }});");
+                }
+                catch (WebDriverException)
+                {
+                    // Log warning if restoration fails
+                }
+            }
 
             return screenshot;
         }

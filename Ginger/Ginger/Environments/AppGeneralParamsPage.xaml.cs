@@ -25,10 +25,9 @@ using GingerCore.Actions;
 using GingerCore.Environments;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Ginger.Environments
 {
@@ -136,8 +135,8 @@ namespace Ginger.Environments
             foreach (var item in grdAppParams.DataSourceList.ListItems)
             {
                 if (ignoreCurrentSelectedItem && ((GeneralParam)item).Guid.Equals(((GeneralParam)grdAppParams.CurrentItem).Guid))
-                { 
-                    continue; 
+                {
+                    continue;
                 }
 
                 if (((GeneralParam)item).Name == name)
@@ -147,7 +146,7 @@ namespace Ginger.Environments
             }
             return false;
         }
-        
+
         public void UpdateVariableNameChange(GeneralParam parameter)
         {
             if (parameter == null)
@@ -231,13 +230,17 @@ namespace Ginger.Environments
             grdAppParams.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddParam));
             grdAppParams.AddToolbarTool("@Share_16x16.png", "Add Selected Parameters to All Environments", new RoutedEventHandler(AddParamsToOtherEnvironmentsApps));
             //Set the Data Grid columns
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = GeneralParam.Fields.Name, WidthWeight = 40 });
-            view.GridColsView.Add(new GridColView() { Field = GeneralParam.Fields.Value, WidthWeight = 30 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appGenParamsPageGrid.Resources["ParamValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = GeneralParam.Fields.Encrypt, WidthWeight = 5, MaxWidth = 100, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = GeneralParam.Fields.Description, WidthWeight = 25 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = GeneralParam.Fields.Name, WidthWeight = 40 },
+                new GridColView() { Field = GeneralParam.Fields.Value, WidthWeight = 30 },
+                new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appGenParamsPageGrid.Resources["ParamValueExpressionButton"] },
+                new GridColView() { Field = GeneralParam.Fields.Encrypt, WidthWeight = 5, MaxWidth = 100, StyleType = GridColView.eGridColStyleType.CheckBox },
+                new GridColView() { Field = GeneralParam.Fields.Description, WidthWeight = 25 },
+            ]
+            };
 
             grdAppParams.SetAllColumnsDefaultView(view);
             grdAppParams.InitViewItems();

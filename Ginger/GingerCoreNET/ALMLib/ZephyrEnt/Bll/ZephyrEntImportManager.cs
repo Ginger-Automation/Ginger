@@ -59,7 +59,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         {
             try
             {
-                List<string[]> tcsSummary = new List<string[]>();
+                List<string[]> tcsSummary = [];
                 statusesDic.Keys.ToList().ForEach(k => statusesDic[k] = 0);
 
                 List<BaseResponseItem> tcsData = zephyrEntRepository.GetTCsByTreeId(tsId);
@@ -108,13 +108,15 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                 }
 
                 //Create Business Flow
-                BusinessFlow busFlow = new BusinessFlow();
-                busFlow.Name = testSet.TestSetName;
-                busFlow.ExternalID = testSet.TestSetID;
-                busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
-                busFlow.Activities = new ObservableList<Activity>();
-                busFlow.Variables = new ObservableList<VariableBase>();
-                Dictionary<string, string> busVariables = new Dictionary<string, string>();//will store linked variables
+                BusinessFlow busFlow = new BusinessFlow
+                {
+                    Name = testSet.TestSetName,
+                    ExternalID = testSet.TestSetID,
+                    Status = BusinessFlow.eBusinessFlowStatus.Development,
+                    Activities = [],
+                    Variables = []
+                };
+                Dictionary<string, string> busVariables = [];//will store linked variables
 
                 //Create Activities Group + Activities for each TC
                 foreach (QC.ALMTSTest tc in testSet.Tests)
@@ -150,11 +152,13 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     }
                     else //TC not exist in Ginger repository so create new one
                     {
-                        tcActivsGroup = new ActivitiesGroup();
-                        tcActivsGroup.Name = tc.TestName;
-                        tcActivsGroup.ExternalID = tc.TestID;
-                        tcActivsGroup.ExternalID2 = tc.LinkedTestID;
-                        tcActivsGroup.Description = tc.Description;
+                        tcActivsGroup = new ActivitiesGroup
+                        {
+                            Name = tc.TestName,
+                            ExternalID = tc.TestID,
+                            ExternalID2 = tc.LinkedTestID,
+                            Description = tc.Description
+                        };
                         busFlow.AddActivitiesGroup(tcActivsGroup);
                     }
 
@@ -165,15 +169,15 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                         bool toAddStepActivity = false;
 
                         //check if mapped activity exist in repository
-                        Activity repoStepActivity = (Activity)GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID == step.StepID);
+                        Activity repoStepActivity = GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID == step.StepID);
                         if (repoStepActivity != null)
                         {
                             //check if it is part of the Activities Group
-                            ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                            ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                             if (groupStepActivityIdent != null)
                             {
                                 //already in Activities Group so get link to it
-                                stepActivity = (Activity)busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
+                                stepActivity = busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                                 // in any case update description/expected/name - even if "step" was taken from repository
                                 stepActivity.Description = StripHTML(step.Description);
                                 stepActivity.Expected = StripHTML(step.Expected);
@@ -187,10 +191,12 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                         }
                         else//Step not exist in Ginger repository so create new one
                         {
-                            stepActivity = new Activity();
-                            stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
-                            stepActivity.ExternalID = step.StepID;
-                            stepActivity.Description = StripHTML(step.Description);
+                            stepActivity = new Activity
+                            {
+                                ActivityName = tc.TestName + ">" + step.StepName,
+                                ExternalID = step.StepID,
+                                Description = StripHTML(step.Description)
+                            };
 
                             toAddStepActivity = true;
                         }
@@ -202,7 +208,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                         }
 
                         //pull TC-Step parameters and add them to the Activity level
-                        List<string> stepParamsList = new List<string>();
+                        List<string> stepParamsList = [];
                         foreach (string param in stepParamsList)
                         {
                             //get the param value
@@ -244,7 +250,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                 isflowControlParam = false;
                                 if (paramSelectedValue.StartsWith("$$_"))
                                 {
-                                    paramSelectedValue = paramSelectedValue.Substring(3);//get value without "$$_"
+                                    paramSelectedValue = paramSelectedValue[3..];//get value without "$$_"
                                 }
                             }
                             else if (paramSelectedValue != "<Empty>")
@@ -259,16 +265,20 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                 if (isflowControlParam == true)
                                 {
                                     //add it as selection list param                               
-                                    stepActivityVar = new VariableSelectionList();
-                                    stepActivityVar.Name = param;
+                                    stepActivityVar = new VariableSelectionList
+                                    {
+                                        Name = param
+                                    };
                                     stepActivity.AddVariable(stepActivityVar);
                                     stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new flow control param was added
                                 }
                                 else
                                 {
                                     //add as String param
-                                    stepActivityVar = new VariableString();
-                                    stepActivityVar.Name = param;
+                                    stepActivityVar = new VariableString
+                                    {
+                                        Name = param
+                                    };
                                     ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                                     stepActivity.AddVariable(stepActivityVar);
                                 }
@@ -278,12 +288,14 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                 //#param exist
                                 if (isflowControlParam == true)
                                 {
-                                    if (!(stepActivityVar is VariableSelectionList))
+                                    if (stepActivityVar is not VariableSelectionList)
                                     {
                                         //flow control param must be Selection List so transform it
                                         stepActivity.Variables.Remove(stepActivityVar);
-                                        stepActivityVar = new VariableSelectionList();
-                                        stepActivityVar.Name = param;
+                                        stepActivityVar = new VariableSelectionList
+                                        {
+                                            Name = param
+                                        };
                                         stepActivity.AddVariable(stepActivityVar);
                                         stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
                                     }
@@ -294,8 +306,10 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                     {
                                         //change it to be string variable
                                         stepActivity.Variables.Remove(stepActivityVar);
-                                        stepActivityVar = new VariableString();
-                                        stepActivityVar.Name = param;
+                                        stepActivityVar = new VariableString
+                                        {
+                                            Name = param
+                                        };
                                         ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                                         stepActivity.AddVariable(stepActivityVar);
                                         stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was removed
@@ -357,12 +371,12 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                         foreach (QC.ALMTSTestStep step in tc.Steps)
                         {
                             int stepIndx = tc.Steps.IndexOf(step) + 1;
-                            ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                            ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                             if (actIdent == null || actIdent.IdentifiedActivity == null)
                             {
                                 break;//something wrong- shouldn't be null
                             }
-                            Activity act = (Activity)actIdent.IdentifiedActivity;
+                            Activity act = actIdent.IdentifiedActivity;
                             int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                             int bfActIndx = busFlow.Activities.IndexOf(act);
 
@@ -384,7 +398,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                     break;
                                 }
                             }
-                            ActivityIdentifiers identOnPlace = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers[groupIndx];
+                            ActivityIdentifiers identOnPlace = tcActivsGroup.ActivitiesIdentifiers[groupIndx];
                             if (identOnPlace.ActivityGuid != act.Guid)
                             {
                                 //replace places in group
@@ -407,9 +421,11 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     foreach (KeyValuePair<string, string> var in busVariables)
                     {
                         //add as String param
-                        VariableString busVar = new VariableString();
-                        busVar.Name = var.Key;
-                        busVar.InitialStringValue = var.Value;
+                        VariableString busVar = new VariableString
+                        {
+                            Name = var.Key,
+                            InitialStringValue = var.Value
+                        };
                         busFlow.AddVariable(busVar);
                     }
                 }
@@ -456,7 +472,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         #endregion private functions
         public ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType = ResourceType.ALL)
         {
-            ObservableList<ExternalItemFieldBase> almFields = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> almFields = [];
             List<Preference> fieldsValues = zephyrEntRepository.GetCustomFieldsValues();
             zephyrEntRepository.GetCustomFields().ForEach(ent =>
             {
@@ -479,7 +495,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
 
         private ObservableList<string> AddValuesToField(List<Preference> fieldsValues, string entityName, string fieldName)
         {
-            ObservableList<string> possibleValues = new ObservableList<string>();
+            ObservableList<string> possibleValues = [];
             Preference field = fieldsValues.Find(val => val.name.Contains(String.Join(".", new[] { entityName.ToLower(), fieldName.ToLower() })));
             if (field != null)
             {

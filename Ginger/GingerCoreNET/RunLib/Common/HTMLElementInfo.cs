@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using HtmlAgilityPack;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -142,7 +141,7 @@ namespace GingerCore.Drivers.Common
 
         public string FindParentPOMGuid()
         {
-            return  this.Properties.FirstOrDefault((prop) => prop.Name.Equals(ElementProperty.ParentPOMGUID))?.Value ?? Guid.Empty.ToString();
+            return this.Properties.FirstOrDefault((prop) => prop.Name.Equals(ElementProperty.ParentPOMGUID))?.Value ?? Guid.Empty.ToString();
         }
     }
 }

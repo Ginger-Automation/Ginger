@@ -75,10 +75,12 @@ namespace Ginger.BusinessFlowLib
                 mFlowDiagram.AddFlowElem(ActivityFE);
 
                 //Add connector to last activity
-                FlowLink FL = new FlowLink(LastActivity, ActivityFE);
-                FL.LinkStyle = FlowLink.eLinkStyle.Arrow;
-                FL.SourcePosition = FlowLink.eFlowElementPosition.bottom;
-                FL.DestinationPosition = FlowLink.eFlowElementPosition.Top;
+                FlowLink FL = new FlowLink(LastActivity, ActivityFE)
+                {
+                    LinkStyle = FlowLink.eLinkStyle.Arrow,
+                    SourcePosition = FlowLink.eFlowElementPosition.bottom,
+                    DestinationPosition = FlowLink.eFlowElementPosition.Top
+                };
                 mFlowDiagram.AddConnector(FL);
                 LastActivity = ActivityFE;
 
@@ -90,10 +92,12 @@ namespace Ginger.BusinessFlowLib
             mFlowDiagram.AddFlowElem(EndFlowElement);
 
             // connect last Activity to 'End' Flow Elem
-            FlowLink FLEnd = new FlowLink(LastActivity, EndFlowElement);
-            FLEnd.LinkStyle = FlowLink.eLinkStyle.Arrow;
-            FLEnd.SourcePosition = FlowLink.eFlowElementPosition.bottom;
-            FLEnd.DestinationPosition = FlowLink.eFlowElementPosition.Top;
+            FlowLink FLEnd = new FlowLink(LastActivity, EndFlowElement)
+            {
+                LinkStyle = FlowLink.eLinkStyle.Arrow,
+                SourcePosition = FlowLink.eFlowElementPosition.bottom,
+                DestinationPosition = FlowLink.eFlowElementPosition.Top
+            };
             mFlowDiagram.AddConnector(FLEnd);
 
             AddFlowControls();
@@ -118,10 +122,12 @@ namespace Ginger.BusinessFlowLib
                         mFlowDiagram.AddFlowElem(FlowControlFE);
 
                         // Create Line connector to the activity this FC is in
-                        FlowLink FL2 = new FlowLink(GetFlowElemOfActivity(a), FlowControlFE);
-                        FL2.LinkStyle = FlowLink.eLinkStyle.Line;
-                        FL2.SourcePosition = FlowLink.eFlowElementPosition.Right;
-                        FL2.DestinationPosition = FlowLink.eFlowElementPosition.Left;
+                        FlowLink FL2 = new FlowLink(GetFlowElemOfActivity(a), FlowControlFE)
+                        {
+                            LinkStyle = FlowLink.eLinkStyle.Line,
+                            SourcePosition = FlowLink.eFlowElementPosition.Right,
+                            DestinationPosition = FlowLink.eFlowElementPosition.Left
+                        };
                         mFlowDiagram.AddConnector(FL2);
 
                         //TODO: update the FlowControlFE to be on same y of the Activity and x + 150
@@ -132,19 +138,23 @@ namespace Ginger.BusinessFlowLib
 
                             FlowElement TargetActivityFE = (from x in mFlowDiagram.GetAllFlowElem() where x.Object is Activity && ((Activity)x.Object).Guid == FC.GetGuidFromValue() select x).FirstOrDefault();
 
-                            FlowLink FL3 = new FlowLink(FlowControlFE, TargetActivityFE);
-                            FL3.LinkStyle = FlowLink.eLinkStyle.DottedArrow;
-                            FL3.SourcePosition = FlowLink.eFlowElementPosition.Top;  // TODO: find best connector - if we go up or down
-                            FL3.DestinationPosition = FlowLink.eFlowElementPosition.Right; // TODO: find best connector- if we go up or down
+                            FlowLink FL3 = new FlowLink(FlowControlFE, TargetActivityFE)
+                            {
+                                LinkStyle = FlowLink.eLinkStyle.DottedArrow,
+                                SourcePosition = FlowLink.eFlowElementPosition.Top,  // TODO: find best connector - if we go up or down
+                                DestinationPosition = FlowLink.eFlowElementPosition.Right // TODO: find best connector- if we go up or down
+                            };
                             mFlowDiagram.AddConnector(FL3);
                         }
 
-                        if (FC.FlowControlAction == eFlowControlAction.StopBusinessFlow || FC.FlowControlAction == eFlowControlAction.StopRun)
+                        if (FC.FlowControlAction is eFlowControlAction.StopBusinessFlow or eFlowControlAction.StopRun)
                         {
-                            FlowLink FL3 = new FlowLink(FlowControlFE, EndFlowElement);
-                            FL3.LinkStyle = FlowLink.eLinkStyle.DottedArrow;
-                            FL3.SourcePosition = FlowLink.eFlowElementPosition.Top;  // TODO: find best connector
-                            FL3.DestinationPosition = FlowLink.eFlowElementPosition.Right; // TODO: find best connector
+                            FlowLink FL3 = new FlowLink(FlowControlFE, EndFlowElement)
+                            {
+                                LinkStyle = FlowLink.eLinkStyle.DottedArrow,
+                                SourcePosition = FlowLink.eFlowElementPosition.Top,  // TODO: find best connector
+                                DestinationPosition = FlowLink.eFlowElementPosition.Right // TODO: find best connector
+                            };
                             mFlowDiagram.AddConnector(FL3);
                         }
                         //TODO: handle all other FC actions

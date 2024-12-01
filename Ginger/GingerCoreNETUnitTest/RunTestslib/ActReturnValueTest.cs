@@ -38,9 +38,11 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             BF = new BusinessFlow("BF1");
             act = new ActDummy();
-            ARC = new ActReturnValue();
-            ARC.Param = "Test";
-            ARC.Active = true;
+            ARC = new ActReturnValue
+            {
+                Param = "Test",
+                Active = true
+            };
             act.Active = true;
             act.AddNewReturnParams = true;
             act.SupportSimulation = true;

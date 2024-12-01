@@ -17,20 +17,16 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.VariablesLib;
+using Amdocs.Ginger.Repository;
+using Ginger.Run;
+using Ginger.Variables;
 using GingerCore;
 using GingerCore.Variables;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Ginger.Variables;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.VariablesLib;
-using static Ginger.Variables.InputVariableRule;
 using GingerCoreNET.RosLynLib;
-using Ginger.Run;
-using amdocs.ginger.GingerCoreNET;
+using System;
+using System.Linq;
+using static Ginger.Variables.InputVariableRule;
 
 namespace Amdocs.Ginger.CoreNET
 {
@@ -40,7 +36,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public BusinessFlow mBusinessFlow;
         public GingerRunner mGingerRunner;
-        
+
         public ProcessInputVariableRule(BusinessFlow businessFlow, GingerRunner gingerRunner)
         {
             mBusinessFlow = businessFlow;
@@ -49,7 +45,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public void GetVariablesByRules(ObservableList<VariableBase> variables)
         {
-            removedbfInputVariables = new ObservableList<VariableBase>();
+            removedbfInputVariables = [];
             foreach (InputVariableRule variableRule in mBusinessFlow.InputVariableRules)
             {
                 try
@@ -60,25 +56,25 @@ namespace Amdocs.Ginger.CoreNET
                         VariableBase targetVariable = variables.FirstOrDefault(x => x.Guid == variableRule.TargetVariableGuid);
                         string originalFormula = targetVariable.Formula;
                         string originalValue = targetVariable.Value;
-                        if (sourceVariable !=null && targetVariable!=null)
+                        if (sourceVariable != null && targetVariable != null)
                         {
                             if (variableRule.OperationType == InputVariableRule.eInputVariableOperation.SetValue && CalculateOperatorStatus(sourceVariable, variableRule))
                             {
                                 if (targetVariable.GetType() == typeof(VariableSelectionList))
                                 {
                                     OptionalValue optionalValue = ((VariableSelectionList)targetVariable).OptionalValuesList.FirstOrDefault(x => x.Value == variableRule.OperationValue);
-                                    if (optionalValue !=null)
+                                    if (optionalValue != null)
                                     {
                                         targetVariable.Value = variableRule.OperationValue;
                                     }
                                 }
                                 else
                                 {
-                                    if(targetVariable.GetType() == typeof(VariableString))
+                                    if (targetVariable.GetType() == typeof(VariableString))
                                     {
-                                       ((VariableString)targetVariable).InitialStringValue = variableRule.OperationValue;
+                                        ((VariableString)targetVariable).InitialStringValue = variableRule.OperationValue;
                                     }
-                                    else if(targetVariable.GetType() == typeof(VariableNumber))
+                                    else if (targetVariable.GetType() == typeof(VariableNumber))
                                     {
                                         ((VariableNumber)targetVariable).InitialNumberValue = variableRule.OperationValue;
                                     }
@@ -86,7 +82,7 @@ namespace Amdocs.Ginger.CoreNET
                                     {
                                         ((VariableDateTime)targetVariable).InitialDateTime = variableRule.OperationValue;
                                     }
-                                }                                
+                                }
                             }
 
                             else if (variableRule.OperationType == InputVariableRule.eInputVariableOperation.SetOptionalValues)
@@ -95,21 +91,21 @@ namespace Amdocs.Ginger.CoreNET
                                 {
                                     if (targetVariable.GetType() == typeof(VariableSelectionList))
                                     {
-                                        ((VariableSelectionList)targetVariable).OptionalValuesList = new ObservableList<OptionalValue>();
+                                        ((VariableSelectionList)targetVariable).OptionalValuesList = [];
                                         foreach (OperationValues values in variableRule.OperationValueList)
                                         {
                                             ((VariableSelectionList)targetVariable).OptionalValuesList.Add(new OptionalValue(values.Value));
                                         }
                                         if (((VariableSelectionList)targetVariable).OptionalValuesList != null && ((VariableSelectionList)targetVariable).OptionalValuesList.Count > 0)
                                         {
-                                           OptionalValue op = ((VariableSelectionList)targetVariable).OptionalValuesList.FirstOrDefault(x => x.Value == ((VariableSelectionList)targetVariable).Value);
-                                            if(op == null)
+                                            OptionalValue op = ((VariableSelectionList)targetVariable).OptionalValuesList.FirstOrDefault(x => x.Value == ((VariableSelectionList)targetVariable).Value);
+                                            if (op == null)
                                             {
-                                                ((VariableSelectionList)targetVariable).Value = ((VariableSelectionList)targetVariable).OptionalValuesList[0].Value;                                                                                              
-                                            }                                            
+                                                ((VariableSelectionList)targetVariable).Value = ((VariableSelectionList)targetVariable).OptionalValuesList[0].Value;
+                                            }
                                         }
-                                    } 
-                                }                                
+                                    }
+                                }
                             }
                             else if (variableRule.Active && variableRule.OperationType == InputVariableRule.eInputVariableOperation.SetVisibility && CalculateOperatorStatus(sourceVariable, variableRule))
                             {
@@ -124,11 +120,11 @@ namespace Amdocs.Ginger.CoreNET
                                 else if (variableRule.OperationValue == eVisibilityOptions.Show.ToString())
                                 {
                                     VariableBase variable = removedbfInputVariables.FirstOrDefault(x => x.Guid == variableRule.TargetVariableGuid);
-                                    if(variable != null)
+                                    if (variable != null)
                                     {
                                         variables.Add(variable);
                                         removedbfInputVariables.Remove(targetVariable);
-                                    }                                    
+                                    }
                                 }
                             }
                         }
@@ -146,16 +142,16 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, string.Format("Failed to process rule"), ex);
                 }
-            }           
+            }
         }
 
         private bool CalculateOperatorStatus(VariableBase sourceVariable, InputVariableRule variableRule)
         {
             bool? status = null;
-            
+
             string Expression = string.Empty;
 
-            if (sourceVariable !=null)
+            if (sourceVariable != null)
             {
                 switch (variableRule.Operator)
                 {
@@ -163,7 +159,7 @@ namespace Amdocs.Ginger.CoreNET
                         if (sourceVariable.GetType() == typeof(VariableSelectionList) || sourceVariable.GetType() == typeof(VariableString))
                         {
                             status = sourceVariable.Value.Contains(variableRule.TriggerValue);
-                        }                        
+                        }
                         break;
                     case eInputVariableOperator.DoesNotContains:
                         if (sourceVariable.GetType() == typeof(VariableSelectionList) || sourceVariable.GetType() == typeof(VariableString))
@@ -191,7 +187,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         else if (sourceVariable.GetType() == typeof(VariableDateTime))
                         {
-                            status =   ComparerDateTime(sourceVariable.Value, variableRule.TriggerValue, ((VariableDateTime)sourceVariable).DateTimeFormat, variableRule.Operator);
+                            status = ComparerDateTime(sourceVariable.Value, variableRule.TriggerValue, ((VariableDateTime)sourceVariable).DateTimeFormat, variableRule.Operator);
                         }
 
                         break;
@@ -205,11 +201,11 @@ namespace Amdocs.Ginger.CoreNET
                             else
                             {
                                 Expression = sourceVariable.Value + ">=" + variableRule.TriggerValue;
-                            } 
+                            }
                         }
                         else if (sourceVariable.GetType() == typeof(VariableDateTime))
                         {
-                            status =  ComparerDateTime(sourceVariable.Value, variableRule.TriggerValue, ((VariableDateTime)sourceVariable).DateTimeFormat, variableRule.Operator);
+                            status = ComparerDateTime(sourceVariable.Value, variableRule.TriggerValue, ((VariableDateTime)sourceVariable).DateTimeFormat, variableRule.Operator);
                         }
                         break;
                     case eInputVariableOperator.LessThan:
@@ -222,11 +218,11 @@ namespace Amdocs.Ginger.CoreNET
                             else
                             {
                                 Expression = sourceVariable.Value + "<" + variableRule.TriggerValue;
-                            } 
+                            }
                         }
                         else if (sourceVariable.GetType() == typeof(VariableDateTime))
                         {
-                           status =  ComparerDateTime(sourceVariable.Value, variableRule.TriggerValue, ((VariableDateTime)sourceVariable).DateTimeFormat, variableRule.Operator);
+                            status = ComparerDateTime(sourceVariable.Value, variableRule.TriggerValue, ((VariableDateTime)sourceVariable).DateTimeFormat, variableRule.Operator);
                         }
                         break;
                     case eInputVariableOperator.LessThanEquals:
@@ -239,11 +235,11 @@ namespace Amdocs.Ginger.CoreNET
                             else
                             {
                                 Expression = sourceVariable.Value + "<=" + variableRule.TriggerValue;
-                            } 
+                            }
                         }
                         else if (sourceVariable.GetType() == typeof(VariableDateTime))
                         {
-                            status =  ComparerDateTime(sourceVariable.Value, variableRule.TriggerValue, ((VariableDateTime)sourceVariable).DateTimeFormat, variableRule.Operator);
+                            status = ComparerDateTime(sourceVariable.Value, variableRule.TriggerValue, ((VariableDateTime)sourceVariable).DateTimeFormat, variableRule.Operator);
                         }
                         break;
                     case eInputVariableOperator.NotEquals:
@@ -256,13 +252,13 @@ namespace Amdocs.Ginger.CoreNET
                 if (status == null)
                 {
                     status = CodeProcessor.EvalCondition(Expression);
-                } 
+                }
             }
 
             return Convert.ToBoolean(status);
         }
 
-        private bool ComparerDateTime(string variableValue, string triggerValue,string dateFormat, eInputVariableOperator voperator)
+        private bool ComparerDateTime(string variableValue, string triggerValue, string dateFormat, eInputVariableOperator voperator)
         {
             bool status = false;
             try

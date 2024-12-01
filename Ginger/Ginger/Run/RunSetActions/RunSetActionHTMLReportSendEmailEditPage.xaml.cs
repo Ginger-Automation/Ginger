@@ -111,7 +111,7 @@ namespace Ginger.Run.RunSetActions
 
             if (runSetActionHTMLReportSendEmail.EmailAttachments == null)
             {
-                runSetActionHTMLReportSendEmail.EmailAttachments = new ObservableList<EmailAttachment>();
+                runSetActionHTMLReportSendEmail.EmailAttachments = [];
             }
 
             AttachmentsGrid.RowDoubleClick += HTMLReportsConfigurationConfigWindow;
@@ -145,7 +145,7 @@ namespace Ginger.Run.RunSetActions
         {
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             view.GridColsView = viewCols;
 
             viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.AttachmentType), WidthWeight = 100, BindingMode = BindingMode.OneTime });

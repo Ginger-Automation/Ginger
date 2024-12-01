@@ -38,8 +38,10 @@ namespace Ginger.Agents
 
             foreach (DriverConfigParam DCp in mAgent.DriverConfiguration)
             {
-                AgentConfigControl AGC = new AgentConfigControl(DCp);
-                AGC.Margin = new Thickness(10, 0, 0, 0);
+                AgentConfigControl AGC = new AgentConfigControl(DCp)
+                {
+                    Margin = new Thickness(10, 0, 0, 0)
+                };
 
                 dynamicPanel.Children.Add(AGC);
             }

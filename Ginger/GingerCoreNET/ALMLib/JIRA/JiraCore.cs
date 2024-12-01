@@ -107,15 +107,12 @@ namespace GingerCore.ALM
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null, ProjEnvironment projEnvironment = null)
         {
-            switch (ALMCore.DefaultAlmConfig.JiraTestingALM)
+            return ALMCore.DefaultAlmConfig.JiraTestingALM switch
             {
-                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Xray:
-                    return exportMananger.ExecuteDataToJira(bizFlow, publishToALMConfig, ref result);
-                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Zephyr:
-                    return exportMananger.ExportExecutionDetailsToJiraZephyr(bizFlow, publishToALMConfig, ref result);
-                default:
-                    return exportMananger.ExecuteDataToJira(bizFlow, publishToALMConfig, ref result);
-            }
+                GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Xray => exportMananger.ExecuteDataToJira(bizFlow, publishToALMConfig, ref result),
+                GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Zephyr => exportMananger.ExportExecutionDetailsToJiraZephyr(bizFlow, publishToALMConfig, ref result),
+                _ => exportMananger.ExecuteDataToJira(bizFlow, publishToALMConfig, ref result),
+            };
         }
 
         public override Dictionary<string, string> GetALMDomainProjects(string ALMDomainName)
@@ -137,7 +134,7 @@ namespace GingerCore.ALM
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType = ResourceType.ALL)
         {
             ObservableList<ExternalItemFieldBase> tempFieldsList = jiraImportObj.GetALMItemFields(resourceType, bw, online);
-            AlmItemFields = new ObservableList<ExternalItemFieldBase>();
+            AlmItemFields = [];
             foreach (ExternalItemFieldBase item in tempFieldsList)
             {
                 AlmItemFields.Add((ExternalItemFieldBase)item.CreateCopy());
@@ -190,7 +187,7 @@ namespace GingerCore.ALM
                                                                                                                         DefaultAlmConfig.ALMServerURL, Convert.ToInt32(cycleId)).DataResult;
             if (cycle != null)
             {
-                cycle.IssuesList = new List<JiraZephyrIssue>();
+                cycle.IssuesList = [];
                 List<JiraZephyrExecution> issuesAsExecutionList = jmz.GetZephyrExecutionList(DefaultAlmConfig.ALMUserName, DefaultAlmConfig.ALMPassword, DefaultAlmConfig.ALMServerURL,
                                                                                                                                                             string.Empty, versionId, DefaultAlmConfig.ALMProjectKey, cycleId, string.Empty, string.Empty,
                                                                                                                                                             string.Empty, string.Empty, folderId).DataResult;
@@ -198,12 +195,14 @@ namespace GingerCore.ALM
                 {
                     foreach (JiraZephyrExecution issuesAsExecution in issuesAsExecutionList.OrderBy(z => z.OrderId))
                     {
-                        JiraZephyrIssue jiraZephyrIssue = new JiraZephyrIssue();
-                        jiraZephyrIssue.name = issuesAsExecution.Summary;
-                        jiraZephyrIssue.key = issuesAsExecution.IssueKey;
-                        jiraZephyrIssue.id = issuesAsExecution.IssueId;
-                        jiraZephyrIssue.Steps = jmz.GetZephyrTestStepsList(DefaultAlmConfig.ALMUserName, DefaultAlmConfig.ALMPassword, DefaultAlmConfig.ALMServerURL,
-                                                                                                                                                                    issuesAsExecution.IssueId).DataResult.stepBeanCollection;
+                        JiraZephyrIssue jiraZephyrIssue = new JiraZephyrIssue
+                        {
+                            name = issuesAsExecution.Summary,
+                            key = issuesAsExecution.IssueKey,
+                            id = issuesAsExecution.IssueId,
+                            Steps = jmz.GetZephyrTestStepsList(DefaultAlmConfig.ALMUserName, DefaultAlmConfig.ALMPassword, DefaultAlmConfig.ALMServerURL,
+                                                                                                                                                                    issuesAsExecution.IssueId).DataResult.stepBeanCollection
+                        };
                         cycle.IssuesList.Add(jiraZephyrIssue);
                     }
                 }

@@ -46,13 +46,16 @@ namespace Ginger.Actions.Mainframe
 
         private void SetCaretValueGrid()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Caret", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Text", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["HttpHeadersValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Replace With Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ActInputValue.Param), Header = "Caret", WidthWeight = 150 },
+                new GridColView() { Field = nameof(ActInputValue.Value), Header = "Text", WidthWeight = 150 },
+                new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["HttpHeadersValueExpressionButton"] },
+                new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Replace With Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay },
+            ]
+            };
 
             CaretValueGrid.SetAllColumnsDefaultView(view);
             CaretValueGrid.InitViewItems();

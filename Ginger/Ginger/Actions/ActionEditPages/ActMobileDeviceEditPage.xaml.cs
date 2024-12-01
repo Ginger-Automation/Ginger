@@ -75,7 +75,7 @@ namespace Ginger.Actions
 
             UpdateBaseLineImage(true);
 
-            
+
             WeakEventManager<UIElement, RoutedEventArgs>.RemoveHandler(source: xPhotoSumilationTxtBox.ValueTextBox, eventName: nameof(UIElement.LostFocus), handler: ValueTextBox_LostFocus);
             WeakEventManager<UIElement, RoutedEventArgs>.AddHandler(source: xPhotoSumilationTxtBox.ValueTextBox, eventName: nameof(UIElement.LostFocus), handler: ValueTextBox_LostFocus);
 
@@ -93,7 +93,7 @@ namespace Ginger.Actions
 
         private void ImportPhotoToSolutionFolder(string filePath)
         {
-            if (string.IsNullOrEmpty(filePath) || filePath.Substring(0, 1) == "~" || filePath.Contains(WorkSpace.Instance.Solution.Folder))
+            if (string.IsNullOrEmpty(filePath) || filePath[..1] == "~" || filePath.Contains(WorkSpace.Instance.Solution.Folder))
             {
                 return;
             }

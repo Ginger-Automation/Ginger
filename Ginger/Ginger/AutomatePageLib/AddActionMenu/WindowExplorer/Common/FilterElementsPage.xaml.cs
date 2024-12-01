@@ -70,10 +70,12 @@ namespace Ginger.WindowExplorer.Common
         {
             string Title = "Filter Elements Window";
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
+            ObservableList<Button> winButtons = [];
 
-            Button searchBtn = new Button();
-            searchBtn.Content = "Search";
+            Button searchBtn = new Button
+            {
+                Content = "Search"
+            };
             searchBtn.Click += DoSearch;
             winButtons.Add(searchBtn);
 
@@ -117,12 +119,15 @@ namespace Ginger.WindowExplorer.Common
             FilterElementsGridView.ShowDelete = System.Windows.Visibility.Collapsed;
 
             //Set the Data Grid columns            
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.Selected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.ElementType), Header = "Element Type", WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.ElementExtraInfo), Header = "Element Extra Info", WidthWeight = 100 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(UIElementFilter.Selected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox },
+                new GridColView() { Field = nameof(UIElementFilter.ElementType), Header = "Element Type", WidthWeight = 100 },
+                new GridColView() { Field = nameof(UIElementFilter.ElementExtraInfo), Header = "Element Extra Info", WidthWeight = 100 },
+            ]
+            };
 
             FilterElementsGridView.SetAllColumnsDefaultView(view);
             FilterElementsGridView.InitViewItems();

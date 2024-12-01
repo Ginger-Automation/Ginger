@@ -19,7 +19,6 @@ limitations under the License.
 using GingerCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Xml.Linq;
 
 namespace Ginger.Reports.HTMLReports
@@ -72,10 +71,7 @@ namespace Ginger.Reports.HTMLReports
             }
             s += xFail.ToString();
 
-            List<string> headers = new List<string>();
-            headers.Add(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-            headers.Add("Elapsed");
-            headers.Add("Status");
+            List<string> headers = [GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), "Elapsed", "Status"];
 
             XNode m = CreateHTMLTable(RI.BusinessFlows, headers, BizFlowHTMLColumns);
             s += m.ToString();

@@ -102,7 +102,7 @@ namespace Ginger.Reports
             xPublishLogToCentralDBRadioButton.Init(typeof(ExecutionLoggerConfiguration.ePublishToCentralDB),
                 xPublishLogToCentralDBRadioBtnPanel, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.PublishLogToCentralDB), PublishLogToCentralDBRadioButton_CheckedHandler);
-            xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish), xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,nameof(ExecutionLoggerConfiguration.DeleteLocalDataOnPublish));
+            xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish), xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.DeleteLocalDataOnPublish));
             xUploadArtifactsButton.Init(typeof(ExecutionLoggerConfiguration.eUploadExecutionArtifactsToCentralizedReport), xUploadArtifactsPanel, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.UploadArtifactsToCentralizedReport));
 
         }
@@ -242,8 +242,7 @@ namespace Ginger.Reports
                     {
                         try
                         {
-                            var control = xPublishLogToCentralDBRadioBtnPanel.Children[i] as RadioButton;
-                            if (control == null)
+                            if (xPublishLogToCentralDBRadioBtnPanel.Children[i] is not RadioButton control)
                             {
                                 continue;
                             }

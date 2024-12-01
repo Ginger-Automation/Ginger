@@ -21,8 +21,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using CommandLine;
-using Ginger;
-using Ginger.Run;
 using GingerCore;
 using GingerCoreNET.RunLib;
 using System;
@@ -41,7 +39,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
     public class CLIProcessor
     {
         ICLI mCLIHandler;
-        CLIHelper mCLIHelper = new CLIHelper();
+        CLIHelper mCLIHelper = new();
 
         public async Task ExecuteArgs(string[] args)
         {
@@ -58,12 +56,30 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 args = newArgs;
             }
 
-            await ParseArgs(args);
+            ParserResult<object> parserResult = args.Length != 0 ? ParseArguments(args) : null;
+            await ProcessParsedArguments(parserResult);
+
+        }
+
+        ///<summary>
+        /// Parses the command line arguments and returns the parsed result.
+        /// </summary>
+        /// <param name="args">The command line arguments.</param>
+        /// <returns>The parsed result of the command line arguments.</returns>
+        public ParserResult<object> ParseArguments(string[] args)
+        {
+            var parser = new Parser(settings =>
+            {
+                settings.IgnoreUnknownArguments = true;
+            });
+
+            return parser.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, VersionOptions, ExampleOptions, DoOptions>(args);
         }
 
 
 
-        private async Task ParseArgs(string[] args)
+
+        public async Task ProcessParsedArguments(ParserResult<object> parserResult)
         {
             // FIXME: failing with exc of obj state
             // Do not show default version
@@ -73,16 +89,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 settings.IgnoreUnknownArguments = true;
             });
 
-            int result = await parser.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, VersionOptions, ExampleOptions, DoOptions>(args).MapResult(
+            int result = await parserResult.MapResult(
                     async (RunOptions opts) => await HandleRunOptions(opts),
-                    async (GridOptions opts) => await HanldeGridOption(opts),
+                    async (GridOptions opts) => await HandleGridOption(opts),
                     async (ConfigFileOptions opts) => await HandleFileOptions("config", opts.FileName, opts.VerboseLevel),
                     async (DynamicOptions opts) => await HandleFileOptions("dynamic", opts.FileName, opts.VerboseLevel),
                     async (ScriptOptions opts) => await HandleFileOptions("script", opts.FileName, opts.VerboseLevel),
                     async (VersionOptions opts) => await HandleVersionOptions(opts),
                     async (ExampleOptions opts) => await HandleExampleOptions(opts),
                     async (DoOptions opts) => await HandleDoOptions(opts),
-
 
                     async errs => await HandleCLIParseError(errs)
             );
@@ -100,7 +115,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
              {
                  try
                  {
-                     DoOptionsHanlder.Run(opts);
+                     new DoOptionsHandler().Run(opts);
                      return 0;
                  }
                  catch (Exception ex)
@@ -190,8 +205,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         private string CreateExample(string solution, string runset, string env = null)
         {
             StringBuilder sb = new StringBuilder();
-            RunOptions runOptions = new RunOptions();
-            runOptions.Solution = solution;
+            RunOptions runOptions = new RunOptions
+            {
+                Solution = solution
+            };
             if (env != null)
             {
                 runOptions.Environment = env;
@@ -301,7 +318,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 string fileContent = ReadFile(fileName);
                 mCLIHandler.LoadGeneralConfigurations(fileContent, mCLIHelper);
 
-                if (fileType == "config" || fileType == "dynamic")  // not needed for script
+                if (fileType is "config" or "dynamic")  // not needed for script
                 {
                     if (!CLILoadAndPrepare(runsetConfigs: fileContent))
                     {
@@ -324,7 +341,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         }
 
 
-        private async Task<int> HanldeGridOption(GridOptions gridOptions)
+        private async Task<int> HandleGridOption(GridOptions gridOptions)
         {
             WorkSpace.Instance.GingerCLIMode = eGingerCLIMode.grid;
             return await Task.Run(() =>
@@ -374,6 +391,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             Reporter.ToLog(eLogLevel.INFO, "Loading Configurations...");
 
             mCLIHandler = new CLIArgs();
+            mCLIHelper.AddCLIGitProperties(runOptions);
             mCLIHelper.Solution = runOptions.Solution;
             mCLIHelper.SetEncryptionKey(runOptions.EncryptionKey);
             mCLIHelper.Runset = runOptions.Runset;
@@ -381,19 +399,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.RunAnalyzer = !runOptions.DoNotAnalyze;
             mCLIHelper.ShowAutoRunWindow = runOptions.ShowUI;
             mCLIHelper.TestArtifactsFolder = runOptions.TestArtifactsPath;
-
-            mCLIHelper.SourceControlURL = runOptions.URL;
-            mCLIHelper.SourcecontrolUser = runOptions.User;
-            mCLIHelper.sourceControlType = runOptions.SCMType;
-
-            mCLIHelper.SetSourceControlBranch(runOptions.Branch);
-
-            mCLIHelper.sourceControlPass = runOptions.Pass;
-            mCLIHelper.sourceControlPassEncrypted = runOptions.PasswordEncrypted;
-            mCLIHelper.SourceControlProxyServer(runOptions.SourceControlProxyServer);
-            mCLIHelper.SourceControlProxyPort(runOptions.SourceControlProxyPort);
             mCLIHelper.SelfHealingCheckInConfigured = runOptions.SelfHealingCheckInConfigured;
-
             mCLIHelper.SealightsEnable = runOptions.SealightsEnable;
             mCLIHelper.SealightsUrl = runOptions.SealightsUrl;
             mCLIHelper.SealightsAgentToken = runOptions.SealightsAgentToken;
@@ -403,8 +409,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.SealightsTestStage = runOptions.SealightsTestStage;
             mCLIHelper.SealightsEntityLevel = runOptions.SealightsEntityLevel?.ToString() == "None" ? null : runOptions.SealightsEntityLevel?.ToString();
             mCLIHelper.SealightsTestRecommendations = runOptions.SealightsTestRecommendations;
-
-            //set source application and source app user
             mCLIHelper.SourceApplication = runOptions.SourceApplication;
             mCLIHelper.SourceApplicationUser = runOptions.SourceApplicationUser;
 
@@ -426,7 +430,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.ReRunFailed = runOptions.ReRunFailed;
             if (runOptions.ReRunFailed)
             {
-                if(!string.IsNullOrEmpty(runOptions.ReferenceExecutionID))
+                if (!string.IsNullOrEmpty(runOptions.ReferenceExecutionID))
                 {
                     if (!Guid.TryParse(runOptions.ReferenceExecutionID, out Guid temp))
                     {
@@ -443,22 +447,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 mCLIHelper.RerunLevel = runOptions.RerunLevel;
             }
 
-            if (WorkSpace.Instance.UserProfile == null)
-            {
-                WorkSpace.Instance.UserProfile = new UserProfile();
-                UserProfileOperations userProfileOperations = new UserProfileOperations(WorkSpace.Instance.UserProfile);
-                WorkSpace.Instance.UserProfile.UserProfileOperations = userProfileOperations;
-            }
-            WorkSpace.Instance.UserProfile.SourceControlURL = runOptions.URL;
-            WorkSpace.Instance.UserProfile.SourceControlUser = runOptions.User;
-            WorkSpace.Instance.UserProfile.SourceControlType = runOptions.SCMType;
-            WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlIgnoreCertificate = runOptions.ignoreCertificate;
-            WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlUseShellClient = runOptions.useScmShell;
-
-
-
-            WorkSpace.Instance.UserProfile.EncryptedSourceControlPass = runOptions.Pass;
-            WorkSpace.Instance.UserProfile.SourceControlPass = runOptions.Pass;
+            mCLIHelper.SetWorkSpaceGitProperties(runOptions);
             if (runOptions.PasswordEncrypted)
             {
                 mCLIHandler.LoadGeneralConfigurations("", mCLIHelper);

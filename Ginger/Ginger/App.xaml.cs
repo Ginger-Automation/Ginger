@@ -22,7 +22,9 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
+using CommandLine;
 using Ginger.BusinessFlowWindows;
 using Ginger.ReporterLib;
 using Ginger.SourceControl;
@@ -31,7 +33,9 @@ using GingerCore.Repository;
 using GingerWPF.WorkSpaceLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -47,7 +51,7 @@ namespace Ginger
 
         public new static MainWindow MainWindow { get; set; }
 
-        private Dictionary<string, Int32> mExceptionsDic = new Dictionary<string, int>();
+        private Dictionary<string, Int32> mExceptionsDic = [];
 
 
 
@@ -101,11 +105,13 @@ namespace Ginger
 
             // Each class which moved from GingerCore to GingerCoreCommon needed to be added here, so it will auto translate
             // For backward compatibility of loading old object name in xml
-            Dictionary<string, Type> list = new Dictionary<string, Type>();
-            list.Add("GingerCore.Actions.ActInputValue", typeof(ActInputValue));
-            list.Add("GingerCore.Actions.ActReturnValue", typeof(ActReturnValue));
-            list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
-            list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
+            Dictionary<string, Type> list = new Dictionary<string, Type>
+            {
+                { "GingerCore.Actions.ActInputValue", typeof(ActInputValue) },
+                { "GingerCore.Actions.ActReturnValue", typeof(ActReturnValue) },
+                { "GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue) },
+                { "GingerCore.Environments.GeneralParam", typeof(GeneralParam) }
+            };
 
 
 
@@ -238,45 +244,192 @@ namespace Ginger
             }
         }
 
-
+        CLIProcessor cliProcessor;
 
         // Main entry point to Ginger UI/CLI
-        private void Application_Startup(object sender, StartupEventArgs e)
+        /// <summary>
+        /// Handles the startup sequence of the application. Initializes logging, workspace, 
+        /// processes command-line arguments, and determines the running mode (UI or execution).
+        /// </summary>
+        private async void Application_Startup(object sender, StartupEventArgs e)
+        {
+            try
+            {
+                InitLogging();
+                bool startGrid = ShouldStartGrid(e.Args);
+                WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
+                var parserResult = ParseCommandLineArguments(e.Args);
+
+                DoOptions doOptions = ExtractDoOptions(parserResult);
+
+                if (IsExecutionMode(e.Args, doOptions))
+                {
+                    WorkSpace.Instance.RunningInExecutionMode = true;
+                    Reporter.ReportAllAlsoToConsole = true;
+                }
+                InitializeGingerCore();
+                if (!WorkSpace.Instance.RunningInExecutionMode)
+                {
+                    ProcessGingerUIStartup(doOptions);
+                }
+                else
+                {
+                    await RunNewCLI(parserResult);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Unhandled exception in Application_Startup", ex);
+            }
+        }
+
+
+        /// <summary>
+        /// Initializes the logging mechanism for the application using log4net.
+        /// </summary>
+        private void InitLogging()
         {
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.InitLog4Net();
+        }
 
+        /// <summary>
+        /// Determines whether the application should start with the grid view.
+        /// Returns true if there are no command-line arguments.
+        /// </summary>
+        /// <param name="args">Command-line arguments.</param>
+        /// <returns>True if no arguments are provided, otherwise false.</returns>
+        private bool ShouldStartGrid(string[] args)
+        {
+            return args.Length == 0;
+        }
 
-
-            bool startGrid = e.Args.Length == 0; // no need to start grid if we have args
-            WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
-            if (e.Args.Length != 0)
+        /// <summary>
+        /// Parses the command line arguments and returns the parsed result.
+        /// </summary>
+        /// <param name="args">The command line arguments.</param>
+        /// <returns>The parsed result of the command line arguments.</returns>
+        private ParserResult<object> ParseCommandLineArguments(string[] args)
+        {
+            string[] arguments;
+            //Added this codition if only user want to launch Ginger without any solution from browser.
+            if (args.Length == 1 && System.Web.HttpUtility.UrlDecode(args[0]).Equals("ginger:///", StringComparison.OrdinalIgnoreCase))
             {
-                WorkSpace.Instance.RunningInExecutionMode = true;
-                Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console      
+                return null;
             }
-            // add additional classes from Ginger and GingerCore
-            InitClassTypesDictionary();
-
-            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new DotNetFrameworkHelper());
-            WorkSpace.Instance.InitTelemetry();
-
-            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();
-
-
-            if (!WorkSpace.Instance.RunningInExecutionMode)
+            if (args.Length == 1)
             {
-                if(WorkSpace.Instance.UserProfile !=null &&  WorkSpace.Instance.UserProfile.AppLogLevel ==  eAppReporterLoggingLevel.Debug) 
+                string input = args[0];
+                input = input.Replace("\n", "").Replace("\r", "");
+                input = System.Web.HttpUtility.UrlDecode(input);
+                if (input.StartsWith("ginger://"))
                 {
-                    GingerLog.StartCustomTraceListeners();
+                    input = input["ginger://".Length..];
                 }
-                HideConsoleWindow();
-                StartGingerUI();// start regular Ginger UI
+                if (input.EndsWith("/"))
+                {
+                    input = input[..^1];
+                }
+                List<string> resultList = General.SplitWithPaths(input).Select(s => s.Trim('\"', '\'')).ToList();
+                arguments = resultList.ToArray();
             }
             else
             {
-                RunNewCLI(e.Args);
+                arguments = args;
+            }
+
+            cliProcessor = new CLIProcessor();
+            return arguments.Length != 0 ? cliProcessor.ParseArguments(arguments) : null;
+        }
+        /// <summary>
+        /// Extracts the DoOptions object from the parser result if available and the operation is 'open'.
+        /// Otherwise, returns null.
+        /// </summary>
+        /// <param name="parserResult">Parsed command-line arguments.</param>
+        /// <returns>DoOptions object or null.</returns>
+        private DoOptions ExtractDoOptions(ParserResult<object> parserResult)
+        {
+            if (parserResult?.Value is DoOptions tempOptions && (tempOptions.Operation == DoOptions.DoOperation.open))
+            {
+                return tempOptions;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Determines if the application is in execution mode based on command-line arguments and DoOptions.
+        /// Returns true if there are arguments and DoOptions is null.
+        /// </summary>
+        /// <param name="args">Command-line arguments.</param>
+        /// <param name="doOptions">DoOptions extracted from the parsed arguments.</param>
+        /// <returns>True if the application is in execution mode, otherwise false.</returns>
+        private bool IsExecutionMode(string[] args, DoOptions doOptions)
+        {
+            if (args.Length == 1 && System.Web.HttpUtility.UrlDecode(args[0]).Equals("ginger:///", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+            return args.Length != 0 && doOptions == null;
+        }
+
+        /// <summary>
+        /// Initializes various core components of Ginger such as class types, workspace, and telemetry.
+        /// Logs the startup information.
+        /// </summary>
+        private void InitializeGingerCore()
+        {
+            InitClassTypesDictionary();
+            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new DotNetFrameworkHelper());
+            WorkSpace.Instance.InitTelemetry();
+            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();
+        }
+
+        /// <summary>
+        /// Processes the startup for the Ginger UI. Initializes logging, checks the user profile settings, 
+        /// hides the console window, and loads the last solution if applicable.
+        /// </summary>
+        /// <param name="doOptions">DoOptions object containing user-specific startup options.</param>
+        private void ProcessGingerUIStartup(DoOptions doOptions)
+        {
+            if (WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug)
+            {
+                GingerLog.StartCustomTraceListeners();
+            }
+
+            HideConsoleWindow();
+            bool CheckAutoLoadSolution = false;
+
+            try
+            {
+                if (WorkSpace.Instance.UserProfile != null)
+                {
+                    CheckAutoLoadSolution = WorkSpace.Instance.UserProfile.AutoLoadLastSolution;
+                }
+
+                if (doOptions != null)
+                {
+                    WorkSpace.Instance.UserProfile.AutoLoadLastSolution = false;
+                }
+
+                StartGingerUI();
+
+                if (doOptions != null && !string.IsNullOrWhiteSpace(doOptions.Solution))
+                {
+
+                    new DoOptionsHandler().Run(doOptions);
+
+
+                }
+            }
+            finally
+            {
+                if (doOptions != null)
+                {
+                    WorkSpace.Instance.UserProfile.AutoLoadLastSolution = CheckAutoLoadSolution;
+                }
             }
         }
+
+
 
 
         [DllImport("kernel32.dll")]
@@ -300,15 +453,33 @@ namespace Ginger
             ShowWindow(handle, SW_SHOW);
         }
 
-        private async void RunNewCLI(string[] args)
+        /// <summary>
+        /// Runs the new CLI process with the provided parsed arguments.
+        /// </summary>
+        /// <param name="parserResult">The parsed result of the command line arguments.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task RunNewCLI(ParserResult<object> parserResult)
         {
-            CLIProcessor cLIProcessor = new CLIProcessor();
-            await cLIProcessor.ExecuteArgs(args);
-
-            // do proper close !!!         
-            System.Windows.Application.Current.Shutdown(Environment.ExitCode);
+            try
+            {
+                if (parserResult != null)
+                {
+                    await cliProcessor.ProcessParsedArguments(parserResult);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while processing command-line arguments", ex);
+            }
+            finally
+            {
+                System.Windows.Application.Current.Shutdown(Environment.ExitCode);
+            }
         }
 
+        /// <summary>
+        /// Starts the Ginger UI. Initializes dictionaries and the main window.
+        /// </summary>
         public void StartGingerUI()
         {
             if (WorkSpace.Instance.RunningFromUnitTest)

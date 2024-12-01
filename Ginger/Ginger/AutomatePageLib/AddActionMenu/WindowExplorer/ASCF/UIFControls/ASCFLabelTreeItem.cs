@@ -36,14 +36,16 @@ namespace Ginger.Actions.Locators.ASCF
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
+            ObservableList<Act> list = [];
 
-            ActASCFControl a1 = new ActASCFControl();
-            a1.Description = "Get " + ASCFControlInfo.Path + " Value";
-            a1.LocateBy = eLocateBy.ByName;
-            a1.LocateValue = ASCFControlInfo.Path;
-            a1.ControlAction = ActASCFControl.eControlAction.GetControlProperty;
-            a1.ControlProperty = ActASCFControl.eControlProperty.Value;
+            ActASCFControl a1 = new ActASCFControl
+            {
+                Description = "Get " + ASCFControlInfo.Path + " Value",
+                LocateBy = eLocateBy.ByName,
+                LocateValue = ASCFControlInfo.Path,
+                ControlAction = ActASCFControl.eControlAction.GetControlProperty,
+                ControlProperty = ActASCFControl.eControlProperty.Value
+            };
             list.Add(a1);
 
             return list;

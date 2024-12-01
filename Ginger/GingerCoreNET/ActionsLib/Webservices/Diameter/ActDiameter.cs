@@ -178,7 +178,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
                 OnPropertyChanged(nameof(IsErrorBitSet));
             }
         }
-        private ObservableList<DiameterAVP> mRequestAvpList = new ObservableList<DiameterAVP>();
+        private ObservableList<DiameterAVP> mRequestAvpList = [];
         [IsSerializedForLocalRepository]
         public ObservableList<DiameterAVP> RequestAvpList
         {
@@ -196,7 +196,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
             }
         }
 
-        private ObservableList<DiameterAVP> mCustomResponseAvpList = new ObservableList<DiameterAVP>();
+        private ObservableList<DiameterAVP> mCustomResponseAvpList = [];
         [IsSerializedForLocalRepository]
         public ObservableList<DiameterAVP> CustomResponseAvpList
         {
@@ -215,24 +215,16 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
         }
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
         {
-            List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>
-            {
+            List<ObservableList<ActInputValue>> list =
+            [
                 AVPToAIVConverter()
-            };
+            ];
 
             return list;
         }
         private ObservableList<ActInputValue> AVPToAIVConverter()
         {
-            ObservableList<ActInputValue> AIVList = new ObservableList<ActInputValue>();
-            foreach (DiameterAVP requestAvp in RequestAvpList)
-            {
-                AIVList.Add(requestAvp);
-            }
-            foreach (DiameterAVP customResponseAvp in CustomResponseAvpList)
-            {
-                AIVList.Add(customResponseAvp);
-            }
+            ObservableList<ActInputValue> AIVList = [.. RequestAvpList, .. CustomResponseAvpList];
             return AIVList;
         }
     }

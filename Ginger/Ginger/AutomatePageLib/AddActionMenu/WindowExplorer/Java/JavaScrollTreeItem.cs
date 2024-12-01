@@ -34,31 +34,29 @@ namespace Ginger.WindowExplorer.Java
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Scroll Up " + Name,
-                ControlAction = ActJavaElement.eControlAction.ScrollUp
-            });
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Scroll Down" + Name,
-                ControlAction = ActJavaElement.eControlAction.ScrollDown
-            });
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Scroll Left " + Name,
-                ControlAction = ActJavaElement.eControlAction.ScrollLeft
-            });
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Scroll Right " + Name,
-                ControlAction = ActJavaElement.eControlAction.ScrollRight
-            });
+            ObservableList<Act> list =
+            [
+                new ActJavaElement()
+                {
+                    Description = "Scroll Up " + Name,
+                    ControlAction = ActJavaElement.eControlAction.ScrollUp
+                },
+                new ActJavaElement()
+                {
+                    Description = "Scroll Down" + Name,
+                    ControlAction = ActJavaElement.eControlAction.ScrollDown
+                },
+                new ActJavaElement()
+                {
+                    Description = "Scroll Left " + Name,
+                    ControlAction = ActJavaElement.eControlAction.ScrollLeft
+                },
+                new ActJavaElement()
+                {
+                    Description = "Scroll Right " + Name,
+                    ControlAction = ActJavaElement.eControlAction.ScrollRight
+                },
+            ];
 
             return list;
         }

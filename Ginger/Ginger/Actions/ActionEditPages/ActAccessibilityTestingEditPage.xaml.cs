@@ -21,38 +21,16 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
-using Amdocs.Ginger.Repository;
-using Deque.AxeCore.Commons;
-using Deque.AxeCore.Selenium;
 using Ginger.Actions._Common.ActUIElementLib;
-using Ginger.ALM.Repository;
 using Ginger.Configurations;
-using Ginger.UserControls;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerTest.WizardLib;
-using Microsoft.Office.Interop.Outlook;
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Windows.Foundation.Collections;
 
 namespace Ginger.Actions
 {
@@ -80,7 +58,7 @@ namespace Ginger.Actions
 
             ObservableList<OperationValues> StandardTaglist = GetStandardTagslist();
             ObservableList<OperationValues> SeverityList = GetSeverityList();
-            mAct.Items = new Dictionary<string, object>();
+            mAct.Items = [];
             xStdStack.Visibility = Visibility.Visible;
             foreach (OperationValues StandardTag in StandardTaglist)
             {
@@ -91,10 +69,10 @@ namespace Ginger.Actions
             }
             xStdCB.ItemsSource = mAct.Items;
             //Boolean value is to show description of enum value  
-            xStdCB.Init(mAct, nameof(mAct.StandardList),ShowEnumDesc: true);
+            xStdCB.Init(mAct, nameof(mAct.StandardList), ShowEnumDesc: true);
 
             xSeverityStack.Visibility = Visibility.Visible;
-            mAct.SeverityItems = new Dictionary<string, object>();
+            mAct.SeverityItems = [];
             foreach (OperationValues severity in SeverityList)
             {
                 if (!string.IsNullOrEmpty(severity.Value.ToString()))
@@ -144,7 +122,7 @@ namespace Ginger.Actions
             if (mAct.Context != null && (Context.GetAsContext(mAct.Context)).BusinessFlow != null)
             {
                 string targetapp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
-                platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == targetapp).Platform; 
+                platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == targetapp).Platform;
             }
             else
             {
@@ -231,25 +209,28 @@ namespace Ginger.Actions
 
         public ObservableList<OperationValues> GetStandardTagslist()
         {
-            ObservableList<OperationValues> StandardTagList = new ObservableList<OperationValues>();
-            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag2a), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag2a)) });
-            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag2aa), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag2aa)) });
-            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag21a), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag21a)) });
-            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag21aa), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag21aa)) });
-            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag22a), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag22a)) });
-            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag22aa), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag22aa)) });
-            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.bestpractice), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.bestpractice)) });
+            ObservableList<OperationValues> StandardTagList =
+            [
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag2a), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag2a)) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag2aa), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag2aa)) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag21a), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag21a)) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag21aa), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag21aa)) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag22a), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag22a)) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag22aa), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag22aa)) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.bestpractice), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.bestpractice)) },
+            ];
             return StandardTagList;
         }
 
         public ObservableList<OperationValues> GetSeverityList()
         {
-            ObservableList<OperationValues> SeverityList = new ObservableList<OperationValues>();
-
-            SeverityList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Critical) });
-            SeverityList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Serious) });
-            SeverityList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Moderate) });
-            SeverityList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Minor) });
+            ObservableList<OperationValues> SeverityList =
+            [
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Critical) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Serious) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Moderate) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Minor) },
+            ];
             return SeverityList;
         }
 

@@ -31,7 +31,6 @@ using GingerCore.Drivers;
 using GingerCore.FlowControlLib;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,13 +49,13 @@ namespace Ginger.AnalyzerLib
         public static List<AnalyzerItemBase> Analyze(BusinessFlow BusinessFlow, Activity parentActivity, Act a, ObservableList<DataSourceBase> DSList, DriverBase? driver = null)
         {
             // Put all tests on Action here
-            List<string> ActivityUsedVariables = new List<string>();
-            List<string> mUsedGlobalParameters = new List<string>();
-            List<string> mMissingStoreToGlobalParameters = new List<string>();
-            List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
+            List<string> ActivityUsedVariables = [];
+            List<string> mUsedGlobalParameters = [];
+            List<string> mMissingStoreToGlobalParameters = [];
+            List<AnalyzerItemBase> IssuesList = [];
             ObservableList<GlobalAppModelParameter> mModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
 
-            AnalyzeValueExpInAction(a, BusinessFlow , parentActivity, ref IssuesList);
+            AnalyzeValueExpInAction(a, BusinessFlow, parentActivity, ref IssuesList);
 
             //Flow Control -> GoToAction , Check if Action u want to go to exist
             if (a.FlowControls.Count > 0)
@@ -71,8 +70,8 @@ namespace Ginger.AnalyzerLib
                             if (parentActivity.GetAct(f.GetGuidFromValue(true), f.GetNameFromValue(true)) == null)
                             {
                                 AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                                AA.Description = "Flow control is mapped to Action which does not exist"; ;
-                                AA.Details = "'" + GoToActionName + "' Action does not exist in '" + parentActivity.ActivityName + "' " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+                                AA.Description = "Flow control is mapped to Action which does not exist";
+                                AA.Details = $"'{ GoToActionName }' Action does not exist in '{ parentActivity.ActivityName }' { GingerDicser.GetTermResValue(eTermResKey.Activity)}";
                                 AA.HowToFix = "Remap the Flow Control Action";
 
                                 if (parentActivity.Acts.FirstOrDefault(x => x.Description == f.GetNameFromValue()) != null)
@@ -102,14 +101,14 @@ namespace Ginger.AnalyzerLib
                             if (BusinessFlow.GetActivity(f.GetGuidFromValue(true), f.GetNameFromValue(true)) == null)
                             {
                                 AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                                AA.Description = "Flow control is mapped to " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " which does not exist"; ;
-                                AA.Details = "'" + GoToActivity + "' " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " does not exist in the '" + BusinessFlow.Name + " ' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                                AA.Description = $"Flow control is mapped to { GingerDicser.GetTermResValue(eTermResKey.Activity) } which does not exist"; ;
+                                AA.Details = $"'{ GoToActivity }'{ GingerDicser.GetTermResValue(eTermResKey.Activity) } does not exist in the '{ BusinessFlow.Name } ' { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}";
                                 AA.HowToFix = "Remap the Flow Control Action";
 
                                 if (BusinessFlow.Activities.FirstOrDefault(x => x.ActivityName == f.GetNameFromValue()) != null)
                                 {
                                     //can be auto fix
-                                    AA.HowToFix = "Remap Flow Control " + GingerDicser.GetTermResValue(eTermResKey.Activity) + ". Auto fix found other " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " with the same name so it will fix the mapping to this " + GingerDicser.GetTermResValue(eTermResKey.Activity) + ".";
+                                    AA.HowToFix = $"Remap Flow Control { GingerDicser.GetTermResValue(eTermResKey.Activity) }. Auto fix found other { GingerDicser.GetTermResValue(eTermResKey.Activity) } with the same name so it will fix the mapping to this { GingerDicser.GetTermResValue(eTermResKey.Activity) }.";
                                     AA.ErrorInfoObject = f;
                                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
                                     AA.FixItHandler = FixFlowControlWrongActivityMapping;
@@ -131,8 +130,8 @@ namespace Ginger.AnalyzerLib
                             if (BusinessFlow.Activities.IndexOf(parentActivity) == (BusinessFlow.Activities.Count - 1))
                             {
                                 AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                                AA.Description = "Flow control is mapped to " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " which does not exist"; ;
-                                AA.Details = "Flow Control is set to 'GoToNextActivity' but the parent " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " is last one in flow.";
+                                AA.Description = $"Flow control is mapped to { GingerDicser.GetTermResValue(eTermResKey.Activity) } which does not exist";
+                                AA.Details = $"Flow Control is set to 'GoToNextActivity' but the parent { GingerDicser.GetTermResValue(eTermResKey.Activity) } is last one in flow.";
                                 AA.HowToFix = "Remap the Flow Control Action";
                                 AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                                 AA.IssueType = eType.Error;
@@ -151,8 +150,8 @@ namespace Ginger.AnalyzerLib
                                 if (!BusinessFlow.CheckIfVariableExists(vals[0].ToString().Trim(), parentActivity))
                                 {
                                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                                    AA.Description = "Flow control mapped to " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " which does not exist"; ;
-                                    AA.Details = "'" + vals[0].Trim() + "' " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " does not exist in parent items";
+                                    AA.Description = $"Flow control mapped to { GingerDicser.GetTermResValue(eTermResKey.Variable) } which does not exist"; ;
+                                    AA.Details = $"'{ vals[0].Trim() }' { GingerDicser.GetTermResValue(eTermResKey.Variable) } does not exist in parent items";
                                     AA.HowToFix = "Remap the Flow Control Action";
                                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                                     AA.IssueType = eType.Error;
@@ -173,8 +172,8 @@ namespace Ginger.AnalyzerLib
                                 if (activities.FirstOrDefault(x => x.ActivityName == RunSharedRepositoryActivity) == null)
                                 {
                                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                                    AA.Description = "Flow control mapped to Shared Repository " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " which does not exist";
-                                    AA.Details = "'" + RunSharedRepositoryActivity + "' " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " does not exist in Shared Repository";
+                                    AA.Description = $"Flow control mapped to Shared Repository { GingerDicser.GetTermResValue(eTermResKey.Activity) } which does not exist";
+                                    AA.Details = $"'{ RunSharedRepositoryActivity }' { GingerDicser.GetTermResValue(eTermResKey.Activity) } does not exist in Shared Repository";
                                     AA.HowToFix = "Remap the Flow Control Action";
                                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                                     AA.IssueType = eType.Error;
@@ -193,8 +192,8 @@ namespace Ginger.AnalyzerLib
                                 if (BusinessFlow.Activities.FirstOrDefault(x => x.ActivityName == activityToGoTo) == null)
                                 {
                                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                                    AA.Description = "Flow control mapped to " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " which does not exist";
-                                    AA.Details = "'" + activityToGoTo + "' " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " does not exist in the parent " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                                    AA.Description = $"Flow control mapped to { GingerDicser.GetTermResValue(eTermResKey.Activity) } which does not exist";
+                                    AA.Details = $"'{ activityToGoTo }' { GingerDicser.GetTermResValue(eTermResKey.Activity) } does not exist in the parent { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}";
                                     AA.HowToFix = "Remap the Flow Control Action";
                                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                                     AA.IssueType = eType.Error;
@@ -246,7 +245,7 @@ namespace Ginger.AnalyzerLib
                                             issueFound = true;
                                         }
                                     }
-                                    else 
+                                    else
                                     {
                                         issueFound = true;
                                     }
@@ -315,12 +314,12 @@ namespace Ginger.AnalyzerLib
                     if (BusinessFlow.GetAllVariables(parentActivity).Where(x => x.Name == Var).Select(x => x.Name).FirstOrDefault() == null)
                     {
                         AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                        AA.Description = "The " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " '" + Var + "' is missing";
-                        AA.Details = "The " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ": '" + Var + "' Does not exist In " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '" + BusinessFlow.Name + "' => " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '" + parentActivity.ActivityName + "' =>" + "Action '" + a.Description + "' ";
-                        AA.HowToFix = " Create new " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " or Delete it from the action";
+                        AA.Description = $"The { GingerDicser.GetTermResValue(eTermResKey.Variable) } '{ Var }' is missing";
+                        AA.Details = $"The { GingerDicser.GetTermResValue(eTermResKey.Variable) }: '{ Var }' Does not exist In { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) } '{ BusinessFlow.Name }' => { GingerDicser.GetTermResValue(eTermResKey.Activity) } '{ parentActivity.ActivityName }' => Action '{ a.Description }' ";
+                        AA.HowToFix = $" Create new { GingerDicser.GetTermResValue(eTermResKey.Variable) } or Delete it from the action";
                         AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                         AA.IssueType = eType.Error;
-                        AA.Impact = GingerDicser.GetTermResValue(eTermResKey.Activity) + " will fail due to missing " + GingerDicser.GetTermResValue(eTermResKey.Variable);
+                        AA.Impact = $"{GingerDicser.GetTermResValue(eTermResKey.Activity) } will fail due to missing { GingerDicser.GetTermResValue(eTermResKey.Variable)}";
                         AA.Severity = eSeverity.High;
 
                         AA.IssueCategory = eIssueCategory.MissingVariable;
@@ -342,12 +341,12 @@ namespace Ginger.AnalyzerLib
                     if (globalParam == null)
                     {
                         AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                        AA.Description = "The Application Global Parameter " + Param + " is missing";
-                        AA.Details = "The Application Global Parameter: '" + Param + "' Does not exist in Models Global Parameters";
+                        AA.Description = $"The Application Global Parameter { Param } is missing";
+                        AA.Details = $"The Application Global Parameter: '{ Param }' Does not exist in Models Global Parameters";
                         AA.HowToFix = " Create new Application Global Parameter or Delete it from the action.";
                         AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                         AA.IssueType = eType.Error;
-                        AA.Impact = GingerDicser.GetTermResValue(eTermResKey.Activity) + " will fail due to missing " + GingerDicser.GetTermResValue(eTermResKey.Variable);
+                        AA.Impact = $"{GingerDicser.GetTermResValue(eTermResKey.Activity)} will fail due to missing { GingerDicser.GetTermResValue(eTermResKey.Variable)}";
                         AA.Severity = eSeverity.High;
                         IssuesList.Add(AA);
                     }
@@ -360,9 +359,9 @@ namespace Ginger.AnalyzerLib
                 foreach (string Param in mMissingStoreToGlobalParameters)
                 {
                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                    AA.Description = "The Output Value with Parameter '" + Param + "' is having store to Parameter which doesn't exist anymore";
-                    AA.Details = "The Output Value with Parameter: '" + Param + "' can be found at " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '" + BusinessFlow.Name + "' => " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '" + parentActivity.ActivityName + "' =>" + "Action '" + a.Description + "' ";
-                    AA.HowToFix = " Create new Parameter and change to it in the 'Store to' dropdown under the above path";
+                    AA.Description = $"The Output Value with Parameter '{ Param }' is having store to Parameter which doesn't exist anymore";
+                    AA.Details = $"The Output Value with Parameter: '{ Param }' can be found at { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) } '{ BusinessFlow.Name }' => { GingerDicser.GetTermResValue(eTermResKey.Activity) } '{ parentActivity.ActivityName }' => Action '{ a.Description }' ";
+                    AA.HowToFix = " Create new Parameter and change to it in the 'Store to' drop-down under the above path";
                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                     AA.IssueType = eType.Error;
                     AA.Impact = GingerDicser.GetTermResValue(eTermResKey.Activity) + " will fail due to missing Parameter";
@@ -380,12 +379,12 @@ namespace Ginger.AnalyzerLib
                 {
                     string list = string.Join(",", driverActs.Select(x => x.ActionDescription).ToList().ToArray());
                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                    AA.Description = GingerDicser.GetTermResValue(eTermResKey.Activity) + " has forbidden combinations";
-                    AA.Details = GingerDicser.GetTermResValue(eTermResKey.Activity) + " has " + a.ActionDescription + " Action with the following platform actions: " + list + ".\nPlatform action inside this current " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " will try to activate the agent before the application is launch(will cause agent issue).";
-                    AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and put " + a.ActionDescription + " Action in a separate " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+                    AA.Description = $"{GingerDicser.GetTermResValue(eTermResKey.Activity) } has forbidden combinations";
+                    AA.Details = $"{GingerDicser.GetTermResValue(eTermResKey.Activity) } has { a.ActionDescription } Action with the following platform actions: { list }.\nPlatform action inside this current { GingerDicser.GetTermResValue(eTermResKey.Activity) } will try to activate the agent before the application is launch(will cause agent issue).";
+                    AA.HowToFix = $"Open the { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) } { GingerDicser.GetTermResValue(eTermResKey.Activity) } and put { a.ActionDescription } Action in a separate { GingerDicser.GetTermResValue(eTermResKey.Activity)}";
                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;    // we can autofix by delete, but don't want to                
                     AA.IssueType = eType.Error;
-                    AA.Impact = GingerDicser.GetTermResValue(eTermResKey.Activity) + " will be executed and will fail due to java agent connection";
+                    AA.Impact = $"{GingerDicser.GetTermResValue(eTermResKey.Activity) } will be executed and will fail due to java agent connection";
                     AA.Severity = eSeverity.High;
 
                     IssuesList.Add(AA);
@@ -412,8 +411,8 @@ namespace Ginger.AnalyzerLib
                     {
                         AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
                         AA.Description = "Action's mapped Page Objects Model is missing";
-                        AA.Details = "Action " + a.ActionDescription + " has mapped Page Objects Model which is missing, reason can be that the Page Objects Model has been deleted after mapping it to this action.";
-                        AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and the Action in order to map different Page Objects Model and Element";
+                        AA.Details = $"Action { a.ActionDescription } has mapped Page Objects Model which is missing, reason can be that the Page Objects Model has been deleted after mapping it to this action.";
+                        AA.HowToFix = $"Open the { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) } { GingerDicser.GetTermResValue(eTermResKey.Activity) } and the Action in order to map different Page Objects Model and Element";
                         AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                         AA.IssueType = eType.Error;
                         AA.Impact = "Action will fail during execution";
@@ -424,13 +423,13 @@ namespace Ginger.AnalyzerLib
                     else
                     {
                         Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                        ElementInfo selectedPOMElement = (ElementInfo)POM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
+                        ElementInfo selectedPOMElement = POM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
                         if (selectedPOMElement == null)
                         {
                             AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
                             AA.Description = "Page Objects Model Element which mapped to this action is missing";
-                            AA.Details = "Action " + a.ActionDescription + " has mapped Page Objects Model Element which is missing, reason can be that the Element has been deleted after mapping it to this action.";
-                            AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and the Action in order to map different Element";
+                            AA.Details = $"Action { a.ActionDescription } has mapped Page Objects Model Element which is missing, reason can be that the Element has been deleted after mapping it to this action.";
+                            AA.HowToFix = $"Open the { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) } { GingerDicser.GetTermResValue(eTermResKey.Activity) } and the Action in order to map different Element";
                             AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                             AA.IssueType = eType.Error;
                             AA.Impact = "Action will fail during execution";
@@ -446,8 +445,8 @@ namespace Ginger.AnalyzerLib
                     //TODO: try to find the failure outside exception
                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
                     AA.Description = "Action's mapped Page Objects Model or Element is invalid";
-                    AA.Details = "Action " + a.ActionDescription + " has invalid mapped Page Objects Model or Element.";
-                    AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and the Action in order to map different Page Objects Model and Element";
+                    AA.Details = $"Action { a.ActionDescription } has invalid mapped Page Objects Model or Element.";
+                    AA.HowToFix = $"Open the { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) } { GingerDicser.GetTermResValue(eTermResKey.Activity) } and the Action in order to map different Page Objects Model and Element";
                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                     AA.IssueType = eType.Error;
                     AA.Impact = "Action will fail during execution";
@@ -465,8 +464,8 @@ namespace Ginger.AnalyzerLib
                     if (a.InputValues.Where(aiv => AIV != null && aiv != null && aiv.Param == AIV.Param).ToList().Count > 1)
                     {
                         AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                        AA.Description = "The Input Value Parameter " + AIV.Param + " is Duplicate";
-                        AA.Details = "The Input Value Parameter: '" + AIV.Param + "' is duplicate in the ActInputValues";
+                        AA.Description = $"The Input Value Parameter { AIV.Param } is Duplicate";
+                        AA.Details = $"The Input Value Parameter: '{ AIV.Param }' is duplicate in the ActInputValues";
                         AA.HowToFix = "Open action Edit page and save it.";
                         AA.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
                         AA.IssueType = eType.Warning;
@@ -479,7 +478,7 @@ namespace Ginger.AnalyzerLib
                 }
             }
 
-            if (driver != null && driver is IIncompleteDriver incompleteDriver)
+            if (driver is not null and IIncompleteDriver incompleteDriver)
             {
                 if (!incompleteDriver.IsActionSupported(a, out string message))
                 {
@@ -525,7 +524,8 @@ namespace Ginger.AnalyzerLib
                                 .ToList();
 
 
-            if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(action.RunDescription, businessFlow.Environment)){
+            if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(action.RunDescription, businessFlow.Environment))
+            {
 
                 ValueExpsNotInCurrEnv.Add("used in Run Description");
             }
@@ -535,15 +535,15 @@ namespace Ginger.AnalyzerLib
                                     .ActFlowControls
                                     .Select((actFlowControl) =>
                                     {
-                                       if(!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actFlowControl.Condition, businessFlow.Environment))
-                                       {
+                                        if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actFlowControl.Condition, businessFlow.Environment))
+                                        {
                                             return $"{actFlowControl.Condition} used in Custom Condition in the Flow Control Tab";
-                                       }
+                                        }
 
-                                       if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actFlowControl.Value, businessFlow.Environment))
-                                       {
+                                        if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actFlowControl.Value, businessFlow.Environment))
+                                        {
                                             return $"{actFlowControl.Value} used in the Flow Control Tab";
-                                       }
+                                        }
                                         return string.Empty;
                                     })
                                     .Where((filteredFlowControl) => !string.Equals(filteredFlowControl, string.Empty));
@@ -555,7 +555,7 @@ namespace Ginger.AnalyzerLib
                                 .Select((actReturnValue) =>
                                 {
 
-                                    if(!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actReturnValue.Param, businessFlow.Environment))
+                                    if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actReturnValue.Param, businessFlow.Environment))
                                     {
                                         return $"{actReturnValue.Param} used in Param in Output Values Tab";
                                     }
@@ -570,7 +570,7 @@ namespace Ginger.AnalyzerLib
                                         return $"{actReturnValue.Expected} used in Expected Value in the Output Values Tab";
                                     }
                                     return string.Empty;
-                                    
+
                                 })
                                 .Where((filteredReturnValue) => !string.Equals(filteredReturnValue, string.Empty));
 
@@ -580,18 +580,20 @@ namespace Ginger.AnalyzerLib
 
             foreach (var filteredValueExp in ValueExpsNotInCurrEnv)
             {
-                AnalyzeAction AA = new AnalyzeAction();
-                AA.Status = eStatus.NeedFix;
-                AA.mActivity = activity;
-                AA.Description = $"Cannot Calculate Value Expression: {filteredValueExp}";
-                AA.ItemName = action.Description;
-                AA.ItemParent = businessFlow.Name + " > " + activity.ActivityName;
-                AA.mAction = action;
-                AA.mBusinessFlow = businessFlow;
-                AA.ItemClass = "Action";
-                AA.CanAutoFix = eCanFix.No;
-                AA.Severity = eSeverity.High;
-                AA.HowToFix = $"Please ensure that you have selected the appropriate environment and that the parameter/URL exists in the chosen environment: '{businessFlow.Environment}'";
+                AnalyzeAction AA = new AnalyzeAction
+                {
+                    Status = eStatus.NeedFix,
+                    mActivity = activity,
+                    Description = $"Cannot Calculate Value Expression: {filteredValueExp}",
+                    ItemName = action.Description,
+                    ItemParent = $"{businessFlow.Name } > { activity.ActivityName}",
+                    mAction = action,
+                    mBusinessFlow = businessFlow,
+                    ItemClass = "Action",
+                    CanAutoFix = eCanFix.No,
+                    Severity = eSeverity.High,
+                    HowToFix = $"Please ensure that you have selected the appropriate environment and that the parameter/URL exists in the chosen environment: '{businessFlow.Environment}'"
+                };
                 issues.Add(AA);
             }
 
@@ -601,7 +603,7 @@ namespace Ginger.AnalyzerLib
 
         public static List<string> GetUsedVariableFromAction(Act action)
         {
-            List<string> actionUsedVariables = new List<string>();
+            List<string> actionUsedVariables = [];
             VariableBase.GetListOfUsedVariables(action, ref actionUsedVariables);
             return actionUsedVariables;
         }
@@ -646,7 +648,7 @@ namespace Ginger.AnalyzerLib
             FlowControl flowControl = (FlowControl)AA.ErrorInfoObject;
             if (AA.mBusinessFlow.GetActivity(flowControl.GetGuidFromValue(true), flowControl.GetNameFromValue(true)) == null)
             {
-                Activity similarNameActivity = (Activity)AA.mBusinessFlow.Activities.FirstOrDefault(x => x.ActivityName == flowControl.GetNameFromValue());
+                Activity similarNameActivity = AA.mBusinessFlow.Activities.FirstOrDefault(x => x.ActivityName == flowControl.GetNameFromValue());
                 if (similarNameActivity != null)
                 {
                     string updatedMappingValue = similarNameActivity.Guid + flowControl.GUID_NAME_SEPERATOR + similarNameActivity.Description;
@@ -678,14 +680,16 @@ namespace Ginger.AnalyzerLib
         }
         static AnalyzeAction CreateNewIssue(BusinessFlow BusinessFlow, Activity Activity, Act action)
         {
-            AnalyzeAction AA = new AnalyzeAction();
-            AA.Status = AnalyzerItemBase.eStatus.NeedFix;
-            AA.mActivity = Activity;
-            AA.ItemName = action.Description;
-            AA.ItemParent = BusinessFlow.Name + " > " + Activity.ActivityName;
-            AA.mAction = action;
-            AA.mBusinessFlow = BusinessFlow;
-            AA.ItemClass = "Action";
+            AnalyzeAction AA = new AnalyzeAction
+            {
+                Status = AnalyzerItemBase.eStatus.NeedFix,
+                mActivity = Activity,
+                ItemName = action.Description,
+                ItemParent = BusinessFlow.Name + " > " + Activity.ActivityName,
+                mAction = action,
+                mBusinessFlow = BusinessFlow,
+                ItemClass = "Action"
+            };
             return AA;
         }
 

@@ -50,9 +50,9 @@ namespace GingerCoreNET.DataSource
             }
         }
 
-        public override string FileFullPath 
-        { 
-            get => base.FileFullPath; 
+        public override string FileFullPath
+        {
+            get => base.FileFullPath;
             set
             {
                 base.FileFullPath = value;
@@ -157,7 +157,7 @@ namespace GingerCoreNET.DataSource
             return CopyTableName;
         }
 
-        public DataTable datatable(IEnumerable<BsonDocument> results , string CopyTableName = null)
+        public DataTable datatable(IEnumerable<BsonDocument> results, string CopyTableName = null)
         {
             if (CopyTableName == null)
             {
@@ -166,8 +166,7 @@ namespace GingerCoreNET.DataSource
             var dt = new LiteDataTable(CopyTableName);
             foreach (var doc in results)
             {
-                var dr = dt.NewRow() as LiteDataRow;
-                if (dr != null)
+                if (dt.NewRow() is LiteDataRow dr)
                 {
                     dr.UnderlyingValue = doc;
                     foreach (var property in doc.RawValue)
@@ -230,17 +229,19 @@ namespace GingerCoreNET.DataSource
                 if (sTableQueryValue.Contains(" where "))
                 {
                     var index = sTableQueryValue.IndexOf(" where ");
-                    whereCond = sTableQueryValue.Substring(index);
+                    whereCond = sTableQueryValue[index..];
 
-                    selectedColumn = sTableQueryValue.Substring(0, index);
+                    selectedColumn = sTableQueryValue[..index];
 
                     var filter = whereCond.Remove(0, 6).Trim();
                     if (filter.Contains("\""))
                     {
                         filter = filter.Replace("\"", "'");
                     }
-                    DataView dv = new DataView(dataTable);
-                    dv.RowFilter = filter;
+                    DataView dv = new DataView(dataTable)
+                    {
+                        RowFilter = filter
+                    };
                     dataTable = dv.ToTable();
 
                     dataTable = dataTable.DefaultView.ToTable(false, selectedColumn.Split(','));
@@ -261,7 +262,7 @@ namespace GingerCoreNET.DataSource
 
         public override List<string> GetColumnList(string tableName)
         {
-            List<string> mColumnNames = new();
+            List<string> mColumnNames = [];
             using (var db = new LiteDatabase(ConnectionString))
             {
                 if (tableName == "")
@@ -275,15 +276,14 @@ namespace GingerCoreNET.DataSource
             return mColumnNames;
         }
 
-        private List<string> GetColumnList(IList<BsonDocument> results , string tableName)
+        private List<string> GetColumnList(IList<BsonDocument> results, string tableName)
         {
             var dt = new LiteDataTable(results.ToString());
-            List<string> mColumnNames = new ();
+            List<string> mColumnNames = [];
 
             foreach (var doc in results)
             {
-                var dr = dt.NewRow() as LiteDataRow;
-                if (dr != null)
+                if (dt.NewRow() is LiteDataRow dr)
                 {
                     dr.UnderlyingValue = doc;
                     foreach (var property in doc.RawValue)
@@ -356,7 +356,7 @@ namespace GingerCoreNET.DataSource
 
         public override DataTable GetQueryOutput(string query)
         {
-            List<string> mColumnNames = new List<string>();
+            List<string> mColumnNames = [];
             DataTable dataTable = new DataTable();
             bool duplicate = false;
             using (var db = new LiteDatabase(ConnectionString))
@@ -371,8 +371,7 @@ namespace GingerCoreNET.DataSource
                         var dt = new LiteDataTable(results.ToString());
                         foreach (var doc in results)
                         {
-                            var dr = dt.NewRow() as LiteDataRow;
-                            if (dr != null)
+                            if (dt.NewRow() is LiteDataRow dr)
                             {
                                 dr.UnderlyingValue = doc;
                                 foreach (var property in doc.RawValue)
@@ -385,11 +384,11 @@ namespace GingerCoreNET.DataSource
                                         }
                                         if (property.Value.RawValue != null)
                                         {
-                                            if (property.Value.RawValue.ToString() == "System.Collections.Generic.Dictionary`2[System.String,BsonValue]" || property.Value.RawValue.ToString() == "System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]")
+                                            if (property.Value.RawValue.ToString() is "System.Collections.Generic.Dictionary`2[System.String,BsonValue]" or "System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]")
                                             {
                                                 dr[property.Key] = "";
                                             }
-                                            else if (property.Value.RawValue.ToString() == "System.Data.DataRowCollection" || property.Value.RawValue.ToString() == "System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]")
+                                            else if (property.Value.RawValue.ToString() is "System.Data.DataRowCollection" or "System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]")
                                             {
                                                 duplicate = true;
                                             }
@@ -451,18 +450,18 @@ namespace GingerCoreNET.DataSource
                         try
                         {
                             // Converting BSON to JSON 
-                            JArray array = new();
+                            JArray array = [];
                             // This query needs SQL Command
                             BsonValue[] result = db.Execute(query).ToArray();
                             foreach (BsonValue bs in result)
                             {
                                 string js = LiteDB.JsonSerializer.Serialize(bs);
-                                if (js == "0" || js == "1")
+                                if (js is "0" or "1")
                                 {
                                     return dataTable;
                                 }
                                 JObject jo = JObject.Parse(js);
-                                JObject jo2 = new JObject();
+                                JObject jo2 = [];
                                 foreach (JToken jt in jo.Children())
                                 {
                                     if ((jt as JProperty).Name != "_id")
@@ -546,8 +545,10 @@ namespace GingerCoreNET.DataSource
         private DataSourceTable CheckDSTableDesign(DataTable dtTable)
         {
             string tablename = dtTable.TableName;
-            DataSourceTable sTableDetail = new DataSourceTable();
-            sTableDetail.Name = tablename;
+            DataSourceTable sTableDetail = new DataSourceTable
+            {
+                Name = tablename
+            };
 
             int iCount = 0;
             int iIdCount = 0;
@@ -555,11 +556,11 @@ namespace GingerCoreNET.DataSource
             foreach (DataColumn column in dtTable.Columns)
             {
 
-                if (column.ToString() == "GINGER_KEY_NAME" || column.ToString() == "GINGER_KEY_VALUE")
+                if (column.ToString() is "GINGER_KEY_NAME" or "GINGER_KEY_VALUE")
                 { iCount++; }
                 else if (column.ToString() == "GINGER_ID")
                 { iIdCount++; }
-                else if (column.ToString() == "GINGER_LAST_UPDATE_DATETIME" || column.ToString() == "GINGER_LAST_UPDATED_BY")
+                else if (column.ToString() is "GINGER_LAST_UPDATE_DATETIME" or "GINGER_LAST_UPDATED_BY")
                 { iUpdateCount++; }
             }
             if (iCount == 2 && dtTable.Columns.Count == 3 + iIdCount + iUpdateCount)
@@ -574,7 +575,7 @@ namespace GingerCoreNET.DataSource
         public override ObservableList<DataSourceTable> GetTablesList()
         {
             DataTable Datatable = new DataTable();
-            ObservableList<DataSourceTable> mDataSourceTableDetails = new ObservableList<DataSourceTable>();
+            ObservableList<DataSourceTable> mDataSourceTableDetails = [];
             using (var db = new LiteDatabase(ConnectionString))
             {
                 IEnumerable<string> Tables = db.GetCollectionNames();
@@ -584,8 +585,7 @@ namespace GingerCoreNET.DataSource
                     var dt = new LiteDataTable(results.ToString());
                     foreach (var doc in results)
                     {
-                        var dr = dt.NewRow() as LiteDataRow;
-                        if (dr != null)
+                        if (dt.NewRow() is LiteDataRow dr)
                         {
                             dr.UnderlyingValue = doc;
                             foreach (var property in doc.RawValue)
@@ -652,7 +652,7 @@ namespace GingerCoreNET.DataSource
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while renaming the table {tableName}", ex);                
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while renaming the table {tableName}", ex);
             }
         }
 
@@ -803,7 +803,7 @@ namespace GingerCoreNET.DataSource
 
             table.DeleteAll();
 
-            List<BsonDocument> batch = new List<BsonDocument>();
+            List<BsonDocument> batch = [];
             if ((dtChange != null))
             {
                 foreach (DataRow dr in dtChange.Rows)
@@ -856,7 +856,7 @@ namespace GingerCoreNET.DataSource
             mColumnNames = this.GetColumnList(mDSTableDetails.Name);
             foreach (string sColName in mColumnNames)
             {
-                if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
+                if (sColName is not "GINGER_ID" and not "GINGER_LAST_UPDATED_BY" and not "GINGER_LAST_UPDATE_DATETIME")
                 {
                     if (sColName == "GINGER_USED")
                     {
@@ -884,7 +884,7 @@ namespace GingerCoreNET.DataSource
 
                 foreach (string sColName in mColumnNames)
                 {
-                    if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
+                    if (sColName is not "GINGER_ID" and not "GINGER_LAST_UPDATED_BY" and not "GINGER_LAST_UPDATE_DATETIME")
                     {
                         if (sColName == "GINGER_USED")
                         {
@@ -998,7 +998,7 @@ namespace GingerCoreNET.DataSource
                     if (actDSTable.BySelectedCell)
                     {
                         string[] tokens = Query.ToLower().Split(new[] { "where" }, StringSplitOptions.None);
-                        string updateParamValue = tokens[0].Substring(tokens[0].LastIndexOf(".") + 1) + "= \"" + actDSTable.Value + "\" where";
+                        string updateParamValue = tokens[0][(tokens[0].LastIndexOf(".") + 1)..] + "= \"" + actDSTable.Value + "\" where";
                         RunQuery($"UPDATE {actDSTable.DSTableName} SET {updateParamValue} {tokens[1]}");
                     }
                     // Customized Query
@@ -1125,7 +1125,7 @@ namespace GingerCoreNET.DataSource
                     SaveTable(DSTable.DataTable);
                     //Get GingerId
                     dt = GetTable(actDSTable.DSTableName);
-                    DataRow dr = dt.Rows[dt.Rows.Count - 1];
+                    DataRow dr = dt.Rows[^1];
                     string GingerId = Convert.ToString(dr["GINGER_ID"]);
                     actDSTable.AddOrUpdateReturnParamActual("GINGER_ID", GingerId);
                     break;
@@ -1187,7 +1187,7 @@ namespace GingerCoreNET.DataSource
 
                 List<string> ColumnList = GetColumnList(table.FindAll().ToList(), TName);
                 table.DeleteAll();
-                List<BsonDocument> batch = new List<BsonDocument>();
+                List<BsonDocument> batch = [];
 
                 var doc = new BsonDocument();
 
@@ -1227,48 +1227,27 @@ namespace GingerCoreNET.DataSource
                     }
                 }
             }
-            query = $"INSERT INTO {Name} VALUES {{ {colvalues} GINGER_LAST_UPDATED_BY: \"{System.Environment.UserName}\",GINGER_LAST_UPDATE_DATETIME:\"{ DateTime.Now.ToString()}\"}}";
+            query = $"INSERT INTO {Name} VALUES {{ {colvalues} GINGER_LAST_UPDATED_BY: \"{System.Environment.UserName}\",GINGER_LAST_UPDATE_DATETIME:\"{DateTime.Now}\"}}";
             return query;
         }
 
-        public static void SetDataRow(DataRow dr , KeyValuePair<string , BsonValue> property)
+        public static void SetDataRow(DataRow dr, KeyValuePair<string, BsonValue> property)
         {
-            
-            switch (property.Value.Type)
-            {
-                case BsonType.Null:
-                    dr[property.Key] = "[NULL]";
-                    break;
-                case BsonType.Document:
-                    dr[property.Key] = property.Value.AsDocument.RawValue.ContainsKey("_type")
-                        ? $"[OBJECT: {property.Value.AsDocument.RawValue["_type"]}]"
-                        : "[OBJECT]";
-                    break;
-                case BsonType.Array:
-                    dr[property.Key] = $"[ARRAY({property.Value.AsArray.Count})]";
-                    break;
-                case BsonType.Binary:
-                    dr[property.Key] = $"[BINARY({property.Value.AsBinary.Length})]";
-                    break;
-                case BsonType.DateTime:
-                    dr[property.Key] = property.Value.AsDateTime.ToString("yyyy-MM-dd HH:mm:ss.fff");
-                    break;
-                case BsonType.String:
-                    dr[property.Key] = property.Value.AsString;
-                    break;
-                case BsonType.Int32:
-                case BsonType.Int64:
-                    dr[property.Key] = property.Value.AsInt64.ToString();
-                    break;
-                case BsonType.Decimal:
-                case BsonType.Double:
-                    dr[property.Key] = property.Value.AsDecimal.ToString(CultureInfo.InvariantCulture);
-                    break;
-                default:
-                    dr[property.Key] = property.Value.RawValue == null ? string.Empty : property.Value.RawValue.ToString();
-                    break;
-            }
 
+            dr[property.Key] = property.Value.Type switch
+            {
+                BsonType.Null => "[NULL]",
+                BsonType.Document => property.Value.AsDocument.RawValue.ContainsKey("_type")
+                                        ? $"[OBJECT: {property.Value.AsDocument.RawValue["_type"]}]"
+                                        : "[OBJECT]",
+                BsonType.Array => $"[ARRAY({property.Value.AsArray.Count})]",
+                BsonType.Binary => $"[BINARY({property.Value.AsBinary.Length})]",
+                BsonType.DateTime => property.Value.AsDateTime.ToString("yyyy-MM-dd HH:mm:ss.fff"),
+                BsonType.String => property.Value.AsString,
+                BsonType.Int32 or BsonType.Int64 => property.Value.AsInt64.ToString(),
+                BsonType.Decimal or BsonType.Double => property.Value.AsDecimal.ToString(CultureInfo.InvariantCulture),
+                _ => property.Value.RawValue == null ? string.Empty : property.Value.RawValue.ToString(),
+            };
         }
     }
 }

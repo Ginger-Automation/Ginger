@@ -118,12 +118,16 @@ namespace Ginger.Reports
 
         private void SetHTMLReportsConfigFieldsGridsView()
         {
-            GridViewDef viewSummaryView = new GridViewDef(GridViewDef.DefaultViewName);
-            viewSummaryView.GridColsView = new ObservableList<GridColView>();
-            viewSummaryView.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" });
-            viewSummaryView.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldType, WidthWeight = 20, ReadOnly = true, Header = "Field Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
-            viewSummaryView.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSelected, WidthWeight = 20, Header = "Selected", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdSummaryViewField.Resources["FieldIsAddedToReportSummaryView"] });
-            viewSummaryView.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed, WidthWeight = 20, Header = "Collapsed", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdSummaryViewField.Resources["SectionCollapsedSummaryView"] });
+            GridViewDef viewSummaryView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldType, WidthWeight = 20, ReadOnly = true, Header = "Field Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSelected, WidthWeight = 20, Header = "Selected", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdSummaryViewField.Resources["FieldIsAddedToReportSummaryView"] },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed, WidthWeight = 20, Header = "Collapsed", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdSummaryViewField.Resources["SectionCollapsedSummaryView"] },
+            ]
+            };
             grdSummaryViewFields.SetAllColumnsDefaultView(viewSummaryView);
             grdSummaryViewFields.InitViewItems();
 
@@ -133,12 +137,16 @@ namespace Ginger.Reports
             grdRunsetViewSourceFields.InitViewItems();
 
 
-            GridViewDef viewGingers = new GridViewDef(GridViewDef.DefaultViewName);
-            viewGingers.GridColsView = new ObservableList<GridColView>();
-            viewGingers.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" });
-            viewGingers.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldType, WidthWeight = 20, ReadOnly = true, Header = "Field Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
-            viewGingers.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSelected, WidthWeight = 20, Header = "Selected", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdGingersField.Resources["FieldIsAddedToReportGingers"] });
-            viewGingers.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed, WidthWeight = 20, Header = "Collapsed", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdGingersField.Resources["SectionCollapsedGingers"] });
+            GridViewDef viewGingers = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldType, WidthWeight = 20, ReadOnly = true, Header = "Field Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSelected, WidthWeight = 20, Header = "Selected", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdGingersField.Resources["FieldIsAddedToReportGingers"] },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed, WidthWeight = 20, Header = "Collapsed", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdGingersField.Resources["SectionCollapsedGingers"] },
+            ]
+            };
             grdGingersFields.SetAllColumnsDefaultView(viewGingers);
             grdGingersFields.InitViewItems();
 
@@ -146,12 +154,16 @@ namespace Ginger.Reports
             grdRunnerViewSourceFields.SetAllColumnsDefaultView(viewGingers);
             grdRunnerViewSourceFields.InitViewItems();
 
-            GridViewDef viewBusinessFlow = new GridViewDef(GridViewDef.DefaultViewName);
-            viewBusinessFlow.GridColsView = new ObservableList<GridColView>();
-            viewBusinessFlow.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" });
-            viewBusinessFlow.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldType, WidthWeight = 20, ReadOnly = true, Header = "Field Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
-            viewBusinessFlow.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSelected, WidthWeight = 20, Header = "Selected", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdBusinessFlowField.Resources["FieldIsAddedToReportBFs"] });
-            viewBusinessFlow.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed, WidthWeight = 20, Header = "Collapsed", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdBusinessFlowField.Resources["SectionCollapsedBusinessFlow"] });
+            GridViewDef viewBusinessFlow = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldType, WidthWeight = 20, ReadOnly = true, Header = "Field Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSelected, WidthWeight = 20, Header = "Selected", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdBusinessFlowField.Resources["FieldIsAddedToReportBFs"] },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed, WidthWeight = 20, Header = "Collapsed", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdBusinessFlowField.Resources["SectionCollapsedBusinessFlow"] },
+            ]
+            };
             grdBusinessFlowFields.SetAllColumnsDefaultView(viewBusinessFlow);
             grdBusinessFlowFields.InitViewItems();
 
@@ -159,12 +171,16 @@ namespace Ginger.Reports
             grdBusinessFlowViewSourceFields.SetAllColumnsDefaultView(viewBusinessFlow);
             grdBusinessFlowViewSourceFields.InitViewItems();
 
-            GridViewDef viewActivities = new GridViewDef(GridViewDef.DefaultViewName);
-            viewActivities.GridColsView = new ObservableList<GridColView>();
-            viewActivities.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" });
-            viewActivities.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldType, WidthWeight = 20, ReadOnly = true, Header = "Field Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
-            viewActivities.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSelected, WidthWeight = 20, Header = "Selected", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdActivitiesField.Resources["FieldIsAddedToReportActivities"] });
-            viewActivities.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed, WidthWeight = 20, Header = "Collapsed", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdActivitiesField.Resources["SectionCollapsedActivities"] });
+            GridViewDef viewActivities = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldType, WidthWeight = 20, ReadOnly = true, Header = "Field Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSelected, WidthWeight = 20, Header = "Selected", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdActivitiesField.Resources["FieldIsAddedToReportActivities"] },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed, WidthWeight = 20, Header = "Collapsed", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdActivitiesField.Resources["SectionCollapsedActivities"] },
+            ]
+            };
             grdActivitiesFields.SetAllColumnsDefaultView(viewActivities);
             grdActivitiesFields.InitViewItems();
 
@@ -172,12 +188,16 @@ namespace Ginger.Reports
             grdActivityViewSourceFields.SetAllColumnsDefaultView(viewActivities);
             grdActivityViewSourceFields.InitViewItems();
 
-            GridViewDef viewActivityGroups = new GridViewDef(GridViewDef.DefaultViewName);
-            viewActivityGroups.GridColsView = new ObservableList<GridColView>();
-            viewActivityGroups.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" });
-            viewActivityGroups.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldType, WidthWeight = 20, ReadOnly = true, Header = "Field Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
-            viewActivityGroups.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSelected, WidthWeight = 20, Header = "Selected", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdActivityGroupsField.Resources["FieldIsAddedToReportActivityGroups"] });
-            viewActivityGroups.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed, WidthWeight = 20, Header = "Collapsed", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdActivityGroupsField.Resources["SectionCollapsedActivityGroups"] });
+            GridViewDef viewActivityGroups = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldType, WidthWeight = 20, ReadOnly = true, Header = "Field Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSelected, WidthWeight = 20, Header = "Selected", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdActivityGroupsField.Resources["FieldIsAddedToReportActivityGroups"] },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed, WidthWeight = 20, Header = "Collapsed", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdActivityGroupsField.Resources["SectionCollapsedActivityGroups"] },
+            ]
+            };
             grdActivityGroupsFields.SetAllColumnsDefaultView(viewActivityGroups);
             grdActivityGroupsFields.InitViewItems();
 
@@ -185,12 +205,16 @@ namespace Ginger.Reports
             grdActivityGroupsViewSourceFields.SetAllColumnsDefaultView(viewActivityGroups);
             grdActivityGroupsViewSourceFields.InitViewItems();
 
-            GridViewDef viewActions = new GridViewDef(GridViewDef.DefaultViewName);
-            viewActions.GridColsView = new ObservableList<GridColView>();
-            viewActions.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" });
-            viewActions.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldType, WidthWeight = 20, ReadOnly = true, Header = "Field Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
-            viewActions.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSelected, WidthWeight = 20, Header = "Selected", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdActionsField.Resources["FieldIsAddedToReportActions"] });
-            viewActions.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed, WidthWeight = 20, Header = "Collapsed", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdActionsField.Resources["SectionCollapsedActions"] });
+            GridViewDef viewActions = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldType, WidthWeight = 20, ReadOnly = true, Header = "Field Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSelected, WidthWeight = 20, Header = "Selected", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdActionsField.Resources["FieldIsAddedToReportActions"] },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed, WidthWeight = 20, Header = "Collapsed", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdActionsField.Resources["SectionCollapsedActions"] },
+            ]
+            };
             grdActionsFields.SetAllColumnsDefaultView(viewActions);
             grdActionsFields.InitViewItems();
 
@@ -198,11 +222,15 @@ namespace Ginger.Reports
             grdActionViewSourceFields.SetAllColumnsDefaultView(viewActions);
             grdActionViewSourceFields.InitViewItems();
 
-            GridViewDef viewEmailSummaryView = new GridViewDef(GridViewDef.DefaultViewName);
-            viewEmailSummaryView.GridColsView = new ObservableList<GridColView>();
-            viewEmailSummaryView.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" });
-            viewEmailSummaryView.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldType, WidthWeight = 20, ReadOnly = true, Header = "Field Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
-            viewEmailSummaryView.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSelected, WidthWeight = 20, Header = "Selected", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdEmailSummaryViewField.Resources["FieldIsAddedToEmailReportSummaryView"] });
+            GridViewDef viewEmailSummaryView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldType, WidthWeight = 20, ReadOnly = true, Header = "Field Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center },
+                new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSelected, WidthWeight = 20, Header = "Selected", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdEmailSummaryViewField.Resources["FieldIsAddedToEmailReportSummaryView"] },
+            ]
+            };
             grdEmailSummaryViewFields.SetAllColumnsDefaultView(viewEmailSummaryView);
             grdEmailSummaryViewFields.InitViewItems();
         }
@@ -513,10 +541,12 @@ namespace Ginger.Reports
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            ObservableList<Button> winButtons = new ObservableList<Button>();
+            ObservableList<Button> winButtons = [];
 
-            Button SaveAllButton = new Button();
-            SaveAllButton.Content = "Save";
+            Button SaveAllButton = new Button
+            {
+                Content = "Save"
+            };
             SaveAllButton.Click += new RoutedEventHandler(SaveButton_Click);
             winButtons.Add(SaveAllButton);
 
@@ -691,9 +721,11 @@ namespace Ginger.Reports
 
         private void SelectHTMLReportsImageFolderButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog();
-            op.Title = "Select a picture";
-            op.Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg";
+            System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog
+            {
+                Title = "Select a picture",
+                Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg"
+            };
             if (op.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 var fileLength = new FileInfo(op.FileName).Length;

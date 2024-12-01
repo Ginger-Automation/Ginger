@@ -30,13 +30,13 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 
         public ObservableList<dynamic> Items { get; set; }
 
-        List<string> mListProperties = new List<string>();
+        List<string> mListProperties = [];
 
         public DynamicListWrapper(string listType, bool AddDummyItem = false)
         {
             mListType = listType;
             SetPropertiesList();
-            Items = new ObservableList<dynamic>();
+            Items = [];
 
             if (AddDummyItem)
             {
@@ -55,7 +55,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             {
                 return;
             }
-            mListProperties = new List<string>();
+            mListProperties = [];
             string props = GetStringBetween(mListType, "{Properties=", "}");
             string[] arr = props.Split(',');
             foreach (string prop in arr)
@@ -103,7 +103,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 
             if ((Pos2 - Pos1) > 0)
             {
-                str = STR.Substring(Pos1, Pos2 - Pos1);
+                str = STR[Pos1..Pos2];
                 return str;
             }
             else

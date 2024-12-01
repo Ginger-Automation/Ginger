@@ -21,7 +21,6 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.Agents;
 using Ginger.ApplicationModelsLib.POMModels;
-using Ginger.BusinessFlowWindows;
 using Ginger.Run;
 using Ginger.SourceControl;
 using GingerCore;
@@ -30,22 +29,9 @@ using GingerCore.GeneralLib;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.BusinessFlowsLib;
 using GingerWPF.WizardLib;
-using LibGit2Sharp;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.ConflictResolve
 {
@@ -63,7 +49,7 @@ namespace Ginger.ConflictResolve
         {
             ResolveMergeConflictWizard wizard = (ResolveMergeConflictWizard)WizardEventArgs.Wizard;
 
-            switch(WizardEventArgs.EventType)
+            switch (WizardEventArgs.EventType)
             {
                 case EventType.Active:
                     OnWizardPageActive(wizard);
@@ -122,9 +108,9 @@ namespace Ginger.ConflictResolve
 
         private void SetPageContent(RepositoryItemBase mergedItem)
         {
-            if(mergedItem is BusinessFlow mergedBusinessFlow)
+            if (mergedItem is BusinessFlow mergedBusinessFlow)
             {
-                Dispatcher.Invoke(() => 
+                Dispatcher.Invoke(() =>
                 {
                     xPageViewTabItem.IsEnabled = true;
                     xPageFrame.ClearAndSetContent(new BusinessFlowViewPage(mergedBusinessFlow, context: null!, General.eRIPageViewMode.View, ignoreValidationRules: true));
@@ -162,7 +148,7 @@ namespace Ginger.ConflictResolve
                     xPageFrame.ClearAndSetContent(new ActionEditPage(mergedAction, General.eRIPageViewMode.View));
                 });
             }
-            else if(mergedItem is ApplicationAPIModel mergedApplicationAPIModel)
+            else if (mergedItem is ApplicationAPIModel mergedApplicationAPIModel)
             {
                 Dispatcher.Invoke(() =>
                 {
@@ -170,7 +156,7 @@ namespace Ginger.ConflictResolve
                     xPageFrame.ClearAndSetContent(new APIModelPage(mergedApplicationAPIModel, General.eRIPageViewMode.View));
                 });
             }
-            else if(mergedItem is ApplicationPOMModel mergedApplicationPOMModel)
+            else if (mergedItem is ApplicationPOMModel mergedApplicationPOMModel)
             {
                 Dispatcher.Invoke(() =>
                 {

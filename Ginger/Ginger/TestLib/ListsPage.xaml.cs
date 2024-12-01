@@ -108,12 +108,16 @@ namespace GingerWPF.TestLib
             BFRF.AddSubFolder("SubFolderForDelete");
 
             //Environments
-            ProjEnvironment env1 = new ProjEnvironment();
-            env1.Name = "Env1";
+            ProjEnvironment env1 = new ProjEnvironment
+            {
+                Name = "Env1"
+            };
             mSolutionRepository.AddRepositoryItem(env1);
 
-            ProjEnvironment env2 = new ProjEnvironment();
-            env2.Name = "Env2";
+            ProjEnvironment env2 = new ProjEnvironment
+            {
+                Name = "Env2"
+            };
             mSolutionRepository.AddRepositoryItem(env2);
             //TODO: add more sample items for testing
         }
@@ -136,8 +140,10 @@ namespace GingerWPF.TestLib
 
         private void AddEnvButton_Click(object sender, RoutedEventArgs e)
         {
-            ProjEnvironment env = new ProjEnvironment();
-            env.Name = "New Env " + DateTime.Now;
+            ProjEnvironment env = new ProjEnvironment
+            {
+                Name = "New Env " + DateTime.Now
+            };
             mSolutionRepository.AddRepositoryItem(env);
         }
 
@@ -178,7 +184,7 @@ namespace GingerWPF.TestLib
     {
         public MenuItem()
         {
-            this.Items = new ObservableList<MenuItem>();
+            this.Items = [];
         }
 
         public string Title { get; set; }

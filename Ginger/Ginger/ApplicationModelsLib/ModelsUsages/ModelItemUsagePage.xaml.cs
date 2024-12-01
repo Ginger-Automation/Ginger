@@ -38,7 +38,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
     {
         GenericWindow _pageGenericWin = null;
         private ApplicationModelBase mModelItem;
-        ObservableList<ModelItemUsage> ModelItemUsages = new ObservableList<ModelItemUsage>();
+        ObservableList<ModelItemUsage> ModelItemUsages = [];
         ApplicationModelBase.eModelUsageUpdateType mUsageUpdateType;
         ApplicationModelBase.eModelParts mModelPart;
 
@@ -58,15 +58,19 @@ namespace Ginger.ApplicationsModels.ModelsUsages
         {
             usageGrid.ShowTitle = Visibility.Collapsed;
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = ModelItemUsage.Fields.Selected, StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10 });
-            view.GridColsView.Add(new GridColView() { Field = ModelItemUsage.Fields.HostBizFlowPath, Header = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), WidthWeight = 25, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = ModelItemUsage.Fields.HostActivityName, Header = GingerDicser.GetTermResValue(eTermResKey.Activity), WidthWeight = 25, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = ModelItemUsage.Fields.UsageItemName, Header = "Action Description", WidthWeight = 25, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = ModelItemUsage.Fields.UsageExtraDetails, Header = "Usage Extra Details", WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = ModelItemUsage.Fields.SelectedItemPart, Header = "Part to Update ", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ModelItemUsage.Fields.ItemParts, ModelItemUsage.Fields.SelectedItemPart, false), WidthWeight = 20 });
-            view.GridColsView.Add(new GridColView() { Field = ModelItemUsage.Fields.Status, WidthWeight = 15, ReadOnly = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = ModelItemUsage.Fields.Selected, StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10 },
+                new GridColView() { Field = ModelItemUsage.Fields.HostBizFlowPath, Header = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), WidthWeight = 25, ReadOnly = true },
+                new GridColView() { Field = ModelItemUsage.Fields.HostActivityName, Header = GingerDicser.GetTermResValue(eTermResKey.Activity), WidthWeight = 25, ReadOnly = true },
+                new GridColView() { Field = ModelItemUsage.Fields.UsageItemName, Header = "Action Description", WidthWeight = 25, ReadOnly = true },
+                new GridColView() { Field = ModelItemUsage.Fields.UsageExtraDetails, Header = "Usage Extra Details", WidthWeight = 20, ReadOnly = true },
+                new GridColView() { Field = ModelItemUsage.Fields.SelectedItemPart, Header = "Part to Update ", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ModelItemUsage.Fields.ItemParts, ModelItemUsage.Fields.SelectedItemPart, false), WidthWeight = 20 },
+                new GridColView() { Field = ModelItemUsage.Fields.Status, WidthWeight = 15, ReadOnly = true },
+            ]
+            };
 
             usageGrid.SetAllColumnsDefaultView(view);
             usageGrid.InitViewItems();
@@ -163,19 +167,21 @@ namespace Ginger.ApplicationsModels.ModelsUsages
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button UpdateAllButton = new Button();
-            UpdateAllButton.Content = "Update All Selected";
+            Button UpdateAllButton = new Button
+            {
+                Content = "Update All Selected"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: UpdateAllButton, eventName: nameof(ButtonBase.Click), handler: UpdateButton_Click);
-            
 
-            Button SaveAllBizFlowsButton = new Button();
-            SaveAllBizFlowsButton.Content = "Save All Updated Usages";
+
+            Button SaveAllBizFlowsButton = new Button
+            {
+                Content = "Save All Updated Usages"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: SaveAllBizFlowsButton, eventName: nameof(ButtonBase.Click), handler: SaveAllBizFlowsButton_Click);
-            
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(SaveAllBizFlowsButton);
-            winButtons.Add(UpdateAllButton);
+
+            ObservableList<Button> winButtons = [SaveAllBizFlowsButton, UpdateAllButton];
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "'" + mModelItem.Name + "' " + " Model Item Usages", this, winButtons, true, "Close");
         }
@@ -241,27 +247,27 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                     actARV.Active = apiARV.Active;
                     actARV.Status = ActReturnValue.eStatus.Pending;
 
-                    if (ePartToUpdate == ActReturnValue.eItemParts.ExpectedValue || ePartToUpdate == ActReturnValue.eItemParts.All)
+                    if (ePartToUpdate is ActReturnValue.eItemParts.ExpectedValue or ActReturnValue.eItemParts.All)
                     {
                         actARV.Expected = apiARV.Expected;
                     }
 
-                    if (ePartToUpdate == ActReturnValue.eItemParts.Parameter || ePartToUpdate == ActReturnValue.eItemParts.All)
+                    if (ePartToUpdate is ActReturnValue.eItemParts.Parameter or ActReturnValue.eItemParts.All)
                     {
                         actARV.ItemName = apiARV.ItemName;
                     }
 
-                    if (ePartToUpdate == ActReturnValue.eItemParts.Path || ePartToUpdate == ActReturnValue.eItemParts.All)
+                    if (ePartToUpdate is ActReturnValue.eItemParts.Path or ActReturnValue.eItemParts.All)
                     {
                         actARV.Path = apiARV.Path;
                     }
 
-                    if (ePartToUpdate == ActReturnValue.eItemParts.SimulatedActual || ePartToUpdate == ActReturnValue.eItemParts.All)
+                    if (ePartToUpdate is ActReturnValue.eItemParts.SimulatedActual or ActReturnValue.eItemParts.All)
                     {
                         actARV.SimulatedActual = apiARV.SimulatedActual;
                     }
 
-                    if (ePartToUpdate == ActReturnValue.eItemParts.StoreTo || ePartToUpdate == ActReturnValue.eItemParts.All)
+                    if (ePartToUpdate is ActReturnValue.eItemParts.StoreTo or ActReturnValue.eItemParts.All)
                     {
                         if (!string.IsNullOrEmpty(apiARV.StoreToValue))
                         {
@@ -287,16 +293,18 @@ namespace Ginger.ApplicationsModels.ModelsUsages
 
         private static void AddNewActReturnValue(Act act, ActReturnValue apiARV)
         {
-            ActReturnValue newARV = new ActReturnValue();
-            newARV.AddedAutomatically = true;
-            newARV.Status = ActReturnValue.eStatus.Pending;
-            newARV.Guid = apiARV.Guid;
-            newARV.Active = apiARV.Active;
-            newARV.ItemName = apiARV.ItemName;
-            newARV.Path = apiARV.Path;
-            newARV.Expected = apiARV.Expected;
-            newARV.StoreTo = apiARV.StoreTo;
-            newARV.SimulatedActual = apiARV.SimulatedActual;
+            ActReturnValue newARV = new ActReturnValue
+            {
+                AddedAutomatically = true,
+                Status = ActReturnValue.eStatus.Pending,
+                Guid = apiARV.Guid,
+                Active = apiARV.Active,
+                ItemName = apiARV.ItemName,
+                Path = apiARV.Path,
+                Expected = apiARV.Expected,
+                StoreTo = apiARV.StoreTo,
+                SimulatedActual = apiARV.SimulatedActual
+            };
             act.ActReturnValues.Add(newARV);
         }
 
@@ -328,7 +336,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                     {
                         foreach (ModelItemUsage usage in ModelItemUsages)
                         {
-                            if (usage.Status == ModelItemUsage.eStatus.Updated || usage.Status == ModelItemUsage.eStatus.SaveFailed)
+                            if (usage.Status is ModelItemUsage.eStatus.Updated or ModelItemUsage.eStatus.SaveFailed)
                             {
                                 try
                                 {

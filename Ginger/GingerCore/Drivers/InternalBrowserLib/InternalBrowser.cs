@@ -148,7 +148,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
                     case "ActTextBox":
                         //TODO: switch case
                         ActTextBox ATB = (ActTextBox)act;
-                        if (ATB.TextBoxAction == ActTextBox.eTextBoxAction.SetValue || ATB.TextBoxAction == ActTextBox.eTextBoxAction.SetValueFast)
+                        if (ATB.TextBoxAction is ActTextBox.eTextBoxAction.SetValue or ActTextBox.eTextBoxAction.SetValueFast)
                         {
                             SetTextBoxValue(ATB);
                         }
@@ -552,7 +552,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
                         Thread.Sleep(100);
 
-                        e = mFrmBrowser.TryGetActElementByLocator(act);                        
+                        e = mFrmBrowser.TryGetActElementByLocator(act);
 
                     } while (e != null && (!(bool)e.getAttribute(strConstDisplayed)));
                     break;
@@ -609,7 +609,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
                 case ActGenElement.eGenElementAction.SwitchFrame:
                     mshtml.FramesCollection frames =
-                        ((mshtml.HTMLDocument)mFrmBrowser.mDocument).frames;
+                        mFrmBrowser.mDocument.frames;
                     mshtml.IHTMLWindow2 tFrame = null;
                     for (int i = 0; i < frames.length; i++)
                     {
@@ -987,7 +987,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
         private void UncheckCheckbox(ActCheckbox cb)
         {
             IHTMLElement e1 = mFrmBrowser.TryGetActElementByLocator(cb);
-            mshtml.IHTMLElement t = (mshtml.IHTMLElement)e1;
+            mshtml.IHTMLElement t = e1;
             if ((bool)e1.getAttribute("checked") == true)
             {
                 e1.setAttribute("checked", false);
@@ -997,21 +997,21 @@ namespace GingerCore.Drivers.InternalBrowserLib
         private void IsCheckboxEnable(ActCheckbox cb)
         {
             IHTMLElement e1 = mFrmBrowser.TryGetActElementByLocator(cb);
-            mshtml.IHTMLElement t = (mshtml.IHTMLElement)e1;
+            mshtml.IHTMLElement t = e1;
             cb.AddOrUpdateReturnParamActual("Actual", Convert.ToString(t.getAttribute("disabled")));
         }
 
         private void GetCheckboxValue(ActCheckbox cb)
         {
             IHTMLElement e1 = mFrmBrowser.TryGetActElementByLocator(cb);
-            mshtml.IHTMLElement t = (mshtml.IHTMLElement)e1;
+            mshtml.IHTMLElement t = e1;
             cb.AddOrUpdateReturnParamActual("Actual", Convert.ToString(t.getAttribute("checked")));
         }
 
         private void IsCheckboxDisplayed(ActCheckbox cb)
         {
             IHTMLElement e1 = mFrmBrowser.TryGetActElementByLocator(cb);
-            mshtml.IHTMLElement t = (mshtml.IHTMLElement)e1;
+            mshtml.IHTMLElement t = e1;
             cb.AddOrUpdateReturnParamActual("Actual", e1.style.display);
         }
 
@@ -1061,7 +1061,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
         private List<IHTMLElement> LocateRadioButtonElements(Act A, eLocateBy LocatorType, string LocValue)
         {
-            List<IHTMLElement> l = new List<IHTMLElement>();
+            List<IHTMLElement> l = [];
             IHTMLElementCollection elm = mFrmBrowser.mDocument.all;
             foreach (IHTMLElement h in elm)
             {
@@ -1309,11 +1309,13 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
         List<AppWindow> IWindowExplorer.GetAppWindows()
         {
-            List<AppWindow> list = new List<AppWindow>();
-            AppWindow AW = new AppWindow();
-            AW.Title = "Current Window"; //TODO: fix me to get current title
-            AW.RefObject = mBrowserControl.Document;
-            AW.WindowType = AppWindow.eWindowType.InternalBrowserWebPageDocument;
+            List<AppWindow> list = [];
+            AppWindow AW = new AppWindow
+            {
+                Title = "Current Window", //TODO: fix me to get current title
+                RefObject = mBrowserControl.Document,
+                WindowType = AppWindow.eWindowType.InternalBrowserWebPageDocument
+            };
             list.Add(AW);
             return list;
         }
@@ -1395,8 +1397,10 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
         AppWindow IWindowExplorer.GetActiveWindow()
         {
-            AppWindow aw = new AppWindow();
-            aw.Title = "Current Window";
+            AppWindow aw = new AppWindow
+            {
+                Title = "Current Window"
+            };
             return aw;
         }
 
@@ -1482,7 +1486,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
         public List<eTabView> SupportedViews()
         {
-            return new List<eTabView>() { /*eTabView.Screenshot, eTabView.GridView, eTabView.PageSource, eTabView.TreeView */ };
+            return [];
         }
 
         public eTabView DefaultView()

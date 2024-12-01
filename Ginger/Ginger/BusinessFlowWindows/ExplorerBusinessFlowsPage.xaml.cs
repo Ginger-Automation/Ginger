@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
@@ -50,13 +49,16 @@ namespace Ginger.BusinessFlowWindows
 
         private void SetBusinessFlowsGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.Name), WidthWeight = 250 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.Description), WidthWeight = 250 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.FilePath), Header = "Local Path", WidthWeight = 250 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.Status), WidthWeight = 50 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(BusinessFlow.Name), WidthWeight = 250 },
+                new GridColView() { Field = nameof(BusinessFlow.Description), WidthWeight = 250 },
+                new GridColView() { Field = nameof(BusinessFlow.FilePath), Header = "Local Path", WidthWeight = 250 },
+                new GridColView() { Field = nameof(BusinessFlow.Status), WidthWeight = 50 },
+            ]
+            };
 
             grdBusinessFlows.SetAllColumnsDefaultView(view);
             grdBusinessFlows.InitViewItems();

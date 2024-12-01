@@ -41,7 +41,7 @@ namespace Ginger.ALM.MapToALMWizard
     {
         internal BusinessFlow mapBusinessFlow { get; private set; } // Business Flow to Map
         private ALMTestSet almTestSetDetails; // ALM Test Set Data
-        private Dictionary<string, ALMTSTest> reMapActivitiesGroupsDic = new Dictionary<string, ALMTSTest>(); // Get mapped AG's when remap BF: key - AG ExternalID, Value - Mapped Test Case
+        private Dictionary<string, ALMTSTest> reMapActivitiesGroupsDic = []; // Get mapped AG's when remap BF: key - AG ExternalID, Value - Mapped Test Case
 
 
         public ALMTestSet AlmTestSetData
@@ -59,11 +59,11 @@ namespace Ginger.ALM.MapToALMWizard
                 almTestSetDetails = value;
             }
         }
-        public ObservableList<ALMTestCaseManualMappingConfig> testCasesMappingList = new ObservableList<ALMTestCaseManualMappingConfig>(); // List for Manage map TC to AG.
+        public ObservableList<ALMTestCaseManualMappingConfig> testCasesMappingList = []; // List for Manage map TC to AG.
 
-        public ObservableList<ALMTSTest> testCasesUnMappedList = new ObservableList<ALMTSTest>(); // List for Manage Test Set unmapped TC's
-        internal ObservableList<ALMTestCaseManualMappingConfig> mappedTestCasesStepPageList = new ObservableList<ALMTestCaseManualMappingConfig>();
-        public Dictionary<String, ObservableList<ALMTSTestStep>> testCaseUnmappedStepsDic = new Dictionary<string, ObservableList<ALMTSTestStep>>();
+        public ObservableList<ALMTSTest> testCasesUnMappedList = []; // List for Manage Test Set unmapped TC's
+        internal ObservableList<ALMTestCaseManualMappingConfig> mappedTestCasesStepPageList = [];
+        public Dictionary<String, ObservableList<ALMTSTestStep>> testCaseUnmappedStepsDic = [];
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string name)
         {
@@ -246,7 +246,7 @@ namespace Ginger.ALM.MapToALMWizard
         /// <param name="tc">Mapped Test Case</param>
         private void ReMapTestSteps(ALMTestCaseManualMappingConfig tc)
         {
-            Dictionary<string, ALMTSTestStep> almStepsDic = new Dictionary<string, ALMTSTestStep>();
+            Dictionary<string, ALMTSTestStep> almStepsDic = [];
             if (tc.aLMTSTest is not null)
             {
                 foreach (ALMTSTestStep tStep in tc.aLMTSTest.Steps)
@@ -262,13 +262,13 @@ namespace Ginger.ALM.MapToALMWizard
                 {
                     if (almStepsDic.ContainsKey(act.ActivityExternalID))
                     {
-                        tc.testStepsMappingList[tc.testStepsMappingList.Count - 1].almTestStep = almStepsDic[act.ActivityExternalID];
+                        tc.testStepsMappingList[^1].almTestStep = almStepsDic[act.ActivityExternalID];
                         almStepsDic.Remove(act.ActivityExternalID);
                     }
                 }
             }
             // Set unmapped steps list after remove all mapped steps.
-            testCaseUnmappedStepsDic.Add(tc.activitiesGroup.ExternalID, new ObservableList<ALMTSTestStep>());
+            testCaseUnmappedStepsDic.Add(tc.activitiesGroup.ExternalID, []);
             foreach (ALMTSTestStep unmappedTStep in almStepsDic.Values)
             {
                 testCaseUnmappedStepsDic[tc.activitiesGroup.ExternalID].Add(unmappedTStep);

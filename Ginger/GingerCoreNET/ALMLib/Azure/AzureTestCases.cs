@@ -16,12 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using GingerCore.ALM.JIRA;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.ALMLib.Azure
 {
@@ -29,7 +24,7 @@ namespace Amdocs.Ginger.CoreNET.ALMLib.Azure
     {
         public AzureTestCases()
         {
-            this.Steps = new List<AzureTestCasesSteps>();
+            this.Steps = [];
         }
 
         public AzureTestCases(string testId, string labels, string description, List<AzureTestCasesSteps> steps)

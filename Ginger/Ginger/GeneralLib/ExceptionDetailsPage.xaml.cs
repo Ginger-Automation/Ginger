@@ -92,22 +92,25 @@ namespace Ginger.GeneralLib
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button CopyToClipboradBtn = new Button();
-            CopyToClipboradBtn.Content = "Copy to Clipboard";
+            Button CopyToClipboradBtn = new Button
+            {
+                Content = "Copy to Clipboard"
+            };
             CopyToClipboradBtn.Click += new RoutedEventHandler(CopyToClipboradBtn_Click);
 
-            Button ViewLogBtn = new Button();
-            ViewLogBtn.Content = "View Log";
+            Button ViewLogBtn = new Button
+            {
+                Content = "View Log"
+            };
             ViewLogBtn.Click += new RoutedEventHandler(ViewLogBtn_Click);
 
-            Button SendMailBtn = new Button();
-            SendMailBtn.Content = "Send Mail";
+            Button SendMailBtn = new Button
+            {
+                Content = "Send Mail"
+            };
             SendMailBtn.Click += new RoutedEventHandler(SendMailBtn_Click);
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(CopyToClipboradBtn);
-            winButtons.Add(ViewLogBtn);
-            winButtons.Add(SendMailBtn);
+            ObservableList<Button> winButtons = [CopyToClipboradBtn, ViewLogBtn, SendMailBtn];
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Error Occurred!", this, winButtons);
         }
@@ -135,7 +138,7 @@ namespace Ginger.GeneralLib
 
         private void CopyToClipboradBtn_Click(object sender, RoutedEventArgs e)
         {
-             GingerCore.General.SetClipboardText(GetFullErrorText());
+            GingerCore.General.SetClipboardText(GetFullErrorText());
         }
 
         private void ViewLogBtn_Click(object sender, RoutedEventArgs e)

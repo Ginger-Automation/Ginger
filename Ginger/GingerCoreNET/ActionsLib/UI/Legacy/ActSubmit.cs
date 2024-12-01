@@ -98,7 +98,7 @@ namespace GingerCore.Actions
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.Web || platform == ePlatformType.NA || platform == ePlatformType.Mobile)
+            if (platform is ePlatformType.Web or ePlatformType.NA or ePlatformType.Mobile)
             {
                 return true;
             }

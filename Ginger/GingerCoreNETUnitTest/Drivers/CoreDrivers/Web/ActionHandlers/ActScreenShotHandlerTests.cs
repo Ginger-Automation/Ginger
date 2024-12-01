@@ -760,7 +760,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.ActionHandlers
 
             await handler.HandleAsync();
 
-            for(int index = 0; index < windowCount; index++)
+            for (int index = 0; index < windowCount; index++)
             {
                 string screenShotName = act.ScreenShotsNames[index];
                 string tabTitle = tabTitles[index];
@@ -1548,7 +1548,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.ActionHandlers
             IBrowserTab[] tabs = new IBrowserTab[tabCount];
             for (int tabIndex = 0; tabIndex < tabCount; tabIndex++)
             {
-                Mock<IBrowserTab> tab = MockBrowserTab(title: $"Mock-Tab-{tabIndex+1}");
+                Mock<IBrowserTab> tab = MockBrowserTab(title: $"Mock-Tab-{tabIndex + 1}");
                 tabs[tabIndex] = tab.Object;
             }
 
@@ -1653,7 +1653,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.ActionHandlers
             {
                 screenInfo
                     .Setup(o => o.ScreenName(index))
-                    .Returns($"Mock-Screen-{index+1}");
+                    .Returns($"Mock-Screen-{index + 1}");
                 screenInfo
                     .Setup(o => o.ScreenPosition(index))
                     .Returns(new Point(x: 1280 * index, y: 0));

@@ -162,10 +162,12 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             string apiName = string.Empty; ;
             if (InputBoxWindow.GetInputWithValidation(string.Format("Add {0} API", type.ToString()), "API Name:", ref apiName))
             {
-                ApplicationAPIModel newApi = new ApplicationAPIModel();
-                newApi.APIType = type;
-                newApi.Name = apiName;
-                newApi.ContainingFolder = mAPIModelFolder.FolderFullPath;
+                ApplicationAPIModel newApi = new ApplicationAPIModel
+                {
+                    APIType = type,
+                    Name = apiName,
+                    ContainingFolder = mAPIModelFolder.FolderFullPath
+                };
                 mAPIModelFolder.AddRepositoryItem(newApi);
             }
         }
@@ -174,7 +176,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         {
             if (WorkSpace.Instance.Solution.ApplicationPlatforms.Any(p => p.Platform == ePlatformType.WebServices))
             {
-                mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
+                mTreeView.Tree.ExpandTreeItem(this);
                 WizardWindow.ShowWizard(new AddAPIModelWizard(mAPIModelFolder), 1000);
             }
             else

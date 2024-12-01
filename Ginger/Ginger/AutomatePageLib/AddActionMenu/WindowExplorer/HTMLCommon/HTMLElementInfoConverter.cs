@@ -28,99 +28,131 @@ namespace Ginger.WindowExplorer.HTMLCommon
         {
             if (EI.ElementTypeEnum == eElementType.TextBox)
             {
-                HTMLTextBoxTreeItem HTBTI = new HTMLTextBoxTreeItem();
-                HTBTI.ElementInfo = EI;
+                HTMLTextBoxTreeItem HTBTI = new HTMLTextBoxTreeItem
+                {
+                    ElementInfo = EI
+                };
                 return HTBTI;
             }
             else if (EI.ElementTypeEnum == eElementType.Button)
             {
-                HTMLButtonTreeItem HTBTI = new HTMLButtonTreeItem();
-                HTBTI.ElementInfo = EI;
+                HTMLButtonTreeItem HTBTI = new HTMLButtonTreeItem
+                {
+                    ElementInfo = EI
+                };
                 return HTBTI;
             }
             else if (EI.ElementTypeEnum == eElementType.TableItem)
             {
-                HTMLTDTreeItem HTBTI = new HTMLTDTreeItem();
-                HTBTI.ElementInfo = EI;
+                HTMLTDTreeItem HTBTI = new HTMLTDTreeItem
+                {
+                    ElementInfo = EI
+                };
                 return HTBTI;
             }
             else if (EI.ElementTypeEnum == eElementType.HyperLink)
             {
-                HTMLLinkTreeItem HTLII = new HTMLLinkTreeItem();
-                HTLII.ElementInfo = EI;
+                HTMLLinkTreeItem HTLII = new HTMLLinkTreeItem
+                {
+                    ElementInfo = EI
+                };
                 return HTLII;
             }
             else if (EI.ElementTypeEnum == eElementType.Label)
             {
-                HTMLLabelTreeItem HTBTI = new HTMLLabelTreeItem();
-                HTBTI.ElementInfo = EI;
+                HTMLLabelTreeItem HTBTI = new HTMLLabelTreeItem
+                {
+                    ElementInfo = EI
+                };
                 return HTBTI;
             }
             else if (EI.ElementTypeEnum == eElementType.ComboBox)
             {
-                HTMLComboBoxTreeItem HCBTI = new HTMLComboBoxTreeItem();
-                HCBTI.ElementInfo = EI;
+                HTMLComboBoxTreeItem HCBTI = new HTMLComboBoxTreeItem
+                {
+                    ElementInfo = EI
+                };
                 return HCBTI;
             }
             else if (EI.ElementTypeEnum == eElementType.Table)
             {
-                HTMLTableTreeItem HTTI = new HTMLTableTreeItem();
-                HTTI.ElementInfo = EI;
+                HTMLTableTreeItem HTTI = new HTMLTableTreeItem
+                {
+                    ElementInfo = EI
+                };
                 return HTTI;
             }
             else if (EI.ElementTypeEnum == eElementType.EditorTable)
             {
-                JEditorHTMLTableTreeItem HTTI = new JEditorHTMLTableTreeItem();
-                HTTI.ElementInfo = EI;
+                JEditorHTMLTableTreeItem HTTI = new JEditorHTMLTableTreeItem
+                {
+                    ElementInfo = EI
+                };
                 return HTTI;
             }
             else if (EI.ElementTypeEnum == eElementType.Div)
             {
-                HTMLDivTreeItem HTTI = new HTMLDivTreeItem();
-                HTTI.ElementInfo = EI;
+                HTMLDivTreeItem HTTI = new HTMLDivTreeItem
+                {
+                    ElementInfo = EI
+                };
                 return HTTI;
             }
             else if (EI.ElementTypeEnum == eElementType.Span)
             {
-                HTMLSpanTreeItem HTTI = new HTMLSpanTreeItem();
-                HTTI.ElementInfo = EI;
+                HTMLSpanTreeItem HTTI = new HTMLSpanTreeItem
+                {
+                    ElementInfo = EI
+                };
                 return HTTI;
             }
             else if (EI.ElementTypeEnum == eElementType.Image)
             {
-                HTMLImgTreeItem HTTI = new HTMLImgTreeItem();
-                HTTI.ElementInfo = EI;
+                HTMLImgTreeItem HTTI = new HTMLImgTreeItem
+                {
+                    ElementInfo = EI
+                };
                 return HTTI;
             }
             else if (EI.ElementTypeEnum == eElementType.CheckBox)
             {
-                HTMLCheckBoxTreeItem HCBTI = new HTMLCheckBoxTreeItem();
-                HCBTI.ElementInfo = EI;
+                HTMLCheckBoxTreeItem HCBTI = new HTMLCheckBoxTreeItem
+                {
+                    ElementInfo = EI
+                };
                 return HCBTI;
             }
             else if (EI.ElementTypeEnum == eElementType.RadioButton)
             {
-                HTMLRadioButtonTreeItem HTRBI = new HTMLRadioButtonTreeItem();
-                HTRBI.ElementInfo = EI;
+                HTMLRadioButtonTreeItem HTRBI = new HTMLRadioButtonTreeItem
+                {
+                    ElementInfo = EI
+                };
                 return HTRBI;
             }
             else if (EI.ElementTypeEnum == eElementType.Iframe)
             {
-                HTMLFrameTreeItem HTFI = new HTMLFrameTreeItem();
-                HTFI.ElementInfo = EI;
+                HTMLFrameTreeItem HTFI = new HTMLFrameTreeItem
+                {
+                    ElementInfo = EI
+                };
                 return HTFI;
             }
             else if (EI.ElementTypeEnum == eElementType.Canvas)
             {
-                HTMLCanvasTreeItem HTFI = new HTMLCanvasTreeItem();
-                HTFI.ElementInfo = EI;
+                HTMLCanvasTreeItem HTFI = new HTMLCanvasTreeItem
+                {
+                    ElementInfo = EI
+                };
                 return HTFI;
             }
             else
             {
                 // If not in above then put generic base
-                HTMLElementTreeItemBase h = new HTMLElementTreeItemBase();
-                h.ElementInfo = EI;
+                HTMLElementTreeItemBase h = new HTMLElementTreeItemBase
+                {
+                    ElementInfo = EI
+                };
                 return h;
             }
         }

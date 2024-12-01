@@ -320,7 +320,7 @@ namespace Ginger.Agents
             }
             List<AppWindow> winsList = null;
 
-            if (((AgentOperations)SelectedAgent.AgentOperations).Status == Agent.eStatus.Completed || ((AgentOperations)SelectedAgent.AgentOperations).Status == Agent.eStatus.Ready || ((AgentOperations)SelectedAgent.AgentOperations).Status == Agent.eStatus.Running)
+            if (((AgentOperations)SelectedAgent.AgentOperations).Status is Agent.eStatus.Completed or Agent.eStatus.Ready or Agent.eStatus.Running)
             {
                 winsList = ((IWindowExplorer)(((AgentOperations)SelectedAgent.AgentOperations).Driver)).GetAppWindows();
             }

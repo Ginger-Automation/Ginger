@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Ginger.UserControls;
+using Ginger.ValidationRules;
 using GingerCore;
 using GingerCore.GeneralLib;
 using System;
@@ -71,10 +72,18 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             //DriverConfigParam screenScaleFactorCorrectionX = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionX));
             //xScreenScaleFactorCorrectionXTextBox.Init(null, screenScaleFactorCorrectionX, nameof(DriverConfigParam.Value));
             //BindingHandler.ObjFieldBinding(xScreenScaleFactorCorrectionXTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionX)), nameof(DriverConfigParam.Description));
-            
+
             //DriverConfigParam screenScaleFactorCorrectionY = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionY));
             //xScreenScaleFactorCorrectionYTextBox.Init(null, screenScaleFactorCorrectionY, nameof(DriverConfigParam.Value));
             //BindingHandler.ObjFieldBinding(xScreenScaleFactorCorrectionYTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionY)), nameof(DriverConfigParam.Description));
+
+            DriverConfigParam screenshotHeight = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenshotHeight));
+            xScreenshotHeightTextBox.Init(null, screenshotHeight, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xScreenshotHeightTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenshotHeight)), nameof(DriverConfigParam.Description));
+
+            DriverConfigParam screenshotWidth = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenshotWidth));
+            xScreenshotWidthTextBox.Init(null, screenshotWidth, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xScreenshotWidthTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenshotWidth)), nameof(DriverConfigParam.Description));
 
             xLoadTimeoutTxtbox.Init(null, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Description));
@@ -86,12 +95,33 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             BindRadioButtons();
 
+            ApplyValidationRules();
+
             if (mAppiumCapabilities.MultiValues == null || mAppiumCapabilities.MultiValues.Count == 0)
             {
-                mAppiumCapabilities.MultiValues = new ObservableList<DriverConfigParam>();
+                mAppiumCapabilities.MultiValues = [];
                 AutoSetCapabilities(true);
             }
             SetCapabilitiesGridView();
+        }
+
+        private void ApplyValidationRules()
+        {
+            xServerURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("URL cannot be empty"));
+            xLoadTimeoutTxtbox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Load Timeout cannot be empty"));
+            xScreenshotHeightTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Height cannot be empty"));
+            xScreenshotWidthTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Width cannot be empty"));
+
+            CallConfigPropertyChange();
+        }
+
+        private void CallConfigPropertyChange()
+        {
+            // need in order to trigger the validation's rules 
+            mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.AppiumServer));
+            mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.LoadDeviceWindow));
+            mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.ScreenshotHeight));
+            mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.ScreenshotWidth));
         }
 
         private void BindRadioButtons()
@@ -126,13 +156,16 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         {
             xCapabilitiesGrid.SetTitleLightStyle = true;
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Parameter, Header = "Capability", WidthWeight = 20 });
-            view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Value, WidthWeight = 30 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["ParamValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Description, BindingMode = BindingMode.OneWay, WidthWeight = 45 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = DriverConfigParam.Fields.Parameter, Header = "Capability", WidthWeight = 20 },
+                new GridColView() { Field = DriverConfigParam.Fields.Value, WidthWeight = 30 },
+                new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["ParamValueExpressionButton"] },
+                new GridColView() { Field = DriverConfigParam.Fields.Description, BindingMode = BindingMode.OneWay, WidthWeight = 45 },
+            ]
+            };
 
             xCapabilitiesGrid.SetAllColumnsDefaultView(view);
             xCapabilitiesGrid.InitViewItems();
@@ -172,8 +205,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
             else if (mDeviceSource.Value == nameof(eDeviceSource.MicroFoucsUFTMLab) && !IsUFTCapabilityExist())
             {
-                DriverConfigParam uftAppiumVersion = new DriverConfigParam() { Parameter = "uftm:appiumVersion", Value ="v2.x", Description = "Appium server version to use in UFT '1.x' or '2.x'" };
-                DriverConfigParam uftClientId = new DriverConfigParam() { Parameter = "uftm:oauthClientId", Description= "UFT Execution key Client Id" };
+                DriverConfigParam uftAppiumVersion = new DriverConfigParam() { Parameter = "uftm:appiumVersion", Value = "v2.x", Description = "Appium server version to use in UFT '1.x' or '2.x'" };
+                DriverConfigParam uftClientId = new DriverConfigParam() { Parameter = "uftm:oauthClientId", Description = "UFT Execution key Client Id" };
                 DriverConfigParam uftClientSecret = new DriverConfigParam() { Parameter = "uftm:oauthClientSecret", Description = "UFT Execution key Client Password" };
                 DriverConfigParam uftTenantId = new DriverConfigParam() { Parameter = "uftm:tenantId", Value = "\"999999999\"", Description = "Default value (Need to change only when using UFT shared spaces))" };
 
@@ -190,7 +223,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 }
             }
             else if (mDeviceSource.Value == nameof(eDeviceSource.Kobiton) && !IsKobitonCapabilityExist())
-            {               
+            {
                 DriverConfigParam kobitonUserName = new DriverConfigParam() { Parameter = "username", Description = "Kobiton account User Name" };
                 DriverConfigParam kobitonAccessKey = new DriverConfigParam() { Parameter = "accessKey", Description = "Kobiton account Access Key" };
                 DriverConfigParam KobitonSessionName = new DriverConfigParam() { Parameter = "sessionName", Value = "Mobile testing via Ginger by Amdocs", Description = "Testing session name" };
@@ -356,7 +389,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             if (existingCap != null)
             {
                 mAppiumCapabilities.MultiValues.Remove(existingCap);
-            }            
+            }
         }
 
         private DriverConfigParam FindExistingCapability(string capabilityName)
@@ -496,7 +529,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             DeleteCapabilityIfExist("uftm:appiumVersion");
             DeleteCapabilityIfExist("uftm:oauthClientId");
             DeleteCapabilityIfExist("uftm:oauthClientSecret");
-            DeleteCapabilityIfExist("uftm:tenantId");            
+            DeleteCapabilityIfExist("uftm:tenantId");
         }
 
         private void DeleteKobitonServerCapabilities()

@@ -26,7 +26,6 @@ using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -46,13 +45,13 @@ namespace Ginger.ConflictResolve
             get => _currentTreeViewItem;
             set
             {
-                if(_currentTreeViewItem != null)
+                if (_currentTreeViewItem != null)
                 {
                     WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(_currentTreeViewItem, nameof(TreeViewItem.Expanded), TreeViewItem_ExpandedCollapsed);
                     WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(_currentTreeViewItem, nameof(TreeViewItem.Collapsed), TreeViewItem_ExpandedCollapsed);
                 }
                 _currentTreeViewItem = value;
-                if(_currentTreeViewItem != null)
+                if (_currentTreeViewItem != null)
                 {
                     WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(_currentTreeViewItem, nameof(TreeViewItem.Expanded), TreeViewItem_ExpandedCollapsed);
                     WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(_currentTreeViewItem, nameof(TreeViewItem.Collapsed), TreeViewItem_ExpandedCollapsed);
@@ -71,15 +70,15 @@ namespace Ginger.ConflictResolve
             }
             else
             {
-                _tviRepo.Add(_comparison, new List<ConflictComparisonTreeViewItem>() { this });
+                _tviRepo.Add(_comparison, [this]);
             }
         }
 
         private void TreeViewItem_ExpandedCollapsed(object? sender, RoutedEventArgs e)
         {
-            if(TreeViewItem != null && _tviRepo.TryGetValue(_comparison, out IList<ConflictComparisonTreeViewItem>? treeViewItems))
+            if (TreeViewItem != null && _tviRepo.TryGetValue(_comparison, out IList<ConflictComparisonTreeViewItem>? treeViewItems))
             {
-                foreach(ConflictComparisonTreeViewItem tvi in treeViewItems)
+                foreach (ConflictComparisonTreeViewItem tvi in treeViewItems)
                 {
                     if (tvi.TreeViewItem == null)
                     {
@@ -134,24 +133,19 @@ namespace Ginger.ConflictResolve
 
         private SolidColorBrush GetItemColor()
         {
-            switch (_comparison.State)
+            return _comparison.State switch
             {
-                case Comparison.StateType.Unmodified:
-                    return Brushes.Transparent;
-                case Comparison.StateType.Modified:
-                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FEFAD4"));
-                case Comparison.StateType.Added:
-                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#CAE9E6"));
-                case Comparison.StateType.Deleted:
-                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FCD8D6"));
-                default:
-                    throw new NotImplementedException();
-            }
+                Comparison.StateType.Unmodified => Brushes.Transparent,
+                Comparison.StateType.Modified => new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FEFAD4")),
+                Comparison.StateType.Added => new SolidColorBrush((Color)ColorConverter.ConvertFromString("#CAE9E6")),
+                Comparison.StateType.Deleted => new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FCD8D6")),
+                _ => throw new NotImplementedException(),
+            };
         }
 
         private CheckBox? GetItemSelectCheckBox()
         {
-            if (_comparison.State == Comparison.StateType.Unmodified || _comparison.State == Comparison.StateType.Modified)
+            if (_comparison.State is Comparison.StateType.Unmodified or Comparison.StateType.Modified)
             {
                 return null;
             }
@@ -163,12 +157,14 @@ namespace Ginger.ConflictResolve
                 return null;
             }
 
-            CheckBox itemSelectCheckbox = new();
-            itemSelectCheckbox.VerticalAlignment = System.Windows.VerticalAlignment.Center;
+            CheckBox itemSelectCheckbox = new()
+            {
+                VerticalAlignment = System.Windows.VerticalAlignment.Center
+            };
             BindingHandler.ObjFieldBinding(
-                frameworkElement: itemSelectCheckbox, 
-                dependencyProperty: CheckBox.IsCheckedProperty, 
-                obj: _comparison, 
+                frameworkElement: itemSelectCheckbox,
+                dependencyProperty: CheckBox.IsCheckedProperty,
+                obj: _comparison,
                 property: nameof(Comparison.Selected));
             BindingHandler.ObjFieldBinding(
                 frameworkElement: itemSelectCheckbox,
@@ -176,7 +172,7 @@ namespace Ginger.ConflictResolve
                 obj: _comparison,
                 property: nameof(Comparison.IsSelectionEnabled));
             itemSelectCheckbox.Tag = _comparison;
-            
+
             itemSelectCheckbox.Checked += CheckBox_CheckedUnchecked;
             itemSelectCheckbox.Unchecked += CheckBox_CheckedUnchecked;
 
@@ -243,8 +239,8 @@ namespace Ginger.ConflictResolve
 
         public bool IsExpandable()
         {
-            return 
-                _comparison.HasChildComparisons && 
+            return
+                _comparison.HasChildComparisons &&
                 _comparison.ChildComparisons.Any(childComparison => _childrenStateFilter.Contains(childComparison.State));
         }
 

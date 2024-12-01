@@ -64,7 +64,7 @@ namespace Ginger.Actions.Locators.ASCF
                 return null;
             }
 
-            List<ITreeViewItem> list = new List<ITreeViewItem>();
+            List<ITreeViewItem> list = [];
             foreach (ASCFBrowserElementInfo c in lst)
             {
                 //TODO: add more handlers
@@ -122,13 +122,15 @@ namespace Ginger.Actions.Locators.ASCF
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
+            ObservableList<Act> list = [];
 
-            ActASCFBrowserElement BC = new ActASCFBrowserElement();
-            BC.Description = "Set Active Browser";
-            BC.LocateBy = eLocateBy.ByName;
-            BC.LocateValue = Path;
-            BC.ControlAction = ActASCFBrowserElement.eControlAction.SetBrowserControl;
+            ActASCFBrowserElement BC = new ActASCFBrowserElement
+            {
+                Description = "Set Active Browser",
+                LocateBy = eLocateBy.ByName,
+                LocateValue = Path,
+                ControlAction = ActASCFBrowserElement.eControlAction.SetBrowserControl
+            };
             list.Add(BC);
 
             return list;
@@ -137,7 +139,7 @@ namespace Ginger.Actions.Locators.ASCF
         ObservableList<ControlProperty> IWindowExplorerTreeItem.GetElementProperties()
         {
             //TODO: temp solution fix me hard coded [0[]
-            ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
+            ObservableList<ControlProperty> list = [];
             return list;
         }
 

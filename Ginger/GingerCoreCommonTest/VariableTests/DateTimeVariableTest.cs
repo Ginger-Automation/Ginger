@@ -102,11 +102,13 @@ namespace GingerCoreCommonTest.VariableTests
         public void DateTimeVar_TestFormulaVal()
         {
             //Arrange
-            var variableDateTime = new VariableDateTime();
-            variableDateTime.Name = "test";
-            variableDateTime.Value = "123";
-            variableDateTime.InitialDateTime = DateTime.Now.ToString("dd/MMM/yyyy");
-            variableDateTime.DateTimeFormat = "dd/MMM/yyyy";
+            var variableDateTime = new VariableDateTime
+            {
+                Name = "test",
+                Value = "123",
+                InitialDateTime = DateTime.Now.ToString("dd/MMM/yyyy"),
+                DateTimeFormat = "dd/MMM/yyyy"
+            };
             //Act
             string formulaStr = variableDateTime.GetFormula();
 
@@ -120,9 +122,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void DateTimeVar_TestResetVal()
         {
             //Arrange
-            var variableDateTime = new VariableDateTime();
-            variableDateTime.Name = "test";
-            variableDateTime.Value = "23/04/2018";
+            var variableDateTime = new VariableDateTime
+            {
+                Name = "test",
+                Value = "23/04/2018"
+            };
 
             //Act
             variableDateTime.ResetValue();
@@ -136,9 +140,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void DateTimeVar_TestVal()
         {
             //Arrange
-            var variableDateTime = new VariableDateTime();
-            variableDateTime.Name = "test";
-            variableDateTime.Value = "23/04/2018";
+            var variableDateTime = new VariableDateTime
+            {
+                Name = "test",
+                Value = "23/04/2018"
+            };
 
             //Act
 
@@ -151,12 +157,14 @@ namespace GingerCoreCommonTest.VariableTests
         public void DateTimeVar_Test_SetValue()
         {
             //Arrange
-            var variableDateTime = new VariableDateTime();
-            variableDateTime.Name = "test";
-            variableDateTime.DateTimeFormat = "MMM dd, yyyy";
-            variableDateTime.MinDateTime = "Jan 21, 2010";
-            variableDateTime.MaxDateTime = "Jan 01, 2030";
-            variableDateTime.InitialDateTime = "Jan 01, 2025";
+            var variableDateTime = new VariableDateTime
+            {
+                Name = "test",
+                DateTimeFormat = "MMM dd, yyyy",
+                MinDateTime = "Jan 21, 2010",
+                MaxDateTime = "Jan 01, 2030",
+                InitialDateTime = "Jan 01, 2025"
+            };
 
             //Act
 
@@ -172,12 +180,14 @@ namespace GingerCoreCommonTest.VariableTests
         public void DateTimeVar_Negative_Format_Test_SetValue()
         {
             //Arrange
-            var variableDateTime = new VariableDateTime();
-            variableDateTime.Name = "test";
-            variableDateTime.DateTimeFormat = "MMM dd, yyyy";
-            variableDateTime.MinDateTime = "Jan 21, 2010";
-            variableDateTime.MaxDateTime = "Jan 01, 2030";
-            variableDateTime.InitialDateTime = "Jan 01, 2025";
+            var variableDateTime = new VariableDateTime
+            {
+                Name = "test",
+                DateTimeFormat = "MMM dd, yyyy",
+                MinDateTime = "Jan 21, 2010",
+                MaxDateTime = "Jan 01, 2030",
+                InitialDateTime = "Jan 01, 2025"
+            };
 
             //Act
 
@@ -192,12 +202,14 @@ namespace GingerCoreCommonTest.VariableTests
         public void DateTimeVar_Negative_Range_Test_SetValue()
         {
             //Arrange
-            var variableDateTime = new VariableDateTime();
-            variableDateTime.Name = "test";
-            variableDateTime.DateTimeFormat = "MMM dd, yyyy";
-            variableDateTime.MinDateTime = "Jan 21, 2010";
-            variableDateTime.MaxDateTime = "Jan 01, 2030";
-            variableDateTime.InitialDateTime = "Jan 01, 2025";
+            var variableDateTime = new VariableDateTime
+            {
+                Name = "test",
+                DateTimeFormat = "MMM dd, yyyy",
+                MinDateTime = "Jan 21, 2010",
+                MaxDateTime = "Jan 01, 2030",
+                InitialDateTime = "Jan 01, 2025"
+            };
 
             //Act
 

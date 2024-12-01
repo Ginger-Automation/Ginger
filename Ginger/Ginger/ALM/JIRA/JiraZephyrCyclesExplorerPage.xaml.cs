@@ -41,7 +41,7 @@ namespace Ginger.ALM.JIRA
         JiraZephyrCyclesCollection treeData;
 
         private ITreeViewItem mCurrentSelectedTreeItem = null;
-        ObservableList<JiraZephyrTreeItem> mCurrentSelectedObjects = new ObservableList<JiraZephyrTreeItem>();
+        ObservableList<JiraZephyrTreeItem> mCurrentSelectedObjects = [];
         object mCurrentSelectedObject = new object();
         private string mImportDestinationPath = string.Empty;
         private bool mParentSelectionMode = false;
@@ -73,9 +73,11 @@ namespace Ginger.ALM.JIRA
             JiraZephyrCyclesExplorerTreeView.Tree.ItemSelected += TestLabExplorerTreeView_ItemSelected;
             foreach (JiraZephyrRelease version in treeData.projectsReleasesList)
             {
-                JiraZephyrVersionTreeItem tvv = new JiraZephyrVersionTreeItem(version.releasesCycles);
-                tvv.Name = version.versionName;
-                tvv.VersionId = version.versionId;
+                JiraZephyrVersionTreeItem tvv = new JiraZephyrVersionTreeItem(version.releasesCycles)
+                {
+                    Name = version.versionName,
+                    VersionId = version.versionId
+                };
                 JiraZephyrCyclesExplorerTreeView.Tree.AddItem(tvv);
             }
 
@@ -103,18 +105,22 @@ namespace Ginger.ALM.JIRA
                     total += number;
                 }
             }
-            Label totalTcsNum = new Label();
-            totalTcsNum.Content = "Total Number of TC's: " + total;
-            totalTcsNum.Style = this.FindResource("@SmallerInputFieldLabelStyle") as Style;
-            totalTcsNum.Margin = new Thickness(0, 0, 0, 0);
+            Label totalTcsNum = new Label
+            {
+                Content = "Total Number of TC's: " + total,
+                Style = this.FindResource("@SmallerInputFieldLabelStyle") as Style,
+                Margin = new Thickness(0, 0, 0, 0)
+            };
             TSExecDetails.Children.Add(totalTcsNum);
 
             foreach (string[] detail in mExecDetailNames)
             {
-                Label StatusName = new Label();
-                StatusName.Content = detail[1] + " TC's in Status '" + detail[0] + "'";
-                StatusName.Style = this.FindResource("@SmallerInputFieldLabelStyle") as Style;
-                StatusName.Margin = new Thickness(0, 0, 0, 0);
+                Label StatusName = new Label
+                {
+                    Content = detail[1] + " TC's in Status '" + detail[0] + "'",
+                    Style = this.FindResource("@SmallerInputFieldLabelStyle") as Style,
+                    Margin = new Thickness(0, 0, 0, 0)
+                };
                 TSExecDetails.Children.Add(StatusName);
             }
         }
@@ -144,7 +150,7 @@ namespace Ginger.ALM.JIRA
                 {
                     // do nothing at this stage                    
                 }
-                if ((mCurrentSelectedTreeItem is JiraZephyrCycleTreeItem) || (mCurrentSelectedTreeItem is JiraZephyrFolderTreeItem))
+                if (mCurrentSelectedTreeItem is JiraZephyrCycleTreeItem or JiraZephyrFolderTreeItem)
                 {
                     CurrentSelectedObjects.Add((JiraZephyrTreeItem)mCurrentSelectedTreeItem);
                 }
@@ -185,18 +191,22 @@ namespace Ginger.ALM.JIRA
         {
             if (mParentSelectionMode)
             {
-                Button importBtn = new Button();
-                importBtn.Content = "Select";
+                Button importBtn = new Button
+                {
+                    Content = "Select"
+                };
                 importBtn.Click += new RoutedEventHandler(SelectFolder);
-                GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Select Path For Export", this, new ObservableList<Button> { importBtn }, true, "Cancel", Cancel_Clicked);
+                GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Select Path For Export", this, [importBtn], true, "Cancel", Cancel_Clicked);
                 return mCurrentSelectedObject;
             }
             else
             {
-                Button importBtn = new Button();
-                importBtn.Content = "Import Selected";
+                Button importBtn = new Button
+                {
+                    Content = "Import Selected"
+                };
                 importBtn.Click += new RoutedEventHandler(ImportSelected);
-                GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse JiraZephyr Cycles", this, new ObservableList<Button> { importBtn }, true, "Cancel", Cancel_Clicked);
+                GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse JiraZephyr Cycles", this, [importBtn], true, "Cancel", Cancel_Clicked);
                 return mCurrentSelectedObject;
             }
         }
@@ -217,7 +227,7 @@ namespace Ginger.ALM.JIRA
         {
             if (mCurrentSelectedTreeItem != null)
             {
-                if (ALMIntegration.Instance.ImportZephyrObject(mImportDestinationPath, (IEnumerable<object>)CurrentSelectedObjects))
+                if (ALMIntegration.Instance.ImportZephyrObject(mImportDestinationPath, CurrentSelectedObjects))
                 {
                     LoadDataBizFlows();
                     ShowCycleDetailsPanel(false);

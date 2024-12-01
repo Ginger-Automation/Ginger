@@ -46,13 +46,16 @@ namespace Ginger.ALM.Rally
 
         private void SetGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = RallyTestCase.Fields.RallyID, Header = "Test Case ID", WidthWeight = 7, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RallyTestCase.Fields.Name, Header = "Test Case Name", WidthWeight = 43, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RallyTestPlan.Fields.CreatedBy, Header = "Created By", WidthWeight = 25, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RallyTestPlan.Fields.CreationDate, Header = "Creation Date", WidthWeight = 25, ReadOnly = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = RallyTestCase.Fields.RallyID, Header = "Test Case ID", WidthWeight = 7, ReadOnly = true },
+                new GridColView() { Field = RallyTestCase.Fields.Name, Header = "Test Case Name", WidthWeight = 43, ReadOnly = true },
+                new GridColView() { Field = RallyTestPlan.Fields.CreatedBy, Header = "Created By", WidthWeight = 25, ReadOnly = true },
+                new GridColView() { Field = RallyTestPlan.Fields.CreationDate, Header = "Creation Date", WidthWeight = 25, ReadOnly = true },
+            ]
+            };
 
             grdRallyTestPlaneImportReview.SetAllColumnsDefaultView(view);
             grdRallyTestPlaneImportReview.InitViewItems();
@@ -67,12 +70,14 @@ namespace Ginger.ALM.Rally
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button importButton = new Button();
-            importButton.Content = "Import";
-            importButton.ToolTip = "Import current Test Plan's Test Cases with selected Test Scripts";
+            Button importButton = new Button
+            {
+                Content = "Import",
+                ToolTip = "Import current Test Plan's Test Cases with selected Test Scripts"
+            };
             importButton.Click += new RoutedEventHandler(ImportTestPlan);
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { importButton });
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, [importButton]);
         }
 
         private void RefreshGrid(object sender, RoutedEventArgs e)
@@ -87,8 +92,7 @@ namespace Ginger.ALM.Rally
 
         private void ImportTestPlan()
         {
-            ObservableList<Object> rqmTestPlanList = new ObservableList<Object>();
-            rqmTestPlanList.Add(mTestPlan);
+            ObservableList<Object> rqmTestPlanList = [mTestPlan];
 
             if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, rqmTestPlanList))
             {

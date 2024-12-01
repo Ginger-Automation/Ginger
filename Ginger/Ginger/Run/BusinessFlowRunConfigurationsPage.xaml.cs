@@ -18,25 +18,24 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using Ginger.Variables;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerCore.Variables;
-using GingerCoreNET.RosLynLib;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using Amdocs.Ginger.CoreNET;
-using GingerCore.GeneralLib;
-using System.Collections.Specialized;
-using System.Windows.Controls.Primitives;
 
 namespace Ginger.Run
 {
@@ -52,7 +51,7 @@ namespace Ginger.Run
         private eWindowMode mWindowMode;
 
         private BusinessFlow mBusinessFlow;
-        
+
         private BusinessFlowExecutionSummary mBusinessFlowExecSummary;
 
         public EventHandler EventRaiseVariableEdit;
@@ -99,7 +98,7 @@ namespace Ginger.Run
             UpdateFlowControlTabVisual();
             CollectionChangedEventManager.AddHandler(source: mBusinessFlow.BFFlowControls, handler: BFFlowControls_CollectionChanged);
 
-            bool editable = _viewMode != General.eRIPageViewMode.View && _viewMode != General.eRIPageViewMode.ViewAndExecute;
+            bool editable = _viewMode is not General.eRIPageViewMode.View and not General.eRIPageViewMode.ViewAndExecute;
             SetViewMode(editable);
         }
 
@@ -107,9 +106,9 @@ namespace Ginger.Run
         {
             if (EventRaiseVariableEdit != null)
             {
-                EventRaiseVariableEdit(null , null);
+                EventRaiseVariableEdit(null, null);
             }
-    
+
         }
 
         private void RunDescription_TextChanged(object sender, TextChangedEventArgs e)
@@ -157,14 +156,16 @@ namespace Ginger.Run
 
         private void SetVariablesGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Image), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Name), Header = "Name", WidthWeight = 20, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MandatoryIndication), Header = " ", WidthWeight = 1, ReadOnly = true, BindingMode = BindingMode.OneWay, Style = FindResource("$GridColumnRedTextStyle") as Style });
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Value), Header = "Initial Value", WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(VariableBase.Image), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 },
+                new GridColView() { Field = nameof(VariableBase.Name), Header = "Name", WidthWeight = 20, ReadOnly = true, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = nameof(VariableBase.MandatoryIndication), Header = " ", WidthWeight = 1, ReadOnly = true, BindingMode = BindingMode.OneWay, Style = FindResource("$GridColumnRedTextStyle") as Style },
+                new GridColView() { Field = nameof(VariableBase.Value), Header = "Initial Value", WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true },
+            ]
+            };
             if (mWindowMode == eWindowMode.Configuration)
             {
                 view.GridColsView.Add(new GridColView()
@@ -175,19 +176,19 @@ namespace Ginger.Run
                     CellTemplate = UCDataMapping.GetTemplate(new UCDataMapping.TemplateOptions(
                         dataTypeProperty: nameof(VariableBase.MappedOutputType),
                         dataValueProperty: nameof(VariableBase.MappedOutputValue))
-                        {
-                            _EnableDataMappingProperty = nameof(VariableBase.SupportSetValue),
-                            _VariabelsSourceProperty = nameof(VariableBase.PossibleVariables),
-                            _OutputVariabelsSourceProperty = nameof(VariableBase.PossibleOutputVariables),
-                            _RestrictedMappingTypes = new[]
+                    {
+                        _EnableDataMappingProperty = nameof(VariableBase.SupportSetValue),
+                        _VariabelsSourceProperty = nameof(VariableBase.PossibleVariables),
+                        _OutputVariabelsSourceProperty = nameof(VariableBase.PossibleOutputVariables),
+                        _RestrictedMappingTypes = new[]
                             {
                                 new UCDataMapping.RestrictedMappingType(
-                                    name: nameof(UCDataMapping.eDataType.Variable), 
+                                    name: nameof(UCDataMapping.eDataType.Variable),
                                     reason: "Variables are deprected for Mapped Runtime Value.")
                             }
-                        }),
+                    }),
                     WidthWeight = 40,
-                    
+
                 });
             }
             else if (mWindowMode == eWindowMode.SummaryView)
@@ -215,10 +216,12 @@ namespace Ginger.Run
                     processInputVariable = new ProcessInputVariableRule(mBusinessFlow, mGingerRunner);
                     grdVariables.Title = "'" + mBusinessFlow.Name + "' Run " + GingerDicser.GetTermResValue(eTermResKey.Variables);
                     ObservableList<VariableBase> bfInputVariables = mBusinessFlow.GetBFandActivitiesVariabeles(true, true);
-                    
+
                     //**Legacy--- set the Variabels can be used- user should use Global Variabels/ Output Variabels instead
-                    ObservableList<string> optionalVars = new ObservableList<string>();
-                    optionalVars.Add(string.Empty);//default value for clear selection
+                    ObservableList<string> optionalVars =
+                    [
+                        string.Empty,//default value for clear selection
+                    ];
                     foreach (VariableBase var in ((GingerExecutionEngine)mGingerRunner.Executor).GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, mBusinessFlow, includeGlobalVars: true, includePrevRunnersVars: false))
                     {
                         optionalVars.Add(var.Name);
@@ -233,11 +236,10 @@ namespace Ginger.Run
                     }
 
                     //Set Output Variabels can be used
-                    ObservableList<VariableBase> optionalOutputVars = new ObservableList<VariableBase>();
-                    foreach (VariableBase outputVar in ((GingerExecutionEngine)mGingerRunner.Executor).GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, mBusinessFlow, includeGlobalVars: false, includePrevRunnersVars: true))
-                    {
-                        optionalOutputVars.Add(outputVar);
-                    }
+                    ObservableList<VariableBase> optionalOutputVars =
+                    [
+                        .. ((GingerExecutionEngine)mGingerRunner.Executor).GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, mBusinessFlow, includeGlobalVars: false, includePrevRunnersVars: true),
+                    ];
                     //allow setting output vars options only to variables types which supports setting value
                     foreach (VariableBase inputVar in bfInputVariables)
                     {
@@ -246,8 +248,8 @@ namespace Ginger.Run
                             inputVar.PossibleOutputVariables = optionalOutputVars;
                         }
                     }
-                   
-                    processInputVariable.GetVariablesByRules(bfInputVariables);                    
+
+                    processInputVariable.GetVariablesByRules(bfInputVariables);
                     grdVariables.DataSourceList = VariableBase.SortByMandatoryInput(new ObservableList<VariableBase>(bfInputVariables));
                     break;
 
@@ -258,7 +260,7 @@ namespace Ginger.Run
             }
         }
 
-            
+
         private void CopyBusFlowVariables(object sender, RoutedEventArgs e)
         {
             if (grdVariables.CurrentItem != null)
@@ -292,7 +294,7 @@ namespace Ginger.Run
                                     }
                                     if (selectedVar.ParentType == "Activity")
                                     {
-                                        Activity a = (Activity)bf.GetActivity(selectedVar.ParentGuid);
+                                        Activity a = bf.GetActivity(selectedVar.ParentGuid);
                                         int indexSelected = a.Variables.IndexOf(matchingVar);
                                         a.Variables.Remove(matchingVar);
                                         a.Variables.Insert(indexSelected, copiedVar);
@@ -373,7 +375,7 @@ namespace Ginger.Run
 
         private void VariablesGrid_grdMain_MouseDoubleClick(object sender, EventArgs e)
         {
-            EditVar();            
+            EditVar();
         }
 
         private void EditVar()
@@ -389,36 +391,36 @@ namespace Ginger.Run
                 varToEdit.DiffrentFromOrigin = true;
                 if (EventRaiseVariableEdit != null)
                 {
-                    EventRaiseVariableEdit(null, null);                    
+                    EventRaiseVariableEdit(null, null);
                 }
-                
+
                 processInputVariable = new ProcessInputVariableRule(mBusinessFlow, mGingerRunner);
                 ObservableList<VariableBase> bfInputVariables = mBusinessFlow.GetBFandActivitiesVariabeles(true, true);
                 ResetVariableValuesToDefault(bfInputVariables);
                 processInputVariable.GetVariablesByRules(bfInputVariables);
-                grdVariables.DataSourceList = VariableBase.SortByMandatoryInput(new ObservableList<VariableBase>(bfInputVariables));                
+                grdVariables.DataSourceList = VariableBase.SortByMandatoryInput(new ObservableList<VariableBase>(bfInputVariables));
             }
 
-            UpdateEditVariablesTabVisual();            
+            UpdateEditVariablesTabVisual();
         }
-        
+
         private void ResetVariableValuesToDefault(ObservableList<VariableBase> bfInputVariables)
-        {          
+        {
             //Revert selection list optional values to original list. 
             BusinessFlow cachedBusinessFlow = WorkSpace.Instance?.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(mBusinessFlow.Guid);
             ObservableList<VariableBase> cachedVariables = cachedBusinessFlow.GetBFandActivitiesVariabeles(true);
             foreach (VariableBase variable in bfInputVariables)
             {
                 VariableBase vb = cachedVariables.FirstOrDefault(x => x.Guid == variable.Guid);
-                if (vb !=null && vb.GetType() == typeof(VariableSelectionList))
+                if (vb != null && vb.GetType() == typeof(VariableSelectionList))
                 {
-                    ((VariableSelectionList)variable).OptionalValuesList = new ObservableList<OptionalValue>();
+                    ((VariableSelectionList)variable).OptionalValuesList = [];
                     foreach (OptionalValue values in ((VariableSelectionList)vb).OptionalValuesList)
                     {
                         ((VariableSelectionList)variable).OptionalValuesList.Add(new OptionalValue(values.Value));
-                    }                   
-                }     
-            }        
+                    }
+                }
+            }
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
@@ -426,15 +428,17 @@ namespace Ginger.Run
             switch (mWindowMode)
             {
                 case eWindowMode.Configuration:
-                    Button okBtn = new Button();
-                    okBtn.Content = "Ok";
+                    Button okBtn = new Button
+                    {
+                        Content = "Ok"
+                    };
                     WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: okBtn_Click);
-                    Button undoBtn = new Button();
-                    undoBtn.Content = "Undo & Close";
+                    Button undoBtn = new Button
+                    {
+                        Content = "Undo & Close"
+                    };
                     WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoBtn, eventName: nameof(ButtonBase.Click), handler: undoBtn_Click);
-                    ObservableList<Button> winButtons = new ObservableList<Button>();
-                    winButtons.Add(okBtn);
-                    winButtons.Add(undoBtn);
+                    ObservableList<Button> winButtons = [okBtn, undoBtn];
 
                     this.Width = 800;
                     this.Height = 800;
@@ -644,6 +648,6 @@ namespace Ginger.Run
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error in " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Configuration Page tabs style", ex);
             }
-        }     
+        }
     }
 }

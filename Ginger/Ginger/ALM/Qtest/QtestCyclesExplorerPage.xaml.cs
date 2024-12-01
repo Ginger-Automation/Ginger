@@ -42,7 +42,7 @@ namespace Ginger.ALM.Qtest
 
         private ITreeViewItem mCurrentSelectedTreeItem = null;
         public string CurrentSelectedPath { get; set; }
-        ObservableList<QtestSuiteTreeItem> mCurrentSelectedTestSuites = new ObservableList<QtestSuiteTreeItem>();
+        ObservableList<QtestSuiteTreeItem> mCurrentSelectedTestSuites = [];
         object mCurrentSelectedObject = new object();
 
         public ObservableList<QtestSuiteTreeItem> CurrentSelectedTestSuites
@@ -74,16 +74,18 @@ namespace Ginger.ALM.Qtest
             QtestCyclesExplorerTreeView.Tree.ItemSelected += TestLabExplorerTreeView_ItemSelected;
             foreach (QTestAPIStdModel.TestCycleResource cycle in treeData)
             {
-                QtestCycleTreeItem tvi = new QtestCycleTreeItem(cycle.TestCycles, cycle.TestSuites);
-                tvi.Name = cycle.Name.ToString();
-                tvi.ID = cycle.Id.ToString();
-                tvi.Path = cycle.Path.ToString();
+                QtestCycleTreeItem tvi = new QtestCycleTreeItem(cycle.TestCycles, cycle.TestSuites)
+                {
+                    Name = cycle.Name.ToString(),
+                    ID = cycle.Id.ToString(),
+                    Path = cycle.Path.ToString()
+                };
                 QtestCyclesExplorerTreeView.Tree.AddItem(tvi);
             }
 
             LoadDataBizFlows();
 
-            mExecDetailNames = new List<string[]>();
+            mExecDetailNames = [];
 
             ShowTestSetDetailsPanel(false);
         }
@@ -108,18 +110,22 @@ namespace Ginger.ALM.Qtest
                     total += number;
                 }
             }
-            Label totalTcsNum = new Label();
-            totalTcsNum.Content = "Total Number of TC's: " + total;
-            totalTcsNum.Style = this.FindResource("@SmallerInputFieldLabelStyle") as Style;
-            totalTcsNum.Margin = new Thickness(0, 0, 0, 0);
+            Label totalTcsNum = new Label
+            {
+                Content = "Total Number of TC's: " + total,
+                Style = this.FindResource("@SmallerInputFieldLabelStyle") as Style,
+                Margin = new Thickness(0, 0, 0, 0)
+            };
             TSExecDetails.Children.Add(totalTcsNum);
 
             foreach (string[] detail in mExecDetailNames)
             {
-                Label StatusName = new Label();
-                StatusName.Content = detail[1] + " TC's in Status '" + detail[0] + "'";
-                StatusName.Style = this.FindResource("@SmallerInputFieldLabelStyle") as Style;
-                StatusName.Margin = new Thickness(0, 0, 0, 0);
+                Label StatusName = new Label
+                {
+                    Content = detail[1] + " TC's in Status '" + detail[0] + "'",
+                    Style = this.FindResource("@SmallerInputFieldLabelStyle") as Style,
+                    Margin = new Thickness(0, 0, 0, 0)
+                };
                 TSExecDetails.Children.Add(StatusName);
             }
         }
@@ -186,18 +192,22 @@ namespace Ginger.ALM.Qtest
         {
             if (mParentSelectionMode)
             {
-                Button importBtn = new Button();
-                importBtn.Content = "Select";
+                Button importBtn = new Button
+                {
+                    Content = "Select"
+                };
                 importBtn.Click += new RoutedEventHandler(SelectFolder);
-                GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Select Path For Export", this, new ObservableList<Button> { importBtn }, true, "Cancel", Cancel_Clicked);
+                GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Select Path For Export", this, [importBtn], true, "Cancel", Cancel_Clicked);
                 return mCurrentSelectedObject;
             }
             else
             {
-                Button importBtn = new Button();
-                importBtn.Content = "Import Selected";
+                Button importBtn = new Button
+                {
+                    Content = "Import Selected"
+                };
                 importBtn.Click += new RoutedEventHandler(ImportSelected);
-                GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse Qtest Cycles", this, new ObservableList<Button> { importBtn }, true, "Cancel", Cancel_Clicked);
+                GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse Qtest Cycles", this, [importBtn], true, "Cancel", Cancel_Clicked);
                 return CurrentSelectedTestSuites;
             }
         }
@@ -218,7 +228,7 @@ namespace Ginger.ALM.Qtest
         {
             if (mCurrentSelectedTreeItem != null)
             {
-                if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, (IEnumerable<object>)CurrentSelectedTestSuites))
+                if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, CurrentSelectedTestSuites))
                 {
                     LoadDataBizFlows();
                     ShowTestSetDetailsPanel(false);

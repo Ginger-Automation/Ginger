@@ -56,19 +56,17 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-
-            //Add Activities Groups
-            Childrens.Add(new SharedActivitiesGroupsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>()));
-
-            //Add Activities
-            Childrens.Add(new SharedActivitiesFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>()));
-
-            // Add Actions
-            Childrens.Add(new SharedActionsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>()));
-
-            //Add Variables
-            Childrens.Add(new SharedVariablesFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>()));
+            List<ITreeViewItem> Childrens =
+            [
+                //Add Activities Groups
+                new SharedActivitiesGroupsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>()),
+                //Add Activities
+                new SharedActivitiesFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>()),
+                // Add Actions
+                new SharedActionsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>()),
+                //Add Variables
+                new SharedVariablesFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>()),
+            ];
 
             return Childrens;
         }

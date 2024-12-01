@@ -46,13 +46,17 @@ namespace Ginger.ALM.JIRA
 
         private void SetGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = JiraTestSet.Fields.JiraID, Header = "Test Set ID", WidthWeight = 15, ReadOnly = true, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = JiraTestSet.Fields.Name, Header = "Test Set Name", ReadOnly = true, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = JiraTestSet.Fields.CreatedBy, Header = "Created By", WidthWeight = 25, ReadOnly = true, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = JiraTestSet.Fields.CreationDate, Header = "Creation Date", WidthWeight = 25, ReadOnly = true, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = "Import Test Set", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ImportButton"] });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = JiraTestSet.Fields.JiraID, Header = "Test Set ID", WidthWeight = 15, ReadOnly = true, AllowSorting = true },
+                new GridColView() { Field = JiraTestSet.Fields.Name, Header = "Test Set Name", ReadOnly = true, AllowSorting = true },
+                new GridColView() { Field = JiraTestSet.Fields.CreatedBy, Header = "Created By", WidthWeight = 25, ReadOnly = true, AllowSorting = true },
+                new GridColView() { Field = JiraTestSet.Fields.CreationDate, Header = "Creation Date", WidthWeight = 25, ReadOnly = true, AllowSorting = true },
+                new GridColView() { Field = "Import Test Set", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ImportButton"] },
+            ]
+            };
             grdJiraTestSets.SetAllColumnsDefaultView(view);
             grdJiraTestSets.InitViewItems();
 
@@ -103,8 +107,7 @@ namespace Ginger.ALM.JIRA
 
             if (ALMIntegration.Instance.ShowImportReviewPage(mImportDestinationPath, grdJiraTestSets.CurrentItem) == true)
             {
-                ObservableList<Object> jiraTestSetList = new ObservableList<Object>();
-                jiraTestSetList.Add(mTestSet);
+                ObservableList<Object> jiraTestSetList = [mTestSet];
 
                 if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, jiraTestSetList) == true)
                 {
@@ -120,7 +123,7 @@ namespace Ginger.ALM.JIRA
 
         private void ImportTestSet(object sender)
         {
-            ObservableList<JiraTestSet> jiraTestSetList = new ObservableList<JiraTestSet>();
+            ObservableList<JiraTestSet> jiraTestSetList = [];
             if (grdJiraTestSets.CurrentItem == null)
             {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);

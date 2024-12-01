@@ -33,7 +33,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
     {
         private static NewRepositorySerializer RS = new NewRepositorySerializer();
         private static BusinessFlow businessFlow = new BusinessFlow();
-        static ObservableList<VariableBase> varList = new ObservableList<VariableBase>();
+        static ObservableList<VariableBase> varList = [];
 
         public VariableBase Var { get; set; } = null;
         public static BusinessFlow BusinessFlow { get => businessFlow; set => businessFlow = value; }

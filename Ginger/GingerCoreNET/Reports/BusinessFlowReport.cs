@@ -245,7 +245,7 @@ namespace Ginger.Reports
                 {
                     if (mActivities == null)
                     {
-                        mActivities = new List<ActivityReport>();
+                        mActivities = [];
                         // TODO: Load in parallel and verify we keep the original order
 
                         foreach (string folder in System.IO.Directory.GetDirectories(LogFolder))
@@ -272,26 +272,28 @@ namespace Ginger.Reports
                     if (_showAllIterationsElements)
                     {
                         var activitiesSortedBySeq = mActivities.OrderBy(item => item.Seq);
-                        return (List<ActivityReport>)activitiesSortedBySeq.ToList();
+                        return activitiesSortedBySeq.ToList();
                     }
                     else
                     {
                         var activitiesLastIterationsSortedBySeq = mActivities.GroupBy(x => x.SourceGuid).Select(x => x.Last()).OrderBy(item => item.Seq);
-                        return (List<ActivityReport>)activitiesLastIterationsSortedBySeq.ToList();
+                        return activitiesLastIterationsSortedBySeq.ToList();
                     }
                 }
                 else
                 {
                     // below is the old way which is not history //TODO: Delete when flag above is obsolete
-                    List<ActivityReport> list = new List<ActivityReport>();
+                    List<ActivityReport> list = [];
                     int i = 0;
                     if (mBusinessFlow.Activities != null)
                     {
                         foreach (Activity activity in mBusinessFlow.Activities)
                         {
                             i++;
-                            ActivityReport ar = new ActivityReport(activity);
-                            ar.Seq = i;
+                            ActivityReport ar = new ActivityReport(activity)
+                            {
+                                Seq = i
+                            };
                             list.Add(ar);
                         }
                     }
@@ -308,7 +310,7 @@ namespace Ginger.Reports
             {
                 if (mActivitiesGroups == null)
                 {
-                    mActivitiesGroups = new List<ActivityGroupReport>();
+                    mActivitiesGroups = [];
                     try
                     {
                         string[] linesActivityGroup = System.IO.File.ReadAllLines(LogFolder + @"\ActivityGroups.txt");
@@ -332,13 +334,15 @@ namespace Ginger.Reports
         {
             get
             {
-                List<VariableReport> list = new List<VariableReport>();
+                List<VariableReport> list = [];
                 int i = 0;
                 foreach (VariableBase v in mBusinessFlow.Variables)
                 {
                     i++;
-                    VariableReport VR = new VariableReport(v);
-                    VR.Seq = i;
+                    VariableReport VR = new VariableReport(v)
+                    {
+                        Seq = i
+                    };
                     list.Add(VR);
                 }
 
@@ -365,7 +369,7 @@ namespace Ginger.Reports
             {
                 if (this.ExecutionLoggerIsEnabled)
                 {
-                    return Activities.Count(x=> (Amdocs.Ginger.CoreNET.Execution.eRunStatus)Enum.Parse(typeof(Amdocs.Ginger.CoreNET.Execution.eRunStatus), x.RunStatus) == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);                    
+                    return Activities.Count(x => (Amdocs.Ginger.CoreNET.Execution.eRunStatus)Enum.Parse(typeof(Amdocs.Ginger.CoreNET.Execution.eRunStatus), x.RunStatus) == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
                 }
                 else
                 {
@@ -380,11 +384,11 @@ namespace Ginger.Reports
             {
                 if (this.ExecutionLoggerIsEnabled)
                 {
-                    return Activities.Count(x => (Amdocs.Ginger.CoreNET.Execution.eRunStatus)Enum.Parse(typeof(Amdocs.Ginger.CoreNET.Execution.eRunStatus), x.RunStatus) == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed);                  
+                    return Activities.Count(x => (Amdocs.Ginger.CoreNET.Execution.eRunStatus)Enum.Parse(typeof(Amdocs.Ginger.CoreNET.Execution.eRunStatus), x.RunStatus) == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed);
                 }
                 else
                 {
-                    return mBusinessFlow.Activities.Count(x=> x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed);                    
+                    return mBusinessFlow.Activities.Count(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed);
                 }
             }
         }
@@ -401,7 +405,7 @@ namespace Ginger.Reports
         {
             get
             {
-                return TotalActivities - TotalActivitiesFailed - TotalActivitiesPassed - TotalActivitiesStopped;                
+                return TotalActivities - TotalActivitiesFailed - TotalActivitiesPassed - TotalActivitiesStopped;
             }
         }
 
@@ -428,7 +432,7 @@ namespace Ginger.Reports
         public double OtherPercent { get { return Activities.Count != 0 ? Math.Round((double)TotalActivitiesOther * 100 / Activities.Count, MidpointRounding.AwayFromZero) + AddOnePercent(ActStatus.Other) : 0; } }
 
         [JsonProperty]
-        public List<string> VariablesBeforeExec { get; set; } = new List<string>();
+        public List<string> VariablesBeforeExec { get; set; } = [];
 
         [JsonProperty]
         public List<string> VariablesAfterExec
@@ -443,7 +447,7 @@ namespace Ginger.Reports
             }
             set { variablesAfterExec = value; }
         }
-        private List<string> variablesAfterExec = new List<string>();
+        private List<string> variablesAfterExec = [];
 
         [FieldParams]
         [FieldParamsNameCaption("Variables Details")]

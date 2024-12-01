@@ -104,16 +104,20 @@ namespace Ginger.Reports
         public static List<HTMLReportTemplate> GetInternalTemplates()
         {
             var list = new List<HTMLReportTemplate>();
-            var RT1 = new HTMLReportTemplate();
-            RT1.Name = "Summary HTML Report";
-            RT1.Description = "aaa";
-            RT1.HTML = GetInternalReportHTML("SummaryHTMLReport.html");
+            var RT1 = new HTMLReportTemplate
+            {
+                Name = "Summary HTML Report",
+                Description = "aaa",
+                HTML = GetInternalReportHTML("SummaryHTMLReport.html")
+            };
             list.Add(RT1);
 
-            var RT2 = new HTMLReportTemplate();
-            RT2.Name = "Skeleton for Customized HTML Report";
-            RT2.Description = "aaa";
-            RT2.HTML = GetInternalReportHTML("SkeletonHTMLReport.html");
+            var RT2 = new HTMLReportTemplate
+            {
+                Name = "Skeleton for Customized HTML Report",
+                Description = "aaa",
+                HTML = GetInternalReportHTML("SkeletonHTMLReport.html")
+            };
             list.Add(RT2);
             return list;
         }

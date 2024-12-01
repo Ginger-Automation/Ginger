@@ -138,41 +138,24 @@ namespace Ginger
         {
             Agent zAgent = (Agent)agent;
 
-            switch (zAgent.DriverType)
+            return zAgent.DriverType switch
             {
-                case eDriverType.InternalBrowser:
-                    return (typeof(InternalBrowser));
-                case eDriverType.Selenium:
-                    return (typeof(SeleniumDriver));
-                case eDriverType.Playwright:
-                    return typeof(PlaywrightDriver);
-                case eDriverType.ASCF:
-                    return (typeof(ASCFDriver));
-                case eDriverType.DOSConsole:
-                    return (typeof(DOSConsoleDriver));
-                case eDriverType.UnixShell:
-                    return (typeof(UnixShellDriver));
-                case eDriverType.PowerBuilder:
-                    return (typeof(PBDriver));
-                case eDriverType.WindowsAutomation:
-                    return (typeof(WindowsDriver));
-                case eDriverType.WebServices:
-                    return (typeof(WebServicesDriver));
-                case eDriverType.JavaDriver:
-                    return (typeof(JavaDriver));
-                case eDriverType.MainFrame3270:
-                    return (typeof(MainFrameDriver));
-
+                eDriverType.InternalBrowser => (typeof(InternalBrowser)),
+                eDriverType.Selenium => (typeof(SeleniumDriver)),
+                eDriverType.Playwright => typeof(PlaywrightDriver),
+                eDriverType.ASCF => (typeof(ASCFDriver)),
+                eDriverType.DOSConsole => (typeof(DOSConsoleDriver)),
+                eDriverType.UnixShell => (typeof(UnixShellDriver)),
+                eDriverType.PowerBuilder => (typeof(PBDriver)),
+                eDriverType.WindowsAutomation => (typeof(WindowsDriver)),
+                eDriverType.WebServices => (typeof(WebServicesDriver)),
+                eDriverType.JavaDriver => (typeof(JavaDriver)),
+                eDriverType.MainFrame3270 => (typeof(MainFrameDriver)),
                 //case Agent.eDriverType.AndroidADB:
                 //    return (typeof(AndroidADBDriver));                    
-
-                case eDriverType.Appium:
-                    return (typeof(GenericAppiumDriver));
-
-                default:
-                    throw new Exception("GetDriverType: Unknown Driver type " + zAgent.DriverType);
-
-            }
+                eDriverType.Appium => (typeof(GenericAppiumDriver)),
+                _ => throw new Exception("GetDriverType: Unknown Driver type " + zAgent.DriverType),
+            };
         }
 
         AutoRunWindow mAutoRunWindow;
@@ -337,15 +320,17 @@ namespace Ginger
         public void CreateChart(List<KeyValuePair<int, int>> y, string chartName, string Title, string tempFolder)
         {
             Chart Chart1 = new Chart();
-            List<string> x = new List<string>() { "Passed", "Failed", "Stopped", "Other" };
+            List<string> x = ["Passed", "Failed", "Stopped", "Other"];
             List<int> yList = (from ylist in y select ylist.Key).ToList();
             int xAxis = 0;
             string total = "";
             Chart1.BackColor = Color.AliceBlue;
             Chart1.BackColor = Color.White;
             Chart1.Series.Add(new Series());
-            ChartArea a1 = new ChartArea();
-            a1.Name = "Area";
+            ChartArea a1 = new ChartArea
+            {
+                Name = "Area"
+            };
             Chart1.ChartAreas.Add(a1);
             a1.InnerPlotPosition = new ElementPosition(12, 10, 78, 78);
             Chart1.Series[0].ChartArea = "Area";
@@ -477,7 +462,7 @@ namespace Ginger
             {
                 foreach (KeyValuePair<Guid, string> defectOpeningResult in defectsOpeningResults)
                 {
-                    if ((defectOpeningResult.Value != null) && (defectOpeningResult.Value != "0"))
+                    if (defectOpeningResult.Value is not null and not "0")
                     {
                         WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.DefectSuggestionGuid == defectOpeningResult.Key).ToList().ForEach(z => { z.ALMDefectID = defectOpeningResult.Value; z.IsOpenDefectFlagEnabled = false; });
                     }

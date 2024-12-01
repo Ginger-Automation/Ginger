@@ -111,8 +111,7 @@ namespace GingerCore.Variables
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
-            List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
-            supportedOperations.Add(VariableBase.eSetValueOptions.AutoGenerateValue);
+            List<VariableBase.eSetValueOptions> supportedOperations = [VariableBase.eSetValueOptions.AutoGenerateValue];
             return supportedOperations;
         }
 

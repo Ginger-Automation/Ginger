@@ -152,7 +152,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
             if (XDL == null)
             {
-                XDL = new List<JsonExtended>();
+                XDL = [];
             }
 
 
@@ -172,7 +172,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
         public IEnumerable<JsonExtended> GetEndingNodes(bool IncludeSelfClosingTags = true)
         {
-            List<JsonExtended> mEndingnodes = new List<JsonExtended>();
+            List<JsonExtended> mEndingnodes = [];
 
             var Jpropertytype = typeof(JProperty);
 
@@ -194,7 +194,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
         #region Private
 
 
-        private List<JsonExtended> ChildNodes = new List<JsonExtended>();
+        private List<JsonExtended> ChildNodes = [];
 
         private void BuildThisNode(JEnumerable<JToken> JTl)
         {
@@ -231,7 +231,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
         public List<JToken> FindTokens(string name)
         {
-            List<JToken> matches = new List<JToken>();
+            List<JToken> matches = [];
             FindTokens(JT, name, matches);
             return matches;
         }

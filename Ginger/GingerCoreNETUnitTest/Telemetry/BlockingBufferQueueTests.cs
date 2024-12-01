@@ -35,7 +35,7 @@ namespace GingerCoreNETUnitTest.Telemetry
             int eachTaskItemCount = 20;
             Task[] tasks = new Task[parallelTaskCount];
             Random random = new();
-            for(int index = 0; index < parallelTaskCount; index++)
+            for (int index = 0; index < parallelTaskCount; index++)
             {
                 tasks[index] = new(() =>
                 {
@@ -45,8 +45,8 @@ namespace GingerCoreNETUnitTest.Telemetry
                     }
                 });
             }
-            
-            foreach(Task task in tasks)
+
+            foreach (Task task in tasks)
             {
                 task.Start();
             }
@@ -99,7 +99,7 @@ namespace GingerCoreNETUnitTest.Telemetry
             {
                 await taskToWait.WaitAsync(timeout);
             }
-            catch {}
+            catch { }
         }
 
         #region Flaky Tests Group 1

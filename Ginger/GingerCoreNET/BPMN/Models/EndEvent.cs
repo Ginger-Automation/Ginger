@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
             EndEventType = endEventType;
             Name = name;
             ProcessId = processId;
-            IncomingFlows = new();
+            IncomingFlows = [];
         }
     }
 }

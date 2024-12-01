@@ -18,13 +18,11 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using GingerCoreNET.GenAIServices;
 using Ginger;
 using Ginger.Extensions;
+using GingerCoreNET.GenAIServices;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Dynamic.Core.Tokenizer;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -32,8 +30,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using NJsonSchema.Infrastructure;
-using Ginger.Configurations;
 
 namespace Amdocs.Ginger.UserControls
 {
@@ -81,7 +77,7 @@ namespace Amdocs.Ginger.UserControls
             }
             if (userName.Length > 10)
             {
-                userName = userName.Substring(0, 7) + "...";
+                userName = userName[..7] + "...";
             }
 
             return userName;
@@ -116,7 +112,7 @@ namespace Amdocs.Ginger.UserControls
 
                 if (chatPanel.Children.Count == 1)
                 {
-                   
+
                     answer = await genAIServiceHelper.StartNewChat(userInput);
                 }
                 else
@@ -124,8 +120,8 @@ namespace Amdocs.Ginger.UserControls
                     answer = await genAIServiceHelper.ContinueChat(userInput);
                 }
 
-                if(answer == null)
-                {                    
+                if (answer == null)
+                {
                     answer = "Sorry, seems like there is an issue, i'm not able to reply, please check it with support team.";
                 }
             }
@@ -155,7 +151,7 @@ namespace Amdocs.Ginger.UserControls
 
             TextBlock messageText = new TextBlock
             {
-                Text = isUserMessage ? message: "",
+                Text = isUserMessage ? message : "",
                 //Background = isUserMessage ? System.Windows.Media.Brushes.LightBlue : System.Windows.Media.Brushes.LightGray,
                 Padding = new Thickness(10),
                 MaxWidth = 315,
@@ -321,8 +317,7 @@ namespace Amdocs.Ginger.UserControls
 
         private void xUserInputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            System.Windows.Controls.TextBox textBox = sender as System.Windows.Controls.TextBox;
-            if (textBox != null)
+            if (sender is System.Windows.Controls.TextBox textBox)
             {
                 TextBlock placeholder = FindPlaceholder(textBox);
                 if (placeholder != null)

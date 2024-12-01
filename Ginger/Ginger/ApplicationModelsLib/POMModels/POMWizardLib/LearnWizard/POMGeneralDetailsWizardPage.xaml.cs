@@ -109,9 +109,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void xBrowseImageLoadButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog();
-            op.Title = "Select a picture";
-            op.Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg";
+            System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog
+            {
+                Title = "Select a picture",
+                Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg"
+            };
             if (op.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 var fileLength = new FileInfo(op.FileName).Length;

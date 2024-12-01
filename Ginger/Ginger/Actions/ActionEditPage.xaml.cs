@@ -56,7 +56,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using static GingerCore.Actions.Act;
-using Amdocs.Ginger.UserControls;
 
 namespace Ginger.Actions
 {
@@ -88,13 +87,13 @@ namespace Ginger.Actions
 
         private static readonly List<ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForCombo(typeof(eOperator));
 
-        ObservableList<DataSourceBase> mDSList = new ObservableList<DataSourceBase>();
-        ObservableList<DataSourceTable> mDSTableList = new ObservableList<DataSourceTable>();
-        List<string> mDSNames = new List<string>();
+        ObservableList<DataSourceBase> mDSList = [];
+        ObservableList<DataSourceTable> mDSTableList = [];
+        List<string> mDSNames = [];
         private DataSourceTable mDSTable;
         private string mDataSourceName;
         List<String> mColNames = null!;
-        ObservableList<String> mStoreToVarsList = new ObservableList<string>();
+        ObservableList<String> mStoreToVarsList = [];
 
         private BusinessFlow mActParentBusinessFlow = null!;
         private Activity mActParentActivity = null!;
@@ -136,7 +135,7 @@ namespace Ginger.Actions
             {
                 if (mArtifactsItems == null)
                 {
-                    mArtifactsItems = new ObservableList<UCArtifact>();
+                    mArtifactsItems = [];
                 }
                 return mArtifactsItems;
             }
@@ -167,7 +166,7 @@ namespace Ginger.Actions
 
             mAction = act;
             mAction.PauseDirtyTracking();
-            if (editMode != General.eRIPageViewMode.View && editMode != General.eRIPageViewMode.ViewAndExecute && editMode != General.eRIPageViewMode.Explorer)
+            if (editMode is not General.eRIPageViewMode.View and not General.eRIPageViewMode.ViewAndExecute and not General.eRIPageViewMode.Explorer)
             {
                 mAction.SaveBackup();
             }
@@ -211,7 +210,7 @@ namespace Ginger.Actions
             }
             else if (mAction.Context != null && mContext.Activity != null)
             {
-                mActParentActivity = (Activity)mContext.Activity;
+                mActParentActivity = mContext.Activity;
             }
 
             GingerHelpProvider.SetHelpString(this, act.ActionDescription);
@@ -282,9 +281,9 @@ namespace Ginger.Actions
 
             IsPageClosing = false;
 
-            mDSList = new ObservableList<DataSourceBase>();
-            mDSTableList = new ObservableList<DataSourceTable>();
-            mDSNames = new List<string>();
+            mDSList = [];
+            mDSTableList = [];
+            mDSNames = [];
             mColNames = null!;
             xOutputValuesGrid.DataSourceList = new ObservableList<ActReturnValue>();
             mStoreToVarsList.Clear();
@@ -309,7 +308,7 @@ namespace Ginger.Actions
                 mAction.AddNewReturnParams = true;
             }
 
-            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View || EditMode == General.eRIPageViewMode.ViewAndExecute || EditMode == General.eRIPageViewMode.Explorer)
+            if (EditMode is General.eRIPageViewMode.Automation or General.eRIPageViewMode.View or General.eRIPageViewMode.ViewAndExecute or General.eRIPageViewMode.Explorer)
             {
                 BindingHandler.ObjFieldBinding(xExecutionStatusTabImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
             }
@@ -318,7 +317,7 @@ namespace Ginger.Actions
                 xExecutionStatusTabImage.Visibility = Visibility.Collapsed;
             }
 
-            if (EditMode == General.eRIPageViewMode.View || EditMode == General.eRIPageViewMode.ViewAndExecute)
+            if (EditMode is General.eRIPageViewMode.View or General.eRIPageViewMode.ViewAndExecute)
             {
                 SetViewMode();
             }
@@ -534,7 +533,7 @@ namespace Ginger.Actions
                 xOutputValuesExpander.IsExpanded = true;
             }
 
-            if (EditMode == General.eRIPageViewMode.View || EditMode == General.eRIPageViewMode.ViewAndExecute)
+            if (EditMode is General.eRIPageViewMode.View or General.eRIPageViewMode.ViewAndExecute)
             {
                 xOutputValuesGrid.DisableGridColoumns();
             }
@@ -552,8 +551,8 @@ namespace Ginger.Actions
             BindingHandler.ObjFieldBinding(xEnableActionLogConfigCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableActionLogConfig));
             InitActionLog();
             //execution details section
-            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View ||
-                EditMode == General.eRIPageViewMode.ViewAndExecute || EditMode == General.eRIPageViewMode.Explorer || EditMode == General.eRIPageViewMode.SharedReposiotry)
+            if (EditMode is General.eRIPageViewMode.Automation or General.eRIPageViewMode.View or
+                General.eRIPageViewMode.ViewAndExecute or General.eRIPageViewMode.Explorer or General.eRIPageViewMode.SharedReposiotry)
             {
                 BindingHandler.ObjFieldBinding(xExecutionStatusImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
                 BindingHandler.ObjFieldBinding(xExecutionStatusLabel, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
@@ -596,7 +595,7 @@ namespace Ginger.Actions
 
         private void LoadArtifacts()
         {
-            ArtifactsItems = new ObservableList<UCArtifact>();
+            ArtifactsItems = [];
             foreach (ArtifactDetails a in mAction.Artifacts)
             {
                 UCArtifact artifact = new UCArtifact
@@ -916,13 +915,13 @@ namespace Ginger.Actions
         private void SetActDataSourceConfigGrid()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             view.GridColsView = viewCols;
 
             viewCols.Add(new GridColView() { Field = ActOutDataSourceConfig.Fields.Active, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
             viewCols.Add(new GridColView() { Field = ActOutDataSourceConfig.Fields.OutputType, Header = "Output Type", WidthWeight = 150, ReadOnly = true });
             viewCols.Add(new GridColView() { Field = ActOutDataSourceConfig.Fields.TableColumn, Header = "Table Column", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ActOutDataSourceConfig.Fields.PossibleValues, ActOutDataSourceConfig.Fields.TableColumn) });
-            if (xDataSourceConfigGrid.SelectedViewName != null && xDataSourceConfigGrid.SelectedViewName != "")
+            if (xDataSourceConfigGrid.SelectedViewName is not null and not "")
             {
                 xDataSourceConfigGrid.updateAndSelectCustomView(view);
             }
@@ -956,7 +955,7 @@ namespace Ginger.Actions
                 outputValuesGridViewSet = true;
 
                 GridViewDef SimView = new GridViewDef(eGridView.All.ToString());
-                ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+                ObservableList<GridColView> viewCols = [];
                 SimView.GridColsView = viewCols;
 
                 //Simulation view
@@ -1032,7 +1031,7 @@ namespace Ginger.Actions
 
 
                 columnPreferences = WorkSpace.Instance.UserProfile.ActionOutputValueUserPreferences;
-             
+
 
                 foreach (Node node in columnMultiSelectComboBox._nodeList)
                 {
@@ -1060,7 +1059,7 @@ namespace Ginger.Actions
                                 break;
                         }
 
-                      }
+                    }
                     catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Invalid format in column preferences", ex);
@@ -1088,7 +1087,7 @@ namespace Ginger.Actions
 
             xOutputValuesGrid.DataSourceList = mAction.ReturnValues;
         }
-        
+
         private void MultiSelectComboBox_Visbility(object sender, RoutedEventArgs e)
         {
             if (columnMultiSelectComboBox.Visibility == Visibility.Collapsed)
@@ -1112,7 +1111,7 @@ namespace Ginger.Actions
         /// </summary>
         private void ColumnMultiSelectComboBox_ItemCheckBoxClick(object? sender, EventArgs e)
         {
-            customDynamicView.GridColsView = new ObservableList<GridColView>();
+            customDynamicView.GridColsView = [];
 
             if (sender is System.Windows.Controls.CheckBox checkBox)
             {
@@ -1162,7 +1161,7 @@ namespace Ginger.Actions
                         customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.Actual, Visible = node.IsSelected, WidthWeight = 180 });
                         customDynamicView.GridColsView.Add(new GridColView() { Field = ">>", Visible = node.IsSelected });
                         columnCount = node.IsSelected ? columnCount + 1 : columnCount;
-                        columnPreferences+= node.IsSelected ? "ActualValue," : "";
+                        columnPreferences += node.IsSelected ? "ActualValue," : "";
                         break;
 
                     case "Expected Value":
@@ -1182,7 +1181,7 @@ namespace Ginger.Actions
                             Header = "Store To"
                         });
                         columnCount = node.IsSelected ? columnCount + 1 : columnCount;
-                        columnPreferences += node.IsSelected ? "StoreTo" : "";                                                   
+                        columnPreferences += node.IsSelected ? "StoreTo" : "";
                         break;
                     default:
                         Reporter.ToLog(eLogLevel.ERROR, "Invalid format in column preferences");
@@ -1195,7 +1194,7 @@ namespace Ginger.Actions
             WorkSpace.Instance.UserProfile.ActionOutputValueUserPreferences = columnPreferences;
 
             bool isVisible = mAction.SupportSimulation;
-           customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.SimulatedActual, Header = "Simulated Value", Visible = isVisible, WidthWeight = 200 });
+            customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.SimulatedActual, Header = "Simulated Value", Visible = isVisible, WidthWeight = 200 });
             customDynamicView.GridColsView.Add(new GridColView() { Field = ".....", Header = "  ...", Visible = isVisible });
             customDynamicView.GridColsView.Add(new GridColView() { Field = "<<", Visible = isVisible });
 
@@ -1208,7 +1207,7 @@ namespace Ginger.Actions
 
         private void GenerateStoreToVarsList()
         {
-            List<string> tempList = new List<string>();
+            List<string> tempList = [];
             if (mActParentBusinessFlow != null)
             {
                 tempList = mActParentBusinessFlow.GetAllVariables(mActParentActivity).Where(a => a.SupportSetValue == true).Select(a => a.Name).ToList();
@@ -1272,12 +1271,15 @@ namespace Ginger.Actions
             }
 
             //List<GridColView> view = new List<GridColView>();
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), WidthWeight = 40 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), WidthWeight = 55 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["InputValueExpressionButton"] });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ActInputValue.Param), WidthWeight = 40 },
+                new GridColView() { Field = nameof(ActInputValue.Value), WidthWeight = 55 },
+                new GridColView() { Field = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["InputValueExpressionButton"] },
+            ]
+            };
             //view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Value ForDriver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
 
             xInputValuesGrid.SetAllColumnsDefaultView(view);
@@ -1487,20 +1489,26 @@ namespace Ginger.Actions
             RoutedEventHandler closeHandler = CloseWinClicked;
             string closeContent = "Undo & Close";
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            Button okBtn = new Button();
-            okBtn.Content = "Ok";
+            ObservableList<Button> winButtons = [];
+            Button okBtn = new Button
+            {
+                Content = "Ok"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: okBtn_Click);
 
 
-            Button undoBtn = new Button();
-            undoBtn.Content = "Undo & Close";
+            Button undoBtn = new Button
+            {
+                Content = "Undo & Close"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoBtn, eventName: nameof(ButtonBase.Click), handler: undoBtn_Click);
 
 
 
-            Button saveBtn = new Button();
-            saveBtn.Content = "Save";
+            Button saveBtn = new Button
+            {
+                Content = "Save"
+            };
             switch (EditMode)
             {
                 case General.eRIPageViewMode.Automation:
@@ -1770,8 +1778,10 @@ namespace Ginger.Actions
                         Name = mAction.ScreenShotsNames[i];
                     }
                     ScreenShotViewPage screenShotPage = new ScreenShotViewPage(Name, mAction.ScreenShots[i], 0.5);
-                    Frame fram = new Frame();
-                    fram.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;
+                    Frame fram = new Frame
+                    {
+                        NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden
+                    };
                     fram.NavigationService.RemoveBackEntry();
                     fram.Margin = new Thickness(20);
                     DockPanel.SetDock(fram, Dock.Top);
@@ -1793,7 +1803,7 @@ namespace Ginger.Actions
             ApplicationAgent aa = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents[0];
             if (aa != null)
             {
-                DriverBase driver = ((AgentOperations)((Agent)aa.Agent).AgentOperations).Driver;
+                DriverBase driver = ((AgentOperations)aa.Agent.AgentOperations).Driver;
                 mContext.Runner.PrepActionValueExpression(mAction);
                 if (driver != null)
                 {
@@ -1811,12 +1821,12 @@ namespace Ginger.Actions
             ApplicationAgent aa = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.FirstOrDefault(x => x.AppName == mActParentActivity.TargetApplication);
             if (aa != null)
             {
-                if (((AgentOperations)((Agent)aa.Agent).AgentOperations).Driver == null)
+                if (((AgentOperations)aa.Agent.AgentOperations).Driver == null)
                 {
-                    ((Agent)aa.Agent).DSList = mDSList;
-                    ((Agent)aa.Agent).AgentOperations.StartDriver();
+                    aa.Agent.DSList = mDSList;
+                    aa.Agent.AgentOperations.StartDriver();
                 }
-                DriverBase driver = ((AgentOperations)((Agent)aa.Agent).AgentOperations).Driver;
+                DriverBase driver = ((AgentOperations)aa.Agent.AgentOperations).Driver;
                 //Instead of check make it disabled ?
                 if (driver is IWindowExplorer)
                 {
@@ -1949,7 +1959,7 @@ namespace Ginger.Actions
             }
 
             PopulateParamMapTypes();
-            if (mAction.OutDSParamMapType == null || mAction.OutDSParamMapType == "")
+            if (mAction.OutDSParamMapType is null or "")
             {
                 xdsOutputParamMapType.SelectedValue = Act.eOutputDSParamMapType.ParamToRow;
             }
@@ -2059,12 +2069,7 @@ namespace Ginger.Actions
             }
 
             DSConfigParam = mAction.DSOutputConfigParams.Where(x => x.DSName == mDataSourceName && x.DSTable == mDSTable.Name && x.OutParamMap == mAction.OutDSParamMapType).ToList();
-            List<ActOutDataSourceConfig> aOutDSConfigParam = new();
-
-            foreach (ActOutDataSourceConfig aOutDSConfig in DSConfigParam)
-            {
-                aOutDSConfigParam.Add(aOutDSConfig);
-            }
+            List<ActOutDataSourceConfig> aOutDSConfigParam = [.. DSConfigParam];
 
 
             xDataSourceConfigGrid.Visibility = Visibility.Visible;
@@ -2162,7 +2167,7 @@ namespace Ginger.Actions
         private void PopulateDataSourceTableNames(IEnumerable<DataSourceTable> tables)
         {
             mDSTableList.Clear();
-            List<string> dsTableNames = new();
+            List<string> dsTableNames = [];
             foreach (DataSourceTable table in tables)
             {
                 mDSTableList.Add(table);
@@ -2400,9 +2405,11 @@ namespace Ginger.Actions
                 string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(mAction.RawResponseValues);
                 if (System.IO.File.Exists(tempFilePath))
                 {
-                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
-                    docPage.Width = 800;
-                    docPage.Height = 800;
+                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty)
+                    {
+                        Width = 800,
+                        Height = 800
+                    };
                     docPage.ShowAsWindow("Raw Output Values");
                     System.IO.File.Delete(tempFilePath);
                     return;

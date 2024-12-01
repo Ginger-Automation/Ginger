@@ -26,8 +26,7 @@ namespace JsonViewerDemo.ValueConverters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var methodName = parameter as string;
-            if (value == null || methodName == null)
+            if (value == null || parameter is not string methodName)
                 return null;
             var methodInfo = value.GetType().GetMethod(methodName, new Type[0]);
             if (methodInfo == null)

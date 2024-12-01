@@ -16,17 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Ginger.ConflictResolve;
-using Ginger.Variables;
-using GingerCore;
-using GingerCore.Activities;
-using GingerCore.FlowControlLib;
-using GingerCore.Platforms;
-using GingerCore.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace GingerTest.ConflictResolve
 {
@@ -3938,7 +3928,7 @@ namespace GingerTest.ConflictResolve
         //        actual: (InputVariableRule?)addedItemComparison?.Data,
         //        $"{nameof(State.Added)} {nameof(BusinessFlow.InputVariableRules)} item comparison's data is not same as Remote BusinessFlow's {nameof(BusinessFlow.InputVariableRules)} item.");
         //}
-        
+
         //#endregion BusinessFlow Comparison Tests
     }
 }

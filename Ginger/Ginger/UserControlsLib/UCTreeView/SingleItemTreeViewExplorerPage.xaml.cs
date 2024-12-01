@@ -53,7 +53,7 @@ namespace GingerWPF.UserControlsLib
             }
         }
 
-        public SingleItemTreeViewExplorerPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, EventHandler treeItemDoubleClickHandler = null, bool isSaveButtonHidden = false, bool showTitle= true)
+        public SingleItemTreeViewExplorerPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, EventHandler treeItemDoubleClickHandler = null, bool isSaveButtonHidden = false, bool showTitle = true)
         {
             InitializeComponent();
 
@@ -77,7 +77,7 @@ namespace GingerWPF.UserControlsLib
                 xTreeView.Tree.ItemDoubleClick += treeItemDoubleClickHandler;
             }
 
-            if(!showTitle)
+            if (!showTitle)
             {
                 TreeView.TreeTitleVisibility = Visibility.Collapsed;
             }

@@ -30,7 +30,7 @@ namespace Ginger.AnalyzerLib
         public BusinessFlow mBusinessFlow { get; set; }
         public static List<AnalyzerItemBase> Analyze(GingerExecutionEngine GR, BusinessFlow BusinessFlow)
         {
-            List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
+            List<AnalyzerItemBase> IssuesList = [];
 
             //code added to analyze for BFFlowControls in Runner BF.
             if (BusinessFlow.BFFlowControls.Count > 0)
@@ -62,18 +62,18 @@ namespace Ginger.AnalyzerLib
                             }
                             else if (lstBusinessFlow.Count == 1)
                             {
-                                bf = (BusinessFlow)lstBusinessFlow[0];
+                                bf = lstBusinessFlow[0];
                             }
                             else//we have more than 1
                             {
-                                BusinessFlow firstActive = (BusinessFlow)lstBusinessFlow.FirstOrDefault(x => x.Active == true);
+                                BusinessFlow firstActive = lstBusinessFlow.FirstOrDefault(x => x.Active == true);
                                 if (firstActive != null)
                                 {
                                     bf = firstActive;
                                 }
                                 else
                                 {
-                                    bf = (BusinessFlow)lstBusinessFlow[0];//no one is Active so returning the first one
+                                    bf = lstBusinessFlow[0];//no one is Active so returning the first one
                                 }
                             }
                             if (bf == null)
@@ -119,11 +119,13 @@ namespace Ginger.AnalyzerLib
 
         private static AnalyzeRunnerBusinessFlow CreateNewIssue(List<AnalyzerItemBase> IssuesList, GingerExecutionEngine gr, BusinessFlow BusinessFlow)
         {
-            AnalyzeRunnerBusinessFlow ABF = new AnalyzeRunnerBusinessFlow();
-            ABF.Status = AnalyzerItemBase.eStatus.NeedFix;
-            ABF.mBusinessFlow = BusinessFlow;
-            ABF.ItemName = BusinessFlow.Description;
-            ABF.ItemParent = gr.GingerRunner.Name + " > " + BusinessFlow.Name;
+            AnalyzeRunnerBusinessFlow ABF = new AnalyzeRunnerBusinessFlow
+            {
+                Status = AnalyzerItemBase.eStatus.NeedFix,
+                mBusinessFlow = BusinessFlow,
+                ItemName = BusinessFlow.Description,
+                ItemParent = gr.GingerRunner.Name + " > " + BusinessFlow.Name
+            };
             ABF.mBusinessFlow = BusinessFlow;
             ABF.ItemClass = "BusinessFlow";
             IssuesList.Add(ABF);

@@ -103,13 +103,13 @@ namespace Amdocs.Ginger.Repository
             mPluginPackageInfo = (PluginPackageInfo)JsonConvert.DeserializeObject(txt, typeof(PluginPackageInfo));
             if (mPluginPackageInfo.Version.ToLower().StartsWith("v"))
             {
-                mPluginPackageInfo.Version = mPluginPackageInfo.Version.Substring(1);
+                mPluginPackageInfo.Version = mPluginPackageInfo.Version[1..];
 
             }
         }
 
 
-        List<PluginAssemblyInfo> mAssembliesInfo = new List<PluginAssemblyInfo>();
+        List<PluginAssemblyInfo> mAssembliesInfo = [];
 
         public void LoadInfoFromDLL()
         {
@@ -119,9 +119,11 @@ namespace Amdocs.Ginger.Repository
                 LoadInfoFromJSON();
             }
             string startupDLLFileName = Path.Combine(PluginPackage.Folder, mPluginPackageInfo.StartupDLL);
-            PluginAssemblyInfo PAI = new PluginAssemblyInfo();
-            PAI.Name = startupDLLFileName;
-            PAI.FilePath = startupDLLFileName;
+            PluginAssemblyInfo PAI = new PluginAssemblyInfo
+            {
+                Name = startupDLLFileName,
+                FilePath = startupDLLFileName
+            };
             mAssembliesInfo.Add(PAI);
             LoadPluginServicesFromDll();
         }
@@ -131,7 +133,7 @@ namespace Amdocs.Ginger.Repository
         {
             if (mServices == null)  // Done only once
             {
-                mServices = new ObservableList<PluginServiceInfo>();    // Move down !!!!!!!!!!!!!!!
+                mServices = [];    // Move down !!!!!!!!!!!!!!!
                 foreach (PluginAssemblyInfo pluginAssemblyInfo in mAssembliesInfo)
                 {
                     var types2 = pluginAssemblyInfo.Assembly.GetExportedTypes();
@@ -221,8 +223,12 @@ namespace Amdocs.Ginger.Repository
                                     continue;
                                 }
 
-                                ActionInputValueInfo actionInputValueInfo = new ActionInputValueInfo() { Param = PI.Name, ParamType = PI.ParameterType };
-                                actionInputValueInfo.ParamAttrs = new List<Attribute>();
+                                ActionInputValueInfo actionInputValueInfo = new ActionInputValueInfo
+                                {
+                                    Param = PI.Name,
+                                    ParamType = PI.ParameterType,
+                                    ParamAttrs = []
+                                };
                                 action.InputValues.Add(actionInputValueInfo);
 
                                 // Add Ginger param properties
@@ -260,10 +266,12 @@ namespace Amdocs.Ginger.Repository
                         {
                             if (Attribute.GetCustomAttribute(mi, typeof(ServiceConfigurationAttribute), false) is ServiceConfigurationAttribute mconfig)
                             {
-                                PluginServiceConfigInfo Config = new PluginServiceConfigInfo();
-                                Config.Name = mconfig.Name;
-                                Config.Description = mconfig.Description;
-                                Config.Type = mconfig.GetType().Name;
+                                PluginServiceConfigInfo Config = new PluginServiceConfigInfo
+                                {
+                                    Name = mconfig.Name,
+                                    Description = mconfig.Description,
+                                    Type = mconfig.GetType().Name
+                                };
 
                                 if (Attribute.GetCustomAttribute(mi, typeof(ValidValueAttribute), false) is ValidValueAttribute validValues)
                                 {
@@ -293,7 +301,7 @@ namespace Amdocs.Ginger.Repository
 
         public PluginServiceInfo GetService(string serviceId)
         {
-            return Services.FirstOrDefault(x=>x.ServiceId == serviceId);
+            return Services.FirstOrDefault(x => x.ServiceId == serviceId);
         }
 
         private void LoadGingerPluginsDLL()

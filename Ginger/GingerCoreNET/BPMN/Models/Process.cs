@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using MongoDB.Driver.Core.Operations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,8 +40,8 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
         internal Process(string participantId)
         {
             Id = $"{participantId}_process";
-            _childEntities = new List<IProcessEntity>();
-            _endEvents = new List<EndEvent>();
+            _childEntities = [];
+            _endEvents = [];
         }
 
         public StartEvent AddStartEvent(string name)

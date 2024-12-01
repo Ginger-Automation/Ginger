@@ -16,13 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Threading;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 
 namespace Ginger
 {
@@ -45,8 +45,10 @@ namespace Ginger
 
         public DevTimeTrackerIdle()
         {
-            idleTimer = new DispatcherTimer();
-            idleTimer.Interval = TimeSpan.FromMinutes(1); // Check every minute
+            idleTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMinutes(1) // Check every minute
+            };
             idleTimer.Tick += IdleTimer_Tick;
             idleTimer.Start();
 

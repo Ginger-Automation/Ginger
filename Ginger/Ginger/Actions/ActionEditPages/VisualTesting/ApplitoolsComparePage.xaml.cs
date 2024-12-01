@@ -73,7 +73,7 @@ namespace Ginger.Actions.VisualTesting
             List<eLocateBy> LocateByList = mPlatform.GetPlatformUIElementLocatorsList();
             xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy, LocateByList);
             xLocateValueVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(Act.Fields.LocateValue));
-           string allProperties = string.Empty;
+            string allProperties = string.Empty;
             PropertyChangedEventManager.AddHandler(source: mAct, handler: mAct_PropertyChanged, propertyName: allProperties);
             SetLocateValueControls();
         }
@@ -266,7 +266,7 @@ namespace Ginger.Actions.VisualTesting
             if (mAct.Context != null && (Context.GetAsContext(mAct.Context)).BusinessFlow != null)
             {
                 string targetapp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
-                platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == targetapp).Platform; 
+                platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == targetapp).Platform;
             }
             else
             {

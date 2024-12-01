@@ -41,7 +41,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eCalcEngineType)GetOrCreateInputParam<eCalcEngineType>(nameof(CalcEngineType), eCalcEngineType.VBS);
+                return GetOrCreateInputParam<eCalcEngineType>(nameof(CalcEngineType), eCalcEngineType.VBS);
             }
             set
             {

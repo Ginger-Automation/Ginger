@@ -165,7 +165,7 @@ namespace UnitTests.UITests.WebBrowserPageTest
             {
                 // Console.WriteLine(e.outerHTML);
                 dynamic eDataQA = e.getAttribute("data-QA");
-                if (!(eDataQA is DBNull))
+                if (eDataQA is not DBNull)
                 {
                     if (QAValue == eDataQA)
                     {

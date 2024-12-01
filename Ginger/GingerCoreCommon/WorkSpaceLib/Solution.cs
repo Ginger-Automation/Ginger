@@ -51,7 +51,7 @@ namespace Ginger.SolutionGeneral
 
         public Solution()
         {
-            Tags = new ObservableList<RepositoryItemTag>();
+            Tags = [];
         }
 
         public enum eSolutionItemToSave { GeneralDetails, TargetApplications, GlobalVariabels, Tags, ALMSettings, SourceControlSettings, LoggerConfiguration, ReportConfiguration }
@@ -125,7 +125,7 @@ namespace Ginger.SolutionGeneral
         {
             get;
             set;
-        } = new ObservableList<ALMConfig>();
+        } = [];
 
         [IsSerializedForLocalRepository]
         public ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
@@ -136,7 +136,7 @@ namespace Ginger.SolutionGeneral
             get
             {
                 if (ApplicationPlatforms == null)
-                    ApplicationPlatforms = new ObservableList<ApplicationPlatform>();
+                    ApplicationPlatforms = [];
 
                 if (ApplicationPlatforms.Count > 0)
                 {
@@ -151,7 +151,7 @@ namespace Ginger.SolutionGeneral
 
         public ObservableList<TargetBase> GetSolutionTargetApplications()
         {
-            ObservableList<TargetBase> solTargetApplications = new ObservableList<TargetBase>();
+            ObservableList<TargetBase> solTargetApplications = [];
             foreach (ApplicationPlatform app in ApplicationPlatforms)
             {
                 solTargetApplications.Add(new TargetApplication() { AppName = app.AppName, Guid = app.Guid });
@@ -214,10 +214,11 @@ namespace Ginger.SolutionGeneral
         {
             //List only need directories which have repo items
             //Do not add documents, ExecutionResults, HTMLReports
-            ConcurrentBag<string> fileEntries = new ConcurrentBag<string>();
-
-            //add Solution.xml
-            fileEntries.Add(Path.Combine(solutionFolder, "Ginger.Solution.xml"));
+            ConcurrentBag<string> fileEntries =
+            [
+                //add Solution.xml
+                Path.Combine(solutionFolder, "Ginger.Solution.xml"),
+            ];
 
             string[] SolutionMainFolders = new string[] { "Agents", "ALMDefectProfiles", "Applications Models", "BusinessFlows", "Configurations", "DataSources", "Environments", "HTMLReportConfigurations", "PluginPackages", "Plugins", "RunSetConfigs", "SharedRepository" };
             Parallel.ForEach(SolutionMainFolders, folder =>
@@ -238,10 +239,10 @@ namespace Ginger.SolutionGeneral
         static void AddFolderFiles(ConcurrentBag<string> CB, string folder)
         {
             //need to look for all .xmls and not only *Ginger.*.xml" for covering old xml's as well
-            IEnumerable<string> files = Directory.EnumerateFiles(folder, "*.xml", SearchOption.AllDirectories).Where(x=> !x.Contains("RQMServerConfigurationsPackage")).AsParallel().AsOrdered();
+            IEnumerable<string> files = Directory.EnumerateFiles(folder, "*.xml", SearchOption.AllDirectories).Where(x => !x.Contains("RQMServerConfigurationsPackage")).AsParallel().AsOrdered();
             Parallel.ForEach(files, file =>
             {
-                    CB.Add(file);
+                CB.Add(file);
             });
         }
 
@@ -272,11 +273,11 @@ namespace Ginger.SolutionGeneral
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
+        public ObservableList<VariableBase> Variables { get; set; } = [];
 
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ExecutionLoggerConfiguration> ExecutionLoggerConfigurationSetList { get; set; } = new ObservableList<ExecutionLoggerConfiguration>();
+        public ObservableList<ExecutionLoggerConfiguration> ExecutionLoggerConfigurationSetList { get; set; } = [];
         public ExecutionLoggerConfiguration LoggerConfigurations
         {
             get
@@ -295,7 +296,7 @@ namespace Ginger.SolutionGeneral
 
 
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList { get; set; } = new ObservableList<HTMLReportsConfiguration>();
+        public ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList { get; set; } = [];
 
         [IsSerializedForLocalRepository]
         public VRTConfiguration VRTConfiguration { get; set; } = new VRTConfiguration();
@@ -359,7 +360,7 @@ namespace Ginger.SolutionGeneral
         ObservableList<ExecutionLoggerConfiguration> ISolution.ExecutionLoggerConfigurationSetList { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ExternalItemFieldBase> ExternalItemsFields = new ObservableList<ExternalItemFieldBase>();
+        public ObservableList<ExternalItemFieldBase> ExternalItemsFields = [];
 
         public ePlatformType GetTargetApplicationPlatform(RepositoryItemKey TargetApplicationKey)
         {
@@ -399,8 +400,10 @@ namespace Ginger.SolutionGeneral
                     ALMConfig AlmConfig = ALMConfigs.FirstOrDefault();
                     if (AlmConfig == null)
                     {
-                        AlmConfig = new ALMConfig();
-                        AlmConfig.DefaultAlm = true;
+                        AlmConfig = new ALMConfig
+                        {
+                            DefaultAlm = true
+                        };
                         ALMConfigs.Add(AlmConfig);
                     }
                     if (name == "ALMServerURL")
@@ -452,13 +455,13 @@ namespace Ginger.SolutionGeneral
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<SolutionCategory> SolutionCategories = new ObservableList<SolutionCategory>();
+        public ObservableList<SolutionCategory> SolutionCategories = [];
 
         public override void PostDeserialization()
         {
-            foreach(eSolutionCategories category in Enum.GetValues(typeof(eSolutionCategories)))
+            foreach (eSolutionCategories category in Enum.GetValues(typeof(eSolutionCategories)))
             {
-                if(!SolutionCategories.Any(x =>x.Category == category))
+                if (!SolutionCategories.Any(x => x.Category == category))
                 {
                     AddCategory(category);
                 }
@@ -476,7 +479,7 @@ namespace Ginger.SolutionGeneral
                 case eSolutionCategories.SubBusinessProcessTag:
                     SolutionCategories.Add(GetSubBusinessProcessTagCategory());
                     break;
-                case eSolutionCategories.TestType: 
+                case eSolutionCategories.TestType:
                     SolutionCategories.Add(GetTestTypeCategory());
                     break;
                 case eSolutionCategories.Product:
@@ -570,7 +573,7 @@ namespace Ginger.SolutionGeneral
                     return ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
                 }
             }
-            return new List<ApplicationPlatform>();
+            return [];
         }
 
         public void SetSealightsOldConifurationsToNewObject()

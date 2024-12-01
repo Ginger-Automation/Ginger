@@ -431,8 +431,10 @@ namespace GingerCore.Drivers.MainFrame
                     foreach (ActInputValue AIV in MFST.CaretValueList)
                     {
                         MFE.SetCaretIndex(Int32.Parse(AIV.Param));
-                        ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
-                        VE.Value = AIV.Value;
+                        ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow)
+                        {
+                            Value = AIV.Value
+                        };
                         MFE.SendText(VE.ValueCalculated);
                     }
 
@@ -531,19 +533,19 @@ namespace GingerCore.Drivers.MainFrame
 
         public void TakeScreenShot(Act act)
         {
-                int width = (int)mDriverWindow.Width;
-                int height = (int)mDriverWindow.Height;
-                RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
-                renderTargetBitmap.Render(mDriverWindow);
+            int width = (int)mDriverWindow.Width;
+            int height = (int)mDriverWindow.Height;
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            renderTargetBitmap.Render(mDriverWindow);
 
-                PngBitmapEncoder pngImage = new PngBitmapEncoder();
-                pngImage.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
-                string FileName = Path.GetTempPath() + Guid.NewGuid().ToString() + ".png";
-                using (Stream fileStream = File.Create(FileName))
-                {
-                    pngImage.Save(fileStream);
-                    fileStream.Close();
-                }
+            PngBitmapEncoder pngImage = new PngBitmapEncoder();
+            pngImage.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
+            string FileName = Path.GetTempPath() + Guid.NewGuid().ToString() + ".png";
+            using (Stream fileStream = File.Create(FileName))
+            {
+                pngImage.Save(fileStream);
+                fileStream.Close();
+            }
 
             using (Bitmap bmp = (Bitmap)Image.FromFile(FileName))
             {
@@ -559,10 +561,12 @@ namespace GingerCore.Drivers.MainFrame
 
         public List<AppWindow> GetAppWindows()
         {
-            List<AppWindow> AppWinList = new System.Collections.Generic.List<AppWindow>();
-            AppWindow AppWin = new AppWindow();
-            AppWin.WindowType = AppWindow.eWindowType.Mainframe;
-            AppWin.Title = "mainframe";
+            List<AppWindow> AppWinList = [];
+            AppWindow AppWin = new AppWindow
+            {
+                WindowType = AppWindow.eWindowType.Mainframe,
+                Title = "mainframe"
+            };
             AppWinList.Add(AppWin);
             return AppWinList;
         }
@@ -592,9 +596,11 @@ namespace GingerCore.Drivers.MainFrame
 
         public AppWindow GetActiveWindow()
         {
-            AppWindow AppWin = new AppWindow();
-            AppWin.WindowType = AppWindow.eWindowType.Mainframe;
-            AppWin.Title = "mainframe";
+            AppWindow AppWin = new AppWindow
+            {
+                WindowType = AppWindow.eWindowType.Mainframe,
+                Title = "mainframe"
+            };
             return AppWin;
             throw new NotImplementedException();
         }
@@ -731,15 +737,16 @@ namespace GingerCore.Drivers.MainFrame
         {
             return await Task.Run(() =>
             {
-                List<ElementInfo> Eil = new System.Collections.Generic.List<ElementInfo>();
+                List<ElementInfo> Eil = [];
 
                 try
                 {
                     foreach (XMLScreenField xf in MFE.GetScreenAsXML().Fields)
                     {
-                        ElementInfo EI = new ElementInfo();
-
-                        EI.ElementTitle = xf.Text;
+                        ElementInfo EI = new ElementInfo
+                        {
+                            ElementTitle = xf.Text
+                        };
                         if (xf.Attributes.FieldType == "Hidden")
                         {
                             EI.ElementType = "Password";
@@ -774,7 +781,7 @@ namespace GingerCore.Drivers.MainFrame
 
         public ObservableList<ControlProperty> GetElementProperties(ElementInfo ElementInfo)
         {
-            return new ObservableList<ControlProperty>();
+            return [];
             throw new System.NotImplementedException();
         }
 
@@ -861,7 +868,7 @@ namespace GingerCore.Drivers.MainFrame
 
         public List<eTabView> SupportedViews()
         {
-            return new List<eTabView>() { /*eTabView.Screenshot, eTabView.GridView, eTabView.PageSource, eTabView.TreeView*/ };
+            return [];
         }
 
         public eTabView DefaultView()

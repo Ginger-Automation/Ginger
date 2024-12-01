@@ -7,6 +7,6 @@ namespace Ginger.Imports.UFT
     {
         public string Name { get; set; }
         public string Class { get; set; }
-        public List<ObjectRepositortyItemProperty> Properties = new List<ObjectRepositortyItemProperty>();
+        public List<ObjectRepositortyItemProperty> Properties = [];
     }
 }

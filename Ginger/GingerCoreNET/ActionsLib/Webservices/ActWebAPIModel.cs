@@ -103,7 +103,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<EnhancedActInputValue> APIModelParamsValue = new ObservableList<EnhancedActInputValue>();
+        public ObservableList<EnhancedActInputValue> APIModelParamsValue = [];
 
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
         {
@@ -146,12 +146,12 @@ namespace GingerCore.Actions.WebServices.WebAPI
             ActWebAPIBase actWebAPI = null;
             if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.REST)
             {
-                actWebAPI = CreateActWebAPIREST((ApplicationAPIModel)AAMB, this);
+                actWebAPI = CreateActWebAPIREST(AAMB, this);
 
             }
             else if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
             {
-                actWebAPI = CreateActWebAPISOAP((ApplicationAPIModel)AAMB, this);
+                actWebAPI = CreateActWebAPISOAP(AAMB, this);
             }
             WebApiAction = actWebAPI;
             return ((IActPluginExecution)actWebAPI).GetAsPlatformAction();
@@ -182,6 +182,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
             actWebAPIBase.SupportSimulation = actWebAPIModel.SupportSimulation;
             actWebAPIBase.AddOrUpdateInputParamValue(nameof(ActWebAPIBase.UseLegacyJSONParsing), "False");
             actWebAPIBase.Description = actWebAPIModel.Description;
+            actWebAPIBase.Timeout = actWebAPIModel.Timeout;
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.RequestType, AAMBDuplicate.RequestType.ToString());
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ReqHttpVersion, AAMBDuplicate.ReqHttpVersion.ToString());
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ResponseContentType, AAMBDuplicate.ResponseContentType.ToString());
@@ -195,6 +196,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLPass, AAMBDuplicate.URLPass);
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, AAMBDuplicate.DoNotFailActionOnBadRespose.ToString());
             actWebAPIBase.HttpHeaders = ConvertAPIModelKeyValueToActInputValues(AAMBDuplicate.HttpHeaders, actWebAPIModel);
+            actWebAPIBase.RequestKeyValues = ConvertAPIModelBodyKeyValueToWebAPIKeyBodyValue(AAMBDuplicate.APIModelBodyKeyValueHeaders, actWebAPIModel);
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, AAMBDuplicate.RequestBodyType.ToString());
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBody, AAMBDuplicate.RequestBody);
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, AAMBDuplicate.CertificateType.ToString());
@@ -211,18 +213,51 @@ namespace GingerCore.Actions.WebServices.WebAPI
             actWebAPIBase.Context = actWebAPIModel.Context;
 
         }
+
+        private ObservableList<WebAPIKeyBodyValues> ConvertAPIModelBodyKeyValueToWebAPIKeyBodyValue(ObservableList<APIModelBodyKeyValue> aPIModelBodyKeyValueHeaders, ActWebAPIModel actWebAPIModel)
+        {
+            ObservableList<WebAPIKeyBodyValues> webAPIKeyBodyValues = new ObservableList<WebAPIKeyBodyValues>();
+
+            if (aPIModelBodyKeyValueHeaders != null)
+            {
+                foreach (APIModelBodyKeyValue AMKV in aPIModelBodyKeyValueHeaders)
+                {
+                    WebAPIKeyBodyValues AIV = new WebAPIKeyBodyValues
+                    {
+                        Param = AMKV.Param,
+                        Value = AMKV.Value,
+                        ValueType = ConvertToWebAPIKeyBodyValueType(AMKV.ValueType),
+                        ValueForDriver = ReplacePlaceHolderParameterWithActual(AMKV.Value, actWebAPIModel.APIModelParamsValue)
+                    };
+                    webAPIKeyBodyValues.Add(AIV);
+                }
+            }
+
+            return webAPIKeyBodyValues;
+        }
+
+        private static WebAPIKeyBodyValues.eValueType ConvertToWebAPIKeyBodyValueType(APIModelBodyKeyValue.eValueType valueType)
+        {
+            if (valueType == APIModelBodyKeyValue.eValueType.File)
+                return WebAPIKeyBodyValues.eValueType.File;
+
+            return WebAPIKeyBodyValues.eValueType.Text;
+        }
+
         private ObservableList<ActInputValue> ConvertAPIModelKeyValueToActInputValues(ObservableList<APIModelKeyValue> GingerCoreNETHttpHeaders, ActWebAPIModel actWebAPIModel)
         {
-            ObservableList<ActInputValue> GingerCoreHttpHeaders = new ObservableList<ActInputValue>();
+            ObservableList<ActInputValue> GingerCoreHttpHeaders = [];
 
             if (GingerCoreNETHttpHeaders != null)
             {
                 foreach (APIModelKeyValue AMKV in GingerCoreNETHttpHeaders)
                 {
-                    ActInputValue AIV = new ActInputValue();
-                    AIV.Param = AMKV.Param;
-                    AIV.Value = AMKV.Value;
-                    AIV.ValueForDriver = ReplacePlaceHolderParameneterWithActual(AMKV.Value, actWebAPIModel.APIModelParamsValue);
+                    ActInputValue AIV = new ActInputValue
+                    {
+                        Param = AMKV.Param,
+                        Value = AMKV.Value,
+                        ValueForDriver = ReplacePlaceHolderParameterWithActual(AMKV.Value, actWebAPIModel.APIModelParamsValue)
+                    };
                     GingerCoreHttpHeaders.Add(AIV);
                 }
             }
@@ -254,7 +289,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
             return AAMBDuplicate;
         }
 
-        private string ReplacePlaceHolderParameneterWithActual(string ValueBeforeReplacing, ObservableList<EnhancedActInputValue> APIModelDynamicParamsValue)
+        private string ReplacePlaceHolderParameterWithActual(string ValueBeforeReplacing, ObservableList<EnhancedActInputValue> APIModelDynamicParamsValue)
         {
             if (string.IsNullOrEmpty(ValueBeforeReplacing))
             {

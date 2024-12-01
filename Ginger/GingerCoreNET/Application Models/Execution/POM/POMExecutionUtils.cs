@@ -73,7 +73,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
         }
 
-        public virtual ElementInfo GetCurrentPOMElementInfo(ePomElementCategory? category =null)
+        public virtual ElementInfo GetCurrentPOMElementInfo(ePomElementCategory? category = null)
         {
             Guid currentPOMElementInfoGUID = new Guid(PomElementGUID[1]);
             ElementInfo selectedPOMElementInfo = GetCurrentPOM().MappedUIElements.FirstOrDefault(z => z.Guid == currentPOMElementInfoGUID);
@@ -86,7 +86,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             else
             {
                 if (category != null)
-                {                    
+                {
                     return FilterElementDetailsByCategory(selectedPOMElementInfo, category);
                 }
             }

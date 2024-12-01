@@ -39,28 +39,28 @@ namespace GingerCore.Actions.VisualTesting
 
         void IVisualAnalyzer.Compare()
         {
-                MagickImage magickBaseImg = new MagickImage(General.ImageToByteArray(mAct.baseImage, System.Drawing.Imaging.ImageFormat.Bmp));//Not tested after code change
-                MagickImage magickTargetImg = new MagickImage(General.ImageToByteArray(mAct.targetImage, System.Drawing.Imaging.ImageFormat.Bmp));//Not tested after code change
+            MagickImage magickBaseImg = new MagickImage(General.ImageToByteArray(mAct.baseImage, System.Drawing.Imaging.ImageFormat.Bmp));//Not tested after code change
+            MagickImage magickTargetImg = new MagickImage(General.ImageToByteArray(mAct.targetImage, System.Drawing.Imaging.ImageFormat.Bmp));//Not tested after code change
 
-                MagickImage diffImg = new MagickImage();
+            MagickImage diffImg = new MagickImage();
 
-                double percentageDifference;
+            double percentageDifference;
 
-                ErrorMetric eErrorMetric = ErrorMetric.Fuzz;
-                Enum.TryParse<ErrorMetric>(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ErrorMetric).Value, out eErrorMetric);
-                percentageDifference = magickBaseImg.Compare(magickTargetImg, eErrorMetric, diffImg, Channels.Red);
-                percentageDifference = percentageDifference * 100;
-                percentageDifference = Math.Round(percentageDifference, 2);
+            ErrorMetric eErrorMetric = ErrorMetric.Fuzz;
+            Enum.TryParse<ErrorMetric>(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ErrorMetric).Value, out eErrorMetric);
+            percentageDifference = magickBaseImg.Compare(magickTargetImg, eErrorMetric, diffImg, Channels.Red);
+            percentageDifference = percentageDifference * 100;
+            percentageDifference = Math.Round(percentageDifference, 2);
 
-                TypeConverter tc = TypeDescriptor.GetConverter(typeof(Bitmap));
-                using (Bitmap ImgToSave = (Bitmap)tc.ConvertFrom(diffImg.ToByteArray()))
-                {
-                    mAct.CompareResult = ImgToSave;//Not tested after code change
+            TypeConverter tc = TypeDescriptor.GetConverter(typeof(Bitmap));
+            using (Bitmap ImgToSave = (Bitmap)tc.ConvertFrom(diffImg.ToByteArray()))
+            {
+                mAct.CompareResult = ImgToSave;//Not tested after code change
 
-                    mAct.AddOrUpdateReturnParamActual("Percentage Difference", percentageDifference + "");
+                mAct.AddOrUpdateReturnParamActual("Percentage Difference", percentageDifference + "");
 
-                    mAct.AddScreenShot(ImgToSave, "Compare Result");
-                }
+                mAct.AddScreenShot(ImgToSave, "Compare Result");
+            }
         }
 
         public void CreateBaseline()

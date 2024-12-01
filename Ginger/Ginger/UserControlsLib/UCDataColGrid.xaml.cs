@@ -79,21 +79,27 @@ namespace Ginger.UserControls
                 //TODO: fix me to be generic, meanwhile temp quick and dirty solution
                 if (l[0].GetType() == typeof(ActInputValue))
                 {
-                    DataGridTextColumn DGTC = new DataGridTextColumn();
-                    DGTC.Header = "Param";
+                    DataGridTextColumn DGTC = new DataGridTextColumn
+                    {
+                        Header = "Param"
+                    };
                     Binding binding = new Binding("Param");
                     DGTC.Binding = binding;
                     DGTC.IsReadOnly = true;
                     this.MainDataGrid2.Columns.Add(DGTC);
 
-                    DataGridTextColumn DGTC2 = new DataGridTextColumn();
-                    DGTC2.Header = "Value";
+                    DataGridTextColumn DGTC2 = new DataGridTextColumn
+                    {
+                        Header = "Value"
+                    };
                     Binding binding2 = new Binding("Value");
                     DGTC2.Binding = binding2;
                     this.MainDataGrid2.Columns.Add(DGTC2);
 
-                    DataGridTextColumn DGTC3 = new DataGridTextColumn();
-                    DGTC3.Header = "Run Time Value";
+                    DataGridTextColumn DGTC3 = new DataGridTextColumn
+                    {
+                        Header = "Run Time Value"
+                    };
                     Binding binding3 = new Binding("ValueForDriver");
                     DGTC3.Binding = binding3;
                     DGTC3.IsReadOnly = true;
@@ -102,28 +108,36 @@ namespace Ginger.UserControls
 
                 if (l[0].GetType() == typeof(ActReturnValue))
                 {
-                    DataGridTextColumn DGTC = new DataGridTextColumn();
-                    DGTC.Header = "Param";
+                    DataGridTextColumn DGTC = new DataGridTextColumn
+                    {
+                        Header = "Param"
+                    };
                     Binding binding = new Binding("Param");
                     DGTC.Binding = binding;
                     DGTC.IsReadOnly = true;
                     this.MainDataGrid2.Columns.Add(DGTC);
 
-                    DataGridTextColumn DGTC2 = new DataGridTextColumn();
-                    DGTC2.Header = "Actual";
+                    DataGridTextColumn DGTC2 = new DataGridTextColumn
+                    {
+                        Header = "Actual"
+                    };
                     Binding binding2 = new Binding("Actual");
                     DGTC2.Binding = binding2;
                     this.MainDataGrid2.Columns.Add(DGTC2);
 
-                    DataGridTextColumn DGTC3 = new DataGridTextColumn();
-                    DGTC3.Header = "Expected";
+                    DataGridTextColumn DGTC3 = new DataGridTextColumn
+                    {
+                        Header = "Expected"
+                    };
                     Binding binding3 = new Binding("Expected");
                     DGTC3.Binding = binding3;
                     // DGTC3.IsReadOnly = true;
                     this.MainDataGrid2.Columns.Add(DGTC3);
 
-                    DataGridTextColumn DGTC4 = new DataGridTextColumn();
-                    DGTC4.Header = "Status";
+                    DataGridTextColumn DGTC4 = new DataGridTextColumn
+                    {
+                        Header = "Status"
+                    };
                     Binding binding4 = new Binding("Status");
                     DGTC4.Binding = binding4;
                     DGTC4.IsReadOnly = true;
@@ -132,15 +146,19 @@ namespace Ginger.UserControls
 
                 if (l[0].GetType() == typeof(FlowControl))
                 {
-                    DataGridTextColumn DGTC = new DataGridTextColumn();
-                    DGTC.Header = "Condition";
+                    DataGridTextColumn DGTC = new DataGridTextColumn
+                    {
+                        Header = "Condition"
+                    };
                     Binding binding = new Binding("Condition");
                     DGTC.Binding = binding;
                     DGTC.IsReadOnly = false;
                     this.MainDataGrid2.Columns.Add(DGTC);
 
-                    DataGridTextColumn DGTC3 = new DataGridTextColumn();
-                    DGTC3.Header = FlowControl.Fields.FlowControlAction;
+                    DataGridTextColumn DGTC3 = new DataGridTextColumn
+                    {
+                        Header = FlowControl.Fields.FlowControlAction
+                    };
                     Binding binding3 = new Binding(FlowControl.Fields.FlowControlAction);
                     DGTC3.Binding = binding3;
                     this.MainDataGrid2.Columns.Add(DGTC3);

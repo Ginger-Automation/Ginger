@@ -75,7 +75,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eUIATextBoxAction)GetOrCreateInputParam<eUIATextBoxAction>(nameof(UIATextBoxAction), eUIATextBoxAction.SetValue);
+                return GetOrCreateInputParam<eUIATextBoxAction>(nameof(UIATextBoxAction), eUIATextBoxAction.SetValue);
             }
             set
             {

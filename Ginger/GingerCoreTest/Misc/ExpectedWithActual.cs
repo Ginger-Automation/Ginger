@@ -39,9 +39,11 @@ namespace UnitTests.NonUITests
         public void ExpectedIsSimpleNumber()
         {
             //Arrange
-            ActReturnValue ARC = new ActReturnValue();
-            ARC.Actual = "123";
-            ARC.Expected = "123";
+            ActReturnValue ARC = new ActReturnValue
+            {
+                Actual = "123",
+                Expected = "123"
+            };
 
             //Act
             CalculateARC(ARC);
@@ -64,9 +66,11 @@ namespace UnitTests.NonUITests
         public void ExpectedIsSimpleString()
         {
             //Arrange
-            ActReturnValue ARC = new ActReturnValue();
-            ARC.Actual = "ABC";
-            ARC.Expected = "ABC";
+            ActReturnValue ARC = new ActReturnValue
+            {
+                Actual = "ABC",
+                Expected = "ABC"
+            };
 
             //Act
             CalculateARC(ARC);
@@ -81,9 +85,11 @@ namespace UnitTests.NonUITests
         public void ExpectedActualGreaterThanNumber()
         {
             //Arrange
-            ActReturnValue ARC = new ActReturnValue();
-            ARC.Actual = "5";
-            ARC.Expected = "{Actual} > 0";
+            ActReturnValue ARC = new ActReturnValue
+            {
+                Actual = "5",
+                Expected = "{Actual} > 0"
+            };
 
             //Act
             CalculateARC(ARC);
@@ -99,9 +105,11 @@ namespace UnitTests.NonUITests
         public void CheckforStartingwithNot()
         {
             //Arrange
-            ActReturnValue ARC = new ActReturnValue();
-            ARC.Actual = "Not Tough";
-            ARC.Expected = "Not Tough";
+            ActReturnValue ARC = new ActReturnValue
+            {
+                Actual = "Not Tough",
+                Expected = "Not Tough"
+            };
 
             //Act
             CalculateARC(ARC);
@@ -116,9 +124,11 @@ namespace UnitTests.NonUITests
         public void ExpectedActualLowerThanNumber()
         {
             //Arrange
-            ActReturnValue ARC = new ActReturnValue();
-            ARC.Actual = "5";
-            ARC.Expected = "{Actual} < 10";
+            ActReturnValue ARC = new ActReturnValue
+            {
+                Actual = "5",
+                Expected = "{Actual} < 10"
+            };
 
             //Act
             CalculateARC(ARC);
@@ -133,9 +143,11 @@ namespace UnitTests.NonUITests
         public void ExpectedActualLowerThanNumberIsFalse()
         {
             //Arrange
-            ActReturnValue ARC = new ActReturnValue();
-            ARC.Actual = "11";
-            ARC.Expected = "{Actual} < 10";
+            ActReturnValue ARC = new ActReturnValue
+            {
+                Actual = "11",
+                Expected = "{Actual} < 10"
+            };
 
             //Act
             CalculateARC(ARC);
@@ -151,9 +163,11 @@ namespace UnitTests.NonUITests
         public void ExpectedActulContainsString()
         {
             //Arrange
-            ActReturnValue ARC = new ActReturnValue();
-            ARC.Actual = "Hello World!";
-            ARC.Expected = "InStr({Actual},\"Hello\")>0";
+            ActReturnValue ARC = new ActReturnValue
+            {
+                Actual = "Hello World!",
+                Expected = "InStr({Actual},\"Hello\")>0"
+            };
 
             //Act
             CalculateARC(ARC);
@@ -168,9 +182,11 @@ namespace UnitTests.NonUITests
         public void ExpectedActulContainsStringIsFalse()
         {
             //Arrange
-            ActReturnValue ARC = new ActReturnValue();
-            ARC.Actual = "ABCDE";
-            ARC.Expected = "InStr({Actual},\"ZZZ\") > 0";
+            ActReturnValue ARC = new ActReturnValue
+            {
+                Actual = "ABCDE",
+                Expected = "InStr({Actual},\"ZZZ\") > 0"
+            };
 
             //Act
             CalculateARC(ARC);
@@ -186,9 +202,11 @@ namespace UnitTests.NonUITests
         public void ExpectedActulWithOrNumbers()
         {
             //Arrange
-            ActReturnValue ARC = new ActReturnValue();
-            ARC.Actual = "7";
-            ARC.Expected = "{Actual}=3 or {Actual}=7";
+            ActReturnValue ARC = new ActReturnValue
+            {
+                Actual = "7",
+                Expected = "{Actual}=3 or {Actual}=7"
+            };
 
             //Act
             CalculateARC(ARC);
@@ -203,9 +221,11 @@ namespace UnitTests.NonUITests
         public void ExpectedActulWithOrNumbersANDCond()
         {
             //Arrange
-            ActReturnValue ARC = new ActReturnValue();
-            ARC.Actual = "5";
-            ARC.Expected = "{Actual}=1 or {Actual}=5";
+            ActReturnValue ARC = new ActReturnValue
+            {
+                Actual = "5",
+                Expected = "{Actual}=1 or {Actual}=5"
+            };
 
             //Act
             CalculateARC(ARC);

@@ -34,7 +34,7 @@ namespace Ginger.Drivers.PowerBuilder
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
+            ObservableList<Act> list = [];
             string Description = "Get Selected Item " + UIAElementInfo.ElementTitle;
 
             list.Add(new ActPBControl()

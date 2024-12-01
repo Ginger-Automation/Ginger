@@ -18,14 +18,15 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Variables;
@@ -37,9 +38,6 @@ using GingerCore.Variables;
 using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Microsoft.CodeAnalysis;
-using System.Diagnostics;
-using Ginger.Run;
-using Amdocs.Ginger.Common.Telemetry;
 namespace GingerCore
 {
     public class BusinessFlow : RepositoryItemBase
@@ -54,13 +52,16 @@ namespace GingerCore
         public BusinessFlow(string sName)
         {
             Name = sName;
-            Activities = new ObservableList<Activity>();
-            Variables = new ObservableList<VariableBase>();
-            TargetApplications = new ObservableList<TargetBase>();
+            Activities = [];
+            Variables = [];
+            TargetApplications = [];
 
-            Activity a = new Activity() { Active = true };
-            a.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
-            a.Acts = new ObservableList<IAct>();
+            Activity a = new Activity
+            {
+                Active = true,
+                ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1",
+                Acts = []
+            };
             Activities.Add(a);
             Activities.CurrentItem = a;
             CurrentActivity = a;
@@ -135,7 +136,7 @@ namespace GingerCore
                 }
             }
         }
-      
+
         public void StartTimer()
         {
             if (_stopwatch == null)
@@ -203,7 +204,7 @@ namespace GingerCore
                     }
                 }
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "error while stopping timer with activities", ex);
             }
@@ -403,7 +404,7 @@ namespace GingerCore
         /// <summary>
         /// Been used to identify if Activities were loaded by lazy load or not
         /// </summary>
-        public bool ActivitiesLazyLoad { get { return (mActivities != null) ? mActivities.LazyLoad : false; } }
+        public bool ActivitiesLazyLoad { get { return (mActivities != null) && mActivities.LazyLoad; } }
         [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.NodePath)]
         [IsSerializedForLocalRepository]
         public ObservableList<Activity> Activities
@@ -412,7 +413,7 @@ namespace GingerCore
             {
                 if (mActivities == null)
                 {
-                    mActivities = new ObservableList<Activity>();
+                    mActivities = [];
                 }
                 DoActivitiesLazyLoad();
                 return mActivities;
@@ -452,9 +453,9 @@ namespace GingerCore
                     this.TrackObservableList(mActivities);
                 }
 
-                IEnumerable<string> distinctTargetApp =  mActivities.Select((activity) => activity.TargetApplication).Distinct();
+                IEnumerable<string> distinctTargetApp = mActivities.Select((activity) => activity.TargetApplication).Distinct();
 
-                for(int indx=0; indx < TargetApplications.Count;)
+                for (int indx = 0; indx < TargetApplications.Count;)
                 {
                     if (!distinctTargetApp.Contains(TargetApplications[indx].Name))
                     {
@@ -479,13 +480,13 @@ namespace GingerCore
         // public ObservableList<Platform> Platforms;
 
         [IsSerializedForLocalRepository]
-        public ObservableList<TargetBase> TargetApplications = new ObservableList<TargetBase>();
+        public ObservableList<TargetBase> TargetApplications = [];
 
         public ObservableList<ApplicationPlatform> TargetApplicationPlatforms
         {
             get
             {
-                ObservableList<ApplicationPlatform> appsPlatform = new ObservableList<ApplicationPlatform>();
+                ObservableList<ApplicationPlatform> appsPlatform = [];
                 foreach (TargetBase target in TargetApplications)
                 {
                     ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == target.Name);
@@ -627,7 +628,7 @@ namespace GingerCore
         /// <summary>
         /// Been used to identify if BF Variables were lazy loaded already or not
         /// </summary>
-        public bool VariablesLazyLoad { get { return (mVariables != null) ? mVariables.LazyLoad : false; } }
+        public bool VariablesLazyLoad { get { return (mVariables != null) && mVariables.LazyLoad; } }
         [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.StringData)]
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables
@@ -636,7 +637,7 @@ namespace GingerCore
             {
                 if (mVariables == null)
                 {
-                    mVariables = new ObservableList<VariableBase>();
+                    mVariables = [];
                 }
                 if (mVariables.LazyLoad)
                 {
@@ -659,7 +660,7 @@ namespace GingerCore
 
         public VariableBase GetVariable(string name)
         {
-            VariableBase v = Variables.FirstOrDefault(v1=> v1.Name == name);
+            VariableBase v = Variables.FirstOrDefault(v1 => v1.Name == name);
             return v;
         }
 
@@ -679,9 +680,9 @@ namespace GingerCore
             }
             if (var == null)
             {
-                var = Variables.FirstOrDefault(v1=>v1.Name == varName);
+                var = Variables.FirstOrDefault(v1 => v1.Name == varName);
                 if (var == null && CurrentActivity != null)
-                    var = CurrentActivity.Variables.FirstOrDefault(v1=> v1.Name == varName);
+                    var = CurrentActivity.Variables.FirstOrDefault(v1 => v1.Name == varName);
             }
 
             //check if linked variable was used and return it instead of original one if yes
@@ -697,12 +698,12 @@ namespace GingerCore
         {
             VariableBase var = null;
             if (SolutionVariables != null)
-                var = SolutionVariables.FirstOrDefault(v1=> v1.Name == varName && v1.VariableType == varType);
+                var = SolutionVariables.FirstOrDefault(v1 => v1.Name == varName && v1.VariableType == varType);
             if (var == null)
             {
-                var = Variables.FirstOrDefault(v1=>  v1.Name == varName && v1.VariableType == varType);
+                var = Variables.FirstOrDefault(v1 => v1.Name == varName && v1.VariableType == varType);
                 if (var == null && CurrentActivity != null)
-                    var = CurrentActivity.Variables.FirstOrDefault(v1=> v1.Name == varName && v1.VariableType == varType);
+                    var = CurrentActivity.Variables.FirstOrDefault(v1 => v1.Name == varName && v1.VariableType == varType);
             }
 
             //check if linked variable was used and return it instead of original one if yes
@@ -721,7 +722,7 @@ namespace GingerCore
         }
         public ObservableList<VariableBase> GetSolutionVariables()
         {
-            ObservableList<VariableBase> varsList = new ObservableList<VariableBase>();
+            ObservableList<VariableBase> varsList = [];
             if (SolutionVariables != null)
                 foreach (VariableBase var in SolutionVariables)
                     varsList.Add(var);
@@ -729,7 +730,7 @@ namespace GingerCore
         }
         public ObservableList<VariableBase> GetAllHierarchyVariables()
         {
-            ObservableList<VariableBase> varsList = new ObservableList<VariableBase>();
+            ObservableList<VariableBase> varsList = [];
             if (SolutionVariables != null)
                 foreach (VariableBase var in SolutionVariables)
                     varsList.Add(var);
@@ -742,7 +743,7 @@ namespace GingerCore
         }
         public ObservableList<VariableBase> GetAllVariables(Activity activity)
         {
-            ObservableList<VariableBase> varsList = new ObservableList<VariableBase>();
+            ObservableList<VariableBase> varsList = [];
             if (SolutionVariables != null)
                 foreach (VariableBase var in SolutionVariables)
                     varsList.Add(var);
@@ -756,7 +757,7 @@ namespace GingerCore
 
         public bool CheckIfVariableExists(string variable, Activity CurrentActivity)
         {
-            ObservableList<VariableBase> varsList = new ObservableList<VariableBase>();
+            ObservableList<VariableBase> varsList = [];
             if (SolutionVariables != null)
                 foreach (VariableBase var in SolutionVariables)
                     if (var.Name.Equals(variable))
@@ -772,9 +773,7 @@ namespace GingerCore
         }
         public ObservableList<VariableBase> GetBFandCurrentActivityVariabeles()
         {
-            ObservableList<VariableBase> varsList = new ObservableList<VariableBase>();
-            foreach (VariableBase var in Variables)
-                varsList.Add(var);
+            ObservableList<VariableBase> varsList = [.. Variables];
             if (CurrentActivity != null)
                 foreach (VariableBase var in CurrentActivity.Variables)
                     varsList.Add(var);
@@ -782,7 +781,7 @@ namespace GingerCore
         }
         public ObservableList<VariableBase> GetBFandActivitiesVariabeles(bool includeParentDetails, bool includeOnlySetAsInputValue = false, bool includeOnlySetAsOutputValue = false, bool includeOnlyPublishedVars = false, bool includeOnlyMandatoryInputs = false)
         {
-            ObservableList<VariableBase> varsList = new ObservableList<VariableBase>();
+            ObservableList<VariableBase> varsList = [];
 
             foreach (VariableBase var in Variables)
             {
@@ -873,11 +872,13 @@ namespace GingerCore
         {
             if (CurrentActivity == null)
             {
-                CurrentActivity = new Activity() { Active = true };
-                //TODO: get from combo of current activity
-                CurrentActivity.ActivityName = "New";
-                //TODO: design how to connect activity and screen + screens repo
-                CurrentActivity.Screen = "Main";
+                CurrentActivity = new Activity
+                {
+                    Active = true,                 //TODO: get from combo of current activity
+                    ActivityName = "New",
+                    //TODO: design how to connect activity and screen + screens repo
+                    Screen = "Main"
+                };
                 Activities.Add(CurrentActivity);
             }
 
@@ -912,7 +913,7 @@ namespace GingerCore
                 {
                     if (activitiesGroup.ActivitiesIdentifiers.Count > 0)
                     {
-                        insertIndex = Activities.IndexOf(activitiesGroup.ActivitiesIdentifiers[activitiesGroup.ActivitiesIdentifiers.Count - 1].IdentifiedActivity) + 1;
+                        insertIndex = Activities.IndexOf(activitiesGroup.ActivitiesIdentifiers[^1].IdentifiedActivity) + 1;
                     }
                     else
                     {
@@ -961,8 +962,8 @@ namespace GingerCore
             }
 
             if (!string.IsNullOrEmpty(activity.TargetApplication) && !TargetApplications.Any(bfTA => ((TargetApplication)bfTA).AppName.Equals(activity.TargetApplication)))
-            {                
-                TargetApplications.Add(GingerCoreCommonWorkSpace.Instance.Solution.GetSolutionTargetApplications().FirstOrDefault(f=>f.Name.Equals(activity.TargetApplication)));
+            {
+                TargetApplications.Add(GingerCoreCommonWorkSpace.Instance.Solution.GetSolutionTargetApplications().FirstOrDefault(f => f.Name.Equals(activity.TargetApplication)));
             }
 
         }
@@ -1002,14 +1003,16 @@ namespace GingerCore
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActivitiesGroup> ActivitiesGroups { get; set; } = new ObservableList<ActivitiesGroup>();
+        public ObservableList<ActivitiesGroup> ActivitiesGroups { get; set; } = [];
 
         public ActivitiesGroup AddActivitiesGroup(ActivitiesGroup activitiesGroup = null, int index = -1)
         {
             if (activitiesGroup == null)
             {
-                activitiesGroup = new ActivitiesGroup();
-                activitiesGroup.Name = "Group";
+                activitiesGroup = new ActivitiesGroup
+                {
+                    Name = "Group"
+                };
             }
             SetUniqueActivitiesGroupName(activitiesGroup);
 
@@ -1090,7 +1093,7 @@ namespace GingerCore
             {
                 for (int AIindex = 0; AIindex < group.ActivitiesIdentifiers.Count;)
                 {
-                    ActivityIdentifiers actIdentifis = (ActivityIdentifiers)group.ActivitiesIdentifiers[AIindex];
+                    ActivityIdentifiers actIdentifis = group.ActivitiesIdentifiers[AIindex];
                     Activity activ = activitiesList.FirstOrDefault(x => x.ActivityName == actIdentifis.ActivityName && x.Guid == actIdentifis.ActivityGuid && x.ActivitiesGroupID == group.Name);
                     if (activ == null)
                     {
@@ -1208,7 +1211,7 @@ namespace GingerCore
             }
 
             //Make sure groups order is according to flow
-            Dictionary<ActivitiesGroup, int> groupsOrderDic = new Dictionary<ActivitiesGroup, int>();
+            Dictionary<ActivitiesGroup, int> groupsOrderDic = [];
             int index = 0;
             foreach (Activity activity in activitiesList)
             {
@@ -1354,7 +1357,7 @@ namespace GingerCore
                 }
                 else
                 {
-                    automatedActsPrecantge = ((double)automatedActs.Count / (double)Activities.Count);
+                    automatedActsPrecantge = (automatedActs.Count / (double)Activities.Count);
                     automatedActsPrecantge = Math.Floor(automatedActsPrecantge * 100);
                 }
 
@@ -1364,7 +1367,7 @@ namespace GingerCore
 
         public List<StatItem> GetActivitiesStats()
         {
-            List<StatItem> lst = new List<StatItem>();
+            List<StatItem> lst = [];
 
             var groups = Activities
             .GroupBy(n => n.Status)
@@ -1385,7 +1388,7 @@ namespace GingerCore
 
         public List<StatItem> GetActionsStat()
         {
-            List<StatItem> lst = new List<StatItem>();
+            List<StatItem> lst = [];
 
             //Get Actions of all activities
             var groups = Activities.SelectMany(p => p.Acts)
@@ -1519,7 +1522,7 @@ namespace GingerCore
 
         public object GetValidationsStat(ref bool isValidaionsExist)
         {
-            List<StatItem> lst = new List<StatItem>();
+            List<StatItem> lst = [];
 
             //Get Actions of all activities
             var groups = Activities.SelectMany(p => p.Acts).Where(act => act.FailIgnored != true).SelectMany(z => z.ActReturnValues)
@@ -1582,17 +1585,13 @@ namespace GingerCore
 
         public string GetPublishStatusString()
         {
-            switch (mPublishStatus)
+            return mPublishStatus switch
             {
-                case ePublishStatus.NotPublished:
-                    return "Not Published";
-                case ePublishStatus.Published:
-                    return "Published";
-                case ePublishStatus.PublishFailed:
-                    return "Publish Failed";
-
-                default: return "Not Published";
-            }
+                ePublishStatus.NotPublished => "Not Published",
+                ePublishStatus.Published => "Published",
+                ePublishStatus.PublishFailed => "Publish Failed",
+                _ => "Not Published",
+            };
         }
 
         public Activity GetActivity(Guid guidValue, string nameValue = null)
@@ -1671,7 +1670,7 @@ namespace GingerCore
         {
             get
             {
-                return ExecutionLogFolder == null || ExecutionLogFolder == string.Empty ? false : true;
+                return ExecutionLogFolder != null && ExecutionLogFolder != string.Empty;
             }
         }
 
@@ -1685,7 +1684,7 @@ namespace GingerCore
         public DateTime EndTimeStamp { get; set; }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> Tags = new ObservableList<Guid>();
+        public ObservableList<Guid> Tags = [];
 
         public override bool FilterBy(eFilterBy filterType, object obj)
         {
@@ -1724,10 +1723,10 @@ namespace GingerCore
         //}
 
         [IsSerializedForLocalRepository]
-        public ObservableList<FlowControl> BFFlowControls { get; set; } = new ObservableList<FlowControl>();
+        public ObservableList<FlowControl> BFFlowControls { get; set; } = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<InputVariableRule> InputVariableRules { get; set; } = new ObservableList<InputVariableRule>();
+        public ObservableList<InputVariableRule> InputVariableRules { get; set; } = [];
 
         public string Applications
         {
@@ -1948,7 +1947,7 @@ namespace GingerCore
                     int indxToMoveInBF = Activities.Count - 1;
                     if (targetGroup.ActivitiesIdentifiers.Count > 0)
                     {
-                        indxToMoveInBF = Activities.IndexOf(targetGroup.ActivitiesIdentifiers[targetGroup.ActivitiesIdentifiers.Count - 1].IdentifiedActivity) + 1;
+                        indxToMoveInBF = Activities.IndexOf(targetGroup.ActivitiesIdentifiers[^1].IdentifiedActivity) + 1;
                     }
                     //move in group
                     targetGroup.AddActivityToGroup(activityToMove);
@@ -2045,6 +2044,59 @@ namespace GingerCore
                 }
                 return variableDetails;
             }
+        }
+
+        public bool AreEqual(BusinessFlow other)
+        {
+            if (other == null || this.Name != other.Name
+                 || this.Activities.Count != other.Activities.Count
+                 || this.Variables.Count != other.Variables.Count
+                 || this.TargetApplications.Count != other.TargetApplications.Count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < this.TargetApplications.Count; i++)
+            {
+                if (!other.TargetApplications.Any(f => f.Name.Equals(this.TargetApplications[i].Name)
+                        && f.Guid.Equals(this.TargetApplications[i].Guid)))
+                {
+                    return false;
+                }
+            }
+
+            for (int i = 0; i < this.Variables.Count; i++)
+            {
+                if (!this.Variables[i].AreEqual(other.Variables[i]))
+                {
+                    return false;
+                }
+            }
+
+            for (int i = 0; i < this.Activities.Count; i++)
+            {
+                if (!this.Activities[i].AreEqual(other.Activities[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Compares this instance with another object to determine if they are equal.
+        /// </summary>
+        /// <param name="obj">The object to compare with.</param>
+        /// <returns>True if the objects are equal; otherwise, false.</returns>
+        public bool AreEqual(object obj)
+        {
+            if (obj == null || obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+
+            return AreEqual(obj as BusinessFlow);
         }
     }
 }

@@ -23,7 +23,6 @@ using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Run;
-using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerWPF.DragDropLib;
 using GingerWPF.WizardLib;
@@ -44,7 +43,7 @@ namespace Ginger.Repository
     {
         readonly RepositoryFolder<Activity> mActivitiesFolder;
         bool mInTreeModeView = false;
-        ObservableList<Guid> mTags = new ObservableList<Guid>();
+        ObservableList<Guid> mTags = [];
         RoutedEventHandler mAddActivityHandler;
         Context mContext;
         GenericWindow _pageGenericWin = null;
@@ -162,7 +161,7 @@ namespace Ginger.Repository
             }
             selectedItem = ((GingerCore.GeneralLib.ComboEnumItem)selectedItem).Value.ToString();
 
-            ObservableList<Activity> activities = new ObservableList<Activity>();
+            ObservableList<Activity> activities = [];
             foreach (Activity item in allActiivtyType)
             {
                 if (selectedItem.Equals(eActivityType.ErrorHandler.ToString()) && item.GetType() == typeof(ErrorHandler))
@@ -212,12 +211,14 @@ namespace Ginger.Repository
 
         public void ShowAsWindow(Window ownerWindow, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, ePageViewMode viewMode = ePageViewMode.Selection)
         {
-            ObservableList<Button> winButtons = new ObservableList<Button>();
+            ObservableList<Button> winButtons = [];
 
             if (viewMode == ePageViewMode.Selection)
             {
-                Button addButton = new Button();
-                addButton.Content = "Add Selected";
+                Button addButton = new Button
+                {
+                    Content = "Add Selected"
+                };
                 WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: addButton, eventName: nameof(ButtonBase.Click), handler: SendSelected);
 
                 winButtons.Add(addButton);

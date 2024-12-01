@@ -16,11 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using Newtonsoft.Json.Linq;
 using System;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
-using Newtonsoft.Json.Linq;
 
 namespace JsonViewerDemo.ValueConverters
 {
@@ -28,8 +28,7 @@ namespace JsonViewerDemo.ValueConverters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var jToken = value as JToken;
-            if(jToken == null)
+            if (value is not JToken jToken)
                 throw new Exception("Wrong type for this converter");
 
             switch (jToken.Type)

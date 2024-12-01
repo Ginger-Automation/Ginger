@@ -19,7 +19,6 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -142,6 +141,9 @@ namespace GingerCore.Actions.Common
             //used for SelectandValidate
             public static string SubElementLocateBy = "SubElementLocateBy";
             public static string SubElementLocatorValue = "SubElementLocatorValue";
+
+            //used for ScrollToElement
+            public static string VerticalScrollAlignment = "VerticalScrollAlignment";
         }
 
         // Fields Helper for specific action, will create AIV with param name based on enum
@@ -705,7 +707,7 @@ namespace GingerCore.Actions.Common
         // but since it is list can also support: X=100, Y=200
         // or multiple attrs: ID='a123' Text='abc' class='TBC'
         // We keep it seperated from Params, but will process Value for driver for each
-        public ObservableList<UIElementPropertyValueLocator> PropertyValueLocatrs = new ObservableList<UIElementPropertyValueLocator>();
+        public ObservableList<UIElementPropertyValueLocator> PropertyValueLocatrs = [];
         public enum eWaitForIdle
         {
             [EnumValueDescription("0. None - default and recommended for most actions")]
@@ -797,37 +799,23 @@ namespace GingerCore.Actions.Common
             {
                 //TODO: replace with below code after Image type onAct.cs will be shifted to eImageType
                 //return ElementInfo.GetElementTypeImage(ElementType);
-                switch (ElementType)
+                return ElementType switch
                 {
-                    case eElementType.Button:
-                        return eImageType.MousePointer;
-                    case eElementType.TextBox:
-                        return eImageType.Edit;
-                    case eElementType.ComboBox:
-                        return eImageType.ExpandAll;
-                    case eElementType.List:
-                        return eImageType.DropList;
-                    case eElementType.CheckBox:
-                        return eImageType.CheckBox;
-                    case eElementType.Image:
-                        return eImageType.Image;
-                    case eElementType.Label:
-                        return eImageType.Paragraph;
-                    case eElementType.MenuItem:
-                        return eImageType.Menu;
-                    case eElementType.MenuBar:
-                        return eImageType.Window;
-                    case eElementType.RadioButton:
-                        return eImageType.RadioButton;
-                    case eElementType.TreeView:
-                        return eImageType.MapSigns;
-                    case eElementType.Window:
-                        return eImageType.WindowsIcon;
-                    case eElementType.Table:
-                        return eImageType.Table;
-                    default:
-                        return eImageType.Window;  // FIXME
-                }
+                    eElementType.Button => eImageType.MousePointer,
+                    eElementType.TextBox => eImageType.Edit,
+                    eElementType.ComboBox => eImageType.ExpandAll,
+                    eElementType.List => eImageType.DropList,
+                    eElementType.CheckBox => eImageType.CheckBox,
+                    eElementType.Image => eImageType.Image,
+                    eElementType.Label => eImageType.Paragraph,
+                    eElementType.MenuItem => eImageType.Menu,
+                    eElementType.MenuBar => eImageType.Window,
+                    eElementType.RadioButton => eImageType.RadioButton,
+                    eElementType.TreeView => eImageType.MapSigns,
+                    eElementType.Window => eImageType.WindowsIcon,
+                    eElementType.Table => eImageType.Table,
+                    _ => eImageType.Window,// FIXME
+                };
             }
         }
 
@@ -932,19 +920,14 @@ namespace GingerCore.Actions.Common
         {
 
             //TODO: fill for all
-            switch (ElementAction)
+            return ElementAction switch
             {
-                case eElementAction.Click:
-                case eElementAction.Collapse:
-                case eElementAction.Expand:
-                    return false;
-                case eElementAction.GetValue:
-                    return true;
-                default:
-                    return false;
-            }
+                eElementAction.Click or eElementAction.Collapse or eElementAction.Expand => false,
+                eElementAction.GetValue => true,
+                _ => false,
+            };
         }
-     
+
 
         public override ActionDetails Details
         {

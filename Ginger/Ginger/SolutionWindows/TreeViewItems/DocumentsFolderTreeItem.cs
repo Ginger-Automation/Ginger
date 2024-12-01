@@ -120,16 +120,18 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private List<ITreeViewItem> GetChildrenList()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            List<ITreeViewItem> Childrens = [];
 
             AddSubFolders(Path, Childrens);
 
             //Add Current folder Docs 
             foreach (string f in Directory.GetFiles(Path))
             {
-                DocumentTreeItem DTI = new DocumentTreeItem();
-                DTI.FileName = System.IO.Path.GetFileName(f);
-                DTI.Path = f;
+                DocumentTreeItem DTI = new DocumentTreeItem
+                {
+                    FileName = System.IO.Path.GetFileName(f),
+                    Path = f
+                };
 
                 Childrens.Add(DTI);
             }
@@ -211,7 +213,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (Reporter.ToUser(eUserMsgKey.DeleteTreeFolderAreYouSure, mTreeView.Tree.GetSelectedTreeNodeName()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
-                List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
+                List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds(this);
                 childNodes.Reverse();
                 foreach (ITreeViewItem node in childNodes)
                 {
@@ -302,7 +304,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
                     foreach (string extension in TE.Extensions)
                     {
-                        String DocumentName = extension.Substring(1).ToUpper();
+                        String DocumentName = extension[1..].ToUpper();
                         TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create " + DocumentName + " Document", CreateNewDocument, extension, "@Add_16x16.png");
                         TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import " + DocumentName + " Document", ImportNewDocument, extension, "@Import_16x16.png");
                     }
@@ -313,7 +315,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void CreateNewDocument(object sender, RoutedEventArgs e)
         {
-            mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
+            mTreeView.Tree.ExpandTreeItem(this);
 
             string FileExtension = ((string)((MenuItem)sender).CommandParameter);
 
@@ -372,9 +374,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void AddChildToTree(string FullFilePath)
         {
-            DocumentTreeItem DTI = new DocumentTreeItem();
-            DTI.FileName = System.IO.Path.GetFileName(FullFilePath);
-            DTI.Path = FullFilePath;
+            DocumentTreeItem DTI = new DocumentTreeItem
+            {
+                FileName = System.IO.Path.GetFileName(FullFilePath),
+                Path = FullFilePath
+            };
 
             ITreeViewItem addTreeViewItem = mTreeView.Tree.AddChildItemAndSelect(this, DTI);
             mTreeView.Tree.RefreshHeader(addTreeViewItem);
@@ -382,11 +386,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void ImportNewDocument(object sender, RoutedEventArgs e)
         {
-            mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
+            mTreeView.Tree.ExpandTreeItem(this);
 
             string FileExtension = ((string)((MenuItem)sender).CommandParameter);
 
-            ImportDocumentPage IDP = new ImportDocumentPage(Path, FileExtension.Substring(1).ToUpper(), FileExtension);
+            ImportDocumentPage IDP = new ImportDocumentPage(Path, FileExtension[1..].ToUpper(), FileExtension);
             IDP.ShowAsWindow();
             if (IDP.Imported)
             {
@@ -397,8 +401,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         //Gherkin BDD functions
         private void ImportGherkinFeatureFile(object sender, RoutedEventArgs e)
         {
-            ImportGherkinFeatureWizard mWizard = new ImportGherkinFeatureWizard(this, ImportGherkinFeatureFilePage.eImportGherkinFileContext.DocumentsFolder);
-            mWizard.mFolder = this.Path;
+            ImportGherkinFeatureWizard mWizard = new ImportGherkinFeatureWizard(this, ImportGherkinFeatureFilePage.eImportGherkinFileContext.DocumentsFolder)
+            {
+                mFolder = this.Path
+            };
             WizardWindow.ShowWizard(mWizard);
 
             if (!String.IsNullOrEmpty(mWizard.FetaureFileName))
@@ -438,13 +444,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             try
             {
-                mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
+                mTreeView.Tree.ExpandTreeItem(this);
 
                 System.IO.Directory.CreateDirectory(newFolderPath);
-                DocumentsFolderTreeItem FolderItem = new DocumentsFolderTreeItem();
-                FolderItem.Folder = newFolderName;
-                FolderItem.Path = newFolderPath;
-                mTreeView.Tree.AddChildItemAndSelect((ITreeViewItem)this, (ITreeViewItem)FolderItem);
+                DocumentsFolderTreeItem FolderItem = new DocumentsFolderTreeItem
+                {
+                    Folder = newFolderName,
+                    Path = newFolderPath
+                };
+                mTreeView.Tree.AddChildItemAndSelect(this, FolderItem);
                 return FolderItem;
             }
             catch (Exception ex)

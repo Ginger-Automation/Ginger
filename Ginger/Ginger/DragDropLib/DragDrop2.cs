@@ -74,8 +74,10 @@ namespace GingerWPF.DragDropLib
                 if (Math.Abs(position.X - _startPoint.X) > SystemParameters.MinimumHorizontalDragDistance ||
                     Math.Abs(position.Y - _startPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
                 {
-                    DrgInfo = new DragInfo();
-                    DrgInfo.OriginalSource = e.OriginalSource;
+                    DrgInfo = new DragInfo
+                    {
+                        OriginalSource = e.OriginalSource
+                    };
                     ((IDragDrop)sender).StartDrag(DrgInfo);
                     // We start drag only of control put data in the drag data
                     if (DrgInfo.Data != null)
@@ -116,7 +118,7 @@ namespace GingerWPF.DragDropLib
 
         private static void DragSource_Drop(object sender, DragEventArgs e)
         {
-            if (DrgInfo.DragIcon == DragInfo.eDragIcon.Add || DrgInfo.DragIcon == DragInfo.eDragIcon.Move || DrgInfo.DragIcon == DragInfo.eDragIcon.MultiAdd)
+            if (DrgInfo.DragIcon is DragInfo.eDragIcon.Add or DragInfo.eDragIcon.Move or DragInfo.eDragIcon.MultiAdd)
             {
                 try
                 {
@@ -131,8 +133,7 @@ namespace GingerWPF.DragDropLib
                     object droppedItem = DrgInfo.Data;
                     if (droppedItem is ObservableList<RepositoryItemBase>)
                     {
-                        ObservableList<RepositoryItemBase> repoItemsList = droppedItem as ObservableList<RepositoryItemBase>;
-                        if (repoItemsList != null && repoItemsList.Count > 0)
+                        if (droppedItem is ObservableList<RepositoryItemBase> repoItemsList && repoItemsList.Count > 0)
                         {
                             foreach (RepositoryItemBase listItem in repoItemsList)
                             {
@@ -179,10 +180,9 @@ namespace GingerWPF.DragDropLib
 
                 if (htResult != null)
                 {
-                    FrameworkElement fwElem = htResult.VisualHit as FrameworkElement;
-                    if (fwElem != null)
+                    if (htResult.VisualHit is FrameworkElement fwElem)
                     {
-                        if (fwElem.DataContext != null && fwElem.DataContext is RepositoryItemBase)
+                        if (fwElem.DataContext is not null and RepositoryItemBase)
                         {
                             return fwElem.DataContext;
                         }
@@ -201,8 +201,7 @@ namespace GingerWPF.DragDropLib
 
                 if (htResult != null)
                 {
-                    FrameworkElement fwElem = htResult.VisualHit as FrameworkElement;
-                    if (fwElem != null)
+                    if (htResult.VisualHit is FrameworkElement fwElem)
                     {
                         if (fwElem.DataContext != null)
                         {

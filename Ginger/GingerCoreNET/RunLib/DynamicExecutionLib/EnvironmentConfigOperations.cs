@@ -42,10 +42,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
             foreach (ProjEnvironment projEnvironment in AllEnvUsedinRunnersAndRunset)
             {
-                EnvironmentConfig configEnv = new();
-                configEnv.Name = projEnvironment.Name;
-                configEnv.Exist = true;
-                configEnv.Guid = projEnvironment.Guid;
+                EnvironmentConfig configEnv = new()
+                {
+                    Name = projEnvironment.Name,
+                    Exist = true,
+                    Guid = projEnvironment.Guid
+                };
 
 
                 if (projEnvironment.Applications != null && projEnvironment.Applications.Count > 0)
@@ -70,7 +72,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                     Name = ((Database)db).Name,
                                     DBType = DatabaseConfigHelper.ConverDBTypeToDBConfigType(((Database)db).DBType)
                                 }
-                                ) ;
+                                );
 
                         });
 
@@ -104,7 +106,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 resultConfigEnvironments.Add(configEnv);
             }
             return resultConfigEnvironments;
-        }        
+        }
         public static void UpdateExistingEnvironmentDetails(IEnumerable<EnvironmentConfig> ExistingEnvironments, ObservableList<ProjEnvironment> AllEnvironmentsInGinger)
         {
 
@@ -127,14 +129,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         false
                     );
 
-                    if(appFromGinger == null)
+                    if (appFromGinger == null)
                     {
                         appFromGinger = ApplicationConfigHelper.CreateEnvApplicationFromConfig(app);
                         envFromGinger.Applications.Add(appFromGinger);
                     }
                     else
                     {
-                        ApplicationConfigHelper.UpdateEnvApplicationFromConfig(ref appFromGinger , app);
+                        ApplicationConfigHelper.UpdateEnvApplicationFromConfig(ref appFromGinger, app);
                     }
 
 
@@ -151,7 +153,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                           false
                          );
 
-                        if(dbFromGinger == null)
+                        if (dbFromGinger == null)
                         {
                             dbFromGinger = DatabaseConfigHelper.CreateDatabaseFromConfig(db);
                             appFromGinger.Dbs.Add(dbFromGinger);
@@ -171,15 +173,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                 false
                              );
 
-                        if(parameterFromGinger == null)
+                        if (parameterFromGinger == null)
                         {
                             parameterFromGinger = ParameterConfigHelper.CreateParameterFromConfig(param);
-                            
+
                             appFromGinger.Variables.Add(parameterFromGinger);
                         }
                         else
                         {
-                            ParameterConfigHelper.UpdateParameterFromConfig(param , ref parameterFromGinger);
+                            ParameterConfigHelper.UpdateParameterFromConfig(param, ref parameterFromGinger);
                         }
                     });
 
@@ -191,35 +193,35 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public static void AddNewEnvironmentDetails(IEnumerable<EnvironmentConfig> NewEnvironmentsInConfig, ObservableList<ProjEnvironment> AllEnvironmentsInGinger)
         {
-           NewEnvironmentsInConfig?.ForEach((Environment) =>
-            {
-                ValidateEnvironmentConfig(AllEnvironmentsInGinger, Environment);
-                var NewEnvironment = new ProjEnvironment()
-                {
-                    Name = Environment.Name,
-                };
+            NewEnvironmentsInConfig?.ForEach((Environment) =>
+             {
+                 ValidateEnvironmentConfig(AllEnvironmentsInGinger, Environment);
+                 var NewEnvironment = new ProjEnvironment()
+                 {
+                     Name = Environment.Name,
+                 };
 
 
-                Environment.Applications?.ForEach((Application) =>
-                {
-                    var EnvApplication = ApplicationConfigHelper.CreateEnvApplicationFromConfig(Application);
-                
-                    NewEnvironment.Applications.Add(EnvApplication);
+                 Environment.Applications?.ForEach((Application) =>
+                 {
+                     var EnvApplication = ApplicationConfigHelper.CreateEnvApplicationFromConfig(Application);
 
-                    Application.Parameters?.ForEach((Parameter) =>
-                    {
-                        var ParameterToBeAdded = ParameterConfigHelper.CreateParameterFromConfig(Parameter);
-                        EnvApplication.Variables.Add(ParameterToBeAdded);
-                    });
+                     NewEnvironment.Applications.Add(EnvApplication);
 
-                    Application.DBs?.ForEach((DatabaseConfig) =>
-                    {
-                        EnvApplication.Dbs.Add(DatabaseConfigHelper.CreateDatabaseFromConfig(DatabaseConfig));
-                    });
-                });
+                     Application.Parameters?.ForEach((Parameter) =>
+                     {
+                         var ParameterToBeAdded = ParameterConfigHelper.CreateParameterFromConfig(Parameter);
+                         EnvApplication.Variables.Add(ParameterToBeAdded);
+                     });
 
-                AllEnvironmentsInGinger.Add(NewEnvironment);
-            });
+                     Application.DBs?.ForEach((DatabaseConfig) =>
+                     {
+                         EnvApplication.Dbs.Add(DatabaseConfigHelper.CreateDatabaseFromConfig(DatabaseConfig));
+                     });
+                 });
+
+                 AllEnvironmentsInGinger.Add(NewEnvironment);
+             });
         }
 
 
@@ -240,11 +242,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public static void CheckIfNameIsUnique<T>(IEnumerable<T> List)
         {
-            var distinctCount =   List.Select((env) => typeof(T).GetProperty("Name").GetValue(env)).Distinct().Count();
+            var distinctCount = List.Select((env) => typeof(T).GetProperty("Name").GetValue(env)).Distinct().Count();
             var actualCount = List.Count();
             if (distinctCount != actualCount)
             {
-                throw new InvalidOperationException($"{typeof(T).Name.Replace("Config","")} Name should be distinct in the list");
+                throw new InvalidOperationException($"{typeof(T).Name.Replace("Config", "")} Name should be distinct in the list");
             }
         }
     }

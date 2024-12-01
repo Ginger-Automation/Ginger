@@ -27,7 +27,7 @@ namespace Ginger.UserControlsLib.TextEditor.Common
 {
     public class BackgroundRenderer : IBackgroundRenderer
     {
-        public List<ISegment> Segments = new List<ISegment>();
+        public List<ISegment> Segments = [];
 
         private ICSharpCode.AvalonEdit.TextEditor _editor;
 
@@ -90,8 +90,10 @@ namespace Ginger.UserControlsLib.TextEditor.Common
         {
             if (mRedPen == null)
             {
-                mRedPen = new Pen(Brushes.Red, 2);
-                mRedPen.Brush = getVB();
+                mRedPen = new Pen(Brushes.Red, 2)
+                {
+                    Brush = getVB()
+                };
             }
             return mRedPen;
         }
@@ -99,9 +101,11 @@ namespace Ginger.UserControlsLib.TextEditor.Common
         VisualBrush getVB()
         {
             //TODO: improve it to look like zigzag wabbely line
-            Path p = new Path();
-            p.Data = Geometry.Parse("M 0,2 L 2,0 4,2 6,0 8,2 10,0 12,2");
-            p.Stroke = Brushes.Red;
+            Path p = new Path
+            {
+                Data = Geometry.Parse("M 0,2 L 2,0 4,2 6,0 8,2 10,0 12,2"),
+                Stroke = Brushes.Red
+            };
             VisualBrush VB = new VisualBrush(p);
             return VB;
         }

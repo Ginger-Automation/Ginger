@@ -90,10 +90,13 @@ namespace WorkspaceHold
         public void StartLocalDriverFromPlugin()
         {
             //Arrange  
-            Agent agent = new Agent() { Name = "agent 1" };
-            agent.AgentType = Agent.eAgentType.Service;
-            agent.PluginId = "Memo";
-            agent.ServiceId = "DictionaryService";
+            Agent agent = new Agent
+            {
+                Name = "agent 1",
+                AgentType = Agent.eAgentType.Service,
+                PluginId = "Memo",
+                ServiceId = "DictionaryService"
+            };
 
             //Act
             mTestHelper.Log("agent.StartDriver()");

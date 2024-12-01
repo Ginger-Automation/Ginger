@@ -20,7 +20,6 @@ using Ginger.UserControlsLib.TextEditor.Common;
 using ICSharpCode.AvalonEdit.Folding;
 using System;
 using System.Data;
-using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -53,7 +52,7 @@ namespace Ginger.UserControlsLib.TextEditor
                 int indexOfKeyWordForIndication = foldingSection.TextContent.IndexOf(KeyWordForTableLocationIndication);
                 if (KeyWordForTableLocationIndication != null && indexOfKeyWordForIndication != -1 && CaretLocation - FoldingOffset > indexOfKeyWordForIndication)
                 {
-                    WorkingSection = foldingSection.TextContent.Substring(indexOfKeyWordForIndication);
+                    WorkingSection = foldingSection.TextContent[indexOfKeyWordForIndication..];
                     GapBetweenFoldingOffsetAndTableLocaionIndication = foldingSection.TextContent.Length - WorkingSection.Length;
                 }
 

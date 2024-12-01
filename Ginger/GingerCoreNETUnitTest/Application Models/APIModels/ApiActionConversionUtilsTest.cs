@@ -64,19 +64,27 @@ namespace GingerCoreNETUnitTest
             string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\" + solutionName);
             mSolutionRepository.Open(TempRepositoryFolder);
 
-            Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
-            sol.ApplicationPlatforms = new ObservableList<GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform>();
-            sol.ApplicationPlatforms.Add(new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
+            Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution
             {
-                AppName = "WebServices",
-                Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.WebServices
-            });
+                ApplicationPlatforms =
+            [
+                new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
+                {
+                    AppName = "WebServices",
+                    Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.WebServices
+                },
+            ]
+            };
 
             WorkSpace.Instance.Solution = sol;
 
-            mListBF = new ObservableList<BusinessFlow>();
-            mBF = new BusinessFlow() { Name = "TestBFConversion", Active = true };
-            mBF.TargetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
+            mListBF = [];
+            mBF = new BusinessFlow
+            {
+                Name = "TestBFConversion",
+                Active = true,
+                TargetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications()
+            };
         }
 
         [TestCleanup]
@@ -129,22 +137,28 @@ namespace GingerCoreNETUnitTest
 
         private static void GetActivityWithActWebApiActions()
         {
-            Activity activity = new Activity();
-            activity.Active = true;
-            activity.SelectedForConversion = true;
-            activity.TargetApplication = webService;
-            ActWebAPIRest actRest = new ActWebAPIRest();
-            actRest.Active = true;
-            actRest.Description = "WebAPI REST Action-XMLBody";
+            Activity activity = new Activity
+            {
+                Active = true,
+                SelectedForConversion = true,
+                TargetApplication = webService
+            };
+            ActWebAPIRest actRest = new ActWebAPIRest
+            {
+                Active = true,
+                Description = "WebAPI REST Action-XMLBody"
+            };
 
             SetRestActionInputValues(actRest, nameof(ActWebAPIBase.Fields.RequestBody), GetXMLBody());
             SetRestActionInputValues(actRest, nameof(ActWebAPIBase.Fields.EndPointURL), "https://jsonplaceholder.typicode.com/posts/1");
 
             activity.Acts.Add(actRest);
 
-            ActWebAPISoap actSoapJson = new ActWebAPISoap();
-            actSoapJson.Active = true;
-            actSoapJson.Description = "WebAPI Soap Action-JsonBody";
+            ActWebAPISoap actSoapJson = new ActWebAPISoap
+            {
+                Active = true,
+                Description = "WebAPI Soap Action-JsonBody"
+            };
 
             SetRestActionInputValues(actSoapJson, nameof(ActWebAPIBase.Fields.RequestBody), GetJsonBody());
             SetRestActionInputValues(actSoapJson, nameof(ActWebAPIBase.Fields.EndPointURL), "http://ws.cdyne.com/delayedstockquote/delayedstockquote.asmx");
@@ -232,30 +246,38 @@ namespace GingerCoreNETUnitTest
 
         private static void GetActivityWithActionsWithSameParametersDiffernetOptionalValues(bool onlyOneAction)
         {
-            Activity activity = new Activity();
-            activity.Active = true;
-            activity.SelectedForConversion = true;
-            activity.TargetApplication = webService;
-            ActWebAPIRest actRest = new ActWebAPIRest();
-            actRest.Active = true;
-            actRest.Description = "WebAPI REST Action-XMLBody";
+            Activity activity = new Activity
+            {
+                Active = true,
+                SelectedForConversion = true,
+                TargetApplication = webService
+            };
+            ActWebAPIRest actRest = new ActWebAPIRest
+            {
+                Active = true,
+                Description = "WebAPI REST Action-XMLBody"
+            };
 
             SetRestActionInputValues(actRest, nameof(ActWebAPIBase.Fields.RequestBody), GetXMLBody());
             SetRestActionInputValues(actRest, nameof(ActWebAPIBase.Fields.EndPointURL), "https://jsonplaceholder.typicode.com/posts/1");
 
-            ObservableList<ActReturnValue> retVal = new ObservableList<ActReturnValue>();
-            retVal.Add(new ActReturnValue() { Param = "RetCode_1st", Expected = "Ok", StoreToValue = ActReturnValue.eStoreTo.ApplicationModelParameter.ToString() });
-            retVal.Add(new ActReturnValue() { Param = "RetCode_2nd", Expected = null, StoreToValue = ActReturnValue.eStoreTo.ApplicationModelParameter.ToString() });
-            retVal.Add(new ActReturnValue() { Param = "RetCode_3rd", Expected = "Ok", StoreToValue = ActReturnValue.eStoreTo.DataSource.ToString() });
+            ObservableList<ActReturnValue> retVal =
+            [
+                new ActReturnValue() { Param = "RetCode_1st", Expected = "Ok", StoreToValue = ActReturnValue.eStoreTo.ApplicationModelParameter.ToString() },
+                new ActReturnValue() { Param = "RetCode_2nd", Expected = null, StoreToValue = ActReturnValue.eStoreTo.ApplicationModelParameter.ToString() },
+                new ActReturnValue() { Param = "RetCode_3rd", Expected = "Ok", StoreToValue = ActReturnValue.eStoreTo.DataSource.ToString() },
+            ];
             actRest.ReturnValues = retVal;
 
             activity.Acts.Add(actRest);
 
             if (!onlyOneAction)
             {
-                ActWebAPIRest actRestDiff = new ActWebAPIRest();
-                actRestDiff.Active = true;
-                actRestDiff.Description = "WebAPI REST Action-XMLBody 2";
+                ActWebAPIRest actRestDiff = new ActWebAPIRest
+                {
+                    Active = true,
+                    Description = "WebAPI REST Action-XMLBody 2"
+                };
 
                 SetRestActionInputValues(actRestDiff, nameof(ActWebAPIBase.Fields.RequestBody), GetXMLBodyDifferentOptionalValues());
                 SetRestActionInputValues(actRestDiff, nameof(ActWebAPIBase.Fields.EndPointURL), "https://jsonplaceholder.typicode.com/posts/1");
@@ -388,7 +410,7 @@ namespace GingerCoreNETUnitTest
 
         private static void ExecuteActionConversion(bool parameterizeRequestBody, bool pullValidations)
         {
-            ObservableList<BusinessFlowToConvert> ListOfBusinessFlowToConvert = new ObservableList<BusinessFlowToConvert>();
+            ObservableList<BusinessFlowToConvert> ListOfBusinessFlowToConvert = [];
             ApiActionConversionUtils utils = new ApiActionConversionUtils();
             foreach (var bf in mListBF)
             {
@@ -397,10 +419,12 @@ namespace GingerCoreNETUnitTest
                     act.SelectedForConversion = true;
                 }
 
-                BusinessFlowToConvert flowConversion = new BusinessFlowToConvert();
-                flowConversion.BusinessFlow = bf;
-                flowConversion.ConversionStatus = eConversionStatus.Pending;
-                flowConversion.TotalProcessingActionsCount = utils.GetConvertibleActionsCountFromBusinessFlow(bf);
+                BusinessFlowToConvert flowConversion = new BusinessFlowToConvert
+                {
+                    BusinessFlow = bf,
+                    ConversionStatus = eConversionStatus.Pending,
+                    TotalProcessingActionsCount = utils.GetConvertibleActionsCountFromBusinessFlow(bf)
+                };
                 ListOfBusinessFlowToConvert.Add(flowConversion);
             }
 

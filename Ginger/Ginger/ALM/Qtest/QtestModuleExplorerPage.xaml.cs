@@ -48,10 +48,12 @@ namespace Ginger.ALM.Qtest
             GetTreeData();
             foreach (QTestAPIStdModel.ModuleResource moduleResource in treeData)
             {
-                QtestModuleTreeItem tvi = new QtestModuleTreeItem(moduleResource.Children);
-                tvi.ID = moduleResource.Id.ToString();
-                tvi.Path = moduleResource.Path;
-                tvi.Name = moduleResource.Name;
+                QtestModuleTreeItem tvi = new QtestModuleTreeItem(moduleResource.Children)
+                {
+                    ID = moduleResource.Id.ToString(),
+                    Path = moduleResource.Path,
+                    Name = moduleResource.Name
+                };
                 TestPlanExplorerTreeView.Tree.AddItem(tvi);
             }
             TestPlanExplorerTreeView.Tree.ItemSelected += TestPlanExplorerTreeView_ItemSelected;
@@ -74,11 +76,13 @@ namespace Ginger.ALM.Qtest
 
         public object ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button selectBtn = new Button();
-            selectBtn.Content = "Select Folder";
+            Button selectBtn = new Button
+            {
+                Content = "Select Folder"
+            };
             selectBtn.Click += new RoutedEventHandler(selectBtn_Clicked);
 
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Browse Qtest/ALM Test Plan", this, new ObservableList<Button> { selectBtn }, true, "Cancel", Cancel_Clicked);
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Browse Qtest/ALM Test Plan", this, [selectBtn], true, "Cancel", Cancel_Clicked);
 
             return mCurrentSelectedObject;
         }

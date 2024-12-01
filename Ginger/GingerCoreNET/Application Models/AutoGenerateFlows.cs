@@ -34,15 +34,17 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         public static ObservableList<Activity> CreatePOMActivitiesFromMetadata(ApplicationPOMModel POM)
         {
             Reporter.ToLog(eLogLevel.INFO, "Started generating activities based on pom meta data.");
-            ObservableList<Activity> activities = new ObservableList<Activity>();
+            ObservableList<Activity> activities = [];
             foreach (POMPageMetaData metaData in POM.ApplicationPOMMetaData)
             {
-                Activity activity = new Activity();
-                activity.Active = true;
-                activity.IsAutoLearned = true;
-                activity.ActivityName = metaData.Name;
-                activity.POMMetaDataId = metaData.Guid;
-                activity.TargetApplication = POM.TargetApplicationKey.ItemName;
+                Activity activity = new Activity
+                {
+                    Active = true,
+                    IsAutoLearned = true,
+                    ActivityName = metaData.Name,
+                    POMMetaDataId = metaData.Guid,
+                    TargetApplication = POM.TargetApplicationKey.ItemName
+                };
 
                 //add GoTo url action
                 WebPlatform webPlatform = new WebPlatform();
@@ -55,8 +57,10 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                     ElementValue = POM.PageURL,
                     LocateBy = "NA"
                 };
-                ElementInfo einfo = new ElementInfo();
-                einfo.ElementTypeEnum = eElementType.Iframe;
+                ElementInfo einfo = new ElementInfo
+                {
+                    ElementTypeEnum = eElementType.Iframe
+                };
                 Act gotoAction = (webPlatform as Amdocs.Ginger.CoreNET.IPlatformInfo).GetPlatformAction(einfo, actConfigurations);
                 gotoAction.Active = true;
                 activity.Acts.Add(gotoAction);

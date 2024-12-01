@@ -34,45 +34,41 @@ namespace Ginger.WindowExplorer.Java
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Set Selected Value " + Name,
-                ControlAction = ActJavaElement.eControlAction.Select
-            });
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Get " + Name + " Value",
-                ControlAction = ActJavaElement.eControlAction.GetValue
-            });
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Get IsEnabled Property " + Name,
-                ControlAction = ActJavaElement.eControlAction.IsEnabled
-            });
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Select Value By Index",
-                ControlAction = ActJavaElement.eControlAction.SelectByIndex,
-                Value = 0 + ""
-            });
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Get Value By Index",
-                ControlAction = ActJavaElement.eControlAction.GetValueByIndex,
-                Value = 0 + ""
-            });
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Get Item Count",
-                ControlAction = ActJavaElement.eControlAction.GetItemCount,
-            });
+            ObservableList<Act> list =
+            [
+                new ActJavaElement()
+                {
+                    Description = "Set Selected Value " + Name,
+                    ControlAction = ActJavaElement.eControlAction.Select
+                },
+                new ActJavaElement()
+                {
+                    Description = "Get " + Name + " Value",
+                    ControlAction = ActJavaElement.eControlAction.GetValue
+                },
+                new ActJavaElement()
+                {
+                    Description = "Get IsEnabled Property " + Name,
+                    ControlAction = ActJavaElement.eControlAction.IsEnabled
+                },
+                new ActJavaElement()
+                {
+                    Description = "Select Value By Index",
+                    ControlAction = ActJavaElement.eControlAction.SelectByIndex,
+                    Value = 0 + ""
+                },
+                new ActJavaElement()
+                {
+                    Description = "Get Value By Index",
+                    ControlAction = ActJavaElement.eControlAction.GetValueByIndex,
+                    Value = 0 + ""
+                },
+                new ActJavaElement()
+                {
+                    Description = "Get Item Count",
+                    ControlAction = ActJavaElement.eControlAction.GetItemCount,
+                },
+            ];
             return list;
         }
     }

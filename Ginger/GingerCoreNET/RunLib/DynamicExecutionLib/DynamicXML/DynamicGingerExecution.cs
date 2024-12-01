@@ -26,6 +26,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public bool ShowAutoRunWindow { get; set; }
 
-        public List<AddRunset> AddRunsets { get; set; } = new List<AddRunset>();
+        public List<AddRunset> AddRunsets { get; set; } = [];
     }
 }

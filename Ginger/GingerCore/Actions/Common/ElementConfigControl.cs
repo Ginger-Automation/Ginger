@@ -30,7 +30,7 @@ namespace GingerCore.Actions.Common
 
         public eElementType ControlType { get; set; }
 
-        public List<string> PossibleValues = new List<string>();
+        public List<string> PossibleValues = [];
 
         public string DefaultValue { get; set; }
 

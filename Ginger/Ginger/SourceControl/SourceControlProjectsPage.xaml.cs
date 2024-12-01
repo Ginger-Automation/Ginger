@@ -36,7 +36,7 @@ namespace Ginger.SourceControl
     /// </summary>
     public partial class SourceControlProjectsPage : Page
     {
-        ObservableList<SolutionInfo> SourceControlSolutions = new ObservableList<SolutionInfo>();
+        ObservableList<SolutionInfo> SourceControlSolutions = [];
 
         SolutionInfo solutionInfo = null;
 
@@ -104,7 +104,7 @@ namespace Ginger.SourceControl
 
             SolutionsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
 
-            if(!string.IsNullOrEmpty(mSourceControl.SourceControlURL) && mSourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
+            if (!string.IsNullOrEmpty(mSourceControl.SourceControlURL) && mSourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
             {
                 xBranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
             }
@@ -242,12 +242,15 @@ namespace Ginger.SourceControl
         private void SetGridView()
         {
             //Set the Data Grid columns
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(SolutionInfo.SourceControlLocation), Header = "Source Control Solution Name", WidthWeight = 30, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(SolutionInfo.LocalFolder), Header = "Solution Local Folder Path", WidthWeight = 50, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(SolutionInfo.ExistInLocaly), Header = "Exist Locally", StyleType = GridColView.eGridColStyleType.Text, WidthWeight = 20, MaxWidth = 800, ReadOnly = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(SolutionInfo.SourceControlLocation), Header = "Source Control Solution Name", WidthWeight = 30, ReadOnly = true },
+                new GridColView() { Field = nameof(SolutionInfo.LocalFolder), Header = "Solution Local Folder Path", WidthWeight = 50, ReadOnly = true },
+                new GridColView() { Field = nameof(SolutionInfo.ExistInLocaly), Header = "Exist Locally", StyleType = GridColView.eGridColStyleType.Text, WidthWeight = 20, MaxWidth = 800, ReadOnly = true },
+            ]
+            };
 
             SolutionsGrid.SetAllColumnsDefaultView(view);
             SolutionsGrid.InitViewItems();
@@ -292,8 +295,10 @@ namespace Ginger.SourceControl
 
         public string ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
         {
-            downloadProjBtn = new Button();
-            downloadProjBtn.Content = "Download Selected Solution";
+            downloadProjBtn = new Button
+            {
+                Content = "Download Selected Solution"
+            };
             downloadProjBtn.Click += new RoutedEventHandler(GetProject_Click);
 
             loaderElement.Name = "xProcessingImage";
@@ -302,7 +307,7 @@ namespace Ginger.SourceControl
             loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
             loaderElement.Visibility = Visibility.Collapsed;
 
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Download Source Control Solution", this, new ObservableList<Button> { downloadProjBtn }, true, "Close", null, false, loaderElement);
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Download Source Control Solution", this, [downloadProjBtn], true, "Close", null, false, loaderElement);
 
             if (solutionInfo != null)
             {
@@ -316,10 +321,12 @@ namespace Ginger.SourceControl
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new System.Windows.Forms.FolderBrowserDialog();
-            dlg.Description = "Select Local Folder";
-            dlg.RootFolder = Environment.SpecialFolder.MyComputer;
-            dlg.ShowNewFolderButton = true;
+            var dlg = new System.Windows.Forms.FolderBrowserDialog
+            {
+                Description = "Select Local Folder",
+                RootFolder = Environment.SpecialFolder.MyComputer,
+                ShowNewFolderButton = true
+            };
             SourceControlIntegration.BusyInProcessWhileDownloading = false;
             System.Windows.Forms.DialogResult result = dlg.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)

@@ -32,8 +32,7 @@ namespace Ginger.Run.RunSetActions
         public IRunSetActionSendDataToExternalSourceOperations RunSetActionSendDataToExternalSourceOperations;
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
-            List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();
-            list.Add(RunSetActionBase.eRunAt.ExecutionEnd);
+            List<RunSetActionBase.eRunAt> list = [RunSetActionBase.eRunAt.ExecutionEnd];
             return list;
         }
 
@@ -50,10 +49,10 @@ namespace Ginger.Run.RunSetActions
         public string EndPointUrl { get { return mEndPointUrl; } set { if (mEndPointUrl != value) { mEndPointUrl = value; OnPropertyChanged(nameof(EndPointUrl)); } } }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> RequestHeaders = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> RequestHeaders = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> RequestBodyParams = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> RequestBodyParams = [];
 
         private string mRequestBodyJson;
         [IsSerializedForLocalRepository]
@@ -82,7 +81,7 @@ namespace Ginger.Run.RunSetActions
         {
             if (RequestBodyParams.Count > 0)
             {
-                JObject obj = new JObject();
+                JObject obj = [];
                 foreach (ActInputValue AIV in RequestBodyParams)
                 {
                     if (AIV.IntValue != 0)
@@ -107,9 +106,11 @@ namespace Ginger.Run.RunSetActions
                     Dictionary<string, string> keyValuePairs = JsonConvert.DeserializeObject<Dictionary<string, string>>(RequestBodyJson);
                     foreach (KeyValuePair<string, string> actInput in keyValuePairs)
                     {
-                        ActInputValue actInputValue = new ActInputValue();
-                        actInputValue.Param = actInput.Key;
-                        actInputValue.Value = actInput.Value;
+                        ActInputValue actInputValue = new ActInputValue
+                        {
+                            Param = actInput.Key,
+                            Value = actInput.Value
+                        };
                         RequestBodyParams.Add(actInputValue);
                     }
                 }

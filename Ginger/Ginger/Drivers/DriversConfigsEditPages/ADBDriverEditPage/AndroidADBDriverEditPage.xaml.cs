@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using Ginger.Drivers.AndroidDeviceADBLib;
 using Ginger.Drivers.Common;
 using GingerCore;
@@ -47,7 +46,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             if (mAgent.DriverConfiguration == null)
             {
-                mAgent.DriverConfiguration = new ObservableList<DriverConfigParam>();
+                mAgent.DriverConfiguration = [];
             }
 
             DriverConfigParam ModelDCP = mAgent.GetOrCreateParam("Model", "");
@@ -103,17 +102,20 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             // Incidentally, /c tells cmd that we want it to execute the command that follows,
             // and then exit.
             System.Diagnostics.ProcessStartInfo procStartInfo =
-            new System.Diagnostics.ProcessStartInfo("cmd", "/c \"" + command + "\"");
-
-            // The following commands are needed to redirect the standard output.
-            // This means that it will be redirected to the Process.StandardOutput StreamReader.
-            procStartInfo.RedirectStandardOutput = true;
-            procStartInfo.UseShellExecute = false;
-            // Do not create the black window.
-            procStartInfo.CreateNoWindow = true;
+            new System.Diagnostics.ProcessStartInfo("cmd", "/c \"" + command + "\"")
+            {
+                // The following commands are needed to redirect the standard output.
+                // This means that it will be redirected to the Process.StandardOutput StreamReader.
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                // Do not create the black window.
+                CreateNoWindow = true
+            };
             // Now we create a process, assign its ProcessStartInfo and start it
-            System.Diagnostics.Process proc = new System.Diagnostics.Process();
-            proc.StartInfo = procStartInfo;
+            System.Diagnostics.Process proc = new System.Diagnostics.Process
+            {
+                StartInfo = procStartInfo
+            };
             proc.Start();
             // Get the output into a string
             string result = proc.StandardOutput.ReadToEnd();
@@ -143,7 +145,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
 
             string cmd = GetAndroidHome() + @"\tools\emulator.exe -list-avds";
-            List<string> list = new List<string>();
+            List<string> list = [];
 
             string lst = ExecuteCommandSync(cmd);
             string[] sep = new string[] { "\r\n" };

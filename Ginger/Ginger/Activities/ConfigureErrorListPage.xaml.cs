@@ -18,7 +18,6 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Ginger.UserControls;
 using GingerCore;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,7 +32,7 @@ namespace Ginger.Activities
         GenericWindow _pageGenericWin = null;
         ErrorHandler mErrorHandler;
 
-        ObservableList<ErrorDetails> mErrorList = new ObservableList<ErrorDetails>();
+        ObservableList<ErrorDetails> mErrorList = [];
         public ConfigureErrorListPage(ErrorHandler errorHandler)
         {
             InitializeComponent();
@@ -44,11 +43,15 @@ namespace Ginger.Activities
         private void SetGridsView()
         {
 
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ErrorDetails.IsSelected), StyleType = GridColView.eGridColStyleType.CheckBox, MaxWidth = 20, Header = " " });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ErrorDetails.ErrorString), WidthWeight = 15, Header = "Error String" });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ErrorDetails.ErrorDescription), WidthWeight = 15, Header = "Description" });
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ErrorDetails.IsSelected), StyleType = GridColView.eGridColStyleType.CheckBox, MaxWidth = 20, Header = " " },
+                new GridColView() { Field = nameof(ErrorDetails.ErrorString), WidthWeight = 15, Header = "Error String" },
+                new GridColView() { Field = nameof(ErrorDetails.ErrorDescription), WidthWeight = 15, Header = "Description" },
+            ]
+            };
             xErrorListConfigurationGrd.SetAllColumnsDefaultView(defView);
             xErrorListConfigurationGrd.InitViewItems();
             xErrorListConfigurationGrd.btnMarkAll.Visibility = Visibility.Visible;
@@ -78,17 +81,19 @@ namespace Ginger.Activities
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
         {
-            Button okBtn = new Button();
-            okBtn.Content = "Save & Close";
+            Button okBtn = new Button
+            {
+                Content = "Save & Close"
+            };
             okBtn.Click += new RoutedEventHandler(SaveBtn_Click);
 
-            Button closeBtn = new Button();
-            closeBtn.Content = "Cancel";
+            Button closeBtn = new Button
+            {
+                Content = "Cancel"
+            };
             closeBtn.Click += new RoutedEventHandler(CancelBtn_Click);
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-
-            winButtons.Add(closeBtn); winButtons.Add(okBtn);
+            ObservableList<Button> winButtons = [closeBtn, okBtn];
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Error String Configuration", this, winButtons, false, string.Empty, CloseWinClicked);
         }

@@ -48,8 +48,10 @@ namespace GingerCoreNETUnitTest.Webservice.DiameterLib
             SolutionRepository mSolutionRepository = WorkSpace.Instance.SolutionRepository;
             string TempRepositoryFolder = TestResources.GetTestTempFolder(Path.Combine("Solutions", "temp"));
             mSolutionRepository.Open(TempRepositoryFolder);
-            Solution sol = new Solution();
-            sol.ContainingFolderFullPath = TempRepositoryFolder;
+            Solution sol = new Solution
+            {
+                ContainingFolderFullPath = TempRepositoryFolder
+            };
             WorkSpace.Instance.Solution = sol;
             if (WorkSpace.Instance.Solution.SolutionOperations == null)
             {

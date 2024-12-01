@@ -51,12 +51,12 @@ namespace GingerCore.Drivers.PBDriver
         HtmlAgilityPack.HtmlDocument HAPDocument;
         mshtml.HTMLDocument mHtmlDocument;
         XPathHelper mXPathHelper;
-        List<string> ImportantProperties = new List<string>();
+        List<string> ImportantProperties = [];
         mshtml.IHTMLDocument3 sourceDoc;
         string documentContents;
         public IHTMLDocument2 frameContent;
         public DispHTMLDocument frameDocument;
-        List<ElementInfo> frameElementsList = new List<ElementInfo>();
+        List<ElementInfo> frameElementsList = [];
         UIAuto.AutomationElement AEBrowser;
 
         public async Task<List<ElementInfo>> GetVisibleElement()
@@ -104,7 +104,7 @@ namespace GingerCore.Drivers.PBDriver
 
         public List<ElementInfo> GetElementChildren(ElementInfo Ei)
         {
-            List<ElementInfo> EIlist = new List<ElementInfo>();
+            List<ElementInfo> EIlist = [];
             IHTMLElement node = null;
             IHTMLDOMNode domNode = null;
             HTMLElementInfo HTMLEI;
@@ -151,9 +151,11 @@ namespace GingerCore.Drivers.PBDriver
                 try
                 {
                     InitFrame(node);
-                    ElementInfo htmlRootEI = new ElementInfo();
-                    htmlRootEI.XPath = "/";
-                    htmlRootEI.WindowExplorer = Ei.WindowExplorer;
+                    ElementInfo htmlRootEI = new ElementInfo
+                    {
+                        XPath = "/",
+                        WindowExplorer = Ei.WindowExplorer
+                    };
                     EIlist = GetElementChildren(htmlRootEI);
                 }
                 catch (Exception e)
@@ -562,12 +564,14 @@ namespace GingerCore.Drivers.PBDriver
 
         public HTMLElementInfo GetHtmlElementInfo(IHTMLElement h1)
         {
-            HTMLElementInfo EI = new HTMLElementInfo();
-            EI.ElementTitle = getElementTitle(h1);
-            EI.ID = getElementId(h1);
-            EI.Value = getElementValue(h1);
-            EI.Name = getElementName(h1);
-            EI.ElementType = getElementType(h1);
+            HTMLElementInfo EI = new HTMLElementInfo
+            {
+                ElementTitle = getElementTitle(h1),
+                ID = getElementId(h1),
+                Value = getElementValue(h1),
+                Name = getElementName(h1),
+                ElementType = getElementType(h1)
+            };
             EI.ElementTypeEnum = GetElementTypeEnum(EI.ElementType);
             EI.Path = "";
             EI.ElementObject = h1;
@@ -584,7 +588,7 @@ namespace GingerCore.Drivers.PBDriver
         {
             Dictionary<string, string> ElemTyp = new Dictionary<string, string>()
             { { "html" ,"HTML"},{ "head" ,"HEAD"},{ "body" ,"BODY"},{ "title" ,"TITLE"},{ "text", "label" },{ "form","FORM"} };
-            IHTMLDOMNode h1 = (IHTMLDOMNode)h2;
+            IHTMLDOMNode h1 = h2;
             HTMLElementInfo EI = new HTMLElementInfo();
             try
             {
@@ -615,11 +619,11 @@ namespace GingerCore.Drivers.PBDriver
         private string ValidateXPath(string xpath)
         {
             var index = xpath.LastIndexOf("/");
-            var lastPath = xpath.Substring(index);
+            var lastPath = xpath[index..];
 
             if (lastPath.Contains("#"))
             {
-                xpath = xpath.Substring(0, index);
+                xpath = xpath[..index];
                 lastPath = lastPath.Replace("#", "");
                 lastPath = lastPath.Replace("[", "()[");
                 xpath = xpath + lastPath;
@@ -629,7 +633,7 @@ namespace GingerCore.Drivers.PBDriver
 
         public async Task<List<ElementInfo>> GetElementList()
         {
-            List<ElementInfo> list = new List<ElementInfo>();
+            List<ElementInfo> list = [];
             frameElementsList.Clear();
             await AddDocumentsAllElements(dispHtmlDocument);
             list.AddRange(frameElementsList);
@@ -659,7 +663,7 @@ namespace GingerCore.Drivers.PBDriver
                         domNode = h1 as IHTMLDOMNode;
                         iframeBase = domNode as IHTMLFrameBase2;
                         domNode2 = iframeBase.contentWindow;
-                        frameContent = (IHTMLDocument2)domNode2.document;
+                        frameContent = domNode2.document;
 
                         DispDoc = (DispHTMLDocument)frameContent;
                         await AddDocumentsAllElements(DispDoc);
@@ -683,7 +687,7 @@ namespace GingerCore.Drivers.PBDriver
             }
 
             mshtml.IHTMLElement currentNode = element;
-            ArrayList path = new ArrayList();
+            ArrayList path = [];
 
             while (currentNode != null)
             {
@@ -763,7 +767,7 @@ namespace GingerCore.Drivers.PBDriver
             {
                 return "set to " + text;
             }
-            if (tagName == "A" || tagName == "a")
+            if (tagName is "A" or "a")
             {
                 if (text != null)
                 {
@@ -836,33 +840,33 @@ namespace GingerCore.Drivers.PBDriver
         {
             eElementType elementType = eElementType.Unknown;
 
-            if (elemType.ToUpper() == "INPUT.TEXT" || elemType.ToUpper() == "TEXTAREA" || elemType.ToUpper() == "INPUT.UNDEFINED"
-                || elemType.ToUpper() == "INPUT.PASSWORD" || elemType.ToUpper() == "INPUT.EMAIL")  // HTML text 
+            if (elemType.ToUpper() is "INPUT.TEXT" or "TEXTAREA" or "INPUT.UNDEFINED"
+                or "INPUT.PASSWORD" or "INPUT.EMAIL")  // HTML text 
             {
                 elementType = eElementType.TextBox;
             }
-            else if (elemType.ToUpper() == "INPUT.BUTTON" || elemType.ToUpper() == "BUTTON" || elemType.ToUpper() == "INPUT.IMAGE" ||
-                elemType.ToUpper() == "LINK" || elemType.ToUpper() == "INPUT.SUBMIT")  // HTML Button
+            else if (elemType.ToUpper() is "INPUT.BUTTON" or "BUTTON" or "INPUT.IMAGE" or
+                "LINK" or "INPUT.SUBMIT")  // HTML Button
             {
                 elementType = eElementType.Button;
             }
-            else if (elemType.ToUpper() == "TD" || elemType.ToUpper() == "TH" || elemType.ToUpper() == "TR")
+            else if (elemType.ToUpper() is "TD" or "TH" or "TR")
             {
                 elementType = eElementType.TableItem;
             }
-            else if (elemType.ToUpper() == "LINK" || elemType.ToUpper() == "A") // HTML Link
+            else if (elemType.ToUpper() is "LINK" or "A") // HTML Link
             {
                 elementType = eElementType.HyperLink;
             }
-            else if (elemType.ToUpper() == "LABEL" || elemType.ToUpper() == "TITLE")// HTML Label
+            else if (elemType.ToUpper() is "LABEL" or "TITLE")// HTML Label
             {
                 elementType = eElementType.Label;
             }
-            else if (elemType.ToUpper() == "SELECT" || elemType.ToUpper() == "SELECT-ONE") // HTML Select/ComboBox
+            else if (elemType.ToUpper() is "SELECT" or "SELECT-ONE") // HTML Select/ComboBox
             {
                 elementType = eElementType.ComboBox;
             }
-            else if (elemType.ToUpper() == "TABLE" || elemType.ToUpper() == "CAPTION")// HTML Table
+            else if (elemType.ToUpper() is "TABLE" or "CAPTION")// HTML Table
             {
                 elementType = eElementType.Table;
             }
@@ -878,7 +882,7 @@ namespace GingerCore.Drivers.PBDriver
             {
                 elementType = eElementType.Span;
             }
-            else if (elemType.ToUpper() == "IMG" || elemType.ToUpper() == "MAP")// IMG Element
+            else if (elemType.ToUpper() is "IMG" or "MAP")// IMG Element
             {
                 elementType = eElementType.Image;
             }
@@ -886,7 +890,7 @@ namespace GingerCore.Drivers.PBDriver
             {
                 elementType = eElementType.CheckBox;
             }
-            else if (elemType.ToUpper() == "OPTGROUP" || elemType.ToUpper() == "OPTION")// HTML Radio
+            else if (elemType.ToUpper() is "OPTGROUP" or "OPTION")// HTML Radio
             {
                 return eElementType.ComboBoxOption;
             }
@@ -906,11 +910,11 @@ namespace GingerCore.Drivers.PBDriver
             {
                 elementType = eElementType.Form;
             }
-            else if (elemType.ToUpper() == "UL" || elemType.ToUpper() == "OL" || elemType.ToUpper() == "DL")
+            else if (elemType.ToUpper() is "UL" or "OL" or "DL")
             {
                 elementType = eElementType.List;
             }
-            else if (elemType.ToUpper() == "LI" || elemType.ToUpper() == "DT" || elemType.ToUpper() == "DD")
+            else if (elemType.ToUpper() is "LI" or "DT" or "DD")
             {
                 elementType = eElementType.ListItem;
             }
@@ -918,7 +922,7 @@ namespace GingerCore.Drivers.PBDriver
             {
                 elementType = eElementType.MenuBar;
             }
-            else if (elemType.ToUpper() == "H1" || elemType.ToUpper() == "H2" || elemType.ToUpper() == "H3" || elemType.ToUpper() == "H4" || elemType.ToUpper() == "H5" || elemType.ToUpper() == "H6" || elemType.ToUpper() == "P")
+            else if (elemType.ToUpper() is "H1" or "H2" or "H3" or "H4" or "H5" or "H6" or "P")
             {
                 elementType = eElementType.Text;
             }
@@ -950,7 +954,7 @@ namespace GingerCore.Drivers.PBDriver
             {
                 elementType = tagName + "." + type;
             }
-            else if (tagName == "a" || tagName == "A" || tagName == "li" || tagName == "LI")
+            else if (tagName is "a" or "A" or "li" or "LI")
             {
                 elementType = "link";
             }
@@ -1019,11 +1023,11 @@ namespace GingerCore.Drivers.PBDriver
                 case "PageSource":
                     if (currentFrameDocument != null)
                     {
-                        result = (dynamic)currentFrameDocument.documentElement.getAttribute("OuterHTML");
+                        result = currentFrameDocument.documentElement.getAttribute("OuterHTML")?.ToString();
                     }
                     else
                     {
-                        result = (dynamic)mHtmlDocument.documentElement.getAttribute("OuterHtml");
+                        result = mHtmlDocument.documentElement.getAttribute("OuterHtml")?.ToString();
                     }
                     break;
                 case "PageURL":
@@ -1351,7 +1355,7 @@ namespace GingerCore.Drivers.PBDriver
 
         public ObservableList<ControlProperty> GetHTMLElementProperties(ElementInfo EI)
         {
-            ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
+            ObservableList<ControlProperty> list = [];
             IHTMLDOMNode d1;
             if (EI.ElementObject.GetType().ToString().Contains("mshtml") || EI.ElementObject.GetType().ToString().Contains("_ComObject"))
             {
@@ -1370,8 +1374,10 @@ namespace GingerCore.Drivers.PBDriver
                 foreach (IHTMLDOMAttribute d in HAttributes)
                 {
                     val = "";
-                    ControlProperty CP = new ControlProperty();
-                    CP.Name = d.nodeName;
+                    ControlProperty CP = new ControlProperty
+                    {
+                        Name = d.nodeName
+                    };
 
                     val = Convert.ToString(d.nodeValue);
                     CP.Value = object.ReferenceEquals(val, null) ? string.Empty : val;
@@ -1385,9 +1391,11 @@ namespace GingerCore.Drivers.PBDriver
             {
                 if (((IHTMLElement)EI.ElementObject).style.cssText != null)
                 {
-                    ControlProperty CP = new ControlProperty();
-                    CP.Name = "Style";
-                    CP.Value = ((IHTMLElement)EI.ElementObject).style.cssText;
+                    ControlProperty CP = new ControlProperty
+                    {
+                        Name = "Style",
+                        Value = ((IHTMLElement)EI.ElementObject).style.cssText
+                    };
                     if (CP.Value != "")
                     {
                         list.Add(CP);
@@ -1499,7 +1507,7 @@ namespace GingerCore.Drivers.PBDriver
         }
         public ObservableList<ElementInfo> GetElements(ElementLocator EL)
         {
-            ObservableList<ElementInfo> list = new ObservableList<ElementInfo>();
+            ObservableList<ElementInfo> list = [];
             //temp for test
             List<IHTMLElement> AEList = FindElementsByLocator(EL);
             if (AEList != null)
@@ -1519,13 +1527,11 @@ namespace GingerCore.Drivers.PBDriver
             eLocateBy eLocatorType = EL.LocateBy;
             string LocValueCalculated = EL.LocateValue;
 
-            switch (eLocatorType)
+            return eLocatorType switch
             {
-                case eLocateBy.ByXPath:
-                    return GetElementsByXpath(LocValueCalculated);
-                default:
-                    throw new Exception("Locator not implement - " + eLocatorType.ToString());
-            }
+                eLocateBy.ByXPath => GetElementsByXpath(LocValueCalculated),
+                _ => throw new Exception("Locator not implement - " + eLocatorType.ToString()),
+            };
         }
 
         public string SelectFromDropDown(IHTMLElement element, string value, string attribute = "value")
@@ -1740,7 +1746,7 @@ namespace GingerCore.Drivers.PBDriver
 
         public ObservableList<ElementLocator> GetHTMLElementLocators(HTMLElementInfo EI)
         {
-            ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
+            ObservableList<ElementLocator> list = [];
 
             if (!string.IsNullOrEmpty(EI.ID))
             {
@@ -1970,7 +1976,7 @@ namespace GingerCore.Drivers.PBDriver
         public List<IHTMLElement> GetElementsByXpath(string XPath)
         {
             List<ElementInfo> elems = mXPathHelper.GetElementsByXpath(XPath);
-            List<IHTMLElement> list = new List<IHTMLElement>();
+            List<IHTMLElement> list = [];
             foreach (ElementInfo EI in elems)
             {
                 list.Add((IHTMLElement)(((HTMLElementInfo)EI).ElementObject));
@@ -1998,8 +2004,10 @@ namespace GingerCore.Drivers.PBDriver
 
         ElementInfo IXPath.UseRootElement()
         {
-            HTMLElementInfo root = new HTMLElementInfo();
-            root.ElementObject = CurrentWindowRootElement.ElementObject;
+            HTMLElementInfo root = new HTMLElementInfo
+            {
+                ElementObject = CurrentWindowRootElement.ElementObject
+            };
             return root;
         }
 
@@ -2055,7 +2063,7 @@ namespace GingerCore.Drivers.PBDriver
                     IHTMLDOMNode domNode = obj as IHTMLDOMNode;
                     IHTMLFrameBase2 iframeBase = domNode as IHTMLFrameBase2;
                     IHTMLWindow2 domNode2 = iframeBase.contentWindow;
-                    IHTMLDocument2 frameContent = (IHTMLDocument2)domNode2.document;
+                    IHTMLDocument2 frameContent = domNode2.document;
 
                     IHTMLElementCollection elmPrevSibling = frameContent.all;
                     foreach (IHTMLElement f12 in elmPrevSibling)
@@ -2074,13 +2082,13 @@ namespace GingerCore.Drivers.PBDriver
             }
             else
             {
-                return GetHtmlElementInfo((IHTMLDOMNode)child);
+                return GetHtmlElementInfo(child);
             }
         }
 
         List<ElementInfo> IXPath.FindAll(ElementInfo ElementInfo, List<XpathPropertyCondition> conditions)
         {
-            List<ElementInfo> listEI = new List<ElementInfo>();
+            List<ElementInfo> listEI = [];
             HTMLElementInfo EI = (HTMLElementInfo)ElementInfo;
             if (EI.ElementObject == null)
             {
@@ -2135,7 +2143,7 @@ namespace GingerCore.Drivers.PBDriver
                     }
                     else
                     {
-                        return GetHtmlElementInfo((IHTMLDOMNode)childNode);
+                        return GetHtmlElementInfo(childNode);
                     }
                 }
                 else
@@ -2153,7 +2161,7 @@ namespace GingerCore.Drivers.PBDriver
                     }
                     else
                     {
-                        return GetHtmlElementInfo((IHTMLDOMNode)childNode);
+                        return GetHtmlElementInfo(childNode);
                     }
                 }
             }
@@ -2196,7 +2204,7 @@ namespace GingerCore.Drivers.PBDriver
                     }
                     else
                     {
-                        return GetHtmlElementInfo((IHTMLDOMNode)elem23);
+                        return GetHtmlElementInfo(elem23);
                     }
                 }
                 else
@@ -2215,7 +2223,7 @@ namespace GingerCore.Drivers.PBDriver
                     }
                     else
                     {
-                        return GetHtmlElementInfo((IHTMLDOMNode)elem23);
+                        return GetHtmlElementInfo(elem23);
                     }
                 }
             }
@@ -2509,7 +2517,7 @@ namespace GingerCore.Drivers.PBDriver
                 var pattern = @"/(.*?)\[(.*?)\]"; // like div[1]
                                                   // Parse the XPath to extract the nodes on the path
                 var matches = Regex.Matches(xpath, pattern);
-                List<DocNode> PathToNode = new List<DocNode>();
+                List<DocNode> PathToNode = [];
                 foreach (Match m in matches) // Make a path of nodes
                 {
                     DocNode n = new DocNode();
@@ -2569,17 +2577,16 @@ namespace GingerCore.Drivers.PBDriver
             // based on the name and position of the node
             int childPos = 0;
             int pos = 0;
-            List<IHTMLElement> elChilds = new List<IHTMLElement>();
-            elChilds.Add((IHTMLElement)el.children);
+            List<IHTMLElement> elChilds = [(IHTMLElement)el.children];
             if (node.Name.StartsWith(".."))
             {
                 el = el.parentElement;
-                node.Name = node.Name.Substring(2);
+                node.Name = node.Name[2..];
             }
             if (node.Name.StartsWith("/"))
             {
                 elChilds.Add((IHTMLElement)el.all);
-                node.Name = node.Name.Substring(1);
+                node.Name = node.Name[1..];
             }
 
             foreach (IHTMLElement child in elChilds)
@@ -2603,7 +2610,7 @@ namespace GingerCore.Drivers.PBDriver
                         }
 
                         string propVal = node.Pos.Split('=')[1].Replace("'", "").Replace("\"", "");
-                        if (propName.StartsWith("@") && Convert.ToString(child.getAttribute(propName.Substring(1))) == propVal)
+                        if (propName.StartsWith("@") && Convert.ToString(child.getAttribute(propName[1..])) == propVal)
                         {
                             return child;
                         }
@@ -2629,7 +2636,7 @@ namespace GingerCore.Drivers.PBDriver
                             {
                                 return child;
                             }
-                            else if (propName.StartsWith("@") && Convert.ToString(child.getAttribute(propName.Substring(1))).Contains(propVal))
+                            else if (propName.StartsWith("@") && Convert.ToString(child.getAttribute(propName[1..])).Contains(propVal))
                             {
                                 return child;
                             }
@@ -2644,7 +2651,7 @@ namespace GingerCore.Drivers.PBDriver
                 IHTMLElement elemFst = null;
                 IHTMLFrameBase2 iframeBase = domNode as IHTMLFrameBase2;
                 IHTMLWindow2 domNode2 = iframeBase.contentWindow;
-                frameContent = (IHTMLDocument2)domNode2.document;
+                frameContent = domNode2.document;
                 frameDocument = (DispHTMLDocument)frameContent;
                 if (frameDocument.firstChild != null)
                 {

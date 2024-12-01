@@ -63,7 +63,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 {
                     string modifiedURI = solution.SourceControl.SourceControlURL.TrimEnd(new char[] { '/' });
                     int lastSlash = modifiedURI.LastIndexOf('/');
-                    modifiedURI = (lastSlash > -1) ? modifiedURI.Substring(0, lastSlash) : modifiedURI;
+                    modifiedURI = (lastSlash > -1) ? modifiedURI[..lastSlash] : modifiedURI;
                     sConfig += "SourceControlUrl=" + modifiedURI + Environment.NewLine;
                 }
                 else
@@ -114,8 +114,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 while ((arg = reader.ReadLine()) != null)
                 {
                     int i = arg.IndexOf('=');
-                    string param = arg.Substring(0, i).Trim();
-                    string value = arg.Substring(i + 1).Trim();
+                    string param = arg[..i].Trim();
+                    string value = arg[(i + 1)..].Trim();
 
                     switch (param)
                     {
@@ -167,8 +167,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 while ((arg = reader.ReadLine()) != null)
                 {
                     int i = arg.IndexOf('=');
-                    string param = arg.Substring(0, i).Trim();
-                    string value = arg.Substring(i + 1).Trim();
+                    string param = arg[..i].Trim();
+                    string value = arg[(i + 1)..].Trim();
 
                     switch (param)
                     {

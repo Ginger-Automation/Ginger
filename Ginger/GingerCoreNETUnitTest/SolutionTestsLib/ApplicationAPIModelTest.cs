@@ -84,12 +84,12 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         {
             //Arrange
             string XmlfFilePath = TestResources.GetTestResourcesFile(@"XML\createPaymentRequest2.xml");
-            ObservableList<ApplicationAPIModel> AAMTempList = new ObservableList<ApplicationAPIModel>();
+            ObservableList<ApplicationAPIModel> AAMTempList = [];
             XmlDocument doc = new XmlDocument();
-            List<XMLDocExtended> xmlElements = new List<XMLDocExtended>();
-            List<XMLDocExtended> xmlElementsAvoidDuplicatesNodes = new List<XMLDocExtended>();
-            List<AppModelParameter> AppModelParameters = new List<AppModelParameter>();
-            List<AppModelParameter> AppModelParametersAvoidNodes = new List<AppModelParameter>();
+            List<XMLDocExtended> xmlElements = [];
+            List<XMLDocExtended> xmlElementsAvoidDuplicatesNodes = [];
+            List<AppModelParameter> AppModelParameters = [];
+            List<AppModelParameter> AppModelParametersAvoidNodes = [];
 
             //Act
             AAMTempList = new XMLTemplateParser().ParseDocument(XmlfFilePath, AAMTempList, false);
@@ -116,11 +116,11 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         {
             //Arrange
             string JsonFilePath = TestResources.GetTestResourcesFile(@"JSON\Request JSON.TXT");
-            ObservableList<ApplicationAPIModel> AAMTempList = new ObservableList<ApplicationAPIModel>();
-            List<JsonExtended> jsonElements = new List<JsonExtended>();
-            List<JsonExtended> jsonElementsAvoidDuplicatesNodes = new List<JsonExtended>();
-            List<AppModelParameter> AppModelParameters = new List<AppModelParameter>();
-            List<AppModelParameter> AppModelParametersAvoidDuplicatesNodes = new List<AppModelParameter>();
+            ObservableList<ApplicationAPIModel> AAMTempList = [];
+            List<JsonExtended> jsonElements = [];
+            List<JsonExtended> jsonElementsAvoidDuplicatesNodes = [];
+            List<AppModelParameter> AppModelParameters = [];
+            List<AppModelParameter> AppModelParametersAvoidDuplicatesNodes = [];
 
             //Act
             AAMTempList = new JSONTemplateParser().ParseDocument(JsonFilePath, AAMTempList, false);
@@ -145,14 +145,16 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         public void ApplicationAPIModelVerifySavedFile()
         {
             // Arrange
-            ApplicationAPIModel AAMS1 = new ApplicationAPIModel();
-            //AAMS1.GroupName = "Group1";
-            AAMS1.Name = "Group1_Operation1";
+            ApplicationAPIModel AAMS1 = new ApplicationAPIModel
+            {
+                //AAMS1.GroupName = "Group1";
+                Name = "Group1_Operation1"
+            };
             SR.AddRepositoryItem(AAMS1);
 
             //Act            
             ObservableList<ApplicationAPIModel> AAMBList = SR.GetAllRepositoryItems<ApplicationAPIModel>();
-            ApplicationAPIModel AAMS2 = (ApplicationAPIModel)(from x in AAMBList where x.Guid == AAMS1.Guid select x).FirstOrDefault();
+            ApplicationAPIModel AAMS2 = (from x in AAMBList where x.Guid == AAMS1.Guid select x).FirstOrDefault();
 
             NewRepositorySerializer RS = new NewRepositorySerializer();
             ApplicationAPIModel ApplicationAPIModelFromDisk = (ApplicationAPIModel)RS.DeserializeFromFile(AAMS1.FilePath);
@@ -172,21 +174,25 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         public void ApplicationAPIModelMixSoapAndRestSaveAndLoad()
         {
             // Arrange
-            ApplicationAPIModel AAMS1 = new ApplicationAPIModel();
-            //AAMS1.GroupName = "Group1";
-            AAMS1.Name = "Group1_Operation1";
+            ApplicationAPIModel AAMS1 = new ApplicationAPIModel
+            {
+                //AAMS1.GroupName = "Group1";
+                Name = "Group1_Operation1"
+            };
             SR.AddRepositoryItem(AAMS1);
 
-            ApplicationAPIModel AAMR1 = new ApplicationAPIModel();
-            //AAMR1.GroupName = "Group2";
-            AAMR1.Name = "Group2_Operation1";
+            ApplicationAPIModel AAMR1 = new ApplicationAPIModel
+            {
+                //AAMR1.GroupName = "Group2";
+                Name = "Group2_Operation1"
+            };
             SR.AddRepositoryItem(AAMR1);
 
 
             //Act
             ObservableList<ApplicationAPIModel> AAMBList = SR.GetAllRepositoryItems<ApplicationAPIModel>();
-            ApplicationAPIModel AAMS2 = (ApplicationAPIModel)(from x in AAMBList where x.Guid == AAMS1.Guid select x).FirstOrDefault();
-            ApplicationAPIModel AAMR2 = (ApplicationAPIModel)(from x in AAMBList where x.Guid == AAMR1.Guid select x).FirstOrDefault();
+            ApplicationAPIModel AAMS2 = (from x in AAMBList where x.Guid == AAMS1.Guid select x).FirstOrDefault();
+            ApplicationAPIModel AAMR2 = (from x in AAMBList where x.Guid == AAMR1.Guid select x).FirstOrDefault();
 
             //Assert
             Assert.IsTrue(AAMS2 != null, "API SOAP Model loaded from disk");
@@ -236,18 +242,19 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
 
             //Act
 
-            ApplicationAPIModel AAMS1 = new ApplicationAPIModel();
-            AAMS1.Name = "Soap1";
-            AAMS1.Description = "Description";
-            AAMS1.EndpointURL = "EndpointURL";
-            AAMS1.ReqHttpVersion = ApplicationAPIUtils.eHttpVersion.HTTPV10;
+            ApplicationAPIModel AAMS1 = new ApplicationAPIModel
+            {
+                Name = "Soap1",
+                Description = "Description",
+                EndpointURL = "EndpointURL",
+                ReqHttpVersion = ApplicationAPIUtils.eHttpVersion.HTTPV10
+            };
             AppModelParameter AMDP = new AppModelParameter() { PlaceHolder = "placeholder", Description = "Description" };
             OptionalValue OV1 = new OptionalValue("Value1");
             OptionalValue OV2 = new OptionalValue("Value2");
             AMDP.OptionalValuesList.Add(OV1);
             AMDP.OptionalValuesList.Add(OV2);
-            AAMS1.AppModelParameters = new ObservableList<AppModelParameter>();
-            AAMS1.AppModelParameters.Add(AMDP);
+            AAMS1.AppModelParameters = [AMDP];
 
             APIModelKeyValue AMKV = new APIModelKeyValue("param", "value");
 
@@ -261,8 +268,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             AAMS1.DoNotFailActionOnBadRespose = true;
 
 
-            AAMS1.HttpHeaders = new ObservableList<APIModelKeyValue>();
-            AAMS1.HttpHeaders.Add(AMKV);
+            AAMS1.HttpHeaders = [AMKV];
             AAMS1.RequestBodyType = ApplicationAPIUtils.eRequestBodyType.FreeText;
             AAMS1.CertificateType = ApplicationAPIUtils.eCretificateType.AllSSL;
             AAMS1.CertificatePath = "CertificatePath";
@@ -286,7 +292,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             //SR.ClearRepositoryItemsCache<ApplicationAPIModel>();    //TODO: we need to make sure this test run as stand alone or it will mess other UT
 
             ObservableList<ApplicationAPIModel> AAMBList = SR.GetAllRepositoryItems<ApplicationAPIModel>();
-            ApplicationAPIModel AAMS2 = (ApplicationAPIModel)(from x in AAMBList where x.Guid == AAMS1.Guid select x).FirstOrDefault();
+            ApplicationAPIModel AAMS2 = (from x in AAMBList where x.Guid == AAMS1.Guid select x).FirstOrDefault();
 
             // TODO: change 'Value Check' to the name of the field
 

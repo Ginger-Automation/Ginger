@@ -77,9 +77,8 @@ namespace GingerTest.POMs.Common
 
             foreach (object subControl in LogicalTreeHelper.GetChildren(control))
             {
-                if (subControl is FrameworkElement)
+                if (subControl is FrameworkElement frameworkElement)
                 {
-                    FrameworkElement frameworkElement = (FrameworkElement)subControl;
                     if (frameworkElement != null)
                     {
                         DependencyObject DO = FindControlByAutomationId(frameworkElement, automationID);

@@ -41,8 +41,10 @@ namespace Ginger.UserControlsLib.POMLearnig
         private void ShowsRelativePathCofigGridView()
         {
             //Set the Data Grid columns            
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = []
+            };
 
             var statusList = Enum.GetValues(typeof(CustomRelativeXpathTemplate.SyntaxValidationStatus));
 
@@ -63,7 +65,7 @@ namespace Ginger.UserControlsLib.POMLearnig
         {
             if (RelativeXpathTemplateList == null)
             {
-                RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>();
+                RelativeXpathTemplateList = [];
             }
 
             CustomRelativeXpathTemplate iOSTemplate = new CustomRelativeXpathTemplate() { Value = "type == '{type}' AND value BEGINSWITH[c] '{value}' AND visible == {visible}", Status = CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed };
@@ -79,7 +81,7 @@ namespace Ginger.UserControlsLib.POMLearnig
         {
             if (RelativeXpathTemplateList == null)
             {
-                RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>();
+                RelativeXpathTemplateList = [];
             }
 
             if (RelativeXpathTemplateList.Count == 0)

@@ -38,8 +38,7 @@ namespace GingerCore.Drivers.MainFrame
 
         private static void CaretChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            TextBox tb = d as TextBox;
-            if (tb != null)
+            if (d is TextBox tb)
             {
                 tb.CaretIndex = (int)e.NewValue;
             }

@@ -58,11 +58,13 @@ namespace GingerCoreCommonTest.VariablesTest
         public void ActionUsedVar()
         {
             //Arrange            
-            ActDummy act1 = new ActDummy();
-            act1.Value = "{Var Name=v1}";
+            ActDummy act1 = new ActDummy
+            {
+                Value = "{Var Name=v1}"
+            };
 
             //Act
-            List<string> usedVars = new List<string>();
+            List<string> usedVars = [];
             VariableBase.GetListOfUsedVariables(act1, ref usedVars);
 
             //Assert
@@ -84,7 +86,7 @@ namespace GingerCoreCommonTest.VariablesTest
             act1.Value = "{Var Name=v1}";
 
             //Act
-            List<string> usedVars = new List<string>();
+            List<string> usedVars = [];
             VariableBase.GetListOfUsedVariables(a1, ref usedVars);
 
             //Assert
@@ -105,7 +107,7 @@ namespace GingerCoreCommonTest.VariablesTest
             act1.FlowControls.Add(flowControl);
 
             //Act
-            List<string> usedVars = new List<string>();
+            List<string> usedVars = [];
             VariableBase.GetListOfUsedVariables(a1, ref usedVars);
 
             //Assert
@@ -125,7 +127,7 @@ namespace GingerCoreCommonTest.VariablesTest
             a1.Acts.Add(act1);
 
             //Act
-            List<string> usedVars = new List<string>();
+            List<string> usedVars = [];
             VariableBase.GetListOfUsedVariables(a1, ref usedVars);
 
             //Assert
@@ -146,7 +148,7 @@ namespace GingerCoreCommonTest.VariablesTest
             a1.Acts.Add(act1);
 
             //Act
-            List<string> usedVars = new List<string>();
+            List<string> usedVars = [];
             VariableBase.GetListOfUsedVariables(a1, ref usedVars);
 
             //Assert
@@ -169,7 +171,7 @@ namespace GingerCoreCommonTest.VariablesTest
             a1.Acts.Add(act1);
 
             //Act
-            List<string> usedVars = new List<string>();
+            List<string> usedVars = [];
             VariableBase.GetListOfUsedVariables(a1, ref usedVars);
 
             //Assert
@@ -192,7 +194,7 @@ namespace GingerCoreCommonTest.VariablesTest
             a1.Acts.Add(act1);
 
             //Act
-            List<string> usedVars = new List<string>();
+            List<string> usedVars = [];
             VariableBase.GetListOfUsedVariables(a1, ref usedVars);
 
             //Assert

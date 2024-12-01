@@ -38,7 +38,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         private PomDeltaUtils mPomDeltaUtils;
         private ObservableList<DeltaElementInfo> mDeltaElements;
         private GenericWindow mGenericWindow = null;
-        private ObservableList<ElementInfo> mElementInfoList = new ObservableList<ElementInfo>();
+        private ObservableList<ElementInfo> mElementInfoList = [];
 
 
         public PomNewAddedElementSelectionPage(ObservableList<DeltaElementInfo> deltaElementInfos, PomDeltaUtils pomDeltaUtils, string searchText, UserControls.GridColView gridColView)
@@ -71,7 +71,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
             if (elementInfo != null)
             {
-                ElementInfo matchingOriginalElement = (ElementInfo)xLiveSpy.mWinExplorer.GetMatchingElement(elementInfo, mElementInfoList);
+                ElementInfo matchingOriginalElement = xLiveSpy.mWinExplorer.GetMatchingElement(elementInfo, mElementInfoList);
                 if (matchingOriginalElement != null)
                 {
                     xLiveSpy.SetLableStatusText("Element found in new added list");
@@ -94,10 +94,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         internal DeltaElementInfo ShowAsWindow(string winTitle)
         {
-            ObservableList<Button> windowButtons = new ObservableList<Button>();
+            ObservableList<Button> windowButtons = [];
 
-            Button selectBtn = new Button();
-            selectBtn.Content = "Select";
+            Button selectBtn = new Button
+            {
+                Content = "Select"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: selectBtn, eventName: nameof(ButtonBase.Click), handler: selectBtn_Click);
             windowButtons.Add(selectBtn);
             this.Height = 600;

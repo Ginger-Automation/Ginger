@@ -24,7 +24,6 @@ using Ginger.UserControls;
 using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
@@ -56,17 +55,21 @@ namespace Ginger.ALM
                 grdQCFields.DataSourceList = selectedItemsFields;
                 SetFieldsGrid();
             }
-            
+
         }
 
         private void SetFieldsGrid()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = ExternalItemFieldBase.Fields.Name, Header = "Field Name", WidthWeight = 20, ReadOnly = true, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = ExternalItemFieldBase.Fields.Mandatory, WidthWeight = 15, ReadOnly = true, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = ExternalItemFieldBase.Fields.SelectedValue, Header = "Selected Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ExternalItemFieldBase.Fields.PossibleValues, ExternalItemFieldBase.Fields.SelectedValue, true), WidthWeight = 20 });
-            view.GridColsView.Add(new GridColView() { Field = ExternalItemFieldBase.Fields.ItemType, Header = "Field Type", WidthWeight = 15, ReadOnly = true, AllowSorting = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = ExternalItemFieldBase.Fields.Name, Header = "Field Name", WidthWeight = 20, ReadOnly = true, AllowSorting = true },
+                new GridColView() { Field = ExternalItemFieldBase.Fields.Mandatory, WidthWeight = 15, ReadOnly = true, AllowSorting = true },
+                new GridColView() { Field = ExternalItemFieldBase.Fields.SelectedValue, Header = "Selected Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ExternalItemFieldBase.Fields.PossibleValues, ExternalItemFieldBase.Fields.SelectedValue, true), WidthWeight = 20 },
+                new GridColView() { Field = ExternalItemFieldBase.Fields.ItemType, Header = "Field Type", WidthWeight = 15, ReadOnly = true, AllowSorting = true },
+            ]
+            };
             grdQCFields.SetAllColumnsDefaultView(view);
             grdQCFields.InitViewItems();
 
@@ -84,23 +87,27 @@ namespace Ginger.ALM
         public void ShowAsWindow(bool refreshFields = true, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
             isReferFields = refreshFields;
-               loaderElement = new ImageMakerControl();
-            loaderElement.Name = "xProcessingImage";
-            loaderElement.Height = 30;
-            loaderElement.Width = 30;
-            loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
-            loaderElement.Visibility = Visibility.Collapsed;
+            loaderElement = new ImageMakerControl
+            {
+                Name = "xProcessingImage",
+                Height = 30,
+                Width = 30,
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing,
+                Visibility = Visibility.Collapsed
+            };
             if (mAlmConfigType == eALMConfigType.MainMenu)
             {
-                Button saveButton = new Button();
-                saveButton.Content = "Save";
-                saveButton.ToolTip = "Save 'To Update' fields";
+                Button saveButton = new Button
+                {
+                    Content = "Save",
+                    ToolTip = "Save 'To Update' fields"
+                };
                 saveButton.Click += new RoutedEventHandler(Save);
-                GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { saveButton }, true, "Close", null, false, loaderElement);
+                GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, [saveButton], true, "Close", null, false, loaderElement);
             }
             else
             {
-                GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this,null, true, "Close", null, false, loaderElement);
+                GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, null, true, "Close", null, false, loaderElement);
             }
         }
 
@@ -183,13 +190,13 @@ namespace Ginger.ALM
             {
                 if (isReferFields)
                 {
-                        if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-                        {
-                            RunWorker(true);
-                        }
+                    if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                    {
+                        RunWorker(true);
+                    }
 
-                        grdQCFields.DataSourceList = mItemsFields;
-                        SetFieldsGrid();
+                    grdQCFields.DataSourceList = mItemsFields;
+                    SetFieldsGrid();
                 }
             }
         }

@@ -70,14 +70,13 @@ namespace GingerCore.Actions
 
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
         {
-            List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>();
-            list.Add(DynamicXMLElements);
+            List<ObservableList<ActInputValue>> list = [DynamicXMLElements];
             return list;
         }
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType actionPlatform)
         {
-            if (actionPlatform == ePlatformType.WebServices || actionPlatform == ePlatformType.NA)
+            if (actionPlatform is ePlatformType.WebServices or ePlatformType.NA)
             {
                 return true;
             }
@@ -156,7 +155,7 @@ namespace GingerCore.Actions
         public ActInputValue URL { get { return GetOrCreateInputParam(Fields.URL); } }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> DynamicXMLElements = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> DynamicXMLElements = [];
 
         public ActInputValue SOAPAction { get { return GetOrCreateInputParam(Fields.SOAPAction); } }
 

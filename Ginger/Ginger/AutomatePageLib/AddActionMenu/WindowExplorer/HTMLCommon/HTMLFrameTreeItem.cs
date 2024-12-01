@@ -34,13 +34,14 @@ namespace Ginger.WindowExplorer.HTMLCommon
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Switch Frame " + this.ElementInfo.ElementTitle,
-                GenElementAction = ActGenElement.eGenElementAction.SwitchFrame
-            });
+            ObservableList<Act> list =
+            [
+                new ActGenElement()
+                {
+                    Description = "Switch Frame " + this.ElementInfo.ElementTitle,
+                    GenElementAction = ActGenElement.eGenElementAction.SwitchFrame
+                },
+            ];
             return list;
         }
     }

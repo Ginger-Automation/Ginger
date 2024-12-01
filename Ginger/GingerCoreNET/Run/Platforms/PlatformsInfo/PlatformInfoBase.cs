@@ -70,25 +70,18 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public static PlatformInfoBase GetPlatformImpl(ePlatformType Platform)
         {
-            switch (Platform)
+            return Platform switch
             {
                 //case ePlatformType.AndroidDevice:
                 //    return mAndroidPlatform;
-                case ePlatformType.Java:
-                    return mJavaPlatform;
-                case ePlatformType.Web:
-                    return mWebPlatform;
-                case ePlatformType.PowerBuilder:
-                    return mPowerBuilderPlatform;
-                case ePlatformType.Windows:
-                    return mWindowsPlatform;
-                case ePlatformType.Mobile:
-                    return mMobilePlatform;
+                ePlatformType.Java => mJavaPlatform,
+                ePlatformType.Web => mWebPlatform,
+                ePlatformType.PowerBuilder => mPowerBuilderPlatform,
+                ePlatformType.Windows => mWindowsPlatform,
+                ePlatformType.Mobile => mMobilePlatform,
                 //TODO: add the rest
-
-                default:
-                    return null;
-            }
+                _ => null,
+            };
         }
 
         /// <summary>
@@ -128,7 +121,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             public eElementType ElementType;
             public Type ActionType;
-            public List<Enum> ElementOperationsList = new List<Enum>();
+            public List<Enum> ElementOperationsList = [];
             private bool mIsCommonElementType;
 
             public bool IsCommonElementType { get { return mIsCommonElementType; } set { mIsCommonElementType = value; } }
@@ -158,15 +151,16 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public virtual List<ActUIElement.eElementProperty> GetPlatformElementProperties()
         {
-            List<ActUIElement.eElementProperty> elementPropertyList = new List<ActUIElement.eElementProperty>();
-
-            elementPropertyList.Add(ActUIElement.eElementProperty.Enabled);
-            elementPropertyList.Add(ActUIElement.eElementProperty.Color);
-            elementPropertyList.Add(ActUIElement.eElementProperty.Text);
-            elementPropertyList.Add(ActUIElement.eElementProperty.ToolTip);
-            elementPropertyList.Add(ActUIElement.eElementProperty.Type);
-            elementPropertyList.Add(ActUIElement.eElementProperty.Value);
-            elementPropertyList.Add(ActUIElement.eElementProperty.Visible);
+            List<ActUIElement.eElementProperty> elementPropertyList =
+            [
+                ActUIElement.eElementProperty.Enabled,
+                ActUIElement.eElementProperty.Color,
+                ActUIElement.eElementProperty.Text,
+                ActUIElement.eElementProperty.ToolTip,
+                ActUIElement.eElementProperty.Type,
+                ActUIElement.eElementProperty.Value,
+                ActUIElement.eElementProperty.Visible,
+            ];
             return elementPropertyList;
         }
 
@@ -174,21 +168,23 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             if (mElementsTypeList == null)
             {
-                mElementsTypeList = new List<eElementType>();
-                mElementsTypeList.Add(eElementType.Unknown);
-                mElementsTypeList.Add(eElementType.Button);
-                mElementsTypeList.Add(eElementType.ScrollBar);
-                mElementsTypeList.Add(eElementType.ComboBox);
-                mElementsTypeList.Add(eElementType.RadioButton);
-                mElementsTypeList.Add(eElementType.TextBox);
-                mElementsTypeList.Add(eElementType.CheckBox);
-                mElementsTypeList.Add(eElementType.Image);
-                mElementsTypeList.Add(eElementType.Label);
-                mElementsTypeList.Add(eElementType.List);
-                mElementsTypeList.Add(eElementType.Table);
-                mElementsTypeList.Add(eElementType.MenuItem);
-                mElementsTypeList.Add(eElementType.Window);
-                mElementsTypeList.Add(eElementType.Tab);
+                mElementsTypeList =
+                [
+                    eElementType.Unknown,
+                    eElementType.Button,
+                    eElementType.ScrollBar,
+                    eElementType.ComboBox,
+                    eElementType.RadioButton,
+                    eElementType.TextBox,
+                    eElementType.CheckBox,
+                    eElementType.Image,
+                    eElementType.Label,
+                    eElementType.List,
+                    eElementType.Table,
+                    eElementType.MenuItem,
+                    eElementType.Window,
+                    eElementType.Tab,
+                ];
             }
             return mElementsTypeList;
         }
@@ -205,7 +201,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public virtual ObservableList<Act> GetPlatformElementActions(ElementInfo elementInfo)
         {
-            ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
+            ObservableList<Act> UIElementsActionsList = [];
             return UIElementsActionsList;
         }
 
@@ -221,7 +217,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public virtual List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
         {
-            List<ActUIElement.eElementAction> list = new List<ActUIElement.eElementAction>();
+            List<ActUIElement.eElementAction> list = [];
 
             switch (ElementType)
             {

@@ -92,8 +92,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void AddNewReport(object sender, System.Windows.RoutedEventArgs e)
         {
-            HTMLReportTemplateTreeItem r = new HTMLReportTemplateTreeItem();
-            r.HTMLReportTemplate = CreateNewHTMLReportTemplate();
+            HTMLReportTemplateTreeItem r = new HTMLReportTemplateTreeItem
+            {
+                HTMLReportTemplate = CreateNewHTMLReportTemplate()
+            };
 
             mTV.Tree.AddChildItemAndSelect(this, r);
         }

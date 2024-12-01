@@ -177,7 +177,7 @@ namespace GingerCore.XPathParser
                 }
                 else
                 {
-                    return xpathExpr.Substring(lexStart, curIndex - lexStart);
+                    return xpathExpr[lexStart..curIndex];
                 }
             }
         }
@@ -249,7 +249,7 @@ namespace GingerCore.XPathParser
 
         public static bool IsWhiteSpace(char ch)
         {
-            return ch <= ' ' && (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r');
+            return ch is <= ' ' and (' ' or '\t' or '\n' or '\r');
         }
 
         public void NextLex()
@@ -567,7 +567,7 @@ namespace GingerCore.XPathParser
             if ((curChar & (~0x20)) == 'E')
             {
                 NextChar();
-                if (curChar == '+' || curChar == '-')
+                if (curChar is '+' or '-')
                 {
                     NextChar();
                 }
@@ -590,7 +590,7 @@ namespace GingerCore.XPathParser
                 throw UnclosedStringException();
             }
 
-            this.stringValue = xpathExpr.Substring(startIdx, endIdx - startIdx);
+            this.stringValue = xpathExpr[startIdx..endIdx];
             SetSourceIndex(endIdx + 1);
         }
 

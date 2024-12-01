@@ -65,8 +65,7 @@ namespace Amdocs.Ginger.UserControls
         }
         private static void ButtonImageForgroundPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = d as ucButton;
-            if (control != null && e.NewValue != null)
+            if (d is ucButton control && e.NewValue != null)
             {
                 control.ButtonImageForground = ((SolidColorBrush)e.NewValue);
             }

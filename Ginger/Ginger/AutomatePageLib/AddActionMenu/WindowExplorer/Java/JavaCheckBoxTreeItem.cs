@@ -34,45 +34,41 @@ namespace Ginger.WindowExplorer.Java
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Set " + Name + " ON",
-                ControlAction = ActJavaElement.eControlAction.SetValue,
-                Value = "true"
-            });
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Set " + Name + " OFF",
-                ControlAction = ActJavaElement.eControlAction.SetValue,
-                Value = "false"
-            });
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Toggle Checkbox " + Name,
-                ControlAction = ActJavaElement.eControlAction.Toggle
-            });
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Get " + Name + " Value",
-                ControlAction = ActJavaElement.eControlAction.GetValue
-            });
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Get IsEnabled Property " + Name,
-                ControlAction = ActJavaElement.eControlAction.IsEnabled
-            });
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Is Checked " + Name,
-                ControlAction = ActJavaElement.eControlAction.IsChecked
-            });
+            ObservableList<Act> list =
+            [
+                new ActJavaElement()
+                {
+                    Description = "Set " + Name + " ON",
+                    ControlAction = ActJavaElement.eControlAction.SetValue,
+                    Value = "true"
+                },
+                new ActJavaElement()
+                {
+                    Description = "Set " + Name + " OFF",
+                    ControlAction = ActJavaElement.eControlAction.SetValue,
+                    Value = "false"
+                },
+                new ActJavaElement()
+                {
+                    Description = "Toggle Checkbox " + Name,
+                    ControlAction = ActJavaElement.eControlAction.Toggle
+                },
+                new ActJavaElement()
+                {
+                    Description = "Get " + Name + " Value",
+                    ControlAction = ActJavaElement.eControlAction.GetValue
+                },
+                new ActJavaElement()
+                {
+                    Description = "Get IsEnabled Property " + Name,
+                    ControlAction = ActJavaElement.eControlAction.IsEnabled
+                },
+                new ActJavaElement()
+                {
+                    Description = "Is Checked " + Name,
+                    ControlAction = ActJavaElement.eControlAction.IsChecked
+                },
+            ];
             return list;
         }
     }

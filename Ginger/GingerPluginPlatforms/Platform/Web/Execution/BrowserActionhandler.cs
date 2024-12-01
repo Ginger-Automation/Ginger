@@ -79,7 +79,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
 
             string Value = (string)InputParams["Value"];
-            List<NodeActionOutputValue> AOVs = new List<NodeActionOutputValue>();
+            List<NodeActionOutputValue> AOVs = [];
 
             try
             {

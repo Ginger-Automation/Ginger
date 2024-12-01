@@ -36,9 +36,9 @@ namespace UnitTests.NonUITests
     public class FindAndReplaceTest
     {
 
-        static ObservableList<BusinessFlow> mBFList = new ObservableList<BusinessFlow>();
-        static ObservableList<IAct> mRepoActions = new ObservableList<IAct>();
-        static ObservableList<ApplicationAPIModel> mApplicationAPIModels = new ObservableList<ApplicationAPIModel>();
+        static ObservableList<BusinessFlow> mBFList = [];
+        static ObservableList<IAct> mRepoActions = [];
+        static ObservableList<ApplicationAPIModel> mApplicationAPIModels = [];
         static Activity a1 = new Activity();
         static SearchConfig mSearchConfig1;
         static SearchConfig mSearchConfig2;
@@ -50,9 +50,11 @@ namespace UnitTests.NonUITests
         {
 
             BusinessFlow mBF = new BusinessFlow();
-            mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "BF1";
+            mBF = new BusinessFlow
+            {
+                Activities = [],
+                Name = "BF1"
+            };
 
             a1.ActivityName = "Activity1";
             a1.Active = true;
@@ -76,31 +78,39 @@ namespace UnitTests.NonUITests
         {
             a1.Acts.Clear();
 
-            ActUIElement actWebAPISoap = new ActUIElement();
-            actWebAPISoap.ItemName = "Action1";
+            ActUIElement actWebAPISoap = new ActUIElement
+            {
+                ItemName = "Action1"
+            };
             actWebAPISoap.ActInputValues.Add(new Amdocs.Ginger.Repository.ActInputValue() { Param = ActUIElement.Fields.ValueToSelect, Value = "bla bli bla VTFInsideList bla bla bla" });
             actWebAPISoap.ActReturnValues.Add(new Amdocs.Ginger.Repository.ActReturnValue() { Param = "ReturnValue1", Expected = "I expect you to VTFInsideList behave" });
             actWebAPISoap.Active = true;
             a1.Acts.Add(actWebAPISoap);
 
-            ActClearAllVariables actClearAllVariables = new ActClearAllVariables();
-            actClearAllVariables.ItemName = "Action2";
-            actClearAllVariables.VariableName = "My Variable is VTFStringField";
+            ActClearAllVariables actClearAllVariables = new ActClearAllVariables
+            {
+                ItemName = "Action2",
+                VariableName = "My Variable is VTFStringField"
+            };
             a1.Acts.Add(actClearAllVariables);
 
-            ActDummy actScript = new ActDummy();
-            actScript.ItemName = "Action3";
-            actScript.Value = "vv";
-            actScript.Wait = 13132424;
+            ActDummy actScript = new ActDummy
+            {
+                ItemName = "Action3",
+                Value = "vv",
+                Wait = 13132424
+            };
             a1.Acts.Add(actScript);
 
             mApplicationAPIModels.Clear();
 
-            ApplicationAPIModel applicationAPIModel = new ApplicationAPIModel();
-            applicationAPIModel.APIType = ApplicationAPIUtils.eWebApiType.SOAP;
-            applicationAPIModel.EndpointURL = "VTF";
-            applicationAPIModel.DoNotFailActionOnBadRespose = true;
-            applicationAPIModel.AppModelParameters.Add(new AppModelParameter() { PlaceHolder = "VTF", Path = "VTF/Path/Path/Path", OptionalValuesList = new ObservableList<OptionalValue>() { new OptionalValue() { Value = "VTF1" }, new OptionalValue() { Value = "VTF2" } } });
+            ApplicationAPIModel applicationAPIModel = new ApplicationAPIModel
+            {
+                APIType = ApplicationAPIUtils.eWebApiType.SOAP,
+                EndpointURL = "VTF",
+                DoNotFailActionOnBadRespose = true
+            };
+            applicationAPIModel.AppModelParameters.Add(new AppModelParameter() { PlaceHolder = "VTF", Path = "VTF/Path/Path/Path", OptionalValuesList = [new OptionalValue() { Value = "VTF1" }, new OptionalValue() { Value = "VTF2" }] });
             applicationAPIModel.HttpHeaders.Add(new APIModelKeyValue() { Param = "Content-Type", Value = "Applicaiton/VTF" });
             mApplicationAPIModels.Add(applicationAPIModel);
         }
@@ -113,8 +123,8 @@ namespace UnitTests.NonUITests
         {
             ResetActionList();
 
-            ObservableList<FoundItem> foundItemsList = new ObservableList<FoundItem>();
-            List<string> ValuesToFind = new List<string>() { "VTF", "Content-Type", };
+            ObservableList<FoundItem> foundItemsList = [];
+            List<string> ValuesToFind = ["VTF", "Content-Type",];
             FindFieldsFromAllActionsOnApplicationModelsList(foundItemsList, ValuesToFind, mSearchConfig4);
 
             Assert.AreEqual(foundItemsList.Count, 3, "Found items count");
@@ -130,8 +140,8 @@ namespace UnitTests.NonUITests
         {
             ResetActionList();
 
-            ObservableList<FoundItem> foundItemsList = new ObservableList<FoundItem>();
-            List<string> ValuesToFind = new List<string>() { "VTf", "Content-Type", };
+            ObservableList<FoundItem> foundItemsList = [];
+            List<string> ValuesToFind = ["VTf", "Content-Type",];
             FindFieldsFromAllActionsOnApplicationModelsList(foundItemsList, ValuesToFind, mSearchConfig2);
 
             Assert.AreEqual(foundItemsList.Count, 1, "Found items count");
@@ -146,8 +156,8 @@ namespace UnitTests.NonUITests
         {
             ResetActionList();
 
-            ObservableList<FoundItem> foundItemsList = new ObservableList<FoundItem>();
-            List<string> ValuesToFind = new List<string>() { "VTF" };
+            ObservableList<FoundItem> foundItemsList = [];
+            List<string> ValuesToFind = ["VTF"];
             FindFieldsFromAllActionsOnApplicationModelsList(foundItemsList, ValuesToFind, mSearchConfig3);
 
             Assert.AreEqual(foundItemsList.Count, 2, "Found items count");
@@ -166,8 +176,8 @@ namespace UnitTests.NonUITests
         {
             ResetActionList();
 
-            ObservableList<FoundItem> foundItemsList = new ObservableList<FoundItem>();
-            List<string> ValuesToFind = new List<string>() { "VTFStringField" };
+            ObservableList<FoundItem> foundItemsList = [];
+            List<string> ValuesToFind = ["VTFStringField"];
             FindFieldsFromAllActionsOnBusinessFlowsList(foundItemsList, ValuesToFind, mSearchConfig1);
 
             FoundItem FI = foundItemsList[0];
@@ -184,8 +194,8 @@ namespace UnitTests.NonUITests
         {
             ResetActionList();
 
-            ObservableList<FoundItem> foundItemsList = new ObservableList<FoundItem>();
-            List<string> ValuesToFind = new List<string>() { "VTFInsideList" };
+            ObservableList<FoundItem> foundItemsList = [];
+            List<string> ValuesToFind = ["VTFInsideList"];
             FindFieldsFromAllActionsOnBusinessFlowsList(foundItemsList, ValuesToFind, mSearchConfig1);
 
             FoundItem FI = foundItemsList[0];
@@ -202,8 +212,8 @@ namespace UnitTests.NonUITests
         {
             ResetActionList();
 
-            ObservableList<FoundItem> foundItemsList = new ObservableList<FoundItem>();
-            List<string> ValuesToFind = new List<string>() { "True" };
+            ObservableList<FoundItem> foundItemsList = [];
+            List<string> ValuesToFind = ["True"];
             FindFieldsFromAllActionsOnBusinessFlowsList(foundItemsList, ValuesToFind, mSearchConfig1);
 
             FoundItem FI = foundItemsList[0];
@@ -240,8 +250,8 @@ namespace UnitTests.NonUITests
         {
             ResetActionList();
 
-            ObservableList<FoundItem> foundItemsList = new ObservableList<FoundItem>();
-            List<string> ValuesToFind = new List<string>() { "13132424" };
+            ObservableList<FoundItem> foundItemsList = [];
+            List<string> ValuesToFind = ["13132424"];
             FindFieldsFromAllActionsOnBusinessFlowsList(foundItemsList, ValuesToFind, mSearchConfig1);
 
             FoundItem FI = foundItemsList[0];
@@ -261,8 +271,8 @@ namespace UnitTests.NonUITests
         {
             ResetActionList();
 
-            ObservableList<FoundItem> foundItemsList = new ObservableList<FoundItem>();
-            List<string> ValuesToFind = new List<string>() { "VTFStringField" };
+            ObservableList<FoundItem> foundItemsList = [];
+            List<string> ValuesToFind = ["VTFStringField"];
             FindFieldsFromAllActionsOnBusinessFlowsList(foundItemsList, ValuesToFind, mSearchConfig1);
 
             Assert.AreEqual(foundItemsList.Count, 1, "Found items count");
@@ -277,8 +287,8 @@ namespace UnitTests.NonUITests
         {
             ResetActionList();
 
-            ObservableList<FoundItem> foundItemsList = new ObservableList<FoundItem>();
-            List<string> ValuesToFind = new List<string>() { "13132424" };
+            ObservableList<FoundItem> foundItemsList = [];
+            List<string> ValuesToFind = ["13132424"];
             FindFieldsFromAllActionsOnBusinessFlowsList(foundItemsList, ValuesToFind, mSearchConfig1);
 
             Assert.AreEqual(foundItemsList.Count, 1, "Found items count");
@@ -294,8 +304,8 @@ namespace UnitTests.NonUITests
         {
             ResetActionList();
 
-            ObservableList<FoundItem> foundItemsList = new ObservableList<FoundItem>();
-            List<string> ValuesToFind = new List<string>() { "FreeCommand" };
+            ObservableList<FoundItem> foundItemsList = [];
+            List<string> ValuesToFind = ["FreeCommand"];
             FindFieldsFromAllActionsOnBusinessFlowsList(foundItemsList, ValuesToFind, mSearchConfig1);
 
             Assert.AreEqual(foundItemsList.Count, 1, "Found items count");
@@ -310,8 +320,8 @@ namespace UnitTests.NonUITests
         {
             ResetActionList();
 
-            ObservableList<FoundItem> foundItemsList = new ObservableList<FoundItem>();
-            List<string> ValuesToFind = new List<string>() { "VTFInsideList" };
+            ObservableList<FoundItem> foundItemsList = [];
+            List<string> ValuesToFind = ["VTFInsideList"];
             FindFieldsFromAllActionsOnBusinessFlowsList(foundItemsList, ValuesToFind, mSearchConfig1);
 
             Assert.AreEqual(foundItemsList.Count, 2, "Found items count");
@@ -328,8 +338,8 @@ namespace UnitTests.NonUITests
         {
             ResetActionList();
 
-            ObservableList<FoundItem> foundItemsList = new ObservableList<FoundItem>();
-            List<string> ValuesToFind = new List<string>() { "VTFInsideList" };
+            ObservableList<FoundItem> foundItemsList = [];
+            List<string> ValuesToFind = ["VTFInsideList"];
             FindFieldsFromAllActionsOnBusinessFlowsList(foundItemsList, ValuesToFind, mSearchConfig1);
 
             Assert.AreEqual(foundItemsList.Count, 2, "Found items count");

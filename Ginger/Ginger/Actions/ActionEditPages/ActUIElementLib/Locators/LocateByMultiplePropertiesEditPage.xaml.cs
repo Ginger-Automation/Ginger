@@ -44,10 +44,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         public void SetMultiplePropertiesGridView()
         {
-            ObservableList<UIElementPropertyValueLocator> list = new ObservableList<UIElementPropertyValueLocator>();
+            ObservableList<UIElementPropertyValueLocator> list = [];
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = []
+            };
 
             List<string> lstLocateBy = mPlatform.GetPlatformUIElementPropertiesList(mAction.ElementType);
 

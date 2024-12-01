@@ -81,12 +81,14 @@ namespace GingerCore.Drivers.AndroidADB
 
         private void InitDeviceActions()
         {
-            List<Act> list = new List<Act>();
-            list.Add(new ActGenElement() { Description = "Home" });
-            list.Add(new ActGenElement() { Description = "Back" });
-            list.Add(new ActGenElement() { Description = "Send Text" });
-            list.Add(new ActGenElement() { Description = "Install APK" });
-            list.Add(new ActShell() { Description = "Get device API version", Value = "getprop ro.build.version.sdk" });
+            List<Act> list =
+            [
+                new ActGenElement() { Description = "Home" },
+                new ActGenElement() { Description = "Back" },
+                new ActGenElement() { Description = "Send Text" },
+                new ActGenElement() { Description = "Install APK" },
+                new ActShell() { Description = "Get device API version", Value = "getprop ro.build.version.sdk" },
+            ];
 
             DeviceActionsGrid.ItemsSource = list;
         }
@@ -914,29 +916,22 @@ namespace GingerCore.Drivers.AndroidADB
         {
 
             //TODO: test/add all keyboard keys
-            switch (k)
+            return k switch
             {
-                case Key.RightCtrl:
-                case Key.LeftCtrl:
-                    return null; // We ignore some keys
-
-                case Key.D0: return "0";
-                case Key.D1: return "1";
-                case Key.D2: return "2";
-                case Key.D3: return "3";
-                case Key.D4: return "4";
-                case Key.D5: return "5";
-                case Key.D6: return "6";
-                case Key.D7: return "7";
-                case Key.D8: return "8";
-                case Key.D9: return "9";
-            }
-
-            // if (k == Key.Delete) return "???";
-
-            return k.ToString();
-
-
+                Key.RightCtrl or Key.LeftCtrl => null,// We ignore some keys
+                Key.D0 => "0",
+                Key.D1 => "1",
+                Key.D2 => "2",
+                Key.D3 => "3",
+                Key.D4 => "4",
+                Key.D5 => "5",
+                Key.D6 => "6",
+                Key.D7 => "7",
+                Key.D8 => "8",
+                Key.D9 => "9",
+                // if (k == Key.Delete) return "???";
+                _ => k.ToString(),
+            };
         }
 
 
@@ -1046,10 +1041,12 @@ namespace GingerCore.Drivers.AndroidADB
                     if (cp.Value == "true")
                     {
                         // mDeviceViewPage.AddTextBox()
-                        ActUIElement a = new ActUIElement();
-                        a.ElementLocateBy = eLocateBy.ByResourceID;
-                        a.ElementType = eElementType.TextBox;
-                        a.ElementAction = ActUIElement.eElementAction.SetText;
+                        ActUIElement a = new ActUIElement
+                        {
+                            ElementLocateBy = eLocateBy.ByResourceID,
+                            ElementType = eElementType.TextBox,
+                            ElementAction = ActUIElement.eElementAction.SetText
+                        };
 
                         // Need to set value in both since sending direct to driver
                         // a.ElementLocateValue = cpresourceid.Value;

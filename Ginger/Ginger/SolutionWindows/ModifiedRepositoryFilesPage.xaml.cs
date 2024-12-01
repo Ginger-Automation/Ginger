@@ -22,7 +22,6 @@ using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.UserControls;
-using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,7 +57,7 @@ namespace Ginger.SolutionWindows
         private void SetGridView()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             view.GridColsView = viewCols;
 
             viewCols.Add(new GridColView() { Field = nameof(ModifiedRepositoryFileInfo.Selected), Header = "Selected", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.CheckBox, AllowSorting = true });
@@ -106,13 +105,17 @@ namespace Ginger.SolutionWindows
         }
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.OnlyDialog)
         {
-            Button saveBtn = new Button();
-            saveBtn.Content = "Save";
+            Button saveBtn = new Button
+            {
+                Content = "Save"
+            };
             saveBtn.Click += SaveButton_Click;
             saveBtn.ToolTip = "Save Selected Files";
 
-            Button undoBtn = new Button();
-            undoBtn.Content = "Undo";
+            Button undoBtn = new Button
+            {
+                Content = "Undo"
+            };
             undoBtn.Click += UndoButton_Click;
             undoBtn.ToolTip = "Undo Changes In Selected Files";
 
@@ -122,22 +125,24 @@ namespace Ginger.SolutionWindows
             loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
             loaderElement.Visibility = Visibility.Collapsed;
 
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Modified Solution Items", this, new ObservableList<Button> { saveBtn }, loaderElement: loaderElement);
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Modified Solution Items", this, [saveBtn], loaderElement: loaderElement);
         }
 
         private ObservableList<ModifiedRepositoryFileInfo> GetModifiedFilesInfo()
         {
-            ObservableList<ModifiedRepositoryFileInfo> list = new ObservableList<ModifiedRepositoryFileInfo>();
+            ObservableList<ModifiedRepositoryFileInfo> list = [];
 
             foreach (RepositoryItemBase RIB in WorkSpace.Instance.SolutionRepository.ModifiedFiles)
             {
-                ModifiedRepositoryFileInfo MRFI = new ModifiedRepositoryFileInfo();
-                MRFI.Name = RIB.ItemName;
-                MRFI.Selected = true;
-                MRFI.Path = RIB.FilePath.Substring(RIB.FilePath.LastIndexOf('\\') + 1);
-                MRFI.FileType = SetFileType(RIB);
-                MRFI.guid = RIB.Guid;
-                MRFI.item = RIB;
+                ModifiedRepositoryFileInfo MRFI = new ModifiedRepositoryFileInfo
+                {
+                    Name = RIB.ItemName,
+                    Selected = true,
+                    Path = RIB.FilePath[(RIB.FilePath.LastIndexOf('\\') + 1)..],
+                    FileType = SetFileType(RIB),
+                    guid = RIB.Guid,
+                    item = RIB
+                };
                 list.Add(MRFI);
             }
 

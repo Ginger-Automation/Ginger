@@ -86,7 +86,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             };
         }
 
-        public static void UpdateDatabaseFromConfig(DatabaseConfig db , ref Database dbFromGinger)
+        public static void UpdateDatabaseFromConfig(DatabaseConfig db, ref Database dbFromGinger)
         {
             ValidateDatabaseConfig(db);
             dbFromGinger.Name = db.Name;

@@ -68,7 +68,7 @@ namespace GingerCore.NoSqlBase
                     MongoClientSettings mongoClientSettings = null;
                     if (HostPort.Length == 2 && HostPortDB.Length == 2)
                     {
-                        if (string.IsNullOrEmpty(HostPortDB[HostPortDB.Length - 1]))
+                        if (string.IsNullOrEmpty(HostPortDB[^1]))
                         {
                             Reporter.ToLog(eLogLevel.ERROR, "Database is not mentioned in the TNS/Host.");
                             return false;
@@ -86,11 +86,11 @@ namespace GingerCore.NoSqlBase
                             String deCryptValue = EncryptionHandler.DecryptwithKey(Db.DatabaseOperations.PassCalculated.ToString());
                             if (!string.IsNullOrEmpty(deCryptValue))
                             {
-                                mongoCredential = MongoCredential.CreateCredential(HostPortDB[HostPortDB.Length - 1], Db.DatabaseOperations.UserCalculated, deCryptValue);
+                                mongoCredential = MongoCredential.CreateCredential(HostPortDB[^1], Db.DatabaseOperations.UserCalculated, deCryptValue);
                             }
                             else
                             {
-                                mongoCredential = MongoCredential.CreateCredential(HostPortDB[HostPortDB.Length - 1], Db.DatabaseOperations.UserCalculated, Db.DatabaseOperations.PassCalculated.ToString());
+                                mongoCredential = MongoCredential.CreateCredential(HostPortDB[^1], Db.DatabaseOperations.UserCalculated, Db.DatabaseOperations.PassCalculated.ToString());
                             }
                             mongoClientSettings = new MongoClientSettings
                             {
@@ -99,7 +99,7 @@ namespace GingerCore.NoSqlBase
                                 Credentials = new[] { mongoCredential }
                             };
                         }
-                        DbName = HostPortDB[HostPortDB.Length - 1];
+                        DbName = HostPortDB[^1];
                         mMongoClient = new MongoClient(mongoClientSettings);
                     }
                     else
@@ -165,7 +165,7 @@ namespace GingerCore.NoSqlBase
         {
             if (mMongoClient == null)
             {
-                return new List<string>();
+                return [];
             }
             return mMongoClient.ListDatabaseNames().ToList();
         }
@@ -176,7 +176,7 @@ namespace GingerCore.NoSqlBase
             {
                 dbName = this.DbName;
             }
-            List<string> table = new List<string>();
+            List<string> table = [];
             var db = mMongoClient.GetDatabase(dbName);
             var names = db.ListCollectionNames().ToList();
             foreach (var item in names)
@@ -185,12 +185,12 @@ namespace GingerCore.NoSqlBase
             }
             return table;
         }
-       
 
-        public  override Task<List<string>> GetColumnList(string collectionName)
+
+        public override Task<List<string>> GetColumnList(string collectionName)
         {
             Connect();
-            List<string>  columns = new List<string>();
+            List<string> columns = [];
             var db = mMongoClient.GetDatabase(DbName);
             var collection = db.GetCollection<BsonDocument>(collectionName);
 
@@ -243,7 +243,7 @@ namespace GingerCore.NoSqlBase
         {
             int startIndex = inputSQL.IndexOf("(") + 1;
             int endIndex = inputSQL.LastIndexOf(")");
-            string updateQueryParams = inputSQL.Substring(startIndex, endIndex - startIndex);
+            string updateQueryParams = inputSQL[startIndex..endIndex];
             return updateQueryParams.Trim();
         }
         private string GetQueryParamater(string inputSQL, string param)
@@ -282,7 +282,7 @@ namespace GingerCore.NoSqlBase
             if (startIndex != -1)
             {
                 int endIndex = inputSQL.IndexOf(")", startIndex);
-                queryParameterValue = inputSQL.Substring(startIndex, endIndex - startIndex);
+                queryParameterValue = inputSQL[startIndex..endIndex];
             }
             queryParameterValue = queryParameterValue.Replace(param + "(", "");
 
@@ -291,8 +291,10 @@ namespace GingerCore.NoSqlBase
 
         public override void PerformDBAction()
         {
-            ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
-            VE.Value = Act.QueryValue;
+            ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList)
+            {
+                Value = Act.QueryValue
+            };
             string SQLCalculated = VE.ValueCalculated;
             string collectionName = "";
             if (Action == Actions.ActDBValidation.eDBValidationType.SimpleSQLOneValue)
@@ -316,7 +318,7 @@ namespace GingerCore.NoSqlBase
                         {
                             string queryParam = GetUpdateQueryParams(SQLCalculated).ToString();
                             Newtonsoft.Json.Linq.JArray jsonArray = Newtonsoft.Json.Linq.JArray.Parse(queryParam);
-                            List<BsonDocument> documents = new List<BsonDocument>();
+                            List<BsonDocument> documents = [];
                             foreach (Newtonsoft.Json.Linq.JObject obj in jsonArray.Children<Newtonsoft.Json.Linq.JObject>())
                             {
                                 BsonDocument document = BsonDocument.Parse(obj.ToString());
@@ -410,7 +412,7 @@ namespace GingerCore.NoSqlBase
 
         private void AddValuesFromResult(List<BsonDocument> result)
         {
-            Dictionary<string, object> keyValues = new Dictionary<string, object>();
+            Dictionary<string, object> keyValues = [];
             int counts = 1;
             foreach (BsonDocument res in result)
             {

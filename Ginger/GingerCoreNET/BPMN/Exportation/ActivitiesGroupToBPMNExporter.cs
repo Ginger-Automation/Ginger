@@ -20,14 +20,8 @@ using Amdocs.Ginger.CoreNET.BPMN.Conversion;
 using Amdocs.Ginger.CoreNET.BPMN.Models;
 using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using GingerCore.Activities;
-using GingerCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 using GingerUtils;
+using System.IO;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
@@ -95,13 +89,13 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             {
                 Directory.CreateDirectory(_exportPath);
             }
-            
+
             string filePath = Path.Combine(_exportPath, bpmnFile.Name);
 
             filePath = FileUtils.GetUniqueFilePath(filePath);
 
             File.WriteAllText(filePath, bpmnFile.Content);
-            
+
             return filePath;
         }
 

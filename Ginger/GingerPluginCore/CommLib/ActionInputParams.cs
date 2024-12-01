@@ -26,7 +26,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         // TODO: add default value and more meta data
         //TODO: check if dictionary is faster but must keep the order
-        public List<ActionParam> Values = new List<ActionParam>();
+        public List<ActionParam> Values = [];
 
         // Easier way to get/set var    i.e: GA.ActionInputParams["URL"] = "http://aaa"
 

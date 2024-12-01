@@ -93,7 +93,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eTextSpeechAction)GetOrCreateInputParam<eTextSpeechAction>(nameof(TextSpeechAction), eTextSpeechAction.TextToSpeech);
+                return GetOrCreateInputParam<eTextSpeechAction>(nameof(TextSpeechAction), eTextSpeechAction.TextToSpeech);
             }
             set
             {
@@ -175,8 +175,8 @@ namespace GingerCore.Actions
             }
             SpeechEngine.Dispose();
             string TranslatedValue = CheckStringConditionByPresenceOfWords(sb.ToString(),
-                                                new List<string>() { "A" },
-                                                new List<string>() { "c", "cr", "English", "start", "started" }); // TODO; create dic
+                                                ["A"],
+                                                ["c", "cr", "English", "start", "started"]); // TODO; create dic
 
             AddOrUpdateReturnParamActual("RecordedText", TranslatedValue);
 
@@ -279,8 +279,10 @@ namespace GingerCore.Actions
         {
             try
             {
-                SpeechSynthesizer SpeechReaderloud = new SpeechSynthesizer();
-                SpeechReaderloud.Rate = (int)-2;
+                SpeechSynthesizer SpeechReaderloud = new SpeechSynthesizer
+                {
+                    Rate = -2
+                };
                 SpeechReaderloud.Speak(TextToSayLoud);
 
                 SpeechReaderloud.Dispose();

@@ -65,8 +65,10 @@ namespace UnitTests.NonUITests
         public void CreateNewSolution()
         {
             // Arrange
-            Solution createSol = new Solution();
-            createSol.Name = "NonUi Solution Test";
+            Solution createSol = new Solution
+            {
+                Name = "NonUi Solution Test"
+            };
 
             string SolFile = TestResources.GetTempFile("Solution1.Ginger.Solution.xml");
 
@@ -85,8 +87,10 @@ namespace UnitTests.NonUITests
         public void CreateNewSolutionWithMultiUnderscore()
         {
             // Arrange
-            Solution createSol = new Solution();
-            createSol.Name = "Non_Ui_Solution_Test";
+            Solution createSol = new Solution
+            {
+                Name = "Non_Ui_Solution_Test"
+            };
             string solFile = TestResources.GetTempFile("Solution2.Ginger.Solution.xml");
 
             //Act

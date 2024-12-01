@@ -184,7 +184,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                     ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, IsImportEmptyColumns, IsModelParamsFile);
                     if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
                     {
-                        _tabItems = new List<TabItem>();
+                        _tabItems = [];
                         foreach (DataTable dt in ExcelImportData.Tables)
                         {
                             AddTabItem(dt.TableName, dt);
@@ -209,9 +209,11 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             int count = _tabItems.Count;
 
             // create new tab item
-            TabItem tab = new TabItem();
-            tab.Header = string.Format("{0}", name);
-            tab.Name = string.Format("{0}", name);
+            TabItem tab = new TabItem
+            {
+                Header = string.Format("{0}", name),
+                Name = string.Format("{0}", name)
+            };
 
             var stackPanel = new StackPanel();
             stackPanel.Children.Add(new ucDataGrid() { ExcelData = dt });

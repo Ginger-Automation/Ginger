@@ -48,7 +48,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
             SystemRef = string.Empty;
             Description = string.Empty;
             CollaborationType = collaborationType;
-            _participants = new List<Participant>();
+            _participants = [];
         }
 
         public static Collaboration CreateForSubProcess(Guid guid, string systemRef)

@@ -44,7 +44,7 @@ namespace Amdocs.Ginger.CoreNET.Run
     {
 
         // keep list of GNI for Plugin which are session
-        static Dictionary<string, GingerNodeInfo> SessionsNodes = new Dictionary<string, GingerNodeInfo>();
+        static Dictionary<string, GingerNodeInfo> SessionsNodes = [];
 
         internal static GingerNodeInfo GetGingerNodeInfoForPluginAction(ActPlugIn actPlugin)
         {
@@ -286,7 +286,7 @@ namespace Amdocs.Ginger.CoreNET.Run
                 string errorMessage = "";
                 if (gingerNodeInfo == null)
                 {
-                    errorMessage += "Cannot find GingerNodeInfo in service grid for: " + ((ActPlugIn)actPlugin).PluginId + ", Service " + ((ActPlugIn)actPlugin).ServiceId + Environment.NewLine;
+                    errorMessage += "Cannot find GingerNodeInfo in service grid for: " + actPlugin.PluginId + ", Service " + actPlugin.ServiceId + Environment.NewLine;
                 }
                 errorMessage += "Error while executing Plugin Service action " + Environment.NewLine;
                 errorMessage += ex.Message;
@@ -356,7 +356,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             NewPayLoad PL = new NewPayLoad("RunAction");
             PL.AddValue(ActPlugIn.ActionId);
             //Add Params
-            List<NewPayLoad> Params = new List<NewPayLoad>();
+            List<NewPayLoad> Params = [];
 
             // if this is the first time the action run it will not have param type
             // so read it from plugin action info
@@ -427,7 +427,7 @@ namespace Amdocs.Ginger.CoreNET.Run
         public static void ExecutesScreenShotActionOnAgent(Agent agent, Act act)
         {
             NewPayLoad PL = new NewPayLoad("ScreenshotAction");
-            List<NewPayLoad> PLParams = new List<NewPayLoad>();
+            List<NewPayLoad> PLParams = [];
 
             NewPayLoad AIVPL = new NewPayLoad("AIV", "WindowsToCapture", act.WindowsToCapture.ToString());
             PLParams.Add(AIVPL);
@@ -486,10 +486,10 @@ namespace Amdocs.Ginger.CoreNET.Run
 
             void AddPOMLocators(ref PlatformAction PlatformAction, ref ActUIElement UIElementAction, ProjEnvironment projEnvironment, BusinessFlow businessFlow)
             {
-                Dictionary<string, string> Locators = new Dictionary<string, string>();
+                Dictionary<string, string> Locators = [];
 
 
-                List<string> Frames = new List<string>();
+                List<string> Frames = [];
 
                 string[] pOMandElementGUIDs = UIElementAction.ElementLocateValue.ToString().Split('_');
                 Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
@@ -503,7 +503,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
 
                 Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
+                ElementInfo selectedPOMElement = currentPOM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
 
 
                 if (selectedPOMElement == null)
@@ -513,7 +513,7 @@ namespace Amdocs.Ginger.CoreNET.Run
                 }
                 else
                 {
-                    List<NewPayLoad> switchframpayload = new List<NewPayLoad>();
+                    List<NewPayLoad> switchframpayload = [];
 
                     if (selectedPOMElement.Path != null)
                     {
@@ -582,10 +582,10 @@ namespace Amdocs.Ginger.CoreNET.Run
                 GingerNodeInfo GNI = null;
                 try
                 {
-                    GNI = GetGingerNodeInfoForPluginAction((ActPlugIn)act);
+                    GNI = GetGingerNodeInfoForPluginAction(act);
                     if (GNI != null)
                     {
-                        ExecuteActionOnPlugin((ActPlugIn)act, GNI);
+                        ExecuteActionOnPlugin(act, GNI);
                     }
                 }
                 catch (Exception ex)
@@ -594,7 +594,7 @@ namespace Amdocs.Ginger.CoreNET.Run
                     string errorMessage = "";
                     if (GNI == null)
                     {
-                        errorMessage += "Cannot find GingerNodeInfo in service grid for: " + ((ActPlugIn)act).PluginId + ", Service " + ((ActPlugIn)act).ServiceId + Environment.NewLine;
+                        errorMessage += "Cannot find GingerNodeInfo in service grid for: " + act.PluginId + ", Service " + act.ServiceId + Environment.NewLine;
                     }
                     errorMessage += "Error while executing Plugin Service action " + Environment.NewLine;
                     errorMessage += ex.Message;

@@ -33,14 +33,17 @@ namespace GingerCore.FlowControlLib.Tests
         [Timeout(60000)]
         public void FLowControlStatusCalculationTest()
         {
-            FlowControl FC = new FlowControl();
-            FC.Operator = eFCOperator.ActionPassed;
+            FlowControl FC = new FlowControl
+            {
+                Operator = eFCOperator.ActionPassed
+            };
 
 
             Activity LastActivity = new Activity();
-            ActDummy act = new ActDummy();
-
-            act.Status = eRunStatus.Passed;
+            ActDummy act = new ActDummy
+            {
+                Status = eRunStatus.Passed
+            };
             bool FcStatus = GingerExecutionEngine.CalculateFlowControlStatus(act, LastActivity, null, FC.Operator, "");
             Assert.AreEqual(true, FcStatus);
             act.Status = eRunStatus.Failed;

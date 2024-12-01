@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -41,28 +40,35 @@ namespace UnitTests.NonUITests
         [TestInitialize]
         public void TestInitialize()
         {
-            mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "BF Visual Testing";
-            mBF.Active = true;
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
+            mBF = new BusinessFlow
+            {
+                Activities = [],
+                Name = "BF Visual Testing",
+                Active = true
+            };
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.Web
+            };
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "VM" });
 
             mGR = new GingerRunner();
             mGR.Executor.SolutionFolder = TestResources.GetTestTempFolder("");
 
-            Agent a = new Agent();
-            a.DriverType = Agent.eDriverType.Selenium;
+            Agent a = new Agent
+            {
+                DriverType = Agent.eDriverType.Selenium
+            };
             DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: nameof(WebBrowserType.Chrome));
             browserTypeParam.Value = nameof(WebBrowserType.Chrome);
 
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [a];
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "VM", Agent = a });
-            mGR.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
-            mGR.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "VM", Platform = ePlatformType.Web, Description = "VM application" });
+            mGR.Executor.SolutionApplications =
+            [
+                new ApplicationPlatform() { AppName = "VM", Platform = ePlatformType.Web, Description = "VM application" },
+            ];
             mGR.Executor.BusinessFlows.Add(mBF);
         }
 

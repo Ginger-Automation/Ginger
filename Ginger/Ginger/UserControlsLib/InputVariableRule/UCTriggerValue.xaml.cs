@@ -21,20 +21,11 @@ using Ginger.Variables;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.UserControlsLib
 {
@@ -42,11 +33,11 @@ namespace Ginger.UserControlsLib
     /// Interaction logic for UCTriggerValue.xaml
     /// </summary>
     public partial class UCTriggerValue : UserControl, INotifyPropertyChanged
-    {       
+    {
         public static DependencyProperty SelectedSourceVariabelProperty = DependencyProperty.Register("SelectedSourceVariabel", typeof(VariableBase), typeof(UCTriggerValue), new PropertyMetadata(OnSelectedSourceVariabelPropertyChanged));
-       
+
         public static DependencyProperty TriggerValueProperty = DependencyProperty.Register("TriggerValue", typeof(string), typeof(UCTriggerValue), new PropertyMetadata(OnTriggerValuePropertyChanged));
-      
+
         public VariableBase SourceVariable
         {
             get { return (VariableBase)GetValue(SelectedSourceVariabelProperty); }
@@ -72,20 +63,19 @@ namespace Ginger.UserControlsLib
 
         public UCTriggerValue()
         {
-            InitializeComponent();           
+            InitializeComponent();
         }
 
         private static void OnSelectedSourceVariabelPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            var control = sender as UCTriggerValue;
-            if (control != null)
+            if (sender is UCTriggerValue control)
             {
                 control.SelectedSourceVariabelPropertyChanged((VariableBase)args.NewValue);
             }
         }
 
         private void SelectedSourceVariabelPropertyChanged(VariableBase selectedVar)
-        {           
+        {
             TriggerValue = "";
             if (selectedVar != null && selectedVar.VariableType == "Selection List")
             {
@@ -94,24 +84,24 @@ namespace Ginger.UserControlsLib
                 xValueExpressionTxtbox.Visibility = Visibility.Collapsed;
                 dateWindow.Visibility = Visibility.Collapsed;
                 txtNumberValue.Visibility = Visibility.Collapsed;
-                xVariablesValuesComboBox.Visibility = Visibility.Visible;               
+                xVariablesValuesComboBox.Visibility = Visibility.Visible;
                 xVariablesValuesComboBox.ItemsSource = ((VariableSelectionList)selectedVar).OptionalValuesList.Select(x => x.Value).ToList();
                 xVariablesValuesComboBox.SelectionChanged += XVariablesValuesComboBox_SelectionChanged;
                 xVariablesValuesComboBox.SelectedValue = selectedVar.Value;
             }
 
-            if (selectedVar != null &&  selectedVar.VariableType == "String")
+            if (selectedVar != null && selectedVar.VariableType == "String")
             {
                 txtNumberValue.ClearControlsBindings();
                 xVariablesValuesComboBox.Visibility = Visibility.Collapsed;
                 dateWindow.Visibility = Visibility.Collapsed;
                 txtNumberValue.Visibility = Visibility.Collapsed;
-                xValueExpressionTxtbox.Visibility = Visibility.Visible;               
+                xValueExpressionTxtbox.Visibility = Visibility.Visible;
                 BindingHandler.ObjFieldBinding(xValueExpressionTxtbox, TextBox.TextProperty, this, nameof(TriggerValue));
-                xValueExpressionTxtbox.Text = selectedVar.Value;               
+                xValueExpressionTxtbox.Text = selectedVar.Value;
             }
 
-            if (selectedVar != null &&  selectedVar.VariableType == "DateTime")
+            if (selectedVar != null && selectedVar.VariableType == "DateTime")
             {
                 txtNumberValue.ClearControlsBindings();
                 xValueExpressionTxtbox.ClearControlsBindings();
@@ -119,43 +109,42 @@ namespace Ginger.UserControlsLib
                 xVariablesValuesComboBox.Visibility = Visibility.Collapsed;
                 txtNumberValue.Visibility = Visibility.Collapsed;
                 dateWindow.Visibility = Visibility.Visible;
-                dpDate.CustomFormat = ((VariableDateTime)selectedVar).DateTimeFormat;                
+                dpDate.CustomFormat = ((VariableDateTime)selectedVar).DateTimeFormat;
                 dpDate.Value = DateTime.Parse(Convert.ToDateTime(((VariableDateTime)selectedVar).Value).ToString(dpDate.CustomFormat, System.Globalization.CultureInfo.InvariantCulture));
-                dpDate.MinDate =  Convert.ToDateTime(((VariableDateTime)selectedVar).MinDateTime);
-                dpDate.MaxDate =  Convert.ToDateTime(((VariableDateTime)selectedVar).MaxDateTime);
+                dpDate.MinDate = Convert.ToDateTime(((VariableDateTime)selectedVar).MinDateTime);
+                dpDate.MaxDate = Convert.ToDateTime(((VariableDateTime)selectedVar).MaxDateTime);
             }
 
-            if (selectedVar != null &&  selectedVar.VariableType == "Number")
+            if (selectedVar != null && selectedVar.VariableType == "Number")
             {
                 xValueExpressionTxtbox.ClearControlsBindings();
                 xValueExpressionTxtbox.Visibility = Visibility.Collapsed;
                 xVariablesValuesComboBox.Visibility = Visibility.Collapsed;
                 dateWindow.Visibility = Visibility.Collapsed;
-                txtNumberValue.Visibility = Visibility.Visible;                
+                txtNumberValue.Visibility = Visibility.Visible;
                 BindingHandler.ObjFieldBinding(txtNumberValue, TextBox.TextProperty, this, nameof(TriggerValue));
                 txtNumberValue.AddValidationRule(new NumberValidationRule());
                 txtNumberValue.AddValidationRule(new NumberValidationRule((VariableNumber)selectedVar));
-                txtNumberValue.Text =  selectedVar.Value;                
+                txtNumberValue.Text = selectedVar.Value;
             }
         }
 
 
         private void SetTriggerValue()
         {
-           
-        }       
-               
+
+        }
+
         private static void OnTriggerValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            var control = sender as UCTriggerValue;
-            if (control != null)
+            if (sender is UCTriggerValue control)
             {
                 control.TriggerValuePropertyChanged((string)args.NewValue);
             }
         }
 
         private void TriggerValuePropertyChanged(string newValue)
-        {            
+        {
             if (SourceVariable != null)
             {
                 if (SourceVariable.VariableType == "Selection List")
@@ -167,13 +156,13 @@ namespace Ginger.UserControlsLib
                     xValueExpressionTxtbox.Text = newValue;
                 }
                 else if (SourceVariable.VariableType == "DateTime" && !string.IsNullOrEmpty(newValue))
-                {                    
+                {
                     dpDate.Value = DateTime.Parse(Convert.ToDateTime(newValue).ToString(((VariableDateTime)SourceVariable).DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture));
                 }
                 else if (SourceVariable.VariableType == "Number")
                 {
-                    txtNumberValue.Text =  newValue;
-                } 
+                    txtNumberValue.Text = newValue;
+                }
             }
             OnPropertyChanged(nameof(TriggerValue));
         }
@@ -207,20 +196,24 @@ namespace Ginger.UserControlsLib
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory triggerValue = new FrameworkElementFactory(typeof(UCTriggerValue));
-         
-            Binding selectedsourceVariableBinding = new Binding(sourcevariable);
-            selectedsourceVariableBinding.Mode = BindingMode.OneWay;
-            selectedsourceVariableBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+
+            Binding selectedsourceVariableBinding = new Binding(sourcevariable)
+            {
+                Mode = BindingMode.OneWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
             triggerValue.SetBinding(UCTriggerValue.SelectedSourceVariabelProperty, selectedsourceVariableBinding);
 
-            Binding triggerValuebinding = new Binding(triggervalue);
-            triggerValuebinding.Mode = BindingMode.TwoWay;
-            triggerValuebinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            Binding triggerValuebinding = new Binding(triggervalue)
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
             triggerValue.SetBinding(UCTriggerValue.TriggerValueProperty, triggerValuebinding);
-        
+
             template.VisualTree = triggerValue;
             return template;
         }
-        
+
     }
 }

@@ -50,12 +50,12 @@ namespace Ginger.Actions
         List<String> mColNames = null;
         int mRowCount = 0;
         SelectedContentArgs mSelectedContentArgs;
-        List<string> mDSNames = new List<string>();
+        List<string> mDSNames = [];
         private DataSourceTable mDSTable;
         private string mDataSourceName;
         public ActDSTableElement mActDSTblElem = new ActDSTableElement();
-        ObservableList<DataSourceBase> mDSList = new ObservableList<DataSourceBase>();
-        ObservableList<DataSourceTable> mDSTableList = new ObservableList<DataSourceTable>();
+        ObservableList<DataSourceBase> mDSList = [];
+        ObservableList<DataSourceTable> mDSTableList = [];
         GenericWindow _pageGenericWin = null;
         bool okClicked = false;
         bool bTableDataLoaded = false;
@@ -158,11 +158,13 @@ namespace Ginger.Actions
 
             if (AttrName != "")
             {
-                Binding b = new Binding();
-                b.Source = mObj;
-                b.Path = new PropertyPath(mAttrName);
-                b.Mode = BindingMode.OneWay;
-                b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                Binding b = new Binding
+                {
+                    Source = mObj,
+                    Path = new PropertyPath(mAttrName),
+                    Mode = BindingMode.OneWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
                 txtValueExpression.SetBinding(TextBlock.TextProperty, b);
             }
 
@@ -209,10 +211,10 @@ namespace Ginger.Actions
                 return;
             }
 
-            string DSName = p.Substring(9, p.IndexOf(" DST=") - 9);
+            string DSName = p[9..p.IndexOf(" DST=")];
             GingerCore.General.SelectComboValue(cmbDataSourceName, DSName);
 
-            p = p.Substring(p.IndexOf(" DST=")).Trim();
+            p = p[p.IndexOf(" DST=")..].Trim();
             if (mDataSourceName == null)
             {
                 return;
@@ -229,18 +231,18 @@ namespace Ginger.Actions
             {
                 DSTable = p.Substring(p.IndexOf("DST=") + 4, p.IndexOf(" ") - 4);
                 GingerCore.General.SelectComboValue(cmbDataSourceTableName, DSTable);
-                p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                p = p[p.TrimStart().IndexOf(" ")..].Trim();
                 if (p.IndexOf("ACT=") != -1)
                 {
                     if (p.TrimStart().IndexOf(" ") != -1)
                     {
-                        p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                        p = p[p.TrimStart().IndexOf(" ")..].Trim();
                     }
 
                 }
                 if (p.IndexOf("EP=") == 0)
                 {
-                    p = p.Substring(p.TrimStart().IndexOf(" ES=")).Trim();
+                    p = p[p.TrimStart().IndexOf(" ES=")..].Trim();
                 }
                 else if (p.IndexOf("KEY=") == 0)
                 {
@@ -269,12 +271,12 @@ namespace Ginger.Actions
                         MarkAsDone.IsChecked = false;
                     }
 
-                    p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                    p = p[p.TrimStart().IndexOf(" ")..].Trim();
 
                     if (p.IndexOf("MR=") == 0)
                     {
                         bMultiRow = p.Substring(p.IndexOf("MR=") + 3, p.IndexOf(" ") - 3);
-                        p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                        p = p[p.TrimStart().IndexOf(" ")..].Trim();
                     }
                     if (bMultiRow == "Y")
                     {
@@ -286,7 +288,7 @@ namespace Ginger.Actions
                     }
 
                     string DSIden = p.Substring(p.IndexOf("IDEN=") + 5, p.IndexOf(" ") - 5);
-                    p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                    p = p[p.TrimStart().IndexOf(" ")..].Trim();
                     if (DSIden == "Query")
                     {
                         ByQuery.IsChecked = true;
@@ -297,7 +299,7 @@ namespace Ginger.Actions
                     {
                         iColVal = p.Substring(p.IndexOf("ICOLVAL=") + 8, p.IndexOf("IROW=") - 9);
                         GingerCore.General.SelectComboValue(cmbColumnValue, iColVal);
-                        p = p.Substring(p.TrimStart().IndexOf("IROW="));
+                        p = p[p.TrimStart().IndexOf("IROW=")..];
 
                         string IRow = "";
                         if (p.IndexOf(" ") > 0)
@@ -316,7 +318,7 @@ namespace Ginger.Actions
                         else if (IRow == "RowNum")
                         {
                             RowNum.IsChecked = true;
-                            p = p.Substring(p.TrimStart().IndexOf("ROWNUM="));
+                            p = p[p.TrimStart().IndexOf("ROWNUM=")..];
                             int startIndex = p.IndexOf("ROWNUM=") + 7;
                             int endIndex = p.IndexOf("}");
                             int charCount = endIndex > startIndex ? endIndex - startIndex : startIndex - endIndex;
@@ -328,7 +330,7 @@ namespace Ginger.Actions
                             if (p.TrimStart().IndexOf("COND=") != -1)
                             {
 
-                                p = p.Substring(p.TrimStart().IndexOf("COND="));
+                                p = p[p.TrimStart().IndexOf("COND=")..];
                                 string Cond = p.Substring(p.IndexOf("COND=") + 5, p.LastIndexOf("}") - 5);
 
                                 Regex rxDSPattern = new Regex(@"{(\bDS Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
@@ -457,9 +459,9 @@ namespace Ginger.Actions
                             }
                             else if (p.TrimStart().IndexOf("WCOLVAL=") != -1 && p.TrimStart().IndexOf("WOPR=") != -1)
                             {
-                                p = p.Substring(p.TrimStart().IndexOf("WCOLVAL="));
+                                p = p[p.TrimStart().IndexOf("WCOLVAL=")..];
                                 string wColVal = p.Substring(p.IndexOf("WCOLVAL=") + 8, p.IndexOf("WOPR=") - 9);
-                                p = p.Substring(p.TrimStart().IndexOf("WOPR="));
+                                p = p[p.TrimStart().IndexOf("WOPR=")..];
                                 string wOpr = "";
                                 ActDSConditon.eOperator wDSOpr = ActDSConditon.eOperator.Equals;
                                 string wRowVal = "";
@@ -472,9 +474,9 @@ namespace Ginger.Actions
                                     wOpr = p.Substring(p.IndexOf("WOPR=") + 5, p.IndexOf("WROWVAL=") - 6);
                                 }
 
-                                if (wOpr != "Is Null" && wOpr != "Is Null")
+                                if (wOpr is not "Is Null" and not "Is Null")
                                 {
-                                    p = p.Substring(p.TrimStart().IndexOf("WROWVAL="));
+                                    p = p[p.TrimStart().IndexOf("WROWVAL=")..];
                                     wRowVal = p.Substring(p.IndexOf("WROWVAL=") + 8, p.IndexOf("}") - 8);
                                 }
                                 foreach (ActDSConditon.eOperator opr in Enum.GetValues(typeof(ActDSConditon.eOperator)))
@@ -537,8 +539,8 @@ namespace Ginger.Actions
                 cmbDataSourceName.SelectedIndex = 0;
                 mDataSourceName = mDSNames[0];
             }
-            
-            if (mActDSTblElem.ValueExp != null && mActDSTblElem.ValueExp != "")
+
+            if (mActDSTblElem.ValueExp is not null and not "")
             {
                 SetDataSourceVEParams(mActDSTblElem.ValueExp);
             }
@@ -591,7 +593,7 @@ namespace Ginger.Actions
         private void AddWhereCondition(object sender, RoutedEventArgs e)
         {
             ActDSConditon.eCondition defaultCond = ActDSConditon.eCondition.EMPTY;
-            ObservableList<string> Condition = new ObservableList<string>();
+            ObservableList<string> Condition = [];
             if (mActDSTblElem.WhereConditions.Count > 0)
             {
                 foreach (ActDSConditon.eCondition item in Enum.GetValues(typeof(ActDSConditon.eCondition)))
@@ -612,7 +614,7 @@ namespace Ginger.Actions
         {
             if (mActDSTblElem.WhereConditions.Count > 0)
             {
-                mActDSTblElem.WhereConditions[0].PossibleCondValues = new ObservableList<string>();
+                mActDSTblElem.WhereConditions[0].PossibleCondValues = [];
                 mActDSTblElem.WhereConditions[0].wCondition = ActDSConditon.eCondition.EMPTY;
             }
             grdCondition.DataSourceList = mActDSTblElem.WhereConditions;
@@ -646,11 +648,12 @@ namespace Ginger.Actions
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
             this.Width = 550;
-            Button okBtn = new Button();
-            okBtn.Content = "OK";
+            Button okBtn = new Button
+            {
+                Content = "OK"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: OKButton_Click);
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(okBtn);
+            ObservableList<Button> winButtons = [okBtn];
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, true, "Cancel");
         }
@@ -878,7 +881,7 @@ namespace Ginger.Actions
             if (mActDSTblElem.WhereConditions.Count == 0)
             {
                 ActDSConditon.eCondition defaultCond = ActDSConditon.eCondition.EMPTY;
-                ObservableList<string> Condition = new ObservableList<string>();
+                ObservableList<string> Condition = [];
                 mActDSTblElem.AddDSCondition(defaultCond, mColNames[0], ActDSConditon.eOperator.Equals, "", mColNames);
                 UpdateValueExpression();
             }
@@ -993,7 +996,7 @@ namespace Ginger.Actions
                         TBH.AddText(" IDEN=");
                         if (SelectedCell.IsChecked == true)
                         {
-                            List<object> SelectedItemsList = new List<object>();
+                            List<object> SelectedItemsList = [];
                             if (grdTableData.Grid.SelectedCells.Count == 0)
                             {
                                 ErrorLabel.Content = "Please select a Valid Cell from Table Data for Current Identifier";
@@ -1176,8 +1179,10 @@ namespace Ginger.Actions
                 {
                     if (ValueUC != null)
                     {
-                        ValueExpression mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, mActDSTblElem.RunOnBusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
-                        mValueExpression.Value = mActDSTblElem.GetInputParamValue("Value");
+                        ValueExpression mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, mActDSTblElem.RunOnBusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>())
+                        {
+                            Value = mActDSTblElem.GetInputParamValue("Value")
+                        };
                         mActDSTblElem.ValueUC = mValueExpression.ValueCalculated;
                     }
                     ErrorLabel.Content = "";
@@ -1199,7 +1204,7 @@ namespace Ginger.Actions
 
                         TBH.AddText(" Query QUERY=");
                         mActDSTblElem.BySelectedCell = true;
-                        List<object> SelectedItemsList = new List<object>();
+                        List<object> SelectedItemsList = [];
                         if (grdTableData.Grid.SelectedCells.Count == 0)
                         {
                             ErrorLabel.Content = "Please select a Valid Cell from Table Data for Current Identifier";
@@ -1389,8 +1394,10 @@ namespace Ginger.Actions
             List<string> mColumnNames = mDSTable.DSC.GetColumnList(mDSTable.Name);
             int iColIndex = mColumnNames.Count - 1;
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = []
+            };
 
             foreach (string colName in mColumnNames)
             {
@@ -1399,7 +1406,7 @@ namespace Ginger.Actions
                 {
                     view.GridColsView.Add(new GridColView() { Field = colName, Header = colHeader, Order = 0, WidthWeight = 10, BindingMode = BindingMode.OneWay });
                 }
-                else if (colName == "GINGER_LAST_UPDATE_DATETIME" || colName == "GINGER_LAST_UPDATED_BY")
+                else if (colName is "GINGER_LAST_UPDATE_DATETIME" or "GINGER_LAST_UPDATED_BY")
                 {
                     view.GridColsView.Add(new GridColView() { Field = colName, Header = colHeader, WidthWeight = 20, BindingMode = BindingMode.OneWay });
                 }
@@ -1429,7 +1436,7 @@ namespace Ginger.Actions
                 {
                     sCol.DisplayIndex = 1;
                 }
-                if (sCol.Header.ToString() == "GINGER__LAST__UPDATED__BY" || sCol.Header.ToString() == "GINGER__LAST__UPDATE__DATETIME")
+                if (sCol.Header.ToString() is "GINGER__LAST__UPDATED__BY" or "GINGER__LAST__UPDATE__DATETIME")
                 {
                     sCol.DisplayIndex = iColIndex;
                     iColIndex--;
@@ -1451,15 +1458,18 @@ namespace Ginger.Actions
             List<ComboEnumItem> lstCond = GingerCore.General.GetEnumValuesForCombo(typeof(ActDSConditon.eCondition));
             List<ComboEnumItem> lstOper = GingerCore.General.GetEnumValuesForCombo(typeof(ActDSConditon.eOperator));
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = ActDSConditon.Fields.wCondition, Header = "And/Or", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ActDSConditon.Fields.PossibleCondValues, ActDSConditon.Fields.wCondition) });
-            //view.GridColsView.Add(new GridColView() { Field = ActDSConditon.Fields.wCondition, Header = "And/Or", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = lstCond });
-            view.GridColsView.Add(new GridColView() { Field = ActDSConditon.Fields.wTableColumn, Header = "Column", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ActDSConditon.Fields.PossibleColumnValues, ActDSConditon.Fields.wTableColumn) });
-            view.GridColsView.Add(new GridColView() { Field = ActDSConditon.Fields.wOperator, Header = "Operator", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = lstOper });
-            view.GridColsView.Add(new GridColView() { Field = ActDSConditon.Fields.wValue, Header = "Value", WidthWeight = 30 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.WhereGrid.Resources["ValueExpressionButton"] });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = ActDSConditon.Fields.wCondition, Header = "And/Or", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ActDSConditon.Fields.PossibleCondValues, ActDSConditon.Fields.wCondition) },
+                //view.GridColsView.Add(new GridColView() { Field = ActDSConditon.Fields.wCondition, Header = "And/Or", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = lstCond });
+                new GridColView() { Field = ActDSConditon.Fields.wTableColumn, Header = "Column", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ActDSConditon.Fields.PossibleColumnValues, ActDSConditon.Fields.wTableColumn) },
+                new GridColView() { Field = ActDSConditon.Fields.wOperator, Header = "Operator", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = lstOper },
+                new GridColView() { Field = ActDSConditon.Fields.wValue, Header = "Value", WidthWeight = 30 },
+                new GridColView() { Field = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.WhereGrid.Resources["ValueExpressionButton"] },
+            ]
+            };
 
             grdCondition.SetAllColumnsDefaultView(view);
             grdCondition.InitViewItems();
@@ -1499,7 +1509,7 @@ namespace Ginger.Actions
                 if (grdTableData.Grid.SelectedCells.Count > 0)
                 {
                     string sSelCol = grdTableData.Grid.SelectedCells[0].Column.Header.ToString();
-                    if (sSelCol == "GINGER__ID" || sSelCol == "GINGER__LAST__UPDATE__DATETIME" || sSelCol == "GINGER__LAST__UPDATED__BY")
+                    if (sSelCol is "GINGER__ID" or "GINGER__LAST__UPDATE__DATETIME" or "GINGER__LAST__UPDATED__BY")
                     {
                         grdTableData.Grid.SelectedCells.Clear();
                     }
@@ -1552,7 +1562,7 @@ namespace Ginger.Actions
                     }
                 }
                 //IdentifierRow.Height = new GridLength(IdentifierRow.Height.Value - ColIden.Height.Value);
-                if (ControlActionComboBox.SelectedValue.ToString() == "MarkAsDone" || ControlActionComboBox.SelectedValue.ToString() == "DeleteRow")
+                if (ControlActionComboBox.SelectedValue.ToString() is "MarkAsDone" or "DeleteRow")
                 {
                     ColIden.Height = new GridLength(0);
                 }
@@ -1586,7 +1596,7 @@ namespace Ginger.Actions
 
         private void cmbDataSourceName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(cmbDataSourceName.SelectedValue == null)
+            if (cmbDataSourceName.SelectedValue == null)
             {
                 return;
             }
@@ -1602,7 +1612,7 @@ namespace Ginger.Actions
                     //    ds.FileFullPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, ds.FileFullPath);
                     //}
                     ds.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ds.FilePath);
-                    List<string> dsTableNames = new List<string>();
+                    List<string> dsTableNames = [];
                     mDSTableList = ds.GetTablesList();
                     if (mDSTableList != null)
                     {
@@ -1708,7 +1718,7 @@ namespace Ginger.Actions
                 KeyGrid.Visibility = Visibility.Visible;
 
                 DataTable dTable = mDSTable.DSC.GetKeyName(mDSTable.Name);
-                List<string> mKeyNames = new List<string>();
+                List<string> mKeyNames = [];
                 if (dTable != null)
                 {
                     for (int iRow = 0; iRow < dTable.Rows.Count; iRow++)
@@ -1893,7 +1903,7 @@ namespace Ginger.Actions
                 if (grdTableData.Grid.SelectedCells.Count > 0)
                 {
                     string sSelCol = grdTableData.Grid.SelectedCells[0].Column.Header.ToString();
-                    if (sSelCol == "GINGER__ID" || sSelCol == "GINGER__LAST__UPDATE__DATETIME" || sSelCol == "GINGER__LAST__UPDATED__BY")
+                    if (sSelCol is "GINGER__ID" or "GINGER__LAST__UPDATE__DATETIME" or "GINGER__LAST__UPDATED__BY")
                     {
                         grdTableData.Grid.SelectedCells.Clear();
                     }
@@ -1982,9 +1992,9 @@ namespace Ginger.Actions
         //}
         public void UpdateContent()
         {
-            string txt = mSelectedContentArgs.TextEditor.Text.Substring(0, mSelectedContentArgs.StartPos);
+            string txt = mSelectedContentArgs.TextEditor.Text[..mSelectedContentArgs.StartPos];
             txt += mActDSTblElem.ValueExp;
-            txt += mSelectedContentArgs.TextEditor.Text.Substring(mSelectedContentArgs.EndPos + 1);
+            txt += mSelectedContentArgs.TextEditor.Text[(mSelectedContentArgs.EndPos + 1)..];
             mSelectedContentArgs.TextEditor.Text = txt;
         }
 

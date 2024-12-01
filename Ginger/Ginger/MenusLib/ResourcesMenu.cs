@@ -156,18 +156,22 @@ namespace Ginger.MenusLib
 
         private static Page Documents()
         {
-            DocumentsFolderTreeItem documentsFolderRoot = new DocumentsFolderTreeItem();
-            documentsFolderRoot.IsGingerDefualtFolder = true;
-            documentsFolderRoot.Path = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Documents");
-            documentsFolderRoot.Folder = "Documents";
+            DocumentsFolderTreeItem documentsFolderRoot = new DocumentsFolderTreeItem
+            {
+                IsGingerDefualtFolder = true,
+                Path = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Documents"),
+                Folder = "Documents"
+            };
             SingleItemTreeViewExplorerPage docsRootPage = new SingleItemTreeViewExplorerPage("Documents", eImageType.File, documentsFolderRoot, saveAllHandler: null, addHandler: null, showTitle: true);
             return docsRootPage;
         }
 
         private static Page DataSources()
         {
-            DataSourceFolderTreeItem dataSourcesRoot = new DataSourceFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>());
-            dataSourcesRoot.IsGingerDefualtFolder = true;
+            DataSourceFolderTreeItem dataSourcesRoot = new DataSourceFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>())
+            {
+                IsGingerDefualtFolder = true
+            };
             SingleItemTreeViewExplorerPage dataSourcesRootPage = new SingleItemTreeViewExplorerPage("Data Sources", eImageType.DataSource, dataSourcesRoot, dataSourcesRoot.SaveAllTreeFolderItemsHandler, dataSourcesRoot.AddDataSource, showTitle: true);
             return dataSourcesRootPage;
         }

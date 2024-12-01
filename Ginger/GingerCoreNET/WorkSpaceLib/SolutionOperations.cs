@@ -95,7 +95,7 @@ namespace Ginger.SolutionGeneral
                 {
                     if (Solution.LoggerConfigurations != null)
                     {
-                        if (Solution.LoggerConfigurations.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || Solution.LoggerConfigurations.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                        if (Solution.LoggerConfigurations.DirtyStatus is Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified or Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                         {
                             bldExtraChangedItems.Append("Execution Logger configuration, ");
                         }
@@ -107,7 +107,7 @@ namespace Ginger.SolutionGeneral
                     {
                         foreach (HTMLReportsConfiguration config in Solution.HTMLReportsConfigurationSetList)
                         {
-                            if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                            if (config.DirtyStatus is Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified or Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                             {
 
                                 bldExtraChangedItems.Append("Report configuration");
@@ -127,7 +127,7 @@ namespace Ginger.SolutionGeneral
                     {
                         foreach (VariableBase var in Solution.Variables)
                         {
-                            if (var.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || var.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                            if (var.DirtyStatus is Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified or Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                             {
                                 bldExtraChangedItems.Append(GingerDicser.GetTermResValue(eTermResKey.Variables, "Global ", ", "));
                                 break;
@@ -145,7 +145,7 @@ namespace Ginger.SolutionGeneral
                     {
                         foreach (ApplicationPlatform app in Solution.ApplicationPlatforms)
                         {
-                            if (app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                            if (app.DirtyStatus is Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified or Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                             {
                                 bldExtraChangedItems.Append($"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}, ");
                                 break;
@@ -163,7 +163,7 @@ namespace Ginger.SolutionGeneral
                     {
                         foreach (RepositoryItemTag tag in Solution.Tags)
                         {
-                            if (tag.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || tag.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                            if (tag.DirtyStatus is Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified or Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                             {
                                 bldExtraChangedItems.Append("Tags, ");
                                 break;
@@ -175,7 +175,7 @@ namespace Ginger.SolutionGeneral
                 if (!string.IsNullOrEmpty(extraChangedItems))
                 {
                     extraChangedItems = extraChangedItems.TrimEnd();
-                    extraChangedItems = extraChangedItems.TrimEnd(new char[] { ',' });                   
+                    extraChangedItems = extraChangedItems.TrimEnd(new char[] { ',' });
                 }
                 doSave = true;
             }
@@ -290,21 +290,25 @@ namespace Ginger.SolutionGeneral
             {
                 if (Solution.LoggerConfigurations == null || Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder == null)
                 {
-                    Solution.LoggerConfigurations = new ExecutionLoggerConfiguration();
-                    Solution.LoggerConfigurations.IsSelected = true;
-                    Solution.LoggerConfigurations.ExecutionLoggerConfigurationIsEnabled = true;
-                    Solution.LoggerConfigurations.ExecutionLoggerConfigurationMaximalFolderSize = 250;
-                    Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = SolutionRepository.cSolutionRootFolderSign + "ExecutionResults";
+                    Solution.LoggerConfigurations = new ExecutionLoggerConfiguration
+                    {
+                        IsSelected = true,
+                        ExecutionLoggerConfigurationIsEnabled = true,
+                        ExecutionLoggerConfigurationMaximalFolderSize = 250,
+                        ExecutionLoggerConfigurationExecResultsFolder = SolutionRepository.cSolutionRootFolderSign + "ExecutionResults"
+                    };
                 }
 
                 if ((Solution.HTMLReportsConfigurationSetList == null) || (Solution.HTMLReportsConfigurationSetList.Count == 0))
                 {
-                    Solution.HTMLReportsConfigurationSetList = new ObservableList<HTMLReportsConfiguration>();
-                    HTMLReportsConfiguration HTMLReportsConfiguration = new HTMLReportsConfiguration();
-                    HTMLReportsConfiguration.IsSelected = true;
-                    HTMLReportsConfiguration.HTMLReportTemplatesSeq = 1;
-                    HTMLReportsConfiguration.HTMLReportsFolder = SolutionRepository.cSolutionRootFolderSign + "HTMLReports";
-                    HTMLReportsConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
+                    Solution.HTMLReportsConfigurationSetList = [];
+                    HTMLReportsConfiguration HTMLReportsConfiguration = new HTMLReportsConfiguration
+                    {
+                        IsSelected = true,
+                        HTMLReportTemplatesSeq = 1,
+                        HTMLReportsFolder = SolutionRepository.cSolutionRootFolderSign + "HTMLReports",
+                        HTMLReportsAutomaticProdIsEnabled = false
+                    };
                     Solution.HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
                 }
 
@@ -356,13 +360,13 @@ namespace Ginger.SolutionGeneral
         public static ObservableList<SolutionCategoryValue> GetSolutionReleaseValues()
         {
             SolutionCategory releaseList = WorkSpace.Instance?.Solution?.SolutionCategories?.FirstOrDefault(x => x.Category == Amdocs.Ginger.CoreNET.Run.SolutionCategory.eSolutionCategories.Release);
-            if(releaseList != null)
+            if (releaseList != null)
             {
                 return releaseList.CategoryOptionalValues;
             }
             else
             {
-                return new ObservableList<SolutionCategoryValue>();
+                return [];
             }
 
         }
@@ -380,7 +384,7 @@ namespace Ginger.SolutionGeneral
                     {
                         Directory.Delete(cacheFolderPath, recursive: true);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while trying to delete directory '{cacheFolderPath}'.", ex);
                     }

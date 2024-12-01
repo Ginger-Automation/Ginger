@@ -32,7 +32,7 @@ namespace GingerCore.ALM.JIRA
         }
         public JiraTestSet()
         {
-            this.Tests = new List<JiraTest>();
+            this.Tests = [];
         }
         public int Seq { get; set; }
         public string Name { get; set; }

@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository;
@@ -29,9 +28,7 @@ using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 
 namespace Ginger.BusinessFlowPages
 {
@@ -74,7 +71,7 @@ namespace Ginger.BusinessFlowPages
 
             //List Items
             ActivitiesListViewHelper activityListItemInfo = new ActivitiesListViewHelper(mContext, mPageViewMode);
-            
+
             activityListItemInfo.ActivityListItemEvent += ActivityListItemInfo_ActivityListItemEvent;
 
 
@@ -92,7 +89,7 @@ namespace Ginger.BusinessFlowPages
             // Disable ScrollViewer's CanContentScroll property for smooth scrolling 
             xActivitiesListView.List.SetValue(ScrollViewer.CanContentScrollProperty, false);
 
-            if (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == General.eRIPageViewMode.ViewAndExecute)
+            if (mPageViewMode is Ginger.General.eRIPageViewMode.View or General.eRIPageViewMode.ViewAndExecute)
             {
                 xActivitiesListView.IsDragDropCompatible = false;
             }
@@ -129,15 +126,13 @@ namespace Ginger.BusinessFlowPages
 
         private void ActivitiesListView_SameFrameItemDropped(object sender, EventArgs e)
         {
-            object droppedItem = ((DragInfo)sender).Data as object;
-            if (droppedItem != null)
+            if (((DragInfo)sender).Data is object droppedItem)
             {
                 if (droppedItem is Activity)
                 {
                     Activity draggedActivity = droppedItem as Activity;
-                    Activity activityDroppedOn = DragDrop2.GetRepositoryItemHit(ListView) as Activity;
 
-                    if (activityDroppedOn != null)
+                    if (DragDrop2.GetRepositoryItemHit(ListView) is Activity activityDroppedOn)
                     {
                         if (activityDroppedOn.ActivitiesGroupID != draggedActivity.ActivitiesGroupID)
                         {
@@ -186,23 +181,20 @@ namespace Ginger.BusinessFlowPages
 
         private void ActivitiesListView_ItemDropped(object sender, EventArgs e)
         {
-            object droppedItem = ((DragInfo)sender).Data as object;
-            if (droppedItem != null)
+            if (((DragInfo)sender).Data is object droppedItem)
             {
                 if (droppedItem is Activity)
                 {
                     string activityGroupID = null;
                     int activityIndex = -1;
-                    Activity activityDroppedOn = DragDrop2.GetRepositoryItemHit(ListView) as Activity;
 
-                    if (activityDroppedOn != null)
+                    if (DragDrop2.GetRepositoryItemHit(ListView) is Activity activityDroppedOn)
                     {
                         activityGroupID = activityDroppedOn.ActivitiesGroupID;
                         activityIndex = ListView.xListView.Items.IndexOf(activityDroppedOn);
                     }
 
-                    List<Activity> list = new List<Activity>();
-                    list.Add((Activity)droppedItem);
+                    List<Activity> list = [(Activity)droppedItem];
                     bool isPomActivity = ((Activity)droppedItem).IsAutoLearned;
                     ActionsFactory.AddActivitiesFromSRHandler(list, mContext.BusinessFlow, activityGroupID, activityIndex, isPomActivity);
                     if (activityIndex != -1)
@@ -212,8 +204,7 @@ namespace Ginger.BusinessFlowPages
                 }
                 else if (droppedItem is ActivitiesGroup)
                 {
-                    List<ActivitiesGroup> list = new List<ActivitiesGroup>();
-                    list.Add((ActivitiesGroup)droppedItem);
+                    List<ActivitiesGroup> list = [(ActivitiesGroup)droppedItem];
                     ActionsFactory.AddActivitiesGroupsFromSRHandler(list, mContext.BusinessFlow);
                 }
             }

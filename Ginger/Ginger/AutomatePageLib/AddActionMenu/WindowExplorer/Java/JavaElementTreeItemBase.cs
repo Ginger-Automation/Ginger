@@ -36,7 +36,7 @@ namespace Ginger.WindowExplorer.Java
 
         public List<ITreeViewItem> Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            List<ITreeViewItem> Childrens = [];
             try
             {
                 PayLoad Response = getChilderns();
@@ -62,7 +62,7 @@ namespace Ginger.WindowExplorer.Java
 
         List<ITreeViewItem> GetControlsAsTreeItems(List<PayLoad> controls)
         {
-            List<ITreeViewItem> items = new List<ITreeViewItem>();
+            List<ITreeViewItem> items = [];
             foreach (PayLoad pl in controls)
             {
                 ElementInfo CI = JavaDriver.GetControlInfoFromPayLoad(pl);
@@ -75,7 +75,7 @@ namespace Ginger.WindowExplorer.Java
 
         List<ITreeViewItem> GetHTMLControlsAsTreeItems(List<PayLoad> controls)
         {
-            List<ITreeViewItem> items = new List<ITreeViewItem>();
+            List<ITreeViewItem> items = [];
 
             foreach (PayLoad pl in controls)
             {

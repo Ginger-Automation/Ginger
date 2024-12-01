@@ -99,18 +99,22 @@ namespace Ginger.Actions.ActionConversion
         /// </summary>
         private void SetGridsView()
         {
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.IsSelected), WidthWeight = 5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select", BindingMode = System.Windows.Data.BindingMode.TwoWay });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.BusinessFlowName), WidthWeight = 25, Header = "Name" });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.Description), WidthWeight = 10, Header = "Description" });
-            defView.GridColsView.Add(new GridColView()
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
             {
-                Field = nameof(BusinessFlowToConvert.TotalProcessingActionsCount),
-                WidthWeight = 10,
-                Header = "Convertible Actions",
-                HorizontalAlignment = HorizontalAlignment.Center
-            });
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(BusinessFlowToConvert.IsSelected), WidthWeight = 5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select", BindingMode = System.Windows.Data.BindingMode.TwoWay },
+                new GridColView() { Field = nameof(BusinessFlowToConvert.BusinessFlowName), WidthWeight = 25, Header = "Name" },
+                new GridColView() { Field = nameof(BusinessFlowToConvert.Description), WidthWeight = 10, Header = "Description" },
+                new GridColView()
+                {
+                    Field = nameof(BusinessFlowToConvert.TotalProcessingActionsCount),
+                    WidthWeight = 10,
+                    Header = "Convertible Actions",
+                    HorizontalAlignment = HorizontalAlignment.Center
+                },
+            ]
+            };
 
             xBusinessFlowGrid.SetAllColumnsDefaultView(defView);
             xBusinessFlowGrid.InitViewItems();
@@ -119,13 +123,13 @@ namespace Ginger.Actions.ActionConversion
             xBusinessFlowGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddBusinessFlow));
 
             xBusinessFlowGrid.DataSourceList = GetDefaultSelectedBusinessFlows();
-                WeakEventManager<ucGrid, EventArgs>.AddHandler(source: xBusinessFlowGrid, eventName: nameof(ucGrid.RowChangedEvent), handler: grdGroups_RowChangedEvent);
+            WeakEventManager<ucGrid, EventArgs>.AddHandler(source: xBusinessFlowGrid, eventName: nameof(ucGrid.RowChangedEvent), handler: grdGroups_RowChangedEvent);
             xBusinessFlowGrid.Title = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " to Convert";
             xBusinessFlowGrid.MarkUnMarkAllActive += MarkUnMarkAllActivities;
-            xBusinessFlowGrid.ValidationRules = new List<ucGrid.eUcGridValidationRules>()
-            {
+            xBusinessFlowGrid.ValidationRules =
+            [
                 ucGrid.eUcGridValidationRules.CheckedRowCount
-            };
+            ];
             xBusinessFlowGrid.ActiveStatus = false;
         }
 
@@ -154,7 +158,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 RepositoryFolder<BusinessFlow> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>();
                 BusinessFlowsFolderTreeItem bfsRoot = new BusinessFlowsFolderTreeItem(repositoryFolder);
-                mBFSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), eImageType.BusinessFlow, bfsRoot,SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, false);
+                mBFSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), eImageType.BusinessFlow, bfsRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, false);
                 WeakEventManager<SingleItemTreeViewSelectionPage, SelectionTreeEventArgs>.AddHandler(source: mBFSelectionPage, eventName: nameof(SingleItemTreeViewSelectionPage.SelectionDone), handler: MBFSelectionPage_SelectionDone);
 
             }
@@ -174,11 +178,13 @@ namespace Ginger.Actions.ActionConversion
                 {
                     if (!IsBusinessFlowAdded(bf.Guid))
                     {
-                        BusinessFlowToConvert flowToConversion = new BusinessFlowToConvert();
-                        flowToConversion.BusinessFlow = bf;
-                        flowToConversion.ConversionStatus = eConversionStatus.Pending;
-                        flowToConversion.IsSelected = true;
-                        flowToConversion.TotalProcessingActionsCount = mConversionProcess.GetConvertibleActionsCountFromBusinessFlow(bf);
+                        BusinessFlowToConvert flowToConversion = new BusinessFlowToConvert
+                        {
+                            BusinessFlow = bf,
+                            ConversionStatus = eConversionStatus.Pending,
+                            IsSelected = true,
+                            TotalProcessingActionsCount = mConversionProcess.GetConvertibleActionsCountFromBusinessFlow(bf)
+                        };
                         ListOfBusinessFlow.Add(flowToConversion);
                     }
                 }

@@ -34,25 +34,24 @@ namespace Ginger.Drivers.PowerBuilder
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActMenuItem()
-            {
-                Description = "Expand " + UIAElementInfo.ElementTitle + " Menu Item",
-                MenuAction = ActMenuItem.eMenuAction.Expand
-            });
-
-            list.Add(new ActMenuItem()
-            {
-                Description = "Collapse " + UIAElementInfo.ElementTitle + " Menu Item",
-                MenuAction = ActMenuItem.eMenuAction.Collapse
-            });
-
-            list.Add(new ActMenuItem()
-            {
-                Description = "Click Menu Item",
-                MenuAction = ActMenuItem.eMenuAction.Click
-            });
+            ObservableList<Act> list =
+            [
+                new ActMenuItem()
+                {
+                    Description = "Expand " + UIAElementInfo.ElementTitle + " Menu Item",
+                    MenuAction = ActMenuItem.eMenuAction.Expand
+                },
+                new ActMenuItem()
+                {
+                    Description = "Collapse " + UIAElementInfo.ElementTitle + " Menu Item",
+                    MenuAction = ActMenuItem.eMenuAction.Collapse
+                },
+                new ActMenuItem()
+                {
+                    Description = "Click Menu Item",
+                    MenuAction = ActMenuItem.eMenuAction.Click
+                },
+            ];
             return list;
         }
     }

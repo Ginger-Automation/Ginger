@@ -49,8 +49,10 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
         public static void ClassInit(TestContext context)
         {
 
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.Web
+            };
 
 
             if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
@@ -66,22 +68,26 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             mGR.Name = "Test Runner";
             mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
-            environment = new ProjEnvironment();
-            environment.Name = "Default";
+            environment = new ProjEnvironment
+            {
+                Name = "Default"
+            };
             //BF1.Environment = environment.Name;
 
-            Agent a = new Agent();
-            a.DriverType = Agent.eDriverType.Selenium;
+            Agent a = new Agent
+            {
+                DriverType = Agent.eDriverType.Selenium
+            };
             DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: nameof(WebBrowserType.Chrome));
             browserTypeParam.Value = nameof(WebBrowserType.Chrome);
 
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [a];
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
-            mGR.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
-
-            mGR.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
+            mGR.Executor.SolutionApplications =
+            [
+                new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" },
+            ];
             //mGR.BusinessFlows.Add(BF1);
 
 
@@ -94,9 +100,11 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             BusinessFlow businessFlow = CreateBusinessFlow();
             mGR.Executor.BusinessFlows.Add(businessFlow);
 
-            Context context1 = new Context();
-            context1.BusinessFlow = businessFlow;
-            context1.Activity = businessFlow.Activities[0];
+            Context context1 = new Context
+            {
+                BusinessFlow = businessFlow,
+                Activity = businessFlow.Activities[0]
+            };
 
             mGR.Executor.CurrentBusinessFlow = businessFlow;
             mGR.Executor.CurrentBusinessFlow.CurrentActivity = businessFlow.Activities[0];
@@ -118,19 +126,23 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
         {
             BusinessFlow businessFlow = CreateBusinessFlow();
 
-            ActReturnValue returnValue = new ActReturnValue();
-            returnValue.Active = true;
-            returnValue.mExpected = "2";
-            returnValue.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
+            ActReturnValue returnValue = new ActReturnValue
+            {
+                Active = true,
+                mExpected = "2",
+                Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals
+            };
 
             businessFlow.Activities[0].Mandatory = true;
             businessFlow.Activities[0].Acts[0].ActReturnValues.Add(returnValue);
 
             mGR.Executor.BusinessFlows.Add(businessFlow);
 
-            Context context1 = new Context();
-            context1.BusinessFlow = businessFlow;
-            context1.Activity = businessFlow.Activities[0];
+            Context context1 = new Context
+            {
+                BusinessFlow = businessFlow,
+                Activity = businessFlow.Activities[0]
+            };
 
             mGR.Executor.CurrentBusinessFlow = businessFlow;
             mGR.Executor.CurrentBusinessFlow.CurrentActivity = businessFlow.Activities[0];
@@ -152,19 +164,23 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
         {
             BusinessFlow businessFlow = CreateBusinessFlow();
 
-            ActReturnValue returnValue = new ActReturnValue();
-            returnValue.Active = true;
-            returnValue.mExpected = "2";
-            returnValue.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
+            ActReturnValue returnValue = new ActReturnValue
+            {
+                Active = true,
+                mExpected = "2",
+                Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals
+            };
 
 
             businessFlow.Activities[1].Acts[0].ActReturnValues.Add(returnValue);
 
             mGR.Executor.BusinessFlows.Add(businessFlow);
 
-            Context context1 = new Context();
-            context1.BusinessFlow = businessFlow;
-            context1.Activity = businessFlow.Activities[0];
+            Context context1 = new Context
+            {
+                BusinessFlow = businessFlow,
+                Activity = businessFlow.Activities[0]
+            };
 
             mGR.Executor.CurrentBusinessFlow = businessFlow;
             mGR.Executor.CurrentBusinessFlow.CurrentActivity = businessFlow.Activities[0];
@@ -189,19 +205,23 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
         {
             BusinessFlow businessFlow = CreateBusinessFlow();
 
-            FlowControl flowControl = new FlowControl();
-            flowControl.Active = true;
-            flowControl.FlowControlAction = eFlowControlAction.StopRun;
-            flowControl.Operator = eFCOperator.ActionPassed;
+            FlowControl flowControl = new FlowControl
+            {
+                Active = true,
+                FlowControlAction = eFlowControlAction.StopRun,
+                Operator = eFCOperator.ActionPassed
+            };
 
             businessFlow.Activities[2].Acts[0].FlowControls.Add(flowControl);
 
             mGR.Executor.BusinessFlows.Add(businessFlow);
 
 
-            Context context1 = new Context();
-            context1.BusinessFlow = businessFlow;
-            context1.Activity = businessFlow.Activities[0];
+            Context context1 = new Context
+            {
+                BusinessFlow = businessFlow,
+                Activity = businessFlow.Activities[0]
+            };
 
             mGR.Executor.CurrentBusinessFlow = businessFlow;
             mGR.Executor.CurrentBusinessFlow.CurrentActivity = businessFlow.Activities[0];
@@ -223,18 +243,22 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
         {
             BusinessFlow businessFlow = CreateBusinessFlow();
 
-            FlowControl flowControl = new FlowControl();
-            flowControl.Active = true;
-            flowControl.FlowControlAction = eFlowControlAction.StopBusinessFlow;
-            flowControl.Operator = eFCOperator.ActionPassed;
+            FlowControl flowControl = new FlowControl
+            {
+                Active = true,
+                FlowControlAction = eFlowControlAction.StopBusinessFlow,
+                Operator = eFCOperator.ActionPassed
+            };
 
             businessFlow.Activities[2].Acts[0].FlowControls.Add(flowControl);
 
             mGR.Executor.BusinessFlows.Add(businessFlow);
 
-            Context context1 = new Context();
-            context1.BusinessFlow = businessFlow;
-            context1.Activity = businessFlow.Activities[0];
+            Context context1 = new Context
+            {
+                BusinessFlow = businessFlow,
+                Activity = businessFlow.Activities[0]
+            };
 
             mGR.Executor.CurrentBusinessFlow = businessFlow;
             mGR.Executor.CurrentBusinessFlow.CurrentActivity = businessFlow.Activities[0];
@@ -253,54 +277,78 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
 
         private BusinessFlow CreateBusinessFlow()
         {
-            BusinessFlow BF1 = new BusinessFlow();
-            BF1.Name = "Clean Up Activity Test";
-            BF1.Active = true;
+            BusinessFlow BF1 = new BusinessFlow
+            {
+                Name = "Clean Up Activity Test",
+                Active = true
+            };
 
             ActivitiesGroup activityGroup = new ActivitiesGroup();
 
-            Activity activity1 = new Activity();
-            activity1.Active = true;
+            Activity activity1 = new Activity
+            {
+                Active = true
+            };
 
-            ActDummy actDummy1 = new ActDummy();
-            actDummy1.Active = true;
-            ActDummy actDummy2 = new ActDummy();
-            actDummy2.Active = true;
+            ActDummy actDummy1 = new ActDummy
+            {
+                Active = true
+            };
+            ActDummy actDummy2 = new ActDummy
+            {
+                Active = true
+            };
 
             activity1.Acts.Add(actDummy1);
             activity1.Acts.Add(actDummy2);
 
 
-            Activity activity2 = new Activity();
-            activity2.Active = true;
+            Activity activity2 = new Activity
+            {
+                Active = true
+            };
 
-            ActDummy actDummy3 = new ActDummy();
-            actDummy3.Active = true;
-            ActDummy actDummy4 = new ActDummy();
-            actDummy4.Active = true;
+            ActDummy actDummy3 = new ActDummy
+            {
+                Active = true
+            };
+            ActDummy actDummy4 = new ActDummy
+            {
+                Active = true
+            };
 
 
             activity2.Acts.Add(actDummy3);
             activity2.Acts.Add(actDummy4);
 
 
-            Activity activity3 = new Activity();
-            activity3.Active = true;
+            Activity activity3 = new Activity
+            {
+                Active = true
+            };
 
-            ActDummy actDummy5 = new ActDummy();
-            actDummy5.Active = true;
-            ActDummy actDummy6 = new ActDummy();
-            actDummy6.Active = true;
+            ActDummy actDummy5 = new ActDummy
+            {
+                Active = true
+            };
+            ActDummy actDummy6 = new ActDummy
+            {
+                Active = true
+            };
 
             activity3.Acts.Add(actDummy5);
             activity3.Acts.Add(actDummy6);
 
 
 
-            CleanUpActivity cleanUpActivity = new CleanUpActivity();
-            cleanUpActivity.Active = true;
-            ActDummy actDummy7 = new ActDummy();
-            actDummy7.Active = true;
+            CleanUpActivity cleanUpActivity = new CleanUpActivity
+            {
+                Active = true
+            };
+            ActDummy actDummy7 = new ActDummy
+            {
+                Active = true
+            };
 
             cleanUpActivity.Acts.Add(actDummy7);
 

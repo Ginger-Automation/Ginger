@@ -40,7 +40,7 @@ namespace Ginger
         ObservableList<Guid> mItemTagsGUID;
         ObservableList<RepositoryItemKey> mItemTagsKey;
 
-        List<RepositoryItemTag> ComboTagsList = new List<RepositoryItemTag>();
+        List<RepositoryItemTag> ComboTagsList = [];
         RepositoryItemTag mFullListEditTag = null;
         bool mAddTags = true;
 
@@ -128,7 +128,7 @@ namespace Ginger
 
         public List<Guid> GetSelectedTagsList()
         {
-            List<Guid> tagsGuid = new List<Guid>();
+            List<Guid> tagsGuid = [];
             switch (mItemTagsType)
             {
                 case eItemTagsType.Guid:
@@ -215,11 +215,11 @@ namespace Ginger
                 RepositoryItemTag t = null;
                 if (mItemTagsType == eItemTagsType.Guid)
                 {
-                    t = (from x in ttg where x.Guid == (Guid)mItemTagsGUID[i] select x).FirstOrDefault();
+                    t = (from x in ttg where x.Guid == mItemTagsGUID[i] select x).FirstOrDefault();
                 }
                 else
                 {
-                    t = (from x in ttg where x.Guid == ((RepositoryItemKey)mItemTagsKey[i]).Guid select x).FirstOrDefault();
+                    t = (from x in ttg where x.Guid == mItemTagsKey[i].Guid select x).FirstOrDefault();
                 }
 
                 if (t != null)
@@ -331,11 +331,11 @@ namespace Ginger
             {
                 if (mItemTagsType == eItemTagsType.Guid)
                 {
-                    ComboTagsList = mFullTagsList.Where(y => !mItemTagsGUID.Any(x => y.Guid == (Guid)x)).ToList();
+                    ComboTagsList = mFullTagsList.Where(y => !mItemTagsGUID.Any(x => y.Guid == x)).ToList();
                 }
                 else
                 {
-                    ComboTagsList = mFullTagsList.Where(y => !mItemTagsKey.Any(x => y.Guid == ((RepositoryItemKey)x).Guid)).ToList();
+                    ComboTagsList = mFullTagsList.Where(y => !mItemTagsKey.Any(x => y.Guid == x.Guid)).ToList();
                 }
             }
             else

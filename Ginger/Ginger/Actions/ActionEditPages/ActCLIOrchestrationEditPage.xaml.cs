@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger.Configurations;
 using Ginger.ValidationRules;
 using GingerCore.Actions;
 using System.Windows;
@@ -46,7 +45,7 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WaitForProcessToFinish, System.Windows.Controls.CheckBox.IsCheckedProperty, act, nameof(mAct.WaitForProcessToFinish));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ParseResult, System.Windows.Controls.CheckBox.IsCheckedProperty, act, nameof(mAct.ParseResult));
             xDelimiterTextBox.Init(mContext, act, nameof(mAct.Delimiter));
-            if(mAct.WaitForProcessToFinish)
+            if (mAct.WaitForProcessToFinish)
             {
                 xPanelParseResult.Visibility = Visibility.Visible;
                 xPanelDelimiter.Visibility = Visibility.Visible;

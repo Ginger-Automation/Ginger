@@ -102,7 +102,7 @@ namespace Ginger.Actions.ActionConversion
             bool isSupported = false;
             foreach (string targetapp in TargetAppList)
             {
-                ePlatformType platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == targetapp).Platform; 
+                ePlatformType platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == targetapp).Platform;
                 if (platform != ePlatformType.NA && PlatformInfoBase.GetPlatformImpl(platform) != null)
                 {
                     isSupported = PlatformInfoBase.GetPlatformImpl(platform).IsPlatformSupportPOM();
@@ -121,12 +121,14 @@ namespace Ginger.Actions.ActionConversion
         private void SetTargetApplicationGridView()
         {
             //Set the Data Grid columns
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = []
+            };
 
             if (mWizard.ConvertableTargetApplications != null && mWizard.ConvertableTargetApplications.Count <= 0)
             {
-                TargetAppList = new ObservableList<string>();
+                TargetAppList = [];
                 mWizard.ConvertableTargetApplications = GetTargetApplication();
             }
 
@@ -191,7 +193,7 @@ namespace Ginger.Actions.ActionConversion
         /// <returns></returns>
         private ObservableList<ConvertableTargetApplicationDetails> GetTargetApplication()
         {
-            ObservableList<ConvertableTargetApplicationDetails> lstTA = new ObservableList<ConvertableTargetApplicationDetails>();
+            ObservableList<ConvertableTargetApplicationDetails> lstTA = [];
             // fetching list of selected convertible activities from the first grid
             if (mWizard.ConversionType == ActionsConversionWizard.eActionConversionType.SingleBusinessFlow)
             {

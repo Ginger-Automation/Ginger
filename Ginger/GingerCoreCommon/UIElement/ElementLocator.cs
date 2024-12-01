@@ -131,17 +131,13 @@ namespace Amdocs.Ginger.Common.UIElement
         {
             get
             {
-                switch (LocateStatus)
+                return LocateStatus switch
                 {
-                    case eLocateStatus.Passed:
-                        return eImageType.Passed;
-                    case eLocateStatus.Failed:
-                        return eImageType.Failed;
-                    case eLocateStatus.Pending:
-                        return eImageType.Pending;
-                    default:
-                        return eImageType.Unknown;
-                }
+                    eLocateStatus.Passed => eImageType.Passed,
+                    eLocateStatus.Failed => eImageType.Failed,
+                    eLocateStatus.Pending => eImageType.Pending,
+                    _ => eImageType.Unknown,
+                };
             }
         }
 

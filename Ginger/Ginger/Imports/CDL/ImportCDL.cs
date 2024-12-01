@@ -38,7 +38,7 @@ namespace Ginger.Imports.CDL
         {
             ObservableList<BusinessFlow> BFs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
-            List<Activity> activities = new List<Activity>();
+            List<Activity> activities = [];
 
             foreach (BusinessFlow BF in BFs)
             {
@@ -57,11 +57,13 @@ namespace Ginger.Imports.CDL
 
             foreach (Activity a in activities)
             {
-                ActGenElement a1 = new ActGenElement();
-                a1.Active = true;
-                a1.Description = "Validate new label exist";
-                a1.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
-                a1.LocateValue = "ID123New";
+                ActGenElement a1 = new ActGenElement
+                {
+                    Active = true,
+                    Description = "Validate new label exist",
+                    LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID,
+                    LocateValue = "ID123New"
+                };
                 a.Acts.Add(a1);
             }
         }

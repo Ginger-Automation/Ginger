@@ -236,7 +236,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Bars);
                     break;
                 case eImageType.AIActivity:
-                    SetAsStaticImage("AIBrain.png");                    
+                    SetAsStaticImage("AIBrain.png");
                     break;
                 case eImageType.Action:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Bolt);
@@ -325,7 +325,7 @@ namespace Amdocs.Ginger.UserControls
                 #region Execution Status Images
                 //############################## Execution Status Images:
                 case eImageType.Passed:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CircleCheck, (SolidColorBrush)FindResource("$PassedStatusColor"), 0 , "Passed");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CircleCheck, (SolidColorBrush)FindResource("$PassedStatusColor"), 0, "Passed");
                     break;
                 case eImageType.Unknown:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CircleQuestion, null, 0, "Unknown");
@@ -352,7 +352,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CircleStop, (SolidColorBrush)FindResource("$StoppedStatusColor"), 0, "Stopped");
                     break;
                 case eImageType.Blocked:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Ban, (SolidColorBrush)FindResource("$BlockedStatusColor"), 0,"Blocked");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Ban, (SolidColorBrush)FindResource("$BlockedStatusColor"), 0, "Blocked");
                     break;
                 case eImageType.Skipped:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_CircleMinus, (SolidColorBrush)FindResource("$SkippedStatusColor"), 0, "Skipped");
@@ -485,6 +485,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.MoveUpDown:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowsUpDown);
+                    break;
+                case eImageType.Category:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_StackExchange);
                     break;
                 case eImageType.Reorder:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_FirstOrder);
@@ -765,7 +768,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FileWord);
                     break;
                 case eImageType.FileXML:
-                    SetAsStaticImage("xml.png" , null, 50);                    
+                    SetAsStaticImage("xml.png", null, 50);
                     break;
                 case eImageType.FileJSON:
                     SetAsStaticImage("json.png", null, 50);
@@ -1120,6 +1123,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.AndroidWhite:
                     SetAsStaticImage("androidWhite.png");
                     break;
+                case eImageType.Katalon:
+                    SetAsStaticImage("katalon.png");
+                    break;
                 #endregion
 
                 #region Comparison Status Images
@@ -1183,7 +1189,7 @@ namespace Amdocs.Ginger.UserControls
             //set Foreground
             if (this.ImageForeground != null)
             {
-                foreground = (SolidColorBrush)this.ImageForeground;
+                foreground = ImageForeground;
             }
             else if (foreground == null)
             {
@@ -1243,9 +1249,11 @@ namespace Amdocs.Ginger.UserControls
 
         public static ImageSource GetImageSource(eImageType imageType, SolidColorBrush foreground = null, double spinDuration = 0, string toolTip = null, double width = 0.0, bool SetBorder = false)
         {
-            ImageMakerControl IM = new ImageMakerControl();
-            IM.ImageType = imageType;
-            IM.SetBorder = SetBorder;
+            ImageMakerControl IM = new ImageMakerControl
+            {
+                ImageType = imageType,
+                SetBorder = SetBorder
+            };
             if (foreground != null || spinDuration > 0 || toolTip != null)//default design change is required
             {
                 IM.SetAsFontAwesomeIcon(IM.xFAImage.Icon, foreground, spinDuration, toolTip);
@@ -1266,11 +1274,11 @@ namespace Amdocs.Ginger.UserControls
         private void SetAsStaticImage(string imageName = "", BitmapImage imageBitMap = null, double Width = 0, double Height = 0)
         {
             xStaticImage.Visibility = Visibility.Visible;
-            if(Width > 0)
+            if (Width > 0)
             {
                 xStaticImage.Width = Width;
-            }            
-            if(Height > 0)
+            }
+            if (Height > 0)
             {
                 xStaticImage.Height = Height;
             }
@@ -1286,13 +1294,14 @@ namespace Amdocs.Ginger.UserControls
 
         Shape GetKidsDrawingShape()
         {
-            Path path = new Path();
+            Path path = new Path
+            {
+                Width = 500,
+                Height = 500,
 
-            path.Width = 500;
-            path.Height = 500;
-
-            path.StrokeThickness = 5;
-            path.Stroke = Brushes.Purple;
+                StrokeThickness = 5,
+                Stroke = Brushes.Purple
+            };
 
             string PathData = "M 100,200 C 100,25 400,350 400,175 H 280";
 

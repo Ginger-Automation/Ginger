@@ -55,11 +55,7 @@ namespace GingerCoreNETUnitTest.GeneralLib.XML
         public void XMLDocGetTerminalNodesTest()
 
         {
-            List<XMLDocExtended> lXD = new List<XMLDocExtended>();
-            foreach (XMLDocExtended mXd in XDE.GetEndingNodes(false))
-            {
-                lXD.Add(mXd);
-            }
+            List<XMLDocExtended> lXD = [.. XDE.GetEndingNodes(false)];
             Assert.AreEqual(154, lXD.Count);
             foreach (XMLDocExtended mXd in XDE.GetEndingNodes(true))
             {

@@ -91,7 +91,7 @@ namespace Ginger.GeneralLib
                 indexOfStart = 0;
             }
 
-            mLogText = mLogText.Substring(indexOfStart);
+            mLogText = mLogText[indexOfStart..];
 
             //split the log per log info
             string[] logs = mLogText.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
@@ -201,22 +201,25 @@ namespace Ginger.GeneralLib
         {
 
 
-            Button CopyToClipboradBtn = new Button();
-            CopyToClipboradBtn.Content = "Copy to Clipboard";
+            Button CopyToClipboradBtn = new Button
+            {
+                Content = "Copy to Clipboard"
+            };
             CopyToClipboradBtn.Click += new RoutedEventHandler(CopyToClipboradBtn_Click);
 
-            Button ViewLogBtn = new Button();
-            ViewLogBtn.Content = "Open Full Log File";
+            Button ViewLogBtn = new Button
+            {
+                Content = "Open Full Log File"
+            };
             ViewLogBtn.Click += new RoutedEventHandler(ViewLogBtn_Click);
 
-            Button SendMailBtn = new Button();
-            SendMailBtn.Content = "Send Details in Mail";
+            Button SendMailBtn = new Button
+            {
+                Content = "Send Details in Mail"
+            };
             SendMailBtn.Click += new RoutedEventHandler(SendMailBtn_Click);
 
-            Amdocs.Ginger.Common.ObservableList<Button> winButtons = new Amdocs.Ginger.Common.ObservableList<Button>();
-            winButtons.Add(CopyToClipboradBtn);
-            winButtons.Add(ViewLogBtn);
-            winButtons.Add(SendMailBtn);
+            Amdocs.Ginger.Common.ObservableList<Button> winButtons = [CopyToClipboradBtn, ViewLogBtn, SendMailBtn];
 
             this.Width = 800;
             this.Height = 600;
@@ -225,7 +228,7 @@ namespace Ginger.GeneralLib
 
         private void CopyToClipboradBtn_Click(object sender, RoutedEventArgs e)
         {
-             GingerCore.General.SetClipboardText(mTextBlockHelper.GetText());
+            GingerCore.General.SetClipboardText(mTextBlockHelper.GetText());
         }
 
         private void ViewLogBtn_Click(object sender, RoutedEventArgs e)

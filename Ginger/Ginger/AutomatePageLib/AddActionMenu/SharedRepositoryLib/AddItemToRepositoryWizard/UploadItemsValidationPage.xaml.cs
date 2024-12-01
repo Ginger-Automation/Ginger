@@ -31,7 +31,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
     public partial class UploadItemsValidationPage : Page, IWizardPage
     {
         public UploadItemToRepositoryWizard UploadItemToRepositoryWizard;
-        public ObservableList<ItemValidationBase> lstItemValidation = new ObservableList<ItemValidationBase>();
+        public ObservableList<ItemValidationBase> lstItemValidation = [];
         public UploadItemsValidationPage()
         {
             InitializeComponent();
@@ -42,15 +42,18 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         {
             //# Default View
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ItemValidationBase.Selected), Header = "Accept Resolution", StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ItemValidationBase.ItemClass), ReadOnly = true, Header = "Item Type", WidthWeight = 10, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ItemValidationBase.ItemName), ReadOnly = true, Header = "Item Name", WidthWeight = 20, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ItemValidationBase.IssueType), ReadOnly = true, Header = "Issue Type", WidthWeight = 10, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ItemValidationBase.IssueDescription), ReadOnly = true, Header = "Issue Description", WidthWeight = 15, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ItemValidationBase.IssueResolution), ReadOnly = true, Header = "Issue Resolution", WidthWeight = 25, AllowSorting = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ItemValidationBase.Selected), Header = "Accept Resolution", StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10 },
+                new GridColView() { Field = nameof(ItemValidationBase.ItemClass), ReadOnly = true, Header = "Item Type", WidthWeight = 10, AllowSorting = true },
+                new GridColView() { Field = nameof(ItemValidationBase.ItemName), ReadOnly = true, Header = "Item Name", WidthWeight = 20, AllowSorting = true },
+                new GridColView() { Field = nameof(ItemValidationBase.IssueType), ReadOnly = true, Header = "Issue Type", WidthWeight = 10, AllowSorting = true },
+                new GridColView() { Field = nameof(ItemValidationBase.IssueDescription), ReadOnly = true, Header = "Issue Description", WidthWeight = 15, AllowSorting = true },
+                new GridColView() { Field = nameof(ItemValidationBase.IssueResolution), ReadOnly = true, Header = "Issue Resolution", WidthWeight = 25, AllowSorting = true },
+            ]
+            };
 
 
             itemValidationGrid.SetAllColumnsDefaultView(view);

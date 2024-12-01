@@ -49,10 +49,8 @@ namespace GingerWPFUnitTest.POMs
         {
             foreach (object o in LogicalTreeHelper.GetChildren(context))
             {
-                if (o is DependencyObject)
+                if (o is DependencyObject dependencyObject)
                 {
-                    DependencyObject dependencyObject = (DependencyObject)o;
-
                     if (dependencyObject is T)  // the type we are searching
                     {
                         if (AutomationProperties.GetAutomationId(dependencyObject) == automationID)
@@ -82,7 +80,7 @@ namespace GingerWPFUnitTest.POMs
                 Stopwatch st = Stopwatch.StartNew();
                 while (d == null && st.ElapsedMilliseconds < 10000)
                 {
-                    d = (DependencyObject)LogicalTreeHelper.FindLogicalNode(context, name);
+                    d = LogicalTreeHelper.FindLogicalNode(context, name);
                     if (d != null)
                     {
                         break;
@@ -106,10 +104,8 @@ namespace GingerWPFUnitTest.POMs
         {
             foreach (object o in LogicalTreeHelper.GetChildren(context))
             {
-                if (o is DependencyObject)
+                if (o is DependencyObject dependencyObject)
                 {
-                    DependencyObject dependencyObject = (DependencyObject)o;
-
                     if (dependencyObject is T)  // the type we are searching
                     {
                         ContentControl cc = (ContentControl)dependencyObject;

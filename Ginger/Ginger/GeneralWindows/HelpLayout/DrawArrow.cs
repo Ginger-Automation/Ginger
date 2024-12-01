@@ -42,38 +42,50 @@ namespace Ginger.GeneralWindows.HelpLayout
 
             Point lpoint = new Point(p.X + 6, p.Y + 15);
             Point rpoint = new Point(p.X - 6, p.Y + 15);
-            LineSegment seg1 = new LineSegment();
-            seg1.Point = lpoint;
+            LineSegment seg1 = new LineSegment
+            {
+                Point = lpoint
+            };
             pathFigure.Segments.Add(seg1);
 
-            LineSegment seg2 = new LineSegment();
-            seg2.Point = rpoint;
+            LineSegment seg2 = new LineSegment
+            {
+                Point = rpoint
+            };
             pathFigure.Segments.Add(seg2);
 
-            LineSegment seg3 = new LineSegment();
-            seg3.Point = p;
+            LineSegment seg3 = new LineSegment
+            {
+                Point = p
+            };
             pathFigure.Segments.Add(seg3);
 
             pathGeometry.Figures.Add(pathFigure);
 
             double theta = Math.Atan2((p2.Y - p1.Y), (p2.X - p1.X)) * 180 / Math.PI;
-            RotateTransform transform = new RotateTransform();
-            transform.Angle = theta + 90;
-            transform.CenterX = p.X;
-            transform.CenterY = p.Y;
+            RotateTransform transform = new RotateTransform
+            {
+                Angle = theta + 90,
+                CenterX = p.X,
+                CenterY = p.Y
+            };
             pathGeometry.Transform = transform;
 
             lineGroup.Children.Add(pathGeometry);
 
-            LineGeometry connectorGeometry = new LineGeometry();
-            connectorGeometry.StartPoint = p1;
-            connectorGeometry.EndPoint = p2;
+            LineGeometry connectorGeometry = new LineGeometry
+            {
+                StartPoint = p1,
+                EndPoint = p2
+            };
             lineGroup.Children.Add(connectorGeometry);
 
 
-            Path path = new Path();
-            path.Data = lineGroup;
-            path.StrokeThickness = 2;
+            Path path = new Path
+            {
+                Data = lineGroup,
+                StrokeThickness = 2
+            };
             path.Stroke = path.Fill = Brushes.White;
 
             return path;

@@ -63,7 +63,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             get
             {
-                if (PageViewMode == General.eRIPageViewMode.Add || PageViewMode == General.eRIPageViewMode.AddFromModel || PageViewMode == General.eRIPageViewMode.AddFromShardRepository)
+                if (PageViewMode is General.eRIPageViewMode.Add or General.eRIPageViewMode.AddFromModel or General.eRIPageViewMode.AddFromShardRepository)
                 {
                     return false;
                 }
@@ -145,13 +145,15 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public List<ListItemOperation> GetListOperations()
         {
-            List<ListItemOperation> operationsList = new List<ListItemOperation>();
+            List<ListItemOperation> operationsList = [];
 
-            ListItemOperation addToFlow = new ListItemOperation();
-            addToFlow.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromModel };
-            addToFlow.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft;
-            addToFlow.ToolTip = "Add to Actions";
-            addToFlow.OperationHandler = AddFromPOMNavPage;
+            ListItemOperation addToFlow = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.AddFromModel],
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft,
+                ToolTip = "Add to Actions",
+                OperationHandler = AddFromPOMNavPage
+            };
             operationsList.Add(addToFlow);
 
             return operationsList;
@@ -175,28 +177,30 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public List<ListItemOperation> GetListExtraOperations()
         {
-            List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
+            List<ListItemOperation> extraOperationsList = [];
             return extraOperationsList;
         }
 
         public List<ListItemNotification> GetItemNotificationsList(object item)
         {
             SetItem(item);
-            List<ListItemNotification> notificationsList = new List<ListItemNotification>();
+            List<ListItemNotification> notificationsList = [];
             return notificationsList;
         }
 
         public List<ListItemOperation> GetItemOperationsList(object item)
         {
             SetItem(item);
-            List<ListItemOperation> operationsList = new List<ListItemOperation>();
+            List<ListItemOperation> operationsList = [];
 
-            ListItemOperation ViewLinkedInstances = new ListItemOperation();
-            ViewLinkedInstances.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromModel };
-            ViewLinkedInstances.AutomationID = "HighlightElement";
-            ViewLinkedInstances.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Visible;
-            ViewLinkedInstances.ToolTip = "Highlight Element";
-            ViewLinkedInstances.OperationHandler = HighlightElementClicked;
+            ListItemOperation ViewLinkedInstances = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.AddFromModel],
+                AutomationID = "HighlightElement",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Visible,
+                ToolTip = "Highlight Element",
+                OperationHandler = HighlightElementClicked
+            };
             operationsList.Add(ViewLinkedInstances);
 
             return operationsList;
@@ -211,7 +215,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public List<ListItemOperation> GetItemExtraOperationsList(object item)
         {
             SetItem(item);
-            List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
+            List<ListItemOperation> extraOperationsList = [];
 
             return extraOperationsList;
         }
@@ -219,7 +223,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public List<ListItemOperation> GetItemExecutionOperationsList(object item)
         {
             SetItem(item);
-            List<ListItemOperation> executionOperationsList = new List<ListItemOperation>();
+            List<ListItemOperation> executionOperationsList = [];
 
             return executionOperationsList;
         }

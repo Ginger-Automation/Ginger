@@ -209,10 +209,12 @@ namespace Amdocs.Ginger.Common
                 XmlDocument element = new XmlDocument();
                 element.LoadXml(xml);
 
-                var settings = new XmlWriterSettings();
-                settings.OmitXmlDeclaration = true;
-                settings.Indent = true;
-                settings.NewLineOnAttributes = newLineOnAttribue;
+                var settings = new XmlWriterSettings
+                {
+                    OmitXmlDeclaration = true,
+                    Indent = true,
+                    NewLineOnAttributes = newLineOnAttribue
+                };
 
                 using (var xmlWriter = XmlWriter.Create(stringBuilder, settings))
                 {
@@ -240,7 +242,7 @@ namespace Amdocs.Ginger.Common
 
             if (XDL == null)
             {
-                XDL = new List<XMLDocExtended>();
+                XDL = [];
             }
 
 
@@ -281,7 +283,7 @@ namespace Amdocs.Ginger.Common
             return XD.InnerXml;
         }
 
-        private List<XMLDocExtended> ChildNodes = new List<XMLDocExtended>();
+        private List<XMLDocExtended> ChildNodes = [];
 
         private string SetXpath()
         {

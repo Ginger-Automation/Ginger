@@ -15,17 +15,14 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.UserControls;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Controls.Primitives;
-using GingerCore.Environments;
-using GingerTest.WizardLib;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Data;
 
 namespace Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems
 {
@@ -46,14 +43,17 @@ namespace Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems
 
         private void SetGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = "Selected", Header = "Select" ,WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
-            view.GridColsView.Add(new GridColView() { Field = "AppName", Header = "Application Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "Platform", Header = "Platform", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "Description", Header = "Description", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = "Selected", Header = "Select" ,WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox },
+                new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 },
+                new GridColView() { Field = "AppName", Header = "Application Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = "Platform", Header = "Platform", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = "Description", Header = "Description", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay },
+            ]
+            };
 
             AppsGrid.SetAllColumnsDefaultView(view);
             AppsGrid.InitViewItems();
@@ -102,10 +102,11 @@ namespace Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool ShowCancelButton = true)
         {
 
-            Button okBtn = new Button();
-            okBtn.Content = "Ok";
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(okBtn);
+            Button okBtn = new Button
+            {
+                Content = "Ok"
+            };
+            ObservableList<Button> winButtons = [okBtn];
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: OKButton_Click);
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, ShowCancelButton, "Cancel");
@@ -123,8 +124,8 @@ namespace Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems
             ApplicationPlatform? selectedApp = null;
             applicationPage.ShowAsWindow(ref selectedApp);
 
-            if(selectedApp!=null)
-            { 
+            if (selectedApp != null)
+            {
                 AppsGrid.DataSourceList.Add(selectedApp);
             }
 

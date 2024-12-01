@@ -169,7 +169,7 @@ namespace Ginger.Repository
             }
         }
 
-        private ObservableList<string> mActivityList = new ObservableList<string>();
+        private ObservableList<string> mActivityList = [];
         public ObservableList<string> ActivityNameList
         {
             get
@@ -183,7 +183,7 @@ namespace Ginger.Repository
             }
         }
 
-        private Dictionary<string, string> mActivityGroupMapping = new Dictionary<string, string>();
+        private Dictionary<string, string> mActivityGroupMapping = [];
         public Dictionary<string, string> ActivityGroupMapping
         {
             get
@@ -228,7 +228,7 @@ namespace Ginger.Repository
         }
 
 
-        ObservableList<string> mItemParts = new ObservableList<string>();
+        ObservableList<string> mItemParts = [];
         public ObservableList<string> ItemParts
         {
             get

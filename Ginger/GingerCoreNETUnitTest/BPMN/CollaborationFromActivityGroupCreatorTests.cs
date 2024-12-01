@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.BPMN.Conversion;
 using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
@@ -30,7 +29,6 @@ using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +55,7 @@ namespace GingerCoreNETUnitTest.BPMN
         {
             ActivitiesGroup activityGroup = new();
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
-            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>());
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns([]);
             ISolutionFacadeForBPMN solutionFacade = solutionFacadeMock.Object;
             CollaborationFromActivityGroupCreator converter = new(activityGroup, solutionFacade);
 
@@ -75,10 +73,10 @@ namespace GingerCoreNETUnitTest.BPMN
             ActivitiesGroup activityGroup = new();
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers()
             {
-                IdentifiedActivity = inactiveActivity 
+                IdentifiedActivity = inactiveActivity
             });
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
-            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { inactiveActivity });
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns([inactiveActivity]);
             ISolutionFacadeForBPMN solutionFacade = solutionFacadeMock.Object;
             CollaborationFromActivityGroupCreator converter = new(activityGroup, solutionFacade);
 
@@ -94,7 +92,7 @@ namespace GingerCoreNETUnitTest.BPMN
                 IdentifiedActivity = null
             });
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
-            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>());
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns([]);
             ISolutionFacadeForBPMN solutionFacade = solutionFacadeMock.Object;
             CollaborationFromActivityGroupCreator converter = new(activityGroup, solutionFacade);
 
@@ -166,8 +164,8 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Assert.AreEqual(
-                expected: restActivityFirstConsumer.ConsumerGuid.ToString(), 
-                actual: collaboration.SystemRef, 
+                expected: restActivityFirstConsumer.ConsumerGuid.ToString(),
+                actual: collaboration.SystemRef,
                 message: $"{nameof(Collaboration)}'s {nameof(Collaboration.SystemRef)} is not set to REST {nameof(Activity)}'s {nameof(Activity.Guid)}.");
         }
 
@@ -928,7 +926,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Assert.IsNotNull(flowFromConditionalTaskToEndEvent, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to {nameof(EndEvent)} with {nameof(EndEvent.EndEventType)} of type {nameof(EndEventType.Termination)}.");
         }
 
-        [TestMethod] 
+        [TestMethod]
         public void Create_WithFailActionAndStopBusinessFlowFlowControl_HasExclusiveGateway()
         {
             CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
@@ -940,8 +938,8 @@ namespace GingerCoreNETUnitTest.BPMN
             ExclusiveGateway? exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().FirstOrDefault();
             Assert.IsNotNull(exclusiveGateway, $"No {nameof(ExclusiveGateway)} found.");
         }
-        
-        [TestMethod] 
+
+        [TestMethod]
         public void Create_WithFailActionAndStopBusinessFlowFlowControl_HasTaskForActivityWithFlowControl()
         {
             CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
@@ -954,8 +952,8 @@ namespace GingerCoreNETUnitTest.BPMN
             Task? taskForActivityWithFlowControl = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Guid == activityWithFlowControl.Guid);
             Assert.IsNotNull(taskForActivityWithFlowControl, $"No {nameof(Task)} found for {nameof(Activity)} with {nameof(FlowControl)}.");
         }
-        
-        [TestMethod] 
+
+        [TestMethod]
         public void Create_WithFailActionAndStopBusinessFlowFlowControl_TaskOfActivityWithFlowControlDirectsToExclusiveGateway()
         {
             CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
@@ -985,7 +983,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Assert.IsNotNull(nextActivityTask, $"No {nameof(Task)} found for next {nameof(Activity)}.");
         }
 
-        [TestMethod] 
+        [TestMethod]
         public void Create_WithFailActionAndStopBusinessFlowFlowControl_ExclusiveGatewayDirectsToNextActivityTask()
         {
             CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
@@ -1000,8 +998,8 @@ namespace GingerCoreNETUnitTest.BPMN
             Flow? flowFromGatewayToNextActivityTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == nextActivityTask);
             Assert.IsNotNull(flowFromGatewayToNextActivityTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to {nameof(Task)} of next {nameof(Activity)}.");
         }
-        
-        [TestMethod] 
+
+        [TestMethod]
         public void Create_WithFailActionAndStopBusinessFlowFlowControl_HasConditionalTask()
         {
             CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
@@ -1013,8 +1011,8 @@ namespace GingerCoreNETUnitTest.BPMN
             Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => IsConditionalTask(t));
             Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
         }
-        
-        [TestMethod] 
+
+        [TestMethod]
         public void Create_WithFailActionAndStopBusinessFlowFlowControl_ExclusiveGatewayDirectsToConditionalTask()
         {
             CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
@@ -1028,8 +1026,8 @@ namespace GingerCoreNETUnitTest.BPMN
             Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
             Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
         }
-        
-        [TestMethod] 
+
+        [TestMethod]
         public void Create_WithFailActionAndStopBusinessFlowFlowControl_HasEndEventOfTypeError()
         {
             CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
@@ -1041,8 +1039,8 @@ namespace GingerCoreNETUnitTest.BPMN
             EndEvent? errorEndEvent = process.EndEvents.FirstOrDefault(e => e.EndEventType == EndEventType.Error);
             Assert.IsNotNull(errorEndEvent, $"No {nameof(EndEvent)} found with {nameof(EndEvent.EndEventType)} of type {nameof(EndEventType.Error)}.");
         }
-        
-        [TestMethod] 
+
+        [TestMethod]
         public void Create_WithFailActionAndStopBusinessFlowFlowControl_ConditionalTaskDirectsToErrorEndEvent()
         {
             CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
@@ -1057,7 +1055,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Assert.IsNotNull(flowFromConditionalTaskToEndEvent, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to {nameof(EndEvent)} with {nameof(EndEvent.EndEventType)} of type {nameof(EndEventType.Error)}.");
         }
 
-        [TestMethod] 
+        [TestMethod]
         public void Create_WithRunSharedRepositoryActivityFlowControl_HasExclusiveGateway()
         {
             CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
@@ -1070,7 +1068,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Assert.IsNotNull(exclusiveGateway, $"No {nameof(ExclusiveGateway)} found.");
         }
 
-        [TestMethod] 
+        [TestMethod]
         public void Create_WithRunSharedRepositoryActivityFlowControl_HasTaskForActivityWithFlowControl()
         {
             CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
@@ -1084,7 +1082,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Assert.IsNotNull(taskForActivityWithFlowControl, $"No {nameof(Task)} found for {nameof(Activity)} with {nameof(FlowControl)}.");
         }
 
-        [TestMethod] 
+        [TestMethod]
         public void Create_WithRunSharedRepositoryActivityFlowControl_TaskOfActivityWithFlowControlDirectsToExclusiveGateway()
         {
             CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
@@ -1100,7 +1098,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Assert.IsNotNull(flowFromTaskToGateway, $"No outgoing {nameof(Flow)} found from {nameof(Task)} of {nameof(Activity)} with {nameof(FlowControl)} to {nameof(ExclusiveGateway)}.");
         }
 
-        [TestMethod] 
+        [TestMethod]
         public void Create_WithRunSharedRepositoryActivityFlowControl_HasTaskForNextActivity()
         {
             CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
@@ -1114,7 +1112,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Assert.IsNotNull(nextActivityTask, $"No {nameof(Task)} found for next {nameof(Activity)}.");
         }
 
-        [TestMethod] 
+        [TestMethod]
         public void Create_WithRunSharedRepositoryActivityFlowControl_ExclusiveGatewayDirectsToNextActivityTask()
         {
             CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
@@ -1130,7 +1128,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Assert.IsNotNull(flowFromGatewayToNextActivityTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to next {nameof(Activity)} {nameof(Task)}.");
         }
 
-        [TestMethod] 
+        [TestMethod]
         public void Create_WithRunSharedRepositoryActivityFlowControl_HasConditionalTask()
         {
             CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
@@ -1143,7 +1141,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
         }
 
-        [TestMethod] 
+        [TestMethod]
         public void Create_WithRunSharedRepositoryActivityFlowControl_ExclusiveGatewayDirectsToConditionalTask()
         {
             CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
@@ -1158,7 +1156,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
         }
 
-        [TestMethod] 
+        [TestMethod]
         public void Create_WithRunSharedRepositoryActivityFlowControl_HasTargetActivityTask()
         {
             CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
@@ -1227,26 +1225,26 @@ namespace GingerCoreNETUnitTest.BPMN
 
         private void CreateActivityGroupWithRerunActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
         {
-            ObservableList<ApplicationPlatform> applicationPlatforms = new()
-            {
+            ObservableList<ApplicationPlatform> applicationPlatforms =
+            [
                 new ApplicationPlatform()
                 {
                     AppName = "MyWebApp",
                     Platform = ePlatformType.Web
                 }
-            };
+            ];
             activityGroup = new();
             Activity activity1 = new()
             {
                 ActivityName = "Activity 1",
                 Active = true,
                 TargetApplication = applicationPlatforms[0].AppName,
-                Acts = new ObservableList<IAct>()
-                {
+                Acts =
+                [
                     new ActDummy()
                     {
-                        FlowControls = new ObservableList<FlowControl>()
-                        {
+                        FlowControls =
+                        [
                             new FlowControl()
                             {
                                 FlowControlAction = eFlowControlAction.RerunActivity,
@@ -1254,9 +1252,9 @@ namespace GingerCoreNETUnitTest.BPMN
                                 Condition = "true",
                                 Operator = eFCOperator.CSharp
                             }
-                        }
+                        ]
                     }
-                }
+                ]
             };
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
             Activity activity2 = new()
@@ -1268,36 +1266,36 @@ namespace GingerCoreNETUnitTest.BPMN
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity2 });
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
-            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2 });
-            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
-            {
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns([activity1, activity2]);
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(
+            [
                 new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
-            });
+            ]);
             solutionFacade = solutionFacadeMock.Object;
         }
 
         private void CreateActivityGroupWithGoToActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
         {
-            ObservableList<ApplicationPlatform> applicationPlatforms = new()
-            {
+            ObservableList<ApplicationPlatform> applicationPlatforms =
+            [
                 new ApplicationPlatform()
                 {
                     AppName = "MyWebApp",
                     Platform = ePlatformType.Web
                 }
-            };
+            ];
             activityGroup = new();
             Activity activity1 = new()
             {
                 ActivityName = "Activity 1",
                 Active = true,
                 TargetApplication = applicationPlatforms[0].AppName,
-                Acts = new ObservableList<IAct>()
-                {
+                Acts =
+                [
                     new ActDummy()
                     {
-                        FlowControls = new ObservableList<FlowControl>()
-                        {
+                        FlowControls =
+                        [
                             new FlowControl()
                             {
                                 FlowControlAction = eFlowControlAction.GoToActivity,
@@ -1305,9 +1303,9 @@ namespace GingerCoreNETUnitTest.BPMN
                                 Active = true,
                                 Operator = eFCOperator.CSharp,
                             }
-                        }
+                        ]
                     }
-                }
+                ]
             };
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
             Activity activity2 = new()
@@ -1327,36 +1325,36 @@ namespace GingerCoreNETUnitTest.BPMN
             activity1.Acts[0].FlowControls[0].Value = activity3.Guid + new FlowControl().GUID_NAME_SEPERATOR + activity3.ActivityName;
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
-            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2, activity3 });
-            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
-            {
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns([activity1, activity2, activity3]);
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(
+            [
                 new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
-            });
+            ]);
             solutionFacade = solutionFacadeMock.Object;
         }
 
         private void CreateActivityGroupWithGoToActivityByNameFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
         {
-            ObservableList<ApplicationPlatform> applicationPlatforms = new()
-            {
+            ObservableList<ApplicationPlatform> applicationPlatforms =
+            [
                 new ApplicationPlatform()
                 {
                     AppName = "MyWebApp",
                     Platform = ePlatformType.Web
                 }
-            };
+            ];
             activityGroup = new();
             Activity activity1 = new()
             {
                 ActivityName = "Activity 1",
                 Active = true,
                 TargetApplication = applicationPlatforms[0].AppName,
-                Acts = new ObservableList<IAct>()
-                {
+                Acts =
+                [
                     new ActDummy()
                     {
-                        FlowControls = new ObservableList<FlowControl>()
-                        {
+                        FlowControls =
+                        [
                             new FlowControl()
                             {
                                 FlowControlAction = eFlowControlAction.GoToActivityByName,
@@ -1364,9 +1362,9 @@ namespace GingerCoreNETUnitTest.BPMN
                                 Active = true,
                                 Operator = eFCOperator.CSharp
                             }
-                        }
+                        ]
                     }
-                }
+                ]
             };
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
             Activity activity2 = new()
@@ -1386,36 +1384,36 @@ namespace GingerCoreNETUnitTest.BPMN
             activity1.Acts[0].FlowControls[0].Value = activity3.ActivityName;
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
-            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2, activity3 });
-            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
-            {
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns([activity1, activity2, activity3]);
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(
+            [
                 new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
-            });
+            ]);
             solutionFacade = solutionFacadeMock.Object;
         }
 
         private void CreateActivityGroupWithGoToActivityByNameFlowControlWithInvalidTargetName(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
         {
-            ObservableList<ApplicationPlatform> applicationPlatforms = new()
-            {
+            ObservableList<ApplicationPlatform> applicationPlatforms =
+            [
                 new ApplicationPlatform()
                 {
                     AppName = "MyWebApp",
                     Platform = ePlatformType.Web
                 }
-            };
+            ];
             activityGroup = new();
             Activity activity1 = new()
             {
                 ActivityName = "Activity 1",
                 Active = true,
                 TargetApplication = applicationPlatforms[0].AppName,
-                Acts = new ObservableList<IAct>()
-                {
+                Acts =
+                [
                     new ActDummy()
                     {
-                        FlowControls = new ObservableList<FlowControl>()
-                        {
+                        FlowControls =
+                        [
                             new FlowControl()
                             {
                                 FlowControlAction = eFlowControlAction.GoToActivityByName,
@@ -1424,9 +1422,9 @@ namespace GingerCoreNETUnitTest.BPMN
                                 Operator = eFCOperator.CSharp,
                                 Value = "NonExistentActivityName"
                             }
-                        }
+                        ]
                     }
-                }
+                ]
             };
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
             Activity activity2 = new()
@@ -1445,24 +1443,24 @@ namespace GingerCoreNETUnitTest.BPMN
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity3 });
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
-            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2, activity3 });
-            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
-            {
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns([activity1, activity2, activity3]);
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(
+            [
                 new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
-            });
+            ]);
             solutionFacade = solutionFacadeMock.Object;
         }
 
         private void CreateActivityGroupWithStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
         {
-            ObservableList<ApplicationPlatform> applicationPlatforms = new()
-            {
+            ObservableList<ApplicationPlatform> applicationPlatforms =
+            [
                 new ApplicationPlatform()
                 {
                     AppName = "MyWebApp",
                     Platform = ePlatformType.Web
                 }
-            };
+            ];
 
             activityGroup = new();
             Activity activity1 = new()
@@ -1470,12 +1468,12 @@ namespace GingerCoreNETUnitTest.BPMN
                 ActivityName = "Activity 1",
                 Active = true,
                 TargetApplication = applicationPlatforms[0].AppName,
-                Acts = new ObservableList<IAct>()
-                {
+                Acts =
+                [
                     new ActDummy()
                     {
-                        FlowControls = new ObservableList<FlowControl>()
-                        {
+                        FlowControls =
+                        [
                             new FlowControl()
                             {
                                 FlowControlAction = eFlowControlAction.StopBusinessFlow,
@@ -1483,9 +1481,9 @@ namespace GingerCoreNETUnitTest.BPMN
                                 Active = true,
                                 Operator = eFCOperator.CSharp
                             }
-                        }
+                        ]
                     }
-                }
+                ]
             };
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
             Activity activity2 = new()
@@ -1498,24 +1496,24 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
-            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2 });
-            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
-            {
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns([activity1, activity2]);
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(
+            [
                 new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
-            });
+            ]);
             solutionFacade = solutionFacadeMock.Object;
         }
 
         private void CreateActivityGroupWithStopRunFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
         {
-            ObservableList<ApplicationPlatform> applicationPlatforms = new()
-            {
+            ObservableList<ApplicationPlatform> applicationPlatforms =
+            [
                 new ApplicationPlatform()
                 {
                     AppName = "MyWebApp",
                     Platform = ePlatformType.Web
                 }
-            };
+            ];
 
             activityGroup = new();
             Activity activity1 = new()
@@ -1523,12 +1521,12 @@ namespace GingerCoreNETUnitTest.BPMN
                 ActivityName = "Activity 1",
                 Active = true,
                 TargetApplication = applicationPlatforms[0].AppName,
-                Acts = new ObservableList<IAct>()
-                {
+                Acts =
+                [
                     new ActDummy()
                     {
-                        FlowControls = new ObservableList<FlowControl>()
-                        {
+                        FlowControls =
+                        [
                             new FlowControl()
                             {
                                 FlowControlAction = eFlowControlAction.StopRun,
@@ -1536,9 +1534,9 @@ namespace GingerCoreNETUnitTest.BPMN
                                 Active = true,
                                 Operator = eFCOperator.CSharp
                             }
-                        }
+                        ]
                     }
-                }
+                ]
             };
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
             Activity activity2 = new()
@@ -1551,24 +1549,24 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
-            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2 });
-            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
-            {
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns([activity1, activity2]);
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(
+            [
                 new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
-            });
+            ]);
             solutionFacade = solutionFacadeMock.Object;
         }
 
         private void CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
         {
-            ObservableList<ApplicationPlatform> applicationPlatforms = new()
-            {
+            ObservableList<ApplicationPlatform> applicationPlatforms =
+            [
                 new ApplicationPlatform()
                 {
                     AppName = "MyWebApp",
                     Platform = ePlatformType.Web
                 }
-            };
+            ];
 
             activityGroup = new();
             Activity activity1 = new()
@@ -1576,12 +1574,12 @@ namespace GingerCoreNETUnitTest.BPMN
                 ActivityName = "Activity 1",
                 Active = true,
                 TargetApplication = applicationPlatforms[0].AppName,
-                Acts = new ObservableList<IAct>()
-                {
+                Acts =
+                [
                     new ActDummy()
                     {
-                        FlowControls = new ObservableList<FlowControl>()
-                        {
+                        FlowControls =
+                        [
                             new FlowControl()
                             {
                                 FlowControlAction = eFlowControlAction.FailActionAndStopBusinessFlow,
@@ -1589,9 +1587,9 @@ namespace GingerCoreNETUnitTest.BPMN
                                 Active = true,
                                 Operator = eFCOperator.CSharp
                             }
-                        }
+                        ]
                     }
-                }
+                ]
             };
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
             Activity activity2 = new()
@@ -1604,24 +1602,24 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
-            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2 });
-            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
-            {
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns([activity1, activity2]);
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(
+            [
                 new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
-            });
+            ]);
             solutionFacade = solutionFacadeMock.Object;
         }
 
         private void CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
         {
-            ObservableList<ApplicationPlatform> applicationPlatforms = new()
-            {
+            ObservableList<ApplicationPlatform> applicationPlatforms =
+            [
                 new ApplicationPlatform()
                 {
                     AppName = "MyWebApp",
                     Platform = ePlatformType.Web
                 }
-            };
+            ];
             Activity activityFromSharedRepository = new()
             {
                 ActivityName = "ActivityFromSharedRepository",
@@ -1635,12 +1633,12 @@ namespace GingerCoreNETUnitTest.BPMN
                 ActivityName = "Activity 1",
                 Active = true,
                 TargetApplication = applicationPlatforms[0].AppName,
-                Acts = new ObservableList<IAct>()
-                {
+                Acts =
+                [
                     new ActDummy()
                     {
-                        FlowControls = new ObservableList<FlowControl>()
-                        {
+                        FlowControls =
+                        [
                             new FlowControl()
                             {
                                 FlowControlAction = eFlowControlAction.RunSharedRepositoryActivity,
@@ -1649,9 +1647,9 @@ namespace GingerCoreNETUnitTest.BPMN
                                 Operator = eFCOperator.CSharp,
                                 Value = activityFromSharedRepository.ActivityName
                             }
-                        }
+                        ]
                     }
-                }
+                ]
             };
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
             Activity activity2 = new()
@@ -1661,28 +1659,28 @@ namespace GingerCoreNETUnitTest.BPMN
                 TargetApplication = applicationPlatforms[0].AppName
             };
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity2 });
-            
+
 
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
-            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2, activityFromSharedRepository });
-            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
-            {
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns([activity1, activity2, activityFromSharedRepository]);
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(
+            [
                 new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
-            });
+            ]);
             solutionFacade = solutionFacadeMock.Object;
         }
 
         private void CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControlWithInvalidTargetName(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
         {
-            ObservableList<ApplicationPlatform> applicationPlatforms = new()
-            {
+            ObservableList<ApplicationPlatform> applicationPlatforms =
+            [
                 new ApplicationPlatform()
                 {
                     AppName = "MyWebApp",
                     Platform = ePlatformType.Web
                 }
-            };
+            ];
 
             activityGroup = new();
             Activity activity1 = new()
@@ -1690,12 +1688,12 @@ namespace GingerCoreNETUnitTest.BPMN
                 ActivityName = "Activity 1",
                 Active = true,
                 TargetApplication = applicationPlatforms[0].AppName,
-                Acts = new ObservableList<IAct>()
-                {
+                Acts =
+                [
                     new ActDummy()
                     {
-                        FlowControls = new ObservableList<FlowControl>()
-                        {
+                        FlowControls =
+                        [
                             new FlowControl()
                             {
                                 FlowControlAction = eFlowControlAction.RunSharedRepositoryActivity,
@@ -1704,9 +1702,9 @@ namespace GingerCoreNETUnitTest.BPMN
                                 Operator = eFCOperator.CSharp,
                                 Value = "NonExistentActivityName"
                             }
-                        }
+                        ]
                     }
-                }
+                ]
             };
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
             Activity activity2 = new()
@@ -1720,36 +1718,36 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
-            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2 });
-            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
-            {
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns([activity1, activity2]);
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(
+            [
                 new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
-            });
+            ]);
             solutionFacade = solutionFacadeMock.Object;
         }
 
         private void CreateActivityGroupWithAllInactiveFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
         {
-            ObservableList<ApplicationPlatform> applicationPlatforms = new()
-            {
+            ObservableList<ApplicationPlatform> applicationPlatforms =
+            [
                 new ApplicationPlatform()
                 {
                     AppName = "MyWebApp",
                     Platform = ePlatformType.Web
                 }
-            };
+            ];
             activityGroup = new();
             Activity activity1 = new()
             {
                 ActivityName = "Activity 1",
                 Active = true,
                 TargetApplication = applicationPlatforms[0].AppName,
-                Acts = new ObservableList<IAct>()
-                {
+                Acts =
+                [
                     new ActDummy()
                     {
-                        FlowControls = new ObservableList<FlowControl>()
-                        {
+                        FlowControls =
+                        [
                             new FlowControl()
                             {
                                 FlowControlAction = eFlowControlAction.GoToActivity,
@@ -1757,9 +1755,9 @@ namespace GingerCoreNETUnitTest.BPMN
                                 Condition = "true",
                                 Operator = eFCOperator.CSharp,
                             }
-                        }
+                        ]
                     }
-                }
+                ]
             };
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
             Activity activity2 = new()
@@ -1779,36 +1777,36 @@ namespace GingerCoreNETUnitTest.BPMN
             activity1.Acts[0].FlowControls[0].Value = activity3.Guid + new FlowControl().GUID_NAME_SEPERATOR + activity3.ActivityName;
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
-            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2, activity3 });
-            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
-            {
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns([activity1, activity2, activity3]);
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(
+            [
                 new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
-            });
+            ]);
             solutionFacade = solutionFacadeMock.Object;
         }
 
         private void CreateActivityGroupWithActiveAndInactiveGotoActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
         {
-            ObservableList<ApplicationPlatform> applicationPlatforms = new()
-            {
+            ObservableList<ApplicationPlatform> applicationPlatforms =
+            [
                 new ApplicationPlatform()
                 {
                     AppName = "MyWebApp",
                     Platform = ePlatformType.Web
                 }
-            };
+            ];
             activityGroup = new();
             Activity activity1 = new()
             {
                 ActivityName = "Activity 1",
                 Active = true,
                 TargetApplication = applicationPlatforms[0].AppName,
-                Acts = new ObservableList<IAct>()
-                {
+                Acts =
+                [
                     new ActDummy()
                     {
-                        FlowControls = new ObservableList<FlowControl>()
-                        {
+                        FlowControls =
+                        [
                             new FlowControl()
                             {
                                 FlowControlAction = eFlowControlAction.GoToActivity,
@@ -1823,9 +1821,9 @@ namespace GingerCoreNETUnitTest.BPMN
                                 Condition = "true",
                                 Operator = eFCOperator.CSharp,
                             }
-                        },
+                        ],
                     }
-                }
+                ]
             };
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
             Activity activity2 = new()
@@ -1846,11 +1844,11 @@ namespace GingerCoreNETUnitTest.BPMN
             activity1.Acts[0].FlowControls[1].Value = activity2.Guid + new FlowControl().GUID_NAME_SEPERATOR + activity2.ActivityName;
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
-            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2, activity3 });
-            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
-            {
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns([activity1, activity2, activity3]);
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(
+            [
                 new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
-            });
+            ]);
             solutionFacade = solutionFacadeMock.Object;
         }
 
@@ -1864,7 +1862,7 @@ namespace GingerCoreNETUnitTest.BPMN
 
         private bool SequenceFlowReachesTargetProcessEntity(SequenceFlow sequenceFlow, IProcessEntity targetProcessEntity)
         {
-            return SequenceFlowReachesTargetProcessEntity(sequenceFlow, targetProcessEntity, new Dictionary<SequenceFlow, bool>());
+            return SequenceFlowReachesTargetProcessEntity(sequenceFlow, targetProcessEntity, []);
         }
 
         private bool SequenceFlowReachesTargetProcessEntity(SequenceFlow sequenceFlow, IProcessEntity targetProcessEntity, Dictionary<SequenceFlow, bool> visitationStatus)
@@ -1884,7 +1882,7 @@ namespace GingerCoreNETUnitTest.BPMN
                 return true;
             }
 
-            if(sequenceFlow.Target is IFlowSource flowSource)
+            if (sequenceFlow.Target is IFlowSource flowSource)
             {
                 IEnumerable<SequenceFlow> nextSequenceFlows = flowSource.OutgoingFlows.Where(of => of is SequenceFlow).Cast<SequenceFlow>();
                 return nextSequenceFlows.Any(sf => SequenceFlowReachesTargetProcessEntity(sf, targetProcessEntity, visitationStatus));
@@ -1895,8 +1893,8 @@ namespace GingerCoreNETUnitTest.BPMN
 
         private void CreateActivityGroupWithActiveAndInactiveActivities(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
         {
-            ObservableList<ApplicationPlatform> applicationPlatforms = new()
-            {
+            ObservableList<ApplicationPlatform> applicationPlatforms =
+            [
                 new ApplicationPlatform()
                 {
                     AppName = "MyWebApp",
@@ -1907,7 +1905,7 @@ namespace GingerCoreNETUnitTest.BPMN
                     AppName = "MyWebServicesApp",
                     Platform = ePlatformType.WebServices
                 }
-            };
+            ];
             activityGroup = new();
             Activity activeActivity = new()
             {
@@ -1925,12 +1923,12 @@ namespace GingerCoreNETUnitTest.BPMN
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = inactiveActivity });
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
-            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activeActivity, inactiveActivity });
-            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
-            {
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns([activeActivity, inactiveActivity]);
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(
+            [
                 new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName },
                 new TargetApplication() { Guid = applicationPlatforms[1].Guid, AppName = applicationPlatforms[1].AppName }
-            });
+            ]);
             solutionFacade = solutionFacadeMock.Object;
 
         }
@@ -1938,8 +1936,8 @@ namespace GingerCoreNETUnitTest.BPMN
         private void CreateActivityGroupWithOnlyOneWebServicesActivity(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
         {
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
-            ObservableList<ApplicationPlatform> applicationPlatforms = new()
-            {
+            ObservableList<ApplicationPlatform> applicationPlatforms =
+            [
                 new ApplicationPlatform()
                 {
                     AppName = "MyWebApp",
@@ -1950,9 +1948,9 @@ namespace GingerCoreNETUnitTest.BPMN
                     AppName = "MyWebServices",
                     Platform = ePlatformType.WebServices
                 }
-            };
-            ObservableList<TargetBase> targetApplications = new()
-            {
+            ];
+            ObservableList<TargetBase> targetApplications =
+            [
                 new TargetApplication()
                 {
                     Guid = applicationPlatforms[0].Guid,
@@ -1963,30 +1961,30 @@ namespace GingerCoreNETUnitTest.BPMN
                     Guid = applicationPlatforms[1].Guid,
                     AppName = applicationPlatforms[1].AppName
                 }
-            };
+            ];
             activityGroup = new();
             Activity restActivity = new()
             {
                 ActivityName = "REST Activity",
                 TargetApplication = targetApplications[1].Name,
                 Active = true,
-                ConsumerApplications = new ObservableList<Consumer>()
-                {
+                ConsumerApplications =
+                [
                     new Consumer()
                     {
                         ConsumerGuid = targetApplications[0].Guid
                     }
-                }
+                ]
             };
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers()
             {
                 IdentifiedActivity = restActivity
             });
-            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { restActivity });
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns([restActivity]);
             solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
             solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(targetApplications);
             solutionFacade = solutionFacadeMock.Object;
-            
+
         }
     }
 }

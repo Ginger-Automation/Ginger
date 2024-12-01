@@ -36,7 +36,7 @@ namespace GingerUtils.TimeLine
         // Item level in the tree, root items are 0 
         public int Level { get; set; }
 
-        List<TimeLineEvent> mChildren = new List<TimeLineEvent>();
+        List<TimeLineEvent> mChildren = [];
 
         public List<TimeLineEvent> ChildrenList
         {

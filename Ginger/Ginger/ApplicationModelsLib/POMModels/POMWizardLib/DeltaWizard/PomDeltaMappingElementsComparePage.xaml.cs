@@ -15,7 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions.UserControls;
 using Ginger.UserControls;
@@ -75,11 +74,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         private void SetElementLocatorsGridView(GridViewDef gridViewDef, bool isDeletedElement = true)
         {
-            gridViewDef.GridColsView = new ObservableList<GridColView>();
-            gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, ReadOnly = true });
-            gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65, ReadOnly = true });
-            gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.Category), WidthWeight = 25, ReadOnly = true });
-            gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 20, ReadOnly = true });
+            gridViewDef.GridColsView =
+            [
+                new GridColView() { Field = nameof(DeltaElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, ReadOnly = true },
+                new GridColView() { Field = nameof(DeltaElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65, ReadOnly = true },
+                new GridColView() { Field = nameof(DeltaElementLocator.Category), WidthWeight = 25, ReadOnly = true },
+                new GridColView() { Field = nameof(DeltaElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 20, ReadOnly = true },
+            ];
 
             if (isDeletedElement)
             {
@@ -100,10 +101,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         private void SetElementPropertiesGridView(GridViewDef gridViewDef, bool isDeletedElement = true)
         {
-            gridViewDef.GridColsView = new ObservableList<GridColView>();
-
-            gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Name), WidthWeight = 25, ReadOnly = true });
-            gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Value), WidthWeight = 75, ReadOnly = true });
+            gridViewDef.GridColsView =
+            [
+                new GridColView() { Field = nameof(ControlProperty.Name), WidthWeight = 25, ReadOnly = true },
+                new GridColView() { Field = nameof(ControlProperty.Value), WidthWeight = 75, ReadOnly = true },
+            ];
 
             if (isDeletedElement)
             {

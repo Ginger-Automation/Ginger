@@ -89,14 +89,18 @@ namespace WorkspaceHold
             // Arrange
             PrepareForCLICreationAndExecution();
             // Create config file
-            CLIHelper cLIHelper = new CLIHelper();
-            cLIHelper.RunAnalyzer = true;
-            cLIHelper.ShowAutoRunWindow = false;
-            cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
+            CLIHelper cLIHelper = new CLIHelper
+            {
+                RunAnalyzer = true,
+                ShowAutoRunWindow = false,
+                DownloadUpgradeSolutionFromSourceControl = false
+            };
 
-            RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
-            runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
-            runSetAutoRunConfiguration.SelectedCLI = new CLIConfigFile();
+            RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper)
+            {
+                ConfigFileFolderPath = mTempFolder,
+                SelectedCLI = new CLIConfigFile()
+            };
             runSetAutoRunConfiguration.CreateContentFile();
 
             // Act            
@@ -233,7 +237,7 @@ namespace WorkspaceHold
             public string MessageToConsole;
         }
 
-        static List<ConsoleMessage> mConsoleMessages = new List<ConsoleMessage>();
+        static List<ConsoleMessage> mConsoleMessages = [];
         public static void ConsoleMessageEvent(eLogLevel logLevel, string messageToConsole)
         {
             mConsoleMessages.Add(new ConsoleMessage() { LogLevel = logLevel, MessageToConsole = messageToConsole });
@@ -245,14 +249,18 @@ namespace WorkspaceHold
             // Arrange
             PrepareForCLICreationAndExecution();
             // Create config file
-            CLIHelper cLIHelper = new CLIHelper();
-            cLIHelper.RunAnalyzer = true;
-            cLIHelper.ShowAutoRunWindow = false;
-            cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
+            CLIHelper cLIHelper = new CLIHelper
+            {
+                RunAnalyzer = true,
+                ShowAutoRunWindow = false,
+                DownloadUpgradeSolutionFromSourceControl = false
+            };
 
-            RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
-            runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
-            runSetAutoRunConfiguration.SelectedCLI = new CLIDynamicFile(CLIDynamicFile.eFileType.XML);
+            RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper)
+            {
+                ConfigFileFolderPath = mTempFolder,
+                SelectedCLI = new CLIDynamicFile(CLIDynamicFile.eFileType.XML)
+            };
             runSetAutoRunConfiguration.CreateContentFile();
 
             // Act            
@@ -276,14 +284,18 @@ namespace WorkspaceHold
             // Arrange
             PrepareForCLICreationAndExecution(runsetName: "Calc_Test");
             // Create config file
-            CLIHelper cLIHelper = new CLIHelper();
-            cLIHelper.RunAnalyzer = true;
-            cLIHelper.ShowAutoRunWindow = false;
-            cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
+            CLIHelper cLIHelper = new CLIHelper
+            {
+                RunAnalyzer = true,
+                ShowAutoRunWindow = false,
+                DownloadUpgradeSolutionFromSourceControl = false
+            };
 
-            RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
-            runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
-            runSetAutoRunConfiguration.SelectedCLI = new CLIDynamicFile(CLIDynamicFile.eFileType.JSON);
+            RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper)
+            {
+                ConfigFileFolderPath = mTempFolder,
+                SelectedCLI = new CLIDynamicFile(CLIDynamicFile.eFileType.JSON)
+            };
             runSetAutoRunConfiguration.CreateContentFile();
 
             // Act            
@@ -433,14 +445,14 @@ namespace WorkspaceHold
 
             string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-VirtualEnvironment.json"), mSolutionFolder);
 
-            CLIProcessor CLI = new ();
+            CLIProcessor CLI = new();
 
             Task.Run(async () =>
             {
                 await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
             }).Wait();
 
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name , "Default123");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name, "Default123");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Applications[0].Name, "app1");
 
             VariableDynamic variable = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Applications[0].Variables[0] as VariableDynamic;
@@ -1149,14 +1161,18 @@ namespace WorkspaceHold
             // Arrange
             PrepareForCLICreationAndExecution();
             // Create config file
-            CLIHelper cLIHelper = new CLIHelper();
-            cLIHelper.RunAnalyzer = true;
-            cLIHelper.ShowAutoRunWindow = false;
-            cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
+            CLIHelper cLIHelper = new CLIHelper
+            {
+                RunAnalyzer = true,
+                ShowAutoRunWindow = false,
+                DownloadUpgradeSolutionFromSourceControl = false
+            };
 
-            RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
-            runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
-            runSetAutoRunConfiguration.SelectedCLI = new CLIConfigFile();
+            RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper)
+            {
+                ConfigFileFolderPath = mTempFolder,
+                SelectedCLI = new CLIConfigFile()
+            };
             runSetAutoRunConfiguration.CreateContentFile();
 
             // Act            
@@ -1205,14 +1221,18 @@ namespace WorkspaceHold
             // Arrange
             PrepareForCLICreationAndExecution();
             // Create config file
-            CLIHelper cLIHelper = new CLIHelper();
-            cLIHelper.RunAnalyzer = true;
-            cLIHelper.ShowAutoRunWindow = false;
-            cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
+            CLIHelper cLIHelper = new CLIHelper
+            {
+                RunAnalyzer = true,
+                ShowAutoRunWindow = false,
+                DownloadUpgradeSolutionFromSourceControl = false
+            };
 
-            RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
-            runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
-            runSetAutoRunConfiguration.SelectedCLI = new CLIArgs();
+            RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper)
+            {
+                ConfigFileFolderPath = mTempFolder,
+                SelectedCLI = new CLIArgs()
+            };
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
@@ -1255,9 +1275,11 @@ namespace WorkspaceHold
         {
             WorkSpace.Instance.OpenSolution(mSolutionFolder, EncryptionHandler.GetDefaultKey());
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
-            RunsetExecutor runsetExecutor = new RunsetExecutor();
-            runsetExecutor.RunsetExecutionEnvironment = (from x in SR.GetAllRepositoryItems<ProjEnvironment>() where x.Name == envName select x).SingleOrDefault();
-            runsetExecutor.RunSetConfig = (from x in SR.GetAllRepositoryItems<RunSetConfig>() where x.Name == runsetName select x).SingleOrDefault();
+            RunsetExecutor runsetExecutor = new RunsetExecutor
+            {
+                RunsetExecutionEnvironment = (from x in SR.GetAllRepositoryItems<ProjEnvironment>() where x.Name == envName select x).SingleOrDefault(),
+                RunSetConfig = (from x in SR.GetAllRepositoryItems<RunSetConfig>() where x.Name == runsetName select x).SingleOrDefault()
+            };
             WorkSpace.Instance.RunsetExecutor = runsetExecutor;
             WorkSpace.Instance.RunsetExecutor.InitRunners();
         }
@@ -1269,22 +1291,18 @@ namespace WorkspaceHold
             PrepareForCLICreationAndExecution();
 
             // Create args
-            List<string> args = new List<string>();
-
-            args.Add("run");
-
-            args.Add("--solution");
-            args.Add(mSolutionFolder);
-
-            args.Add("--env");
-            args.Add("Default");
-
-            args.Add("--runset");
-            args.Add("Default Run Set");
-
-            args.Add("--do-not-analyze");
-
-            args.Add("--showui");
+            List<string> args =
+            [
+                "run",
+                "--solution",
+                mSolutionFolder,
+                "--env",
+                "Default",
+                "--runset",
+                "Default Run Set",
+                "--do-not-analyze",
+                "--showui",
+            ];
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();

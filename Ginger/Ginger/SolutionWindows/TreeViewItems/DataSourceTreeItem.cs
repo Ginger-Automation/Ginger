@@ -73,22 +73,24 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            List<ITreeViewItem> Childrens = [];
 
             //Get Data Source Tables List
             DSDetails.DSTableList = DSDetails.GetTablesList();
             if (DSDetails.DSTableList == null)
             {
-                DSDetails.DSTableList = new ObservableList<DataSourceTable>();
+                DSDetails.DSTableList = [];
             }
 
             foreach (DataSourceTable dsTable in DSDetails.DSTableList)
             {
                 if (TableTreeView == DataSourceFolderTreeItem.eDataTableView.All || (TableTreeView == DataSourceFolderTreeItem.eDataTableView.Key && dsTable.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue) || (TableTreeView == DataSourceFolderTreeItem.eDataTableView.Customized && dsTable.DSTableType == DataSourceTable.eDSTableType.Customized))
                 {
-                    DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
-                    DSTTI.DSTableDetails = dsTable;
-                    DSTTI.DSDetails = DSDetails;
+                    DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem
+                    {
+                        DSTableDetails = dsTable,
+                        DSDetails = DSDetails
+                    };
                     Childrens.Add(DSTTI);
                 }
             }
@@ -231,13 +233,17 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 else
                 {
-                    DataSourceTable dsTableDetails = new DataSourceTable();
-                    dsTableDetails.Name = tableName;
-                    dsTableDetails.DSC = DSDetails;
-                    dsTableDetails.DSTableType = DSTableType;
-                    DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
-                    DSTTI.DSTableDetails = dsTableDetails;
-                    DSTTI.DSDetails = DSDetails;
+                    DataSourceTable dsTableDetails = new DataSourceTable
+                    {
+                        Name = tableName,
+                        DSC = DSDetails,
+                        DSTableType = DSTableType
+                    };
+                    DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem
+                    {
+                        DSTableDetails = dsTableDetails,
+                        DSDetails = DSDetails
+                    };
                     dsTableDetails.DSC.AddTable(dsTableDetails.Name, query);
                     mTreeView.Tree.AddChildItemAndSelect(this, DSTTI);
                     DSDetails.DSTableList.Add(dsTableDetails);
@@ -326,8 +332,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
-            var repoItem = item as RepositoryItemBase;
-            if (repoItem != null)
+            if (item is RepositoryItemBase repoItem)
             {
                 if (!deleteWithoutAsking)
                 {
@@ -344,11 +349,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void CommitAll(object sender, RoutedEventArgs e)
         {
             SaveTreeItem(DSDetails);
-            List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
+            List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds(this);
 
             foreach (ITreeViewItem node in childNodes)
             {
-                if (node != null && node is DataSourceTableTreeItem)
+                if (node is not null and DataSourceTableTreeItem)
                 {
                     if (((DataSourceTable)node.NodeObject()).DirtyStatus == eDirtyStatus.Modified)
                     {
@@ -363,7 +368,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             //TODO: Need to move code from if else to the respective classes.
             if (DSDetails.DSType == DataSourceBase.eDSType.MSAccess)
             {
-                AccessDataSource dsDetailsCopy = (AccessDataSource)CopyTreeItemWithNewName((RepositoryItemBase)DSDetails);
+                AccessDataSource dsDetailsCopy = (AccessDataSource)CopyTreeItemWithNewName(DSDetails);
                 if (dsDetailsCopy == null)
                 {
                     return;
@@ -377,11 +382,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
                 File.Copy(DSDetails.FileFullPath, dsDetailsCopy.FileFullPath);
 
-                (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(((RepositoryItemBase)DSDetails))).AddRepositoryItem(dsDetailsCopy);
+                (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(DSDetails)).AddRepositoryItem(dsDetailsCopy);
             }
             else
             {
-                GingerLiteDB dsDetailsCopy = (GingerLiteDB)CopyTreeItemWithNewName((RepositoryItemBase)DSDetails);
+                GingerLiteDB dsDetailsCopy = (GingerLiteDB)CopyTreeItemWithNewName(DSDetails);
                 if (dsDetailsCopy == null)
                 {
                     return;
@@ -394,7 +399,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
                 File.Copy(DSDetails.FileFullPath, dsDetailsCopy.FileFullPath);
 
-                (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(((RepositoryItemBase)DSDetails))).AddRepositoryItem(dsDetailsCopy);
+                (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(DSDetails)).AddRepositoryItem(dsDetailsCopy);
             }
 
         }

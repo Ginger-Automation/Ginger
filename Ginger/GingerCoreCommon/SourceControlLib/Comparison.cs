@@ -20,8 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 #nullable enable
 namespace Amdocs.Ginger.Common.SourceControlLib
@@ -65,7 +63,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             get => _selected;
             set
             {
-                if(!IsSelectionEnabled)
+                if (!IsSelectionEnabled)
                 {
                     return;
                 }
@@ -101,7 +99,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             State = state;
             ChildComparisons = childComparisons;
             HasChildComparisons = true;
-            foreach(Comparison childComparison in childComparisons)
+            foreach (Comparison childComparison in childComparisons)
             {
                 childComparison.ParentComparison = this;
             }
@@ -114,7 +112,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             Name = name;
             State = state;
             ChildComparisons = childComparisons;
-            HasChildComparisons = true; 
+            HasChildComparisons = true;
             foreach (Comparison childComparison in childComparisons)
             {
                 childComparison.ParentComparison = this;
@@ -166,7 +164,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             }
             else if (State == StateType.Modified)
             {
-                Dictionary<string, List<Comparison>> uniqueNameComparisons = new();
+                Dictionary<string, List<Comparison>> uniqueNameComparisons = [];
                 foreach (Comparison childComparison in ChildComparisons)
                 {
                     if (uniqueNameComparisons.ContainsKey(childComparison.Name))
@@ -175,7 +173,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     }
                     else
                     {
-                        uniqueNameComparisons.Add(childComparison.Name, new List<Comparison>() { childComparison });
+                        uniqueNameComparisons.Add(childComparison.Name, [childComparison]);
                     }
                 }
 

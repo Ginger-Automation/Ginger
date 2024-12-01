@@ -48,8 +48,10 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         public void CachecSimpleInOut()
         {
             //Arrange            
-            BusinessFlow BF = new BusinessFlow();
-            BF.Name = "hello";
+            BusinessFlow BF = new BusinessFlow
+            {
+                Name = "hello"
+            };
 
             //Act
             RC[BF.Name] = BF;

@@ -66,7 +66,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            List<ITreeViewItem> Childrens = [];
             return Childrens;
         }
 

@@ -20,10 +20,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.DiameterLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Amdocs.Ginger.CoreNET.DiameterLib.DiameterEnums;
 
 namespace GingerCoreNETUnitTest.Webservice.DiameterLib
@@ -132,7 +128,7 @@ namespace GingerCoreNETUnitTest.Webservice.DiameterLib
         public void TestNestedAvpListProperty()
         {
             // Arrange
-            ObservableList<DiameterAVP> expectedList = new ObservableList<DiameterAVP>();
+            ObservableList<DiameterAVP> expectedList = [];
             avp.DataType = eDiameterAvpDataType.Grouped;
             DiameterAVP childAVP = new DiameterAVP();
             expectedList.Add(childAVP);

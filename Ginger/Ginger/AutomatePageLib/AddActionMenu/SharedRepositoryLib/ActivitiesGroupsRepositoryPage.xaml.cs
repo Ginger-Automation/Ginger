@@ -22,7 +22,6 @@ using Amdocs.Ginger.Repository;
 using Ginger.Activities;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository.AddItemToRepositoryWizard;
-using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Activities;
 using GingerWPF.DragDropLib;
@@ -145,8 +144,7 @@ namespace Ginger.Repository
                 if (dragedItem != null)
                 {
                     //add the Group and it Activities to repository                    
-                    List<RepositoryItemBase> list = new List<RepositoryItemBase>();
-                    list.Add(dragedItem);
+                    List<RepositoryItemBase> list = [dragedItem];
                     foreach (ActivityIdentifiers activityIdnt in dragedItem.ActivitiesIdentifiers)
                     {
                         list.Add(activityIdnt.IdentifiedActivity);

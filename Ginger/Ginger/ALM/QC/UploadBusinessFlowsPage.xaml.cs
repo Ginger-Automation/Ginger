@@ -63,7 +63,7 @@ namespace Ginger.ALM.QC
             }
         }
 
-        ObservableList<BusinessFlowUpload> BFUs = new ObservableList<BusinessFlowUpload>();
+        ObservableList<BusinessFlowUpload> BFUs = [];
 
         ObservableList<BusinessFlow> mBusinessFlows;
 
@@ -85,12 +85,14 @@ namespace Ginger.ALM.QC
             BFUs.Clear();
             foreach (BusinessFlow BF in mBusinessFlows)
             {
-                BusinessFlowUpload BFU = new BusinessFlowUpload();
-                BFU.Selected = true;
-                BFU.Name = BF.Name;
-                BFU.BF = BF;
-                BFU.ExternalID = BF.ExternalID;
-                BFU.Status = "Active";
+                BusinessFlowUpload BFU = new BusinessFlowUpload
+                {
+                    Selected = true,
+                    Name = BF.Name,
+                    BF = BF,
+                    ExternalID = BF.ExternalID,
+                    Status = "Active"
+                };
 
                 BFUs.Add(BFU);
             }
@@ -110,13 +112,16 @@ namespace Ginger.ALM.QC
         {
             grdBusinessFlows.Title = "Upload " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: "s");
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = BusinessFlowUpload.Fields.Selected, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox, BindingMode = BindingMode.TwoWay });
-
-            view.GridColsView.Add(new GridColView() { Field = BusinessFlowUpload.Fields.Name, WidthWeight = 250 });
-            view.GridColsView.Add(new GridColView() { Field = BusinessFlowUpload.Fields.Status, WidthWeight = 50 });
-            view.GridColsView.Add(new GridColView() { Field = BusinessFlowUpload.Fields.ExternalID, WidthWeight = 50 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = BusinessFlowUpload.Fields.Selected, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox, BindingMode = BindingMode.TwoWay },
+                new GridColView() { Field = BusinessFlowUpload.Fields.Name, WidthWeight = 250 },
+                new GridColView() { Field = BusinessFlowUpload.Fields.Status, WidthWeight = 50 },
+                new GridColView() { Field = BusinessFlowUpload.Fields.ExternalID, WidthWeight = 50 },
+            ]
+            };
 
             grdBusinessFlows.SetAllColumnsDefaultView(view);
             grdBusinessFlows.InitViewItems();
@@ -129,12 +134,14 @@ namespace Ginger.ALM.QC
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button UploadButton = new Button();
-            UploadButton.Content = "Upload";
+            Button UploadButton = new Button
+            {
+                Content = "Upload"
+            };
             UploadButton.Click += new RoutedEventHandler(UploadBFs);
 
             GenericWindow genWin = null;
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { UploadButton });
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, [UploadButton]);
         }
 
         private void UploadBFs(object sender, RoutedEventArgs e)

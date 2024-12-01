@@ -31,9 +31,11 @@ namespace GingerTest
             // SSML - https://docs.microsoft.com/en-us/cortana/skills/speech-synthesis-markup-language
             if (synthesizer == null)
             {
-                synthesizer = new SpeechSynthesizer();
-                synthesizer.Volume = 100;  // 0...100
-                synthesizer.Rate = -2;     // -10...10
+                synthesizer = new SpeechSynthesizer
+                {
+                    Volume = 100,  // 0...100
+                    Rate = -2     // -10...10
+                };
                 synthesizer.SelectVoice("Microsoft Zira Desktop");
             }
             //string xml = System.IO.File.ReadAllText(@"c:\temp\speak.xml");

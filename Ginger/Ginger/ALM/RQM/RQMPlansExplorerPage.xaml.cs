@@ -48,14 +48,17 @@ namespace Ginger.ALM.RQM
 
         private void SetGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = RQMTestPlan.Fields.RQMID, Header = "Test Plan ID", WidthWeight = 15, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RQMTestPlan.Fields.Name, Header = "Test Plan Name", ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RQMTestPlan.Fields.CreatedBy, Header = "Created By", WidthWeight = 25, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RQMTestPlan.Fields.CreationDate, Header = "Creation Date", WidthWeight = 25, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = "Import Test Plan", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ImportButton"] });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = RQMTestPlan.Fields.RQMID, Header = "Test Plan ID", WidthWeight = 15, ReadOnly = true },
+                new GridColView() { Field = RQMTestPlan.Fields.Name, Header = "Test Plan Name", ReadOnly = true },
+                new GridColView() { Field = RQMTestPlan.Fields.CreatedBy, Header = "Created By", WidthWeight = 25, ReadOnly = true },
+                new GridColView() { Field = RQMTestPlan.Fields.CreationDate, Header = "Creation Date", WidthWeight = 25, ReadOnly = true },
+                new GridColView() { Field = "Import Test Plan", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ImportButton"] },
+            ]
+            };
 
             grdRQMTestPlanes.SetAllColumnsDefaultView(view);
             grdRQMTestPlanes.InitViewItems();
@@ -67,11 +70,10 @@ namespace Ginger.ALM.RQM
         private void SetGridData()
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            ObservableList<RQMTestPlan> mRQMTestPlansListSortedByDate = new ObservableList<RQMTestPlan>();
-            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectKey, System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
-            {
-                mRQMTestPlansListSortedByDate.Add(testPlan);
-            }
+            ObservableList<RQMTestPlan> mRQMTestPlansListSortedByDate =
+            [
+                .. RQMConnect.Instance.GetRQMTestPlansByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectKey, System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate),
+            ];
             grdRQMTestPlanes.DataSourceList = mRQMTestPlansListSortedByDate;
             Mouse.OverrideCursor = null;
         }

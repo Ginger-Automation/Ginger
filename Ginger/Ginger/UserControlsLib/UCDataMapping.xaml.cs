@@ -96,16 +96,16 @@ namespace Ginger.UserControlsLib
 
         public string MappedValue
         {
-            get 
-            { 
-                return (string)GetValue(MappedValueProperty); 
+            get
+            {
+                return (string)GetValue(MappedValueProperty);
             }
-            set 
-            { 
-                
+            set
+            {
+
                 SetValue(MappedValueProperty, value);
-                if(WorkSpace.Instance!=null 
-                    && WorkSpace.Instance.RunsetExecutor!=null 
+                if (WorkSpace.Instance != null
+                    && WorkSpace.Instance.RunsetExecutor != null
                     && WorkSpace.Instance.RunsetExecutor.RunSetConfig != null)
                 {
                     WorkSpace.Instance.RunsetExecutor.RunSetConfig.DirtyStatus = eDirtyStatus.Modified;
@@ -176,8 +176,8 @@ namespace Ginger.UserControlsLib
         #region Global
         private void InitValuesOptions()
         {
-            mVariablesList = new ObservableList<string>();
-            mOutputVariablesList = new ObservableList<VariableBase>();
+            mVariablesList = [];
+            mOutputVariablesList = [];
             SetGlobalVariabelsListValues();
             SetModelGlobalParametersListValues();
             SetDataSourceValues();
@@ -287,8 +287,7 @@ namespace Ginger.UserControlsLib
 
         private static void OnMappedValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            var control = sender as UCDataMapping;
-            if (control != null)
+            if (sender is UCDataMapping control)
             {
                 control.MappedValuePropertyChanged((string)args.NewValue);
             }
@@ -372,8 +371,7 @@ namespace Ginger.UserControlsLib
 
         private static void OnEnableDataMappingPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            var control = sender as UCDataMapping;
-            if (control != null)
+            if (sender is UCDataMapping control)
             {
                 control.EnableDataMappingPropertyChanged((bool)args.NewValue);
             }
@@ -432,9 +430,11 @@ namespace Ginger.UserControlsLib
 
             if (!string.IsNullOrEmpty(options._VariabelsSourceProperty))
             {
-                Binding variablesSourceBinding = new Binding(options._VariabelsSourceProperty);
-                variablesSourceBinding.Mode = BindingMode.OneWay;
-                variablesSourceBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                Binding variablesSourceBinding = new Binding(options._VariabelsSourceProperty)
+                {
+                    Mode = BindingMode.OneWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
                 ucDataMapping.SetBinding(UCDataMapping.VariabelsSourceProperty, variablesSourceBinding);
             }
             else if (options._VariabelsSourceList != null)
@@ -445,27 +445,35 @@ namespace Ginger.UserControlsLib
 
             if (!string.IsNullOrEmpty(options._OutputVariabelsSourceProperty))
             {
-                Binding outputVariabelsSourceBinding = new Binding(options._OutputVariabelsSourceProperty);
-                outputVariabelsSourceBinding.Mode = BindingMode.OneWay;
-                outputVariabelsSourceBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                Binding outputVariabelsSourceBinding = new Binding(options._OutputVariabelsSourceProperty)
+                {
+                    Mode = BindingMode.OneWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
                 ucDataMapping.SetBinding(UCDataMapping.OutputVariabelsSourceProperty, outputVariabelsSourceBinding);
             }
 
-            Binding mappedItemTypeBinding = new Binding(options._DataTypeProperty);
-            mappedItemTypeBinding.Mode = BindingMode.TwoWay;
-            mappedItemTypeBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            Binding mappedItemTypeBinding = new Binding(options._DataTypeProperty)
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
             ucDataMapping.SetBinding(UCDataMapping.MappedTypeProperty, mappedItemTypeBinding);
 
-            Binding mappedValueBinding = new Binding(options._DataValueProperty);
-            mappedValueBinding.Mode = BindingMode.TwoWay;
-            mappedValueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            Binding mappedValueBinding = new Binding(options._DataValueProperty)
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
             ucDataMapping.SetBinding(UCDataMapping.MappedValueProperty, mappedValueBinding);
 
             if (!string.IsNullOrEmpty(options._EnableDataMappingProperty))
             {
-                Binding allowDataMappingBinding = new Binding(options._EnableDataMappingProperty);
-                allowDataMappingBinding.Mode = BindingMode.OneWay;
-                allowDataMappingBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                Binding allowDataMappingBinding = new Binding(options._EnableDataMappingProperty)
+                {
+                    Mode = BindingMode.OneWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
                 ucDataMapping.SetBinding(UCDataMapping.EnableDataMappingProperty, allowDataMappingBinding);
             }
             else
@@ -486,8 +494,7 @@ namespace Ginger.UserControlsLib
         #region Variables
         private static void OnVariabelsSourcePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            var control = sender as UCDataMapping;
-            if (control != null)
+            if (sender is UCDataMapping control)
             {
                 control.VariabelsSourcePropertyChanged((ObservableList<string>)args.NewValue);
             }
@@ -518,8 +525,7 @@ namespace Ginger.UserControlsLib
         #region Output Variables
         private static void OnOutputVariabelsSourcePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            var control = sender as UCDataMapping;
-            if (control != null)
+            if (sender is UCDataMapping control)
             {
                 control.OutputVariabelsSourcePropertyChanged((ObservableList<VariableBase>)args.NewValue);
             }
@@ -551,7 +557,7 @@ namespace Ginger.UserControlsLib
         #region Global Variables
         private void SetGlobalVariabelsListValues()
         {
-            mGlobalVariablesList = new ObservableList<VariableBase>();
+            mGlobalVariablesList = [];
             WorkSpace.Instance.Solution.Variables.CollectionChanged += GlobalVariables_CollectionChanged;
             foreach (VariableBase var in WorkSpace.Instance.Solution.Variables.Where(x => x.SupportSetValue == true).ToList())
             {

@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using System.Windows;
@@ -66,11 +65,15 @@ namespace Ginger.Run.RunSetActions
 
         private void SetParametersGridView()
         {
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Parameter Name", WidthWeight = 40 });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Parameter Value", WidthWeight = 40 });
-            defView.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ParamValueExpressionButton"] });
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ActInputValue.Param), Header = "Parameter Name", WidthWeight = 40 },
+                new GridColView() { Field = nameof(ActInputValue.Value), Header = "Parameter Value", WidthWeight = 40 },
+                new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ParamValueExpressionButton"] },
+            ]
+            };
 
             grdTestNGReportParameters.SetAllColumnsDefaultView(defView);
             grdTestNGReportParameters.InitViewItems();

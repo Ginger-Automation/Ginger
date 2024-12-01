@@ -7,7 +7,7 @@ namespace Ginger.Imports.UFT
     public static class ObjectRepositoryConverter
     {
         //Create List Objects for Property and Repo Item
-        public static List<ObjectRepositoryItem> Objectlist = new List<ObjectRepositoryItem>();
+        public static List<ObjectRepositoryItem> Objectlist = [];
 
         public static List<ObjectRepositoryItem> ProcessXML(string sXMLPath)
         {
@@ -45,9 +45,11 @@ namespace Ginger.Imports.UFT
                     //Storing value in ObjectRepositoryItemProperty object
                     if (eChild.FirstChild.FirstChild.Value != "")
                     {
-                        ObjectRepositortyItemProperty Orip = new ObjectRepositortyItemProperty();
-                        Orip.Name = sXMLObjectProperty.ToString();
-                        Orip.Value = eChild.FirstChild.FirstChild.Value;
+                        ObjectRepositortyItemProperty Orip = new ObjectRepositortyItemProperty
+                        {
+                            Name = sXMLObjectProperty.ToString(),
+                            Value = eChild.FirstChild.FirstChild.Value
+                        };
                         Object_ori.Properties.Add(Orip);
                         Orip = null;
                     }

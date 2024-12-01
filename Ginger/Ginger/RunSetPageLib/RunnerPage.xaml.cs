@@ -57,7 +57,7 @@ namespace Ginger.Run
 
         public event RunnerPageEventHandler RunnerPageEvent;
         public delegate void RunnerPageEventHandler(RunnerPageEventArgs EventArgs);
-        public event EventHandler CheckIfRunsetDirty;        
+        public event EventHandler CheckIfRunsetDirty;
 
         public void OnGingerRunnerEvent(RunnerPageEventArgs.eEventType EvType, Object obj)
         {
@@ -120,7 +120,7 @@ namespace Ginger.Run
             {
                 for (int i = 0; i < mBusinessflowRunnerItems.Count; i++)
                 {
-                    RunnerItemPage page = (RunnerItemPage)mBusinessflowRunnerItems[i];
+                    RunnerItemPage page = mBusinessflowRunnerItems[i];
                     page.ClearBindings();
                     page = null;//to make sure memory gets free
                 }
@@ -189,14 +189,18 @@ namespace Ginger.Run
                 pageGrid.IsEnabled = false;
             }
 
-            mDispatcherTimer = new DispatcherTimer();
-            mDispatcherTimer.Interval = new TimeSpan(0, 0, 1); // one second
+            mDispatcherTimer = new DispatcherTimer
+            {
+                Interval = new TimeSpan(0, 0, 1) // one second
+            };
             WeakEventManager<DispatcherTimer, EventArgs>.AddHandler(source: mDispatcherTimer, eventName: nameof(DispatcherTimer.Tick), handler: dispatcherTimerElapsedTick);
             mDispatcherTimer.Start();
             UpdateExecutionStats();
 
-            mRunnerPageListener = new RunnerPageListener();
-            mRunnerPageListener.UpdateStat = HandleUpdateStat;
+            mRunnerPageListener = new RunnerPageListener
+            {
+                UpdateStat = HandleUpdateStat
+            };
             runner.RunListeners.Add(mRunnerPageListener);
 
             if (WorkSpace.Instance.RunningInExecutionMode)
@@ -249,9 +253,11 @@ namespace Ginger.Run
 
         private RunnerItemPage CreateBusinessFlowRunnerItem(BusinessFlow bf, bool ViewMode = false)
         {
-            RunnerItemPage ri = new RunnerItemPage(Runnerobj: bf, ViewMode: ViewMode1, runnerItemEventHandler: _runnerItemEventHandler);
-            ri.ItemName = bf.Name;
-            ri.ItemTitleTooltip = string.Format(@"{0}\{1}", bf.ContainingFolder, bf.Name);
+            RunnerItemPage ri = new RunnerItemPage(Runnerobj: bf, ViewMode: ViewMode1, runnerItemEventHandler: _runnerItemEventHandler)
+            {
+                ItemName = bf.Name,
+                ItemTitleTooltip = string.Format(@"{0}\{1}", bf.ContainingFolder, bf.Name)
+            };
             if (string.IsNullOrEmpty(bf.Description))
             {
                 ri.xItemSeparator.Visibility = Visibility.Collapsed;
@@ -275,7 +281,7 @@ namespace Ginger.Run
                 WeakEventManager<RunnerItemPage, RoutedEventArgs>.AddHandler(source: ri, eventName: nameof(RunnerItemPage.DuplicateClick), handler: Businessflow_DuplicateClick);
                 WeakEventManager<RunnerItemPage, RoutedEventArgs>.AddHandler(source: ri, eventName: nameof(RunnerItemPage.RemoveClick), handler: Businessflow_RemoveClick);
                 WeakEventManager<RunnerItemPage, RoutedEventArgs>.AddHandler(source: ri, eventName: nameof(RunnerItemPage.ResetBusinessFlowStatus), handler: BusinessFlow_ResetStatus);
-                
+
 
 
                 ri.xRunnerItemMenu.Visibility = Visibility.Visible;
@@ -348,7 +354,7 @@ namespace Ginger.Run
 
         public void LoadBusinessflowRunnerItem(bool ViewMode = false)
         {
-            mBusinessflowRunnerItems = new ObservableList<RunnerItemPage>();
+            mBusinessflowRunnerItems = [];
             foreach (BusinessFlow bff in mExecutorEngine.BusinessFlows)
             {
                 RunnerItemPage bfItem = CreateBusinessFlowRunnerItem(bff, ViewMode);
@@ -418,10 +424,12 @@ namespace Ginger.Run
             }
             else
             {
-                Context context = new Context();
-                context.BusinessFlow = bf;
-                context.Runner = mExecutorEngine;
-                context.Environment = mExecutorEngine.GingerRunner.ProjEnvironment;
+                Context context = new Context
+                {
+                    BusinessFlow = bf,
+                    Runner = mExecutorEngine,
+                    Environment = mExecutorEngine.GingerRunner.ProjEnvironment
+                };
                 mExecutorEngine.ExecutionLoggerManager.GenerateBusinessFlowOfflineReport(context, currentConf.HTMLReportsFolder + bf.Name, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name);
             }
         }
@@ -537,7 +545,7 @@ namespace Ginger.Run
             {
                 e.Handled = false;
                 return;
-            }            
+            }
         }
         //Contains event fired for Change of BusinessFlow/Activities/Actions changed
         private void UpdateBusinessFlowGrid()
@@ -546,7 +554,7 @@ namespace Ginger.Run
         public void UpdateExecutionStats()
         {
             //TODO: break to smaller funcs            
-            List<GingerCoreNET.GeneralLib.StatItem> allItems = new List<GingerCoreNET.GeneralLib.StatItem>();
+            List<GingerCoreNET.GeneralLib.StatItem> allItems = [];
             int totalBusinessFlowCount = 0;
             int totalActivityCount = 0;
             int totalActionCount = 0;
@@ -557,7 +565,7 @@ namespace Ginger.Run
                 {
                     mBFESs = mExecutorEngine.BusinessFlows;
                     //Business Flows
-                    List<GingerCoreNET.GeneralLib.StatItem> bizsList = new List<GingerCoreNET.GeneralLib.StatItem>();
+                    List<GingerCoreNET.GeneralLib.StatItem> bizsList = [];
                     var bizGroups = mBFESs
                     .GroupBy(n => n.RunStatus)
                     .Select(n => new
@@ -574,7 +582,7 @@ namespace Ginger.Run
                     BizFlowsPieChartLayout.DataContext = bizsList;
                     CreateStatistics(bizsList, eObjectType.BusinessFlow);
                     //Activities
-                    List<GingerCoreNET.GeneralLib.StatItem> activitiesList = new List<GingerCoreNET.GeneralLib.StatItem>();
+                    List<GingerCoreNET.GeneralLib.StatItem> activitiesList = [];
                     var activitiesGroups = mBFESs.SelectMany(b => b.Activities).Where(b => b.GetType() != typeof(ErrorHandler) && b.GetType() != typeof(CleanUpActivity))
                     .GroupBy(n => n.Status)
                     .Select(n => new
@@ -591,7 +599,7 @@ namespace Ginger.Run
                     ActivitiesPieChartLayout.DataContext = activitiesList;
                     CreateStatistics(activitiesList, eObjectType.Activity);
                     //Actions
-                    List<GingerCoreNET.GeneralLib.StatItem> actionsList = new List<GingerCoreNET.GeneralLib.StatItem>();
+                    List<GingerCoreNET.GeneralLib.StatItem> actionsList = [];
                     var actionsGroups = mBFESs.SelectMany(b => b.Activities).Where(b => b.GetType() != typeof(ErrorHandler) && b.GetType() != typeof(CleanUpActivity)).SelectMany(x => x.Acts)
                     .GroupBy(n => n.Status)
                     .Select(n => new
@@ -640,10 +648,12 @@ namespace Ginger.Run
                         xBusinessflowsStatistics.Inlines.Add(statCount);
                         if (list.IndexOf(s) < list.Count - 1)
                         {
-                            System.Windows.Documents.Run statSeperator = new System.Windows.Documents.Run();
-                            statSeperator.Text = " | ";
-                            statSeperator.Foreground = Brushes.DarkGray;
-                            statSeperator.FontWeight = FontWeights.Bold;
+                            System.Windows.Documents.Run statSeperator = new System.Windows.Documents.Run
+                            {
+                                Text = " | ",
+                                Foreground = Brushes.DarkGray,
+                                FontWeight = FontWeights.Bold
+                            };
                             xBusinessflowsStatistics.Inlines.Add(statSeperator);
                         }
                     }
@@ -656,10 +666,12 @@ namespace Ginger.Run
                         xActivitiesStatistics.Inlines.Add(statCount);
                         if (list.IndexOf(s) < list.Count - 1)
                         {
-                            System.Windows.Documents.Run statSeperator = new System.Windows.Documents.Run();
-                            statSeperator.Text = " | ";
-                            statSeperator.Foreground = Brushes.DarkGray;
-                            statSeperator.FontWeight = FontWeights.Bold;
+                            System.Windows.Documents.Run statSeperator = new System.Windows.Documents.Run
+                            {
+                                Text = " | ",
+                                Foreground = Brushes.DarkGray,
+                                FontWeight = FontWeights.Bold
+                            };
                             xActivitiesStatistics.Inlines.Add(statSeperator);
                         }
                     }
@@ -672,10 +684,12 @@ namespace Ginger.Run
                         xActionsStatistics.Inlines.Add(statCount);
                         if (list.IndexOf(s) < list.Count - 1)
                         {
-                            System.Windows.Documents.Run statSeperator = new System.Windows.Documents.Run();
-                            statSeperator.Text = " | ";
-                            statSeperator.Foreground = Brushes.DarkGray;
-                            statSeperator.FontWeight = FontWeights.Bold;
+                            System.Windows.Documents.Run statSeperator = new System.Windows.Documents.Run
+                            {
+                                Text = " | ",
+                                Foreground = Brushes.DarkGray,
+                                FontWeight = FontWeights.Bold
+                            };
                             xActionsStatistics.Inlines.Add(statSeperator);
                         }
                     }
@@ -684,8 +698,10 @@ namespace Ginger.Run
                     xLegend.Text = string.Empty;
                     foreach (GingerCoreNET.GeneralLib.StatItem s in list)
                     {
-                        System.Windows.Documents.Run runText = new System.Windows.Documents.Run();
-                        runText.Text = s.Description.ToString() + " ";
+                        System.Windows.Documents.Run runText = new System.Windows.Documents.Run
+                        {
+                            Text = s.Description.ToString() + " "
+                        };
                         Rectangle r = new Rectangle();
                         r.Height = r.Width = r.StrokeThickness = 10;
                         r.Margin = new Thickness(5, 0, 5, 0);
@@ -699,9 +715,11 @@ namespace Ginger.Run
         public System.Windows.Documents.Run createRun(GingerCoreNET.GeneralLib.StatItem status)
         {
             System.Windows.Documents.Run runText = null;
-            runText = new System.Windows.Documents.Run();
-            runText.Text = status.Count.ToString();
-            runText.Foreground = ColorSelector != null ? ColorSelector.SelectBrush(status, 0) : Brushes.Black;
+            runText = new System.Windows.Documents.Run
+            {
+                Text = status.Count.ToString(),
+                Foreground = ColorSelector != null ? ColorSelector.SelectBrush(status, 0) : Brushes.Black
+            };
             return runText;
         }
 
@@ -782,7 +800,7 @@ namespace Ginger.Run
         {
             if (str.Length > maxLen)
             {
-                string shortStr = (str.Substring(0, maxLen - 3) + "...");
+                string shortStr = (str[..(maxLen - 3)] + "...");
                 return shortStr;
             }
             else

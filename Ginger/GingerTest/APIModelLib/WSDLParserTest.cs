@@ -62,7 +62,7 @@ namespace GingerTest
             WSDLParser WSDLP = new WSDLParser();
 
             //Act
-            ObservableList<ApplicationAPIModel> AAMList = new ObservableList<ApplicationAPIModel>();
+            ObservableList<ApplicationAPIModel> AAMList = [];
             AAMList = WSDLP.ParseDocument(filename, AAMList);
 
             //Assert

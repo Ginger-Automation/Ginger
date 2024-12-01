@@ -62,7 +62,7 @@ namespace Amdocs.Ginger.Repository
         public const int cLearnScreenHeight = 1000;
         private Stopwatch _stopwatch;
 
-        public static readonly List<ePlatformType> PomSupportedPlatforms = new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Java, ePlatformType.Windows, ePlatformType.Mobile };
+        public static readonly List<ePlatformType> PomSupportedPlatforms = [ePlatformType.Web, ePlatformType.Java, ePlatformType.Windows, ePlatformType.Mobile];
 
         public bool IsLearning { get; set; }
 
@@ -172,7 +172,7 @@ namespace Amdocs.Ginger.Repository
         /// <summary>
         /// Been used to identify if UnMappedUIElements were lazy loaded already or not
         /// </summary>
-        public bool UnMappedUIElementsLazyLoad { get { return (mUnMappedElements != null) ? mUnMappedElements.LazyLoad : false; } }
+        public bool UnMappedUIElementsLazyLoad { get { return (mUnMappedElements != null) && mUnMappedElements.LazyLoad; } }
         [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.NodePath)]
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> UnMappedUIElements
@@ -181,7 +181,7 @@ namespace Amdocs.Ginger.Repository
             {
                 if (mUnMappedElements == null)
                 {
-                    mUnMappedElements = new ObservableList<ElementInfo>();
+                    mUnMappedElements = [];
                 }
                 if (mUnMappedElements.LazyLoad)
                 {
@@ -203,7 +203,7 @@ namespace Amdocs.Ginger.Repository
         /// <summary>
         /// Been used to identify if MappedUIElements were lazy loaded already or not
         /// </summary>
-        public bool MappedUIElementsLazyLoad { get { return (mMappedElements != null) ? mMappedElements.LazyLoad : false; } }
+        public bool MappedUIElementsLazyLoad { get { return (mMappedElements != null) && mMappedElements.LazyLoad; } }
         [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.NodePath)]
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> MappedUIElements
@@ -212,7 +212,7 @@ namespace Amdocs.Ginger.Repository
             {
                 if (mMappedElements == null)
                 {
-                    mMappedElements = new ObservableList<ElementInfo>();
+                    mMappedElements = [];
                 }
                 if (mMappedElements.LazyLoad)
                 {
@@ -231,11 +231,11 @@ namespace Amdocs.Ginger.Repository
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<CustomRelativeXpathTemplate> RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>();
+        public ObservableList<CustomRelativeXpathTemplate> RelativeXpathTemplateList = [];
 
         public ObservableList<ElementInfo> GetUnifiedElementsList()
         {
-            ObservableList<ElementInfo> unifiedList = new ObservableList<ElementInfo>();
+            ObservableList<ElementInfo> unifiedList = [];
             foreach (ElementInfo element in MappedUIElements)
             {
                 element.ElementGroup = ApplicationPOMModel.eElementGroup.Mapped;
@@ -276,25 +276,14 @@ namespace Amdocs.Ginger.Repository
 
         public void SetItemImageType(ePlatformType platformType)
         {
-            switch (platformType)
+            eImageType = platformType switch
             {
-                case ePlatformType.Web:
-                    eImageType = eImageType.Globe;
-                    break;
-                case ePlatformType.Java:
-                    eImageType = eImageType.Java;
-                    break;
-                case ePlatformType.Windows:
-                    eImageType = eImageType.Window;
-                    break;
-                case ePlatformType.Mobile:
-                    eImageType = eImageType.Mobile;
-                    break;
-                default:
-                    eImageType = eImageType.ApplicationPOMModel;
-                    break;
-            }
-
+                ePlatformType.Web => eImageType.Globe,
+                ePlatformType.Java => eImageType.Java,
+                ePlatformType.Windows => eImageType.Window,
+                ePlatformType.Mobile => eImageType.Mobile,
+                _ => eImageType.ApplicationPOMModel,
+            };
         }
 
         public override string ItemNameField
@@ -313,7 +302,7 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                return this.ContainingFolder.Substring(this.ContainingFolder.IndexOf(@"\POM Models") + 11) + "\\" + Name;
+                return this.ContainingFolder[(this.ContainingFolder.IndexOf(@"\POM Models") + 11)..] + "\\" + Name;
             }
 
         }
@@ -340,7 +329,7 @@ namespace Amdocs.Ginger.Repository
         /// <summary>
         /// Been used to identify if POMMetaData were lazy loaded already or not
         /// </summary>
-        public bool ApplicationPOMMetaDataLazyLoad { get { return (mApplicationPOMMetaData != null) ? mApplicationPOMMetaData.LazyLoad : false; } }
+        public bool ApplicationPOMMetaDataLazyLoad { get { return (mApplicationPOMMetaData != null) && mApplicationPOMMetaData.LazyLoad; } }
         [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.NodePath)]
         [IsSerializedForLocalRepository]
         public ObservableList<POMPageMetaData> ApplicationPOMMetaData
@@ -349,7 +338,7 @@ namespace Amdocs.Ginger.Repository
             {
                 if (mApplicationPOMMetaData == null)
                 {
-                    mApplicationPOMMetaData = new ObservableList<POMPageMetaData>();
+                    mApplicationPOMMetaData = [];
                 }
                 if (mApplicationPOMMetaData.LazyLoad)
                 {

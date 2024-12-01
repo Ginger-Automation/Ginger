@@ -197,7 +197,7 @@ namespace Ginger.Reports
 
             if ((Pos2 - Pos1) > 0)
             {
-                str = STR.Substring(Pos1, Pos2 - Pos1);
+                str = STR[Pos1..Pos2];
                 return str;
             }
             else

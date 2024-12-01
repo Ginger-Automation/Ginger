@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         GingerSocketServer2 mGingerSocketServer;
 
         // Object created and referred from remote client
-        Dictionary<Guid, RemoteObjectHandle> mObjects = new Dictionary<Guid, RemoteObjectHandle>();
+        Dictionary<Guid, RemoteObjectHandle> mObjects = [];
 
         // one input string which is the object id and return object - callback to the using class - must be set
         public Func<string, object> GetObjectHandler;
@@ -37,8 +37,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
         public void Start(int port)
         {
-            mGingerSocketServer = new GingerSocketServer2();
-            mGingerSocketServer.MessageHandler = MessageHandler;
+            mGingerSocketServer = new GingerSocketServer2
+            {
+                MessageHandler = MessageHandler
+            };
             mGingerSocketServer.StartServer(port);
         }
 

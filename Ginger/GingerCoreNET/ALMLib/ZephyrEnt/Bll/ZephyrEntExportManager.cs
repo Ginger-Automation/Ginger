@@ -95,7 +95,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     {
                         name = activtiesGroup.Name,
                         automated = true,
-                        requirementIds = new List<string>(),
+                        requirementIds = [],
                         releaseId = Convert.ToInt64(projectId),
                         description = activtiesGroup.Description,
                         tcCreationDate = DateTime.Now.ToString("dd/MM/yyyy"),
@@ -285,7 +285,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         {
             try
             {
-                List<TestStepResource> testStepResourcesList = new List<TestStepResource>();
+                List<TestStepResource> testStepResourcesList = [];
                 long currentTestStepResourceId = 0;
                 foreach (ActivityIdentifiers step in testStepsList)
                 {
@@ -303,8 +303,10 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     else
                     {
                         TestStep newTestStep = new TestStep(step.ActivityName, stepDescription, testStepsList.IndexOf(step) + 1, stepExpected);
-                        TestStepResource existedTestStepResource = new TestStepResource(currentTestStepResourceId, tcVersionId, testStepsList.IndexOf(step) + 1, tcId);
-                        existedTestStepResource.step = newTestStep;
+                        TestStepResource existedTestStepResource = new TestStepResource(currentTestStepResourceId, tcVersionId, testStepsList.IndexOf(step) + 1, tcId)
+                        {
+                            step = newTestStep
+                        };
                         TestStepResource testStepResource = zephyrEntRepository.UpdateTestStep(existedTestStepResource, tcVersionId, tcId);
                         testStepResourcesList.Add(testStepResource);
                         step.ExternalID = testStepResource.step.id.ToString();
@@ -322,7 +324,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         {
             try
             {
-                List<long> toDeleteSteps = new List<long>();
+                List<long> toDeleteSteps = [];
                 TestStepResource testSteps = zephyrEntRepository.GetTestCaseStepsByTcId((int)tcVersionId, projectId.ToString());
                 testSteps.steps.ForEach(step => toDeleteSteps.Add(step.id));
                 foreach (ActivityIdentifiers step in testStepsList)
@@ -341,8 +343,10 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     else
                     {
                         TestStep newTestStep = new TestStep(step.ActivityName, stepDescription, testStepsList.IndexOf(step) + 1, stepExpected);
-                        TestStepResource existedTestStepResource = new TestStepResource(testSteps.id, tcVersionId, testStepsList.IndexOf(step) + 1, tcId);
-                        existedTestStepResource.step = newTestStep;
+                        TestStepResource existedTestStepResource = new TestStepResource(testSteps.id, tcVersionId, testStepsList.IndexOf(step) + 1, tcId)
+                        {
+                            step = newTestStep
+                        };
                         TestStepResource testStepResource = zephyrEntRepository.UpdateTestStep(existedTestStepResource, testSteps.tcId, tcId);
                         toDeleteSteps.Remove(testStepResource.step.id);
                         step.ExternalID = testStepResource.step.id.ToString();
@@ -370,7 +374,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                                                             DateTime.Now.AddDays(30).ToString("MM/dd/yyyy"),
                                                                             0,
                                                                             projectId,
-                                                                            new List<CyclePhase>(),
+                                                                            [],
                                                                             DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString()));  // "1562668881250" format
                 return cycle;
             }
@@ -408,7 +412,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         {
             try
             {
-                List<Execution> assignsList = new List<Execution>();
+                List<Execution> assignsList = [];
                 foreach (long tcVersionId in tcVersionIds)
                 {
                     List<Execution> execution = zephyrEntRepository.AssignTestCaseToTesterForExecution(tcVersionId, cyclePhaseId, testerId, tcrCatalogTreeId);
@@ -427,7 +431,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         }
         public void ExecuteTestCases(List<Execution> assignsList, long testerId, ObservableList<ActivitiesGroup> ActivitiesGroups)
         {
-            List<TestCaseResource> testCaseResourcesList = new List<TestCaseResource>();
+            List<TestCaseResource> testCaseResourcesList = [];
             foreach (ActivitiesGroup testCase in ActivitiesGroups)
             {
                 long currentAssigmentId = assignsList.Where(z => z.tcrTreeTestcase.testcase.testcaseId == Convert.ToInt64(testCase.ExternalID)).Select(y => y.id).FirstOrDefault();
@@ -461,7 +465,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             {
                 return 3;
             }
-            else if (testToExport.ActivitiesIdentifiers.Count(x => x.IdentifiedActivity.Status == eRunStatus.Passed || x.IdentifiedActivity.Status == eRunStatus.Skipped) == testToExport.ActivitiesIdentifiers.Count)
+            else if (testToExport.ActivitiesIdentifiers.Count(x => x.IdentifiedActivity.Status is eRunStatus.Passed or eRunStatus.Skipped) == testToExport.ActivitiesIdentifiers.Count)
             {
                 return 1;
             }

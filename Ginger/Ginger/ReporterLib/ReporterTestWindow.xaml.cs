@@ -37,13 +37,15 @@ namespace Ginger.ReporterLib
 
         private void FillListBox()
         {
-            List<MessageInfo> messages = new List<MessageInfo>();
+            List<MessageInfo> messages = [];
             Array arr = Enum.GetValues(typeof(eUserMsgKey));
             foreach (eUserMsgKey o in arr)
             {
                 UserMsg mess;
-                MessageInfo messageInfo = new MessageInfo();
-                messageInfo.MessageKey = o;
+                MessageInfo messageInfo = new MessageInfo
+                {
+                    MessageKey = o
+                };
                 bool b = Reporter.UserMsgsPool.TryGetValue(o, out mess);
                 if (!b)
                 {

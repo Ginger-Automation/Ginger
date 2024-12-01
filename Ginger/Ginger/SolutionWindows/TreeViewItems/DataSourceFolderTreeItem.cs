@@ -154,11 +154,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override void PostSaveTreeItemHandler()
         {
-            List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
+            List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds(this);
 
             foreach (ITreeViewItem node in childNodes)
             {
-                if (node != null && node is DataSourceTableTreeItem)
+                if (node is not null and DataSourceTableTreeItem)
                 {
                     ((DataSourceTableTreeItem)node).SaveTreeItem();
                 }
@@ -167,7 +167,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
         public override void SaveAllTreeFolderItems()
         {
-            List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
+            List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds(this);
 
             int itemsSavedCount = 0;
             foreach (ITreeViewItem node in childNodes)

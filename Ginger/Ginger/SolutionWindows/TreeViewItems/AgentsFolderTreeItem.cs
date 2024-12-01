@@ -124,7 +124,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override void AddTreeItem()
         {
-            WizardWindow.ShowWizard(new AddAgentWizard(mAgentsFolder),1100,1100);
+            WizardWindow.ShowWizard(new AddAgentWizard(mAgentsFolder), 1100, 1100);
         }
 
         private void RefreshApplicationAgents(object sender, System.Windows.RoutedEventArgs e)

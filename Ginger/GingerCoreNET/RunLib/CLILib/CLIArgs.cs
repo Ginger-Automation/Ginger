@@ -41,25 +41,27 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public string CreateConfigurationsContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
-            RunOptions options = new RunOptions();
-            options.Solution = solution.Folder;
-            options.Runset = runsetExecutor.RunSetConfig.Name;
-            options.Environment = runsetExecutor.RunsetExecutionEnvironment.Name;
-            options.DoNotAnalyze = !cliHelper.RunAnalyzer;
-            options.ShowUI = cliHelper.ShowAutoRunWindow;
-            options.TestArtifactsPath = cliHelper.TestArtifactsFolder;
+            RunOptions options = new RunOptions
+            {
+                Solution = solution.Folder,
+                Runset = runsetExecutor.RunSetConfig.Name,
+                Environment = runsetExecutor.RunsetExecutionEnvironment.Name,
+                DoNotAnalyze = !cliHelper.RunAnalyzer,
+                ShowUI = cliHelper.ShowAutoRunWindow,
+                TestArtifactsPath = cliHelper.TestArtifactsFolder,
 
-            options.EncryptionKey = solution.EncryptionKey;
+                EncryptionKey = solution.EncryptionKey,
 
-            options.URL = cliHelper.SourceControlURL;
-            options.User = cliHelper.SourcecontrolUser;
-            options.Pass = cliHelper.sourceControlPass;
+                URL = cliHelper.SourceControlURL,
+                User = cliHelper.SourcecontrolUser,
+                Pass = cliHelper.sourceControlPass,
 
-            options.PasswordEncrypted = cliHelper.sourceControlPassEncrypted;
-            options.SCMType = cliHelper.sourceControlType;
+                PasswordEncrypted = cliHelper.sourceControlPassEncrypted,
+                SCMType = cliHelper.sourceControlType,
 
-            options.SourceApplication = cliHelper.SourceApplication;
-            options.SourceApplicationUser = cliHelper.SourceApplicationUser;
+                SourceApplication = cliHelper.SourceApplication,
+                SourceApplicationUser = cliHelper.SourceApplicationUser
+            };
             if (string.IsNullOrEmpty(options.SourceApplication))
             {
                 options.SourceApplication = "Ginger CLI";
@@ -89,7 +91,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
             if (cliHelper.SetSealightsSettings)
             {
-                options.SealightsEnable = solution.SealightsConfiguration.SealightsLog == SealightsConfiguration.eSealightsLog.Yes ? true : false;
+                options.SealightsEnable = solution.SealightsConfiguration.SealightsLog == SealightsConfiguration.eSealightsLog.Yes;
                 options.SealightsUrl = solution.SealightsConfiguration.SealightsURL;
                 options.SealightsLabID = solution.SealightsConfiguration.SealightsLabId;
                 options.SealightsSessionID = solution.SealightsConfiguration.SealightsBuildSessionID;

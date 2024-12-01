@@ -60,7 +60,7 @@ namespace Ginger.WizardLib
 
                 if (l.StartsWith("### "))
                 {
-                    l = l.Substring(4);
+                    l = l[4..];
                     TBH.AddFormattedText(l, foregroundColor, true);
                 }
                 else if (l.Length == 0)

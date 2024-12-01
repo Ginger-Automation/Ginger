@@ -98,21 +98,13 @@ namespace GingerCore.Actions
 
         eLogLevel GetLogLevel(eActionLogLevels loglevel)
         {
-            eLogLevel logLevel;
-            switch (loglevel)
+            var logLevel = loglevel switch
             {
-                case eActionLogLevels.ERROR:
-                    logLevel = eLogLevel.ERROR;
-                    break;
-                case eActionLogLevels.INFO:
-                    logLevel = eLogLevel.INFO;
-                    break;
-                case eActionLogLevels.WARN:
-                    logLevel = eLogLevel.WARN;
-                    break;
-                default:
-                    throw new KeyNotFoundException();
-            }
+                eActionLogLevels.ERROR => eLogLevel.ERROR,
+                eActionLogLevels.INFO => eLogLevel.INFO,
+                eActionLogLevels.WARN => eLogLevel.WARN,
+                _ => throw new KeyNotFoundException(),
+            };
             return logLevel;
         }
 

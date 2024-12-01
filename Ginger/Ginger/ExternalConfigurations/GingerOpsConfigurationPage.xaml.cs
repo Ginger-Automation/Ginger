@@ -16,21 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Ginger.Configurations;
 using Ginger.UserControlsLib;
-using Amdocs.Ginger.Common;
-using System.Windows;
-using GingerCore;
-using amdocs.ginger.GingerCoreNET;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System;
-using IdentityModel.Client;
 using Ginger.ValidationRules;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using GingerCore;
+using System;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace Ginger.ExternalConfigurations
 {
@@ -49,7 +43,7 @@ namespace Ginger.ExternalConfigurations
         private void Init()
         {
             OpsAPI = new GingerOpsAPI();
-            gingerOpsUserConfig  = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerOpsConfiguration>().Count == 0 ? new GingerOpsConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerOpsConfiguration>();
+            gingerOpsUserConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerOpsConfiguration>().Count == 0 ? new GingerOpsConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerOpsConfiguration>();
             gingerOpsUserConfig.StartDirtyTracking();
             SetControls();
 
@@ -157,22 +151,22 @@ namespace Ginger.ExternalConfigurations
         }
 
 
-        
+
 
         public void HideLoader()
         {
-        this.Dispatcher.Invoke(() =>
-        {
-            xProcessingImage.Visibility = Visibility.Hidden;
-        });
+            this.Dispatcher.Invoke(() =>
+            {
+                xProcessingImage.Visibility = Visibility.Hidden;
+            });
         }
 
         public void ShowLoader()
         {
-        this.Dispatcher.Invoke(() =>
-        {
-            xProcessingImage.Visibility = Visibility.Visible;
-        });
+            this.Dispatcher.Invoke(() =>
+            {
+                xProcessingImage.Visibility = Visibility.Visible;
+            });
         }
     }
 }

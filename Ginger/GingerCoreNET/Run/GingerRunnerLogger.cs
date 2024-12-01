@@ -59,16 +59,12 @@ namespace Ginger.Run
                 strBuilder.AppendLine("[Input Values]");
                 formatTextTable = new FormatTextTable();
 
-                List<string> colHeaders = new List<string>();
-                colHeaders.Add("Parameter");
-                colHeaders.Add("Value");
+                List<string> colHeaders = ["Parameter", "Value"];
                 formatTextTable.AddRowHeader(colHeaders);
 
                 foreach (ActInputValue actInputValue in logAction.InputValues)
                 {
-                    List<string> colValues = new List<string>();
-                    colValues.Add(actInputValue.ItemName);
-                    colValues.Add(actInputValue.Value);
+                    List<string> colValues = [actInputValue.ItemName, actInputValue.Value];
                     formatTextTable.AddRowValues(colValues);
                 }
                 strBuilder.AppendLine(formatTextTable.FormatLogTable());
@@ -80,18 +76,12 @@ namespace Ginger.Run
                 strBuilder.AppendLine("[Return Values]");
                 formatTextTable = new FormatTextTable();
 
-                List<string> colHeaders = new List<string>();
-                colHeaders.Add("Parameter");
-                colHeaders.Add("Expected");
-                colHeaders.Add("Actual");
+                List<string> colHeaders = ["Parameter", "Expected", "Actual"];
                 formatTextTable.AddRowHeader(colHeaders);
 
                 foreach (ActReturnValue actReturnValue in logAction.ReturnValues)
                 {
-                    List<string> colValues = new List<string>();
-                    colValues.Add(actReturnValue.ItemName);
-                    colValues.Add(actReturnValue.Expected);
-                    colValues.Add(actReturnValue.Actual);
+                    List<string> colValues = [actReturnValue.ItemName, actReturnValue.Expected, actReturnValue.Actual];
                     formatTextTable.AddRowValues(colValues);
                 }
                 strBuilder.AppendLine(formatTextTable.FormatLogTable());

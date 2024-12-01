@@ -23,9 +23,6 @@ using GingerCore.Actions.Common;
 using GingerCore.Drivers.CommunicationProtocol;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 {

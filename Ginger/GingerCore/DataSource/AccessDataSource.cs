@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
-using System.Linq;
 using System.Reflection;
 
 namespace GingerCore.DataSource
@@ -53,7 +52,7 @@ namespace GingerCore.DataSource
             {
                 lock (thisObj)
                 {
-                    ObservableList<DataSourceTable> mDataSourceTableDetails = new ObservableList<DataSourceTable>();
+                    ObservableList<DataSourceTable> mDataSourceTableDetails = [];
                     using (OleDbConnection connObj = new(GetConnectionString("Read")))
                     {
                         if (connObj.State != System.Data.ConnectionState.Open)
@@ -92,8 +91,10 @@ namespace GingerCore.DataSource
         private DataSourceTable CheckDSTableDesign(DataTable dtTable)
         {
             string tablename = dtTable.TableName;
-            DataSourceTable sTableDetail = new DataSourceTable();
-            sTableDetail.Name = tablename;
+            DataSourceTable sTableDetail = new DataSourceTable
+            {
+                Name = tablename
+            };
 
             int iCount = 0;
             int iIdCount = 0;
@@ -101,7 +102,7 @@ namespace GingerCore.DataSource
             foreach (DataColumn column in dtTable.Columns)
             {
 
-                if (column.ToString() == "GINGER_KEY_NAME" || column.ToString() == "GINGER_KEY_VALUE")
+                if (column.ToString() is "GINGER_KEY_NAME" or "GINGER_KEY_VALUE")
                 {
                     iCount++;
                 }
@@ -109,7 +110,7 @@ namespace GingerCore.DataSource
                 {
                     iIdCount++;
                 }
-                else if (column.ToString() == "GINGER_LAST_UPDATE_DATETIME" || column.ToString() == "GINGER_LAST_UPDATED_BY")
+                else if (column.ToString() is "GINGER_LAST_UPDATE_DATETIME" or "GINGER_LAST_UPDATED_BY")
                 {
                     iUpdateCount++;
                 }
@@ -171,7 +172,7 @@ namespace GingerCore.DataSource
             {
                 lock (thisObj)
                 {
-                    List<string> mColumnNames = new List<string>();
+                    List<string> mColumnNames = [];
                     using (OleDbConnection connObj = new(GetConnectionString("Read")))
                     {
                         if (connObj.State != System.Data.ConnectionState.Open)
@@ -328,10 +329,10 @@ namespace GingerCore.DataSource
         {
             if (!TableName.Equals(NewTableName, StringComparison.OrdinalIgnoreCase))
             {
-                if (RunQuery($"SELECT * INTO { NewTableName } FROM { TableName}"))
+                if (RunQuery($"SELECT * INTO {NewTableName} FROM {TableName}"))
                 {
                     // AccessDB does not support renaming table using alter query so we copy data to new table and delete old
-                    DeleteTable(TableName);     
+                    DeleteTable(TableName);
                 }
             }
         }
@@ -375,7 +376,7 @@ namespace GingerCore.DataSource
                             }
                         }
 
-                        updateCommand = updateCommand.Substring(0, updateCommand.Length - 1);
+                        updateCommand = updateCommand[..^1];
                         updateCommand = updateCommand + " where GINGER_ID = " + row["GINGER_ID", DataRowVersion.Original];
                         RunQuery(updateCommand);
                     }
@@ -390,7 +391,7 @@ namespace GingerCore.DataSource
                             }
                         }
 
-                        insertCommand = insertCommand.Substring(0, insertCommand.Length - 1) + ") VALUES (";
+                        insertCommand = insertCommand[..^1] + ") VALUES (";
                         for (int iRow = 0; iRow < row.ItemArray.Length; iRow++)
                         {
                             if (row.Table.Columns[iRow].ColumnName != "GINGER_ID")
@@ -410,7 +411,7 @@ namespace GingerCore.DataSource
                             }
                         }
 
-                        insertCommand = insertCommand.Substring(0, insertCommand.Length - 1) + ");";
+                        insertCommand = insertCommand[..^1] + ");";
 
                         RunQuery(insertCommand);
                     }
@@ -485,7 +486,7 @@ namespace GingerCore.DataSource
             {
                 string colType = mDSTableDetails.DSC.GetTable(mDSTableDetails.Name).Columns[sColName].DataType.ToString();
 
-                if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
+                if (sColName is not "GINGER_ID" and not "GINGER_LAST_UPDATED_BY" and not "GINGER_LAST_UPDATE_DATETIME")
                 {
                     if (colType == "Int32")
                     {
@@ -513,7 +514,7 @@ namespace GingerCore.DataSource
                 DataRow dr = mDSTableDetails.DataTable.NewRow();
                 foreach (string sColName in mColumnNames)
                 {
-                    if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
+                    if (sColName is not "GINGER_ID" and not "GINGER_LAST_UPDATED_BY" and not "GINGER_LAST_UPDATE_DATETIME")
                     {
                         dr[sColName] = row[sColName];
                     }

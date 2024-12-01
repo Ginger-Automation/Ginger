@@ -61,7 +61,7 @@ namespace Amdocs.Ginger.Common.Functionalities
         {
             get
             {
-                return OriginObject.ObjFileExt.Substring(OriginObject.ObjFileExt.IndexOf("Ginger.") + 7);
+                return OriginObject.ObjFileExt[(OriginObject.ObjFileExt.IndexOf("Ginger.") + 7)..];
             }
         }
 
@@ -151,7 +151,7 @@ namespace Amdocs.Ginger.Common.Functionalities
             }
         }
 
-        public List<string> OptionalValuesToRepalce = new List<string>();
+        public List<string> OptionalValuesToRepalce = [];
 
         //public string OriginalFieldValue { get; set; }
 

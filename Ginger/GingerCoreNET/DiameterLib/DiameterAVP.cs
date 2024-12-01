@@ -120,7 +120,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
         }
         private eDiameterAvpDataType mDataType;
-        [IsSerializedForLocalRepository]   
+        [IsSerializedForLocalRepository]
         public eDiameterAvpDataType DataType
         {
             get
@@ -190,7 +190,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         }
         public DiameterAVP()
         {
-            mNestedAvpList = new ObservableList<DiameterAVP>();
+            mNestedAvpList = [];
         }
     }
 }

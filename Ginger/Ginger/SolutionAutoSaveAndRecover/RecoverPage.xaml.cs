@@ -50,7 +50,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
         }
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            mRecoveredItems = new ObservableList<RecoveredItem>();
+            mRecoveredItems = [];
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, null, false);
         }
 
@@ -76,9 +76,11 @@ namespace Ginger.SolutionAutoSaveAndRecover
                             {
                                 try
                                 {
-                                    RecoveredItem recoveredItem = new RecoveredItem();
-                                    recoveredItem.RecoveredItemObject = serializer.DeserializeFromFile(file.FullName);
-                                    recoveredItem.RecoverDate = timestamp;
+                                    RecoveredItem recoveredItem = new RecoveredItem
+                                    {
+                                        RecoveredItemObject = serializer.DeserializeFromFile(file.FullName),
+                                        RecoverDate = timestamp
+                                    };
                                     recoveredItem.RecoveredItemObject.FileName = file.FullName;
                                     recoveredItem.RecoveredItemObject.ContainingFolder = file.FullName.Replace(directory.FullName, "~");
                                     recoveredItem.Status = eRecoveredItemStatus.PendingRecover;
@@ -180,7 +182,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
         {
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             view.GridColsView = viewCols;
 
             view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.Selected), WidthWeight = 3, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
@@ -216,16 +218,20 @@ namespace Ginger.SolutionAutoSaveAndRecover
                 RecoveredItem selectedItem = (RecoveredItem)xRecoveredItemsGrid.Grid.SelectedItem;
                 if (selectedItem.RecoveredItemObject is BusinessFlow)
                 {
-                    GingerWPF.BusinessFlowsLib.BusinessFlowViewPage w = new GingerWPF.BusinessFlowsLib.BusinessFlowViewPage((BusinessFlow)selectedItem.RecoveredItemObject, new Context(), General.eRIPageViewMode.View);
-                    w.Width = 1000;
-                    w.Height = 800;
+                    GingerWPF.BusinessFlowsLib.BusinessFlowViewPage w = new GingerWPF.BusinessFlowsLib.BusinessFlowViewPage((BusinessFlow)selectedItem.RecoveredItemObject, new Context(), General.eRIPageViewMode.View)
+                    {
+                        Width = 1000,
+                        Height = 800
+                    };
                     w.ShowAsWindow();
                 }
                 if (selectedItem.RecoveredItemObject is Run.RunSetConfig)
                 {
-                    Run.NewRunSetPage newRunSetPage = new Run.NewRunSetPage((Run.RunSetConfig)selectedItem.RecoveredItemObject, Run.NewRunSetPage.eEditMode.View);
-                    newRunSetPage.Width = 1000;
-                    newRunSetPage.Height = 800;
+                    Run.NewRunSetPage newRunSetPage = new Run.NewRunSetPage((Run.RunSetConfig)selectedItem.RecoveredItemObject, Run.NewRunSetPage.eEditMode.View)
+                    {
+                        Width = 1000,
+                        Height = 800
+                    };
                     newRunSetPage.ShowAsWindow();
                 }
             }

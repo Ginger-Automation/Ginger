@@ -135,8 +135,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
-            var repoItem = item as RepositoryItemBase;
-            if (repoItem != null)
+            if (item is RepositoryItemBase repoItem)
             {
                 if (!deleteWithoutAsking)
                 {

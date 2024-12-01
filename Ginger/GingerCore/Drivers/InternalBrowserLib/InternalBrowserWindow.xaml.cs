@@ -196,8 +196,10 @@ namespace GingerCore.Drivers
 
         private void AddGoToURLAction()
         {
-            ActGotoURL a = new ActGotoURL();
-            a.LocateBy = eLocateBy.NA;
+            ActGotoURL a = new ActGotoURL
+            {
+                LocateBy = eLocateBy.NA
+            };
             a.AddOrUpdateInputParamValue("Value", txtURL.Text);
             a.Description = "Goto App URL - " + txtURL.Text;
             mBusinessFlow.AddAct(a);
@@ -406,50 +408,52 @@ namespace GingerCore.Drivers
                 return;
             }
 
-            IHTMLElementCollection elements = (IHTMLElementCollection)mDocument.getElementsByTagName("select");
+            IHTMLElementCollection elements = mDocument.getElementsByTagName("select");
             foreach (mshtml.HTMLSelectElement el in elements)
             {
                 h = new DomEventHandler(delegate
                 {
                     if (btnRecord.IsChecked != true)
                     {
-                        ((mshtml.HTMLSelectElement)el).detachEvent("onchange", h);
+                        el.detachEvent("onchange", h);
                     }
                     else
                     {
                         OnListSelected(el, EventArgs.Empty);
-                    } ((mshtml.HTMLSelectElement)el).detachEvent("onchange", h);
+                    }
+                    el.detachEvent("onchange", h);
                 });
 
                 el.attachEvent("onchange", h);
 
             }
-            elements = (IHTMLElementCollection)mDocument.getElementsByTagName("span");
+            elements = mDocument.getElementsByTagName("span");
 
             foreach (mshtml.HTMLSpanElement el in elements)
             {
-                if (((mshtml.HTMLSpanElement)el).innerHTML != null && ((mshtml.HTMLSpanElement)el).innerHTML.IndexOf("<") < 0 && ((mshtml.HTMLSpanElement)el).innerText != null)
+                if (el.innerHTML != null && el.innerHTML.IndexOf("<") < 0 && el.innerText != null)
                 {
                     h = new DomEventHandler(delegate
                     {
                         if (btnRecord.IsChecked != true)
                         {
-                            ((mshtml.HTMLSpanElement)el).detachEvent("onclick", h);
+                            el.detachEvent("onclick", h);
                         }
                         else
                         {
                             OnElementClicked(el, EventArgs.Empty);
-                        } ((mshtml.HTMLSpanElement)el).detachEvent("onclick", h);
+                        }
+                        el.detachEvent("onclick", h);
                     });
 
                     el.attachEvent("onclick", h);
                 }
             }
-            elements = (IHTMLElementCollection)mDocument.getElementsByTagName("div");
+            elements = mDocument.getElementsByTagName("div");
 
             foreach (mshtml.HTMLDivElement el in elements)
             {
-                mshtml.HTMLDivElement div = ((mshtml.HTMLDivElement)el);
+                mshtml.HTMLDivElement div = el;
                 try
                 {
                     var c = div.innerHTML;
@@ -459,12 +463,13 @@ namespace GingerCore.Drivers
                         {
                             if (btnRecord.IsChecked != true)
                             {
-                                ((mshtml.HTMLDivElement)el).detachEvent("onclick", h);
+                                el.detachEvent("onclick", h);
                             }
                             else
                             {
                                 OnDivClicked(el, EventArgs.Empty);
-                            } ((mshtml.HTMLDivElement)el).detachEvent("onclick", h);
+                            }
+                            el.detachEvent("onclick", h);
                         });
 
                         el.attachEvent("onclick", h);
@@ -475,7 +480,7 @@ namespace GingerCore.Drivers
                     //do nothing
                 }
             }
-            elements = (IHTMLElementCollection)mDocument.getElementsByTagName("button");
+            elements = mDocument.getElementsByTagName("button");
 
             foreach (mshtml.HTMLButtonElement el in elements)
             {
@@ -483,16 +488,17 @@ namespace GingerCore.Drivers
                 {
                     if (btnRecord.IsChecked != true)
                     {
-                        ((mshtml.HTMLButtonElement)el).detachEvent("onclick", h);
+                        el.detachEvent("onclick", h);
                     }
                     else
                     {
                         OnBtnClicked(el, EventArgs.Empty);
-                    } ((mshtml.HTMLButtonElement)el).detachEvent("onclick", h);
+                    }
+                    el.detachEvent("onclick", h);
                 });
                 el.attachEvent("onclick", h);
             }
-            elements = (IHTMLElementCollection)mDocument.getElementsByTagName("input");
+            elements = mDocument.getElementsByTagName("input");
 
             foreach (mshtml.HTMLInputElement el in elements)
             {
@@ -508,12 +514,13 @@ namespace GingerCore.Drivers
                             {
                                 if (btnRecord.IsChecked != true)
                                 {
-                                    ((mshtml.HTMLInputElement)el).detachEvent("onclick", h);
+                                    el.detachEvent("onclick", h);
                                 }
                                 else
                                 {
                                     OnButtonClicked(el, EventArgs.Empty);
-                                } ((mshtml.HTMLInputElement)el).detachEvent("onclick", h);
+                                }
+                                el.detachEvent("onclick", h);
                             });
 
                             el.attachEvent("onclick", h);
@@ -526,12 +533,13 @@ namespace GingerCore.Drivers
                             {
                                 if (btnRecord.IsChecked != true)
                                 {
-                                    ((mshtml.HTMLInputElement)el).detachEvent("onclick", h);
+                                    el.detachEvent("onclick", h);
                                 }
                                 else
                                 {
                                     OnSubmitClicked(el, EventArgs.Empty);
-                                } ((mshtml.HTMLInputElement)el).detachEvent("onclick", h);
+                                }
+                                el.detachEvent("onclick", h);
                             });
 
                             el.attachEvent("onclick", h);
@@ -546,12 +554,13 @@ namespace GingerCore.Drivers
                             {
                                 if (btnRecord.IsChecked != true)
                                 {
-                                    ((mshtml.HTMLInputElement)el).detachEvent("onblur", h);
+                                    el.detachEvent("onblur", h);
                                 }
                                 else
                                 {
                                     OnElementLostFocus(el, EventArgs.Empty);
-                                } ((mshtml.HTMLInputElement)el).detachEvent("onblur", h);
+                                }
+                                el.detachEvent("onblur", h);
                             });
 
                             el.attachEvent("onblur", h);
@@ -648,9 +657,11 @@ namespace GingerCore.Drivers
             //To avoid eMenu covers the small elements
             rect.X += 101;
 
-            Thickness marginThickness = new Thickness();
-            marginThickness.Top = rect.Top;
-            marginThickness.Left = rect.Left - 100;
+            Thickness marginThickness = new Thickness
+            {
+                Top = rect.Top,
+                Left = rect.Left - 100
+            };
             bdrEmenu.Margin = marginThickness;
         }
 
@@ -1283,7 +1294,7 @@ namespace GingerCore.Drivers
             // the first one that has a matching attribute/value pair.
             foreach (mshtml.IHTMLElement el in elementCollection)
             {
-                IHTMLElement l = (IHTMLElement)el;
+                IHTMLElement l = el;
                 try
                 {
                     string val = null;
@@ -1299,7 +1310,7 @@ namespace GingerCore.Drivers
                     {
                         if (val == LocateValue)
                         {
-                            return (IHTMLElement)el;
+                            return el;
                         }
                     }
                 }
@@ -1327,7 +1338,7 @@ namespace GingerCore.Drivers
 
             foreach (mshtml.IHTMLElement el in elementsById)
             {
-                IHTMLElement l = (IHTMLElement)el;
+                IHTMLElement l = el;
                 if (String.IsNullOrEmpty(l.innerText))
                 {
                     continue;
@@ -1342,9 +1353,9 @@ namespace GingerCore.Drivers
                         switch (A.ActClass)
                         {
                             case "GingerCore.Actions.ActLink":
-                                if (el.GetType().ToString() != "mshtml.HTMLAnchorElementClass"
-                                    &&
-                                    el.GetType().ToString() != "mshtml.HTMLLinkElementClass")
+                                if (el.GetType().ToString() is not "mshtml.HTMLAnchorElementClass"
+                                    and
+                                    not "mshtml.HTMLLinkElementClass")
                                 {
                                     continue;
                                 }
@@ -1360,11 +1371,11 @@ namespace GingerCore.Drivers
 
                         }
                         iElementsMatchedById++;
-                        currentElementById = (IHTMLElement)el;
+                        currentElementById = el;
 
                         //Go out whenever first element found
                         //TODO: add option of warning when more than one, however for speed we go on the first
-                        return ((IHTMLElement)currentElementById);
+                        return currentElementById;
                     }
                 }
             }
@@ -1379,7 +1390,7 @@ namespace GingerCore.Drivers
                 }
                 else //  just 1 match
                 {
-                    return ((IHTMLElement)currentElementById);
+                    return currentElementById;
                 }
             }
             return null;
@@ -1405,9 +1416,9 @@ namespace GingerCore.Drivers
                 switch (ElementType)
                 {
                     case "GingerCore.Actions.ActLink":
-                        if (e.GetType().ToString() != "mshtml.HTMLAnchorElementClass"
-                            &&
-                            e.GetType().ToString() != "mshtml.HTMLLinkElementClass")
+                        if (e.GetType().ToString() is not "mshtml.HTMLAnchorElementClass"
+                            and
+                            not "mshtml.HTMLLinkElementClass")
                         { continue; }
                         else
                         {
@@ -1476,9 +1487,9 @@ namespace GingerCore.Drivers
                 switch (ElementType)
                 {
                     case "GingerCore.Actions.ActLink":
-                        if (e.GetType().ToString() != "mshtml.HTMLAnchorElementClass"
-                            &&
-                            e.GetType().ToString() != "mshtml.HTMLLinkElementClass")
+                        if (e.GetType().ToString() is not "mshtml.HTMLAnchorElementClass"
+                            and
+                            not "mshtml.HTMLLinkElementClass")
                         { continue; }
                         else
                         {
@@ -1665,9 +1676,12 @@ namespace GingerCore.Drivers
             {
                 if (!String.IsNullOrEmpty(newActivityName))
                 {
-                    Activity a = new Activity() { Active = true };
-                    a.ActivityName = newActivityName;
-                    a.TargetApplication = mBusinessFlow.MainApplication;
+                    Activity a = new Activity
+                    {
+                        Active = true,
+                        ActivityName = newActivityName,
+                        TargetApplication = mBusinessFlow.MainApplication
+                    };
                     mBusinessFlow.Activities.Add(a);
                 }
             }
@@ -1698,8 +1712,7 @@ namespace GingerCore.Drivers
 
         private void RibbonLoaded(object sender, RoutedEventArgs e)
         {
-            Grid child = VisualTreeHelper.GetChild((DependencyObject)sender, 0) as Grid;
-            if (child != null)
+            if (VisualTreeHelper.GetChild((DependencyObject)sender, 0) is Grid child)
             {
                 //hide the ribbon QuickAccessToolBar
                 child.RowDefinitions[0].Height = new GridLength(0);
@@ -2056,12 +2069,12 @@ namespace GingerCore.Drivers
         {
             SetActionButton1(ButtonText: "Validate Value(Ctrl+1)",
                                 Description: "Validate obejct: " + element.innerText,
-                                element: (mshtml.IHTMLElement)element,
+                                element: element,
                                 Expected: element.innerText,
                                                act: new ActGenElement() { GenElementAction = ActGenElement.eGenElementAction.GetInnerText });
             SetActionButton2(ButtonText: "Validate Visibility(Ctrl+2)",
                                Description: "Validate object visible",
-                               element: (mshtml.IHTMLElement)element,
+                               element: element,
                                Expected: "True",
                                                act: new ActGenElement() { GenElementAction = ActGenElement.eGenElementAction.Visible });
         }
@@ -2119,15 +2132,17 @@ namespace GingerCore.Drivers
 
         private void BrowseMHTButton_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new System.Windows.Forms.FolderBrowserDialog();
-            dlg.Description = "Select MHT files folder";
+            var dlg = new System.Windows.Forms.FolderBrowserDialog
+            {
+                Description = "Select MHT files folder"
+            };
 
             string DocsFolder = mBusinessFlow.FileName;
             int i = DocsFolder.IndexOf("BusinessFlows");
             if (i > 0)
             {
                 //TODO: fix me not working shoing the folder of docs
-                DocsFolder = DocsFolder.Substring(0, i) + "Documents";
+                DocsFolder = DocsFolder[..i] + "Documents";
             }
             else
             {
@@ -2263,10 +2278,12 @@ namespace GingerCore.Drivers
             UnLightCurrentHighlightedElement();
             dynamic d = LocateByComboBox.SelectedItem;
             eLocateBy locType = d.Value;
-            ActGenElement act = new ActGenElement();
-            act.LocateBy = locType;
-            act.LocateValue = LocateValueTextBox.Text;
-            act.LocateValueCalculated = LocateValueTextBox.Text;
+            ActGenElement act = new ActGenElement
+            {
+                LocateBy = locType,
+                LocateValue = LocateValueTextBox.Text,
+                LocateValueCalculated = LocateValueTextBox.Text
+            };
             mshtml.IHTMLElement elem = TryGetActElementByLocator(act);
             if (elem != null)
             {
@@ -2488,7 +2505,7 @@ namespace GingerCore.Drivers
 
         public static ObservableList<DeviceEmulation> DevicesForEmulation()
         {
-            ObservableList<DeviceEmulation> Devices = new ObservableList<DeviceEmulation>();
+            ObservableList<DeviceEmulation> Devices = [];
 
             string devicelistpath = Directory.GetCurrentDirectory() + @"\Device.xml";
             Devices = (ObservableList<DeviceEmulation>)RepositoryItem.LoadFromFile(typeof(ObservableList<DeviceEmulation>), devicelistpath);

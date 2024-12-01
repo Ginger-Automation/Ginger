@@ -296,7 +296,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             else
             {
                 //if search is already complete and user trying to clear text we collapse the unselected nodes
-                List<TreeViewItem> pathNodes = new List<TreeViewItem>();
+                List<TreeViewItem> pathNodes = [];
                 if (xTreeViewTree.LastSelectedTVI != null)
                 {
                     pathNodes = UCTreeView.getSelecetdItemPathNodes(xTreeViewTree.LastSelectedTVI);

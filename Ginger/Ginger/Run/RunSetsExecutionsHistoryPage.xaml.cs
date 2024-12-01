@@ -62,7 +62,7 @@ namespace Ginger.Run
 
         private readonly RunsetFromReportLoader _runsetFromReportLoader;
 
-        ObservableList<RunSetReport> mExecutionsHistoryList = new ObservableList<RunSetReport>();
+        ObservableList<RunSetReport> mExecutionsHistoryList = [];
         ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
 
         private HttpClient? _httpClient;
@@ -176,7 +176,7 @@ namespace Ginger.Run
                 else
                 {
                     isGraphQlClinetConfigure = false;
-                    return false; 
+                    return false;
                 }
 
             }
@@ -222,7 +222,7 @@ namespace Ginger.Run
         {
             xButtonPnl.Visibility = Visibility.Visible;
             GraphQlLoadingVisible();
-            if (SetExectionHistoryVisibility(execLoggerConfig)&&AssignGraphQLObjectEndPoint())
+            if (SetExectionHistoryVisibility(execLoggerConfig) && AssignGraphQLObjectEndPoint())
             {
                 await LoadExecutionsHistoryDataGraphQl();
             }
@@ -278,15 +278,15 @@ namespace Ginger.Run
         {
             execLoggerConfig = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(c => c.IsSelected);
             ReloadExecutionHistoryData();
-            
+
         }
         /// <summary>
         /// Reloads the data for the RunSetsExecutionsHistoryPage.
         /// </summary>
         public void ReloadExecutionHistoryData()
         {
-            
-            if (AssignGraphQLObjectEndPoint()&&SetExectionHistoryVisibility(execLoggerConfig) )
+
+            if (AssignGraphQLObjectEndPoint() && SetExectionHistoryVisibility(execLoggerConfig))
             {
                 remoteRadioButton.IsChecked = true;
                 remoteRadioButton.IsEnabled = true;
@@ -312,8 +312,9 @@ namespace Ginger.Run
             xPageSizeComboBox.Items.Add(25);
             xPageSizeComboBox.Items.Add(50);
             xPageSizeComboBox.Items.Add(100);
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView =
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
             [
                 new() {
                     Field = nameof(RunSetReport.GUID),
@@ -376,7 +377,8 @@ namespace Ginger.Run
                     StyleType = GridColView.eGridColStyleType.Template,
                     CellTemplate = GetActionsDataTemplate()
                 }
-            ];
+            ]
+            };
 
             xGridExecutionsHistory.SetAllColumnsDefaultView(view);
             xGridExecutionsHistory.InitViewItems();
@@ -479,8 +481,10 @@ namespace Ginger.Run
 
                         foreach (var runSet in runSetDataColl)
                         {
-                            RunSetReport runSetReport = new RunSetReport();
-                            runSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
+                            RunSetReport runSetReport = new RunSetReport
+                            {
+                                DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB
+                            };
                             runSetReport.SetLiteDBData(runSet);
                             mExecutionsHistoryList.Add(runSetReport);
                         }
@@ -514,7 +518,7 @@ namespace Ginger.Run
         /// </summary>
         void SetContentInGrid()
         {
-            ObservableList<RunSetReport> executionsHistoryListSortedByDate = new ObservableList<RunSetReport>();
+            ObservableList<RunSetReport> executionsHistoryListSortedByDate = [];
             if (mExecutionsHistoryList != null && mExecutionsHistoryList.Count > 0)
             {
                 IEnumerable<RunSetReport> sortedAndFilteredExecutionHistoryList = mExecutionsHistoryList
@@ -999,7 +1003,7 @@ namespace Ginger.Run
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, $"error while capturing '{FeatureId.ExportRunSetExecutionHistoryBPMN}' feature metadata", ex);
                     }
-                    
+
                     foreach (ExecutedBusinessFlow executedBusinessFlow in executedBusinessFlows)
                     {
                         try
@@ -1108,7 +1112,7 @@ namespace Ginger.Run
             bool wasAllAdded = false;
             Dispatcher.Invoke(() =>
             {
-                List<UploadItemSelection> uploadItems = new();
+                List<UploadItemSelection> uploadItems = [];
                 foreach (var bfActivitiesPair in bfActivities)
                 {
                     BusinessFlow bf = bfActivitiesPair.Item1;

@@ -33,7 +33,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 {
     public class DatabaseListViewHelper : IListViewHelper
     {
-        private readonly ObservableList<IDatabase> Databases = new ObservableList<IDatabase>();
+        private readonly ObservableList<IDatabase> Databases = [];
         private readonly Context mContext;
 
         public delegate void DatabaseListItemEventHandler(ListItemEventArgs EventArgs);
@@ -47,13 +47,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
         }
 
-        public DatabaseListViewHelper(ObservableList<IDatabase> Databases, Context context) 
+        public DatabaseListViewHelper(ObservableList<IDatabase> Databases, Context context)
         {
             this.Databases = Databases;
             this.mContext = context;
         }
         private UcListView mListView = null;
-        public UcListView ListView {
+        public UcListView ListView
+        {
             get
             {
                 return mListView;
@@ -64,7 +65,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
         }
 
-        public General.eRIPageViewMode PageViewMode { get; set ; }
+        public General.eRIPageViewMode PageViewMode { get; set; }
         public bool AllowExpandItems { get; set; } = true;
         public bool ExpandItemOnLoad { get; set; } = true;
 
@@ -157,44 +158,50 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public List<ListItemOperation> GetItemOperationsList(object item)
         {
-            List<ListItemOperation> operationsList = new List<ListItemOperation>();
+            List<ListItemOperation> operationsList = [];
 
-            ListItemOperation testDatabase = new ListItemOperation();
-            testDatabase.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            testDatabase.AutomationID = "test";
-            testDatabase.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Run;
-            testDatabase.ToolTip = "Test Database";
-            testDatabase.OperationHandler = TestDatabase;
+            ListItemOperation testDatabase = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "test",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Run,
+                ToolTip = "Test Database",
+                OperationHandler = TestDatabase
+            };
             operationsList.Add(testDatabase);
 
-            ListItemOperation editDB = new ListItemOperation();
-            editDB.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            editDB.AutomationID = "edit";
-            editDB.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
-            editDB.ToolTip = "Edit Database";
-            editDB.OperationHandler = EditDatabase;
+            ListItemOperation editDB = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "edit",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit,
+                ToolTip = "Edit Database",
+                OperationHandler = EditDatabase
+            };
             operationsList.Add(editDB);
 
-            ListItemOperation deleteDB = new ListItemOperation();
-            deleteDB.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            deleteDB.AutomationID = "edit";
-            deleteDB.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-            deleteDB.ToolTip = "Delete Database";
-            deleteDB.OperationHandler = DeleteDatabase;
+            ListItemOperation deleteDB = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "edit",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete,
+                ToolTip = "Delete Database",
+                OperationHandler = DeleteDatabase
+            };
             operationsList.Add(deleteDB);
             return operationsList;
         }
 
         private void DeleteDatabase(object sender, RoutedEventArgs e)
         {
-            if(sender == null)
+            if (sender == null)
             {
                 return;
             }
 
             Database database = (Database)((ucButton)sender).Tag;
 
-            if(database == null)
+            if (database == null)
             {
                 return;
             }
@@ -209,7 +216,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void EditDatabase(object sender, RoutedEventArgs e)
         {
-            if(sender == null)
+            if (sender == null)
             {
                 return;
             }
@@ -217,7 +224,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
             Database? database = (Database)((ucButton)sender).Tag;
 
-            if(database == null)
+            if (database == null)
             {
                 return;
             }
@@ -235,7 +242,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
             try
             {
-                
+
                 db.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                 db.ProjEnvironment = mContext.Environment;
                 db.BusinessFlow = null;
@@ -266,7 +273,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
                     }
                 }
-                Reporter.ToLog(eLogLevel.ERROR,ex.Message,ex);
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
 
             db.TestConnectionStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
@@ -307,7 +314,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public List<ListItemOperation> GetListOperations()
         {
-            List<ListItemOperation> operationsList = new List<ListItemOperation>();
+            List<ListItemOperation> operationsList = [];
 
 
             if (mContext.Environment.GOpsFlag)
@@ -315,28 +322,34 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 return operationsList;
             }
 
-            ListItemOperation addNew = new ListItemOperation();
-            addNew.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            addNew.AutomationID = "addNew";
-            addNew.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
-            addNew.ToolTip = "Add New Database";
-            addNew.OperationHandler = AddNewHandler;
+            ListItemOperation addNew = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "addNew",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add,
+                ToolTip = "Add New Database",
+                OperationHandler = AddNewHandler
+            };
             operationsList.Add(addNew);
 
-            ListItemOperation deleteSelected = new ListItemOperation();
-            deleteSelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            deleteSelected.AutomationID = "deleteSelected";
-            deleteSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-            deleteSelected.ToolTip = "Delete Selected Database (Del)";
-            deleteSelected.OperationHandler = DeleteDBs;
+            ListItemOperation deleteSelected = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "deleteSelected",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete,
+                ToolTip = "Delete Selected Database (Del)",
+                OperationHandler = DeleteDBs
+            };
             operationsList.Add(deleteSelected);
 
-            ListItemOperation testAllDatabases = new ListItemOperation();
-            testAllDatabases.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            testAllDatabases.AutomationID = "testAllDatabases";
-            testAllDatabases.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Run;
-            testAllDatabases.ToolTip = "Test All Databases";
-            testAllDatabases.OperationHandler = TestAllDatabases;
+            ListItemOperation testAllDatabases = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "testAllDatabases",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Run,
+                ToolTip = "Test All Databases",
+                OperationHandler = TestAllDatabases
+            };
 
             operationsList.Add(testAllDatabases);
 
@@ -363,7 +376,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (Reporter.ToUser(eUserMsgKey.DeleteSelectedDB) == eUserMsgSelection.Yes)
             {
                 var dbList = ListView.List.SelectedItems.Cast<Database>().ToList();
-                for(int indx = 0; indx< dbList.Count; indx++)
+                for (int indx = 0; indx < dbList.Count; indx++)
                 {
                     Databases.Remove(dbList[indx]);
                 }
@@ -380,7 +393,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public void DbPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Database db = (Database)sender;
-            if (db.DBType != Database.eDBTypes.Cassandra && db.DBType != Database.eDBTypes.Couchbase && db.DBType != Database.eDBTypes.MongoDb)
+            if (db.DBType is not Database.eDBTypes.Cassandra and not Database.eDBTypes.Couchbase and not Database.eDBTypes.MongoDb)
             {
                 if (e.PropertyName == nameof(Database.TNS))
                 {
@@ -389,10 +402,10 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                         db.DatabaseOperations.SplitUserIdPassFromTNS();
                     }
                 }
-                if (e.PropertyName == nameof(Database.TNS) 
-                    || e.PropertyName == nameof(Database.User) 
-                    || e.PropertyName == nameof(Database.Pass) 
-                    || e.PropertyName == nameof(Database.Name))
+                if (e.PropertyName is (nameof(Database.TNS))
+                    or (nameof(Database.User))
+                    or (nameof(Database.Pass))
+                    or (nameof(Database.Name)))
                 {
                     db.DatabaseOperations.CreateConnectionString();
                 }

@@ -14,8 +14,9 @@
             </StackPanel>
             <StackPanel Orientation="Vertical" >
                 <StackPanel x:Name="InterpreterPathPanel" Visibility="Collapsed" Orientation="Horizontal" >
-                    <Label x:Name="ScriptInterpreterLabel" Style="{StaticResource @InputFieldLabelStyle}"  Width="250" Height="35">Script Interpreter Path</Label>
-                    <Actions:UCFileBrowser HorizontalAlignment="Left" x:Name="ScriptInterPreter"  Width="370"/>
+                    <Label x:Name="ScriptInterpreterLabel" Style="{StaticResource @InputFieldLabelStyle}"  Width="250" Height="35">Script Interpreter Path</Label> 
+                    <Actions:UCValueExpression x:Name="xVScriptInterPreter"  ToolTip="Select Interpreter according to script." Width="370"/>
+                    
                 </StackPanel>
                 <StackPanel x:Name="ScriptActionPanel" Visibility="Visible"  Orientation="Horizontal">
                     <Label Style="{StaticResource @InputFieldLabelStyle}"  Height="35" Width="250">Script Action</Label>

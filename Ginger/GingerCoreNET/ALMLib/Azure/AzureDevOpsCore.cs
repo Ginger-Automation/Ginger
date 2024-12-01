@@ -22,11 +22,11 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.ALMLib.Azure;
 using Amdocs.Ginger.CoreNET.ALMLib.DataContract;
 using Amdocs.Ginger.Repository;
+using Applitools.Utils;
 using AzureRepositoryStd;
 using AzureRepositoryStd.BLL;
 using GingerCore.Activities;
 using GingerCore.Environments;
-using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -123,7 +123,7 @@ namespace GingerCore.ALM
 
         public Dictionary<string, string> AzureProjectList()
         {
-            dynamic list = AzureDevOpsRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMPassword);
+            dynamic list = AzureDevOpsManager.GetProjectsList(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMPassword);
             Dictionary<string, string> listOfItems = [];
             if (list.DataResult is null)
             {
@@ -147,27 +147,9 @@ namespace GingerCore.ALM
             {
 
                 Dictionary<Guid, string> defectsOpeningResults = [];
-                List<string> screenshots = [];
                 foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
                 {
-                    string summaryValue = defectForOpening.Value.ContainsKey("Summary") ? defectForOpening.Value["Summary"] : string.Empty;
-                    if (!string.IsNullOrEmpty(summaryValue))
-                    {
-                        string defectId = CheckIfDefectExist(summaryValue);
-                        if (!string.IsNullOrEmpty(defectId))
-                        {
-                            defectsOpeningResults.Add(defectForOpening.Key, defectId);
-                            continue;
-                        }
-                        else
-                        {
-                            string paths = defectForOpening.Value.ContainsKey("screenshots") ? defectForOpening.Value["screenshots"] : string.Empty;
-                            screenshots.Add(paths);
-                        }
-                    }
-
-                    defectsOpeningResults.Add(defectForOpening.Key, CreateDefectData(defectForOpening).Id.ToString());
-
+                    defectsOpeningResults.Add(defectForOpening.Key, CreateOrUpdateDefectData(defectForOpening).Id.ToString());
                 }
                 return defectsOpeningResults;
             }
@@ -179,15 +161,29 @@ namespace GingerCore.ALM
             }
         }
 
-        private static WorkItem CreateDefectData(KeyValuePair<Guid, Dictionary<string, string>> defectForOpening)
+        private static WorkItem CreateOrUpdateDefectData(KeyValuePair<Guid, Dictionary<string, string>> defectForOpening)
         {
             try
             {
+                string tempDefectId = string.Empty;
+
+                string summaryValue = defectForOpening.Value.ContainsKey("Summary") ? defectForOpening.Value["Summary"] : string.Empty;
+                if (!string.IsNullOrEmpty(summaryValue))
+                {
+                    string defectId = CheckIfDefectExist(summaryValue);
+                    if (!string.IsNullOrEmpty(defectId))
+                    {
+                        tempDefectId = defectId;
+                    }
+                }
+
                 LoginDTO login = GetLoginDTO();
 
                 VssConnection connection = AzureDevOpsRepository.LoginAzure(login);
 
                 WorkItemTrackingHttpClient workItemTrackingClient = connection.GetClient<WorkItemTrackingHttpClient>();
+
+                Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem newWorkItem = null;
 
                 JsonPatchDocument patchDocument =
                 [
@@ -207,7 +203,14 @@ namespace GingerCore.ALM
 
                 patchDocument = AddAttachmentsToDefect(patchDocument, defectForOpening, workItemTrackingClient);
 
-                Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem newWorkItem = workItemTrackingClient.CreateWorkItemAsync(patchDocument, login.Project, "Bug").Result;
+                if (!string.IsNullOrEmpty(tempDefectId))
+                {
+                    newWorkItem = workItemTrackingClient.UpdateWorkItemAsync(patchDocument,tempDefectId.ToInt32()).Result;
+                }
+                else
+                {
+                    newWorkItem = workItemTrackingClient.CreateWorkItemAsync(patchDocument, login.Project, AzureDevOpsManager.WorkItemTypeEnum.Bug.ToString()).Result;
+                }
 
                 return newWorkItem;
             }
@@ -398,13 +401,13 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType = ResourceType.ALL)
         {
-            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> fields = [];
             LoginDTO _loginDto = GetLoginDTO();
 
             string[] witType = ["Test Case", "Test Suite", "Test Plan"];
             foreach (var i in witType)
             {
-                List<WorkItemTypeFieldWithReferences> listnodes = AzureDevOpsRepository.GetListNodes(_loginDto, i);
+                List<WorkItemTypeFieldWithReferences> listnodes = AzureDevOpsManager.GetListNodes(_loginDto, i);
                 ExtractFields(fields, i, listnodes);
             }
 
@@ -658,10 +661,12 @@ namespace GingerCore.ALM
             JsonPatchDocument json = [];
 
             // create a title field
-            JsonPatchOperation patchDocument1 = new JsonPatchOperation();
-            patchDocument1.Operation = Operation.Add;
-            patchDocument1.Path = "/fields/System.Title";
-            patchDocument1.Value = ag.Name;
+            JsonPatchOperation patchDocument1 = new JsonPatchOperation
+            {
+                Operation = Operation.Add,
+                Path = "/fields/System.Title",
+                Value = ag.Name
+            };
             json.Add(patchDocument1);
 
             // add test steps in json
@@ -838,7 +843,7 @@ namespace GingerCore.ALM
 
         public List<AzureTestPlan> GetTestSetExplorer(string PathNode)
         {
-            List<AzureTestPlan> testlabPathList = new List<AzureTestPlan>();
+            List<AzureTestPlan> testlabPathList = [];
             Dictionary<string, List<string>> listoftestPlans = GetTestPlan();
             foreach (var testset in listoftestPlans)
             {

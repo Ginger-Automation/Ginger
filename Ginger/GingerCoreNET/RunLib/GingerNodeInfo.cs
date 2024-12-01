@@ -69,7 +69,7 @@ namespace GingerCoreNET.RunLib
 
         public bool IsAlive()
         {
-            GingerNodeInfo gingerNodeInfo = WorkSpace.Instance.LocalGingerGrid.NodeList.FirstOrDefault(x=> x == this);
+            GingerNodeInfo gingerNodeInfo = WorkSpace.Instance.LocalGingerGrid.NodeList.FirstOrDefault(x => x == this);
             if (gingerNodeInfo != null)
             {
                 return true;

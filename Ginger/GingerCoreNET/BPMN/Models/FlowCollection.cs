@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +28,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
 
         public FlowCollection()
         {
-            _items = new();
+            _items = [];
         }
 
         public bool Add(Flow flow)

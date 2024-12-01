@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -28,8 +28,10 @@ namespace Amdocs.Ginger.Repository
     {
         public static explicit operator ActInputValue(string Value)
         {
-            ActInputValue AIV = new ActInputValue();
-            AIV.Value = Value;
+            ActInputValue AIV = new ActInputValue
+            {
+                Value = Value
+            };
             return AIV;
         }
 
@@ -223,6 +225,38 @@ namespace Amdocs.Ginger.Repository
                 return this.Param;
             }
         }
+
+        /// <summary>
+        /// Compares this instance with another ActInputValue instance for equality.
+        /// </summary>
+        /// <param name="other">The other ActInputValue instance to compare with.</param>
+        /// <returns>True if both instances are equal; otherwise, false.</returns>
+        public bool AreEqual(ActInputValue other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return this.Param == other.Param &&
+                    this.Value == other.Value;
+        }
+
+        /// <summary>
+        /// Compares this instance with another object for equality.
+        /// </summary>
+        /// <param name="obj">The object to compare with.</param>
+        /// <returns>True if the object is an ActInputValue instance and both instances are equal; otherwise, false.</returns>
+        public bool AreEqual(object obj)
+        {
+            if (obj == null || obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+
+            return Equals(obj as ActInputValue);
+        }
+
 
     }
 }

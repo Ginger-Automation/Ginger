@@ -87,8 +87,8 @@ namespace GingerCore.ALM.JIRA
 
         internal Dictionary<string, string> GetJiraDomainProjects()
         {
-            Dictionary<string, string> jiraProjects = new Dictionary<string, string>();
-            List<ProjectArea> currentDomainProject = new List<ProjectArea>();
+            Dictionary<string, string> jiraProjects = [];
+            List<ProjectArea> currentDomainProject = [];
             if (jiraDomainsProjectsDataList == null)
             {
                 GetJiraDomains();
@@ -105,7 +105,7 @@ namespace GingerCore.ALM.JIRA
         {
             LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
             jiraDomainsProjectsDataList = jiraRepositoryObj.GetLoginProjects(loginData.User, loginData.Password, loginData.Server).DataResult;
-            List<string> jiraDomains = new List<string>();
+            List<string> jiraDomains = [];
             foreach (var domain in jiraDomainsProjectsDataList)
             {
                 if (!domain.DomainName.Equals(String.Empty))

@@ -58,37 +58,46 @@ namespace UnitTests.UITests
             mGR = new GingerRunner();
             mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
-            mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "BF Test Screen Shot Action";
-            mBF.Active = true;
+            mBF = new BusinessFlow
+            {
+                Activities = [],
+                Name = "BF Test Screen Shot Action",
+                Active = true
+            };
 
             Activity activity = new Activity();
             mBF.Activities.Add(activity);
             mBF.CurrentActivity = activity;
 
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.Web
+            };
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "WebApp" });
             mBF.CurrentActivity.TargetApplication = "WebApp";
-            mDriver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome);
-            mDriver.AutoDetect = true;
-            mDriver.HttpServerTimeOut = 60;
+            mDriver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome)
+            {
+                AutoDetect = true,
+                HttpServerTimeOut = 60
+            };
             mDriver.StartDriver();
 
-            Agent a = new Agent();
-            a.Active = true;
+            Agent a = new Agent
+            {
+                Active = true
+            };
             ((AgentOperations)a.AgentOperations).Driver = mDriver;
             a.DriverType = Agent.eDriverType.Selenium;
             DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: nameof(WebBrowserType.Chrome));
             browserTypeParam.Value = nameof(WebBrowserType.Chrome);
 
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [a];
 
-            ApplicationAgent AA = new ApplicationAgent();
-            AA.AppName = "WebApp";
-            AA.Agent = a;
+            ApplicationAgent AA = new ApplicationAgent
+            {
+                AppName = "WebApp",
+                Agent = a
+            };
 
             mGR.ApplicationAgents.Add(AA);
             mGR.Executor.CurrentBusinessFlow = mBF;
@@ -124,11 +133,13 @@ namespace UnitTests.UITests
         public void TakeScreenShotAction()
         {
             //Arrange
-            ActScreenShot action = new ActScreenShot();
-            action.SaveToFileName = TestResources.GetTestResourcesFolder("ScreenShot");
-            action.TakeScreenShot = true;
-            action.Active = true;
-            action.WindowsToCapture = Act.eWindowsToCapture.OnlyActiveWindow;
+            ActScreenShot action = new ActScreenShot
+            {
+                SaveToFileName = TestResources.GetTestResourcesFolder("ScreenShot"),
+                TakeScreenShot = true,
+                Active = true,
+                WindowsToCapture = Act.eWindowsToCapture.OnlyActiveWindow
+            };
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
@@ -161,8 +172,10 @@ namespace UnitTests.UITests
         {
             //Arrange
             string inputURL = "www.gmail.com";
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", inputURL);
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
@@ -182,14 +195,21 @@ namespace UnitTests.UITests
         public void GetBrowserLogTest()
         {
             //arrange
-            ActBrowserElement actBrowser = new ActBrowserElement() { Active = true };
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                Active = true,
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.GetOrCreateInputParam("Value", "www.facebook.com");
 
             mGR.Executor.CurrentBusinessFlow.CurrentActivity.Acts.Add(actBrowser);
 
-            ActBrowserElement actBrowser2 = new ActBrowserElement() { Active = true, AddNewReturnParams = true };
-            actBrowser2.ControlAction = ActBrowserElement.eControlAction.GetBrowserLog;
+            ActBrowserElement actBrowser2 = new ActBrowserElement
+            {
+                Active = true,
+                AddNewReturnParams = true,
+                ControlAction = ActBrowserElement.eControlAction.GetBrowserLog
+            };
             mGR.Executor.CurrentBusinessFlow.CurrentActivity.Acts.Add(actBrowser2);
 
             //act
@@ -202,9 +222,11 @@ namespace UnitTests.UITests
 
         public ActBrowserElement ValidatePageURL()
         {
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GetPageURL;
-            actBrowser.AddNewReturnParams = true;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GetPageURL,
+                AddNewReturnParams = true
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -217,8 +239,10 @@ namespace UnitTests.UITests
         public void GotoURLWithNewTab()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", "www.gmail.com");
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewTab.ToString());
@@ -239,8 +263,10 @@ namespace UnitTests.UITests
         public void GotoURLWithNewWindow()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", "www.gmail.com");
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewWindow.ToString());
@@ -262,20 +288,26 @@ namespace UnitTests.UITests
         public void CloseAll()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", "www.gmail.com");
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewTab.ToString());
 
-            ActBrowserElement actBrowser1 = new ActBrowserElement();
-            actBrowser1.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser1 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser1.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser1.GetOrCreateInputParam("Value", "https://opensource-demo.orangehrmlive.com/");
             actBrowser1.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewTab.ToString());
 
-            ActBrowserElement actBrowser2 = new ActBrowserElement();
-            actBrowser2.ControlAction = ActBrowserElement.eControlAction.CloseAll;
+            ActBrowserElement actBrowser2 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.CloseAll
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -295,22 +327,28 @@ namespace UnitTests.UITests
         public void CloseTabExceptByURL()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", "www.gmail.com");
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewTab.ToString());
 
-            ActBrowserElement actBrowser1 = new ActBrowserElement();
-            actBrowser1.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser1 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser1.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser1.GetOrCreateInputParam("Value", "https://opensource-demo.orangehrmlive.com/");
             actBrowser1.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewTab.ToString());
 
-            ActBrowserElement actBrowser2 = new ActBrowserElement();
-            actBrowser2.ControlAction = ActBrowserElement.eControlAction.CloseTabExcept;
-            actBrowser2.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByUrl;
-            actBrowser2.LocateValue = "https://opensource-demo.orangehrmlive.com/";
+            ActBrowserElement actBrowser2 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.CloseTabExcept,
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByUrl,
+                LocateValue = "https://opensource-demo.orangehrmlive.com/"
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -330,22 +368,28 @@ namespace UnitTests.UITests
         public void CloseTabExceptByTitle()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", "www.gmail.com");
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewTab.ToString());
 
-            ActBrowserElement actBrowser1 = new ActBrowserElement();
-            actBrowser1.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser1 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser1.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser1.GetOrCreateInputParam("Value", "https://opensource-demo.orangehrmlive.com/");
             actBrowser1.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewTab.ToString());
 
-            ActBrowserElement actBrowser2 = new ActBrowserElement();
-            actBrowser2.ControlAction = ActBrowserElement.eControlAction.CloseTabExcept;
-            actBrowser2.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByTitle;
-            actBrowser2.LocateValue = "OrangeHRM";
+            ActBrowserElement actBrowser2 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.CloseTabExcept,
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByTitle,
+                LocateValue = "OrangeHRM"
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -364,9 +408,11 @@ namespace UnitTests.UITests
         public void GetPageSource()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GetPageSource;
-            actBrowser.AddNewReturnParams = true;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GetPageSource,
+                AddNewReturnParams = true
+            };
             //Act
             mGR.Executor.RunAction(actBrowser, false);
 
@@ -379,9 +425,11 @@ namespace UnitTests.UITests
         public void GetPageURL()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GetPageURL;
-            actBrowser.AddNewReturnParams = true;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GetPageURL,
+                AddNewReturnParams = true
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -395,15 +443,19 @@ namespace UnitTests.UITests
         public void GetWindowTitle()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", "https://opensource-demo.orangehrmlive.com/");
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
 
-            ActBrowserElement actBrowser1 = new ActBrowserElement();
-            actBrowser1.ControlAction = ActBrowserElement.eControlAction.GetWindowTitle;
-            actBrowser1.AddNewReturnParams = true;
+            ActBrowserElement actBrowser1 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GetWindowTitle,
+                AddNewReturnParams = true
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -418,13 +470,17 @@ namespace UnitTests.UITests
         public void MaximizeWindow()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", "www.gmail.com");
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewWindow.ToString());
-            ActBrowserElement actBrowser1 = new ActBrowserElement();
-            actBrowser1.ControlAction = ActBrowserElement.eControlAction.Maximize;
+            ActBrowserElement actBrowser1 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.Maximize
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -439,18 +495,24 @@ namespace UnitTests.UITests
         public void NevigateBack()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", "https://opensource-demo.orangehrmlive.com/");
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
 
-            ActBrowserElement actBrowser1 = new ActBrowserElement();
-            actBrowser1.ControlAction = ActBrowserElement.eControlAction.NavigateBack;
+            ActBrowserElement actBrowser1 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.NavigateBack
+            };
 
-            ActBrowserElement actBrowser2 = new ActBrowserElement();
-            actBrowser2.ControlAction = ActBrowserElement.eControlAction.GetWindowTitle;
-            actBrowser2.AddNewReturnParams = true;
+            ActBrowserElement actBrowser2 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GetWindowTitle,
+                AddNewReturnParams = true
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -466,8 +528,10 @@ namespace UnitTests.UITests
         public void OpenURLInNewTab()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.OpenURLNewTab;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.OpenURLNewTab
+            };
             actBrowser.GetOrCreateInputParam("Value", "www.gmail.com");
 
             //Act
@@ -485,8 +549,10 @@ namespace UnitTests.UITests
         public void Refresh()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.Refresh;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.Refresh
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -499,14 +565,18 @@ namespace UnitTests.UITests
         public void RunJavaScript()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", "www.google.com");
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewWindow.ToString());
 
-            ActBrowserElement actBrowser1 = new ActBrowserElement();
-            actBrowser1.ControlAction = ActBrowserElement.eControlAction.RunJavaScript;
+            ActBrowserElement actBrowser1 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.RunJavaScript
+            };
             actBrowser1.GetOrCreateInputParam("Value", "document.getElementById('hplogo');");
             actBrowser1.AddNewReturnParams = true;
 
@@ -524,14 +594,18 @@ namespace UnitTests.UITests
         public void InjectJavaScript()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", "www.google.com");
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewWindow.ToString());
 
-            ActBrowserElement actBrowser1 = new ActBrowserElement();
-            actBrowser1.ControlAction = ActBrowserElement.eControlAction.InjectJS;
+            ActBrowserElement actBrowser1 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.InjectJS
+            };
             actBrowser1.GetOrCreateInputParam("Value", "document.getElementById('hplogo');");
             actBrowser1.AddNewReturnParams = true;
 
@@ -549,18 +623,24 @@ namespace UnitTests.UITests
         public void WaitTillPageLoaded()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", "https://ginger.amdocs.com/");
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
 
-            ActBrowserElement actBrowser1 = new ActBrowserElement();
-            actBrowser1.ControlAction = ActBrowserElement.eControlAction.CheckPageLoaded;
+            ActBrowserElement actBrowser1 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.CheckPageLoaded
+            };
 
-            ActBrowserElement actBrowser2 = new ActBrowserElement();
-            actBrowser2.ControlAction = ActBrowserElement.eControlAction.GetWindowTitle;
-            actBrowser2.AddNewReturnParams = true;
+            ActBrowserElement actBrowser2 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GetWindowTitle,
+                AddNewReturnParams = true
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -576,20 +656,26 @@ namespace UnitTests.UITests
         public void SwitchWindowUsingGoToURL()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", "https://www.google.co.in/?gws_rd=ssl");
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
 
-            ActBrowserElement actBrowser1 = new ActBrowserElement();
-            actBrowser1.ControlAction = ActBrowserElement.eControlAction.SwitchWindow;
-            actBrowser1.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByTitle;
-            actBrowser1.LocateValue = "Google";
+            ActBrowserElement actBrowser1 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.SwitchWindow,
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByTitle,
+                LocateValue = "Google"
+            };
 
-            ActBrowserElement actBrowser2 = new ActBrowserElement();
-            actBrowser2.ControlAction = ActBrowserElement.eControlAction.GetWindowTitle;
-            actBrowser2.AddNewReturnParams = true;
+            ActBrowserElement actBrowser2 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GetWindowTitle,
+                AddNewReturnParams = true
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -606,27 +692,35 @@ namespace UnitTests.UITests
         public void SwitchWindowByIndex()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", "www.google.com");
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
 
-            ActBrowserElement actBrowser1 = new ActBrowserElement();
-            actBrowser1.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser1 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser1.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser1.GetOrCreateInputParam("Value", "www.gmail.com");
             actBrowser1.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewTab.ToString());
 
-            ActBrowserElement actBrowser2 = new ActBrowserElement();
-            actBrowser2.ControlAction = ActBrowserElement.eControlAction.SwitchWindow;
-            actBrowser2.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByIndex;
-            actBrowser2.LocateValue = "1";
+            ActBrowserElement actBrowser2 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.SwitchWindow,
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByIndex,
+                LocateValue = "1"
+            };
 
             //validation
-            ActBrowserElement actBrowser3 = new ActBrowserElement();
-            actBrowser3.ControlAction = ActBrowserElement.eControlAction.GetWindowTitle;
-            actBrowser3.AddNewReturnParams = true;
+            ActBrowserElement actBrowser3 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GetWindowTitle,
+                AddNewReturnParams = true
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -643,20 +737,26 @@ namespace UnitTests.UITests
         [TestMethod]
         public void SwitchWindowAction()
         {
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", "https://www.google.co.in/?gws_rd=ssl");
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
 
-            ActSwitchWindow actSwitchWindow = new ActSwitchWindow();
-            actSwitchWindow.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByTitle;
-            actSwitchWindow.LocateValue = "Google";
+            ActSwitchWindow actSwitchWindow = new ActSwitchWindow
+            {
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByTitle,
+                LocateValue = "Google"
+            };
             actSwitchWindow.GetOrCreateInputParam(ActSwitchWindow.Fields.WaitTime, "10");
 
-            ActBrowserElement actBrowser1 = new ActBrowserElement();
-            actBrowser1.ControlAction = ActBrowserElement.eControlAction.GetWindowTitle;
-            actBrowser1.AddNewReturnParams = true;
+            ActBrowserElement actBrowser1 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GetWindowTitle,
+                AddNewReturnParams = true
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -672,31 +772,41 @@ namespace UnitTests.UITests
         public void SwitchFrame()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", "http://www.w3schools.com/tags/tryit.asp?filename=tryhtml_frame_cols");
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
 
-            ActBrowserElement actBrowser1 = new ActBrowserElement();
-            actBrowser1.ControlAction = ActBrowserElement.eControlAction.SwitchToDefaultFrame;
+            ActBrowserElement actBrowser1 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.SwitchToDefaultFrame
+            };
 
-            ActBrowserElement actBrowser2 = new ActBrowserElement();
-            actBrowser2.ControlAction = ActBrowserElement.eControlAction.SwitchFrame;
-            actBrowser2.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByXPath;
-            actBrowser2.LocateValue = "//*[@id='iframeResult']";
+            ActBrowserElement actBrowser2 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.SwitchFrame,
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByXPath,
+                LocateValue = "//*[@id='iframeResult']"
+            };
 
-            ActBrowserElement actBrowser3 = new ActBrowserElement();
-            actBrowser3.ControlAction = ActBrowserElement.eControlAction.SwitchFrame;
-            actBrowser3.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByXPath;
-            actBrowser3.LocateValue = "/html/frameset/frame[1]";
+            ActBrowserElement actBrowser3 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.SwitchFrame,
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByXPath,
+                LocateValue = "/html/frameset/frame[1]"
+            };
 
-            ActUIElement actUIElement = new ActUIElement();
-            actUIElement.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByXPath;
-            actUIElement.ElementLocateValue = "/html/body/p";
-            actUIElement.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.Text;
-            actUIElement.ElementAction = GingerCore.Actions.Common.ActUIElement.eElementAction.GetValue;
-            actUIElement.AddNewReturnParams = true;
+            ActUIElement actUIElement = new ActUIElement
+            {
+                ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByXPath,
+                ElementLocateValue = "/html/body/p",
+                ElementType = Amdocs.Ginger.Common.UIElement.eElementType.Text,
+                ElementAction = GingerCore.Actions.Common.ActUIElement.eElementAction.GetValue,
+                AddNewReturnParams = true
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -714,19 +824,25 @@ namespace UnitTests.UITests
         public void SwitchToDefaultFrame()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", "http://www.w3schools.com/tags/tryit.asp?filename=tryhtml_frame_cols");
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
 
-            ActBrowserElement actBrowser1 = new ActBrowserElement();
-            actBrowser1.ControlAction = ActBrowserElement.eControlAction.SwitchToDefaultFrame;
+            ActBrowserElement actBrowser1 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.SwitchToDefaultFrame
+            };
 
-            ActBrowserElement actBrowser2 = new ActBrowserElement();
-            actBrowser2.ControlAction = ActBrowserElement.eControlAction.SwitchFrame;
-            actBrowser2.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByXPath;
-            actBrowser2.LocateValue = "//*[@id='iframeResult']";
+            ActBrowserElement actBrowser2 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.SwitchFrame,
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByXPath,
+                LocateValue = "//*[@id='iframeResult']"
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -741,34 +857,46 @@ namespace UnitTests.UITests
         public void SwitchToParentFrame()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", "http://www.w3schools.com/tags/tryit.asp?filename=tryhtml_frame_cols");
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
 
-            ActBrowserElement actBrowser1 = new ActBrowserElement();
-            actBrowser1.ControlAction = ActBrowserElement.eControlAction.SwitchToParentFrame;
+            ActBrowserElement actBrowser1 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.SwitchToParentFrame
+            };
 
-            ActBrowserElement actBrowser2 = new ActBrowserElement();
-            actBrowser2.ControlAction = ActBrowserElement.eControlAction.SwitchToParentFrame;
+            ActBrowserElement actBrowser2 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.SwitchToParentFrame
+            };
 
-            ActBrowserElement actBrowser3 = new ActBrowserElement();
-            actBrowser3.ControlAction = ActBrowserElement.eControlAction.SwitchFrame;
-            actBrowser3.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByXPath;
-            actBrowser3.LocateValue = "//*[@id='iframeResult']";
+            ActBrowserElement actBrowser3 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.SwitchFrame,
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByXPath,
+                LocateValue = "//*[@id='iframeResult']"
+            };
 
-            ActBrowserElement actBrowser4 = new ActBrowserElement();
-            actBrowser4.ControlAction = ActBrowserElement.eControlAction.SwitchFrame;
-            actBrowser4.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByXPath;
-            actBrowser4.LocateValue = "/html/frameset/frame[2]";
+            ActBrowserElement actBrowser4 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.SwitchFrame,
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByXPath,
+                LocateValue = "/html/frameset/frame[2]"
+            };
 
-            ActUIElement actUIElement = new ActUIElement();
-            actUIElement.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByXPath;
-            actUIElement.ElementLocateValue = "/html/body/h3";
-            actUIElement.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.Label;
-            actUIElement.ElementAction = GingerCore.Actions.Common.ActUIElement.eElementAction.GetValue;
-            actUIElement.AddNewReturnParams = true;
+            ActUIElement actUIElement = new ActUIElement
+            {
+                ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByXPath,
+                ElementLocateValue = "/html/body/h3",
+                ElementType = Amdocs.Ginger.Common.UIElement.eElementType.Label,
+                ElementAction = GingerCore.Actions.Common.ActUIElement.eElementAction.GetValue,
+                AddNewReturnParams = true
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -787,22 +915,28 @@ namespace UnitTests.UITests
         public void SmartSyncAction()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", TestResources.GetTestResourcesFile("TestForm.htm"));
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
 
-            ActUIElement actUIElement = new ActUIElement();
-            actUIElement.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
-            actUIElement.ElementLocateValue = "hyperLinkHover";
-            actUIElement.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.HyperLink;
-            actUIElement.ElementAction = GingerCore.Actions.Common.ActUIElement.eElementAction.Click;
+            ActUIElement actUIElement = new ActUIElement
+            {
+                ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID,
+                ElementLocateValue = "hyperLinkHover",
+                ElementType = Amdocs.Ginger.Common.UIElement.eElementType.HyperLink,
+                ElementAction = GingerCore.Actions.Common.ActUIElement.eElementAction.Click
+            };
 
-            ActSmartSync actSmartSync = new ActSmartSync();
-            actSmartSync.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
-            actSmartSync.LocateValue = "txtBox_Google";
-            actSmartSync.SmartSyncAction = GingerCore.Actions.ActSmartSync.eSmartSyncAction.WaitUntilDisapear;
+            ActSmartSync actSmartSync = new ActSmartSync
+            {
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID,
+                LocateValue = "txtBox_Google",
+                SmartSyncAction = GingerCore.Actions.ActSmartSync.eSmartSyncAction.WaitUntilDisapear
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -826,14 +960,18 @@ namespace UnitTests.UITests
         {
             SmartSyncAction();
 
-            ActGenElement actGenElement = new ActGenElement();
-            actGenElement.GenElementAction = GingerCore.Actions.ActGenElement.eGenElementAction.Back;
+            ActGenElement actGenElement = new ActGenElement
+            {
+                GenElementAction = GingerCore.Actions.ActGenElement.eGenElementAction.Back
+            };
 
-            ActSmartSync actSmartSync1 = new ActSmartSync();
-            actSmartSync1.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
-            actSmartSync1.LocateValue = "txtBox_Google";
-            actSmartSync1.SmartSyncAction = GingerCore.Actions.ActSmartSync.eSmartSyncAction.WaitUntilDisplay;
-            actSmartSync1.WaitTime = 2;
+            ActSmartSync actSmartSync1 = new ActSmartSync
+            {
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID,
+                LocateValue = "txtBox_Google",
+                SmartSyncAction = GingerCore.Actions.ActSmartSync.eSmartSyncAction.WaitUntilDisplay,
+                WaitTime = 2
+            };
 
             //Act
             mGR.Executor.RunAction(actGenElement, false);
@@ -848,21 +986,27 @@ namespace UnitTests.UITests
         public void TwoWebElementsDistances()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
             actBrowser.GetOrCreateInputParam("Value", TestResources.GetTestResourcesFile("TestForm.htm"));
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
 
-            ActPWL actPWL = new ActPWL();
-            actPWL.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
-            actPWL.LocateValue = "Btn_Click";
-            actPWL.PWLAction = GingerCore.Actions.ActPWL.ePWLAction.GetHDistanceRight2Left;
-            actPWL.OLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
-            actPWL.OLocateValue = "ddLst";
+            ActPWL actPWL = new ActPWL
+            {
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID,
+                LocateValue = "Btn_Click",
+                PWLAction = GingerCore.Actions.ActPWL.ePWLAction.GetHDistanceRight2Left,
+                OLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID,
+                OLocateValue = "ddLst"
+            };
 
-            ActGenElement actGenElement = new ActGenElement();
-            actGenElement.GenElementAction = GingerCore.Actions.ActGenElement.eGenElementAction.RunJavaScript;
+            ActGenElement actGenElement = new ActGenElement
+            {
+                GenElementAction = GingerCore.Actions.ActGenElement.eGenElementAction.RunJavaScript
+            };
             actGenElement.GetOrCreateInputParam("Value", "document.getElementById('Btn_Click').getBoundingClientRect().top");
             actGenElement.AddNewReturnParams = true;
 
@@ -881,8 +1025,10 @@ namespace UnitTests.UITests
         public void SetAlertBox()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.SetAlertBoxText;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.SetAlertBoxText
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -896,8 +1042,10 @@ namespace UnitTests.UITests
         public void DeleteAllCookies()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.DeleteAllCookies;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.DeleteAllCookies
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -911,8 +1059,10 @@ namespace UnitTests.UITests
         public void DismissMessageBox()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.DismissMessageBox;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.DismissMessageBox
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -927,8 +1077,10 @@ namespace UnitTests.UITests
         {
 
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.AcceptMessageBox;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.AcceptMessageBox
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -942,8 +1094,10 @@ namespace UnitTests.UITests
         public void GetMessageBoxText()
         {
             //Arrange
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GetMessageBoxText;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GetMessageBoxText
+            };
 
             //Act
             mGR.Executor.RunAction(actBrowser, false);
@@ -960,27 +1114,35 @@ namespace UnitTests.UITests
             mBF.Activities.Add(activity);
             mBF.CurrentActivity = activity;
 
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.Web
+            };
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "DeviceEmulation" });
             mBF.CurrentActivity.TargetApplication = "DeviceEmulation";
 
-            var mDriver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome);
-            mDriver.AutoDetect = true;
-            mDriver.HttpServerTimeOut = 60;
-            //Set emulation device name
-            mDriver.EmulationDeviceName = "iPad";
+            var mDriver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome)
+            {
+                AutoDetect = true,
+                HttpServerTimeOut = 60,
+                //Set emulation device name
+                EmulationDeviceName = "iPad"
+            };
             mDriver.StartDriver();
 
-            Agent agent = new Agent();
-            agent.Active = true;
+            Agent agent = new Agent
+            {
+                Active = true
+            };
             ((AgentOperations)agent.AgentOperations).Driver = mDriver;
             agent.DriverType = Agent.eDriverType.Selenium;
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(agent);
 
-            ApplicationAgent AA = new ApplicationAgent();
-            AA.AppName = "DeviceEmulation";
-            AA.Agent = agent;
+            ApplicationAgent AA = new ApplicationAgent
+            {
+                AppName = "DeviceEmulation",
+                Agent = agent
+            };
 
             mGR.ApplicationAgents.Add(AA);
             mGR.Executor.CurrentBusinessFlow = mBF;
@@ -988,15 +1150,19 @@ namespace UnitTests.UITests
 
             mGR.Executor.SetCurrentActivityAgent();
 
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.GetOrCreateInputParam("Value", "http://www.google.com");
             actBrowser.Active = true;
             activity.Acts.Add(actBrowser);
 
             //act
-            ActBrowserElement actBrowser2 = new ActBrowserElement();
-            actBrowser2.ControlAction = ActBrowserElement.eControlAction.RunJavaScript;
+            ActBrowserElement actBrowser2 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.RunJavaScript
+            };
             actBrowser2.GetOrCreateInputParam("Value", "navigator.userAgent");
             actBrowser2.Active = true;
             actBrowser2.AddNewReturnParams = true;
@@ -1016,30 +1182,38 @@ namespace UnitTests.UITests
             mBF.Activities.Add(activity);
             mBF.CurrentActivity = activity;
 
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.Web
+            };
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "DeviceEmulationUserAgent" });
             mBF.CurrentActivity.TargetApplication = "DeviceEmulationUserAgent";
 
-            var mDriver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome);
-            mDriver.AutoDetect = true;
-            mDriver.HttpServerTimeOut = 60;
-            //Set Browser User Agent
-            mDriver.BrowserUserAgent = "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1";
-            mDriver.BrowserHeight = "960";
-            mDriver.BrowserWidth = "600";
+            var mDriver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome)
+            {
+                AutoDetect = true,
+                HttpServerTimeOut = 60,
+                //Set Browser User Agent
+                BrowserUserAgent = "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1",
+                BrowserHeight = "960",
+                BrowserWidth = "600"
+            };
 
             mDriver.StartDriver();
 
-            Agent agent = new Agent();
-            agent.Active = true;
+            Agent agent = new Agent
+            {
+                Active = true
+            };
             ((AgentOperations)agent.AgentOperations).Driver = mDriver;
             agent.DriverType = Agent.eDriverType.Selenium;
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(agent);
 
-            ApplicationAgent AA = new ApplicationAgent();
-            AA.AppName = "DeviceEmulationUserAgent";
-            AA.Agent = agent;
+            ApplicationAgent AA = new ApplicationAgent
+            {
+                AppName = "DeviceEmulationUserAgent",
+                Agent = agent
+            };
 
             mGR.ApplicationAgents.Add(AA);
             mGR.Executor.CurrentBusinessFlow = mBF;
@@ -1047,8 +1221,10 @@ namespace UnitTests.UITests
 
             mGR.Executor.SetCurrentActivityAgent();
 
-            ActBrowserElement actBrowser = new ActBrowserElement();
-            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            ActBrowserElement actBrowser = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL
+            };
             actBrowser.GetOrCreateInputParam("Value", "http://www.google.com");
             actBrowser.Active = true;
             activity.Acts.Add(actBrowser);
@@ -1056,8 +1232,10 @@ namespace UnitTests.UITests
             //act
 
             //get user agent string
-            ActBrowserElement actBrowser2 = new ActBrowserElement();
-            actBrowser2.ControlAction = ActBrowserElement.eControlAction.RunJavaScript;
+            ActBrowserElement actBrowser2 = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.RunJavaScript
+            };
             actBrowser2.GetOrCreateInputParam("Value", "navigator.userAgent");
             actBrowser2.Active = true;
             actBrowser2.AddNewReturnParams = true;

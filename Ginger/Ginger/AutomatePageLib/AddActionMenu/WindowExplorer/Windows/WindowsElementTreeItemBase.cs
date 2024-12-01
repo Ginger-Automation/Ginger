@@ -59,7 +59,7 @@ namespace Ginger.Drivers.Windows
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> list = new List<ITreeViewItem>();
+            List<ITreeViewItem> list = [];
             {
                 List<ElementInfo> Childrens = base.UIAElementInfo.WindowExplorer.GetElementChildren(base.UIAElementInfo);
                 foreach (ElementInfo EI in Childrens)

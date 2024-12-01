@@ -43,21 +43,23 @@ namespace Ginger.Repository.ItemToRepositoryWizard
 
         private void SetSelectedItemsGridView()
         {
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.Selected), StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10 });
-
-            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ItemName), Header = "Item To Upload", WidthWeight = 20, ReadOnly = true });
-
-            defView.GridColsView.Add(new GridColView()
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
             {
-                Field = nameof(UploadItemSelection.ReplaceType),
-                Header = "Replace Type",
-                WidthWeight = 20,
-                StyleType = GridColView.eGridColStyleType.Template,
-                CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(UploadItemSelection.eActivityInstanceType)), nameof(UploadItemSelection.ReplaceType), false, false, nameof(UploadItemSelection.IsActivity), true),
-                ReadOnly = isConvertPage
-            });
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(UploadItemSelection.Selected), StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10 },
+                new GridColView() { Field = nameof(UploadItemSelection.ItemName), Header = "Item To Upload", WidthWeight = 20, ReadOnly = true },
+                new GridColView()
+                {
+                    Field = nameof(UploadItemSelection.ReplaceType),
+                    Header = "Replace Type",
+                    WidthWeight = 20,
+                    StyleType = GridColView.eGridColStyleType.Template,
+                    CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(UploadItemSelection.eActivityInstanceType)), nameof(UploadItemSelection.ReplaceType), false, false, nameof(UploadItemSelection.IsActivity), true),
+                    ReadOnly = isConvertPage
+                },
+            ]
+            };
 
             GridColView GCWUploadType = new GridColView()
             {

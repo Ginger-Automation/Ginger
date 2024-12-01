@@ -60,7 +60,7 @@ namespace Ginger.SourceControl
         public static bool GetLatest(string path, SourceControlBase SourceControl)
         {
             string error = string.Empty;
-            List<string> conflictsPaths = new List<string>();
+            List<string> conflictsPaths = [];
 
             if (!SourceControl.GetLatest(path, ref error, ref conflictsPaths))
             {
@@ -89,7 +89,7 @@ namespace Ginger.SourceControl
                         }
                     }
                 }
-                else if(string.Equals(error, Reporter.UserMsgsPool[eUserMsgKey.UncommitedChangesPreventCheckout].Message))
+                else if (string.Equals(error, Reporter.UserMsgsPool[eUserMsgKey.UncommitedChangesPreventCheckout].Message))
                 {
                     Reporter.ToUser(eUserMsgKey.UncommitedChangesPreventCheckout);
                 }

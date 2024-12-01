@@ -16,12 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Common.Telemetry
@@ -39,7 +36,7 @@ namespace Amdocs.Ginger.Common.Telemetry
 
         public static TelemetryMetadata WithTags(params string[] tags)
         {
-            TelemetryMetadata metadata = new();
+            TelemetryMetadata metadata = [];
             metadata.SetTags(tags);
             return metadata;
         }

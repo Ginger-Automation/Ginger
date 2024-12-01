@@ -35,12 +35,14 @@ namespace GingerCore.Actions.VisualTesting
         public Bitmap Bitmap { get; set; }
 
         [JsonProperty]
-        public List<VisualElement> Elements = new List<VisualElement>();
+        public List<VisualElement> Elements = [];
 
         private static void initJSon()
         {
-            mJsonSerializer = new JsonSerializer();
-            mJsonSerializer.NullValueHandling = NullValueHandling.Ignore;
+            mJsonSerializer = new JsonSerializer
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
         }
 
         public void Save(string FileName)

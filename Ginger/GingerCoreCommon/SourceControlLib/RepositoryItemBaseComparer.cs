@@ -47,7 +47,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             {
                 return CompareCollectionValue(name, localValue, remoteValue);
             }
-            else if(IsRepositoryItemHeader(localValue, remoteValue))
+            else if (IsRepositoryItemHeader(localValue, remoteValue))
             {
                 return CompareRIBHeaderValue(name, localValue, remoteValue);
             }
@@ -107,7 +107,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                 {
                     RepositoryItemBase localRIB = (RepositoryItemBase)localValue.Data!;
 
-                    List<Comparison> childComparisons = new();
+                    List<Comparison> childComparisons = [];
 
                     foreach (PropertyInfo property in localRIB.GetType().GetProperties())
                     {
@@ -144,7 +144,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                 {
                     RepositoryItemBase remoteRIB = (RepositoryItemBase)remoteValue.Data!;
 
-                    List<Comparison> childComparisons = new();
+                    List<Comparison> childComparisons = [];
 
                     foreach (PropertyInfo property in remoteRIB.GetType().GetProperties())
                     {
@@ -195,7 +195,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     if (localRIB.Guid == remoteRIB.Guid)
                     {
                         Type seniorType = GetSeniorType(localRIB.GetType(), remoteRIB.GetType());
-                        List<Comparison> childComparisons = new();
+                        List<Comparison> childComparisons = [];
                         foreach (PropertyInfo property in seniorType.GetProperties())
                         {
                             if (!IsPropertySerialized(property))
@@ -232,7 +232,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     }
                     else
                     {
-                        List<Comparison> localChildComparisons = new();
+                        List<Comparison> localChildComparisons = [];
                         foreach (PropertyInfo property in localRIB.GetType().GetProperties())
                         {
                             if (!IsPropertySerialized(property))
@@ -259,7 +259,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                         }
                         Comparison localComparisonResult = new(name, state: Comparison.StateType.Deleted, localChildComparisons, data: localRIB);
 
-                        List<Comparison> remoteChildComparisons = new();
+                        List<Comparison> remoteChildComparisons = [];
                         foreach (PropertyInfo property in remoteRIB.GetType().GetProperties())
                         {
                             if (!IsPropertySerialized(property))
@@ -340,7 +340,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                 {
                     System.Collections.ICollection remoteCollection = (System.Collections.ICollection)remoteValue.Data!;
 
-                    List<Comparison> childComparisons = new();
+                    List<Comparison> childComparisons = [];
 
                     int index = 0;
                     foreach (object? item in remoteCollection)
@@ -368,7 +368,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                 {
                     System.Collections.ICollection localCollection = (System.Collections.ICollection)localValue.Data!;
 
-                    List<Comparison> childComparisons = new();
+                    List<Comparison> childComparisons = [];
 
                     int index = 0;
                     foreach (object? item in localCollection)
@@ -405,7 +405,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     return CompareValue(name, localValue, remoteValue: null);
                 }
 
-                List<Comparison> childComparisons = new();
+                List<Comparison> childComparisons = [];
                 int index = 0;
                 System.Collections.IEnumerator localCollectionEnumerator = localCollection.GetEnumerator();
                 System.Collections.IEnumerator remoteCollectionEnumerator = remoteCollection.GetEnumerator();
@@ -453,18 +453,22 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                 //data in local is null
                 if (localValue!.Data == null)
                 {
-                    Comparison comparison = new(name, Comparison.StateType.Deleted, data: null);
-                    comparison.Selected = true;
-                    comparison.IsSelectionEnabled = false;
-                    return new Comparison[] {  comparison };
+                    Comparison comparison = new(name, Comparison.StateType.Deleted, data: null)
+                    {
+                        Selected = true,
+                        IsSelectionEnabled = false
+                    };
+                    return new Comparison[] { comparison };
                 }
                 //data in local is not null
                 else
                 {
                     RepositoryItemHeader localRIH = (RepositoryItemHeader)localValue.Data!;
-                    Comparison comparison = new(name, state: Comparison.StateType.Deleted, data: localRIH);
-                    comparison.Selected = true;
-                    comparison.IsSelectionEnabled = false;
+                    Comparison comparison = new(name, state: Comparison.StateType.Deleted, data: localRIH)
+                    {
+                        Selected = true,
+                        IsSelectionEnabled = false
+                    };
                     return new Comparison[] { comparison };
                 }
             }
@@ -475,18 +479,22 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                 //data in remote is null
                 if (remoteValue!.Data == null)
                 {
-                    Comparison comparison = new(name, Comparison.StateType.Added, data: null);
-                    comparison.Selected = true;
-                    comparison.IsSelectionEnabled = false;
+                    Comparison comparison = new(name, Comparison.StateType.Added, data: null)
+                    {
+                        Selected = true,
+                        IsSelectionEnabled = false
+                    };
                     return new Comparison[] { comparison };
                 }
                 //data in remote is not null
                 else
                 {
                     RepositoryItemHeader remoteRIH = (RepositoryItemHeader)remoteValue.Data!;
-                    Comparison comparison = new(name, state: Comparison.StateType.Added, remoteRIH);
-                    comparison.Selected = true;
-                    comparison.IsSelectionEnabled = false;
+                    Comparison comparison = new(name, state: Comparison.StateType.Added, remoteRIH)
+                    {
+                        Selected = true,
+                        IsSelectionEnabled = false
+                    };
                     return new Comparison[] { comparison };
                 }
             }
@@ -583,11 +591,11 @@ namespace Amdocs.Ginger.Common.SourceControlLib
 
                     localComparison.SetSiblingComparison(remoteComparison);
 
-                    return new List<Comparison>()
-                    {
+                    return
+                    [
                         localComparison,
                         remoteComparison
-                    };
+                    ];
                 }
             }
         }

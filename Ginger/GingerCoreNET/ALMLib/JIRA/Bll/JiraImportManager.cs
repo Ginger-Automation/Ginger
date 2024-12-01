@@ -55,7 +55,7 @@ namespace GingerCore.ALM.JIRA
 
         internal ObservableList<ExternalItemFieldBase> GetALMItemFields(ResourceType resourceType, BackgroundWorker bw, bool online)
         {
-            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> fields = [];
             try
             {
                 JiraRepositoryStd.JiraRepositoryStd jiraRep = new JiraRepositoryStd.JiraRepositoryStd();
@@ -88,7 +88,7 @@ namespace GingerCore.ALM.JIRA
 
         private ObservableList<ExternalItemFieldBase> SetALMItemsFields(AlmResponseWithData<JiraFieldColl> testCaseFieldsList, ResourceType fieldResourceType)
         {
-            ObservableList<ExternalItemFieldBase> resourceFields = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> resourceFields = [];
             string fieldResourceTypeToString = fieldResourceType.ToString();
             if (fieldResourceType == ResourceType.TEST_CASE_EXECUTION_RECORDS)
             {
@@ -101,11 +101,13 @@ namespace GingerCore.ALM.JIRA
                     continue;
                 }
 
-                ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
-                itemfield.ID = field.name;
-                itemfield.Name = field.name;
-                itemfield.Mandatory = field.required;
-                itemfield.ItemType = fieldResourceTypeToString;
+                ExternalItemFieldBase itemfield = new ExternalItemFieldBase
+                {
+                    ID = field.name,
+                    Name = field.name,
+                    Mandatory = field.required,
+                    ItemType = fieldResourceTypeToString
+                };
 
                 if (field.allowedValues.Count > 0)
                 {
@@ -134,12 +136,14 @@ namespace GingerCore.ALM.JIRA
                 }
 
                 //Create Business Flow
-                BusinessFlow busFlow = new BusinessFlow();
-                busFlow.Name = testSet.Name;
-                busFlow.ExternalID = testSet.Key;
-                busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
-                busFlow.Activities = new ObservableList<Activity>();
-                busFlow.Variables = new ObservableList<VariableBase>();
+                BusinessFlow busFlow = new BusinessFlow
+                {
+                    Name = testSet.Name,
+                    ExternalID = testSet.Key,
+                    Status = BusinessFlow.eBusinessFlowStatus.Development,
+                    Activities = [],
+                    Variables = []
+                };
                 //Create Activities Group + Activities for each TC
                 foreach (JiraTest tc in testSet.Tests)
                 {
@@ -159,7 +163,7 @@ namespace GingerCore.ALM.JIRA
                         }
 
                         //pull TC-Step parameters and add them to the Activity level
-                        List<string> stepParamsList = new List<string>();
+                        List<string> stepParamsList = [];
                         GetStepParameters(StripHTML(step.Variables), ref stepParamsList);
                         //GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
                         foreach (string param in stepParamsList)
@@ -243,18 +247,20 @@ namespace GingerCore.ALM.JIRA
                 }
 
                 //Create Business Flow
-                BusinessFlow busFlow = new BusinessFlow();
-                busFlow.Name = cycle.name;
-                busFlow.ExternalID = cycle.id.ToString();
-                busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
-                busFlow.Activities = new ObservableList<Activity>();
-                busFlow.Variables = new ObservableList<VariableBase>();
+                BusinessFlow busFlow = new BusinessFlow
+                {
+                    Name = cycle.name,
+                    ExternalID = cycle.id.ToString(),
+                    Status = BusinessFlow.eBusinessFlowStatus.Development,
+                    Activities = [],
+                    Variables = []
+                };
                 //Create Activities Group + Activities for each TC
                 foreach (JiraZephyrIssue issue in cycle.IssuesList)
                 {
                     // converting JiraZephyrIssue to JiraTest
                     // and JiraZephyrTeststep to JiraTestStep - in order to re-use existing code
-                    List<JiraTestStep> steps = new List<JiraTestStep>();
+                    List<JiraTestStep> steps = [];
                     issue.Steps.ForEach(z => steps.Add(new JiraTestStep() { StepID = z.id.ToString(), StepName = z.step, Description = z.data }));
                     JiraTest tc = new JiraTest(issue.id.ToString(), issue.name, issue.name, steps);
 
@@ -274,7 +280,7 @@ namespace GingerCore.ALM.JIRA
                         }
 
                         //pull TC-Step parameters and add them to the Activity level
-                        List<string> stepParamsList = new List<string>();
+                        List<string> stepParamsList = [];
                         if ((step.Expected != null) && ((step.Expected == string.Empty)))
                         {
                             GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
@@ -360,12 +366,14 @@ namespace GingerCore.ALM.JIRA
                 }
 
                 //Create Business Flow
-                BusinessFlow busFlow = new BusinessFlow();
-                busFlow.Name = testSet.Name;
-                busFlow.ExternalID = testSet.Key;
-                busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
-                busFlow.Activities = new ObservableList<Activity>();
-                busFlow.Variables = new ObservableList<VariableBase>();
+                BusinessFlow busFlow = new BusinessFlow
+                {
+                    Name = testSet.Name,
+                    ExternalID = testSet.Key,
+                    Status = BusinessFlow.eBusinessFlowStatus.Development,
+                    Activities = [],
+                    Variables = []
+                };
                 //Create Activities Group + Activities for each TC
                 foreach (JiraTest tc in testSet.Tests)
                 {
@@ -385,7 +393,7 @@ namespace GingerCore.ALM.JIRA
                         }
 
                         //pull TC-Step parameters and add them to the Activity level
-                        List<string> stepParamsList = new List<string>();
+                        List<string> stepParamsList = [];
                         GetStepParameters(StripHTML(step.Variables), ref stepParamsList);
                         //GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
                         foreach (string param in stepParamsList)
@@ -495,7 +503,7 @@ namespace GingerCore.ALM.JIRA
                 isflowControlParam = false;
                 if (paramSelectedValue.StartsWith("$$_"))
                 {
-                    paramSelectedValue = paramSelectedValue.Substring(3);//get value without "$$_"
+                    paramSelectedValue = paramSelectedValue[3..];//get value without "$$_"
                 }
             }
             else if (paramSelectedValue != "<Empty>")
@@ -511,16 +519,20 @@ namespace GingerCore.ALM.JIRA
                 if (isflowControlParam == true)
                 {
                     //add it as selection list param                               
-                    stepActivityVar = new VariableSelectionList();
-                    stepActivityVar.Name = param;
+                    stepActivityVar = new VariableSelectionList
+                    {
+                        Name = param
+                    };
                     stepActivity.AddVariable(stepActivityVar);
                     stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new flow control param was added
                 }
                 else
                 {
                     //add as String param
-                    stepActivityVar = new VariableString();
-                    stepActivityVar.Name = param;
+                    stepActivityVar = new VariableString
+                    {
+                        Name = param
+                    };
                     ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                     stepActivity.AddVariable(stepActivityVar);
                 }
@@ -530,12 +542,14 @@ namespace GingerCore.ALM.JIRA
                 //#param exist
                 if (isflowControlParam == true)
                 {
-                    if (!(stepActivityVar is VariableSelectionList))
+                    if (stepActivityVar is not VariableSelectionList)
                     {
                         //flow control param must be Selection List so transform it
                         stepActivity.Variables.Remove(stepActivityVar);
-                        stepActivityVar = new VariableSelectionList();
-                        stepActivityVar.Name = param;
+                        stepActivityVar = new VariableSelectionList
+                        {
+                            Name = param
+                        };
                         stepActivity.AddVariable(stepActivityVar);
                         stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
                     }
@@ -546,8 +560,10 @@ namespace GingerCore.ALM.JIRA
                     {
                         //change it to be string variable
                         stepActivity.Variables.Remove(stepActivityVar);
-                        stepActivityVar = new VariableString();
-                        stepActivityVar.Name = param;
+                        stepActivityVar = new VariableString
+                        {
+                            Name = param
+                        };
                         ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                         stepActivity.AddVariable(stepActivityVar);
                         stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was removed
@@ -625,10 +641,12 @@ namespace GingerCore.ALM.JIRA
             }
             else//Step not exist in Ginger repository so create new one
             {
-                stepActivity = new Activity();
-                stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
-                stepActivity.ExternalID = step.StepID;
-                stepActivity.Description = StripHTML(step.Description);
+                stepActivity = new Activity
+                {
+                    ActivityName = tc.TestName + ">" + step.StepName,
+                    ExternalID = step.StepID,
+                    Description = StripHTML(step.Description)
+                };
                 //stepActivity.Expected = StripHTML(step.Expected);
 
                 toAddStepActivity = true;
@@ -669,8 +687,10 @@ namespace GingerCore.ALM.JIRA
             }
             else //TC not exist in Ginger repository so create new one
             {
-                tcActivsGroup = new ActivitiesGroup();
-                tcActivsGroup.Name = tc.TestName;
+                tcActivsGroup = new ActivitiesGroup
+                {
+                    Name = tc.TestName
+                };
                 if (tc.LinkedTestID == null || tc.LinkedTestID == string.Empty)
                 {
                     tcActivsGroup.ExternalID = tc.TestKey;
@@ -735,9 +755,9 @@ namespace GingerCore.ALM.JIRA
         }
         public JiraTestSet GetTestSetData(JiraTestSet currentTS)
         {
-            WhereDataList filterData = new WhereDataList();
+            WhereDataList filterData = [];
             JiraTestSet issue = new JiraTestSet();
-            filterData.Add(new WhereData() { Name = "id", Values = new List<string>() { currentTS.Key }, Operator = WhereOperator.And });
+            filterData.Add(new WhereData() { Name = "id", Values = [currentTS.Key], Operator = WhereOperator.And });
             AlmResponseWithData<List<JiraIssue>> getTestsSet = jiraRepObj.GetJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMProjectName, ResourceType.TEST_SET, filterData);
             List<FieldSchema> templates = ExportSettings.Instance.GetSchemaByProject(ALMCore.DefaultAlmConfig.ALMProjectName, ResourceType.TEST_SET);
             foreach (var item in getTestsSet.DataResult)
@@ -771,7 +791,7 @@ namespace GingerCore.ALM.JIRA
                                     issue.Description = fieldValue.First();
                                     break;
                                 case "Test Cases":
-                                    issue.Tests = new List<JiraTest>();
+                                    issue.Tests = [];
                                     foreach (var val in fieldValue)
                                     {
                                         issue.Tests.Add(new JiraTest() { TestID = val });
@@ -790,13 +810,13 @@ namespace GingerCore.ALM.JIRA
         }
         private void GetTestData(List<JiraTest> tests)
         {
-            WhereDataList filterData = new WhereDataList();
+            WhereDataList filterData = [];
             foreach (JiraTest test in tests)
             {
                 filterData.Clear();
-                filterData.Add(new WhereData() { Name = "id", Values = new List<string>() { test.TestID }, Operator = WhereOperator.And });
+                filterData.Add(new WhereData() { Name = "id", Values = [test.TestID], Operator = WhereOperator.And });
                 AlmResponseWithData<List<JiraIssue>> getTest = jiraRepObj.GetJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMProjectName, ResourceType.TEST_CASE, filterData);
-                ObservableList<JiraTest> jiratests = new ObservableList<JiraTest>();
+                ObservableList<JiraTest> jiratests = [];
                 List<FieldSchema> templates = ExportSettings.Instance.GetSchemaByProject(ALMCore.DefaultAlmConfig.ALMProjectName, ResourceType.TEST_CASE);
                 foreach (var item in getTest.DataResult)
                 {
@@ -832,7 +852,7 @@ namespace GingerCore.ALM.JIRA
                                         }
                                         break;
                                     case "Test Steps":
-                                        test.Steps = new List<JiraTestStep>();
+                                        test.Steps = [];
                                         var stepAnonymousTypeDef = new { id = 0, index = 0, step = string.Empty, data = string.Empty };
                                         foreach (var val in fieldValue)
                                         {
@@ -867,19 +887,21 @@ namespace GingerCore.ALM.JIRA
         }
         public ObservableList<JiraTestSet> GetJiraTestSets()
         {
-            WhereDataList filterData = new WhereDataList();
-            List<string> testSetKeys = new List<string> { "reporter", "created", "summary", "project" };
+            WhereDataList filterData = [];
+            List<string> testSetKeys = ["reporter", "created", "summary", "project"];
             filterData.Add(new WhereData() { Name = "fields", Values = testSetKeys, Operator = WhereOperator.Ampersand });
             AlmResponseWithData<List<JiraIssue>> getTestsSet = jiraRepObj.GetJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMProjectName, ResourceType.TEST_SET, filterData);
 
-            ObservableList<JiraTestSet> jiratestset = new ObservableList<JiraTestSet>();
+            ObservableList<JiraTestSet> jiratestset = [];
             List<FieldSchema> templates = ExportSettings.Instance.GetSchemaByProject(ALMCore.DefaultAlmConfig.ALMProjectName, ResourceType.TEST_SET);
             foreach (var item in getTestsSet.DataResult)
             {
-                JiraTestSet issue = new JiraTestSet();
-                issue.ID = item.id.ToString();
-                issue.URLPath = item.self;
-                issue.Key = item.key;
+                JiraTestSet issue = new JiraTestSet
+                {
+                    ID = item.id.ToString(),
+                    URLPath = item.self,
+                    Key = item.key
+                };
 
                 foreach (string tsKey in testSetKeys)
                 {
@@ -914,7 +936,7 @@ namespace GingerCore.ALM.JIRA
 
         private List<string> getSelectedFieldValue(dynamic fields, string fieldName, ResourceType resourceType)
         {
-            List<string> valuesList = new List<string>();
+            List<string> valuesList = [];
             try
             {
                 FieldSchema temp = jiraRepObj.GetFieldFromTemplateByName(resourceType, "DE", fieldName);
@@ -966,10 +988,10 @@ namespace GingerCore.ALM.JIRA
                 return;
             }
 
-            Dictionary<string, string> busVariables = new Dictionary<string, string>();
+            Dictionary<string, string> busVariables = [];
 
             int startGroupActsIndxInBf = 0;
-            Dictionary<string, int> activityGroupsToRemoveIndexes = new Dictionary<string, int>();
+            Dictionary<string, int> activityGroupsToRemoveIndexes = [];
             foreach (JiraTest tc in activitiesGroupToUpdatedData.Values)
             {
                 var activitiesToRemove = busFlow.Activities.Where(x => tc.Steps.Any(stepid => stepid.StepID.Equals(x.ExternalID))).ToList();
@@ -1001,10 +1023,12 @@ namespace GingerCore.ALM.JIRA
                 //check if the TC is already exist in repository
                 ActivitiesGroup tcActivsGroup = new ActivitiesGroup();
 
-                tcActivsGroup = new ActivitiesGroup();
-                tcActivsGroup.Name = tc.TestName;
-                tcActivsGroup.ExternalID = tc.TestKey;
-                tcActivsGroup.Description = tc.Description;
+                tcActivsGroup = new ActivitiesGroup
+                {
+                    Name = tc.TestName,
+                    ExternalID = tc.TestKey,
+                    Description = tc.Description
+                };
                 busFlow.AddActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
 
                 //Add the TC steps as Activities if not already on the Activities group
@@ -1014,15 +1038,15 @@ namespace GingerCore.ALM.JIRA
                     bool toAddStepActivity = false;
 
                     //check if mapped activity exist in repository
-                    Activity repoStepActivity = (Activity)GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID == step.StepID);
+                    Activity repoStepActivity = GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID == step.StepID);
                     if (repoStepActivity != null)
                     {
                         //check if it is part of the Activities Group
-                        ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                        ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                         if (groupStepActivityIdent != null)
                         {
                             //already in Activities Group so get link to it
-                            stepActivity = (Activity)busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
+                            stepActivity = busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                         }
                         else//not in ActivitiesGroup so get instance from repo
                         {
@@ -1033,10 +1057,12 @@ namespace GingerCore.ALM.JIRA
                     }
                     else//Step not exist in Ginger repository so create new one
                     {
-                        stepActivity = new Activity();
-                        stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
-                        stepActivity.ExternalID = step.StepID;
-                        stepActivity.Description = StripHTML(step.Description);
+                        stepActivity = new Activity
+                        {
+                            ActivityName = tc.TestName + ">" + step.StepName,
+                            ExternalID = step.StepID,
+                            Description = StripHTML(step.Description)
+                        };
                         //stepActivity.Expected = StripHTML(step.Expected);
 
                         toAddStepActivity = true;
@@ -1049,7 +1075,7 @@ namespace GingerCore.ALM.JIRA
                     }
 
                     //pull TC-Step parameters and add them to the Activity level
-                    List<string> stepParamsList = new List<string>();
+                    List<string> stepParamsList = [];
                     GetStepParameters(StripHTML(step.Variables), ref stepParamsList);
                     //GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
                     foreach (string param in stepParamsList)
@@ -1093,7 +1119,7 @@ namespace GingerCore.ALM.JIRA
                             isflowControlParam = false;
                             if (paramSelectedValue.StartsWith("$$_"))
                             {
-                                paramSelectedValue = paramSelectedValue.Substring(3);//get value without "$$_"
+                                paramSelectedValue = paramSelectedValue[3..];//get value without "$$_"
                             }
                         }
                         else if (paramSelectedValue != "<Empty>")
@@ -1109,16 +1135,20 @@ namespace GingerCore.ALM.JIRA
                             if (isflowControlParam == true)
                             {
                                 //add it as selection list param                               
-                                stepActivityVar = new VariableSelectionList();
-                                stepActivityVar.Name = param;
+                                stepActivityVar = new VariableSelectionList
+                                {
+                                    Name = param
+                                };
                                 stepActivity.AddVariable(stepActivityVar);
                                 stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new flow control param was added
                             }
                             else
                             {
                                 //add as String param
-                                stepActivityVar = new VariableString();
-                                stepActivityVar.Name = param;
+                                stepActivityVar = new VariableString
+                                {
+                                    Name = param
+                                };
                                 ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                                 stepActivity.AddVariable(stepActivityVar);
                             }
@@ -1128,12 +1158,14 @@ namespace GingerCore.ALM.JIRA
                             //#param exist
                             if (isflowControlParam == true)
                             {
-                                if (!(stepActivityVar is VariableSelectionList))
+                                if (stepActivityVar is not VariableSelectionList)
                                 {
                                     //flow control param must be Selection List so transform it
                                     stepActivity.Variables.Remove(stepActivityVar);
-                                    stepActivityVar = new VariableSelectionList();
-                                    stepActivityVar.Name = param;
+                                    stepActivityVar = new VariableSelectionList
+                                    {
+                                        Name = param
+                                    };
                                     stepActivity.AddVariable(stepActivityVar);
                                     stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
                                 }
@@ -1144,8 +1176,10 @@ namespace GingerCore.ALM.JIRA
                                 {
                                     //change it to be string variable
                                     stepActivity.Variables.Remove(stepActivityVar);
-                                    stepActivityVar = new VariableString();
-                                    stepActivityVar.Name = param;
+                                    stepActivityVar = new VariableString
+                                    {
+                                        Name = param
+                                    };
                                     ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                                     stepActivity.AddVariable(stepActivityVar);
                                     stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was removed
@@ -1202,13 +1236,13 @@ namespace GingerCore.ALM.JIRA
                     foreach (JiraTestStep step in tc.Steps)
                     {
                         int stepIndx = tc.Steps.IndexOf(step) + 1;
-                        ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                        ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                         if (actIdent == null || actIdent.IdentifiedActivity == null)
                         {
                             break;//something wrong- shouldnt be null
                         }
 
-                        Activity act = (Activity)actIdent.IdentifiedActivity;
+                        Activity act = actIdent.IdentifiedActivity;
                         int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                         int bfActIndx = busFlow.Activities.IndexOf(act);
 
@@ -1231,7 +1265,7 @@ namespace GingerCore.ALM.JIRA
                                 break;
                             }
                         }
-                        ActivityIdentifiers identOnPlace = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers[groupIndx];
+                        ActivityIdentifiers identOnPlace = tcActivsGroup.ActivitiesIdentifiers[groupIndx];
                         if (identOnPlace.ActivityGuid != act.Guid)
                         {
                             //replace places in group
@@ -1264,7 +1298,7 @@ namespace GingerCore.ALM.JIRA
         }
         public Dictionary<string, JiraTest> GetJiraSelectedTestsData(string testSetID, List<string> TCsIds = null)
         {
-            Dictionary<string, JiraTest> existsTestInJira = new Dictionary<string, JiraTest>();
+            Dictionary<string, JiraTest> existsTestInJira = [];
 
             JiraTestSet testSet = GetTestSetData(new JiraTestSet { Key = testSetID });
             if (testSet != null && testSet.Tests.Count > 0)

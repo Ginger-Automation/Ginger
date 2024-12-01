@@ -18,7 +18,6 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 
@@ -34,7 +33,7 @@ namespace Ginger.Imports.UFT
         public string Notes { get; set; }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<CommonFunctionMapping> CommonFunctionMappingList = new ObservableList<CommonFunctionMapping>();
+        public ObservableList<CommonFunctionMapping> CommonFunctionMappingList = [];
 
         public string sParamLocateBy;
         public string sParamLocateValue;
@@ -53,7 +52,7 @@ namespace Ginger.Imports.UFT
             }
             return str.Trim();
         }
-        public Dictionary<string, string> ActionFromCommonFunction = new Dictionary<string, string>();
+        public Dictionary<string, string> ActionFromCommonFunction = [];
         public int ParamDiff;
         public int CollateTill;
         public string sLocateDesc = "";
@@ -166,7 +165,7 @@ namespace Ginger.Imports.UFT
 
             if ((Pos2 - Pos1) > 0)
             {
-                str = STR.Substring(Pos1, Pos2 - Pos1);
+                str = STR[Pos1..Pos2];
                 return str;
             }
             else

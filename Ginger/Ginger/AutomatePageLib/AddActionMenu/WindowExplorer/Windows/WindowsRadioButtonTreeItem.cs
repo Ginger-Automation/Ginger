@@ -35,31 +35,29 @@ namespace Ginger.Drivers.Windows
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActWindowsControl()
-            {
-                Description = "Select Radio Button " + UIAElementInfo.ElementTitle,
-                ControlAction = ActWindowsControl.eControlAction.Select
-            });
-
-            list.Add(new ActWindowsControl()
-            {
-                Description = "Get Radio Button Value- " + UIAElementInfo.ElementTitle,
-                ControlAction = ActWindowsControl.eControlAction.GetValue
-            });
-
-            list.Add(new ActWindowsControl()
-            {
-                Description = "Is Radio Button Selected- " + UIAElementInfo.ElementTitle,
-                ControlAction = ActWindowsControl.eControlAction.IsSelected
-            });
-
-            list.Add(new ActWindowsControl()
-            {
-                Description = "Click Radio Button" + UIAElementInfo.ElementTitle,
-                ControlAction = ActWindowsControl.eControlAction.Click
-            });
+            ObservableList<Act> list =
+            [
+                new ActWindowsControl()
+                {
+                    Description = "Select Radio Button " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActWindowsControl.eControlAction.Select
+                },
+                new ActWindowsControl()
+                {
+                    Description = "Get Radio Button Value- " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActWindowsControl.eControlAction.GetValue
+                },
+                new ActWindowsControl()
+                {
+                    Description = "Is Radio Button Selected- " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActWindowsControl.eControlAction.IsSelected
+                },
+                new ActWindowsControl()
+                {
+                    Description = "Click Radio Button" + UIAElementInfo.ElementTitle,
+                    ControlAction = ActWindowsControl.eControlAction.Click
+                },
+            ];
             return list;
         }
     }

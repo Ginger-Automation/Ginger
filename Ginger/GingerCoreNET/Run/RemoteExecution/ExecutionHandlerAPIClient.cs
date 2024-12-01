@@ -156,7 +156,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
 
                 return executionDetails;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting execution details from ExecutionHandler", ex);
                 throw;
@@ -183,7 +183,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
 
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while starting remote execution.", ex);
                 return false;

@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
@@ -60,7 +59,7 @@ namespace Ginger.Reports
 
         public enum eDeleteLocalDataOnPublish
         {
-            Yes , 
+            Yes,
             No
         }
 
@@ -209,7 +208,7 @@ namespace Ginger.Reports
                 }
             }
         }
-        
+
         private string mCentralLoggerEndPointUrl;
         [IsSerializedForLocalRepository]
         public string CentralLoggerEndPointUrl
@@ -258,7 +257,7 @@ namespace Ginger.Reports
             }
             set
             {
-                    mSealightsLog = value;
+                mSealightsLog = value;
             }
         }
 
@@ -390,7 +389,7 @@ namespace Ginger.Reports
 
         public bool ExecutionLoggerHTMLReportsAutomaticProdIsEnabled { get; set; }
 
-        public ObservableList<IHTMLReportConfiguration> temporaryPlacedHTMLReportConfigurationList = new ObservableList<IHTMLReportConfiguration>();
+        public ObservableList<IHTMLReportConfiguration> temporaryPlacedHTMLReportConfigurationList = [];
 
         public AutomationTabContext ExecutionLoggerAutomationTabContext { get; set; }
 

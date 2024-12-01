@@ -27,7 +27,6 @@ using GingerCore.Drivers;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -372,7 +371,7 @@ namespace GingerCore.Actions
         private CancellationTokenSource mAttachAgentCancellationToken = null;
         private Task mAttachAgentTask = null;
         private bool mWaitForWindowTimeOut = false;
-        private readonly List<string> processNames = new();
+        private readonly List<string> processNames = [];
         public override void Execute()
         {
             processNames.Clear();
@@ -688,7 +687,7 @@ namespace GingerCore.Actions
                 // If extesion is exe then we keep java executer empty
 
                 //arrange java application command params
-                List<string> commandParams = new List<string>();
+                List<string> commandParams = [];
                 foreach (ActInputValue AIV in this.InputValues)
                 {
                     if (!string.IsNullOrEmpty(AIV.Param) && !string.IsNullOrEmpty(AIV.ValueForDriver) && string.Compare(AIV.Param, "URL", true) != 0 && string.Compare(AIV.Param, "Port", true) != 0 && string.Compare(AIV.Param, "PortConfigParam", true) != 0)
@@ -749,7 +748,7 @@ namespace GingerCore.Actions
                 }
 
                 //run commnad
-                ExecuteCommandAsync(new List<string> { javaExecuter, command });
+                ExecuteCommandAsync([javaExecuter, command]);
 
                 if (String.IsNullOrEmpty(Error) != true)
                 {
@@ -809,7 +808,7 @@ namespace GingerCore.Actions
                 command = "-jar " + "\"" + Path.Combine(mJavaAgentPath_Calc, "GingerAgentStarter.jar") + "\" " + commandParams_OneLine;
 
                 //run commnad
-                ExecuteCommandAsync(new List<string> { javaExecuter, command });
+                ExecuteCommandAsync([javaExecuter, command]);
 
                 if (String.IsNullOrEmpty(Error) != true)
                 {
@@ -855,7 +854,7 @@ namespace GingerCore.Actions
                         var processlist = Process.GetProcesses()
                             .Where(process => processNames.Any(name => process.ProcessName.Contains(name, StringComparison.OrdinalIgnoreCase)));
 
-                        List<Process> matchingProcessList = new List<Process>();
+                        List<Process> matchingProcessList = [];
 
                         foreach (Process process in processlist)
                         {
@@ -1025,11 +1024,13 @@ namespace GingerCore.Actions
             try
             {
                 //Asynchronously start the Thread to process the Execute command request.
-                Thread objThread = new Thread(new ParameterizedThreadStart(ExecuteCommandSync));
-                //Make the thread as background thread.
-                objThread.IsBackground = true;
-                //Set the Priority of the thread.
-                objThread.Priority = ThreadPriority.AboveNormal;
+                Thread objThread = new Thread(new ParameterizedThreadStart(ExecuteCommandSync))
+                {
+                    //Make the thread as background thread.
+                    IsBackground = true,
+                    //Set the Priority of the thread.
+                    Priority = ThreadPriority.AboveNormal
+                };
                 //Start the thread.
                 objThread.Start(command);
             }
@@ -1105,9 +1106,9 @@ namespace GingerCore.Actions
                     return true;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG,"Error occurred while fetching process by id.", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred while fetching process by id.", ex);
             }
             return false;
         }

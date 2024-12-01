@@ -52,20 +52,23 @@ namespace UnitTests.NonUITests
         {
             TargetFrameworkHelper.Helper = new DotNetFrameworkHelper();
 
-            mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "BF Non-Driver Action Test";
-            mBF.Active = true;
+            mBF = new BusinessFlow
+            {
+                Activities = [],
+                Name = "BF Non-Driver Action Test",
+                Active = true
+            };
 
             Activity activity = new Activity();
             mBF.Activities.Add(activity);
             mBF.CurrentActivity = activity;
 
             mGR = new GingerRunner();
-            mGR.Executor = new GingerExecutionEngine(mGR);
-
-            mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
-            mGR.Executor.CurrentBusinessFlow = mBF;
+            mGR.Executor = new GingerExecutionEngine(mGR)
+            {
+                CurrentSolution = new Ginger.SolutionGeneral.Solution(),
+                CurrentBusinessFlow = mBF
+            };
             mGR.Executor.BusinessFlows.Add(mBF);
 
 
@@ -96,8 +99,10 @@ namespace UnitTests.NonUITests
 
         public static void AddApplicationAgent()
         {
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.Web
+            };
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "Web" });
 
             Agent a = new Agent();
@@ -108,12 +113,13 @@ namespace UnitTests.NonUITests
             DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: nameof(WebBrowserType.Chrome));
             browserTypeParam.Value = nameof(WebBrowserType.Chrome);
 
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [a];
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "Web", Agent = a });
-            mGR.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
-            mGR.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "Web", Platform = ePlatformType.Web, Description = "New Web application" });
+            mGR.Executor.SolutionApplications =
+            [
+                new ApplicationPlatform() { AppName = "Web", Platform = ePlatformType.Web, Description = "New Web application" },
+            ];
         }
 
 
@@ -133,18 +139,22 @@ namespace UnitTests.NonUITests
             action.GetOrCreateInputParam(ActXMLProcessing.Fields.TargetFileName, targetFile);
             action.TargetFileName.ValueForDriver = targetFile;
 
-            VariableString stringVar = new VariableString();
-            stringVar.Name = "env";
-            stringVar.Value = "xyz";
+            VariableString stringVar = new VariableString
+            {
+                Name = "env",
+                Value = "xyz"
+            };
 
             mBF.CurrentActivity.AddVariable(stringVar);
 
-            ObservableList<ActInputValue> paramList = new ObservableList<ActInputValue>();
-            paramList.Add(new ActInputValue() { Param = "PAR_ENV", Value = "{Var Name=env}" });
-            paramList.Add(new ActInputValue() { Param = "PAR_USER", Value = "abc" });
-            paramList.Add(new ActInputValue() { Param = "PAR_PASS", Value = "abc123" });
-            paramList.Add(new ActInputValue() { Param = "PAR_BUCKET", Value = "pqrst" });
-            paramList.Add(new ActInputValue() { Param = "PAR_QUERY", Value = "test1234" });
+            ObservableList<ActInputValue> paramList =
+            [
+                new ActInputValue() { Param = "PAR_ENV", Value = "{Var Name=env}" },
+                new ActInputValue() { Param = "PAR_USER", Value = "abc" },
+                new ActInputValue() { Param = "PAR_PASS", Value = "abc123" },
+                new ActInputValue() { Param = "PAR_BUCKET", Value = "pqrst" },
+                new ActInputValue() { Param = "PAR_QUERY", Value = "test1234" },
+            ];
 
             action.DynamicElements = paramList;
             action.Active = true;
@@ -177,11 +187,13 @@ namespace UnitTests.NonUITests
             action.GetOrCreateInputParam(ActXMLProcessing.Fields.TargetFileName, targetFile);
             action.TargetFileName.ValueForDriver = targetFile;
 
-            ObservableList<ActInputValue> paramList = new ObservableList<ActInputValue>();
-            paramList.Add(new ActInputValue() { Param = "VAR_DIR_NAME", Value = "ginger" });
-            paramList.Add(new ActInputValue() { Param = "VAR_ENV_COMMAND", Value = "abc" });
-            paramList.Add(new ActInputValue() { Param = "VAR_CLASS_FILE_NAME", Value = "abc123" });
-            paramList.Add(new ActInputValue() { Param = "VAR_IDENTIFIER_NAME", Value = "pqrst" });
+            ObservableList<ActInputValue> paramList =
+            [
+                new ActInputValue() { Param = "VAR_DIR_NAME", Value = "ginger" },
+                new ActInputValue() { Param = "VAR_ENV_COMMAND", Value = "abc" },
+                new ActInputValue() { Param = "VAR_CLASS_FILE_NAME", Value = "abc123" },
+                new ActInputValue() { Param = "VAR_IDENTIFIER_NAME", Value = "pqrst" },
+            ];
 
             action.DynamicElements = paramList;
             action.Active = true;
@@ -278,14 +290,18 @@ namespace UnitTests.NonUITests
         public void XMLRequestFromFileCheckedTestForPath()
         {
             //Arrange
-            ActXMLTagValidation action = new ActXMLTagValidation();
-            action.DocumentType = GingerCore.Actions.XML.ActXMLTagValidation.eDocumentType.XML;
-            action.ReqisFromFile = true;
+            ActXMLTagValidation action = new ActXMLTagValidation
+            {
+                DocumentType = GingerCore.Actions.XML.ActXMLTagValidation.eDocumentType.XML,
+                ReqisFromFile = true
+            };
             action.InputFile.Value = TestResources.GetTestResourcesFile($"XML{Separator}book.xml");
-            ActInputValue AIV = new ActInputValue();
-            AIV.FilePath = "/catalog/book[2]";
-            AIV.Value = "publisher";
-            AIV.Param = "/catalog/book[2]";
+            ActInputValue AIV = new ActInputValue
+            {
+                FilePath = "/catalog/book[2]",
+                Value = "publisher",
+                Param = "/catalog/book[2]"
+            };
             action.DynamicElements.Add(AIV);
             action.Active = true;
             action.AddNewReturnParams = true;
@@ -302,9 +318,11 @@ namespace UnitTests.NonUITests
         public void XMLRequestFromFileCheckedTestForContent()
         {
             //Arrange
-            ActXMLTagValidation action = new ActXMLTagValidation();
-            action.DocumentType = GingerCore.Actions.XML.ActXMLTagValidation.eDocumentType.XML;
-            action.ReqisFromFile = false;
+            ActXMLTagValidation action = new ActXMLTagValidation
+            {
+                DocumentType = GingerCore.Actions.XML.ActXMLTagValidation.eDocumentType.XML,
+                ReqisFromFile = false
+            };
             string xmlFileContent = File.ReadAllText(TestResources.GetTestResourcesFile($"XML{Separator}book.xml"));
             action.InputFile.Value = xmlFileContent;
             action.Active = true;
@@ -320,14 +338,18 @@ namespace UnitTests.NonUITests
         public void XMLRequestFromFileUnCheckedTestForPath()
         {
             //Arrange
-            ActXMLTagValidation action = new ActXMLTagValidation();
-            action.DocumentType = GingerCore.Actions.XML.ActXMLTagValidation.eDocumentType.XML;
-            action.ReqisFromFile = false;
+            ActXMLTagValidation action = new ActXMLTagValidation
+            {
+                DocumentType = GingerCore.Actions.XML.ActXMLTagValidation.eDocumentType.XML,
+                ReqisFromFile = false
+            };
             action.InputFile.Value = TestResources.GetTestResourcesFile($"XML{Separator}book.xml");
-            ActInputValue AIV = new ActInputValue();
-            AIV.FilePath = "/catalog/book[2]";
-            AIV.Value = "publisher";
-            AIV.Param = "/catalog/book[2]";
+            ActInputValue AIV = new ActInputValue
+            {
+                FilePath = "/catalog/book[2]",
+                Value = "publisher",
+                Param = "/catalog/book[2]"
+            };
             action.DynamicElements.Add(AIV);
             action.Active = true;
             action.AddNewReturnParams = true;
@@ -344,9 +366,11 @@ namespace UnitTests.NonUITests
         public void XMLRequestFromFileUnCheckedTestForContent()
         {
             //Arrange
-            ActXMLTagValidation action = new ActXMLTagValidation();
-            action.DocumentType = GingerCore.Actions.XML.ActXMLTagValidation.eDocumentType.XML;
-            action.ReqisFromFile = true;
+            ActXMLTagValidation action = new ActXMLTagValidation
+            {
+                DocumentType = GingerCore.Actions.XML.ActXMLTagValidation.eDocumentType.XML,
+                ReqisFromFile = true
+            };
             string xmlFileContent = File.ReadAllText(TestResources.GetTestResourcesFile($"XML{Separator}book.xml"));
             action.InputFile.Value = xmlFileContent;
             action.Active = true;

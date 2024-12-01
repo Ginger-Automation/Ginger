@@ -57,13 +57,15 @@ namespace Ginger.Run
             RunSetActionsGrid.AddToolbarTool("@AddMail2_16x16.png", "Add Send Text Email Operation", AddSendFreeEmailAction);
             RunSetActionsGrid.AddToolbarTool("@AddSMS_16x16.png", "Add Send SMS Operation", AddSendSMS);
 
-            Binding b = new Binding();
-            b.Source = WorkSpace.Instance.UserProfile;
-            b.Path = new PropertyPath(nameof(UserProfile.ShowEnterpriseFeatures));
-            b.Mode = BindingMode.OneWay;
-            b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            b.NotifyOnValidationError = true;
-            b.Converter = new GingerCore.GeneralLib.BoolVisibilityConverter();
+            Binding b = new Binding
+            {
+                Source = WorkSpace.Instance.UserProfile,
+                Path = new PropertyPath(nameof(UserProfile.ShowEnterpriseFeatures)),
+                Mode = BindingMode.OneWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                NotifyOnValidationError = true,
+                Converter = new GingerCore.GeneralLib.BoolVisibilityConverter()
+            };
 
             RunSetActionsGrid.AddSeparator(b);
             RunSetActionsGrid.AddToolbarTool("@AddRunSetALMAction_16x16.png", "Add Publish Execution Results to ALM Operation", AddPublishtoALMAction, binding: b);
@@ -132,7 +134,7 @@ namespace Ginger.Run
         {
             RunSetActionsGrid.ShowHeader = Visibility.Collapsed;
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             view.GridColsView = viewCols;
 
             viewCols.Add(new GridColView() { Field = nameof(RunSetActionBase.Active), WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });

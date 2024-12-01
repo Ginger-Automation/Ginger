@@ -48,32 +48,41 @@ namespace UnitTests.UITests
         {
             TargetFrameworkHelper.Helper = new DotNetFrameworkHelper();
 
-            mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "BF Test Chrome";
-            mBF.Active = true;
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
+            mBF = new BusinessFlow
+            {
+                Activities = [],
+                Name = "BF Test Chrome",
+                Active = true
+            };
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.Web
+            };
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "WebApp" });
 
             VariableString v1 = new VariableString() { Name = "v1", InitialStringValue = "1" };
             mBF.AddVariable(v1);
 
             mGR = new GingerRunner();
-            mGR.Executor = new GingerExecutionEngine(mGR);
-            mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+            mGR.Executor = new GingerExecutionEngine(mGR)
+            {
+                CurrentSolution = new Ginger.SolutionGeneral.Solution()
+            };
 
-            Agent a = new Agent();
-            a.DriverType = Agent.eDriverType.Selenium;
+            Agent a = new Agent
+            {
+                DriverType = Agent.eDriverType.Selenium
+            };
             DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: nameof(WebBrowserType.Chrome));
             browserTypeParam.Value = nameof(WebBrowserType.Chrome);
 
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [a];
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "WebApp", Agent = a });
-            mGR.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
-            mGR.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "WebApp", Platform = ePlatformType.Web, Description = "New application" });
+            mGR.Executor.SolutionApplications =
+            [
+                new ApplicationPlatform() { AppName = "WebApp", Platform = ePlatformType.Web, Description = "New application" },
+            ];
             mGR.Executor.BusinessFlows.Add(mBF);
         }
 
@@ -85,18 +94,21 @@ namespace UnitTests.UITests
             // Arrange
             ResetBusinessFlow();
 
-            Activity a1 = new Activity();
-            a1.Active = true;
-            a1.TargetApplication = "WebApp";
+            Activity a1 = new Activity
+            {
+                Active = true,
+                TargetApplication = "WebApp"
+            };
             mBF.Activities.Add(a1);
 
             ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://demos.telerik.com/kendo-ui/dragdrop/index", Active = true };
             a1.Acts.Add(act1);
 
 
-            ActUIElement act3 = new ActUIElement();
-
-            act3.ElementLocateBy = eLocateBy.ByXPath;
+            ActUIElement act3 = new ActUIElement
+            {
+                ElementLocateBy = eLocateBy.ByXPath
+            };
             // act2.LocateValue
             act3.GetOrCreateInputParam(ActUIElement.Fields.ElementLocateValue, "//*[@id='draggable']");
             act3.ElementAction = ActUIElement.eElementAction.DragDrop;
@@ -124,17 +136,20 @@ namespace UnitTests.UITests
         {
             ResetBusinessFlow();
 
-            Activity a1 = new Activity();
-            a1.Active = true;
-            a1.TargetApplication = "WebApp";
+            Activity a1 = new Activity
+            {
+                Active = true,
+                TargetApplication = "WebApp"
+            };
             mBF.Activities.Add(a1);
 
             ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://www.w3schools.com/html/html5_draganddrop.asp", Active = true };
             a1.Acts.Add(act1);
 
-            ActUIElement act2 = new ActUIElement();
-
-            act2.ElementLocateBy = eLocateBy.ByXPath;
+            ActUIElement act2 = new ActUIElement
+            {
+                ElementLocateBy = eLocateBy.ByXPath
+            };
             act2.GetOrCreateInputParam(ActUIElement.Fields.ElementLocateValue, "//*[@id='drag1']");
             act2.ElementAction = ActUIElement.eElementAction.DragDrop;
             act2.GetOrCreateInputParam(ActUIElement.Fields.DragDropType, ActUIElement.eElementDragDropType.DragDropJS.ToString());
@@ -158,16 +173,20 @@ namespace UnitTests.UITests
         {
             ResetBusinessFlow();
 
-            Activity a1 = new Activity();
-            a1.Active = true;
-            a1.TargetApplication = "WebApp";
+            Activity a1 = new Activity
+            {
+                Active = true,
+                TargetApplication = "WebApp"
+            };
             mBF.Activities.Add(a1);
 
             ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://demos.telerik.com/kendo-ui/dragdrop/index", Active = true };
             a1.Acts.Add(act1);
 
-            ActUIElement act3 = new ActUIElement();
-            act3.ElementLocateBy = eLocateBy.ByXPath;
+            ActUIElement act3 = new ActUIElement
+            {
+                ElementLocateBy = eLocateBy.ByXPath
+            };
             act3.GetOrCreateInputParam(ActUIElement.Fields.ElementLocateValue, "//*[@id='draggable']");
             act3.ElementAction = ActUIElement.eElementAction.DragDrop;
 
@@ -192,9 +211,11 @@ namespace UnitTests.UITests
         {
             ResetBusinessFlow();
 
-            Activity a1 = new Activity();
-            a1.Active = true;
-            a1.TargetApplication = "WebApp";
+            Activity a1 = new Activity
+            {
+                Active = true,
+                TargetApplication = "WebApp"
+            };
             mBF.Activities.Add(a1);
 
             ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "http://szimek.github.io/signature_pad/", Active = true };
@@ -202,9 +223,10 @@ namespace UnitTests.UITests
             a1.Acts.Add(act1);
 
 
-            ActUIElement act3 = new ActUIElement();
-
-            act3.ElementLocateBy = eLocateBy.ByXPath;
+            ActUIElement act3 = new ActUIElement
+            {
+                ElementLocateBy = eLocateBy.ByXPath
+            };
             act3.GetOrCreateInputParam(ActUIElement.Fields.ElementLocateValue, "//*[@id='signature-pad']/div[1]/canvas");
             // act3.GetOrCreateInputParam(ActUIElement.Fields.ElementLocateValue, "//*[@id='painter']");
             act3.ElementAction = ActUIElement.eElementAction.DrawObject;

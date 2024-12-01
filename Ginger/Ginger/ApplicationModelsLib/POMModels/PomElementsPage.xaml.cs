@@ -185,7 +185,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void SetEditMode()
         {
-            if(_editMode == General.eRIPageViewMode.View || _editMode == General.eRIPageViewMode.ViewAndExecute)
+            if (_editMode is General.eRIPageViewMode.View or General.eRIPageViewMode.ViewAndExecute)
             {
                 xMainElementsGrid.IsEnabled = false;
                 xElementDetails.IsEnabled = false;
@@ -327,11 +327,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void SetElementsGridView()
         {
             xMainElementsGrid.SetTitleLightStyle = true;
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 25, AllowSorting = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ElementInfo.ElementTypeImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 },
+                new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 25, AllowSorting = true },
+            ]
+            };
 
             List<ComboEnumItem> ElementTypeList = GetEnumValuesForCombo(typeof(eElementType));
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnum), Header = "Type", WidthWeight = 10, AllowSorting = true, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ElementTypeList, HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
@@ -349,9 +352,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.LastUpdatedTime), Header = "Last Updated", WidthWeight = 10 });
             }
 
-            GridViewDef mRegularView = new GridViewDef(eGridView.RegularView.ToString());
-            mRegularView.GridColsView = new ObservableList<GridColView>();
-            mRegularView.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.StatusIcon), Visible = false });
+            GridViewDef mRegularView = new GridViewDef(eGridView.RegularView.ToString())
+            {
+                GridColsView = [new GridColView() { Field = nameof(ElementInfo.StatusIcon), Visible = false }]
+            };
 
             xMainElementsGrid.AddCustomView(mRegularView);
             xMainElementsGrid.SetAllColumnsDefaultView(view);
@@ -374,14 +378,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 xMainElementsGrid.SetbtnDeleteHandler(DeleteUnMappedElementRow);
             }
 
-            
-                WeakEventManager<DataGrid, DataGridPreparingCellForEditEventArgs>.AddHandler(source: xMainElementsGrid.grdMain, eventName: nameof(DataGrid.PreparingCellForEdit), handler: MainElementsGrid_PreparingCellForEdit);
-                xMainElementsGrid.PasteItemEvent += PasteElementEvent;
-                xMainElementsGrid.SelectedItemChanged += XMainElementsGrid_SelectedItemChanged;
-                
-                WeakEventManager<DataGrid, SelectionChangedEventArgs>.AddHandler(source: xMainElementsGrid.grdMain, eventName: nameof(DataGrid.SelectionChanged), handler: Grid_SelectionChanged);
 
-            
+            WeakEventManager<DataGrid, DataGridPreparingCellForEditEventArgs>.AddHandler(source: xMainElementsGrid.grdMain, eventName: nameof(DataGrid.PreparingCellForEdit), handler: MainElementsGrid_PreparingCellForEdit);
+            xMainElementsGrid.PasteItemEvent += PasteElementEvent;
+            xMainElementsGrid.SelectedItemChanged += XMainElementsGrid_SelectedItemChanged;
+
+            WeakEventManager<DataGrid, SelectionChangedEventArgs>.AddHandler(source: xMainElementsGrid.grdMain, eventName: nameof(DataGrid.SelectionChanged), handler: Grid_SelectionChanged);
+
+            xMainElementsGrid.AddToolbarTool(eImageType.Category, toolTip: "Set missing Categories for selected Elements", new RoutedEventHandler(SetMissingCategoriesForSelectedElements));
         }
 
         /// <summary>
@@ -457,10 +461,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private List<AppParameters> GetParameterList()
         {
             ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
-            List<AppParameters> parameters = new List<AppParameters>();
+            List<AppParameters> parameters = [];
             try
             {
-                List<string> lstParName = new List<string>();
+                List<string> lstParName = [];
                 foreach (var prms in mElements)
                 {
                     if (ElementInfo.IsElementTypeSupportingOptionalValues(prms.ElementTypeEnum))
@@ -473,11 +477,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
                             parName = string.Format("{0}_{1}", parName, count);
                         }
 
-                        AppParameters par = new AppParameters();
-                        par.ItemName = parName;
-                        par.OptionalValuesList = prms.OptionalValuesObjectsList;
-                        par.OptionalValuesString = prms.OptionalValuesObjectsListAsString;
-                        par.Description = prms.Description;
+                        AppParameters par = new AppParameters
+                        {
+                            ItemName = parName,
+                            OptionalValuesList = prms.OptionalValuesObjectsList,
+                            OptionalValuesString = prms.OptionalValuesObjectsListAsString,
+                            Description = prms.Description
+                        };
                         parameters.Add(par);
                     }
                 }
@@ -509,7 +515,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         // bool disabeledElementMsgShown;
         private void MainElementsGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {
-            if ((string)e.Column.Header == "Name" || (string)e.Column.Header == nameof(ElementInfo.Description))
+            if ((string)e.Column.Header is "Name" or (nameof(ElementInfo.Description)))
             {
                 return;
             }
@@ -591,9 +597,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void SetLocatorsGridView()
         {
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox },
+            ]
+            };
 
             List<ComboEnumItem> locateByList = GetPlatformLocatByList();
 
@@ -601,7 +611,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65 });
             defView.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xLocateValueVETemplate"] });
             defView.GridColsView.Add(new GridColView() { Field = "", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xCopyLocatorButtonTemplate"] });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.EnableFriendlyLocator), Visible = isEnableFriendlyLocator, Header = "Friendly Locator", WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });            
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.EnableFriendlyLocator), Visible = isEnableFriendlyLocator, Header = "Friendly Locator", WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Category), Header = nameof(ElementLocator.Category), WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GetPossibleCategories(), BindingMode = BindingMode.TwoWay });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
@@ -614,27 +624,39 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xElementDetails.xLocatorsGrid.btnAdd.AddHandler(System.Windows.Controls.Button.ClickEvent, new RoutedEventHandler(AddLocatorButtonClicked));
             xElementDetails.xLocatorsGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteLocatorClicked));
             WeakEventManager<DataGrid, DataGridPreparingCellForEditEventArgs>.AddHandler(source: xElementDetails.xLocatorsGrid.grdMain, eventName: nameof(DataGrid.PreparingCellForEdit), handler: LocatorsGrid_PreparingCellForEdit);
-            
-            
+
             xElementDetails.xLocatorsGrid.PasteItemEvent += PasteLocatorEvent;
         }
 
         private List<ComboEnumItem> GetPossibleCategories()
         {
             ePlatformType mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
-            List<ePomElementCategory> categoriesList= PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetPlatformPOMElementCategories();
+            List<ePomElementCategory> categoriesList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetPlatformPOMElementCategories();
 
-            List<ComboEnumItem> elementStatus = new List<ComboEnumItem>();
+            List<ComboEnumItem> elementStatus = [];
             foreach (ePomElementCategory category in categoriesList)
             {
                 elementStatus.Add(new ComboEnumItem() { text = category.ToString(), Value = category });
-            }        
+            }
             return elementStatus;
+        }
+
+        private List<string> GetPossibleCategoriesAsString()
+        {
+            ePlatformType mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
+            List<ePomElementCategory> categoriesList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetPlatformPOMElementCategories();
+
+            List<string> categories = [];
+            foreach (ePomElementCategory category in categoriesList)
+            {
+                categories.Add(category.ToString());
+            }
+            return categories;
         }
 
         private List<ComboEnumItem> GetPositionList()
         {
-            List<ComboEnumItem> PositionComboItemList = new List<ComboEnumItem>();
+            List<ComboEnumItem> PositionComboItemList = [];
             var targetPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
             if (!targetPlatform.Equals(ePlatformType.NA))
             {
@@ -642,9 +664,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 List<ePosition> positionList = platformInfoBase.GetElementPositionList();
                 foreach (var positionBy in positionList)
                 {
-                    ComboEnumItem comboEnumItem = new ComboEnumItem();
-                    comboEnumItem.text = GingerCore.General.GetEnumValueDescription(typeof(ePosition), positionBy);
-                    comboEnumItem.Value = positionBy;
+                    ComboEnumItem comboEnumItem = new ComboEnumItem
+                    {
+                        text = GingerCore.General.GetEnumValueDescription(typeof(ePosition), positionBy),
+                        Value = positionBy
+                    };
                     PositionComboItemList.Add(comboEnumItem);
                 }
             }
@@ -652,7 +676,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         }
         private List<ComboEnumItem> GetPlatformLocatByList()
         {
-            List<ComboEnumItem> locateByComboItemList = new List<ComboEnumItem>();
+            List<ComboEnumItem> locateByComboItemList = [];
 
             var targetPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
 
@@ -665,9 +689,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 {
                     if (!locateBy.Equals(eLocateBy.POMElement))
                     {
-                        ComboEnumItem comboEnumItem = new ComboEnumItem();
-                        comboEnumItem.text = GingerCore.General.GetEnumValueDescription(typeof(eLocateBy), locateBy);
-                        comboEnumItem.Value = locateBy;
+                        ComboEnumItem comboEnumItem = new ComboEnumItem
+                        {
+                            text = GingerCore.General.GetEnumValueDescription(typeof(eLocateBy), locateBy),
+                            Value = locateBy
+                        };
                         locateByComboItemList.Add(comboEnumItem);
                     }
                 }
@@ -770,12 +796,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void SetControlPropertiesGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Name), WidthWeight = 25 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Value), WidthWeight = 75 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xPropertyValueVETemplate"] });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ControlProperty.Name), WidthWeight = 25 },
+                new GridColView() { Field = nameof(ControlProperty.Value), WidthWeight = 75 },
+                new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xPropertyValueVETemplate"] },
+            ]
+            };
 
             xElementDetails.xPropertiesGrid.SetAllColumnsDefaultView(view);
             xElementDetails.xPropertiesGrid.InitViewItems();
@@ -783,8 +812,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xElementDetails.xPropertiesGrid.btnAdd.AddHandler(System.Windows.Controls.Button.ClickEvent, new RoutedEventHandler(AddPropertyHandler));
             WeakEventManager<DataGrid, DataGridPreparingCellForEditEventArgs>.AddHandler(source: xElementDetails.xPropertiesGrid.grdMain, eventName: nameof(DataGrid.PreparingCellForEdit), handler: PropertiesGrid_PreparingCellForEdit);
             WeakEventManager<DataGrid, DataGridCellEditEndingEventArgs>.AddHandler(source: xElementDetails.xPropertiesGrid.grdMain, eventName: nameof(DataGrid.CellEditEnding), handler: PropertiesGrid_CellEditEnding);
-            
-            
+
+
         }
 
         private void PropertiesGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
@@ -799,8 +828,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             if (e.Column.Header.ToString() == nameof(ControlProperty.Value))
             {
-                ControlProperty ctrlProp = e.EditingElement.DataContext as ControlProperty;
-                mSelectedElement.Path = ctrlProp != null ? ctrlProp.Value : "";
+                mSelectedElement.Path = e.EditingElement.DataContext is ControlProperty ctrlProp ? ctrlProp.Value : "";
             }
         }
 
@@ -838,7 +866,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     string title;
                     if (mSelectedElement.ElementName.Length > 100)
                     {
-                        title = string.Format("'{0}...' Details", mSelectedElement.ElementName.Substring(0, 25));
+                        title = string.Format("'{0}...' Details", mSelectedElement.ElementName[..25]);
                     }
                     else
                     {
@@ -852,16 +880,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
                 CollectionChangedEventManager.RemoveHandler(source: mSelectedElement.Locators, handler: Locators_CollectionChanged);
                 CollectionChangedEventManager.AddHandler(source: mSelectedElement.Locators, handler: Locators_CollectionChanged);
-                
-                
+
+
                 xElementDetails.xLocatorsGrid.DataSourceList = mSelectedElement.Locators;
                 UpdateLocatorsHeader();
                 if (isEnableFriendlyLocator)
                 {
                     CollectionChangedEventManager.RemoveHandler(source: mSelectedElement.FriendlyLocators, handler: FriendlyLocators_CollectionChanged);
                     CollectionChangedEventManager.AddHandler(source: mSelectedElement.FriendlyLocators, handler: FriendlyLocators_CollectionChanged);
-                    
-                    
+
+
                     for (int j = 0; j < mSelectedElement.FriendlyLocators.Count; j++)
                     {
                         ElementLocator felementLocator = mSelectedElement.FriendlyLocators[j];
@@ -886,10 +914,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     xElementDetails.xFriendlyLocatorTab.Visibility = Visibility.Collapsed;
                 }
                 string allProperties = string.Empty;
-               mSelectedElement.Properties.CollectionChanged -= Properties_CollectionChanged;
-               mSelectedElement.Properties.CollectionChanged += Properties_CollectionChanged;
-                
-                
+                mSelectedElement.Properties.CollectionChanged -= Properties_CollectionChanged;
+                mSelectedElement.Properties.CollectionChanged += Properties_CollectionChanged;
+
+
                 xElementDetails.xPropertiesGrid.DataSourceList = GingerCore.General.ConvertListToObservableList(mSelectedElement.Properties.Where(p => p.ShowOnUI).ToList());
                 if (!mSelectedElement.IsAutoLearned && mSelectedElement.Properties.FirstOrDefault(c => c.Name == "Parent IFrame") == null)
                 {
@@ -939,7 +967,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
                 catch (Exception ex)
                 {
-                    if(ex is NoSuchElementException)
+                    if (ex is NoSuchElementException)
                     {
                         Reporter.ToUser(eUserMsgKey.ElementNotFound);
                     }
@@ -973,7 +1001,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 return;
             }
-            
+
             IsTestBtnClicked = true;
 
 
@@ -981,10 +1009,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedLocator != null)
             {
-                var testElement = new ElementInfo();
-                testElement.Path = CurrentEI.Path;
-                testElement.Locators = new ObservableList<ElementLocator>() { mSelectedLocator };
-                testElement.FriendlyLocators = CurrentEI.FriendlyLocators;
+                var testElement = new ElementInfo
+                {
+                    Path = CurrentEI.Path,
+                    Locators = [mSelectedLocator],
+                    FriendlyLocators = CurrentEI.FriendlyLocators
+                };
                 //For Java Driver Widgets
 
                 if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey).Equals(ePlatformType.Java))
@@ -998,13 +1028,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
                 else if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey).Equals(ePlatformType.Web))
                 {
-                    var htmlElementInfo = new HTMLElementInfo() {
+                    var htmlElementInfo = new HTMLElementInfo
+                    {
                         Path = testElement.Path,
                         Locators = testElement.Locators,
                         Properties = ((HTMLElementInfo)CurrentEI).Properties,
+                        FriendlyLocators = testElement.FriendlyLocators
                     };
-
-                    htmlElementInfo.FriendlyLocators = testElement.FriendlyLocators;
                     testElement = htmlElementInfo;
                 }
 
@@ -1022,7 +1052,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-            private void TestAllElementsLocators(object sender, RoutedEventArgs e)
+        private void TestAllElementsLocators(object sender, RoutedEventArgs e)
         {
             if (!ValidateDriverAvalability())
             {
@@ -1031,7 +1061,74 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                mWinExplorer.TestElementLocators(mSelectedElement, mPOM:mPOM);
+                mWinExplorer.TestElementLocators(mSelectedElement, mPOM: mPOM);
+            }
+        }
+
+        private void SetMissingCategoriesForSelectedElements(object sender, RoutedEventArgs e)
+        {
+            if (xMainElementsGrid.Grid.SelectedItems.Count == 0)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select elements to set missing categories.");
+                return;
+            }
+
+            bool isCategoryUpdated = false;
+            string selectedCategory = "";
+            if (InputBoxWindow.OpenDialog("Set Missing Categories", "Select Category to set:", ref selectedCategory, GetPossibleCategoriesAsString()))
+            {
+                if (!string.IsNullOrEmpty(selectedCategory))
+                {
+                    try
+                    {
+                        Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "setting all missing categories for selected elements...");
+                        foreach (ElementInfo element in xMainElementsGrid.Grid.SelectedItems)
+                        {
+                            if (element.Properties.All(y => y.Category == null) && element.Locators.All(y => y.Category == null))
+                            {
+                                SetMissingCategoriesForElement(element, (ePomElementCategory)Enum.Parse(typeof(ePomElementCategory), selectedCategory));
+                                isCategoryUpdated = true;
+                            }
+
+                        }
+                        if (isCategoryUpdated)
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Missing categories updated successfully.");
+                        }
+                        else
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No missing categoriess found.");
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error in setting missing categories for selected elements", ex);
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error in setting missing categories for all/some elements");
+                    }
+                    finally
+                    {
+                        Reporter.HideStatusMessage();
+                    }
+                }
+            }
+        }
+
+        private void SetMissingCategoriesForElement(ElementInfo element, ePomElementCategory category)
+        {
+            foreach (ElementLocator locator in element.Locators)
+            {
+                if (locator.Category == null)
+                {
+                    locator.Category = category;
+                }
+            }
+            foreach (ControlProperty property in element.Properties)
+            {
+                if (property.Category == null)
+                {
+                    property.Category = category;
+                }
             }
         }
 
@@ -1154,16 +1251,22 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void SetFriendlyLocatorsGridView()
         {
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox },
+            ]
+            };
             List<ComboEnumItem> positionList = GetPositionList();
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Position), Header = "Position", WidthWeight = 25, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = positionList });
 
             List<ComboEnumItem> locateByList = GetPlatformLocatByList();
-            ComboEnumItem comboEnumItem = new ComboEnumItem();
-            comboEnumItem.text = GingerCore.General.GetEnumValueDescription(typeof(eLocateBy), eLocateBy.POMElement);
-            comboEnumItem.Value = eLocateBy.POMElement;
+            ComboEnumItem comboEnumItem = new ComboEnumItem
+            {
+                text = GingerCore.General.GetEnumValueDescription(typeof(eLocateBy), eLocateBy.POMElement),
+                Value = eLocateBy.POMElement
+            };
             locateByList.Add(comboEnumItem);
 
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, });
@@ -1176,8 +1279,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             WeakEventManager<DataGrid, DataGridPreparingCellForEditEventArgs>.AddHandler(source: xElementDetails.xFriendlyLocatorsGrid.grdMain, eventName: nameof(DataGrid.PreparingCellForEdit), handler: FriendlyLocatorsGrid_PreparingCellForEdit);
             xElementDetails.xFriendlyLocatorsGrid.PasteItemEvent += PasteLocatorEvent;
-           
-            
+
+
         }
 
     }

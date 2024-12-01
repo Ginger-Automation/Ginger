@@ -34,13 +34,14 @@ namespace Ginger.WindowExplorer.Android
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActUIElement()
-            {
-                Description = "Get Text " + Name,
-                ElementAction = ActUIElement.eElementAction.GetValue
-            });
+            ObservableList<Act> list =
+            [
+                new ActUIElement()
+                {
+                    Description = "Get Text " + Name,
+                    ElementAction = ActUIElement.eElementAction.GetValue
+                },
+            ];
             return list;
         }
     }

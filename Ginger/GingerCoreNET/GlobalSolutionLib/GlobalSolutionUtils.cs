@@ -277,7 +277,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             try
             {
                 ActivitiesGroup activitiesGroup = (ActivitiesGroup)newRepositorySerializer.DeserializeFromFile(itemActivitiesGroup.ItemFullPath);
-                List<string> filePaths = new List<string>();
+                List<string> filePaths = [];
                 if (Directory.Exists(Path.Combine(SolutionFolder, "SharedRepository", "Activities")))
                 {
                     filePaths = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "Activities"), "*.xml", SearchOption.AllDirectories).ToList();
@@ -361,9 +361,8 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
 
         public void AddDependaciesForAction(Act act, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, ref List<VariableBase> VariableListToImport, ref List<EnvApplication> EnvAppListToImport, string dependacyFor = "")
         {
-            if (act is ActScript)
+            if (act is ActScript actScript)
             {
-                ActScript actScript = (ActScript)act;
                 if (!string.IsNullOrEmpty(actScript.ScriptName))
                 {
                     string scriptPath = Path.Combine(SolutionFolder, "Documents", "scripts", actScript.ScriptName);
@@ -371,21 +370,24 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
                 }
             }
-            if (act is ActVisualTesting)
+            if (act is ActVisualTesting actVisualTesting)
             {
-                ActVisualTesting actVisualTesting = (ActVisualTesting)act;
                 Solution solution = GetSolution();
 
                 if (actVisualTesting.VisualTestingAnalyzer == ActVisualTesting.eVisualTestingAnalyzer.VRT)
                 {
-                    GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.ExtrnalIntegrationConfigurations, solution.FilePath, ConvertToRelativePath(solution.FilePath), true, "", string.IsNullOrEmpty(dependacyFor) ? act.Description : dependacyFor);
-                    newItem.ItemName = ActVisualTesting.eVisualTestingAnalyzer.VRT.ToString();
+                    GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.ExtrnalIntegrationConfigurations, solution.FilePath, ConvertToRelativePath(solution.FilePath), true, "", string.IsNullOrEmpty(dependacyFor) ? act.Description : dependacyFor)
+                    {
+                        ItemName = ActVisualTesting.eVisualTestingAnalyzer.VRT.ToString()
+                    };
                     AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
                 }
                 else if (actVisualTesting.VisualTestingAnalyzer == ActVisualTesting.eVisualTestingAnalyzer.Applitools)
                 {
-                    GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.ExtrnalIntegrationConfigurations, solution.FilePath, ConvertToRelativePath(solution.FilePath), true, "", string.IsNullOrEmpty(dependacyFor) ? act.Description : dependacyFor);
-                    newItem.ItemName = ActVisualTesting.eVisualTestingAnalyzer.Applitools.ToString();
+                    GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.ExtrnalIntegrationConfigurations, solution.FilePath, ConvertToRelativePath(solution.FilePath), true, "", string.IsNullOrEmpty(dependacyFor) ? act.Description : dependacyFor)
+                    {
+                        ItemName = ActVisualTesting.eVisualTestingAnalyzer.Applitools.ToString()
+                    };
                     AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
                 }
             }
@@ -417,9 +419,8 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
         private string GetApplicationPOMModelFilePathForAction(Act act)
         {
             string filePath = string.Empty;
-            if (act is ActUIElement)
+            if (act is ActUIElement actUIElement)
             {
-                ActUIElement actUIElement = (ActUIElement)act;
                 if (actUIElement.ElementLocateBy == Common.UIElement.eLocateBy.POMElement)
                 {
                     string[] pOMandElementGUIDs = actUIElement.ElementLocateValue.Split('_');
@@ -443,7 +444,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             Guid selectedPOMGUID = new Guid(GUID);
             if (!string.IsNullOrEmpty(GUID))
             {
-                List<string> filePaths = new List<string>();
+                List<string> filePaths = [];
                 if (Directory.Exists(Path.Combine(SolutionFolder, "Applications Models", "POM Models")))
                 {
                     filePaths = Directory.GetFiles(Path.Combine(SolutionFolder, "Applications Models", "POM Models"), "*.xml", SearchOption.AllDirectories).ToList();
@@ -487,7 +488,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             Guid selectedPOMGUID = new Guid(GUID);
             if (!string.IsNullOrEmpty(GUID))
             {
-                List<string> filePaths = new List<string>();
+                List<string> filePaths = [];
                 if (Directory.Exists(Path.Combine(SolutionFolder, "Applications Models", "API Models")))
                 {
                     filePaths = Directory.GetFiles(Path.Combine(SolutionFolder, "Applications Models", "API Models"), "*.xml", SearchOption.AllDirectories).ToList();
@@ -535,7 +536,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 }
                 //Shared Items
                 //1. Shared ActivitiesGroup
-                List<string> filePaths = new List<string>();
+                List<string> filePaths = [];
                 if (Directory.Exists(Path.Combine(SolutionFolder, "SharedRepository", "ActivitiesGroup")))
                 {
                     filePaths = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "ActivitiesGroup"), "*.xml", SearchOption.AllDirectories).ToList();
@@ -546,7 +547,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     {
                         try
                         {
-                            RepositoryItemBase existingRepoItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(file);
+                            RepositoryItemBase existingRepoItem = newRepositorySerializer.DeserializeFromFile(file);
                             if (SharedRepositoryOperations.IsMatchingRepoItem(ag, existingRepoItem, ref linkIsByExternalID, ref linkIsByParentID))
                             {
                                 GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryActions, file, ConvertToRelativePath(file), true, GetRepositoryItemName(file), importedBF.Name);
@@ -563,9 +564,9 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     }
                 }
                 //if the solution is cloned, empty foldes will not be created at local
-                List<string> filePathsActivity = new List<string>();
-                List<string> filePathsActs = new List<string>();
-                List<string> filePathsVars = new List<string>();
+                List<string> filePathsActivity = [];
+                List<string> filePathsActs = [];
+                List<string> filePathsVars = [];
 
                 if (Directory.Exists(Path.Combine(SolutionFolder, "SharedRepository", "Activities")))
                 {
@@ -586,7 +587,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     {
                         try
                         {
-                            RepositoryItemBase existingRepoItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(file);
+                            RepositoryItemBase existingRepoItem = newRepositorySerializer.DeserializeFromFile(file);
                             if (SharedRepositoryOperations.IsMatchingRepoItem(activity, existingRepoItem, ref linkIsByExternalID, ref linkIsByParentID))
                             {
                                 GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryActivities, file, ConvertToRelativePath(file), true, GetRepositoryItemName(file), importedBF.Name);
@@ -608,7 +609,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                         {
                             try
                             {
-                                RepositoryItemBase existingRepoItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(file);
+                                RepositoryItemBase existingRepoItem = newRepositorySerializer.DeserializeFromFile(file);
                                 if (SharedRepositoryOperations.IsMatchingRepoItem(act, existingRepoItem, ref linkIsByExternalID, ref linkIsByParentID))
                                 {
                                     GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryActions, file, ConvertToRelativePath(file), true, GetRepositoryItemName(file), importedBF.Name);
@@ -626,7 +627,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                                     {
                                         try
                                         {
-                                            RepositoryItemBase existingSharedActivityRepoItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(filename);
+                                            RepositoryItemBase existingSharedActivityRepoItem = newRepositorySerializer.DeserializeFromFile(filename);
                                             if (((Activity)existingSharedActivityRepoItem).ActivityName.ToUpper() == activityName)
                                             {
                                                 GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryActivities, filename, ConvertToRelativePath(filename), true, GetRepositoryItemName(filename), importedBF.Name);
@@ -685,7 +686,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 AddVariableToList(((ActSetVariableValue)act).VariableName, dependancyFor, VariableListToImport, ref SelectedItemsListToImport);
             }
             //check if the action has StoreTo as Variable/GlobalVariable
-            var list = act.ActReturnValues.Where(x => x.StoreTo == ActReturnValue.eStoreTo.Variable || x.StoreTo == ActReturnValue.eStoreTo.GlobalVariable);
+            var list = act.ActReturnValues.Where(x => x.StoreTo is ActReturnValue.eStoreTo.Variable or ActReturnValue.eStoreTo.GlobalVariable);
             foreach (ActReturnValue arv in list)
             {
                 AddVariableToList(arv.StoreToValue, dependancyFor, VariableListToImport, ref SelectedItemsListToImport);
@@ -702,8 +703,10 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 {
                     VariableListToImport.Add(vb);
                 }
-                GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.Variables, solution.FilePath, ConvertToRelativePath(solution.FilePath), true, "", dependancyFor);
-                newItem.ItemName = string.Join(",", VariableListToImport);
+                GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.Variables, solution.FilePath, ConvertToRelativePath(solution.FilePath), true, "", dependancyFor)
+                {
+                    ItemName = string.Join(",", VariableListToImport)
+                };
                 AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
             }
         }
@@ -716,7 +719,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 {
                     try
                     {
-                        RepositoryItemBase existingRepoItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(file);
+                        RepositoryItemBase existingRepoItem = newRepositorySerializer.DeserializeFromFile(file);
                         if (SharedRepositoryOperations.IsMatchingRepoItem(variable, existingRepoItem, ref linkIsByExternalID, ref linkIsByParentID))
                         {
                             GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryVariables, file, ConvertToRelativePath(file), true, GetRepositoryItemName(file), dependancyFor);
@@ -776,8 +779,8 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     string paramStr = " Param=";
                     int indxOfApp = match.IndexOf(appStr);
                     int indexOfParam = match.IndexOf(paramStr);
-                    AppName = match.Substring(indxOfApp + appStr.Length, indexOfParam - (indxOfApp + appStr.Length));
-                    GlobalParamName = match.Substring(indexOfParam + paramStr.Length, (match.Length - 1) - (indexOfParam + paramStr.Length));
+                    AppName = match[(indxOfApp + appStr.Length)..indexOfParam];
+                    GlobalParamName = match[(indexOfParam + paramStr.Length)..^1];
 
                     string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder, "Environments"), "*.xml", SearchOption.AllDirectories);
                     foreach (string envFile in filePaths)
@@ -863,9 +866,8 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                         {
 
                             string varValue = string.Empty;
-                            if (vb is VariablePasswordString)
+                            if (vb is VariablePasswordString vp)
                             {
-                                VariablePasswordString vp = (VariablePasswordString)vb;
                                 vp.Password = EncryptValueWithCurrentSolutionKey(vb.Value);
                                 VariableListToImport.Add(vp);
                             }
@@ -878,8 +880,10 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 }
                 if (VariableListToImport.Count > 0)
                 {
-                    GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.Variables, solution.FilePath, ConvertToRelativePath(solution.FilePath), true, "", GetRepositoryItemName(filePath));
-                    newItem.ItemName = string.Join(",", VariableListToImport);
+                    GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.Variables, solution.FilePath, ConvertToRelativePath(solution.FilePath), true, "", GetRepositoryItemName(filePath))
+                    {
+                        ItemName = string.Join(",", VariableListToImport)
+                    };
                     AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
                 }
             }
@@ -1082,7 +1086,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
 
         public void VariablesToReEncrypt(string sourceFile, GlobalSolutionItem itemToImport)
         {
-            List<VariableBase> variablePasswords = new List<VariableBase>();
+            List<VariableBase> variablePasswords = [];
             switch (itemToImport.ItemType)
             {
                 case GlobalSolution.eImportItemType.SharedRepositoryActivities:

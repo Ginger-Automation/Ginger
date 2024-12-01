@@ -59,10 +59,12 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                     }
                     else if (mContext == eImportGherkinFileContext.BusinessFlowFolder)
                     {
-                        DocumentsFolderTreeItem documentsFolderRoot = new DocumentsFolderTreeItem();
-                        documentsFolderRoot.IsGingerDefualtFolder = true;
-                        documentsFolderRoot.Path = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Documents");
-                        documentsFolderRoot.Folder = "Documents";
+                        DocumentsFolderTreeItem documentsFolderRoot = new DocumentsFolderTreeItem
+                        {
+                            IsGingerDefualtFolder = true,
+                            Path = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Documents"),
+                            Folder = "Documents"
+                        };
                         mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage("Documents", eImageType.File, documentsFolderRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);
                     }
                     mTargetFolderSelectionPage.xTreeView.xTreeViewTree.ValidationRules.Add(UCTreeView.eUcTreeValidationRules.NoItemSelected);

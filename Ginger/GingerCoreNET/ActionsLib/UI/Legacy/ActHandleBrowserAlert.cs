@@ -70,7 +70,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eHandleBrowseAlert)GetOrCreateInputParam<eHandleBrowseAlert>(nameof(GenElementAction), eHandleBrowseAlert.AcceptAlertBox);
+                return GetOrCreateInputParam<eHandleBrowseAlert>(nameof(GenElementAction), eHandleBrowseAlert.AcceptAlertBox);
             }
             set
             {
@@ -95,7 +95,7 @@ namespace GingerCore.Actions
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.Web || platform == ePlatformType.NA || platform == ePlatformType.Mobile)
+            if (platform is ePlatformType.Web or ePlatformType.NA or ePlatformType.Mobile)
             {
                 return true;
             }
@@ -135,24 +135,14 @@ namespace GingerCore.Actions
             Type currentType = GetActionTypeByElementActionName(GenElementAction);
             if (currentType == typeof(ActBrowserElement))
             {
-                switch (GenElementAction)
+                NewActBrowserElement.ControlAction = GenElementAction switch
                 {
-                    case eHandleBrowseAlert.AcceptAlertBox:
-                        NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.AcceptMessageBox;
-                        break;
-                    case eHandleBrowseAlert.DismissAlertBox:
-                        NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.DismissMessageBox;
-                        break;
-                    case eHandleBrowseAlert.GetAlertBoxText:
-                        NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.GetMessageBoxText;
-                        break;
-                    case eHandleBrowseAlert.SendKeysAlertBox:
-                        NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.SetAlertBoxText;
-                        break;
-                    default:
-                        NewActBrowserElement.ControlAction = (ActBrowserElement.eControlAction)System.Enum.Parse(typeof(ActBrowserElement.eControlAction), GenElementAction.ToString());
-                        break;
-                }
+                    eHandleBrowseAlert.AcceptAlertBox => ActBrowserElement.eControlAction.AcceptMessageBox,
+                    eHandleBrowseAlert.DismissAlertBox => ActBrowserElement.eControlAction.DismissMessageBox,
+                    eHandleBrowseAlert.GetAlertBoxText => ActBrowserElement.eControlAction.GetMessageBoxText,
+                    eHandleBrowseAlert.SendKeysAlertBox => ActBrowserElement.eControlAction.SetAlertBoxText,
+                    _ => (ActBrowserElement.eControlAction)System.Enum.Parse(typeof(ActBrowserElement.eControlAction), GenElementAction.ToString()),
+                };
             }
 
             if (currentType == typeof(ActBrowserElement))

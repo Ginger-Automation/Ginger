@@ -34,12 +34,14 @@ namespace Ginger.WindowExplorer.Windows
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-            list.Add(new ActBrowserElement()
-            {
-                Description = "Initialize Browser - " + UIAElementInfo.ElementTitle,
-                ControlAction = ActBrowserElement.eControlAction.InitializeBrowser
-            });
+            ObservableList<Act> list =
+            [
+                new ActBrowserElement()
+                {
+                    Description = "Initialize Browser - " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActBrowserElement.eControlAction.InitializeBrowser
+                },
+            ];
             return list;
         }
     }

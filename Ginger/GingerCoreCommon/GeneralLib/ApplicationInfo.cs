@@ -209,13 +209,13 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 }
 
                 long version = iMajor * 1000000 + iMinor * 10000 + iBuild * 100 + iRevision;
-                return version;           
+                return version;
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to get the '{0}' version as Long", appVersion), ex);
                 return 0;//failed to get the version as long
             }
-        }        
+        }
     }
 }

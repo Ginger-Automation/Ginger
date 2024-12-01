@@ -23,7 +23,6 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
-using Ginger;
 using Ginger.ApplicationModelsLib.APIModels;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.SolutionWindows.TreeViewItems;
@@ -48,8 +47,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
     public partial class ModelParamsPage : Page
     {
         ApplicationModelBase mApplicationModel;
-        public ObservableList<AppModelParameter> ParamsList = new ObservableList<AppModelParameter>();
-        public ObservableList<GlobalAppModelParameter> APIGlobalParamList = new ObservableList<GlobalAppModelParameter>();
+        public ObservableList<AppModelParameter> ParamsList = [];
+        public ObservableList<GlobalAppModelParameter> APIGlobalParamList = [];
         string GridPlaceholderHeader = "Place Holder";
         Ginger.General.eRIPageViewMode mPageViewMode;
 
@@ -65,7 +64,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             InitModelParametersGrid();
             InitGlobalModelParametersGrid();
             CollectionChangedEventManager.AddHandler(source: mApplicationModel.AppModelParameters, handler: LocalParameters_CollectionChanged);
-            
+
             UpdateLocalParametersGridHeader();
             CollectionChangedEventManager.AddHandler(source: mApplicationModel.GlobalAppModelParameters, handler: GloablParameters_CollectionChanged);
             UpdateGlobalParametersGridHeader();
@@ -73,15 +72,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
         private void InitGlobalModelParametersGrid()
         {
-            bool isFieldReadOnly = (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute);
+            bool isFieldReadOnly = (mPageViewMode is Ginger.General.eRIPageViewMode.View or Ginger.General.eRIPageViewMode.ViewAndExecute);
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.RequiredAsInput), Header = "Required as Input", ReadOnly = isFieldReadOnly, WidthWeight = 30, MaxWidth = 220, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.PlaceHolder), Header = GridPlaceholderHeader, ReadOnly = isFieldReadOnly, WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.Description), Header = "Description", ReadOnly = isFieldReadOnly, WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.OptionalValuesString), Header = "Optional Values", WidthWeight = 80, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, ReadOnly = isFieldReadOnly, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["OpenEditGlobalParamPossibleValuesPage"] });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(AppModelParameter.RequiredAsInput), Header = "Required as Input", ReadOnly = isFieldReadOnly, WidthWeight = 30, MaxWidth = 220, StyleType = GridColView.eGridColStyleType.CheckBox },
+                new GridColView() { Field = nameof(AppModelParameter.PlaceHolder), Header = GridPlaceholderHeader, ReadOnly = isFieldReadOnly, WidthWeight = 100 },
+                new GridColView() { Field = nameof(AppModelParameter.Description), Header = "Description", ReadOnly = isFieldReadOnly, WidthWeight = 150 },
+                new GridColView() { Field = nameof(AppModelParameter.OptionalValuesString), Header = "Optional Values", WidthWeight = 80, ReadOnly = true, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = "...", WidthWeight = 8, ReadOnly = isFieldReadOnly, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["OpenEditGlobalParamPossibleValuesPage"] },
+            ]
+            };
 
             xGlobalModelParametersGrid.SetAllColumnsDefaultView(view);
             xGlobalModelParametersGrid.InitViewItems();
@@ -89,7 +92,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             if (xGlobalModelParametersGrid.Grid != null)
             {
                 WeakEventManager<DataGrid, DataGridBeginningEditEventArgs>.AddHandler(source: xGlobalModelParametersGrid.Grid, eventName: nameof(DataGrid.BeginningEdit), handler: grdGlobalParams_BeginningEdit);
-                 WeakEventManager<DataGrid, DataGridCellEditEndingEventArgs>.AddHandler(source: xGlobalModelParametersGrid.Grid, eventName: nameof(DataGrid.CellEditEnding), handler: grdGlobalParams_CellEditEnding);
+                WeakEventManager<DataGrid, DataGridCellEditEndingEventArgs>.AddHandler(source: xGlobalModelParametersGrid.Grid, eventName: nameof(DataGrid.CellEditEnding), handler: grdGlobalParams_CellEditEnding);
             }
 
             xGlobalModelParametersGrid.DataSourceList = APIGlobalParamList;
@@ -142,16 +145,20 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
         private void InitModelParametersGrid()
         {
-            bool isFieldReadOnly = (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute);
+            bool isFieldReadOnly = (mPageViewMode is Ginger.General.eRIPageViewMode.View or Ginger.General.eRIPageViewMode.ViewAndExecute);
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.RequiredAsInput), Header = "Required as Input", ReadOnly = isFieldReadOnly, WidthWeight = 30, MaxWidth = 220, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.PlaceHolder), Header = GridPlaceholderHeader, ReadOnly = isFieldReadOnly, WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.Path), Header = "Path", ReadOnly = isFieldReadOnly, WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.Description), Header = "Description", ReadOnly = isFieldReadOnly, WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.OptionalValuesString), Header = "Optional Values", WidthWeight = 80, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, ReadOnly = isFieldReadOnly, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["OpenEditLocalParamPossibleValuesPage"] });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(AppModelParameter.RequiredAsInput), Header = "Required as Input", ReadOnly = isFieldReadOnly, WidthWeight = 30, MaxWidth = 220, StyleType = GridColView.eGridColStyleType.CheckBox },
+                new GridColView() { Field = nameof(AppModelParameter.PlaceHolder), Header = GridPlaceholderHeader, ReadOnly = isFieldReadOnly, WidthWeight = 100 },
+                new GridColView() { Field = nameof(AppModelParameter.Path), Header = "Path", ReadOnly = isFieldReadOnly, WidthWeight = 150 },
+                new GridColView() { Field = nameof(AppModelParameter.Description), Header = "Description", ReadOnly = isFieldReadOnly, WidthWeight = 150 },
+                new GridColView() { Field = nameof(AppModelParameter.OptionalValuesString), Header = "Optional Values", WidthWeight = 80, ReadOnly = true, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = "...", WidthWeight = 8, ReadOnly = isFieldReadOnly, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["OpenEditLocalParamPossibleValuesPage"] },
+            ]
+            };
 
             ModelParametersGrid.SetAllColumnsDefaultView(view);
             ModelParametersGrid.InitViewItems();
@@ -209,7 +216,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
         private void ImportOptionalValuesForParameters(object sender, RoutedEventArgs e)
         {
-            WizardWindow.ShowWizard(new AddModelOptionalValuesWizard((ApplicationModelBase)mApplicationModel));
+            WizardWindow.ShowWizard(new AddModelOptionalValuesWizard(mApplicationModel));
             ModelParametersGrid.DataSourceList = mApplicationModel.AppModelParameters;
         }
 
@@ -254,7 +261,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         private List<AppParameters> GetParameterList()
         {
             ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
-            List<AppParameters> parameters = new List<AppParameters>();
+            List<AppParameters> parameters = [];
             try
             {
                 foreach (var prms in mApplicationModel.AppModelParameters)
@@ -415,8 +422,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             if (InputBoxWindow.GetInputWithValidation("Merge Parameters", "Set Placeholder for Merged Parameters", ref newParamName, new char[0]))
             {
                 //Create new Merged param
-                AppModelParameter mergedParam = new AppModelParameter();
-                mergedParam.PlaceHolder = newParamName;
+                AppModelParameter mergedParam = new AppModelParameter
+                {
+                    PlaceHolder = newParamName
+                };
 
                 //Merged optional values
                 SetMergedOptionalValues(mergedParam);
@@ -424,10 +433,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 //Set Grid selected index
                 int selctedIndex = ModelParametersGrid.Grid.SelectedIndex;
 
-                List<string> placeHoldersToReplace = new List<string>();
+                List<string> placeHoldersToReplace = [];
                 //Save Placeholders and remove old params for merge, and add the new merged one
 
-                List<AppModelParameter> tobeRemoved = new List<AppModelParameter>();
+                List<AppModelParameter> tobeRemoved = [];
                 for (int i = 0; i < ModelParametersGrid.Grid.SelectedItems.Count; i++)
                 {
                     AppModelParameter paramToRemove = (AppModelParameter)ModelParametersGrid.Grid.SelectedItems[i];
@@ -455,7 +464,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
         private void SetMergedOptionalValues(AppModelParameter mergedParam)
         {
-            ObservableList<OptionalValue> mergedOptionalValuesList = new ObservableList<OptionalValue>();
+            ObservableList<OptionalValue> mergedOptionalValuesList = [];
 
             foreach (AppModelParameter apiModelParam in ModelParametersGrid.Grid.SelectedItems)
             {
@@ -463,8 +472,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 {
                     if (mergedOptionalValuesList.FirstOrDefault(x => x.Value == paramOV.Value) == null)
                     {
-                        OptionalValue ov = new OptionalValue();
-                        ov.Value = paramOV.Value;
+                        OptionalValue ov = new OptionalValue
+                        {
+                            Value = paramOV.Value
+                        };
                         mergedOptionalValuesList.Add(ov);
                     }
                 }
@@ -495,7 +506,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 CurrentAMDP = (AppModelParameter)ModelParametersGrid.CurrentItem;
                 if (CurrentAMDP != null && !IsParamPlaceholderNameConflict(CurrentAMDP))
                 {
-                    mApplicationModel.UpdateParamsPlaceholder(mApplicationModel, new List<string> { LocalParamValueBeforeEdit }, CurrentAMDP.PlaceHolder);
+                    mApplicationModel.UpdateParamsPlaceholder(mApplicationModel, [LocalParamValueBeforeEdit], CurrentAMDP.PlaceHolder);
                 }
             }
         }

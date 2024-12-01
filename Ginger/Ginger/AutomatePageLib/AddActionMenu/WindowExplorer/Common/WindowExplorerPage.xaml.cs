@@ -84,7 +84,7 @@ namespace Ginger.WindowExplorer
 
         //If we come from ActionEditPage keep the Action
         private Act mAction;
-        ObservableList<ElementInfo> VisibleElementsInfoList = new ObservableList<ElementInfo>();
+        ObservableList<ElementInfo> VisibleElementsInfoList = [];
         bool mSyncControlsViewWithLiveSpy = false;
         bool mFirstElementSelectionDone = false;
         //Page mControlFrameContentPage = null;
@@ -103,17 +103,17 @@ namespace Ginger.WindowExplorer
 
             mContext = context;
             //mContext.PropertyChanged += MContext_PropertyChanged;
-            mPlatform = PlatformInfoBase.GetPlatformImpl(((Agent)ApplicationAgent.Agent).Platform);
+            mPlatform = PlatformInfoBase.GetPlatformImpl(ApplicationAgent.Agent.Platform);
 
             //Instead of check make it disabled ?
-            if (((AgentOperations)((Agent)ApplicationAgent.Agent).AgentOperations).Driver != null && (((AgentOperations)((Agent)ApplicationAgent.Agent).AgentOperations).Driver is IWindowExplorer) == false)
+            if (((AgentOperations)ApplicationAgent.Agent.AgentOperations).Driver != null && (((AgentOperations)ApplicationAgent.Agent.AgentOperations).Driver is IWindowExplorer) == false)
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Control selection is not available yet for driver - " + ((AgentOperations)((Agent)ApplicationAgent.Agent).AgentOperations).Driver.GetType().ToString());
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Control selection is not available yet for driver - " + ((AgentOperations)ApplicationAgent.Agent.AgentOperations).Driver.GetType().ToString());
                 _GenWin.Close();
                 return;
             }
 
-            IWindowExplorer WindowExplorerDriver = (IWindowExplorer)((AgentOperations)((Agent)ApplicationAgent.Agent).AgentOperations).Driver;
+            IWindowExplorer WindowExplorerDriver = (IWindowExplorer)((AgentOperations)ApplicationAgent.Agent.AgentOperations).Driver;
 
             mWindowExplorerDriver = WindowExplorerDriver;
             mAction = Act;
@@ -290,14 +290,14 @@ namespace Ginger.WindowExplorer
 
         object DefaultSelectedTab()
         {
-            switch (mWindowExplorerDriver.DefaultView())
+            return mWindowExplorerDriver.DefaultView() switch
             {
-                case eTabView.GridView: return xGridViewTab;
-                case eTabView.TreeView: return xTreeViewTab;
-                case eTabView.PageSource: return xPageSrcTab;
-                case eTabView.Screenshot: return xScreenShotViewTab;
-                default: return null;
-            }
+                eTabView.GridView => xGridViewTab,
+                eTabView.TreeView => xTreeViewTab,
+                eTabView.PageSource => xPageSrcTab,
+                eTabView.Screenshot => xScreenShotViewTab,
+                _ => null,
+            };
         }
 
         bool ExplorerLoaded = false;
@@ -486,7 +486,7 @@ namespace Ginger.WindowExplorer
             {
                 var srcDoc = await mWindowExplorerDriver.GetPageSourceDocument(true);
 
-                if (srcDoc != null && srcDoc is XmlDocument)
+                if (srcDoc is not null and XmlDocument)
                 {
                     xXMLPageSrcViewer.Visibility = Visibility.Visible;
                     xXMLPageSrcViewer.xmlDocument = srcDoc as XmlDocument;
@@ -549,27 +549,33 @@ namespace Ginger.WindowExplorer
                     InitTree(WTI);
                     break;
                 case AppWindow.eWindowType.ASCFForm:
-                    ASCFFormTreeItem AFTI = new ASCFFormTreeItem();
-                    AFTI.Name = AW.Title;
-                    AFTI.Path = AW.Path;
+                    ASCFFormTreeItem AFTI = new ASCFFormTreeItem
+                    {
+                        Name = AW.Title,
+                        Path = AW.Path
+                    };
                     InitTree(AFTI);
                     break;
                 case AppWindow.eWindowType.WebPage:
                     HTMLPageTreeItem HPTI = new HTMLPageTreeItem();
-                    HTMLElementInfo EI = new HTMLElementInfo();
-                    EI.ElementTitle = AW.Title;
-                    EI.XPath = "/html";
-                    EI.WindowExplorer = mWindowExplorerDriver;
+                    HTMLElementInfo EI = new HTMLElementInfo
+                    {
+                        ElementTitle = AW.Title,
+                        XPath = "/html",
+                        WindowExplorer = mWindowExplorerDriver
+                    };
                     HPTI.ElementInfo = EI;
                     InitTree(HPTI);
                     break;
                 case AppWindow.eWindowType.JFrmae:
                     JavaWindowTreeItem JWTI = new JavaWindowTreeItem();
-                    JavaElementInfo JEI = new JavaElementInfo();
-                    JEI.ElementTitle = AW.Title;
-                    JEI.Path = AW.Title;
-                    JEI.XPath = "/";
-                    JEI.IsExpandable = true;
+                    JavaElementInfo JEI = new JavaElementInfo
+                    {
+                        ElementTitle = AW.Title,
+                        Path = AW.Title,
+                        XPath = "/",
+                        IsExpandable = true
+                    };
                     JWTI.JavaElementInfo = JEI;
                     JEI.WindowExplorer = mWindowExplorerDriver;
                     InitTree(JWTI);
@@ -610,9 +616,11 @@ namespace Ginger.WindowExplorer
                 //    InitTree(ADTI);
                 //    break;
                 case AppWindow.eWindowType.Mainframe:
-                    MainframeTreeItemBase MFTI = new MainframeTreeItemBase();
-                    MFTI.Name = AW.Title;
-                    MFTI.Path = AW.Path;
+                    MainframeTreeItemBase MFTI = new MainframeTreeItemBase
+                    {
+                        Name = AW.Title,
+                        Path = AW.Path
+                    };
                     InitTree(MFTI);
                     break;
                 default:
@@ -700,9 +708,8 @@ namespace Ginger.WindowExplorer
                     if ((Reporter.ToUser(eUserMsgKey.ConfirmToAddTreeItem)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                     {
                         //TODO: Need to move this to IWindowExplorer and each driver will implement this and return matching ITreeViewItem for Element.
-                        if (mSpyElement is UIAElementInfo)
+                        if (mSpyElement is UIAElementInfo UEI)
                         {
-                            UIAElementInfo UEI = (UIAElementInfo)mSpyElement;
                             UIAElementInfo rootEI = ((UIAElementInfo)mRootItem.NodeObject());
 
                             if (UEI.WindowExplorer.GetType() == typeof(PBDriver))
@@ -875,14 +882,17 @@ namespace Ginger.WindowExplorer
             //TODO: add button to show all...        
 
             //Set the Data Grid columns            
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTitle), Header = "Element Title", WidthWeight = 100, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Value), WidthWeight = 100, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementType), Header = "Element Type", WidthWeight = 60, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Path), WidthWeight = 100, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.XPath), WidthWeight = 150, ReadOnly = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ElementInfo.ElementTitle), Header = "Element Title", WidthWeight = 100, ReadOnly = true },
+                new GridColView() { Field = nameof(ElementInfo.Value), WidthWeight = 100, ReadOnly = true },
+                new GridColView() { Field = nameof(ElementInfo.ElementType), Header = "Element Type", WidthWeight = 60, ReadOnly = true },
+                new GridColView() { Field = nameof(ElementInfo.Path), WidthWeight = 100, ReadOnly = true },
+                new GridColView() { Field = nameof(ElementInfo.XPath), WidthWeight = 150, ReadOnly = true },
+            ]
+            };
 
             xWindowControlsGridView.SetAllColumnsDefaultView(view);
             xWindowControlsGridView.InitViewItems();
@@ -895,8 +905,10 @@ namespace Ginger.WindowExplorer
                 try
                 {
                     //StatusTextBlock.Text = "Loading";
-                    PomSetting pomSetting = new PomSetting();
-                    pomSetting.filteredElementType = CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList();
+                    PomSetting pomSetting = new PomSetting
+                    {
+                        filteredElementType = CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList()
+                    };
                     List<ElementInfo> list = await mWindowExplorerDriver.GetVisibleControls(pomSetting);
 
                     // Convert to obserable for the grid
@@ -953,9 +965,8 @@ namespace Ginger.WindowExplorer
             {
                 TVI = JavaElementInfoConverter.GetTreeViewItemFor(EI);
             }
-            else if (EI is UIAElementInfo)
+            else if (EI is UIAElementInfo UEI)
             {
-                UIAElementInfo UEI = (UIAElementInfo)EI;
                 if (UEI.WindowExplorer.GetType() == typeof(PBDriver))
                 {
                     //TODO:  Below will work for now. But need to Implement element info
@@ -1040,8 +1051,8 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        ObservableList<UIElementFilter> CheckedFilteringCreteriaList = new ObservableList<UIElementFilter>();
-        ObservableList<UIElementFilter> FilteringCreteriaList = new ObservableList<UIElementFilter>();
+        ObservableList<UIElementFilter> CheckedFilteringCreteriaList = [];
+        ObservableList<UIElementFilter> FilteringCreteriaList = [];
 
         private void FilterElementButtonClicked(object sender, RoutedEventArgs e)
         {
@@ -1092,7 +1103,7 @@ namespace Ginger.WindowExplorer
 
             if (FilteringCreteriaList.Count != 0)
             {
-                CheckedFilteringCreteriaList = new ObservableList<UIElementFilter>();
+                CheckedFilteringCreteriaList = [];
                 FilterElementsPage FEW = new FilterElementsPage(FilteringCreteriaList, CheckedFilteringCreteriaList, /*ControlsSearchButton_Click,*/ this);
                 FEW.ShowAsWindow(eWindowShowStyle.Dialog);
 
@@ -1124,7 +1135,7 @@ namespace Ginger.WindowExplorer
 
             /// UnComment later after complete Implementation of functionalities over all platforms.
             //if(IsWebMobJavaPlatform)
-            mWindowExplorerDriver.UnHighLightElements();            
+            mWindowExplorerDriver.UnHighLightElements();
             try
             {
                 LoadPageSourceDoc = mWindowExplorerDriver.SupportedViews().Contains(eTabView.PageSource);
@@ -1136,9 +1147,10 @@ namespace Ginger.WindowExplorer
 
                 using (Bitmap ScreenShotBitmap = ((IVisualTestingDriver)((AgentOperations)mApplicationAgent.Agent.AgentOperations).Driver).GetScreenShot())
                 {
-                    mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, (mWindowExplorerDriver as DriverBase).ScreenShotInitialZoom());
-
-                    mScreenShotViewPage.ImageMouseCursor = Cursors.Hand;
+                    mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, (mWindowExplorerDriver as DriverBase).ScreenShotInitialZoom())
+                    {
+                        ImageMouseCursor = Cursors.Hand
+                    };
                     ///TODO UnComment to allow Element detection on hover
                     //if (mPlatform.PlatformType() == ePlatformType.Web)
                     //{
@@ -1598,7 +1610,7 @@ namespace Ginger.WindowExplorer
 
         private void xCopyPageSrc_Click(object sender, RoutedEventArgs e)
         {
-             GingerCore.General.SetClipboardText(mWindowExplorerDriver.GetCurrentPageSourceString());
+            GingerCore.General.SetClipboardText(mWindowExplorerDriver.GetCurrentPageSourceString());
         }
     }
 }

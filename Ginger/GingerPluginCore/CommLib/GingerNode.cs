@@ -80,8 +80,10 @@ namespace GingerCoreNET.DriversLib
             string OSVersion = System.Environment.OSVersion.ToString();
 
             //TODO: first register at the hub
-            mHubClient = new GingerSocketClient2();
-            mHubClient.MessageHandler = HubClientMessageHandler;
+            mHubClient = new GingerSocketClient2
+            {
+                MessageHandler = HubClientMessageHandler
+            };
 
             Console.WriteLine("Connecting to Ginger Grid Hub: " + HubIP + ":" + HubPort);
             mHubClient.Connect(HubIP, HubPort);
@@ -156,38 +158,19 @@ namespace GingerCoreNET.DriversLib
             Console.WriteLine("Processing Message");
 
             NewPayLoad pl = gingerSocketInfo.DataAsPayload;
-            switch (pl.Name)
+            gingerSocketInfo.Response = pl.Name switch
             {
-                case SocketMessages.Reserve:
-                    gingerSocketInfo.Response = Reserve(pl);
-                    break;
-                case "RunAction":
-                    gingerSocketInfo.Response = RunAction(pl);
-                    break;
-                case "RunPlatformAction":
-                    gingerSocketInfo.Response = RunPlatformAction(pl);
-                    break;
-                case "StartDriver":
-                    gingerSocketInfo.Response = StartDriver(pl);
-                    break;
-                case "CloseDriver":
-                    gingerSocketInfo.Response = CloseDriver();
-                    break;
-                case "Shutdown":
-                    gingerSocketInfo.Response = ShutdownNode();
-                    break;
-                case "Ping":
-                    gingerSocketInfo.Response = Ping();
-                    break;
-                case "AttachDisplay":
-                    gingerSocketInfo.Response = AttachDisplay(pl);
-                    break;
-                case "ScreenshotAction":
-                    gingerSocketInfo.Response = TakeScreenot(pl);
-                    break;
-                default:
-                    throw new Exception("Unknown Messgae: " + pl.Name);
-            }
+                SocketMessages.Reserve => Reserve(pl),
+                "RunAction" => RunAction(pl),
+                "RunPlatformAction" => RunPlatformAction(pl),
+                "StartDriver" => StartDriver(pl),
+                "CloseDriver" => CloseDriver(),
+                "Shutdown" => ShutdownNode(),
+                "Ping" => Ping(),
+                "AttachDisplay" => AttachDisplay(pl),
+                "ScreenshotAction" => TakeScreenot(pl),
+                _ => throw new Exception("Unknown Messgae: " + pl.Name),
+            };
         }
 
 
@@ -214,7 +197,7 @@ namespace GingerCoreNET.DriversLib
             if (mService is IScreenShotService ScreenshotService)
             {
 
-                Dictionary<string, string> InputParams = new Dictionary<string, string>();
+                Dictionary<string, string> InputParams = [];
                 List<NewPayLoad> FieldsandParams = ActionPayload.GetListPayLoad();
 
 
@@ -231,7 +214,7 @@ namespace GingerCoreNET.DriversLib
                 NewPayLoad ResponsePL = new NewPayLoad("ScreenShots");
                 string WindowsToCapture = InputParams["WindowsToCapture"];
 
-                List<NewPayLoad> ScreenShots = new List<NewPayLoad>();
+                List<NewPayLoad> ScreenShots = [];
 
                 switch (WindowsToCapture)
                 {
@@ -473,7 +456,7 @@ namespace GingerCoreNET.DriversLib
                 return;
             }
             Console.WriteLine("Scanning Service: " + mService.GetType().FullName);
-            mServiceActions = new List<ActionHandler>();
+            mServiceActions = [];
 
             // Register all actions which have 'GingerAction' attribute
             Type t = mService.GetType();
@@ -483,10 +466,12 @@ namespace GingerCoreNET.DriversLib
                 GingerActionAttribute GAA = (GingerActionAttribute)MI.GetCustomAttribute(typeof(GingerActionAttribute));
                 if (GAA != null)
                 {
-                    ActionHandler AH = new ActionHandler();
-                    AH.ServiceActionId = GAA.Id;
-                    AH.MethodInfo = MI;
-                    AH.Instance = mService;
+                    ActionHandler AH = new ActionHandler
+                    {
+                        ServiceActionId = GAA.Id,
+                        MethodInfo = MI,
+                        Instance = mService
+                    };
                     mServiceActions.Add(AH);
 
                     Console.WriteLine("Found Action: " + AH.ServiceActionId);
@@ -519,7 +504,7 @@ namespace GingerCoreNET.DriversLib
             {
                 List<NewPayLoad> FieldsandParams = pl.GetListPayLoad();
 
-                Dictionary<string, string> InputParams = new Dictionary<string, string>();
+                Dictionary<string, string> InputParams = [];
                 foreach (NewPayLoad Np in FieldsandParams)
                 {
                     string Name = Np.GetValueString();
@@ -578,7 +563,7 @@ namespace GingerCoreNET.DriversLib
 
         public static List<NewPayLoad> GetOutpuValuesPayLoad(List<NodeActionOutputValue> AOVs)
         {
-            List<NewPayLoad> OutputValuesPayLoad = new List<NewPayLoad>();
+            List<NewPayLoad> OutputValuesPayLoad = [];
             if (AOVs != null) // we return empty list in case of null - no output values
             {
                 foreach (NodeActionOutputValue AOV in AOVs)

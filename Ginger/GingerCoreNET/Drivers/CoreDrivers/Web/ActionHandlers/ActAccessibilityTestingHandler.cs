@@ -170,7 +170,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             {
                 throw new Exception($"No element found '{_act.LocateBy}' and value '{_act.LocateValueCalculated}'");
             }
-            
+
             return await element.TestAccessibilityAsync(options);
         }
 

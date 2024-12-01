@@ -83,20 +83,26 @@ namespace Ginger.ALM.MapToALMWizard
         private void Bind()
         {
             xMapActivityGroupToTestCaseGrid.SetTitleLightStyle = true;
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ALMTestCaseManualMappingConfig.ActivityGroupName), Header = $"{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "Ginger")}", WidthWeight = 25, AllowSorting = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ALMTestCaseManualMappingConfig.TestCaseName), Header = "Mapped ALM Test Case", WidthWeight = 25, AllowSorting = true, BindingMode = BindingMode.OneWay });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ALMTestCaseManualMappingConfig.ActivityGroupName), Header = $"{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "Ginger")}", WidthWeight = 25, AllowSorting = true, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = nameof(ALMTestCaseManualMappingConfig.TestCaseName), Header = "Mapped ALM Test Case", WidthWeight = 25, AllowSorting = true, BindingMode = BindingMode.OneWay },
+            ]
+            };
             GridViewDef mRegularView = new GridViewDef(eGridView.RegularView.ToString());
             xMapActivityGroupToTestCaseGrid.SetAllColumnsDefaultView(view);
             xMapActivityGroupToTestCaseGrid.InitViewItems();
 
             xUnMapTestCaseGrid.SetTitleLightStyle = true;
-            GridViewDef view2 = new GridViewDef(GridViewDef.DefaultViewName);
-            view2.GridColsView = new ObservableList<GridColView>();
-
-            view2.GridColsView.Add(new GridColView() { Field = nameof(ALMTSTest.TestName), Header = "ALM Test Case", WidthWeight = 25, AllowSorting = true });
+            GridViewDef view2 = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ALMTSTest.TestName), Header = "ALM Test Case", WidthWeight = 25, AllowSorting = true },
+            ]
+            };
             GridViewDef mRegularView2 = new GridViewDef(eGridView.RegularView.ToString());
             xUnMapTestCaseGrid.AddToolbarTool(eImageType.MapSigns, $"Map selected test case to selected ginger {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}", new RoutedEventHandler(MapTestCaseToolbarHandler));
             xUnMapTestCaseGrid.SetAllColumnsDefaultView(view2);
@@ -132,7 +138,7 @@ namespace Ginger.ALM.MapToALMWizard
                     // Create unmapped test steps list
                     if (!mWizard.testCaseUnmappedStepsDic.ContainsKey(mappedTc.aLMTSTest.TestID))
                     {
-                        mWizard.testCaseUnmappedStepsDic.Add(mappedTc.aLMTSTest.TestID, new ObservableList<ALMTSTestStep>());
+                        mWizard.testCaseUnmappedStepsDic.Add(mappedTc.aLMTSTest.TestID, []);
                         if (mappedTc.aLMTSTest.Steps.Count > mappedTc.activitiesGroup.ActivitiesIdentifiers.Count)
                         {
                             for (int i = mappedTc.activitiesGroup.ActivitiesIdentifiers.Count; i < mappedTc.aLMTSTest.Steps.Count; i++)
@@ -258,8 +264,7 @@ namespace Ginger.ALM.MapToALMWizard
 
         private void xUnMapTestCaseGrid_ItemDropped(object sender, EventArgs e)
         {
-            object draggedItem = ((DragInfo)sender).Data as object;
-            if (draggedItem == null)
+            if (((DragInfo)sender).Data is not object draggedItem)
             {
                 return;
             }

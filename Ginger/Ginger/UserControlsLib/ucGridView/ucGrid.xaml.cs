@@ -28,11 +28,9 @@ using Ginger.Extensions;
 using Ginger.Help;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
-using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerWPF.DragDropLib;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -98,7 +96,7 @@ namespace Ginger
         public ObservableList<Guid> Tags = null;
         private ICollectionView mCollectionView;
 
-        List<Button> mFloatingButtons = new List<Button>();
+        List<Button> mFloatingButtons = [];
 
         public IObservableList DataSourceList
         {
@@ -119,7 +117,7 @@ namespace Ginger
                     {
                         mCollectionView = CollectionViewSource.GetDefaultView(mObjList);
                     });
-                        
+
 
                     if (mCollectionView != null)
                     {
@@ -147,7 +145,7 @@ namespace Ginger
                             grdMain.CurrentItem = value[0];
                             // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
                             mObjList.CurrentItem = value[0];
-                        }                        
+                        }
                     });
                     UpdateFloatingButtons();
                 }
@@ -367,7 +365,7 @@ namespace Ginger
             txtSearch.UndoLimit = 0;
             if (Tags == null)
             {
-                Tags = new ObservableList<Guid>();
+                Tags = [];
             }
 
             TagsViewer.Init(Tags);
@@ -388,8 +386,8 @@ namespace Ginger
 
 
         //for grid view        
-        private Dictionary<string, DataGridColumn> _CurrentGridCols = new Dictionary<string, DataGridColumn>();
-        private Dictionary<string, GridViewDef> _GridViews = new Dictionary<string, GridViewDef>();
+        private Dictionary<string, DataGridColumn> _CurrentGridCols = [];
+        private Dictionary<string, GridViewDef> _GridViews = [];
         private string _DefaultViewName { get; set; }
         public string SelectedViewName
         {
@@ -413,10 +411,10 @@ namespace Ginger
             this.Dispatcher.Invoke(() =>
             {
                 //different kind of changes that may have occurred in collection
-                if (e.Action == NotifyCollectionChangedAction.Add ||
-                e.Action == NotifyCollectionChangedAction.Replace ||
-                e.Action == NotifyCollectionChangedAction.Remove ||
-                e.Action == NotifyCollectionChangedAction.Move)
+                if (e.Action is NotifyCollectionChangedAction.Add or
+                NotifyCollectionChangedAction.Replace or
+                NotifyCollectionChangedAction.Remove or
+                NotifyCollectionChangedAction.Move)
                 {
                     Renum();
                 }
@@ -735,6 +733,7 @@ namespace Ginger
                 rowslist.Add(row);
             }
 
+
             mObjList = rowslist;
             mObjList.PropertyChanged += ObjListPropertyChanged;
             grdMain.ItemsSource = dtView;
@@ -798,9 +797,9 @@ namespace Ginger
                 bool IsItemsDeleted = false;
                 foreach (object o in SelectedItemsList)
                 {
-                        mObjList.Remove(o);
-                        RemoveFromLiteDB(o);
-                   
+                    mObjList.Remove(o);
+                    RemoveFromLiteDB(o);
+
                 }
             }
             finally
@@ -991,7 +990,7 @@ namespace Ginger
                     return txt != txtSearch.Text;
                 }
 
-               if (mCollectionView != null && !(await UserKeepsTyping()) && txtSearch.Text != mFilterSearchText)
+                if (mCollectionView != null && !(await UserKeepsTyping()) && txtSearch.Text != mFilterSearchText)
                 {
                     this.Dispatcher.Invoke(() =>
                     {
@@ -1019,7 +1018,7 @@ namespace Ginger
                         }
                     }
 
-                    filter = filter.Substring(0, filter.LastIndexOf("OR"));
+                    filter = filter[..filter.LastIndexOf("OR")];
                     ((DataView)grdMain.ItemsSource).RowFilter = filter;
                 }
             }
@@ -1103,9 +1102,10 @@ namespace Ginger
         }
         public Label AddLabel(string txt)
         {
-            Label lb = new Label();
-
-            lb.Content = txt;
+            Label lb = new Label
+            {
+                Content = txt
+            };
             toolbar.Items.Add(lb);
             return lb;
         }
@@ -1113,8 +1113,10 @@ namespace Ginger
 
         public TextBox AddTextBox(string txt, string label, string fieldName, TextChangedEventHandler handler)
         {
-            TextBox t = new TextBox();
-            t.Text = txt;
+            TextBox t = new TextBox
+            {
+                Text = txt
+            };
             t.AddHandler(TextBox.TextChangedEvent, handler);
 
 
@@ -1163,19 +1165,23 @@ namespace Ginger
         }
         public CheckBox AddCheckBox(string txt, RoutedEventHandler? handler)
         {
-            DockPanel pnl = new DockPanel();
-            pnl.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
-            pnl.VerticalAlignment = System.Windows.VerticalAlignment.Center;
-            pnl.LastChildFill = false;
+            DockPanel pnl = new DockPanel
+            {
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+                VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                LastChildFill = false
+            };
 
-            CheckBox b = new CheckBox();
-            b.Margin = new Thickness(3, 0, 0, 0);
-            b.Height = Double.NaN;
-            b.Width = Double.NaN;
-            b.HorizontalAlignment = System.Windows.HorizontalAlignment.Right;
-            b.VerticalAlignment = System.Windows.VerticalAlignment.Center;
-            b.Padding = new Thickness(2, 0, 0, 0);
-            b.Content = txt;
+            CheckBox b = new CheckBox
+            {
+                Margin = new Thickness(3, 0, 0, 0),
+                Height = Double.NaN,
+                Width = Double.NaN,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
+                VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                Padding = new Thickness(2, 0, 0, 0),
+                Content = txt
+            };
             if (handler != null)
             {
                 b.AddHandler(CheckBox.ClickEvent, handler);
@@ -1187,10 +1193,12 @@ namespace Ginger
         }
         public RadioButton AddRadioButton(string content, string groupName, RoutedEventHandler? handler, bool isEnabled = true, bool isChecked = false)
         {
-            DockPanel pnl = new DockPanel();
-            pnl.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
-            pnl.VerticalAlignment = System.Windows.VerticalAlignment.Center;
-            pnl.LastChildFill = false;
+            DockPanel pnl = new DockPanel
+            {
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+                VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                LastChildFill = false
+            };
 
             if (string.IsNullOrEmpty(content))
             {
@@ -1201,18 +1209,20 @@ namespace Ginger
                 throw new ArgumentException("GroupName cannot be null or empty", nameof(groupName));
             }
 
-            RadioButton b = new RadioButton();
-            b.Margin = new Thickness(3, 0, 0, 0);
-            b.Height = Double.NaN;
-            b.Width = Double.NaN;
-            b.HorizontalAlignment = System.Windows.HorizontalAlignment.Right;
-            b.VerticalAlignment = System.Windows.VerticalAlignment.Center;
-            b.Padding = new Thickness(2, 0, 0, 0);
-            b.Content = content;
-            b.GroupName = groupName; // Set the group name for grouping radio buttons together
-            b.IsEnabled = isEnabled; // Set the enabled/disabled state of the radio button
-            b.IsChecked = isChecked; // Set the checked/unchecked state of the radio button
-  
+            RadioButton b = new RadioButton
+            {
+                Margin = new Thickness(3, 0, 0, 0),
+                Height = Double.NaN,
+                Width = Double.NaN,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
+                VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                Padding = new Thickness(2, 0, 0, 0),
+                Content = content,
+                GroupName = groupName, // Set the group name for grouping radio buttons together
+                IsEnabled = isEnabled, // Set the enabled/disabled state of the radio button
+                IsChecked = isChecked // Set the checked/unchecked state of the radio button
+            };
+
 
             if (handler != null)
             {
@@ -1235,7 +1245,7 @@ namespace Ginger
             {
                 GingerCore.General.DoEvents();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Error on object list change", ex);
             }
@@ -1282,7 +1292,7 @@ namespace Ginger
 
         public IEnumerable<DataGridRow> GetDataGridRows(DataGrid grid)
         {
-            var itemsSource = grid.ItemsSource as IEnumerable;
+            var itemsSource = grid.ItemsSource;
             if (itemsSource == null)
             {
                 yield return null;
@@ -1290,8 +1300,7 @@ namespace Ginger
 
             foreach (var item in itemsSource)
             {
-                var row = grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
-                if (null != row)
+                if (grid.ItemContainerGenerator.ContainerFromItem(item) is DataGridRow row)
                 {
                     yield return row;
                 }
@@ -1300,7 +1309,7 @@ namespace Ginger
 
         public List<object> GetVisibileGridItems()
         {
-            List<object> visibleItems = new List<object>();
+            List<object> visibleItems = [];
 
             foreach (DataGridRow row in GetDataGridRows(Grid))
             {
@@ -1573,12 +1582,12 @@ namespace Ginger
                                 {
                                     //or we can get just simple list of strings if not CEI list
                                     // Assume we got List<string>
-                                    if (colView.ComboboxDisplayMemberField != null && colView.ComboboxDisplayMemberField != "")
+                                    if (colView.ComboboxDisplayMemberField is not null and not "")
                                     {
                                         ((DataGridComboBoxColumn)gridCol).DisplayMemberPath = colView.ComboboxDisplayMemberField;
                                     }
 
-                                    if (colView.ComboboxSelectedValueField != null && colView.ComboboxSelectedValueField != "")
+                                    if (colView.ComboboxSelectedValueField is not null and not "")
                                     {
                                         ((DataGridComboBoxColumn)gridCol).SelectedValuePath = colView.ComboboxSelectedValueField;
                                         ((DataGridComboBoxColumn)gridCol).SelectedValueBinding = binding;
@@ -1595,7 +1604,7 @@ namespace Ginger
                                 }
                                 else
                                 {
-                                    ((DataGridComboBoxColumn)gridCol).ItemsSource = (IEnumerable)colView.CellValuesList;
+                                    ((DataGridComboBoxColumn)gridCol).ItemsSource = colView.CellValuesList;
                                 }
 
                                 break;
@@ -1667,7 +1676,7 @@ namespace Ginger
                         gridCol.MaxWidth = (double)colView.MaxWidth;
                     }
 
-                    if (colView.AllowSorting != null && colView.AllowSorting == true)
+                    if (colView.AllowSorting is not null and true)
                     {
                         gridCol.CanUserSort = true;
                         grdMain.CanUserSortColumns = true;
@@ -1726,16 +1735,20 @@ namespace Ginger
             FrameworkElementFactory checkbox = new FrameworkElementFactory(typeof(CheckBox));
             checkbox.SetValue(CheckBox.MaxWidthProperty, 100.0);
 
-            Binding selectedValueBinding = new Binding(selectedValueField);
-            selectedValueBinding.Mode = BindingMode.TwoWay;
-            selectedValueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            Binding selectedValueBinding = new Binding(selectedValueField)
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
             checkbox.SetBinding(CheckBox.IsCheckedProperty, selectedValueBinding);
 
             if (!string.IsNullOrEmpty(readonlyfield))
             {
-                Binding ReadonlyBinding = new Binding(readonlyfield);
-                ReadonlyBinding.Mode = BindingMode.OneWay;
-                ReadonlyBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                Binding ReadonlyBinding = new Binding(readonlyfield)
+                {
+                    Mode = BindingMode.OneWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
                 checkbox.SetBinding(CheckBox.IsEnabledProperty, ReadonlyBinding);
             }
 
@@ -1794,15 +1807,19 @@ namespace Ginger
             combo.SetValue(ComboBox.DisplayMemberPathProperty, nameof(ComboEnumItem.text));
             combo.SetValue(ComboBox.SelectedValuePathProperty, nameof(ComboEnumItem.Value));
 
-            Binding selectedValueBinding = new Binding(selectedValueField);
-            selectedValueBinding.Mode = BindingMode.TwoWay;
-            selectedValueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            Binding selectedValueBinding = new Binding(selectedValueField)
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
             combo.SetBinding(ComboBox.SelectedValueProperty, selectedValueBinding);
             if (isreadonly)
             {
-                Binding ReadonlyBinding = new Binding(readonlyfield);
-                ReadonlyBinding.Mode = BindingMode.OneWay;
-                ReadonlyBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                Binding ReadonlyBinding = new Binding(readonlyfield)
+                {
+                    Mode = BindingMode.OneWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
                 combo.SetBinding(ComboBox.IsHitTestVisibleProperty, ReadonlyBinding);
             }
             else
@@ -1831,20 +1848,26 @@ namespace Ginger
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));
 
-            Binding valuesBinding = new Binding(valuesListField);
-            valuesBinding.Mode = BindingMode.TwoWay;
-            valuesBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            Binding valuesBinding = new Binding(valuesListField)
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
             combo.SetBinding(ComboBox.ItemsSourceProperty, valuesBinding);
 
-            Binding selectedValueBinding = new Binding(selectedValueField);
-            selectedValueBinding.Mode = BindingMode.TwoWay;
-            selectedValueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            Binding selectedValueBinding = new Binding(selectedValueField)
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
             combo.SetBinding(ComboBox.TextProperty, selectedValueBinding);
             if (isreadonly)
             {
-                Binding ReadonlyBinding = new Binding(readonlyfield);
-                ReadonlyBinding.Mode = BindingMode.OneWay;
-                ReadonlyBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                Binding ReadonlyBinding = new Binding(readonlyfield)
+                {
+                    Mode = BindingMode.OneWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
                 combo.SetBinding(ComboBox.IsHitTestVisibleProperty, ReadonlyBinding);
                 if (isdisable)
                 {
@@ -1878,14 +1901,18 @@ namespace Ginger
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));
 
-            Binding valuesBinding = new Binding(valuesListField);
-            valuesBinding.Mode = BindingMode.TwoWay;
-            valuesBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            Binding valuesBinding = new Binding(valuesListField)
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
             combo.SetBinding(ComboBox.ItemsSourceProperty, valuesBinding);
 
-            Binding selectedValueBinding = new Binding(selectedValueField);
-            selectedValueBinding.Mode = BindingMode.TwoWay;
-            selectedValueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            Binding selectedValueBinding = new Binding(selectedValueField)
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
             combo.SetBinding(ComboBox.SelectedValueProperty, selectedValueBinding);
 
             if (!string.IsNullOrEmpty(selectedValuePathField))
@@ -1900,9 +1927,11 @@ namespace Ginger
 
             if (isreadonly)
             {
-                Binding ReadonlyBinding = new Binding(readonlyfield);
-                ReadonlyBinding.Mode = BindingMode.OneWay;
-                ReadonlyBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                Binding ReadonlyBinding = new Binding(readonlyfield)
+                {
+                    Mode = BindingMode.OneWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
                 combo.SetBinding(ComboBox.IsHitTestVisibleProperty, ReadonlyBinding);
             }
             else
@@ -1973,7 +2002,7 @@ namespace Ginger
 
             double pnlWidth = grdMain.ActualWidth - grdMain.RowHeaderWidth;
             double gridColsWidthWeight = 0;
-            List<DataGridColumn> visibleCols = new List<DataGridColumn>();
+            List<DataGridColumn> visibleCols = [];
             if (grdMain.Columns.Count > 0)
             {
                 foreach (DataGridColumn col in grdMain.Columns)
@@ -2044,15 +2073,21 @@ namespace Ginger
         public DataGridTemplateColumn BindImageColumn(string ImageField)
         {
             // Here we add a new Image column 
-            DataGridTemplateColumn imgColumn = new DataGridTemplateColumn();
-            imgColumn.Header = "";
+            DataGridTemplateColumn imgColumn = new DataGridTemplateColumn
+            {
+                Header = ""
+            };
             FrameworkElementFactory imageFactory = new FrameworkElementFactory(typeof(System.Windows.Controls.Image));
-            Binding b = new Binding();
-            b.Path = new PropertyPath(ImageField);
-            b.Converter = new ImageToSourceConverter();
+            Binding b = new Binding
+            {
+                Path = new PropertyPath(ImageField),
+                Converter = new ImageToSourceConverter()
+            };
             imageFactory.SetValue(System.Windows.Controls.Image.SourceProperty, b);
-            DataTemplate dataTemplate = new DataTemplate();
-            dataTemplate.VisualTree = imageFactory;
+            DataTemplate dataTemplate = new DataTemplate
+            {
+                VisualTree = imageFactory
+            };
             imgColumn.CellTemplate = dataTemplate;
             return imgColumn;
         }
@@ -2060,15 +2095,21 @@ namespace Ginger
         public DataGridTemplateColumn BindImageMakerColumn(string ImageField)
         {
             // Here we add a new Image column 
-            DataGridTemplateColumn imgColumn = new DataGridTemplateColumn();
-            imgColumn.Header = "";
+            DataGridTemplateColumn imgColumn = new DataGridTemplateColumn
+            {
+                Header = ""
+            };
             FrameworkElementFactory imageFactory = new FrameworkElementFactory(typeof(System.Windows.Controls.Image));
-            Binding b = new Binding();
-            b.Path = new PropertyPath(ImageField);
-            b.Converter = new ImageMakerToSourceConverter();
+            Binding b = new Binding
+            {
+                Path = new PropertyPath(ImageField),
+                Converter = new ImageMakerToSourceConverter()
+            };
             imageFactory.SetValue(System.Windows.Controls.Image.SourceProperty, b);
-            DataTemplate dataTemplate = new DataTemplate();
-            dataTemplate.VisualTree = imageFactory;
+            DataTemplate dataTemplate = new DataTemplate
+            {
+                VisualTree = imageFactory
+            };
             imgColumn.CellTemplate = dataTemplate;
             return imgColumn;
         }
@@ -2132,28 +2173,34 @@ namespace Ginger
 
         public void AddToolbarTool(string toolImage, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, Binding binding = null)
         {
-            Image image = new Image();
-            image.Source = new BitmapImage(new Uri(@"/Images/" + toolImage, UriKind.RelativeOrAbsolute));
+            Image image = new Image
+            {
+                Source = new BitmapImage(new Uri(@"/Images/" + toolImage, UriKind.RelativeOrAbsolute))
+            };
             AddToolbarTool(image, toolTip, clickHandler, toolVisibility);
         }
 
         public void AddToolbarTool(eImageType imageType, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, int imageSize = 16)
         {
-            ImageMakerControl image = new ImageMakerControl();
-            image.Width = imageSize;
-            image.Height = imageSize;
-            image.ImageType = imageType;
+            ImageMakerControl image = new ImageMakerControl
+            {
+                Width = imageSize,
+                Height = imageSize,
+                ImageType = imageType
+            };
             AddToolbarTool(image, toolTip, clickHandler, toolVisibility);
         }
 
 
         private void AddToolbarTool(object userControl, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, Binding binding = null)
         {
-            Button tool = new Button();
-            tool.Visibility = toolVisibility;
-            tool.ToolTip = toolTip;
+            Button tool = new Button
+            {
+                Visibility = toolVisibility,
+                ToolTip = toolTip,
 
-            tool.Content = userControl;
+                Content = userControl
+            };
             tool.Click += clickHandler;
 
             if (binding != null)
@@ -2181,10 +2228,12 @@ namespace Ginger
 
         public void AddComboBoxToolbarTool(string lableContent, Type enumType, SelectionChangedEventHandler view_SelectionChanged, string defaultOptionText = null)
         {
-            ComboBox comboBox = new ComboBox();
-            comboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
+            ComboBox comboBox = new ComboBox
+            {
+                Style = this.FindResource("$FlatInputComboBoxStyle") as Style,
 
-            comboBox.Width = 100;
+                Width = 100
+            };
             List<ComboEnumItem> itemsList = GingerCore.General.GetEnumValuesForCombo(enumType);
             if (defaultOptionText != null)
             {
@@ -2197,12 +2246,7 @@ namespace Ginger
                 else
                 {
                     ComboEnumItem newDefaultItem = new ComboEnumItem() { text = defaultOptionText, Value = null };
-                    List<ComboEnumItem> itemsListWithNewDefaultText = new List<ComboEnumItem>();
-                    itemsListWithNewDefaultText.Add(newDefaultItem);
-                    foreach (ComboEnumItem CEI in itemsList)
-                    {
-                        itemsListWithNewDefaultText.Add(CEI);
-                    }
+                    List<ComboEnumItem> itemsListWithNewDefaultText = [newDefaultItem, .. itemsList];
                     comboBox.ItemsSource = itemsListWithNewDefaultText;
                     comboBox.SelectedIndex = 0;
                 }
@@ -2210,8 +2254,10 @@ namespace Ginger
 
             comboBox.SelectionChanged += view_SelectionChanged;
 
-            Label label = new Label();
-            label.Content = lableContent;
+            Label label = new Label
+            {
+                Content = lableContent
+            };
 
             //toolbar.Items.Remove(lblSearch);
             //toolbar.Items.Remove(txtSearch);
@@ -2253,8 +2299,10 @@ namespace Ginger
         {
             Style columnStyle = new Style(typeof(TextBlock));
             Binding b = new Binding();
-            Setter s = new Setter();
-            s.Property = Property;
+            Setter s = new Setter
+            {
+                Property = Property
+            };
             b.Path = new PropertyPath(TextBlock.TextProperty);
             b.RelativeSource = RelativeSource.Self;
             b.Converter = Converter;
@@ -2278,8 +2326,10 @@ namespace Ginger
 
         public void SetBtnImage(Button btn, string imageName)
         {
-            Image image = new Image();
-            image.Source = new BitmapImage(new Uri(@"/Images/" + imageName, UriKind.RelativeOrAbsolute));
+            Image image = new Image
+            {
+                Source = new BitmapImage(new Uri(@"/Images/" + imageName, UriKind.RelativeOrAbsolute))
+            };
             btn.Content = image;
         }
 
@@ -2312,7 +2362,7 @@ namespace Ginger
                     {
                         identityTextLength = 16;
                     }
-                    Info.Header = row.Item.ToString().Substring(0, identityTextLength) + ".. + " + (selectedItemsCount - 1);
+                    Info.Header = row.Item.ToString()[..identityTextLength] + ".. + " + (selectedItemsCount - 1);
                 }
                 else
                 {
@@ -2406,8 +2456,10 @@ namespace Ginger
         public void AddFloatingImageButton(string btnImage, string tooltip, RoutedEventHandler handler, int column)
         {
             Button b = new Button();
-            Image image = new Image();
-            image.Source = new BitmapImage(new Uri(@"/Images/" + btnImage, UriKind.RelativeOrAbsolute));
+            Image image = new Image
+            {
+                Source = new BitmapImage(new Uri(@"/Images/" + btnImage, UriKind.RelativeOrAbsolute))
+            };
             b.Content = image;
             b.ToolTip = tooltip;
             b.Style = this.FindResource("@GridFloatingImageButtonStyle") as Style;
@@ -2440,7 +2492,7 @@ namespace Ginger
                 }
 
                 // Put the button on the current Grid Row in the column end
-                Dictionary<int, double> colFlotingBtnsSize = new Dictionary<int, double>();
+                Dictionary<int, double> colFlotingBtnsSize = [];
                 double bHieght = 0;
                 DataGridRow r = (DataGridRow)grdMain.ItemContainerGenerator.ContainerFromItem(grdMain.SelectedItem);
                 if (r == null)
@@ -2519,8 +2571,7 @@ namespace Ginger
             for (int i = 0; i < Grid.Items.Count; i++)
             {
                 var cItem = grdMain.Items[i];
-                var mycheckbox = grdMain.Columns[0].GetCellContent(cItem) as CheckBox;
-                if (mycheckbox != null && (bool)mycheckbox.IsChecked)
+                if (grdMain.Columns[0].GetCellContent(cItem) is CheckBox mycheckbox && (bool)mycheckbox.IsChecked)
                 {
                     count++;
                 }
@@ -2544,7 +2595,7 @@ namespace Ginger
             CheckedRowCount
         }
 
-        public List<eUcGridValidationRules> ValidationRules = new List<eUcGridValidationRules>();
+        public List<eUcGridValidationRules> ValidationRules = [];
 
 
         public bool HasValidationError()
@@ -2597,7 +2648,7 @@ namespace Ginger
 
         public ObservableList<RepositoryItemBase> GetSelectedItems()
         {
-            ObservableList<RepositoryItemBase> selectedItemsList = new ObservableList<RepositoryItemBase>();
+            ObservableList<RepositoryItemBase> selectedItemsList = [];
             foreach (object selectedItem in grdMain.SelectedItems)
             {
                 if (selectedItem is RepositoryItemBase)

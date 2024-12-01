@@ -26,8 +26,10 @@ namespace Amdocs.Ginger.Common.GeneralLib
     {
         public static string Download(Uri url)
         {
-            WebClient wbClient = new WebClient();
-            wbClient.Proxy = WebRequest.GetSystemWebProxy();
+            WebClient wbClient = new WebClient
+            {
+                Proxy = WebRequest.GetSystemWebProxy()
+            };
             return wbClient.DownloadString(url);
         }
     }

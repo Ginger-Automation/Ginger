@@ -69,36 +69,46 @@ namespace UnitTests.NonUITests
 
             //Act
 
-            BusinessFlow BF = new BusinessFlow();
-            BF.Name = "Biz flow 1";
-            BF.Description = "Desc 1";
-            //BF.Status = BusinessFlow.eBusinessFlowStatus.Active; //TODOL do NOT write to XML if null or empty
-            BF.Activities = new ObservableList<Activity>();
+            BusinessFlow BF = new BusinessFlow
+            {
+                Name = "Biz flow 1",
+                Description = "Desc 1",
+                //BF.Status = BusinessFlow.eBusinessFlowStatus.Active; //TODOL do NOT write to XML if null or empty
+                Activities = []
+            };
 
             for (int i = 1; i <= ActivitiesToCreate; i++)
             {
-                Activity a = new Activity();
-                a.ActivityName = "Activity number " + i;
-                a.Description = "Desc - " + i;
+                Activity a = new Activity
+                {
+                    ActivityName = "Activity number " + i,
+                    Description = "Desc - " + i
+                };
                 BF.Activities.Add(a);
                 a.Status = eRunStatus.Passed;
                 for (int j = 1; j <= 2; j++)
                 {
-                    ActUIElement t = new ActUIElement();
-                    t.Description = "Set text box " + j;
-                    t.LocateBy = eLocateBy.ByID;
-                    t.LocateValue = "ID" + j;
+                    ActUIElement t = new ActUIElement
+                    {
+                        Description = "Set text box " + j,
+                        LocateBy = eLocateBy.ByID,
+                        LocateValue = "ID" + j
+                    };
                     a.Acts.Add(t);
 
-                    ActUIElement g = new ActUIElement();
-                    g.Description = "goto URL " + j;
-                    g.LocateValue = "ID" + j;
+                    ActUIElement g = new ActUIElement
+                    {
+                        Description = "goto URL " + j,
+                        LocateValue = "ID" + j
+                    };
                     a.Acts.Add(g);
                 }
             }
-            VariableString v = new VariableString();
-            v.Name = "Var1";
-            v.Description = "VDesc 1";
+            VariableString v = new VariableString
+            {
+                Name = "Var1",
+                Description = "VDesc 1"
+            };
             BF.AddVariable(v);
             string FileName = TestResources.GetTempFile("bf1.xml");
             BF.RepositorySerializer.SaveToFile(BF, FileName);
@@ -130,36 +140,46 @@ namespace UnitTests.NonUITests
             string TempFilepath = TestResources.GetTempFile("bfIsDirtyTrue.xml");
             int ActivitiesToCreate = 2;
 
-            BusinessFlow BF = new BusinessFlow();
-            BF.Name = "Biz flow 1";
-            BF.Description = "Desc 1";
-            //BF.Status = BusinessFlow.eBusinessFlowStatus.Active; //TODOL do NOT write to XML if null or empty
-            BF.Activities = new ObservableList<Activity>();
+            BusinessFlow BF = new BusinessFlow
+            {
+                Name = "Biz flow 1",
+                Description = "Desc 1",
+                //BF.Status = BusinessFlow.eBusinessFlowStatus.Active; //TODOL do NOT write to XML if null or empty
+                Activities = []
+            };
 
             for (int i = 1; i <= ActivitiesToCreate; i++)
             {
-                Activity a = new Activity();
-                a.ActivityName = "Activity number " + i;
-                a.Description = "Desc - " + i;
+                Activity a = new Activity
+                {
+                    ActivityName = "Activity number " + i,
+                    Description = "Desc - " + i
+                };
                 BF.Activities.Add(a);
                 a.Status = eRunStatus.Passed;
                 for (int j = 1; j <= 2; j++)
                 {
-                    ActUIElement t = new ActUIElement();
-                    t.Description = "Set text box " + j;
-                    t.LocateBy = eLocateBy.ByID;
-                    t.LocateValue = "ID" + j;
+                    ActUIElement t = new ActUIElement
+                    {
+                        Description = "Set text box " + j,
+                        LocateBy = eLocateBy.ByID,
+                        LocateValue = "ID" + j
+                    };
                     a.Acts.Add(t);
 
-                    ActUIElement g = new ActUIElement();
-                    g.Description = "goto URL " + j;
-                    g.LocateValue = "ID" + j;
+                    ActUIElement g = new ActUIElement
+                    {
+                        Description = "goto URL " + j,
+                        LocateValue = "ID" + j
+                    };
                     a.Acts.Add(g);
                 }
             }
-            VariableString v = new VariableString();
-            v.Name = "Var1";
-            v.Description = "VDesc 1";
+            VariableString v = new VariableString
+            {
+                Name = "Var1",
+                Description = "VDesc 1"
+            };
             BF.AddVariable(v);
 
 
@@ -178,10 +198,12 @@ namespace UnitTests.NonUITests
         public void BizFlowClearBackup()
         {
             //Arrange
-            BusinessFlow BF = new BusinessFlow();
-            BF.Name = "Businessflow1";
-            BF.Description = "Test Clear Backup";
-            BF.Activities = new ObservableList<Activity>();
+            BusinessFlow BF = new BusinessFlow
+            {
+                Name = "Businessflow1",
+                Description = "Test Clear Backup",
+                Activities = []
+            };
 
             Activity a = new Activity() { ActivityName = "Activity 1", Description = "Desciption -1", Status = eRunStatus.Passed };
             BF.Activities.Add(a);
@@ -215,7 +237,7 @@ namespace UnitTests.NonUITests
             string FileName = TestResources.GetTempFile("activityClearBackup.xml");
             BF.Name = "Businessflow1";
             BF.Description = "Test Clear Backup";
-            BF.Activities = new ObservableList<Activity>();
+            BF.Activities = [];
             Activity a = new Activity() { ActivityName = "Activity 1", Description = "Desciption -1", Status = eRunStatus.Passed };
             BF.Activities.Add(a);
 
@@ -245,19 +267,25 @@ namespace UnitTests.NonUITests
         public void ActionClearBackup()
         {
             //Arrange
-            BusinessFlow BF = new BusinessFlow();
-            BF.Name = "Businessflow1";
-            BF.Description = "Test Clear Backup";
-            BF.Activities = new ObservableList<Activity>();
-            Activity a = new Activity();
-            a.ActivityName = "Activity 1";
-            a.Description = "Desciption -1";
+            BusinessFlow BF = new BusinessFlow
+            {
+                Name = "Businessflow1",
+                Description = "Test Clear Backup",
+                Activities = []
+            };
+            Activity a = new Activity
+            {
+                ActivityName = "Activity 1",
+                Description = "Desciption -1"
+            };
             BF.Activities.Add(a);
             a.Status = eRunStatus.Passed;
 
-            ActUIElement g = new ActUIElement();
-            g.Description = "goto URL ";
-            g.LocateValue = "ID";
+            ActUIElement g = new ActUIElement
+            {
+                Description = "goto URL ",
+                LocateValue = "ID"
+            };
             a.Acts.Add(g);
             string TempFilepath = TestResources.GetTempFile("actionClearBackup.xml");
 
@@ -289,36 +317,46 @@ namespace UnitTests.NonUITests
 
             string TempFilepath = TestResources.GetTempFile("bfIsDirtyTrue.xml");
 
-            BusinessFlow BF = new BusinessFlow();
-            BF.Name = "Biz flow 1";
-            BF.Description = "Desc 1";
-            //BF.Status = BusinessFlow.eBusinessFlowStatus.Active; //TODOL do NOT write to XML if null or empty
-            BF.Activities = new ObservableList<Activity>();
+            BusinessFlow BF = new BusinessFlow
+            {
+                Name = "Biz flow 1",
+                Description = "Desc 1",
+                //BF.Status = BusinessFlow.eBusinessFlowStatus.Active; //TODOL do NOT write to XML if null or empty
+                Activities = []
+            };
 
             for (int i = 1; i <= ActivitiesToCreate; i++)
             {
-                Activity a = new Activity();
-                a.ActivityName = "Activity number " + i;
-                a.Description = "Desc - " + i;
+                Activity a = new Activity
+                {
+                    ActivityName = "Activity number " + i,
+                    Description = "Desc - " + i
+                };
                 BF.Activities.Add(a);
                 a.Status = eRunStatus.Passed;
                 for (int j = 1; j <= 2; j++)
                 {
-                    ActUIElement t = new ActUIElement();
-                    t.Description = "Set text box " + j;
-                    t.LocateBy = eLocateBy.ByID;
-                    t.LocateValue = "ID" + j;
+                    ActUIElement t = new ActUIElement
+                    {
+                        Description = "Set text box " + j,
+                        LocateBy = eLocateBy.ByID,
+                        LocateValue = "ID" + j
+                    };
                     a.Acts.Add(t);
 
-                    ActUIElement g = new ActUIElement();
-                    g.Description = "goto URL " + j;
-                    g.LocateValue = "ID" + j;
+                    ActUIElement g = new ActUIElement
+                    {
+                        Description = "goto URL " + j,
+                        LocateValue = "ID" + j
+                    };
                     a.Acts.Add(g);
                 }
             }
-            VariableString v = new VariableString();
-            v.Name = "Var1";
-            v.Description = "VDesc 1";
+            VariableString v = new VariableString
+            {
+                Name = "Var1",
+                Description = "VDesc 1"
+            };
             BF.AddVariable(v);
 
 
@@ -342,12 +380,18 @@ namespace UnitTests.NonUITests
             string TempFilepath = TestResources.GetTempFile("UTRSC1.xml");
 
             //Act
-            RunSetConfig RSC = new RunSetConfig();
-            RSC.Name = "UT RSC1";
-            GingerRunner ARC1 = new GingerRunner();
-            ARC1.Name = " Agent 1";
-            BusinessFlowRun BFR = new BusinessFlowRun();
-            BFR.BusinessFlowName = "BF1";
+            RunSetConfig RSC = new RunSetConfig
+            {
+                Name = "UT RSC1"
+            };
+            GingerRunner ARC1 = new GingerRunner
+            {
+                Name = " Agent 1"
+            };
+            BusinessFlowRun BFR = new BusinessFlowRun
+            {
+                BusinessFlowName = "BF1"
+            };
             ARC1.BusinessFlowsRunList.Add(BFR);
             RSC.GingerRunners.Add(ARC1);
 
@@ -446,9 +490,12 @@ namespace UnitTests.NonUITests
             int ActivitiesToCreate = 5;
             string FileName = TestResources.GetTempFile("BFSaveLoad.xml");
 
-            BusinessFlow BF = new BusinessFlow() { Name = "Biz flow 1", Description = "Desc 1" };
-
-            BF.Activities = new ObservableList<Activity>();
+            BusinessFlow BF = new BusinessFlow
+            {
+                Name = "Biz flow 1",
+                Description = "Desc 1",
+                Activities = []
+            };
 
             for (int i = 1; i <= ActivitiesToCreate; i++)
             {
@@ -469,9 +516,11 @@ namespace UnitTests.NonUITests
                 //    a.Acts.Add(g);
                 //}
             }
-            VariableString v = new VariableString();
-            v.Name = "Var1";
-            v.Description = "VDesc 1";
+            VariableString v = new VariableString
+            {
+                Name = "Var1",
+                Description = "VDesc 1"
+            };
             BF.AddVariable(v);
 
             //ValidationDB vdb = new ValidationDB() { Description ="DBV1", Expected ="exp1" };
@@ -498,33 +547,45 @@ namespace UnitTests.NonUITests
 
             BusinessFlow bf = new BusinessFlow("Test");
 
-            Activity activity = new Activity();
-            activity.ActivityName = "Login";
+            Activity activity = new Activity
+            {
+                ActivityName = "Login"
+            };
 
-            ActUIElement actGotoURL = new ActUIElement();
-            actGotoURL.Description = "Launch";
+            ActUIElement actGotoURL = new ActUIElement
+            {
+                Description = "Launch"
+            };
 
             activity.Acts.Add(actGotoURL);
 
-            Activity activity2 = new Activity();
-            activity2.ActivityName = "Test";
+            Activity activity2 = new Activity
+            {
+                ActivityName = "Test"
+            };
 
-            ActDummy act2 = new ActDummy();
-            act2.Description = "WaitForApp";
+            ActDummy act2 = new ActDummy
+            {
+                Description = "WaitForApp"
+            };
 
             activity.Acts.Add(act2);
 
-            FlowControl flowControl = new FlowControl();
-            flowControl.Active = true;
-            flowControl.Condition = "1=1";
-            flowControl.FlowControlAction = eFlowControlAction.GoToActivity;
+            FlowControl flowControl = new FlowControl
+            {
+                Active = true,
+                Condition = "1=1",
+                FlowControlAction = eFlowControlAction.GoToActivity
+            };
             flowControl.Value = activity2.Guid + flowControl.GUID_NAME_SEPERATOR + activity2.ItemName;
 
-            FlowControl flowControl2 = new FlowControl();
-            flowControl2.Active = true;
-            flowControl2.Condition = "2=2";
-            flowControl2.FlowControlAction = eFlowControlAction.GoToAction;
-            flowControl2.Value = act2.Guid + flowControl.GUID_NAME_SEPERATOR + act2.ItemName;
+            FlowControl flowControl2 = new FlowControl
+            {
+                Active = true,
+                Condition = "2=2",
+                FlowControlAction = eFlowControlAction.GoToAction,
+                Value = act2.Guid + flowControl.GUID_NAME_SEPERATOR + act2.ItemName
+            };
 
 
             actGotoURL.FlowControls.Add(flowControl);
@@ -551,9 +612,12 @@ namespace UnitTests.NonUITests
             string BizFlowName = "Biz flow Back/Rest";
             string BizFlowDescription = "Desc Back/Rest tester";
 
-            BusinessFlow BF = new BusinessFlow() { Name = BizFlowName };
-            BF.Status = BusinessFlow.eBusinessFlowStatus.Development;
-            BF.Activities = new ObservableList<Activity>();
+            BusinessFlow BF = new BusinessFlow
+            {
+                Name = BizFlowName,
+                Status = BusinessFlow.eBusinessFlowStatus.Development,
+                Activities = []
+            };
             ObservableList<Activity> OriginalActivitiesObj = BF.Activities;
 
             for (int i = 1; i <= ActivitiesToCreate; i++)
@@ -567,36 +631,46 @@ namespace UnitTests.NonUITests
             BF.Activities.Add(a6);
 
             // Add one action to make sure backup drill down, and restore the ref item not a copy
-            ActUIElement act1 = new ActUIElement();
-            act1.Description = "Goto URL 1";
+            ActUIElement act1 = new ActUIElement
+            {
+                Description = "Goto URL 1"
+            };
             a6.Acts.Add(act1);
 
             //add action with input/output vals
-            act1.InputValues = new ObservableList<ActInputValue>();
+            act1.InputValues = [];
             string firstInputValName = "Param1";
             ActInputValue firstInputVal = new ActInputValue() { Param = firstInputValName };
             act1.InputValues.Add(firstInputVal);
             act1.InputValues.Add(new ActInputValue() { Param = "Param2" });
 
             //add flow control
-            act1.FlowControls = new ObservableList<FlowControl>();
-            act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "A=B", FlowControlAction = eFlowControlAction.GoToActivity });
+            act1.FlowControls =
+            [
+                new GingerCore.FlowControlLib.FlowControl() { Condition = "A=B", FlowControlAction = eFlowControlAction.GoToActivity },
+            ];
             eFlowControlAction secondFlowControlAction = eFlowControlAction.RerunAction;
             GingerCore.FlowControlLib.FlowControl secondFlowControl = new GingerCore.FlowControlLib.FlowControl() { Condition = "C>123", FlowControlAction = secondFlowControlAction };
             act1.FlowControls.Add(secondFlowControl);
             act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "D=111", FlowControlAction = eFlowControlAction.StopRun });
 
             //BF Variables
-            VariableString v = new VariableString();
-            v.Name = "Var1";
-            v.Description = "VDesc 1";
+            VariableString v = new VariableString
+            {
+                Name = "Var1",
+                Description = "VDesc 1"
+            };
             BF.AddVariable(v);
-            VariableSelectionList sl = new VariableSelectionList();
-            sl.Name = "Var 2";
-            sl.OptionalValuesList = new ObservableList<OptionalValue>();
-            sl.OptionalValuesList.Add(new OptionalValue("11"));
-            sl.OptionalValuesList.Add(new OptionalValue("22"));
-            sl.OptionalValuesList.Add(new OptionalValue("33"));
+            VariableSelectionList sl = new VariableSelectionList
+            {
+                Name = "Var 2",
+                OptionalValuesList =
+            [
+                new OptionalValue("11"),
+                new OptionalValue("22"),
+                new OptionalValue("33"),
+            ]
+            };
             BF.AddVariable(sl);
 
             // BF.SaveBackup();            
@@ -668,12 +742,16 @@ namespace UnitTests.NonUITests
             //Arrange
             BusinessFlow BF = new BusinessFlow() { Name = "Biz flow VariableSelectionList" };
 
-            VariableSelectionList sl = new VariableSelectionList();
-            sl.Name = "Var 2";
-            sl.OptionalValuesList = new ObservableList<OptionalValue>();
-            sl.OptionalValuesList.Add(new OptionalValue("11"));
-            sl.OptionalValuesList.Add(new OptionalValue("22"));
-            sl.OptionalValuesList.Add(new OptionalValue("33"));
+            VariableSelectionList sl = new VariableSelectionList
+            {
+                Name = "Var 2",
+                OptionalValuesList =
+            [
+                new OptionalValue("11"),
+                new OptionalValue("22"),
+                new OptionalValue("33"),
+            ]
+            };
 
             BF.AddVariable(sl);
 
@@ -701,10 +779,11 @@ namespace UnitTests.NonUITests
         {
             //Arrange            
 
-            VariableSelectionList sl = new VariableSelectionList();
-            sl.Name = "Var 2";
-            sl.OptionalValuesList = new ObservableList<OptionalValue>();
-            sl.OptionalValuesList.Add(new OptionalValue("11"));
+            VariableSelectionList sl = new VariableSelectionList
+            {
+                Name = "Var 2",
+                OptionalValuesList = [new OptionalValue("11")]
+            };
 
             //Act
             sl.SaveBackup();
@@ -749,8 +828,10 @@ namespace UnitTests.NonUITests
 
             //Arrange
             RunSetConfig RSC = new RunSetConfig();
-            RunSetActionSendEmail RSASE = new RunSetActionSendEmail();
-            RSASE.Name = "Send Email";
+            RunSetActionSendEmail RSASE = new RunSetActionSendEmail
+            {
+                Name = "Send Email"
+            };
             string MailFrom = "From.Me@amdocs.com";
             string MailTo = "To.You@amdocs.com";
             string MailCC = "CC.YouTo@amdocs.com";
@@ -783,19 +864,23 @@ namespace UnitTests.NonUITests
         {
 
             //Arrange
-            BusinessFlow BF = new BusinessFlow();
-            BF.Name = "Biz flow With Tags";
-            BF.Description = "Desc 1";
-            BF.Activities = new ObservableList<Activity>();
+            BusinessFlow BF = new BusinessFlow
+            {
+                Name = "Biz flow With Tags",
+                Description = "Desc 1",
+                Activities = []
+            };
             Guid g1 = Guid.NewGuid();
             Guid g2 = Guid.NewGuid();
             BF.Tags.Add(g1);
             BF.Tags.Add(g2);
 
-            Activity a = new Activity();
-            a.ActivityName = "Activity number 1";
-            a.Description = "Desc - 1";
-            a.Status = eRunStatus.Passed;
+            Activity a = new Activity
+            {
+                ActivityName = "Activity number 1",
+                Description = "Desc - 1",
+                Status = eRunStatus.Passed
+            };
             BF.Activities.Add(a);
 
             //Act
@@ -914,8 +999,10 @@ namespace UnitTests.NonUITests
         public void CopyAction()
         {
             //Arrange
-            ActUIElement actGotoURL = new ActUIElement();
-            actGotoURL.Description = "www.google.com";
+            ActUIElement actGotoURL = new ActUIElement
+            {
+                Description = "www.google.com"
+            };
 
             //Act
             ActUIElement a2 = (ActUIElement)actGotoURL.CreateCopy();
@@ -931,8 +1018,10 @@ namespace UnitTests.NonUITests
         {
 
             //Arrange
-            ActUIElement actGotoURL = new ActUIElement();
-            actGotoURL.Description = "www.google.com";
+            ActUIElement actGotoURL = new ActUIElement
+            {
+                Description = "www.google.com"
+            };
 
             //Act
             ActUIElement a2 = (ActUIElement)actGotoURL.CreateCopy(false);
@@ -1023,17 +1112,23 @@ namespace UnitTests.NonUITests
             //Arrange
             Activity activity = new Activity();
 
-            ActUIElement actGotoURL = new ActUIElement();
-            actGotoURL.Description = "Launch";
+            ActUIElement actGotoURL = new ActUIElement
+            {
+                Description = "Launch"
+            };
 
-            ActDummy act2 = new ActDummy();
-            act2.Description = "WaitForApp";
+            ActDummy act2 = new ActDummy
+            {
+                Description = "WaitForApp"
+            };
 
 
-            FlowControl flowControl = new FlowControl();
-            flowControl.Active = true;
-            flowControl.Condition = "1=1";
-            flowControl.FlowControlAction = eFlowControlAction.GoToAction;
+            FlowControl flowControl = new FlowControl
+            {
+                Active = true,
+                Condition = "1=1",
+                FlowControlAction = eFlowControlAction.GoToAction
+            };
             flowControl.Value = act2.Guid + flowControl.GUID_NAME_SEPERATOR + act2.ItemName;
 
 
@@ -1069,8 +1164,10 @@ namespace UnitTests.NonUITests
 
             VariableDependency vd = new VariableDependency(selectionList.Guid, selectionList.ItemName, selectionList.Value);
 
-            ActUIElement actGotoURL = new ActUIElement();
-            actGotoURL.Description = "www.google.com";
+            ActUIElement actGotoURL = new ActUIElement
+            {
+                Description = "www.google.com"
+            };
             actGotoURL.VariablesDependencies.Add(vd);
 
             ActDummy act2 = new ActDummy();
@@ -1117,28 +1214,38 @@ namespace UnitTests.NonUITests
             BusinessFlow bf = new BusinessFlow("Test");
 
             Activity activity = new Activity();
-            VariableSelectionList selectionList2 = new VariableSelectionList();
-            selectionList2.Name = "activityVariable1";
+            VariableSelectionList selectionList2 = new VariableSelectionList
+            {
+                Name = "activityVariable1"
+            };
             selectionList2.OptionalValuesList.Add(new OptionalValue("c"));
             selectionList2.OptionalValuesList.Add(new OptionalValue("d"));
 
             VariableDependency vd = new VariableDependency(selectionList2.Guid, selectionList2.ItemName, selectionList2.Value);
 
-            ActUIElement actGotoURL = new ActUIElement();
-            actGotoURL.Description = "www.google.com";
+            ActUIElement actGotoURL = new ActUIElement
+            {
+                Description = "www.google.com"
+            };
             actGotoURL.VariablesDependencies.Add(vd);
-            ActDummy actDummy = new ActDummy();
-            actDummy.Description = "www.google.com";
+            ActDummy actDummy = new ActDummy
+            {
+                Description = "www.google.com"
+            };
             actDummy.VariablesDependencies.Add(vd);
             activity.Variables.Add(selectionList2);
             activity.Acts.Add(actGotoURL);
             activity.Acts.Add(actDummy);
             Activity activity2 = new Activity();
-            ActDummy act2 = new ActDummy();
-            act2.Description = "www.google.com";
+            ActDummy act2 = new ActDummy
+            {
+                Description = "www.google.com"
+            };
             activity2.Acts.Add(act2);
-            VariableSelectionList selectionList = new VariableSelectionList();
-            selectionList.Name = "bfVariable1";
+            VariableSelectionList selectionList = new VariableSelectionList
+            {
+                Name = "bfVariable1"
+            };
             selectionList.OptionalValuesList.Add(new OptionalValue("a"));
             selectionList.OptionalValuesList.Add(new OptionalValue("b"));
 
@@ -1178,19 +1285,27 @@ namespace UnitTests.NonUITests
             //Arrange
             BusinessFlow bf = new BusinessFlow("Test");
 
-            Activity activity = new Activity();
-            activity.ActivityName = "Login";
+            Activity activity = new Activity
+            {
+                ActivityName = "Login"
+            };
 
-            ActUIElement actGotoURL = new ActUIElement();
-            actGotoURL.Description = "Launch";
+            ActUIElement actGotoURL = new ActUIElement
+            {
+                Description = "Launch"
+            };
 
             activity.Acts.Add(actGotoURL);
 
-            Activity activity2 = new Activity();
-            activity2.ActivityName = "Test";
+            Activity activity2 = new Activity
+            {
+                ActivityName = "Test"
+            };
 
-            ActDummy act2 = new ActDummy();
-            act2.Description = "WaitForApp";
+            ActDummy act2 = new ActDummy
+            {
+                Description = "WaitForApp"
+            };
 
             activity.Acts.Add(act2);
 
@@ -1202,8 +1317,10 @@ namespace UnitTests.NonUITests
 
             //Act
             BusinessFlow copiedItem = (BusinessFlow)bf.CreateCopy();
-            Activity activity3 = new Activity();
-            activity3.ActivityName = "NewActivity";
+            Activity activity3 = new Activity
+            {
+                ActivityName = "NewActivity"
+            };
             bf.Activities.Add(activity3);
 
             activity2.ActivityName = "Test_New";
@@ -1263,19 +1380,27 @@ namespace UnitTests.NonUITests
             //Arrange
             BusinessFlow bf = new BusinessFlow("Test");
 
-            Activity activity = new Activity();
-            activity.ActivityName = "Login";
+            Activity activity = new Activity
+            {
+                ActivityName = "Login"
+            };
 
-            ActUIElement actGotoURL = new ActUIElement();
-            actGotoURL.Description = "Launch";
+            ActUIElement actGotoURL = new ActUIElement
+            {
+                Description = "Launch"
+            };
 
             activity.Acts.Add(actGotoURL);
 
-            Activity activity2 = new Activity();
-            activity2.ActivityName = "Test";
+            Activity activity2 = new Activity
+            {
+                ActivityName = "Test"
+            };
 
-            ActDummy act2 = new ActDummy();
-            act2.Description = "WaitForApp";
+            ActDummy act2 = new ActDummy
+            {
+                Description = "WaitForApp"
+            };
 
             activity.Acts.Add(act2);
 
@@ -1303,10 +1428,14 @@ namespace UnitTests.NonUITests
             //Arrange
             BusinessFlow bf = new BusinessFlow("Test");
 
-            Activity activity1 = new Activity();
-            activity1.ActivityName = "activity1";
-            Activity activity2 = new Activity();
-            activity2.ActivityName = "activity2";
+            Activity activity1 = new Activity
+            {
+                ActivityName = "activity1"
+            };
+            Activity activity2 = new Activity
+            {
+                ActivityName = "activity2"
+            };
             ActDummy dumAct = new ActDummy();
             FlowControl sampleFC = new FlowControl()
             {
@@ -1342,10 +1471,14 @@ namespace UnitTests.NonUITests
             //Arrange
             BusinessFlow bf = new BusinessFlow("Test");
 
-            Activity activity1 = new Activity();
-            activity1.ActivityName = "activity1";
-            Activity activity2 = new Activity();
-            activity2.ActivityName = "activity2";
+            Activity activity1 = new Activity
+            {
+                ActivityName = "activity1"
+            };
+            Activity activity2 = new Activity
+            {
+                ActivityName = "activity2"
+            };
             ActDummy dumAct = new ActDummy();
             FlowControl sampleFC = new FlowControl()
             {

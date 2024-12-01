@@ -16,11 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
-using Microsoft.CodeAnalysis;
-using GingerCore.Activities;
 
 namespace Ginger.Configurations
 {
@@ -28,7 +24,7 @@ namespace Ginger.Configurations
     public class AskLisaConfiguration : RepositoryItemBase
     {
         public delegate void AskLisaConfigurationChangedEvent();
-       
+
         public enum eEnableChatBot
         {
             Yes,
@@ -216,7 +212,7 @@ namespace Ginger.Configurations
             }
         }
 
-        private string mTemperatureLevel ="0.1";
+        private string mTemperatureLevel = "0.1";
         [IsSerializedForLocalRepository]
         public string TemperatureLevel
         {
@@ -234,7 +230,7 @@ namespace Ginger.Configurations
             }
         }
 
-        private string mMaxTokenValue ="2000";
+        private string mMaxTokenValue = "2000";
         [IsSerializedForLocalRepository]
         public string MaxTokenValue
         {
@@ -245,7 +241,7 @@ namespace Ginger.Configurations
             set
             {
                 if (mMaxTokenValue != value)
-                {   
+                {
                     mMaxTokenValue = value;
                     OnPropertyChanged(nameof(MaxTokenValue));
                 }
@@ -289,7 +285,7 @@ namespace Ginger.Configurations
         }
 
         public string Token = "token";
-      
+
 
         public override string ItemName { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 

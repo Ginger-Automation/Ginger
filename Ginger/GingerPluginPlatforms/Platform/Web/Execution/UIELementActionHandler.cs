@@ -150,7 +150,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
 
         // Remove !!!!!!!!!!!
-        internal List<NodeActionOutputValue> AOVs = new List<NodeActionOutputValue>();
+        internal List<NodeActionOutputValue> AOVs = [];
 
         // Remove !!!!!!!!!!!
         public string ExecutionInfo { get; set; }

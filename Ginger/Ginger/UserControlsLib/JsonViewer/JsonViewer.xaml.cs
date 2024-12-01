@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -23,7 +24,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Newtonsoft.Json.Linq;
 
 namespace JsonViewerDemo.JsonViewer
 {
@@ -66,13 +66,12 @@ namespace JsonViewerDemo.JsonViewer
 
         private void JValue_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ClickCount != 2) 
+            if (e.ClickCount != 2)
                 return;
-            
-            var tb = sender as TextBlock;
-            if (tb != null)
+
+            if (sender is TextBlock tb)
             {
-                 GingerCore.General.SetClipboardText(tb.Text); 
+                GingerCore.General.SetClipboardText(tb.Text);
             }
         }
 

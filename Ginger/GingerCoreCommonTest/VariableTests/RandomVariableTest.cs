@@ -90,10 +90,12 @@ namespace GingerCoreCommonTest.VariableTests
         public void RandomNumberVar_Min5_Max10_Interval_1()
         {
             //Arrange
-            VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
-            variableRandomNumber.Min = 5;
-            variableRandomNumber.Max = 10;
-            variableRandomNumber.Interval = 1;
+            VariableRandomNumber variableRandomNumber = new VariableRandomNumber
+            {
+                Min = 5,
+                Max = 10,
+                Interval = 1
+            };
 
             //Act
             string errorMsg = string.Empty;
@@ -115,10 +117,12 @@ namespace GingerCoreCommonTest.VariableTests
             int interval = 5;
 
             //Arrange
-            VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
-            variableRandomNumber.Min = min;
-            variableRandomNumber.Max = max;
-            variableRandomNumber.Interval = interval;
+            VariableRandomNumber variableRandomNumber = new VariableRandomNumber
+            {
+                Min = min,
+                Max = max,
+                Interval = interval
+            };
 
             //Act
             string errorMsg = string.Empty;
@@ -136,9 +140,9 @@ namespace GingerCoreCommonTest.VariableTests
 
             // Now check the validy 5,10,15 etc..
             //Verify that the num modolu 5 is give remainder of 0 or 5
-            Assert.IsTrue(num1 % 5 == 0 || num1 % 5 == 5, "num1 % 5 == 0 || num1 % 5 == 5");
-            Assert.IsTrue(num2 % 5 == 0 || num2 % 5 == 5, "num1 % 5 == 0 || num1 % 5 == 5");
-            Assert.IsTrue(num3 % 5 == 0 || num3 % 5 == 5, "num1 % 5 == 0 || num1 % 5 == 5");
+            Assert.IsTrue(num1 % 5 is 0 or 5, "num1 % 5 == 0 || num1 % 5 == 5");
+            Assert.IsTrue(num2 % 5 is 0 or 5, "num1 % 5 == 0 || num1 % 5 == 5");
+            Assert.IsTrue(num3 % 5 is 0 or 5, "num1 % 5 == 0 || num1 % 5 == 5");
         }
 
         [TestMethod]
@@ -146,10 +150,12 @@ namespace GingerCoreCommonTest.VariableTests
         public void RandomNumberVar_Min500_Max100()
         {
             //Arrange
-            VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
-            variableRandomNumber.Min = 500;
-            variableRandomNumber.Max = 100;
-            variableRandomNumber.Interval = 40;
+            VariableRandomNumber variableRandomNumber = new VariableRandomNumber
+            {
+                Min = 500,
+                Max = 100,
+                Interval = 40
+            };
 
             //Act
             string errorMsg = string.Empty;
@@ -166,10 +172,12 @@ namespace GingerCoreCommonTest.VariableTests
         public void RandomNumberVar_var500_Interval_40()
         {
             //Arrange
-            VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
-            variableRandomNumber.Min = 0;
-            variableRandomNumber.Max = 500;
-            variableRandomNumber.Interval = 40;
+            VariableRandomNumber variableRandomNumber = new VariableRandomNumber
+            {
+                Min = 0,
+                Max = 500,
+                Interval = 40
+            };
 
             //Act
             string errorMsg = string.Empty;
@@ -177,7 +185,7 @@ namespace GingerCoreCommonTest.VariableTests
             decimal num1 = decimal.Parse(variableRandomNumber.Value);
 
             //Verify numbers areof mutlipliers of 40 starting with 0
-            Assert.IsTrue(num1 >= 0 && num1 <= 500, "num1>=0 && num1 <=500");
+            Assert.IsTrue(num1 is >= 0 and <= 500, "num1>=0 && num1 <=500");
             Assert.AreEqual(num1 % 40, 0, "num1 % 40 = 0");
         }
 
@@ -186,9 +194,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void RandomNumberVar_Negative_Minus10_to_Minus_5()
         {
             //Arrange
-            VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
-            variableRandomNumber.Min = -10;
-            variableRandomNumber.Max = -5;
+            VariableRandomNumber variableRandomNumber = new VariableRandomNumber
+            {
+                Min = -10,
+                Max = -5
+            };
 
             //Act
             string errorMsg = string.Empty;
@@ -196,7 +206,7 @@ namespace GingerCoreCommonTest.VariableTests
             decimal num1 = decimal.Parse(variableRandomNumber.Value);
 
             //Verify numbers areof mutlipliers of 40 starting with 0
-            Assert.IsTrue(num1 >= -10 && num1 <= -5, "num1>=-10 && num1 <=-5");
+            Assert.IsTrue(num1 is >= (-10) and <= (-5), "num1>=-10 && num1 <=-5");
         }
 
         [TestMethod]
@@ -204,9 +214,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void RandomStringVar_LowerString15char()
         {
             //Arrange
-            VariableRandomString variableRandomString = new VariableRandomString();
-            variableRandomString.Max = 15;
-            variableRandomString.IsLowerCase = true;
+            VariableRandomString variableRandomString = new VariableRandomString
+            {
+                Max = 15,
+                IsLowerCase = true
+            };
 
             //Act
             string errorMsg = string.Empty;
@@ -221,9 +233,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void RandomStringVar_UpperString15char()
         {
             //Arrange
-            VariableRandomString variableRandomString = new VariableRandomString();
-            variableRandomString.Max = 15;
-            variableRandomString.IsUpperCase = true;
+            VariableRandomString variableRandomString = new VariableRandomString
+            {
+                Max = 15,
+                IsUpperCase = true
+            };
 
             //Act
             string errorMsg = string.Empty;
@@ -238,13 +252,15 @@ namespace GingerCoreCommonTest.VariableTests
         public void RandomStringVar_BothupperlowerString15char_ShowError()
         {
             //Arrange
-            VariableRandomString variableRandomString = new VariableRandomString();
-            variableRandomString.Max = 15;
-            variableRandomString.IsUpperCase = true;
+            VariableRandomString variableRandomString = new VariableRandomString
+            {
+                Max = 15,
+                IsUpperCase = true,
 
-            //Act
-            //When the user change to lower case make sure the Isupper case get turned off
-            variableRandomString.IsLowerCase = true;
+                //Act
+                //When the user change to lower case make sure the Isupper case get turned off
+                IsLowerCase = true
+            };
             string errorMsg = string.Empty;
             variableRandomString.GenerateAutoValue(ref errorMsg);
 
@@ -261,9 +277,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void RandomStringVar_0_10_chars()
         {
             //Arrange
-            VariableRandomString variableRandomString = new VariableRandomString();
-            variableRandomString.Min = 0;
-            variableRandomString.Max = 10;
+            VariableRandomString variableRandomString = new VariableRandomString
+            {
+                Min = 0,
+                Max = 10
+            };
             bool Hit0 = false;
             bool Hit5 = false;
             bool Hit10 = false;
@@ -275,7 +293,7 @@ namespace GingerCoreCommonTest.VariableTests
             {
                 string errorMsg = string.Empty;
                 variableRandomString.GenerateAutoValue(ref errorMsg);
-                Assert.IsTrue(variableRandomString.Value.Length >= 0 && variableRandomString.Value.Length <= 10, "variableRandomString.Value.Length >= 0 && variableRandomString.Value.Length <= 10");
+                Assert.IsTrue(variableRandomString.Value.Length is >= 0 and <= 10, "variableRandomString.Value.Length >= 0 && variableRandomString.Value.Length <= 10");
                 if (variableRandomString.Value.Length == 0)
                 {
                     Hit0 = true;
@@ -303,9 +321,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void RandomStringVar_DigitsString15char()
         {
             //Arrange
-            VariableRandomString variableRandomString = new VariableRandomString();
-            variableRandomString.Max = 15;
-            variableRandomString.IsDigit = true;
+            VariableRandomString variableRandomString = new VariableRandomString
+            {
+                Max = 15,
+                IsDigit = true
+            };
 
             //Act
             string errorMsg = string.Empty;
@@ -322,9 +342,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void RandomNumberVar_BigNumbers_1111111111111__()
         {
             //Arrange
-            VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
-            variableRandomNumber.Min = 1111111111111;
-            variableRandomNumber.Max = 9999999999999;
+            VariableRandomNumber variableRandomNumber = new VariableRandomNumber
+            {
+                Min = 1111111111111,
+                Max = 9999999999999
+            };
 
             //Act
             string errorMsg = string.Empty;
@@ -332,7 +354,7 @@ namespace GingerCoreCommonTest.VariableTests
             decimal num1 = decimal.Parse(variableRandomNumber.Value);
 
             //Assert            
-            Assert.IsTrue(num1 >= 1111111111111 && num1 <= 9999999999999, "num1 >= 1111111111111 && num1 <= 9999999999999");
+            Assert.IsTrue(num1 is >= 1111111111111 and <= 9999999999999, "num1 >= 1111111111111 && num1 <= 9999999999999");
         }
 
         [TestMethod]
@@ -340,10 +362,12 @@ namespace GingerCoreCommonTest.VariableTests
         public void RandomNumberVar_Integer_1_10_checkNoFractions()
         {
             //Arrange
-            VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
-            variableRandomNumber.Min = 1;
-            variableRandomNumber.Max = 10;
-            variableRandomNumber.IsInteger = true;
+            VariableRandomNumber variableRandomNumber = new VariableRandomNumber
+            {
+                Min = 1,
+                Max = 10,
+                IsInteger = true
+            };
 
             //Act
             string errorMsg = string.Empty;
@@ -361,9 +385,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void RandomNumberVar_With_Fractions()
         {
             //Arrange
-            VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
-            variableRandomNumber.Min = decimal.Parse("1.5");   // not using M to mark it decimal, using parse since this is ehat happen from UI
-            variableRandomNumber.Max = decimal.Parse("1.7");
+            VariableRandomNumber variableRandomNumber = new VariableRandomNumber
+            {
+                Min = decimal.Parse("1.5"),   // not using M to mark it decimal, using parse since this is ehat happen from UI
+                Max = decimal.Parse("1.7")
+            };
 
             //Act
             string errorMsg = string.Empty;
@@ -371,7 +397,7 @@ namespace GingerCoreCommonTest.VariableTests
             decimal num1 = decimal.Parse(variableRandomNumber.Value);
 
             //Assert            
-            Assert.IsTrue(num1 >= 1.5M && num1 <= 1.7M, "num1 >= 1.5M && num1 <= 1.7M");
+            Assert.IsTrue(num1 is >= 1.5M and <= 1.7M, "num1 >= 1.5M && num1 <= 1.7M");
         }
 
 
@@ -383,10 +409,12 @@ namespace GingerCoreCommonTest.VariableTests
             // array to keep hits per number [0]-21, [1]-22 etc..
             int[] numbers = new int[20];
 
-            VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
-            variableRandomNumber.Min = decimal.Parse("21");
-            variableRandomNumber.Max = decimal.Parse("40");
-            variableRandomNumber.IsInteger = true;
+            VariableRandomNumber variableRandomNumber = new VariableRandomNumber
+            {
+                Min = decimal.Parse("21"),
+                Max = decimal.Parse("40"),
+                IsInteger = true
+            };
 
             //Act
 
@@ -416,17 +444,19 @@ namespace GingerCoreCommonTest.VariableTests
         public void RandomStringVar_Digit_5_8()
         {
             //Arrange
-            VariableRandomString variableRandomString = new VariableRandomString();
-            variableRandomString.Min = 5;
-            variableRandomString.Max = 8;
-            variableRandomString.IsDigit = true;
+            VariableRandomString variableRandomString = new VariableRandomString
+            {
+                Min = 5,
+                Max = 8,
+                IsDigit = true
+            };
             //Act
             string errorMsg = string.Empty;
             variableRandomString.GenerateAutoValue(ref errorMsg);
             decimal num1 = decimal.Parse(variableRandomString.Value);
 
             //Assert                        
-            Assert.IsTrue(variableRandomString.Value.Length >= 5 && variableRandomString.Value.Length <= 8, "variableRandomString.Value.Length >= 5 && variableRandomString.Value.Length <= 8");
+            Assert.IsTrue(variableRandomString.Value.Length is >= 5 and <= 8, "variableRandomString.Value.Length >= 5 && variableRandomString.Value.Length <= 8");
         }
 
 
@@ -436,10 +466,12 @@ namespace GingerCoreCommonTest.VariableTests
         {
             //Arrange
             int[] a = new int[5];
-            VariableRandomString variableRandomString = new VariableRandomString();
-            variableRandomString.Min = 6;
-            variableRandomString.Max = 10;
-            variableRandomString.IsDigit = true;
+            VariableRandomString variableRandomString = new VariableRandomString
+            {
+                Min = 6,
+                Max = 10,
+                IsDigit = true
+            };
 
             //Act
             Stopwatch stopwatch = Stopwatch.StartNew();
@@ -448,7 +480,7 @@ namespace GingerCoreCommonTest.VariableTests
             {
                 variableRandomString.GenerateAutoValue(ref errorMsg);
                 decimal num1 = decimal.Parse(variableRandomString.Value);
-                Assert.IsTrue(variableRandomString.Value.Length >= 6 && variableRandomString.Value.Length <= 10, "variableRandomString.Value.Length >= 6 && variableRandomString.Value.Length <= 10");
+                Assert.IsTrue(variableRandomString.Value.Length is >= 6 and <= 10, "variableRandomString.Value.Length >= 6 && variableRandomString.Value.Length <= 10");
                 a[variableRandomString.Value.Length - 6]++;
             }
 
@@ -479,9 +511,11 @@ namespace GingerCoreCommonTest.VariableTests
         {
             //Arrange
             bool Hit0 = false;
-            VariableRandomString variableRandomString = new VariableRandomString();
-            variableRandomString.Min = 0;
-            variableRandomString.Max = 5;
+            VariableRandomString variableRandomString = new VariableRandomString
+            {
+                Min = 0,
+                Max = 5
+            };
 
             //Act
             string errorMsg = string.Empty;
@@ -504,10 +538,12 @@ namespace GingerCoreCommonTest.VariableTests
         public void RandomStringVar_Digit_13()
         {
             //Arrange
-            VariableRandomString variableRandomString = new VariableRandomString();
-            variableRandomString.Min = 13;
-            variableRandomString.Max = 13;
-            variableRandomString.IsDigit = true;
+            VariableRandomString variableRandomString = new VariableRandomString
+            {
+                Min = 13,
+                Max = 13,
+                IsDigit = true
+            };
 
             string errorMsg = string.Empty;
             for (int i = 0; i < 100; i++)
@@ -518,7 +554,7 @@ namespace GingerCoreCommonTest.VariableTests
 
                 //Assert            
                 Assert.AreEqual(variableRandomString.Value.Length, 13, "variableRandomString.Value.Length=13");
-                Assert.IsTrue(num1 >= 0 && num1 <= 9999999999999, "num1 >= 0 && num1 <= 9999999999999");
+                Assert.IsTrue(num1 is >= 0 and <= 9999999999999, "num1 >= 0 && num1 <= 9999999999999");
             }
         }
 

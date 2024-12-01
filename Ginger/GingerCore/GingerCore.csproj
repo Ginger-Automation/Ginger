@@ -41,6 +41,16 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Remove="Actions\REST\**" />
+    <EmbeddedResource Remove="Actions\WebServices\**" />
+    <EmbeddedResource Remove="Environments\**" />
+    <EmbeddedResource Remove="Plugins\**" />
+    <None Remove="Actions\REST\**" />
+    <None Remove="Actions\WebServices\**" />
+    <None Remove="Environments\**" />
+    <None Remove="Plugins\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="ACL_Data_Contract">
       <HintPath>DLLs\ACL_Data_Contract.dll</HintPath>
     </Reference>
@@ -74,6 +84,9 @@
     </Reference>
     <Reference Include="OctaneRepositoryStd">
       <HintPath>DLLs\OctaneRepositoryStd.dll</HintPath>
+    </Reference>
+    <Reference Include="OctaneSdkStandard">
+      <HintPath>..\GingerCoreNET\DLLS\OctaneSdkStandard.dll</HintPath>
     </Reference>
     <Reference Include="Open3270, Version=1.5.0.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -185,24 +198,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\ActSikuli.cs" />
-    <Compile Include="Actions\RobotFramework\ActRobot.cs" />
-    <Compile Include="Actions\RobotFramework\RobotTestCase.cs" />
-    <Compile Include="Actions\RobotFramework\GingerParam.cs" />
-    <Compile Include="Actions\Common\ActMedia.cs" />
-    <Compile Include="Actions\Common\ActBattery.cs" />
-    <Compile Include="Actions\Common\ActPhone.cs" />
-    <Compile Include="Actions\Common\ActDevice.cs" />
     <Compile Include="Actions\ActDemoPage.cs" />
-    <Compile Include="Actions\Common\ElementConfigControl.cs" />
-    <Compile Include="Actions\JSON\ActJSONTagValidation.cs" />
     <Compile Include="Actions\ActImage.cs" />
     <Compile Include="Actions\ActLowLevelClicks.cs" />
     <Compile Include="Actions\ActCreatePDFChart.cs" />
     <Compile Include="Actions\ActActivateRow.cs" />
     <Compile Include="Actions\ActGetMsgboxText.cs" />
     <Compile Include="Actions\ActConsoleCommand.cs" />
-    <Compile Include="Actions\ActFunction.cs" />
-    <Compile Include="Actions\ActASCFControl.cs" />
     <Compile Include="Actions\ActLaunchJavaWSApplication.cs" />
     <Compile Include="Actions\ActGenerateFileFromTemplate.cs" />
     <Compile Include="Actions\ActionFlowControl.cs" />
@@ -212,15 +214,8 @@
     <Compile Include="Actions\ActSetConfig.cs" />
     <Compile Include="Actions\ActMenuItem.cs" />
     <Compile Include="Actions\ActTextSpeech.cs" />
-    <Compile Include="Actions\ActWindow.cs" />
-    <Compile Include="Actions\Common\ActDeviceButton.cs" />
-    <Compile Include="Actions\ASCF\ActASCFBrowserElement.cs" />
-    <Compile Include="Actions\Java\ActJavaElement.cs" />
-    <Compile Include="Actions\Java\ActJavaEXE.cs" />
     <Compile Include="Actions\ActTableElement.cs" />
-    <Compile Include="Actions\MainFrame\ActMainframeGetDetails.cs" />
-    <Compile Include="Actions\MainFrame\ActMainframeSendKey.cs" />
-    <Compile Include="Actions\MainFrame\ActMainframeSetText.cs" />
+    <Compile Include="Actions\Common\ElementConfigControl.cs" />
     <Compile Include="Actions\ScreenCapture\LocatorImageCaptureWindow.xaml.cs">
       <DependentUpon>LocatorImageCaptureWindow.xaml</DependentUpon>
     </Compile>
@@ -229,7 +224,6 @@
     </Compile>
     <Compile Include="Actions\ScreenCapture\SnippingTool.Designer.cs" />
     <Compile Include="Actions\UIAutomation\UIAElementInfo.cs" />
-    <Compile Include="Actions\Windows\ActWindowsControl.cs" />
     <Compile Include="Actions\ScreenCapture\ScreenCaptureWindow.xaml.cs">
       <DependentUpon>ScreenCaptureWindow.xaml</DependentUpon>
     </Compile>
@@ -251,47 +245,7 @@
     <Compile Include="Actions\UIAutomation\UIA_ActionRecorder.xaml.cs">
       <DependentUpon>UIA_ActionRecorder.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\XML\ActXMLTagValidation.cs" />
-    <Compile Include="Actions\XML\ActXMLProcessing.cs" />
-    <Compile Include="Actions\XML\XMLProcessor.cs" />
     <Compile Include="ActOcr.cs" />
-    <Compile Include="ALM\QtestCore.cs" />
-    <Compile Include="ALM\Qtest\ImportFromQtest.cs" />
-    <Compile Include="ALM\QCRestAPICore.cs" />
-    <Compile Include="ALM\QCRestAPI\ExportToQCRestAPI.cs" />
-    <Compile Include="ALM\QCRestAPI\ImportFromQCRest.cs" />
-    <Compile Include="ALM\QCRestAPI\QCRestAPIConnect.cs" />
-    <Compile Include="ALM\QC\ExportToQC.cs" />
-    <Compile Include="ALM\QCCore.cs" />
-    <Compile Include="ALM\QC\ImportFromQC.cs" />
-    <Compile Include="ALM\QC\QCConnect.cs" />
-    <Compile Include="ALM\Qtest\QtestTestRun.cs" />
-    <Compile Include="ALM\Qtest\QtestTestSuite.cs" />
-    <Compile Include="ALM\Qtest\QtestTest.cs" />
-    <Compile Include="ALM\Qtest\QtestTestParameter.cs" />
-    <Compile Include="ALM\Qtest\QtestTestStep.cs" />
-    <Compile Include="ALM\Qtest\QtestConnect.cs" />
-    <Compile Include="ALM\RallyCore.cs" />
-    <Compile Include="ALM\Rally\ImportFromRally.cs" />
-    <Compile Include="ALM\Rally\RallyConnect.cs" />
-    <Compile Include="ALM\Rally\RallyStep.cs" />
-    <Compile Include="ALM\Rally\RallyTestCase.cs" />
-    <Compile Include="ALM\Rally\RallyTestParameter.cs" />
-    <Compile Include="ALM\Rally\RallyTestPlan.cs" />
-    <Compile Include="ALM\RQMCore.cs" />
-    <Compile Include="ALM\RQM\ExportToRQM.cs" />
-    <Compile Include="ALM\RQM\ImportFromRQM.cs" />
-    <Compile Include="ALM\RQM\RQMTestSuiteResults.cs" />
-    <Compile Include="ALM\RQM\RQMTestSuiteExecutionRecord.cs" />
-    <Compile Include="ALM\RQM\RQMTestSuite.cs" />
-    <Compile Include="ALM\RQM\RQMTestParameter.cs" />
-    <Compile Include="ALM\RQM\RQMStep.cs" />
-    <Compile Include="ALM\RQM\RQMExecutionRecord.cs" />
-    <Compile Include="ALM\RQM\RQMTestScript.cs" />
-    <Compile Include="ALM\RQM\RQMTestCase.cs" />
-    <Compile Include="ALM\RQM\RQMFieldsMappingConfig.cs" />
-    <Compile Include="ALM\RQM\RQMTestPlan.cs" />
-    <Compile Include="ALM\RQM\RQMConnect.cs" />
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
     <Compile Include="Common\Devices\DeviceConfig.cs" />
     <Compile Include="Common\Devices\DeviceButton.cs" />
@@ -320,14 +274,11 @@
     <Compile Include="Drivers\MainFrame\MainFrameUIHelper.cs" />
     <Compile Include="Drivers\MainFrame\Terminal.cs" />
     <Compile Include="Drivers\PBDriver\HTMLHelper.cs" />
-    <Compile Include="External\JsonExternalItemField.cs" />
     <Compile Include="GeneralLib\BindingHandler.cs" />
     <Compile Include="GeneralLib\ComboEnumItem.cs" />
     <Compile Include="GeneralLib\ComboGroupedEnumItem.cs" />
     <Compile Include="GeneralLib\ComboItem.cs" />
-    <Compile Include="GeneralLib\CommonLib.cs" />
     <Compile Include="GeneralLib\FrameControlExtensions.cs" />
-    <Compile Include="GeneralLib\JSONHelper.cs" />
     <Compile Include="Extensions\Screenshot.cs" />
     <Compile Include="DataSource\AccessDataSource.cs" />
     <Compile Include="GeneralLib\ComboBoxWindow.xaml.cs">
@@ -337,7 +288,6 @@
     <Compile Include="GeneralLib\ProcessExtension.cs" />
     <Compile Include="GingerOCR\GingerOcrOperations.cs" />
     <Compile Include="Helpers\HTMLHelper.cs" />
-    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -350,7 +300,6 @@
     <Compile Include="UserControls\ucTextDicResource.xaml.cs">
       <DependentUpon>ucTextDicResource.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Animations\Animations.cs" />
     <Compile Include="DragDrop\VisualDrag.xaml.cs">
       <DependentUpon>VisualDrag.xaml</DependentUpon>
     </Compile>
@@ -415,19 +364,6 @@
     <Resource Include="tessdata\pdf.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQMSettings.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\Export_Settings.xml" />
-    <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\QM\fa1qm1\executionRecord.xml" />
-    <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\QM\fa1qm1\ExecutionResult.xml" />
-    <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\QM\fa1qm1\TestCase.xml" />
-    <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\QM\fa1qm1\TestPlan.xml" />
-    <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\QM\fa1qm1\TestScript.xml" />
-    <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Import\RQM_ImportConfigs_Template.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
     <None Include="Resources\%40EmptyStart_16x16.gif" />
     <None Include="Resources\%40Star_16x16.gif" />
     <None Include="Resources\%40StarGray_16x16.gif" />
@@ -440,14 +376,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Actions\REST\" />
-    <Folder Include="Actions\WebServices\" />
-    <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\CCM\fa1qm1\" />
-    <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\RM\" />
-    <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Fields\" />
     <Folder Include="Drivers\JavaDriverLib\GingerJavaAgent\bin\com\amdocs\ginger\ASCFPack\" />
-    <Folder Include="Environments\" />
-    <Folder Include="Plugins\Jenkins\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Const.png" />
@@ -627,7 +556,7 @@
       <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.IO.Packaging">
-      <Version>8.0.0</Version>
+      <Version>8.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.Linq.Dynamic.Core">
       <Version>1.3.7</Version>

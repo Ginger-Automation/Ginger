@@ -32,9 +32,9 @@ namespace Ginger.Actions.ActionConversion
     {
         public override string Title { get { return "Actions Conversion Wizard"; } }
         public Context Context;
-        public ObservableList<ConvertableActionDetails> ActionToBeConverted = new ObservableList<ConvertableActionDetails>();
-        public ObservableList<ConvertableTargetApplicationDetails> ConvertableTargetApplications = new ObservableList<ConvertableTargetApplicationDetails>();
-        public ObservableList<Guid> SelectedPOMs = new ObservableList<Guid>();
+        public ObservableList<ConvertableActionDetails> ActionToBeConverted = [];
+        public ObservableList<ConvertableTargetApplicationDetails> ConvertableTargetApplications = [];
+        public ObservableList<Guid> SelectedPOMs = [];
 
         public bool NewActivityChecked { get; set; }
 
@@ -111,12 +111,14 @@ namespace Ginger.Actions.ActionConversion
         /// <returns></returns>
         private ObservableList<BusinessFlowToConvert> GetBusinessFlowsToConvert(ObservableList<BusinessFlow> businessFlows)
         {
-            ObservableList<BusinessFlowToConvert> lst = new ObservableList<BusinessFlowToConvert>();
+            ObservableList<BusinessFlowToConvert> lst = [];
             Parallel.ForEach(businessFlows, bf =>
             {
-                BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
-                flowToConvert.BusinessFlow = bf;
-                flowToConvert.TotalProcessingActionsCount = mConversionUtils.GetConvertibleActionsCountFromBusinessFlow(bf);
+                BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert
+                {
+                    BusinessFlow = bf,
+                    TotalProcessingActionsCount = mConversionUtils.GetConvertibleActionsCountFromBusinessFlow(bf)
+                };
                 lst.Add(flowToConvert);
             });
             return lst;
@@ -164,7 +166,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 if (isReConvert)
                 {
-                    ObservableList<BusinessFlowToConvert> selectedLst = new ObservableList<BusinessFlowToConvert>();
+                    ObservableList<BusinessFlowToConvert> selectedLst = [];
                     foreach (var bf in lst)
                     {
                         if (bf.IsSelected)

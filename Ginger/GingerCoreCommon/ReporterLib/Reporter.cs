@@ -19,7 +19,6 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Timers;
 using Amdocs.Ginger.Common.Telemetry;
 
@@ -45,7 +44,7 @@ namespace Amdocs.Ginger.Common
                 return;
             }
 
-            if (logLevel == eLogLevel.ERROR || logLevel == eLogLevel.FATAL)
+            if (logLevel is eLogLevel.ERROR or eLogLevel.FATAL)
             {
                 ReporterData.ErrorCounter++;
             }
@@ -168,24 +167,14 @@ namespace Amdocs.Ginger.Common
                 }
 
                 //set the message type
-                switch (messageToShow.MessageType)
+                messageImage = messageToShow.MessageType switch
                 {
-                    case eUserMsgType.ERROR:
-                        messageImage = eUserMsgIcon.Error;
-                        break;
-                    case eUserMsgType.INFO:
-                        messageImage = eUserMsgIcon.Information;
-                        break;
-                    case eUserMsgType.QUESTION:
-                        messageImage = eUserMsgIcon.Question;
-                        break;
-                    case eUserMsgType.WARN:
-                        messageImage = eUserMsgIcon.Warning;
-                        break;
-                    default:
-                        messageImage = eUserMsgIcon.Information;
-                        break;
-                }
+                    eUserMsgType.ERROR => eUserMsgIcon.Error,
+                    eUserMsgType.INFO => eUserMsgIcon.Information,
+                    eUserMsgType.QUESTION => eUserMsgIcon.Question,
+                    eUserMsgType.WARN => eUserMsgIcon.Warning,
+                    _ => eUserMsgIcon.Information,
+                };
 
                 //enter message args if exist
                 if (messageArgs.Length > 0)
@@ -310,9 +299,11 @@ namespace Amdocs.Ginger.Common
             {
                 bClosing = true;
                 // let the message show for at least one second
-                var timer = new Timer();
-                timer.Interval = 1000; // In milliseconds
-                timer.AutoReset = false; // Stops it from repeating
+                var timer = new Timer
+                {
+                    Interval = 1000, // In milliseconds
+                    AutoReset = false // Stops it from repeating
+                };
                 timer.Elapsed += new ElapsedEventHandler(HideMessage_Event);
                 timer.Start();
             }

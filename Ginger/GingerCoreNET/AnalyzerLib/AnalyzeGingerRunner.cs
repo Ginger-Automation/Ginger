@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Ginger.Run;
 using GingerCore;
@@ -25,7 +24,6 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Ginger.AnalyzerLib.AnalyzeGingerRunner;
 
 namespace Ginger.AnalyzerLib
 {
@@ -43,7 +41,7 @@ namespace Ginger.AnalyzerLib
 
         public static List<AnalyzerItemBase> Analyze(GingerRunner GR, Check checks = Check.All)
         {
-            List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
+            List<AnalyzerItemBase> IssuesList = [];
 
             // check that we have BFs
             if (checks.AreAllFlagsSet(Check.NoBusinessFlows) && !GR.Executor.BusinessFlows.Any())
@@ -94,11 +92,13 @@ namespace Ginger.AnalyzerLib
 
         static AnalyzeGingerRunner CreateNewIssue(List<AnalyzerItemBase> IssuesList, GingerRunner GR)
         {
-            AnalyzeGingerRunner AGR = new AnalyzeGingerRunner();
-            AGR.Status = AnalyzerItemBase.eStatus.NeedFix;
-            AGR.GingerRunner = GR;
-            AGR.ItemName = GR.Name;
-            AGR.ItemClass = "Runner";
+            AnalyzeGingerRunner AGR = new AnalyzeGingerRunner
+            {
+                Status = AnalyzerItemBase.eStatus.NeedFix,
+                GingerRunner = GR,
+                ItemName = GR.Name,
+                ItemClass = "Runner"
+            };
             IssuesList.Add(AGR);
             return AGR;
         }

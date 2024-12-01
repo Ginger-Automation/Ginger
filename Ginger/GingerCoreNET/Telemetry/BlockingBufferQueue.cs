@@ -16,15 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using Org.BouncyCastle.Crypto;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Telemetry
@@ -133,7 +128,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             _isDisposed = true;
 
             Flush();
-            
+
             _syncBufferSizeSemaphore.Dispose();
             _syncEnqueueEvent.Dispose();
             _syncDequeueEvent.Dispose();

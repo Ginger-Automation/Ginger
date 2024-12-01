@@ -30,7 +30,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
 
         public RepositoryItemBase UsageItem { get; set; }
 
-        public static ObservableList<ItemValidationBase> mIssuesList = new ObservableList<ItemValidationBase>();
+        public static ObservableList<ItemValidationBase> mIssuesList = [];
 
         private bool mSelected;
         public bool Selected { get { return mSelected; } set { if (mSelected != value) { mSelected = value; OnPropertyChanged(nameof(Selected)); } } }
@@ -74,12 +74,14 @@ namespace Ginger.Repository.ItemToRepositoryWizard
 
         public static ItemValidationBase CreateNewIssue(RepositoryItemBase rItem)
         {
-            ItemValidationBase ITB = new ItemValidationBase();
-            ITB.UsageItem = rItem;
-            ITB.ItemName = rItem.ItemName;
-            // TODO: remove me and use RepositoryItemBase
-            //ITB.ItemClass = RepositoryItem.GetShortType(rItem.GetType());
-            ITB.ItemClass = rItem.GetItemType();
+            ItemValidationBase ITB = new ItemValidationBase
+            {
+                UsageItem = rItem,
+                ItemName = rItem.ItemName,
+                // TODO: remove me and use RepositoryItemBase
+                //ITB.ItemClass = RepositoryItem.GetShortType(rItem.GetType());
+                ItemClass = rItem.GetItemType()
+            };
 
             return ITB;
         }

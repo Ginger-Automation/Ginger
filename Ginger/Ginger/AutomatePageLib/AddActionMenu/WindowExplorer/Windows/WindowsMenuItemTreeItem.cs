@@ -34,7 +34,7 @@ namespace Ginger.Drivers.Windows
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
+            ObservableList<Act> list = [];
 
             ActMenuItem actMenuAction_Expand = new ActMenuItem()
             {

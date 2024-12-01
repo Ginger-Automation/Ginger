@@ -113,55 +113,53 @@ namespace GingerCore.Actions
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActSoapUiInputValue> AllProperties = new ObservableList<ActSoapUiInputValue>();
+        public ObservableList<ActSoapUiInputValue> AllProperties = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActSoapUiInputValue> TempProperties = new ObservableList<ActSoapUiInputValue>();
+        public ObservableList<ActSoapUiInputValue> TempProperties = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> SystemProperties = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> SystemProperties = [];
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> GlobalProperties = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> GlobalProperties = [];
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> ProjectProperties = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> ProjectProperties = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> TestCaseProperties = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> TestCaseProperties = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> ProjectInnerProperties = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> ProjectInnerProperties = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> TestSuiteProperties = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> TestSuiteProperties = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> TestStepProperties = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> TestStepProperties = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> TestSuitePlaceHolder = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> TestSuitePlaceHolder = [];
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
         {
-            List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>();
-            list.Add(SystemProperties);
-            list.Add(GlobalProperties);
-            list.Add(ProjectProperties);
-            list.Add(TestCaseProperties);
-            list.Add(TestSuiteProperties);
-            list.Add(TestStepProperties);
-            list.Add(TestSuitePlaceHolder);
-            list.Add(ProjectInnerProperties);
-            // convert ObservableList<ActSoapUiInputValue> to ObservableList<ActInputValue>
-            list.Add(ConvertActSoapUiToActInputValue(AllProperties));
+            List<ObservableList<ActInputValue>> list =
+            [
+                SystemProperties,
+                GlobalProperties,
+                ProjectProperties,
+                TestCaseProperties,
+                TestSuiteProperties,
+                TestStepProperties,
+                TestSuitePlaceHolder,
+                ProjectInnerProperties,
+                // convert ObservableList<ActSoapUiInputValue> to ObservableList<ActInputValue>
+                ConvertActSoapUiToActInputValue(AllProperties),
+            ];
             return list;
         }
 
         private ObservableList<ActInputValue> ConvertActSoapUiToActInputValue(ObservableList<ActSoapUiInputValue> list)
         {
-            ObservableList<ActInputValue> obList = new ObservableList<ActInputValue>();
-            foreach (var item in list)
-            {
-                obList.Add(item);
-            }
+            ObservableList<ActInputValue> obList = [.. list];
             return obList;
         }
         public enum ePasswordWSSType

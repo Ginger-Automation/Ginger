@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Ginger.Agents;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore.DataSource;
@@ -72,11 +71,14 @@ namespace Ginger.DataSource
             grdTableList.ShowUndo = Visibility.Collapsed;
 
             //Set the Data Grid columns            
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = DataSourceTable.Fields.Name, Header = "Table Name", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = DataSourceTable.Fields.DSTableType, Header = "Table Type", WidthWeight = 150 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = DataSourceTable.Fields.Name, Header = "Table Name", WidthWeight = 150 },
+                new GridColView() { Field = DataSourceTable.Fields.DSTableType, Header = "Table Type", WidthWeight = 150 },
+            ]
+            };
 
             grdTableList.SetAllColumnsDefaultView(view);
             grdTableList.InitViewItems();

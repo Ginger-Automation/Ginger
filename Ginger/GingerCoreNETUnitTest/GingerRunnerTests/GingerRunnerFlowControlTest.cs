@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Run;
 using GingerCore;
@@ -46,11 +45,12 @@ namespace amdocs.ginger.GingerCoreNETTest.GingerRunnerTests
             mGR = new GingerRunner();
             mGR.Executor = new GingerExecutionEngine(mGR);
 
-            Agent a = new Agent();
-            a.DriverType = Agent.eDriverType.WindowsAutomation; // just a dummy driver not really for use
+            Agent a = new Agent
+            {
+                DriverType = Agent.eDriverType.WindowsAutomation // just a dummy driver not really for use
+            };
 
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [a];
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "App1", Agent = a });
         }
@@ -75,9 +75,11 @@ namespace amdocs.ginger.GingerCoreNETTest.GingerRunnerTests
             //Arrange
             BusinessFlow mBF = CreateBusinessFlow();
 
-            Activity a1 = new Activity();
-            a1.Active = true;
-            a1.TargetApplication = "App1";
+            Activity a1 = new Activity
+            {
+                Active = true,
+                TargetApplication = "App1"
+            };
             mBF.Activities.Add(a1);
 
             ActDummy act1 = new ActDummy() { Description = "A1", Active = true };
@@ -109,9 +111,11 @@ namespace amdocs.ginger.GingerCoreNETTest.GingerRunnerTests
             //Arrange
             BusinessFlow mBF = CreateBusinessFlow();
 
-            Activity a1 = new Activity();
-            a1.Active = true;
-            a1.TargetApplication = "App1";
+            Activity a1 = new Activity
+            {
+                Active = true,
+                TargetApplication = "App1"
+            };
             mBF.Activities.Add(a1);
 
             ActDummy act1 = new ActDummy() { Description = "A1", Active = true };
@@ -143,9 +147,11 @@ namespace amdocs.ginger.GingerCoreNETTest.GingerRunnerTests
             //Arrange
             BusinessFlow mBF = CreateBusinessFlow();
 
-            Activity a1 = new Activity();
-            a1.Active = true;
-            a1.TargetApplication = "App1";
+            Activity a1 = new Activity
+            {
+                Active = true,
+                TargetApplication = "App1"
+            };
             mBF.Activities.Add(a1);
 
             ActDummy act1 = new ActDummy() { Description = "A1", Active = true, };
@@ -189,8 +195,10 @@ namespace amdocs.ginger.GingerCoreNETTest.GingerRunnerTests
 
             businessFlow.Name = "BF Test Flow Control";
             businessFlow.Active = true;
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.Web
+            };
             businessFlow.TargetApplications.Add(new TargetApplication() { AppName = "App1" });
 
             return businessFlow;

@@ -17,14 +17,9 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Telemetry;
 using Ginger.SolutionGeneral;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Telemetry
@@ -38,7 +33,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
         private bool _stopped = false;
 
         public FeatureId FeatureId { get; }
-        
+
         public TelemetryMetadata Metadata { get; }
 
         internal FeatureTracker(FeatureId featureId, OnStopHandler onStop)
@@ -46,7 +41,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             _startTime = DateTime.UtcNow.Ticks;
             _onStop = onStop;
             FeatureId = featureId;
-            Metadata = new();
+            Metadata = [];
         }
 
         public void StopTracking()

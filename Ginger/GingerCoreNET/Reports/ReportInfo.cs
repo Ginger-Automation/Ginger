@@ -113,18 +113,19 @@ namespace Ginger.Reports
         public ReportInfo(ProjEnvironment Env, BusinessFlow BF, GingerExecutionEngine GR = null) // to remove after discussion !!!
         {
             mProjEnvironment = Env;
-            mBFESs = new ObservableList<BusinessFlowExecutionSummary>();
-            BusinessFlowExecutionSummary BFES = new BusinessFlowExecutionSummary();
-
-            BFES.BusinessFlowName = BF.Name;
-            BFES.BusinessFlowRunDescription = BF.RunDescription;
-            BFES.Status = BF.RunStatus;
-            BFES.Activities = BF.Activities.Count;
-            BFES.Actions = BF.GetActionsCount();
-            BFES.Validations = BF.GetValidationsCount();
-            BFES.ExecutionVariabeles = BF.GetBFandActivitiesVariabeles(true);
-            BFES.BusinessFlow = BF;
-            BFES.Selected = true;
+            mBFESs = [];
+            BusinessFlowExecutionSummary BFES = new BusinessFlowExecutionSummary
+            {
+                BusinessFlowName = BF.Name,
+                BusinessFlowRunDescription = BF.RunDescription,
+                Status = BF.RunStatus,
+                Activities = BF.Activities.Count,
+                Actions = BF.GetActionsCount(),
+                Validations = BF.GetValidationsCount(),
+                ExecutionVariabeles = BF.GetBFandActivitiesVariabeles(true),
+                BusinessFlow = BF,
+                Selected = true
+            };
             if (GR != null)
             {
                 BFES.BusinessFlowExecLoggerFolder = Path.Combine(GR.ExecutionLoggerManager.ExecutionLogfolder, BF.ExecutionLogFolder);
@@ -170,7 +171,7 @@ namespace Ginger.Reports
                     txtFileName = fileName;
                 }
             }
-            if ((txtFilesInDirectoryCount == 0) || (txtFilesInDirectoryCount > 1))
+            if (txtFilesInDirectoryCount is 0 or > 1)
             {
                 return;
             }
@@ -234,7 +235,7 @@ namespace Ginger.Reports
         {
             get
             {
-                return BusinessFlows.Count(x=> x.IsPassed);
+                return BusinessFlows.Count(x => x.IsPassed);
             }
         }
 
@@ -257,7 +258,7 @@ namespace Ginger.Reports
         {
             get
             {
-                return AllActivitiesForReport.Count(activity => activity.Status.Equals(Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed.ToString()));               
+                return AllActivitiesForReport.Count(activity => activity.Status.Equals(Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed.ToString()));
 
             }
         }
@@ -319,7 +320,7 @@ namespace Ginger.Reports
         {
             get
             {
-                return BusinessFlows.Count(f1=> f1.IsStopped);                
+                return BusinessFlows.Count(f1 => f1.IsStopped);
             }
         }
 
@@ -365,7 +366,7 @@ namespace Ginger.Reports
                 // We cache it for next time, so gen only one time
                 if (mAllValidationsForReport == null)
                 {
-                    mAllValidationsForReport = AllActionsForReport.SelectMany(act => act.ReturnValueReport).Where(arv => arv.Expected != null && arv.Expected != "");
+                    mAllValidationsForReport = AllActionsForReport.SelectMany(act => act.ReturnValueReport).Where(arv => arv.Expected is not null and not "");
                 }
 
                 return mAllValidationsForReport;
@@ -377,7 +378,7 @@ namespace Ginger.Reports
         {
             get
             {
-                return AllActivitiesForReport.Count();                
+                return AllActivitiesForReport.Count();
             }
         }
 

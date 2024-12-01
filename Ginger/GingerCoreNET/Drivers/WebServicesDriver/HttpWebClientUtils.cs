@@ -46,7 +46,7 @@ namespace GingerCore.Actions.WebAPI
         HttpRequestMessage RequestMessage = null;
         ActWebAPIBase mAct;
         NetworkCredential UserCredentials = null;
-        static Dictionary<string, Cookie> SessionCokiesDic = new Dictionary<string, Cookie>();
+        static Dictionary<string, Cookie> SessionCokiesDic = [];
         HttpResponseMessage Response = null;
         string BodyString = null;
         string ContentType;
@@ -251,7 +251,7 @@ namespace GingerCore.Actions.WebAPI
                     string certificateKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
 
                     if (!string.IsNullOrEmpty(path))
-                    {                        
+                    {
                         if (string.IsNullOrEmpty(certificateKey))
                         {
                             handler.ClientCertificates.Add(new X509Certificate2(path));
@@ -453,12 +453,12 @@ namespace GingerCore.Actions.WebAPI
                     StringBuilder str = new StringBuilder();
                     foreach (KeyValuePair<string, string> keyValue in ConstructURLEncoded((ActWebAPIRest)mAct))
                         str.Append(keyValue.Key + "=" + keyValue.Value + "&");
-                    
+
                     RequestFileContent += str.ToString().Trim('&');
                 }
                 else if ((mAct.RequestKeyValues.Any()) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "FormData"))
                 {
-                    MultipartFormDataContent FormDataContent = new MultipartFormDataContent();
+                    MultipartFormDataContent FormDataContent = [];
 
                     RequestFileContent = CreateRawRequestAndResponse("request");
                     StringBuilder str = new StringBuilder();
@@ -583,7 +583,7 @@ namespace GingerCore.Actions.WebAPI
         private void AddRawResponseAndRequestToOutputParams()
         {
             //If response is broken, do not show the message.
-            if (Response.ReasonPhrase == "OK" || Response.ReasonPhrase == "Accepted" || Response.ReasonPhrase == "Created" || Response.ReasonPhrase == "Found")
+            if (Response.ReasonPhrase is "OK" or "Accepted" or "Created" or "Found")
             {
                 mAct.RawResponseValues = ">>>>>>>>>>>>>>>>>>>>>>>>>>> REQUEST:" + Environment.NewLine + Environment.NewLine + RequestFileContent;
                 mAct.RawResponseValues += Environment.NewLine + Environment.NewLine;
@@ -729,7 +729,7 @@ namespace GingerCore.Actions.WebAPI
 
         private void SetRequestContent(HttpMethod RequestMethod)
         {
-            List<KeyValuePair<string, string>> KeyValues = new List<KeyValuePair<string, string>>();
+            List<KeyValuePair<string, string>> KeyValues = [];
 
             if ((RequestMethod.ToString() == ApplicationAPIUtils.eRequestType.GET.ToString()))
             {
@@ -743,7 +743,7 @@ namespace GingerCore.Actions.WebAPI
                             GetRequest += mAct.RequestKeyValues[i].ItemName.ToString() + "=" + mAct.RequestKeyValues[i].ValueForDriver + "&";
                         }
                     }
-                    string ValuesURL = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.EndPointURL) + HttpUtility.UrlEncode(GetRequest.Substring(0, GetRequest.Length - 1));
+                    string ValuesURL = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.EndPointURL) + HttpUtility.UrlEncode(GetRequest[..^1]);
                     Client.BaseAddress = new Uri(ValuesURL);
                 }
                 else
@@ -753,7 +753,7 @@ namespace GingerCore.Actions.WebAPI
             }
             else
             {
-                if ((eContentType != ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded) && (eContentType != ApplicationAPIUtils.eContentType.FormData))
+                if (eContentType is not ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded and not ApplicationAPIUtils.eContentType.FormData)
                 {
                     string RequestBodyType = mAct.GetInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton);
                     if (RequestBodyType == ApplicationAPIUtils.eRequestBodyType.FreeText.ToString())
@@ -779,8 +779,8 @@ namespace GingerCore.Actions.WebAPI
                     case ApplicationAPIUtils.eContentType.FormData:
                         if (mAct.RequestKeyValues.Any())
                         {
-                            MultipartFormDataContent requestContent = new MultipartFormDataContent();
-                            List<KeyValuePair<string, string>> FormDataKeyValues = new List<KeyValuePair<string, string>>();
+                            MultipartFormDataContent requestContent = [];
+                            List<KeyValuePair<string, string>> FormDataKeyValues = [];
                             for (int i = 0; i < mAct.RequestKeyValues.Count; i++)
                             {
                                 if (mAct.RequestKeyValues[i].ValueType == WebAPIKeyBodyValues.eValueType.Text)
@@ -814,6 +814,11 @@ namespace GingerCore.Actions.WebAPI
                         }
                         RequestMessage.Content = new StringContent(BodyString, Encoding.UTF8, ContentType);
                         break;
+
+                    case ApplicationAPIUtils.eContentType.JSonWithoutCharset:
+                        RequestMessage.Content = new StringContent(BodyString, new MediaTypeHeaderValue(ContentType));
+                        break;
+
                     default:
                         RequestMessage.Content = new StringContent(BodyString, Encoding.UTF8, ContentType);
                         break;
@@ -835,9 +840,11 @@ namespace GingerCore.Actions.WebAPI
                     foreach (Cookie cooki in SessionCokiesDic.Values)
                     {
                         Uri domainName = new Uri(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.EndPointURL.ToString()));
-                        Cookie ck = new Cookie();
-                        ck.Name = cooki.Name;
-                        ck.Value = cooki.Value;
+                        Cookie ck = new Cookie
+                        {
+                            Name = cooki.Name,
+                            Value = cooki.Value
+                        };
                         if (String.IsNullOrEmpty(cooki.Domain))
                         {
                             cooki.Domain = domainName.Host;
@@ -854,9 +861,10 @@ namespace GingerCore.Actions.WebAPI
 
         private void SetContentType()
         {
-            if (ContentType == null)
-            {
-                eContentType = (ApplicationAPIUtils.eContentType)mAct.GetInputParamCalculatedValue<ApplicationAPIUtils.eContentType>(ActWebAPIRest.Fields.ContentType);
+            eContentType = (ApplicationAPIUtils.eContentType)mAct.GetInputParamCalculatedValue<ApplicationAPIUtils.eContentType>(ActWebAPIRest.Fields.ContentType);
+
+            if (ContentType == null)            
+            {                
                 switch (eContentType)
                 {
                     case ApplicationAPIUtils.eContentType.JSon:
@@ -879,6 +887,11 @@ namespace GingerCore.Actions.WebAPI
                         Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
                         ContentType = "application/xml";
                         break;
+
+                    case ApplicationAPIUtils.eContentType.JSonWithoutCharset:
+                        Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        ContentType = "application/json";
+                        break;
                 }
             }
         }
@@ -898,7 +911,7 @@ namespace GingerCore.Actions.WebAPI
 
         private List<KeyValuePair<string, string>> ConstructURLEncoded(ActWebAPIRest act)
         {
-            List<KeyValuePair<string, string>> KeyValues = new List<KeyValuePair<string, string>>();
+            List<KeyValuePair<string, string>> KeyValues = [];
 
             for (int i = 0; i < act.RequestKeyValues.Count; i++)
             {
@@ -998,7 +1011,7 @@ namespace GingerCore.Actions.WebAPI
 
         public static List<string> GetSoapSecurityHeaderContent(ref string txtBoxBodyContent)
         {
-            List<string> SecuritryContent = new List<string>();
+            List<string> SecuritryContent = [];
             StringBuilder soapHeaderContent = new StringBuilder();
 
             soapHeaderContent.Append("\t<soapenv:Header>\n");

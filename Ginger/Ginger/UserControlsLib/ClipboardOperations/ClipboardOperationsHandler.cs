@@ -27,7 +27,7 @@ namespace Ginger.UserControlsLib
 {
     public class ClipboardOperationsHandler
     {
-        public static ObservableList<RepositoryItemBase> CopiedorCutItems = new ObservableList<RepositoryItemBase>();
+        public static ObservableList<RepositoryItemBase> CopiedorCutItems = [];
         public static IObservableList CutSourceList = null;
 
         public static void CopySelectedItems(IClipboardOperations containerControl)

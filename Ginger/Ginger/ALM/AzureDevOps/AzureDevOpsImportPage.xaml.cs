@@ -17,12 +17,14 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.ALMLib.Azure;
+using DocumentFormat.OpenXml.Drawing.Charts;
 using Ginger.UserControls;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Amdocs.Ginger.CoreNET.ALMLib.Azure;
 
 namespace Ginger.ALM.AzureDevOps
 {
@@ -31,7 +33,7 @@ namespace Ginger.ALM.AzureDevOps
     /// </summary>
     public partial class AzureDevOpsImportPage : Page
     {
-        
+
         GenericWindow _pageGenericWin = null;
         private AzureTestPlan mTestSet = null;
         private string mImportDestinationPath = string.Empty;
@@ -47,13 +49,17 @@ namespace Ginger.ALM.AzureDevOps
 
         private void SetGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = AzureTestPlan.Fields.AzureID, Header = "Azure ID", WidthWeight = 15, ReadOnly = true, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = AzureTestPlan.Fields.Name, Header = "Test Suite Name", ReadOnly = true, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = AzureTestPlan.Fields.State, Header = "State", WidthWeight = 25, ReadOnly = true, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = AzureTestPlan.Fields.Project, Header = "Project", WidthWeight = 25, ReadOnly = true, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = "Import Test Set", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ImportButton"] });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = AzureTestPlan.Fields.AzureID, Header = "Azure ID", WidthWeight = 15, ReadOnly = true, AllowSorting = true },
+                new GridColView() { Field = AzureTestPlan.Fields.Name, Header = "Test Suite Name", ReadOnly = true, AllowSorting = true },
+                new GridColView() { Field = AzureTestPlan.Fields.State, Header = "State", WidthWeight = 25, ReadOnly = true, AllowSorting = true },
+                new GridColView() { Field = AzureTestPlan.Fields.Project, Header = "Project", WidthWeight = 25, ReadOnly = true, AllowSorting = true },
+                new GridColView() { Field = "Import Test Set", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ImportButton"] },
+            ]
+            };
             grdAzureTestPlan.SetAllColumnsDefaultView(view);
             grdAzureTestPlan.InitViewItems();
 
@@ -65,11 +71,12 @@ namespace Ginger.ALM.AzureDevOps
         {
 
             Mouse.OverrideCursor = Cursors.Wait;
-            ObservableList<AzureTestPlan> mAzureTestPlansListSortedByDate = new ObservableList<AzureTestPlan>();
-            foreach (AzureTestPlan testSet in ALMIntegration.Instance.GetTestSetExplorer(""))
+            ObservableList<AzureTestPlan> mAzureTestPlansListSortedByDate = [];
+            foreach (AzureTestPlan item in ALMIntegration.Instance.GetTestSetExplorer(""))
             {
-                mAzureTestPlansListSortedByDate.Add(testSet);
+                mAzureTestPlansListSortedByDate.Add(item);
             }
+            
             grdAzureTestPlan.DataSourceList = mAzureTestPlansListSortedByDate;
             Mouse.OverrideCursor = null;
         }
@@ -100,8 +107,7 @@ namespace Ginger.ALM.AzureDevOps
 
             if (ALMIntegration.Instance.ShowImportReviewPage(mImportDestinationPath, grdAzureTestPlan.CurrentItem))
             {
-                ObservableList<Object> AzureTestPlanList = new ObservableList<Object>();
-                AzureTestPlanList.Add(mTestSet);
+                ObservableList<Object> AzureTestPlanList = [mTestSet];
 
                 if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, AzureTestPlanList))
                 {
@@ -117,7 +123,7 @@ namespace Ginger.ALM.AzureDevOps
 
         private void ImportTestSet(object sender)
         {
-            ObservableList<AzureTestPlan> AzureTestPlanList = new ObservableList<AzureTestPlan>();
+            ObservableList<AzureTestPlan> AzureTestPlanList = [];
             if (grdAzureTestPlan.CurrentItem == null)
             {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);

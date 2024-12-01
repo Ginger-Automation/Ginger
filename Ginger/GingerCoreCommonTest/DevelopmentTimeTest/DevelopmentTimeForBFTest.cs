@@ -19,12 +19,7 @@ limitations under the License.
 using GingerCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace GingerCoreCommonTest.DevelopmentTimeTest
 {
@@ -36,8 +31,8 @@ namespace GingerCoreCommonTest.DevelopmentTimeTest
         {
             BusinessFlow businessFlow = new BusinessFlow("BF1");
 
-            TimeSpan stopwatch = TimeSpan.Zero ;
-            
+            TimeSpan stopwatch = TimeSpan.Zero;
+
             Thread.Sleep(1000);
             //Checking that Time has not started until any change
             Assert.AreEqual(stopwatch, businessFlow.DevelopmentTime);

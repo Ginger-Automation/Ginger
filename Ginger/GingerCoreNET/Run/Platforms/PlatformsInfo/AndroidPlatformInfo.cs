@@ -57,18 +57,19 @@ namespace GingerCore.Platforms.PlatformsInfo
             // We cache the results
             if (mElementsTypeList == null)
             {
-                mElementsTypeList = new List<eElementType>();
-
-                mElementsTypeList.Add(eElementType.Unknown);
-                mElementsTypeList.Add(eElementType.Button);
-                mElementsTypeList.Add(eElementType.ComboBox);
-                mElementsTypeList.Add(eElementType.RadioButton);
-                mElementsTypeList.Add(eElementType.TextBox);
-                mElementsTypeList.Add(eElementType.CheckBox);
-                mElementsTypeList.Add(eElementType.Image);
-                mElementsTypeList.Add(eElementType.Label);
-                mElementsTypeList.Add(eElementType.List);
-                mElementsTypeList.Add(eElementType.Table);
+                mElementsTypeList =
+                [
+                    eElementType.Unknown,
+                    eElementType.Button,
+                    eElementType.ComboBox,
+                    eElementType.RadioButton,
+                    eElementType.TextBox,
+                    eElementType.CheckBox,
+                    eElementType.Image,
+                    eElementType.Label,
+                    eElementType.List,
+                    eElementType.Table,
+                ];
             }
             return mElementsTypeList;
         }
@@ -78,14 +79,16 @@ namespace GingerCore.Platforms.PlatformsInfo
             // We cache the results
             if (mElementLocatorsTypeList == null)
             {
-                mElementLocatorsTypeList = new List<eLocateBy>();
-                mElementLocatorsTypeList.Add(eLocateBy.ByResourceID);
-                mElementLocatorsTypeList.Add(eLocateBy.ByXY);
-                mElementLocatorsTypeList.Add(eLocateBy.ByXPath);
-                mElementLocatorsTypeList.Add(eLocateBy.ByMulitpleProperties);
-                mElementLocatorsTypeList.Add(eLocateBy.ByClassName);
-                mElementLocatorsTypeList.Add(eLocateBy.ByText);
-                mElementLocatorsTypeList.Add(eLocateBy.ByElementsRepository);
+                mElementLocatorsTypeList =
+                [
+                    eLocateBy.ByResourceID,
+                    eLocateBy.ByXY,
+                    eLocateBy.ByXPath,
+                    eLocateBy.ByMulitpleProperties,
+                    eLocateBy.ByClassName,
+                    eLocateBy.ByText,
+                    eLocateBy.ByElementsRepository,
+                ];
             }
             return mElementLocatorsTypeList;
         }
@@ -104,24 +107,26 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override List<string> GetPlatformUIElementPropertiesList(eElementType ElementType)
         {
             //TODO: cache in hashmap per elem type
-            List<string> list = new List<string>();
-            // add attr which exist for all android elements from PageSource
-            list.Add("index");
-            list.Add("text");
-            list.Add("resource-id");
-            list.Add("class");
-            list.Add("package");
-            list.Add("content-desc");
-            list.Add("checkable");
-            list.Add("checked");
-            list.Add("clickable");
-            list.Add("enabled");
-            list.Add("focusable");
-            list.Add("scrollable");
-            list.Add("long-clickable");
-            list.Add("password");
-            list.Add("selected");
-            list.Add("bounds");
+            List<string> list =
+            [
+                // add attr which exist for all android elements from PageSource
+                "index",
+                "text",
+                "resource-id",
+                "class",
+                "package",
+                "content-desc",
+                "checkable",
+                "checked",
+                "clickable",
+                "enabled",
+                "focusable",
+                "scrollable",
+                "long-clickable",
+                "password",
+                "selected",
+                "bounds",
+            ];
 
             // Per type we can add more
             switch (ElementType)

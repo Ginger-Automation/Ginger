@@ -39,7 +39,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private string GetValue(string line)
         {
-            return line.Substring(line.IndexOf("=") + 1);
+            return line[(line.IndexOf("=") + 1)..];
         }
 
         //public static string CreateNodeConfigFile(string name, string serviceId)

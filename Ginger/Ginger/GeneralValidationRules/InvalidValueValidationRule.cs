@@ -45,7 +45,7 @@ namespace Amdocs.Ginger.ValidationRules
             }
         }
 
-        List<int> mInvalidValue = new List<int>();
+        List<int> mInvalidValue = [];
         public List<int> InvalidValue
         {
             get

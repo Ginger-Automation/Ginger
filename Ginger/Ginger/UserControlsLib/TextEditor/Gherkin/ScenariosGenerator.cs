@@ -86,7 +86,7 @@ namespace Ginger.GherkinLib
                 else
                 {
                     int i = 0;
-                    ValuesDict = new Dictionary<string, List<OptionalValue>>();
+                    ValuesDict = [];
 
                     //TODO: handle case of more than one example table - check what is Gherking expected todo: all combinations!!??
                     foreach (Examples x in examples)
@@ -120,8 +120,7 @@ namespace Ginger.GherkinLib
                                     }
                                     else
                                     {
-                                        List<OptionalValue> newList = new List<OptionalValue>();
-                                        newList.Add(ov);
+                                        List<OptionalValue> newList = [ov];
                                         ValuesDict.Add(ColName, newList);
                                     }
                                     ((VariableSelectionList)v).OptionalValuesList.Add(ov);
@@ -162,16 +161,18 @@ namespace Ginger.GherkinLib
 
         private void CreateBusinessFlowVar(string varName, string varDescription, string varValue)
         {
-            VariableList v = new VariableList();
-            v.FileName = varName;
-            v.Description = varDescription;
+            VariableList v = new VariableList
+            {
+                FileName = varName,
+                Description = varDescription
+            };
             v.Formula += varValue + ",";
 
             mBizFlow.Variables.Add(v);
         }
 
         private string NotFoundItems = string.Empty;
-        private List<string> NotFoundItemsList = new List<string>();
+        private List<string> NotFoundItemsList = [];
 
         private string GetExampleValue(TableRow tableHeader, TableRow tr, string ColName)
         {
@@ -223,7 +224,7 @@ namespace Ginger.GherkinLib
 
             for (int indx = 0; indx < BF.ActivitiesGroups.Count; indx++)
             {
-                if (((ActivitiesGroup)BF.ActivitiesGroups[indx]).ItemName != "Optimized Activities" && ((ActivitiesGroup)BF.ActivitiesGroups[indx]).ItemName != "Optimized Activities - Not in Use")
+                if (BF.ActivitiesGroups[indx].ItemName is not "Optimized Activities" and not "Optimized Activities - Not in Use")
                 {
                     BF.ActivitiesGroups.RemoveAt(indx);
                     indx--;
@@ -233,7 +234,7 @@ namespace Ginger.GherkinLib
             while (true)
             {
                 //TODO: make const for "Optimized Activities"
-                var a = (from x in BF.Activities where x.ActivitiesGroupID != "Optimized Activities" && x.ActivitiesGroupID != "Optimized Activities - Not in Use" select x).FirstOrDefault();
+                var a = (from x in BF.Activities where x.ActivitiesGroupID is not "Optimized Activities" and not "Optimized Activities - Not in Use" select x).FirstOrDefault();
                 if (a == null)
                 {
                     break;
@@ -253,7 +254,7 @@ namespace Ginger.GherkinLib
                     {
                         if (a2.Tags != null)
                         {
-                            ObservableList<Guid> actTags = new ObservableList<Guid>();
+                            ObservableList<Guid> actTags = [];
                             foreach (Guid guid in act.Tags)
                             {
                                 if (a2.Tags.Contains(guid))
@@ -283,8 +284,10 @@ namespace Ginger.GherkinLib
         {
             // Create new activity per each step
             // Each scenario is in one ActivitiesGroup
-            ActivitiesGroup AG = new ActivitiesGroup();
-            AG.Name = sc.Name;
+            ActivitiesGroup AG = new ActivitiesGroup
+            {
+                Name = sc.Name
+            };
             if (index != null)
             {
                 AG.Name += " #" + index;  // Adding Scenario index so it will be unique
@@ -318,7 +321,7 @@ namespace Ginger.GherkinLib
             {
                 // Find the Activity from the template BF with All activity, create a copy and add to BF
                 string GN = GherkinGeneral.GetActivityGherkinName(step.Text);
-                Activity a = (Activity)SearchActivityByName(GN);
+                Activity a = SearchActivityByName(GN);
                 if (a != null)
                 {
                     Activity a1 = (Activity)a.CreateCopy(false);
@@ -370,7 +373,7 @@ namespace Ginger.GherkinLib
         {
             if (TagName.StartsWith("@"))
             {
-                TagName = TagName.Substring(1);
+                TagName = TagName[1..];
             }
 
             Guid TagGuid = (from x in WorkSpace.Instance.Solution.Tags where x.Name == TagName select x.Guid).FirstOrDefault();
@@ -414,7 +417,7 @@ namespace Ginger.GherkinLib
                 if (num == "")
                 {
                     int ii = s.IndexOf("%p");
-                    num = s.Substring(ii + 2);
+                    num = s[(ii + 2)..];
                 }
                 s = s.Replace("%p" + i, "");
                 VariableString v = (VariableString)a.GetVariable("p" + i);

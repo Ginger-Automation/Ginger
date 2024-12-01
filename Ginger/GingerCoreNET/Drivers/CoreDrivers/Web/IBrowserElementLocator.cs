@@ -17,10 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.UIElement;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 #nullable enable

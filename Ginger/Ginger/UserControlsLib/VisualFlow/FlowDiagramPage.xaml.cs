@@ -29,7 +29,7 @@ namespace Ginger.UserControlsLib.VisualFlow
     /// </summary>
     public partial class FlowDiagramPage : Page
     {
-        List<FlowLink> GEList = new List<FlowLink>();
+        List<FlowLink> GEList = [];
 
         enum CurrentAction
         {
@@ -151,7 +151,7 @@ namespace Ginger.UserControlsLib.VisualFlow
 
         public void AddFlowElem(FlowElement FE, int index = -1)
         {
-            List<FlowElement> fe = new List<FlowElement>();
+            List<FlowElement> fe = [];
             fe = GetAllFlowElements();
             MainCanvas.Children.Clear();
 
@@ -241,7 +241,7 @@ namespace Ginger.UserControlsLib.VisualFlow
         public void MoveFlowElement(int oldindex, int newindex)
         {
             FlowElement ue = null;
-            List<FlowElement> fe = new List<FlowElement>();
+            List<FlowElement> fe = [];
             fe = GetAllFlowElements();
             MainCanvas.Children.Clear();
             foreach (FlowElement child in fe)
@@ -290,9 +290,8 @@ namespace Ginger.UserControlsLib.VisualFlow
                 // if Rect connector
                 var UIElement = Mouse.DirectlyOver as UIElement;
 
-                if (UIElement is FrameworkElement)
+                if (UIElement is FrameworkElement F1)
                 {
-                    FrameworkElement F1 = (FrameworkElement)UIElement;
                     mCurrnetFlowElemControl = F1.Name;
                     if (F1.Name == "TopLeftResizer")
                     {
@@ -305,11 +304,10 @@ namespace Ginger.UserControlsLib.VisualFlow
                         return;
                     }
 
-                    if (F1.Name == "LeftConnector" || F1.Name == "RightConnector" || F1.Name == "TopConnector" || F1.Name == "BottomConnector")
+                    if (F1.Name is "LeftConnector" or "RightConnector" or "TopConnector" or "BottomConnector")
                     {
                         // For Drag Drop 
-                        UIElement element = sender as UIElement;
-                        if (element == null)
+                        if (sender is not UIElement element)
                         {
                             return;
                         }
@@ -361,8 +359,7 @@ namespace Ginger.UserControlsLib.VisualFlow
 
         private void MainCanvas_Drop(object sender, DragEventArgs e)
         {
-            FrameworkElement elem = sender as FrameworkElement;
-            if (elem == null)
+            if (sender is not FrameworkElement elem)
             {
                 return;
             }
@@ -373,17 +370,17 @@ namespace Ginger.UserControlsLib.VisualFlow
                 return;
             }
 
-            FlowElement source = data.GetData(typeof(FlowElement)) as FlowElement;
-            if (source == null)
+            if (data.GetData(typeof(FlowElement)) is not FlowElement source)
             {
                 return;
             }
 
             if (e.Source is FlowElement)
             {
-                FlowLink FL = new FlowLink(source, (FlowElement)e.Source);
-
-                FL.LinkStyle = FlowLink.eLinkStyle.Arrow;
+                FlowLink FL = new FlowLink(source, (FlowElement)e.Source)
+                {
+                    LinkStyle = FlowLink.eLinkStyle.Arrow
+                };
                 GEList.Add(FL);
                 SetFlowLinkConnectorsLocations(FL, e);
                 FL.Draw();
@@ -510,7 +507,7 @@ namespace Ginger.UserControlsLib.VisualFlow
 
         public List<FlowElement> GetAllFlowElements()
         {
-            List<FlowElement> list = new List<FlowElement>();
+            List<FlowElement> list = [];
             foreach (UIElement e in this.MainCanvas.Children)
             {
                 if (e is FrameworkElement)

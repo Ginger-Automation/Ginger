@@ -75,7 +75,7 @@ namespace GingerCore.Drivers.Common.Devices
 
         //Buttons on the device itself
         [DataMember]
-        public List<DeviceButton> DeviceButtons = new List<DeviceButton>();
+        public List<DeviceButton> DeviceButtons = [];
 
 
         // Define all the controllers available for this device, usually remote controller

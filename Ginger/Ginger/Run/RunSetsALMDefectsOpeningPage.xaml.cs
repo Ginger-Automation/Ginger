@@ -47,22 +47,25 @@ namespace Ginger.Run
 
         private void SetGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(DefectSuggestion.ToOpenDefectFlag).ToString(), Header = "To Open Defect", WidthWeight = 10, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ToOpenDefectFlag"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DefectSuggestion.ALMDefectID).ToString(), Header = "ALM Defect ID", WidthWeight = 10, ReadOnly = true, HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DefectSuggestion.RunnerName).ToString(), Header = "Runner Name", WidthWeight = 8, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DefectSuggestion.BusinessFlowName).ToString(), Header = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name", WidthWeight = 12, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DefectSuggestion.ActivitiesGroupName).ToString(), Header = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " Name", WidthWeight = 14, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DefectSuggestion.ActivitySequence).ToString(), Header = GingerDicser.GetTermResValue(eTermResKey.Activity) + " Sequence", WidthWeight = 12, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DefectSuggestion.ActivityName).ToString(), Header = GingerDicser.GetTermResValue(eTermResKey.Activity) + " Name", WidthWeight = 10, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DefectSuggestion.ActionSequence).ToString(), Header = "Action Sequence", WidthWeight = 10, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DefectSuggestion.ActionDescription).ToString(), Header = "Action Description", WidthWeight = 16, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DefectSuggestion.RetryIteration).ToString(), Header = "Retry Iteration", WidthWeight = 10, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DefectSuggestion.ErrorDetails).ToString(), Header = "Error Details", WidthWeight = 18, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DefectSuggestion.ExtraDetails).ToString(), Header = "Extra Details", WidthWeight = 16, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DefectSuggestion.ScreenshotFileNames).ToString(), Header = "Screenshot", WidthWeight = 7, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ScreenShotButton"] });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(DefectSuggestion.ToOpenDefectFlag).ToString(), Header = "To Open Defect", WidthWeight = 10, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ToOpenDefectFlag"] },
+                new GridColView() { Field = nameof(DefectSuggestion.ALMDefectID).ToString(), Header = "ALM Defect ID", WidthWeight = 10, ReadOnly = true, HorizontalAlignment = System.Windows.HorizontalAlignment.Center },
+                new GridColView() { Field = nameof(DefectSuggestion.RunnerName).ToString(), Header = "Runner Name", WidthWeight = 8, ReadOnly = true },
+                new GridColView() { Field = nameof(DefectSuggestion.BusinessFlowName).ToString(), Header = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name", WidthWeight = 12, ReadOnly = true },
+                new GridColView() { Field = nameof(DefectSuggestion.ActivitiesGroupName).ToString(), Header = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " Name", WidthWeight = 14, ReadOnly = true },
+                new GridColView() { Field = nameof(DefectSuggestion.ActivitySequence).ToString(), Header = GingerDicser.GetTermResValue(eTermResKey.Activity) + " Sequence", WidthWeight = 12, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, ReadOnly = true },
+                new GridColView() { Field = nameof(DefectSuggestion.ActivityName).ToString(), Header = GingerDicser.GetTermResValue(eTermResKey.Activity) + " Name", WidthWeight = 10, ReadOnly = true },
+                new GridColView() { Field = nameof(DefectSuggestion.ActionSequence).ToString(), Header = "Action Sequence", WidthWeight = 10, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, ReadOnly = true },
+                new GridColView() { Field = nameof(DefectSuggestion.ActionDescription).ToString(), Header = "Action Description", WidthWeight = 16, ReadOnly = true },
+                new GridColView() { Field = nameof(DefectSuggestion.RetryIteration).ToString(), Header = "Retry Iteration", WidthWeight = 10, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, ReadOnly = true },
+                new GridColView() { Field = nameof(DefectSuggestion.ErrorDetails).ToString(), Header = "Error Details", WidthWeight = 18, ReadOnly = true },
+                new GridColView() { Field = nameof(DefectSuggestion.ExtraDetails).ToString(), Header = "Extra Details", WidthWeight = 16, ReadOnly = true },
+                new GridColView() { Field = nameof(DefectSuggestion.ScreenshotFileNames).ToString(), Header = "Screenshot", WidthWeight = 7, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ScreenShotButton"] },
+            ]
+            };
 
             grdDefectSuggestions.SetAllColumnsDefaultView(view);
             grdDefectSuggestions.InitViewItems();
@@ -122,7 +125,7 @@ namespace Ginger.Run
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
-                if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null && 
+                if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null &&
                     WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Any(x => x.ToOpenDefectFlag == true && string.IsNullOrEmpty(x.ALMDefectID)))
                 {
                     //if selected ALM is QC And UseRest=False return
@@ -135,11 +138,11 @@ namespace Ginger.Run
 
                     if (Reporter.ToUser(eUserMsgKey.AskALMDefectsOpening, WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Count(x => x.ToOpenDefectFlag == true && string.IsNullOrEmpty(x.ALMDefectID))) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                     {
-                        
-                        Dictionary<Guid, Dictionary<string, string>> defectsForOpening = new Dictionary<Guid, Dictionary<string, string>>();
+
+                        Dictionary<Guid, Dictionary<string, string>> defectsForOpening = [];
                         foreach (DefectSuggestion defectSuggestion in WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.ToOpenDefectFlag == true && string.IsNullOrEmpty(x.ALMDefectID)))
                         {
-                            Dictionary<string, string> currentALMDefectFieldsValues = new Dictionary<string, string>();
+                            Dictionary<string, string> currentALMDefectFieldsValues = [];
                             try
                             {
                                 currentALMDefectFieldsValues = ((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).ALMDefectProfileFields.Where(z => (z.SelectedValue != null && z.SelectedValue != string.Empty) ||
@@ -177,9 +180,9 @@ namespace Ginger.Run
                                     suggestedDefect.ToOpenDefectFlag = false;
                                 }
                             }
-                            grdDefectSuggestions.DataSourceList = WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList;                            
+                            grdDefectSuggestions.DataSourceList = WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList;
                             Reporter.ToUser(eUserMsgKey.ALMDefectsWereOpened, defectsOpeningResults.Where(x => x.Value != null && x.Value != string.Empty && x.Value != "0").ToList().Count);
-                        }                        
+                        }
                     }
                 }
                 else if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null && WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Any() && !WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Any(x => string.IsNullOrEmpty(x.ALMDefectID)))
@@ -195,7 +198,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to create Defect - { ex.InnerException}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to create Defect - {ex.InnerException}");
             }
             finally
             {

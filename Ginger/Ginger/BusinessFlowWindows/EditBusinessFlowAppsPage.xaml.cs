@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Platforms;
@@ -38,7 +37,7 @@ namespace Ginger.BusinessFlowWindows
     public partial class EditBusinessFlowAppsPage : Page
     {
         BusinessFlow mBusinessFlow;
-        ObservableList<ApplicationPlatform> mApplicationsPlatforms = new ObservableList<ApplicationPlatform>();
+        ObservableList<ApplicationPlatform> mApplicationsPlatforms = [];
         GenericWindow _pageGenericWin = null;
         private bool IsNewBusinessflow = false;
         public EditBusinessFlowAppsPage(BusinessFlow BizFlow, bool IsNewBF = false)
@@ -47,7 +46,7 @@ namespace Ginger.BusinessFlowWindows
             InitializeComponent();
             AppsGrid.SelectionMode = DataGridSelectionMode.Single;
 
-            this.Title = $"Edit {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} { GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}";
+            this.Title = $"Edit {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}";
 
             mBusinessFlow = BizFlow;
             IsNewBusinessflow = IsNewBF;
@@ -56,22 +55,27 @@ namespace Ginger.BusinessFlowWindows
 
         private void SetGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
-            view.GridColsView.Add(new GridColView() { Field = "AppName", Header = "Application Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "Platform", Header = "Platform", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 },
+                new GridColView() { Field = "AppName", Header = "Application Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = "Platform", Header = "Platform", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay },
+            ]
+            };
 
             AppsGrid.SetAllColumnsDefaultView(view);
             AppsGrid.InitViewItems();
 
             foreach (ApplicationPlatform AP in WorkSpace.Instance.Solution.ApplicationPlatforms)
             {
-                ApplicationPlatform AP1 = new ApplicationPlatform();
-                AP1.AppName = AP.AppName;
-                AP1.Platform = AP.Platform;
-                AP1.Guid = AP.Guid;
+                ApplicationPlatform AP1 = new ApplicationPlatform
+                {
+                    AppName = AP.AppName,
+                    Platform = AP.Platform,
+                    Guid = AP.Guid
+                };
 
                 // If this App was selected before then mark it 
                 TargetApplication APS = (TargetApplication)(from x in mBusinessFlow.TargetApplications where x?.Name == AP.AppName select x).FirstOrDefault();
@@ -101,7 +105,7 @@ namespace Ginger.BusinessFlowWindows
             {
                 if (!mApplicationsPlatforms.Any(x => x.Selected))
                 {
-                    Reporter.ToUser(eUserMsgKey.BusinessFlowNeedTargetApplication,GingerDicser.GetTermResValue(eTermResKey.TargetApplication));
+                    Reporter.ToUser(eUserMsgKey.BusinessFlowNeedTargetApplication, GingerDicser.GetTermResValue(eTermResKey.TargetApplication));
                     return;
                 }
                 SetTargetApplications();
@@ -119,17 +123,18 @@ namespace Ginger.BusinessFlowWindows
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.BusinessFlowNeedTargetApplication,GingerDicser.GetTermResValue(eTermResKey.TargetApplication));
+                Reporter.ToUser(eUserMsgKey.BusinessFlowNeedTargetApplication, GingerDicser.GetTermResValue(eTermResKey.TargetApplication));
             }
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool ShowCancelButton = true)
         {
-            Button okBtn = new Button();
-            okBtn.Content = "Ok";
+            Button okBtn = new Button
+            {
+                Content = "Ok"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: OKButton_Click);
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(okBtn);
+            ObservableList<Button> winButtons = [okBtn];
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, ShowCancelButton, "Cancel");
         }
@@ -161,10 +166,12 @@ namespace Ginger.BusinessFlowWindows
 
             if (mBusinessFlow.TargetApplications.FirstOrDefault(x => x.Name == TA.AppName) == null)
             {
-                TargetApplication tt = new TargetApplication();
-                tt.AppName = TA.AppName;
-                tt.TargetGuid = TA.Guid;
-                tt.Selected = true;
+                TargetApplication tt = new TargetApplication
+                {
+                    AppName = TA.AppName,
+                    TargetGuid = TA.Guid,
+                    Selected = true
+                };
                 mBusinessFlow.TargetApplications.Add(tt);
             }
         }

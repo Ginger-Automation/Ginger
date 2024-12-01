@@ -19,15 +19,12 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi;
 using Amdocs.Ginger.Repository;
-using DocumentFormat.OpenXml.Drawing;
 using Ginger.UserControls;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard;
 using GingerWPF.WizardLib;
-using NPOI.HPSF;
 using System;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
@@ -56,11 +53,15 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void SetFieldsGrid()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(TemplateFile.FilePath), Header = "Request Sample File Path" });
-            view.GridColsView.Add(new GridColView() { Field = nameof(TemplateFile.MatchingResponseFilePath), Header = "Matching Response File Path" });
-            view.GridColsView.Add(new GridColView() { Field = "", WidthWeight = 15, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["MatchingResponseBrowse"] });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(TemplateFile.FilePath), Header = "Request Sample File Path" },
+                new GridColView() { Field = nameof(TemplateFile.MatchingResponseFilePath), Header = "Matching Response File Path" },
+                new GridColView() { Field = "", WidthWeight = 15, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["MatchingResponseBrowse"] },
+            ]
+            };
             XMLTemplatesGrid.SetAllColumnsDefaultView(view);
             XMLTemplatesGrid.InitViewItems();
             XMLTemplatesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddFileTemplates));
@@ -437,9 +438,10 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 AddAPIModelWizard.APIType = eAPIType.Swagger;
                 if (FileRadioButton.IsChecked == true)
                 {
-                    System.Windows.Forms.OpenFileDialog dlg2 = new System.Windows.Forms.OpenFileDialog();
-
-                    dlg2.Filter = "JSON Files (*.json)|*.json|YAML Files (*.yaml, *.yml)|*.yaml;*.yml|All Files (*.*)|*.*";
+                    System.Windows.Forms.OpenFileDialog dlg2 = new System.Windows.Forms.OpenFileDialog
+                    {
+                        Filter = "JSON Files (*.json)|*.json|YAML Files (*.yaml, *.yml)|*.yaml;*.yml|All Files (*.*)|*.*"
+                    };
 
                     System.Windows.Forms.DialogResult result = dlg2.ShowDialog();
 
@@ -472,10 +474,12 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void BrowseForTemplateFiles(string files = null)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-            dlg.Multiselect = true;
+            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog
+            {
+                Multiselect = true,
 
-            dlg.Filter = GetRelevantFilter();
+                Filter = GetRelevantFilter()
+            };
 
             System.Windows.Forms.DialogResult result = dlg.ShowDialog();
 
@@ -555,7 +559,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             try
             {
                 XMLTemplateParser xmlParser = new XMLTemplateParser();
-                ObservableList<ApplicationAPIModel> xmlList = new ObservableList<ApplicationAPIModel>();
+                ObservableList<ApplicationAPIModel> xmlList = [];
                 xmlList = xmlParser.ParseDocument(fileName, xmlList);
                 if (xmlList == null || xmlList.Count == 0)
                 {
@@ -575,7 +579,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             try
             {
                 SwaggerParser swaggerParser = new SwaggerParser();
-                ObservableList<ApplicationAPIModel> swaggerList = new ObservableList<ApplicationAPIModel>();
+                ObservableList<ApplicationAPIModel> swaggerList = [];
                 swaggerList = swaggerParser.ParseDocument(fileName, swaggerList);
                 AddAPIModelWizard.InfoTitle = swaggerParser.getInfoTitle();
                 if (swaggerList == null || swaggerList.Count == 0)
@@ -596,7 +600,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             try
             {
                 JSONTemplateParser jsonParser = new JSONTemplateParser();
-                ObservableList<ApplicationAPIModel> jsonList = new ObservableList<ApplicationAPIModel>();
+                ObservableList<ApplicationAPIModel> jsonList = [];
                 jsonList = jsonParser.ParseDocument(fileName, jsonList);
                 if (jsonList == null || jsonList.Count == 0)
                 {

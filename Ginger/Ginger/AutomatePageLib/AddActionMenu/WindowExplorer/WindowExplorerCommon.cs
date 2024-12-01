@@ -51,9 +51,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 TVI = JavaElementInfoConverter.GetTreeViewItemFor(EI);
             }
-            else if (EI is UIAElementInfo)
+            else if (EI is UIAElementInfo UEI)
             {
-                UIAElementInfo UEI = (UIAElementInfo)EI;
                 if (UEI.WindowExplorer.GetType() == typeof(PBDriver))
                 {
                     //TODO:  Below will work for now. But need to Implement element info

@@ -118,8 +118,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
-            var repoItem = item as RepositoryItemBase;
-            if (repoItem != null)
+            if (item is RepositoryItemBase repoItem)
             {
                 if (!deleteWithoutAsking)
                 {
@@ -144,7 +143,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 {
                     if (env.Applications.FirstOrDefault(x => x.Name == EnvApplication.Name) == null)
                     {
-                        EnvApplication app = (EnvApplication)(((RepositoryItemBase)EnvApplication).CreateCopy());
+                        EnvApplication app = (EnvApplication)(EnvApplication.CreateCopy());
                         env.Applications.Add(app);
                         env.SaveBackup();//to mark the env as changed
                         appsWereAdded = true;

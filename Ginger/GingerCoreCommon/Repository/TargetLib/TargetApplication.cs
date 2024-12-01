@@ -27,7 +27,7 @@ namespace GingerCore.Platforms
         public override string Name { get { return AppName; } }
 
 
-        
+
         public Guid TargetGuid
         {
             get

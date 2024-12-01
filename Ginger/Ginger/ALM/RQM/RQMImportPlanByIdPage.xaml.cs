@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using GingerCore.ALM;
 using GingerCore.ALM.RQM;
 using System.Windows;
@@ -56,12 +55,14 @@ namespace Ginger.ALM.RQM
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button importButton = new Button();
-            importButton.Content = "Import";
-            importButton.ToolTip = "Import The Selected Test Plan";
+            Button importButton = new Button
+            {
+                Content = "Import",
+                ToolTip = "Import The Selected Test Plan"
+            };
             importButton.Click += new RoutedEventHandler(ImportTestPlan);
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { importButton });
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, [importButton]);
         }
         private void ImportTestPlan(object sender, RoutedEventArgs e)
         {
@@ -75,7 +76,7 @@ namespace Ginger.ALM.RQM
             testPlanId = txtTestPlanId.Text;
             if (testPlanId != "")
             {
-                if(testPlanId.Contains("RQMID="))
+                if (testPlanId.Contains("RQMID="))
                 {
                     testPlanId = testPlanId.Replace("RQMID=", string.Empty);
                 }

@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
@@ -51,31 +50,39 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-            mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "BF Test Fire Fox";
-            mBF.Active = true;
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
+            mBF = new BusinessFlow
+            {
+                Activities = [],
+                Name = "BF Test Fire Fox",
+                Active = true
+            };
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.Web
+            };
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
 
             VariableString busFlowV1 = new VariableString() { Name = "BFV1", InitialStringValue = "1" };
             mBF.AddVariable(busFlowV1);
 
             mGR = new GingerRunner();
-            mGR.Executor = new GingerExecutionEngine(mGR);
+            mGR.Executor = new GingerExecutionEngine(mGR)
+            {
+                CurrentSolution = new Ginger.SolutionGeneral.Solution()
+            };
 
-            mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+            Agent a = new Agent
+            {
+                AgentType = Agent.eAgentType.Service // Simple agent which anyhow we don't need to start for this test and will work on Linux
+            };
 
-            Agent a = new Agent();
-            a.AgentType = Agent.eAgentType.Service; // Simple agent which anyhow we don't need to start for this test and will work on Linux
-
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [a];
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
-            mGR.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
-            mGR.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
+            mGR.Executor.SolutionApplications =
+            [
+                new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" },
+            ];
             mGR.Executor.BusinessFlows.Add(mBF);
 
             WorkSpace.Init(new WorkSpaceEventHandler());

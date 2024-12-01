@@ -16,19 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using Deque.AxeCore.Commons;
+using Deque.AxeCore.Playwright;
 using Microsoft.Playwright;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 using IPlaywrightElementHandle = Microsoft.Playwright.IElementHandle;
-using IPlaywrightPage = Microsoft.Playwright.IPage;
-using System.Drawing;
-using Deque.AxeCore.Commons;
-using GingerCore.Actions;
-using Deque.AxeCore.Playwright;
+using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright

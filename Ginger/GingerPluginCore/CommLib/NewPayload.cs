@@ -19,7 +19,6 @@ limitations under the License.
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -121,7 +120,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             else
             {
                 // verify Last byte marker at the end
-                byte b = bytes[bytes.Length - 1];
+                byte b = bytes[^1];
                 if (b != LastByteMarker)
                 {
                     throw new InvalidOperationException("PayLoad Integrity Error - last byte != 255");
@@ -670,7 +669,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
         public List<object> GetParsedResult()
         {
-            List<object> result = new List<object>();
+            List<object> result = [];
             byte byteValue = ReadValueType();
             switch (byteValue)
             {
@@ -763,7 +762,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
         public List<string> GetListString()
         {
-            List<string> list = new List<string>();
+            List<string> list = [];
 
             byte b = ReadValueType();
 
@@ -808,7 +807,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
         public List<NewPayLoad> GetListPayLoad()
         {
-            List<NewPayLoad> list = new List<NewPayLoad>();
+            List<NewPayLoad> list = [];
 
             byte b = ReadValueType();
             if (b == ListPayLoadType)

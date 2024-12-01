@@ -78,8 +78,10 @@ namespace Ginger.UserControlsLib.TextEditor
                 {
                     //Use the default UCTextEditor control
                     UCTextEditor UCTE = new UCTextEditor();
-                    AutoDetectTextEditor AD = new AutoDetectTextEditor();
-                    AD.ext = Path.GetExtension(FileName);
+                    AutoDetectTextEditor AD = new AutoDetectTextEditor
+                    {
+                        ext = Path.GetExtension(FileName)
+                    };
                     TE = AD;
                     UCTE.Init(FileName, TE, enableEdit, RemoveToolBar);
                     if (UCTextEditorTitle != null)
@@ -164,36 +166,60 @@ namespace Ginger.UserControlsLib.TextEditor
 
         private static void FillExtensionsList()
         {
-            ExtensiosnList = new List<string>();
-            ExtensiosnList.Add(".txt");
-            ExtensiosnList.Add(".bat");
-            ExtensiosnList.Add(".ahk");
-            ExtensiosnList.Add(".applescript");
-            ExtensiosnList.Add(".as");
-            ExtensiosnList.Add(".au3");
-            ExtensiosnList.Add(".bas"); ExtensiosnList.Add(".cljs");
-            ExtensiosnList.Add(".cmd"); ExtensiosnList.Add(".coffee");
-            ExtensiosnList.Add(".egg"); ExtensiosnList.Add(".egt");
-            ExtensiosnList.Add(".erb"); ExtensiosnList.Add(".hta");
-            ExtensiosnList.Add(".ibi"); ExtensiosnList.Add(".ici");
-            ExtensiosnList.Add(".ijs"); ExtensiosnList.Add(".ipynb");
-            ExtensiosnList.Add(".itcl"); ExtensiosnList.Add(".js");
-            ExtensiosnList.Add(".jsfl"); ExtensiosnList.Add(".lua");
-            ExtensiosnList.Add(".m"); ExtensiosnList.Add(".mrc");
-            ExtensiosnList.Add(".ncf"); ExtensiosnList.Add(".nut");
-            ExtensiosnList.Add(".php"); ExtensiosnList.Add(".pl");
-            ExtensiosnList.Add(".pm"); ExtensiosnList.Add(".ps1");
-            ExtensiosnList.Add(".ps1xml"); ExtensiosnList.Add(".psc1");
-            ExtensiosnList.Add(".psd1"); ExtensiosnList.Add(".psm1");
-            ExtensiosnList.Add(".py"); ExtensiosnList.Add(".pyc");
-            ExtensiosnList.Add(".pyo"); ExtensiosnList.Add(".r");
-            ExtensiosnList.Add(".rb"); ExtensiosnList.Add(".rdp");
-            ExtensiosnList.Add(".scpt"); ExtensiosnList.Add(".scptd");
-            ExtensiosnList.Add(".sdl"); ExtensiosnList.Add(".sh");
-            ExtensiosnList.Add(".syjs"); ExtensiosnList.Add(".sypy");
-            ExtensiosnList.Add(".tcl"); ExtensiosnList.Add(".vbs");
-            ExtensiosnList.Add(".xpl"); ExtensiosnList.Add(".ebuild");
-            ExtensiosnList.Add(".feature");
+            ExtensiosnList =
+            [
+                ".txt",
+                ".bat",
+                ".ahk",
+                ".applescript",
+                ".as",
+                ".au3",
+                ".bas",
+                ".cljs",
+                ".cmd",
+                ".coffee",
+                ".egg",
+                ".egt",
+                ".erb",
+                ".hta",
+                ".ibi",
+                ".ici",
+                ".ijs",
+                ".ipynb",
+                ".itcl",
+                ".js",
+                ".jsfl",
+                ".lua",
+                ".m",
+                ".mrc",
+                ".ncf",
+                ".nut",
+                ".php",
+                ".pl",
+                ".pm",
+                ".ps1",
+                ".ps1xml",
+                ".psc1",
+                ".psd1",
+                ".psm1",
+                ".py",
+                ".pyc",
+                ".pyo",
+                ".r",
+                ".rb",
+                ".rdp",
+                ".scpt",
+                ".scptd",
+                ".sdl",
+                ".sh",
+                ".syjs",
+                ".sypy",
+                ".tcl",
+                ".vbs",
+                ".xpl",
+                ".ebuild",
+                ".feature",
+            ];
         }
 
         private TextEditorBase GetTextEditorByExtension(string FileName)
@@ -220,7 +246,7 @@ namespace Ginger.UserControlsLib.TextEditor
         {
             if (TextEditors == null)
             {
-                TextEditors = new List<TextEditorBase>();
+                TextEditors = [];
 
                 var list = from type in typeof(TextEditorBase).Assembly.GetTypes()
                            where type.IsSubclassOf(typeof(TextEditorBase))

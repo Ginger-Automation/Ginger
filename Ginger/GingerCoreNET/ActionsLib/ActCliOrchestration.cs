@@ -20,15 +20,15 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using CliWrap;
+using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using CliWrap;
-using System.IO;
-using GingerCoreNET.GeneralLib;
-using System.Runtime.InteropServices;
 
 namespace GingerCore.Actions
 {
@@ -90,7 +90,7 @@ namespace GingerCore.Actions
         {
             DataBuffer = new StringBuilder();
 
-            if(string.IsNullOrEmpty(ValueExpression.Calculate(this.FilePath)))
+            if (string.IsNullOrEmpty(ValueExpression.Calculate(this.FilePath)))
             {
                 Error = "Application/File path is Empty";
                 return;
@@ -118,14 +118,14 @@ namespace GingerCore.Actions
         {
             bool isVBSScript = false;
             bool isshellScript = false;
-            StringBuilder arguments = new ();
+            StringBuilder arguments = new();
             string actualApplicationPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(this.FilePath);
-            if ((Path.GetExtension(actualApplicationPath)).Equals(".vbs", StringComparison.InvariantCultureIgnoreCase) || (Path.GetExtension(actualApplicationPath)).Equals(".js",StringComparison.InvariantCultureIgnoreCase))
+            if ((Path.GetExtension(actualApplicationPath)).Equals(".vbs", StringComparison.InvariantCultureIgnoreCase) || (Path.GetExtension(actualApplicationPath)).Equals(".js", StringComparison.InvariantCultureIgnoreCase))
             {
                 arguments.Append(actualApplicationPath).Append(' ');
                 actualApplicationPath = GetSystemDirectory() + $"{Path.DirectorySeparatorChar}cscript.exe";
             }
-            else if((Path.GetExtension(actualApplicationPath)).Equals(".sh", StringComparison.InvariantCultureIgnoreCase))
+            else if ((Path.GetExtension(actualApplicationPath)).Equals(".sh", StringComparison.InvariantCultureIgnoreCase))
             {
                 arguments.Append(actualApplicationPath).Append(' ');
                 actualApplicationPath = $"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}bash";
@@ -150,7 +150,7 @@ namespace GingerCore.Actions
                     {
                         Directory.CreateDirectory(folderPath);
                     }
-                    path = General.GenerateFilePath(folderPath,ItemName);
+                    path = General.GenerateFilePath(folderPath, ItemName);
                     AddOrUpdateReturnParamActual(ParamName: "Output logfile", ActualValue: path);
                 }
                 try
@@ -184,9 +184,9 @@ namespace GingerCore.Actions
                         var cmd = Cli.Wrap(actualApplicationPath)
                             .WithArguments(arguments.ToString());
                         cmd.ExecuteAsync();
-                    }                
+                    }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Error = "Error: during CLI Orchestration:" + ex.Message;
                     Reporter.ToLog(eLogLevel.ERROR, "Error: during CLI Orchestration", ex);
@@ -211,7 +211,7 @@ namespace GingerCore.Actions
             ExInfo += $"ExitCode: {result.ExitCode}";
         }
 
-        private void WriteTofile(string filepath,StringBuilder data)
+        private void WriteTofile(string filepath, StringBuilder data)
         {
             using (var writer = new StreamWriter(filepath, true))
             {
@@ -232,12 +232,12 @@ namespace GingerCore.Actions
                     int i = RCValue.IndexOf(this.Delimiter);
                     if (i > 0)
                     {
-                        Param = RCValue.Substring(0, i);
+                        Param = RCValue[..i];
                         //the rest is the value
-                        Value = RCValue.Substring(Param.Length + 1);
+                        Value = RCValue[(Param.Length + 1)..];
                         AddOrUpdateReturnParamActual(Param, Value);
                     }
-                    
+
                 }
             }
         }

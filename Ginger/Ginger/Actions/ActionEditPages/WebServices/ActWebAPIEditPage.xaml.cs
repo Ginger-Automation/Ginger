@@ -330,7 +330,7 @@ namespace Ginger.Actions.WebServices
                         string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
                         if (newFileName.IndexOf(copySufix) != -1)
                         {
-                            newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
+                            newFileName = newFileName[..newFileName.IndexOf(copySufix)];
                         }
 
                         newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
@@ -411,9 +411,9 @@ namespace Ginger.Actions.WebServices
                 fileNum++;
                 if (fileNameWithoutExt.Contains(copySufix, StringComparison.CurrentCulture))
                 {
-                    fileNameWithoutExt = fileNameWithoutExt.Substring(0, fileNameWithoutExt.IndexOf(copySufix));
+                    fileNameWithoutExt = fileNameWithoutExt[..fileNameWithoutExt.IndexOf(copySufix)];
                 }
-                StringBuilder sb = new  StringBuilder();
+                StringBuilder sb = new StringBuilder();
                 sb.Append(fileNameWithoutExt);
                 sb.Append(copySufix);
                 sb.Append(fileNum);
@@ -536,10 +536,13 @@ namespace Ginger.Actions.WebServices
             FormDataGrid.SetTitleStyle((Style)TryFindResource("@ucGridTitleLightStyle"));
 
             //View with Browse and Combobox -->Form Data 
-            GridViewDef FormDataView = new GridViewDef("FormData");
-            FormDataView.GridColsView = new ObservableList<GridColView>();
-
-            FormDataView.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Key", WidthWeight = 100 });
+            GridViewDef FormDataView = new GridViewDef("FormData")
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ActInputValue.Param), Header = "Key", WidthWeight = 100 },
+            ]
+            };
             List<ComboEnumItem> valueTypes = GingerCore.General.GetEnumValuesForCombo(typeof(WebAPIKeyBodyValues.eValueType));
             FormDataView.GridColsView.Add(new GridColView() { Field = nameof(WebAPIKeyBodyValues.ValueType), Header = "Value Type", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = valueTypes });
             FormDataView.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Value/File Path", WidthWeight = 100 });
@@ -547,9 +550,11 @@ namespace Ginger.Actions.WebServices
             FormDataView.GridColsView.Add(new GridColView() { Field = "Browse", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.controlGrid.Resources["BrowseValueFilesButton"] });
 
             //Define URLEncoded GridView
-            GridViewDef UrlEncodedView = new GridViewDef("UrlEncoded");
-            UrlEncodedView.GridColsView = new ObservableList<GridColView>();
-            ObservableList<GridColView> UrlViewCols = new ObservableList<GridColView>();
+            GridViewDef UrlEncodedView = new GridViewDef("UrlEncoded")
+            {
+                GridColsView = []
+            };
+            ObservableList<GridColView> UrlViewCols = [];
             UrlEncodedView.GridColsView.Add(new GridColView() { Field = nameof(WebAPIKeyBodyValues.ValueType), Visible = false });
             UrlEncodedView.GridColsView.Add(new GridColView() { Field = "Browse", Visible = false });
 
@@ -606,8 +611,10 @@ namespace Ginger.Actions.WebServices
 
         private void AddRow(object sender, RoutedEventArgs e)
         {
-            WebAPIKeyBodyValues Wa = new WebAPIKeyBodyValues();
-            Wa.ValueType = WebAPIKeyBodyValues.eValueType.Text;
+            WebAPIKeyBodyValues Wa = new WebAPIKeyBodyValues
+            {
+                ValueType = WebAPIKeyBodyValues.eValueType.Text
+            };
             mAct.RequestKeyValues.Add(Wa);
         }
         private void ResponseTypeComboBox_SelectionChanged(object sender, RoutedEventArgs e)
@@ -658,9 +665,11 @@ namespace Ginger.Actions.WebServices
                 string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(requestContent);
                 if (System.IO.File.Exists(tempFilePath))
                 {
-                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
-                    docPage.Width = 800;
-                    docPage.Height = 800;
+                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty)
+                    {
+                        Width = 800,
+                        Height = 800
+                    };
                     docPage.ShowAsWindow("Raw Request Preview");
                     System.IO.File.Delete(tempFilePath);
                     return;

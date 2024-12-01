@@ -86,13 +86,16 @@ namespace Ginger.PlugInsWindows
         {
 
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Id), Header = "Plugin ID", WidthWeight = 30, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Description), WidthWeight = 30, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.URL), WidthWeight = 30, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Status), WidthWeight = 30, ReadOnly = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(OnlinePluginPackage.Id), Header = "Plugin ID", WidthWeight = 30, ReadOnly = true },
+                new GridColView() { Field = nameof(OnlinePluginPackage.Description), WidthWeight = 30, ReadOnly = true },
+                new GridColView() { Field = nameof(OnlinePluginPackage.URL), WidthWeight = 30, ReadOnly = true },
+                new GridColView() { Field = nameof(OnlinePluginPackage.Status), WidthWeight = 30, ReadOnly = true },
+            ]
+            };
 
             xPluginsGrid.SetAllColumnsDefaultView(view);
             xPluginsGrid.InitViewItems();

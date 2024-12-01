@@ -42,49 +42,65 @@ namespace UnitTests.NonUITests
             Solution = new Solution();
             BF = new BusinessFlow();
 
-            VariableString VarString = new VariableString();
-            VarString.Name = "BF_VarString";
-            VarString.SetAsInputValue = true;
-            VarString.MandatoryInput = true;
+            VariableString VarString = new VariableString
+            {
+                Name = "BF_VarString",
+                SetAsInputValue = true,
+                MandatoryInput = true
+            };
             BF.Variables.Add(VarString);
 
-            VariableSelectionList VarList = new VariableSelectionList();
-            VarList.Name = "BF_VarList";
-            VarList.SetAsInputValue = true;
-            VarList.MandatoryInput = true;
+            VariableSelectionList VarList = new VariableSelectionList
+            {
+                Name = "BF_VarList",
+                SetAsInputValue = true,
+                MandatoryInput = true
+            };
             VarList.OptionalValuesList.Add(new OptionalValue(value: " "));
             VarList.OptionalValuesList.Add(new OptionalValue(value: "aa"));
             VarList.OptionalValuesList.Add(new OptionalValue(value: "bb"));
             VarList.Value = " ";
             BF.Variables.Add(VarList);
 
-            Activity Acty = new Activity();
-            Acty.ActivityName = "Act1";
+            Activity Acty = new Activity
+            {
+                ActivityName = "Act1"
+            };
 
             BF.AddActivity(Acty);
-            VariableString VarString2 = new VariableString();
-            VarString2.Name = "NewVarString";
+            VariableString VarString2 = new VariableString
+            {
+                Name = "NewVarString"
+            };
             Acty.AddVariable(VarString2);
 
-            VariableString VarString3 = new VariableString();
-            VarString3.Name = "NewVarString3";
-            VarString3.SetAsInputValue = true;
-            VarString3.MandatoryInput = true;
-            VarString3.Value = "test123";
+            VariableString VarString3 = new VariableString
+            {
+                Name = "NewVarString3",
+                SetAsInputValue = true,
+                MandatoryInput = true,
+                Value = "test123"
+            };
             Acty.AddVariable(VarString3);
 
-            VariableString VarString4 = new VariableString();
-            VarString4.Name = "NewVarString";
+            VariableString VarString4 = new VariableString
+            {
+                Name = "NewVarString"
+            };
             Acty.AddVariable(VarString4);
 
-            VariableString VarString5 = new VariableString();
-            VarString5.Name = "NewVarString";
+            VariableString VarString5 = new VariableString
+            {
+                Name = "NewVarString"
+            };
             Acty.AddVariable(VarString5);
 
-            VariableString VarString6 = new VariableString();
-            VarString6.Name = "NewVarString6";
-            VarString6.SetAsInputValue = true;
-            VarString6.MandatoryInput = true;
+            VariableString VarString6 = new VariableString
+            {
+                Name = "NewVarString6",
+                SetAsInputValue = true,
+                MandatoryInput = true
+            };
             Acty.AddVariable(VarString6);
 
             ActDummy DummyAction = new ActDummy();

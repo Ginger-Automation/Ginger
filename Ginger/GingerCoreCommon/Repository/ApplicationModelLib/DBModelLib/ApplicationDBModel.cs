@@ -40,7 +40,7 @@ namespace Amdocs.Ginger.Repository
         }
 
         //Not serialized
-        public ObservableList<ApplicationDBTableModel> Tables = new ObservableList<ApplicationDBTableModel>();
+        public ObservableList<ApplicationDBTableModel> Tables = [];
     }
 
 }

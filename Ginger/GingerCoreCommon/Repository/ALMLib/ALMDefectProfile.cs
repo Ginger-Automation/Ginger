@@ -64,7 +64,7 @@ namespace Amdocs.Ginger.Repository
         public int ALMDefectProfilesSeq { get; set; }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ExternalItemFieldBase> ALMDefectProfileFields = new ObservableList<ExternalItemFieldBase>();
+        public ObservableList<ExternalItemFieldBase> ALMDefectProfileFields = [];
 
         public RepositoryFolder<ALMDefectProfile> ALMDefectProfileFolder;
 

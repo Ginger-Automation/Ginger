@@ -38,13 +38,13 @@ using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
-using OpenQA.Selenium.Appium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace Ginger
@@ -238,12 +238,15 @@ namespace Ginger
         private void InitControlPropertiesGridView()
         {
             // Grid View
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = "Name", WidthWeight = 3, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = "Value", WidthWeight = 5, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Category), WidthWeight = 2, ReadOnly = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = "Name", WidthWeight = 3, ReadOnly = true },
+                new GridColView() { Field = "Value", WidthWeight = 5, ReadOnly = true },
+                new GridColView() { Field = nameof(ControlProperty.Category), WidthWeight = 2, ReadOnly = true, BindingMode = BindingMode.TwoWay },
+            ]
+            };
 
             xPropertiesGrid.RowDoubleClick += XPropertiesGrid_RowDoubleClick;
             xPropertiesGrid.ToolTip = "Double click on a row to copy the selected property value";
@@ -256,13 +259,13 @@ namespace Ginger
         {
             if (!string.IsNullOrEmpty((sender as ControlProperty).Value))
             {
-                 GingerCore.General.SetClipboardText((sender as ControlProperty).Value);
+                GingerCore.General.SetClipboardText((sender as ControlProperty).Value);
             }
         }
 
         private void XLocatorsGrid_RowDoubleClick(object sender, EventArgs e)
         {
-             GingerCore.General.SetClipboardText((sender as ElementLocator).LocateValue);
+            GingerCore.General.SetClipboardText((sender as ElementLocator).LocateValue);
         }
 
         bool LocatorsGridInitialized = false;
@@ -272,11 +275,14 @@ namespace Ginger
             if (!LocatorsGridInitialized)
             {
                 // Grid View
-                GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-                view.GridColsView = new ObservableList<GridColView>();
-
-                view.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), WidthWeight = 8, ReadOnly = true });
-                view.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), WidthWeight = 20, ReadOnly = true });
+                GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+                {
+                    GridColsView =
+                [
+                    new GridColView() { Field = nameof(ElementLocator.LocateBy), WidthWeight = 8, ReadOnly = true },
+                    new GridColView() { Field = nameof(ElementLocator.LocateValue), WidthWeight = 20, ReadOnly = true },
+                ]
+                };
 
                 //if (mPlatform.PlatformType() != ePlatformType.Web && mPlatform.PlatformType() != ePlatformType.Java)
                 //{
@@ -300,9 +306,13 @@ namespace Ginger
         {
             if (!LocatorsGridInitialized)
             {
-                GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-                defView.GridColsView = new ObservableList<GridColView>();
-                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
+                GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
+                {
+                    GridColsView =
+                [
+                    new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox },
+                ]
+                };
 
                 List<ComboEnumItem> locateByList = GetPlatformLocatByList();
 
@@ -400,7 +410,7 @@ namespace Ginger
 
         private void XFriendlyLocatorsGrid_RowDoubleClick(object sender, EventArgs e)
         {
-             GingerCore.General.SetClipboardText((sender as ElementLocator).LocateValue);
+            GingerCore.General.SetClipboardText((sender as ElementLocator).LocateValue);
         }
 
         bool FriendlyLocatorsGridInitialized = false;
@@ -410,11 +420,14 @@ namespace Ginger
             if (!FriendlyLocatorsGridInitialized)
             {
                 // Grid View
-                GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-                view.GridColsView = new ObservableList<GridColView>();
-
-                view.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), WidthWeight = 8, ReadOnly = true });
-                view.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), WidthWeight = 20, ReadOnly = true });
+                GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+                {
+                    GridColsView =
+                [
+                    new GridColView() { Field = nameof(ElementLocator.LocateBy), WidthWeight = 8, ReadOnly = true },
+                    new GridColView() { Field = nameof(ElementLocator.LocateValue), WidthWeight = 20, ReadOnly = true },
+                ]
+                };
 
                 //if (mPlatform.PlatformType() != ePlatformType.Web && mPlatform.PlatformType() != ePlatformType.Java)
                 //{
@@ -530,7 +543,7 @@ namespace Ginger
 
         private List<ComboEnumItem> GetPlatformLocatByList()
         {
-            List<ComboEnumItem> locateByComboItemList = new List<ComboEnumItem>();
+            List<ComboEnumItem> locateByComboItemList = [];
 
             if (Platform == null)
             {
@@ -543,9 +556,11 @@ namespace Ginger
             {
                 if (!locateBy.Equals(eLocateBy.POMElement))
                 {
-                    ComboEnumItem comboEnumItem = new ComboEnumItem();
-                    comboEnumItem.text = GingerCore.General.GetEnumValueDescription(typeof(eLocateBy), locateBy);
-                    comboEnumItem.Value = locateBy;
+                    ComboEnumItem comboEnumItem = new ComboEnumItem
+                    {
+                        text = GingerCore.General.GetEnumValueDescription(typeof(eLocateBy), locateBy),
+                        Value = locateBy
+                    };
                     locateByComboItemList.Add(comboEnumItem);
                 }
             }
@@ -556,7 +571,7 @@ namespace Ginger
 
         private List<ComboEnumItem> GetPositionList()
         {
-            List<ComboEnumItem> PositionComboItemList = new List<ComboEnumItem>();
+            List<ComboEnumItem> PositionComboItemList = [];
             if (Platform == null)
             {
                 Platform = PlatformInfoBase.GetPlatformImpl(Context.Platform);  // ((Agent)ApplicationAgent.Agent).Platform);
@@ -564,9 +579,11 @@ namespace Ginger
             List<ePosition> positionList = Platform.GetElementPositionList();
             foreach (var positionBy in positionList)
             {
-                ComboEnumItem comboEnumItem = new ComboEnumItem();
-                comboEnumItem.text = GingerCore.General.GetEnumValueDescription(typeof(ePosition), positionBy);
-                comboEnumItem.Value = positionBy;
+                ComboEnumItem comboEnumItem = new ComboEnumItem
+                {
+                    text = GingerCore.General.GetEnumValueDescription(typeof(ePosition), positionBy),
+                    Value = positionBy
+                };
                 PositionComboItemList.Add(comboEnumItem);
             }
             return PositionComboItemList;
@@ -668,19 +685,21 @@ namespace Ginger
                     else
                     {
                         //pomAllElementsPage = new PomAllElementsPage(xWindowSelection.SelectedPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
-                        ElementInfo matchingOriginalElement = (ElementInfo)WindowExplorerDriver.GetMatchingElement(SelectedElement, SelectedPOM.GetUnifiedElementsList());
+                        ElementInfo matchingOriginalElement = WindowExplorerDriver.GetMatchingElement(SelectedElement, SelectedPOM.GetUnifiedElementsList());
 
                         if (matchingOriginalElement == null)
                         {
                             WindowExplorerDriver.LearnElementInfoDetails(SelectedElement);
-                            matchingOriginalElement = (ElementInfo)WindowExplorerDriver.GetMatchingElement(SelectedElement, SelectedPOM.GetUnifiedElementsList());
+                            matchingOriginalElement = WindowExplorerDriver.GetMatchingElement(SelectedElement, SelectedPOM.GetUnifiedElementsList());
                         }
 
                         if (matchingOriginalElement != null &&
                                 (SelectedPOM.MappedUIElements.Contains(matchingOriginalElement) || SelectedPOM.UnMappedUIElements.Contains(matchingOriginalElement)))
                         {
-                            PomDeltaUtils pomDeltaUtils = new PomDeltaUtils(SelectedPOM, Context.Agent);
-                            pomDeltaUtils.KeepOriginalLocatorsOrderAndActivation = true;
+                            PomDeltaUtils pomDeltaUtils = new PomDeltaUtils(SelectedPOM, Context.Agent)
+                            {
+                                KeepOriginalLocatorsOrderAndActivation = true
+                            };
 
                             /// Not Required but 
                             pomDeltaUtils.DeltaViewElements.Clear();
@@ -813,8 +832,7 @@ namespace Ginger
 
             if (LocatorChanged)
             {
-                ElementLocator locator = xLocatorsGrid.CurrentItem as ElementLocator;
-                if (locator != null && xActUIPageFrame.HasContent && (xActUIPageFrame.Content as ControlActionsPage_New).DefaultAction is ActUIElement)
+                if (xLocatorsGrid.CurrentItem is ElementLocator locator && xActUIPageFrame.HasContent && (xActUIPageFrame.Content as ControlActionsPage_New).DefaultAction is ActUIElement)
                 {
                     if (((xActUIPageFrame.Content as ControlActionsPage_New).DefaultAction as ActUIElement).ElementLocateBy != eLocateBy.POMElement)
                     {
@@ -961,7 +979,7 @@ namespace Ginger
             HandlePOMOperationsPanelVisibility(true);
 
             SelectedElementChanged = true;
-            POMCheckBoxToggled = POMCheckBoxToggled == null ? false : true;
+            POMCheckBoxToggled = POMCheckBoxToggled != null;
             RefreshElementAction();
         }
 
@@ -1042,9 +1060,11 @@ namespace Ginger
 
             if (mSelectedLocator != null)
             {
-                var testElement = new ElementInfo();
-                testElement.Path = SelectedElement.Path;
-                testElement.Locators = new ObservableList<ElementLocator>() { mSelectedLocator };
+                var testElement = new ElementInfo
+                {
+                    Path = SelectedElement.Path,
+                    Locators = [mSelectedLocator]
+                };
 
                 //For Java Driver Widgets
                 if (Platform.PlatformType() == ePlatformType.Java)  // WorkSpace.Instance.Solution.GetTargetApplicationPlatform(SelectedPOM.TargetApplicationKey).Equals(ePlatformType.Java))
@@ -1060,7 +1080,7 @@ namespace Ginger
                 }
                 else if (Platform.PlatformType().Equals(ePlatformType.Web) && SelectedElement is HTMLElementInfo)
                 {
-                    var htmlElementInfo = new HTMLElementInfo() { Path = testElement.Path, Locators = testElement.Locators, Properties = SelectedElement.Properties};
+                    var htmlElementInfo = new HTMLElementInfo() { Path = testElement.Path, Locators = testElement.Locators, Properties = SelectedElement.Properties };
                     WindowExplorerDriver.TestElementLocators(htmlElementInfo, mPOM: SelectedPOM);
                 }
 
@@ -1074,7 +1094,7 @@ namespace Ginger
 
         private void xRunActBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (xActUIPageFrame.Content != null && xActUIPageFrame.Content is ControlActionsPage_New)
+            if (xActUIPageFrame.Content is not null and ControlActionsPage_New)
             {
                 (xActUIPageFrame.Content as ControlActionsPage_New).RunActionClicked(sender, e);
             }
@@ -1082,12 +1102,12 @@ namespace Ginger
 
         private void xAddActBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (xActUIPageFrame.Content != null && xActUIPageFrame.Content is ControlActionsPage_New)
+            if (xActUIPageFrame.Content is not null and ControlActionsPage_New)
             {
 
-                if(SelectedElement!= null && SelectedElement is HTMLElementInfo htmlSelectedElementInfo)
+                if (SelectedElement is not null and HTMLElementInfo htmlSelectedElementInfo)
                 {
-                    if(htmlSelectedElementInfo.XPathList?.Count > 0)
+                    if (htmlSelectedElementInfo.XPathList?.Count > 0)
                     {
                         Reporter.ToUser(eUserMsgKey.ShadowRootExists);
                     }
@@ -1095,7 +1115,7 @@ namespace Ginger
 
                 (xActUIPageFrame.Content as ControlActionsPage_New).AddActionClicked(sender, e);
 
-                if (xIntegratePOMChkBox.IsChecked==true)
+                if (xIntegratePOMChkBox.IsChecked == true)
                 {
                     if (POMElementsUpdated && (xAutoSavePOMChkBox.IsChecked == true
                         || Reporter.ToUser(eUserMsgKey.SavePOMChanges, SelectedPOM.Name) == eUserMsgSelection.Yes))
@@ -1121,7 +1141,7 @@ namespace Ginger
 
             if (mSelectedLocator != null)
             {
-                 GingerCore.General.SetClipboardText(mSelectedLocator.LocateValue);
+                GingerCore.General.SetClipboardText(mSelectedLocator.LocateValue);
             }
         }
 

@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using Ginger.UserControls;
 using GingerCore.DataSource;
 using System;
@@ -49,11 +48,15 @@ namespace Ginger.DataSource
 
         private void SetDataSourcesGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = DataSourceBase.Fields.Name, Header = "Data Source Name", WidthWeight = 250 });
-            view.GridColsView.Add(new GridColView() { Field = DataSourceBase.Fields.DSType, Header = "Data Source Type", WidthWeight = 250 });
-            view.GridColsView.Add(new GridColView() { Field = DataSourceBase.Fields.FilePath, Header = "File Path", WidthWeight = 250 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = DataSourceBase.Fields.Name, Header = "Data Source Name", WidthWeight = 250 },
+                new GridColView() { Field = DataSourceBase.Fields.DSType, Header = "Data Source Type", WidthWeight = 250 },
+                new GridColView() { Field = DataSourceBase.Fields.FilePath, Header = "File Path", WidthWeight = 250 },
+            ]
+            };
             grdDataSources.SetAllColumnsDefaultView(view);
             grdDataSources.InitViewItems();
         }

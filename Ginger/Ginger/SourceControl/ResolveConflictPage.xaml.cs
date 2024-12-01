@@ -90,11 +90,13 @@ namespace Ginger.SourceControl
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button resolveBtn = new Button();
-            resolveBtn.Content = "Resolve";
+            Button resolveBtn = new Button
+            {
+                Content = "Resolve"
+            };
             resolveBtn.Click += new RoutedEventHandler(resolve_Click);
 
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Source Control Conflicts", this, new ObservableList<Button> { resolveBtn }, true, "Do Not Resolve", CloseWindow);
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Source Control Conflicts", this, [resolveBtn], true, "Do Not Resolve", CloseWindow);
         }
 
         private void resolve_Click(object sender, EventArgs e)

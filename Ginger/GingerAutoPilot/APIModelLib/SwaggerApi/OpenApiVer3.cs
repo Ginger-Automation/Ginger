@@ -16,23 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.APIModelLib;
-using Amdocs.Ginger.Common.Expressions;
-using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Repository;
-using GingerCore.Variables;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NJsonSchema;
 using NSwag;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Mime;
-using System.Reflection;
-using System.Reflection.Metadata;
 
 namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi
 {
@@ -40,12 +28,12 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
     {
         SwaggerDocument opendoc = null;
         public OpenApiComponents OpenApiComponents { get; set; }
-        
+
         public ObservableList<ApplicationAPIModel> OpenApiThree(SwaggerDocument Swaggerdoc, ObservableList<ApplicationAPIModel> SwaggerModels)
         {
-            
+
             opendoc = Swaggerdoc;
-            
+
             var reqBodyNullExampleList = GetExamplesFromDefinitions(opendoc);
             foreach (var paths in opendoc.Paths)
             {
@@ -54,13 +42,13 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 foreach (KeyValuePair<SwaggerOperationMethod, SwaggerOperation> so in SPi.AsEnumerable())
                 {
                     SwaggerOperation Operation = so.Value;
-                    
+
 
                     bool supportBody = true;
                     if (Operation.RequestBody == null)
                     {
 
-                        ApplicationAPIModel basicModal = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key,opendoc);
+                        ApplicationAPIModel basicModal = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key, opendoc);
                         SetOptionalValue(basicModal.AppModelParameters, reqBodyNullExampleList, enumValuesListAMP);
                         SwaggerModels.Add(basicModal);
                         GenerateResponse(Operation, basicModal);
@@ -129,7 +117,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 }
             }
 
-            
+
             return SwaggerModels;
         }
 

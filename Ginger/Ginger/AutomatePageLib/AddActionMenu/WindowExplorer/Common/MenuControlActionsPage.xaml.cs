@@ -60,12 +60,16 @@ namespace Ginger.WindowExplorer.Common
 
         private void InitGrid()
         {
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = Act.Fields.Description, WidthWeight = 10 });
-            defView.GridColsView.Add(new GridColView() { Field = Act.Fields.LocateBy, WidthWeight = 10 });
-            defView.GridColsView.Add(new GridColView() { Field = Act.Fields.LocateValue, WidthWeight = 10 });
-            defView.GridColsView.Add(new GridColView() { Field = "Value", WidthWeight = 10 });
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = Act.Fields.Description, WidthWeight = 10 },
+                new GridColView() { Field = Act.Fields.LocateBy, WidthWeight = 10 },
+                new GridColView() { Field = Act.Fields.LocateValue, WidthWeight = 10 },
+                new GridColView() { Field = "Value", WidthWeight = 10 },
+            ]
+            };
 
             AvailableControlActionsGrid.SetAllColumnsDefaultView(defView);
             AvailableControlActionsGrid.InitViewItems();

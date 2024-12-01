@@ -30,7 +30,7 @@ namespace Amdocs.Ginger.Plugin.Core
     public class GingerNodeStarter : IDisposable
     {
 
-        List<GingerNode> mNodes = new List<GingerNode>();
+        List<GingerNode> mNodes = [];
 
         public void Dispose()
         {

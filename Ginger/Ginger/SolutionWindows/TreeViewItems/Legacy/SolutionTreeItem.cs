@@ -54,8 +54,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             // it is also possible to build your own Stack Panel and return
             //Solution is a special case since we want to have: Solution 'Solname'   - so we create 3 labels
 
-            StackPanel stack = new StackPanel();
-            stack.Orientation = Orientation.Horizontal;
+            StackPanel stack = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
 
             // create Image
             Image image = new Image();
@@ -63,21 +65,29 @@ namespace Ginger.SolutionWindows.TreeViewItems
             image.Source = new BitmapImage(new Uri(@"/Images/" + ImageFile, UriKind.RelativeOrAbsolute));
 
             // Source Control Image
-            Image SCimage = new Image();
-            SCimage.Source = Ginger.SourceControl.SourceControlUI.GetItemSourceControlImage(Solution.Folder, ref ItemSourceControlStatus);
+            Image SCimage = new Image
+            {
+                Source = Ginger.SourceControl.SourceControlUI.GetItemSourceControlImage(Solution.Folder, ref ItemSourceControlStatus)
+            };
 
             // Labels
-            Label lbl1 = new Label();
-            lbl1.Content = "Solution - '";
+            Label lbl1 = new Label
+            {
+                Content = "Solution - '"
+            };
 
-            Label lbl2 = new Label();
-            lbl2.FontWeight = FontWeights.ExtraBold;
-            lbl2.Margin = new Thickness(-10, 0, 0, 0);
+            Label lbl2 = new Label
+            {
+                FontWeight = FontWeights.ExtraBold,
+                Margin = new Thickness(-10, 0, 0, 0)
+            };
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(lbl2, Label.ContentProperty, Solution, nameof(Solution.Name));
 
-            Label lbl3 = new Label();
-            lbl3.Margin = new Thickness(-10, 0, 0, 0);
-            lbl3.Content = "'";
+            Label lbl3 = new Label
+            {
+                Margin = new Thickness(-10, 0, 0, 0),
+                Content = "'"
+            };
 
             // Add into stack
             stack.Children.Add(image);
@@ -91,7 +101,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            List<ITreeViewItem> Childrens = [];
             return Childrens;
         }
 

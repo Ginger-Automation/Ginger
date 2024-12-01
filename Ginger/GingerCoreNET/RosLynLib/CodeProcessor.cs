@@ -19,17 +19,13 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RosLynLib;
 using Amdocs.Ginger.Repository;
-using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
-using OfficeOpenXml.Drawing.Slicer.Style;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Metadata;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -112,11 +108,11 @@ namespace GingerCoreNET.RosLynLib
                 {
                     evalresult = result.ToString().ToLower();
                 }
-                else if(result.GetType() == typeof(string))
+                else if (result.GetType() == typeof(string))
                 {
                     evalresult = result.ToString();
                 }
-                else if(result.GetType() == typeof(string[]))
+                else if (result.GetType() == typeof(string[]))
                 {
                     evalresult = string.Join(",", (string[])result);
                     evalresult = $"[{evalresult}]";
@@ -276,7 +272,7 @@ namespace GingerCoreNET.RosLynLib
                 {
                     return Expression;
                 }
-                Pattern = new Regex("{MockDataExp({.*}|[^{}]*)*}", RegexOptions.Compiled,new TimeSpan(0,0,5));
+                Pattern = new Regex("{MockDataExp({.*}|[^{}]*)*}", RegexOptions.Compiled, new TimeSpan(0, 0, 5));
                 Regex Clean = new Regex("{MockDataExp(\\s)*Fun(\\s)*=", RegexOptions.Compiled);
 
                 MatchCollection PatternMatchlist = Pattern.Matches(Expression);
@@ -298,7 +294,7 @@ namespace GingerCoreNET.RosLynLib
                 }
                 return Expression;
             }
-            catch(RegexMatchTimeoutException ex)
+            catch (RegexMatchTimeoutException ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Timeout Exception", ex);
                 return string.Empty;
@@ -339,7 +335,7 @@ namespace GingerCoreNET.RosLynLib
                             /// Handles scenarios with special case like Between and constructs expressions accordingly
                             if (expressionlist[1].Contains("Between"))
                             {
-                                string expressionsubstring = expressionlist[1].Substring(expressionlist[1].IndexOf('(') + 1,expressionlist[1].IndexOf("))") - expressionlist[1].IndexOf("(") + 1);
+                                string expressionsubstring = expressionlist[1].Substring(expressionlist[1].IndexOf('(') + 1, expressionlist[1].IndexOf("))") - expressionlist[1].IndexOf("(") + 1);
                                 string[] Parameter = expressionsubstring.Split(',');
                                 /// Handles scenarios with special case like Between function have inbuilt function as parameter and constructs expressions accordingly
                                 if (expressionlist[1].Contains("Past") && expressionlist[1].Contains("Future"))
@@ -351,15 +347,15 @@ namespace GingerCoreNET.RosLynLib
                                     else
                                     {
                                         expressionlist[1] = expressionlist[1].Replace(Parameter[0], $"Result.{Parameter[0]}").Replace(Parameter[1], $"Result.{Parameter[1]}");
-                                    }  
+                                    }
                                 }
                                 expression = $"var Result = new Bogus.DataSets.{expressionlist[0]}; return Result.{expressionlist[1]}";
                             }
-                            else 
+                            else
                             {
                                 expression = $"var Result = new Bogus.DataSets.{expressionlist[0]}; return Result.{expressionlist[1]}";
                             }
-                            
+
                         }
                         else
                         {

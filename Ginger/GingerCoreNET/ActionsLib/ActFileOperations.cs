@@ -23,7 +23,6 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Applitools.Utils;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using NPOI.HPSF;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -72,7 +71,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eFileoperations)GetOrCreateInputParam<eFileoperations>(nameof(FileOperationMode), eFileoperations.CheckFileExists);
+                return GetOrCreateInputParam<eFileoperations>(nameof(FileOperationMode), eFileoperations.CheckFileExists);
             }
             set
             {
@@ -141,204 +140,204 @@ namespace GingerCore.Actions
             }
             try
             {
-            switch (FileOperationMode)
-            {
-                case eFileoperations.CheckFileExists:
-                    if (!System.IO.File.Exists(calculatedSourceFilePath))
-                    {
-                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        base.ExInfo = "File doesn't exists";
-                        return;
-                    }
-                    break;
-
-                case eFileoperations.CheckFolderExists:
-                    if (!System.IO.Directory.Exists(calculatedSourceFilePath))
-                    {
-                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        base.ExInfo = "Folder doesn't exists";
-                        return;
-                    }
-
-                    break;
-                case eFileoperations.DeleteDirectoryFiles:
-                    if (!System.IO.Directory.Exists(calculatedSourceFilePath))
-                    {
-                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        base.ExInfo = "Folder doesn't exists";
-                        return;
-                    }
-                    foreach (string file in System.IO.Directory.GetFiles(calculatedSourceFilePath))
-                    {
-                        System.IO.File.Delete(file);
-                    }
-                    break;
-                case eFileoperations.DeleteDirectory:
-                    if (!IsLinuxPath(calculatedSourceFilePath))
-                    {
-                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        base.ExInfo = "Path is not valid";
-                        return;
-                    }
-                    if (!System.IO.Directory.Exists(calculatedSourceFilePath))
-                    {
-                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        base.ExInfo = "Directory doesn't exist";
-                        return;
-                    }
-                    System.IO.Directory.Delete(calculatedSourceFilePath, recursive: true);
-                    break;
-                case eFileoperations.Copy:
-                    SetupDestinationFolder();
-                    if (System.IO.File.Exists(calculatedSourceFilePath))
-                    {
-                        if (System.IO.Directory.Exists(DestinationFolder))
+                switch (FileOperationMode)
+                {
+                    case eFileoperations.CheckFileExists:
+                        if (!System.IO.File.Exists(calculatedSourceFilePath))
                         {
-                            if (DestinationFile.Length > 0)
+                            base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                            base.ExInfo = "File doesn't exists";
+                            return;
+                        }
+                        break;
+
+                    case eFileoperations.CheckFolderExists:
+                        if (!System.IO.Directory.Exists(calculatedSourceFilePath))
+                        {
+                            base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                            base.ExInfo = "Folder doesn't exists";
+                            return;
+                        }
+
+                        break;
+                    case eFileoperations.DeleteDirectoryFiles:
+                        if (!System.IO.Directory.Exists(calculatedSourceFilePath))
+                        {
+                            base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                            base.ExInfo = "Folder doesn't exists";
+                            return;
+                        }
+                        foreach (string file in System.IO.Directory.GetFiles(calculatedSourceFilePath))
+                        {
+                            System.IO.File.Delete(file);
+                        }
+                        break;
+                    case eFileoperations.DeleteDirectory:
+                        if (!IsLinuxPath(calculatedSourceFilePath))
+                        {
+                            base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                            base.ExInfo = "Path is not valid";
+                            return;
+                        }
+                        if (!System.IO.Directory.Exists(calculatedSourceFilePath))
+                        {
+                            base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                            base.ExInfo = "Directory doesn't exist";
+                            return;
+                        }
+                        System.IO.Directory.Delete(calculatedSourceFilePath, recursive: true);
+                        break;
+                    case eFileoperations.Copy:
+                        SetupDestinationFolder();
+                        if (System.IO.File.Exists(calculatedSourceFilePath))
+                        {
+                            if (System.IO.Directory.Exists(DestinationFolder))
                             {
-                                System.IO.File.Copy(calculatedSourceFilePath, Path.Combine(DestinationFolder, DestinationFile));
+                                if (DestinationFile.Length > 0)
+                                {
+                                    System.IO.File.Copy(calculatedSourceFilePath, Path.Combine(DestinationFolder, DestinationFile));
+                                }
+                                else
+                                {
+                                    System.IO.File.Copy(calculatedSourceFilePath, Path.Combine(DestinationFolder, Path.GetFileName(calculatedSourceFilePath)));
+                                }
                             }
                             else
                             {
-                                System.IO.File.Copy(calculatedSourceFilePath, Path.Combine(DestinationFolder, Path.GetFileName(calculatedSourceFilePath)));
+                                base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                                base.Error = "Destination folder not found";
+                                base.ExInfo = "Destination folder not found";
+                                return;
                             }
                         }
                         else
                         {
                             base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                            base.Error = "Destination folder not found";
-                            base.ExInfo = "Destination folder not found";
+                            base.ExInfo = "File doesn't exists";
+                            base.Error = "File doesn't exists";
+
                             return;
                         }
-                    }
-                    else
-                    {
-                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        base.ExInfo = "File doesn't exists";
-                        base.Error = "File doesn't exists";
-
-                        return;
-                    }
-                    break;
-                case eFileoperations.ForceCopy:
-                    SetupDestinationFolder();
-                    if (System.IO.File.Exists(calculatedSourceFilePath))
-                    {
-                        if (!System.IO.Directory.Exists(DestinationFolder))
+                        break;
+                    case eFileoperations.ForceCopy:
+                        SetupDestinationFolder();
+                        if (System.IO.File.Exists(calculatedSourceFilePath))
                         {
+                            if (!System.IO.Directory.Exists(DestinationFolder))
+                            {
 
-                            System.IO.Directory.CreateDirectory(DestinationFolder);
+                                System.IO.Directory.CreateDirectory(DestinationFolder);
+                            }
+                            System.IO.File.Copy(calculatedSourceFilePath, Path.Combine(DestinationFolder, Path.GetFileName(calculatedSourceFilePath)), true);
                         }
-                        System.IO.File.Copy(calculatedSourceFilePath, Path.Combine(DestinationFolder, Path.GetFileName(calculatedSourceFilePath)), true);
-                    }
-                    else
-                    {
-                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        base.ExInfo = "File doesn't exists";
-                        base.Error = "File doesn't exists";
-                        return;
-                    }
-                    break;
-                case eFileoperations.Move:
-                    SetupDestinationFolder();
-                    if (IsSorcePathRelative)
-                    {
-                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        base.ExInfo = "You cannot move a file from Solution";
-                        base.Error = "You cannot move a file from Solution";
-                        return;
-                    }
-                    else if (System.IO.File.Exists(calculatedSourceFilePath))
-                    {
-                        if (!System.IO.Directory.Exists(DestinationFolder))
+                        else
                         {
-
                             base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                            base.ExInfo = "Destination Folder doesn't exists ";
-                            base.Error = "Destination Folder doesn't exists";
+                            base.ExInfo = "File doesn't exists";
+                            base.Error = "File doesn't exists";
                             return;
                         }
-                        string fileName = string.Empty;
-                        if (!string.IsNullOrEmpty(DestinationFile))
+                        break;
+                    case eFileoperations.Move:
+                        SetupDestinationFolder();
+                        if (IsSorcePathRelative)
                         {
-                            fileName = DestinationFile;
+                            base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                            base.ExInfo = "You cannot move a file from Solution";
+                            base.Error = "You cannot move a file from Solution";
+                            return;
+                        }
+                        else if (System.IO.File.Exists(calculatedSourceFilePath))
+                        {
+                            if (!System.IO.Directory.Exists(DestinationFolder))
+                            {
+
+                                base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                                base.ExInfo = "Destination Folder doesn't exists ";
+                                base.Error = "Destination Folder doesn't exists";
+                                return;
+                            }
+                            string fileName = string.Empty;
+                            if (!string.IsNullOrEmpty(DestinationFile))
+                            {
+                                fileName = DestinationFile;
+                            }
+                            else
+                            {
+                                fileName = Path.GetFileName(calculatedSourceFilePath);
+                            }
+                            System.IO.File.Move(calculatedSourceFilePath, Path.Combine(DestinationFolder, fileName));
                         }
                         else
                         {
-                            fileName = Path.GetFileName(calculatedSourceFilePath);
+                            base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                            base.ExInfo = "File doesn't exists";
+                            base.Error = "File doesn't exists";
+                            return;
                         }
-                        System.IO.File.Move(calculatedSourceFilePath, Path.Combine(DestinationFolder, fileName));
-                    }
-                    else
-                    {
-                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        base.ExInfo = "File doesn't exists";
-                        base.Error = "File doesn't exists";
-                        return;
-                    }
-                    break;
-                case eFileoperations.RunCommand:
-                case eFileoperations.Execute:
-                    if (!string.IsNullOrEmpty(Arguments))
-                    {
-                        ProcessStart(calculatedSourceFilePath, Arguments);
-                    }
-                    else
-                    {
-                        int spaceIndex = calculatedSourceFilePath.IndexOf(' ');
-                        //For Backward Support - Providing structure like: file Path + ' ' + arguments
-                        if (spaceIndex != -1 && System.IO.File.Exists(calculatedSourceFilePath.Substring(0, spaceIndex + 1)))
+                        break;
+                    case eFileoperations.RunCommand:
+                    case eFileoperations.Execute:
+                        if (!string.IsNullOrEmpty(Arguments))
                         {
-                            ProcessStart(calculatedSourceFilePath.Substring(0, spaceIndex + 1), calculatedSourceFilePath.Substring(spaceIndex));
+                            ProcessStart(calculatedSourceFilePath, Arguments);
                         }
                         else
                         {
-                            ProcessStart(calculatedSourceFilePath);
+                            int spaceIndex = calculatedSourceFilePath.IndexOf(' ');
+                            //For Backward Support - Providing structure like: file Path + ' ' + arguments
+                            if (spaceIndex != -1 && System.IO.File.Exists(calculatedSourceFilePath[..(spaceIndex + 1)]))
+                            {
+                                ProcessStart(calculatedSourceFilePath[..(spaceIndex + 1)], calculatedSourceFilePath[spaceIndex..]);
+                            }
+                            else
+                            {
+                                ProcessStart(calculatedSourceFilePath);
+                            }
                         }
-                    }
-                    break;
-                case eFileoperations.UnZip:
-                    SetupDestinationFolder();
-                    if (!calculatedSourceFilePath.ToLower().EndsWith(".zip"))
-                    {
-                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        base.ExInfo = "Not a valid Zip File";
-                        base.Error = "Not a valid Zip File";
-                        return;
-                    }                
-
-                    if (System.IO.File.Exists(calculatedSourceFilePath))
-                    {
-                        if (!DestinationFolder.EndsWithOrdinal(Path.GetFileNameWithoutExtension(calculatedSourceFilePath)))
+                        break;
+                    case eFileoperations.UnZip:
+                        SetupDestinationFolder();
+                        if (!calculatedSourceFilePath.ToLower().EndsWith(".zip"))
                         {
-                            DestinationFolder = Path.Combine(DestinationFolder, Path.GetFileNameWithoutExtension(calculatedSourceFilePath));
+                            base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                            base.ExInfo = "Not a valid Zip File";
+                            base.Error = "Not a valid Zip File";
+                            return;
                         }
-                        if (!System.IO.Directory.Exists(DestinationFolder))
+
+                        if (System.IO.File.Exists(calculatedSourceFilePath))
                         {
-                            System.IO.Directory.CreateDirectory(DestinationFolder);
+                            if (!DestinationFolder.EndsWithOrdinal(Path.GetFileNameWithoutExtension(calculatedSourceFilePath)))
+                            {
+                                DestinationFolder = Path.Combine(DestinationFolder, Path.GetFileNameWithoutExtension(calculatedSourceFilePath));
+                            }
+                            if (!System.IO.Directory.Exists(DestinationFolder))
+                            {
+                                System.IO.Directory.CreateDirectory(DestinationFolder);
+                            }
+                            System.IO.Compression.ZipFile.ExtractToDirectory(calculatedSourceFilePath, DestinationFolder);
                         }
-                        System.IO.Compression.ZipFile.ExtractToDirectory(calculatedSourceFilePath, DestinationFolder);
-                    }
 
-                    else
-                    {
-                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        base.ExInfo = "File doesn't exists";
-                        base.Error = "File doesn't exists";
-                        return;
-                    }
-                    break;
+                        else
+                        {
+                            base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                            base.ExInfo = "File doesn't exists";
+                            base.Error = "File doesn't exists";
+                            return;
+                        }
+                        break;
 
-                default:
-                    break;
+                    default:
+                        break;
 
+                }
             }
-        }
-        catch(Exception ex)
-         {
+            catch (Exception ex)
+            {
                 base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                base.Error = $"{ActionType.ToString()} File Operation failed due to {ex.Message}";
-                Reporter.ToLog(eLogLevel.ERROR, $"{ActionType.ToString()} File Operation failed", ex);
+                base.Error = $"{ActionType} File Operation failed due to {ex.Message}";
+                Reporter.ToLog(eLogLevel.ERROR, $"{ActionType} File Operation failed", ex);
             }
         }
 
@@ -415,7 +414,7 @@ namespace GingerCore.Actions
         {
             char[] invalidPathChars = Path.GetInvalidPathChars();
 
-            if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+            if (Environment.OSVersion.Platform is PlatformID.Unix or PlatformID.MacOSX)
             {
                 // Linux or macOS platform, check for valid Linux path characters
                 foreach (char c in path)

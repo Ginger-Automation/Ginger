@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib;
+using Ginger.External.Katalon;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.TreeViewItemsLib;
@@ -130,8 +131,15 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowRefresh: false);
             }
+            MenuItem importMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Import", eImageType.ImportFile);
+            TreeViewUtils.AddSubMenuItem(importMenu, "Katalon Object-Repository", ImportFromKatalonObjectRepository, CommandParameter: null!, icon: eImageType.Katalon);
 
             AddSourceControlOptions(mContextMenu);
+        }
+
+        private void ImportFromKatalonObjectRepository(object sender, RoutedEventArgs e)
+        {
+            WizardWindow.ShowWizard(new ImportKatalonObjectRepositoryWizard(mPOMModelFolder), width: 1000);
         }
 
         internal void AddPOM(object sender, RoutedEventArgs e)
@@ -139,7 +147,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             List<ApplicationPlatform> TargetApplications = WorkSpace.Instance.Solution.GetListOfPomSupportedPlatform();
             if (TargetApplications.Count != 0)
             {
-                mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
+                mTreeView.Tree.ExpandTreeItem(this);
                 WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder), 1000, 700, DoNotShowAsDialog: true);
             }
             else

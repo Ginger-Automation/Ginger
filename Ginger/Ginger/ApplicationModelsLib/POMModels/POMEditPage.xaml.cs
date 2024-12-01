@@ -158,7 +158,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             SetDefaultPage();
 
-            if(mEditMode == eRIPageViewMode.View || mEditMode == eRIPageViewMode.ViewAndExecute)
+            if (mEditMode is eRIPageViewMode.View or eRIPageViewMode.ViewAndExecute)
             {
                 xDetailsStackPanel.IsEnabled = false;
                 xScreenshotOperationBtns.IsEnabled = false;
@@ -233,7 +233,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xTargetApplicationComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
             xTargetApplicationComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
             CollectionChangedEventManager.AddHandler(source: WorkSpace.Instance.Solution.ApplicationPlatforms, handler: ApplicationPlatforms_CollectionChanged);
-            
+
         }
 
         private void ApplicationPlatforms_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -298,9 +298,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void BrowseImageButtonClicked(object sender, System.Windows.RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog();
-            op.Title = "Select a picture";
-            op.Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg";
+            System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog
+            {
+                Title = "Select a picture",
+                Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg"
+            };
             if (op.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 if (!string.IsNullOrEmpty(op.FileName))
@@ -426,19 +428,23 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mPOM.StartDirtyTracking();
             }
 
-            Button saveButton = new Button();
-            saveButton.Content = "Save";
+            Button saveButton = new Button
+            {
+                Content = "Save"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: saveButton, eventName: nameof(ButtonBase.Click), handler: SaveButton_Click);
-            
 
-            Button undoButton = new Button();
-            undoButton.Content = "Undo & Close";
+
+            Button undoButton = new Button
+            {
+                Content = "Undo & Close"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoButton, eventName: nameof(ButtonBase.Click), handler: UndoButton_Click);
-            
+
 
             this.Height = 800;
             this.Width = 800;
-            GingerCore.General.LoadGenericWindow(ref mWin, App.MainWindow, windowStyle, mPOM.Name + " Edit Page", this, new ObservableList<Button> { saveButton, undoButton });
+            GingerCore.General.LoadGenericWindow(ref mWin, App.MainWindow, windowStyle, mPOM.Name + " Edit Page", this, [saveButton, undoButton]);
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)

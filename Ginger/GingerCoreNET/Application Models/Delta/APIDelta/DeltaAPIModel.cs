@@ -175,7 +175,7 @@ namespace GingerCoreNET.Application_Models
             }
         }
 
-        private ObservableList<string> _OperationsList = new ObservableList<string>();
+        private ObservableList<string> _OperationsList = [];
         public ObservableList<string> OperationsList
         {
             get
@@ -194,9 +194,9 @@ namespace GingerCoreNET.Application_Models
             foreach (eHandlingOperations enumItem in Enum.GetValues(typeof(eHandlingOperations)))
             {
                 string enumDes = GetEnumDescription(enumItem);
-                if (comparisonStatus == eComparisonOutput.New || comparisonStatus == eComparisonOutput.Unknown)
+                if (comparisonStatus is eComparisonOutput.New or eComparisonOutput.Unknown)
                 {
-                    if (enumItem == eHandlingOperations.MergeChanges || enumItem == eHandlingOperations.ReplaceExisting)
+                    if (enumItem is eHandlingOperations.MergeChanges or eHandlingOperations.ReplaceExisting)
                     {
                         continue;
                     }
@@ -271,13 +271,13 @@ namespace GingerCoreNET.Application_Models
         {
             get
             {
-                switch (comparisonStatus)
+                return comparisonStatus switch
                 {
-                    case eComparisonOutput.New: return Amdocs.Ginger.Common.Enums.eImageType.Added;
-                    case eComparisonOutput.Modified: return Amdocs.Ginger.Common.Enums.eImageType.Changed;
-                    case eComparisonOutput.Unchanged: return Amdocs.Ginger.Common.Enums.eImageType.Unchanged;
-                    default: return Amdocs.Ginger.Common.Enums.eImageType.Unknown;
-                }
+                    eComparisonOutput.New => Amdocs.Ginger.Common.Enums.eImageType.Added,
+                    eComparisonOutput.Modified => Amdocs.Ginger.Common.Enums.eImageType.Changed,
+                    eComparisonOutput.Unchanged => Amdocs.Ginger.Common.Enums.eImageType.Unchanged,
+                    _ => Amdocs.Ginger.Common.Enums.eImageType.Unknown,
+                };
             }
         }
 
@@ -288,8 +288,7 @@ namespace GingerCoreNET.Application_Models
 
             if (enumMember != null && enumMember.Length > 0)
             {
-                object[] attrs = enumMember[0].GetCustomAttributes(typeof(DescriptionAttribute)) as object[];
-                if (attrs != null && attrs.Length > 0)
+                if (enumMember[0].GetCustomAttributes(typeof(DescriptionAttribute)) is object[] attrs && attrs.Length > 0)
                 {
                     return (attrs[0] as DescriptionAttribute).Description;
                 }
@@ -308,9 +307,8 @@ namespace GingerCoreNET.Application_Models
 
             foreach (var field in type.GetFields())
             {
-                var attribute = Attribute.GetCustomAttribute(field,
-                    typeof(DescriptionAttribute)) as DescriptionAttribute;
-                if (attribute != null)
+                if (Attribute.GetCustomAttribute(field,
+                    typeof(DescriptionAttribute)) is DescriptionAttribute attribute)
                 {
                     if (attribute.Description == description)
                     {

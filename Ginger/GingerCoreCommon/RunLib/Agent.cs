@@ -118,7 +118,7 @@ namespace GingerCore
         public bool Active { get; set; }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<DriverConfigParam> AdvanceAgentConfigurations = new ObservableList<DriverConfigParam>();
+        public ObservableList<DriverConfigParam> AdvanceAgentConfigurations = [];
 
         public bool mIsStarting = false;
 
@@ -145,7 +145,7 @@ namespace GingerCore
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> Tags = new ObservableList<Guid>();
+        public ObservableList<Guid> Tags = [];
 
         public override bool FilterBy(eFilterBy filterType, object obj)
         {
@@ -311,40 +311,27 @@ namespace GingerCore
 
         public static ePlatformType GetDriverPlatformType(eDriverType driver)
         {
-            switch (driver)
+            return driver switch
             {
-                case eDriverType.InternalBrowser:
-                case eDriverType.Selenium:
-                case eDriverType.Playwright:
-                    return ePlatformType.Web;
-                case eDriverType.ASCF:
-                    return ePlatformType.ASCF;
-                case eDriverType.DOSConsole:
-                    return ePlatformType.DOS;
-                case eDriverType.UnixShell:
-                    return ePlatformType.Unix;
-                case eDriverType.WebServices:
-                    return ePlatformType.WebServices;
-                case eDriverType.WindowsAutomation:
-                    return ePlatformType.Windows;
-                case eDriverType.Appium:
-                    return ePlatformType.Mobile;
-                case eDriverType.PowerBuilder:
-                    return ePlatformType.PowerBuilder;
-                case eDriverType.JavaDriver:
-                    return ePlatformType.Java;
-                case eDriverType.MainFrame3270:
-                    return ePlatformType.MainFrame;
+                eDriverType.InternalBrowser or eDriverType.Selenium or eDriverType.Playwright => ePlatformType.Web,
+                eDriverType.ASCF => ePlatformType.ASCF,
+                eDriverType.DOSConsole => ePlatformType.DOS,
+                eDriverType.UnixShell => ePlatformType.Unix,
+                eDriverType.WebServices => ePlatformType.WebServices,
+                eDriverType.WindowsAutomation => ePlatformType.Windows,
+                eDriverType.Appium => ePlatformType.Mobile,
+                eDriverType.PowerBuilder => ePlatformType.PowerBuilder,
+                eDriverType.JavaDriver => ePlatformType.Java,
+                eDriverType.MainFrame3270 => ePlatformType.MainFrame,
                 //case eDriverType.AndroidADB:
                 //    return ePlatformType.AndroidDevice;               
-                default:
-                    return ePlatformType.NA;
-            }
+                _ => ePlatformType.NA,
+            };
         }
 
         public List<object> GetDriverTypesByPlatfrom(string platformType)
         {
-            List<object> driverTypes = new List<object>();
+            List<object> driverTypes = [];
 
             if (platformType == ePlatformType.Web.ToString())
             {
@@ -557,32 +544,32 @@ namespace GingerCore
         {
             if (errorType == SerializationErrorType.SetValueException)
             {
-                if (value == "MobileAppiumAndroid" || value == "PerfectoMobileAndroid" || value == "MobileAppiumIOS" || value == "PerfectoMobileIOS"
-                       || value == "MobileAppiumAndroidBrowser" || value == "PerfectoMobileAndroidWeb" || value == "MobileAppiumIOSBrowser" || value == "PerfectoMobileIOSWeb")
+                if (value is "MobileAppiumAndroid" or "PerfectoMobileAndroid" or "MobileAppiumIOS" or "PerfectoMobileIOS"
+                       or "MobileAppiumAndroidBrowser" or "PerfectoMobileAndroidWeb" or "MobileAppiumIOSBrowser" or "PerfectoMobileIOSWeb")
                 {
                     this.DriverType = Agent.eDriverType.Appium;
-                    this.DriverConfiguration = new ObservableList<DriverConfigParam>();
+                    this.DriverConfiguration = [];
                     //this.GetOrCreateParam(nameof(AppiumServer), @"http://127.0.0.1:4723/wd/hub");
                     this.GetOrCreateParam("LoadDeviceWindow", "true");
                     this.GetOrCreateParam("DeviceAutoScreenshotRefreshMode", eAutoScreenshotRefreshMode.Live.ToString());
                     this.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified;
 
-                    if (value == "MobileAppiumAndroid" || value == "PerfectoMobileAndroid")
+                    if (value is "MobileAppiumAndroid" or "PerfectoMobileAndroid")
                     {
                         this.GetOrCreateParam("DevicePlatformType", eDevicePlatformType.Android.ToString());
                         this.GetOrCreateParam("AppType", eAppType.NativeHybride.ToString());
                     }
-                    else if (value == "MobileAppiumIOS" || value == "PerfectoMobileIOS")
+                    else if (value is "MobileAppiumIOS" or "PerfectoMobileIOS")
                     {
                         this.GetOrCreateParam("DevicePlatformType", eDevicePlatformType.iOS.ToString());
                         this.GetOrCreateParam("AppType", eAppType.NativeHybride.ToString());
                     }
-                    else if (value == "MobileAppiumAndroidBrowser" || value == "PerfectoMobileAndroidWeb")
+                    else if (value is "MobileAppiumAndroidBrowser" or "PerfectoMobileAndroidWeb")
                     {
                         this.GetOrCreateParam("DevicePlatformType", eDevicePlatformType.Android.ToString());
                         this.GetOrCreateParam("AppType", eAppType.Web.ToString());
                     }
-                    else if (value == "MobileAppiumIOSBrowser" || value == "PerfectoMobileIOSWeb")
+                    else if (value is "MobileAppiumIOSBrowser" or "PerfectoMobileIOSWeb")
                     {
                         this.GetOrCreateParam("DevicePlatformType", eDevicePlatformType.iOS.ToString());
                         this.GetOrCreateParam("AppType", eAppType.Web.ToString());
@@ -626,7 +613,7 @@ namespace GingerCore
                         DriverConfiguration = [];
                     }
                     DriverType = eDriverType.Selenium;
-                    
+
                     DriverConfiguration.Add(new DriverConfigParam()
                     {
                         Parameter = "BrowserType",

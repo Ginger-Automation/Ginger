@@ -62,7 +62,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
 
         static List<string> CheckMissingVariables(Activity activity)
         {
-            List<string> usedVariables = new List<string>();
+            List<string> usedVariables = [];
             foreach (Act action in activity.Acts)
             {
                 VariableBase.GetListOfUsedVariables(action, ref usedVariables);

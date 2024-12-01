@@ -28,13 +28,11 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.ComponentModel;
 using static GingerCore.Agent;
-using System.Linq;
-using Ginger.Drivers.DriversConfigsEditPages;
 
 namespace Ginger.Agents
 {
@@ -74,7 +72,7 @@ namespace Ginger.Agents
                 BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Notes));
                 BindingHandler.ObjFieldBinding(xAgentTypelbl, Label.ContentProperty, mAgent, nameof(Agent.AgentType));
                 BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mAgent, nameof(RepositoryItemBase.Publish));
-                
+
                 if (WorkSpace.Instance.BetaFeatures.ShowHealenium)
                 {
                     UpdateHealeniumUI();
@@ -119,7 +117,7 @@ namespace Ginger.Agents
                 }
             }
         }
-        
+
         private void Agent_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (string.Equals(e.PropertyName, nameof(Agent.DriverType)))
@@ -140,12 +138,12 @@ namespace Ginger.Agents
 
         private bool DriverSupportMultipleBrowsers(eDriverType driverType)
         {
-            return driverType == eDriverType.Selenium || driverType == eDriverType.Playwright;
+            return driverType is eDriverType.Selenium or eDriverType.Playwright;
         }
-        
+
         private void BetaFeatures_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == nameof(BetaFeatures.ShowHealenium))
+            if (e.PropertyName == nameof(BetaFeatures.ShowHealenium))
             {
                 if (WorkSpace.Instance.BetaFeatures.ShowHealenium)
                 {
@@ -158,20 +156,20 @@ namespace Ginger.Agents
                 }
 
             }
-            
+
         }
 
         private void UpdateHealeniumUI()
         {
             bool isSeleniumDriver = mAgent.DriverType == eDriverType.Selenium;
-            WebBrowserType? browserType = null; 
+            WebBrowserType? browserType = null;
             if (mAgent.DriverConfiguration != null)
             {
                 DriverConfigParam? browserTypeParam = mAgent.DriverConfiguration.FirstOrDefault(p => string.Equals(p.Parameter, nameof(GingerWebDriver.BrowserType)));
                 if (browserTypeParam != null && Enum.TryParse(browserTypeParam.Value, out WebBrowserType result))
                 {
                     browserType = result;
-                }                
+                }
             }
             bool isRemoteBrowser = browserType.HasValue && browserType.Value == WebBrowserType.RemoteWebDriver;
 
@@ -239,7 +237,7 @@ namespace Ginger.Agents
                 BrowserTypeComboBox.Items.Clear();
                 BrowserTypePanel.Visibility = Visibility.Collapsed;
             }
-            List<object> lst = new List<object>();
+            List<object> lst = [];
             foreach (eDriverType item in Enum.GetValues(typeof(eDriverType)))
             {
                 var platform = Agent.GetDriverPlatformType(item);
@@ -266,7 +264,7 @@ namespace Ginger.Agents
         private void PopulateBrowserTypeComboBox()
         {
             BrowserTypeComboBox.Items.Clear();
-            
+
             foreach (WebBrowserType browser in GingerWebDriver.GetSupportedBrowserTypes(mAgent.DriverType))
             {
                 BrowserTypeComboBox.Items.Add(new ComboEnumItem()
@@ -290,7 +288,7 @@ namespace Ginger.Agents
             browserTypeParam.Value = ((WebBrowserType)BrowserTypeComboBox.SelectedValue).ToString();
             if (xAgentConfigFrame.Content is AgentDriverConfigPage driverConfigPage)
             {
-                driverConfigPage.SetDriverConfigsPageContent();              
+                driverConfigPage.SetDriverConfigsPageContent();
             }
 
             if (WorkSpace.Instance.BetaFeatures.ShowHealenium)
@@ -356,7 +354,7 @@ namespace Ginger.Agents
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR,"Failed to test the agent", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to test the agent", ex);
                     }
                 });
             }

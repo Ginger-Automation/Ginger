@@ -66,7 +66,7 @@ namespace Ginger.Actions
                 if (mContext != null && mContext.BusinessFlow != null && mContext.BusinessFlow.CurrentActivity != null)
                 {
                     string targetapp = mContext.BusinessFlow.CurrentActivity.TargetApplication;
-                    mActConsoleCommand.Platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == targetapp).Platform; 
+                    mActConsoleCommand.Platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == targetapp).Platform;
                 }
                 //TODO: Need to handle in generic way for all actions added to SR
                 //else - if platform is NA and context is also null means we are in Shared repository
@@ -74,9 +74,7 @@ namespace Ginger.Actions
             }
 
 
-            List<object> actionList = new List<object>();
-
-            actionList.Add(ActConsoleCommand.eConsoleCommand.FreeCommand);
+            List<object> actionList = [ActConsoleCommand.eConsoleCommand.FreeCommand];
 
             if (mActConsoleCommand.Platform == ePlatformType.Unix)
             {

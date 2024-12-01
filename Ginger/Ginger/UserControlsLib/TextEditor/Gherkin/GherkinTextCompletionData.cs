@@ -54,19 +54,19 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             string lineAfterHeader = string.Empty;
             if (lineNoSpace.StartsWith("Given"))
             {
-                lineAfterHeader = lineNoSpace.Substring(5);
+                lineAfterHeader = lineNoSpace[5..];
             }
             else if (lineNoSpace.StartsWith("And"))
             {
-                lineAfterHeader = lineNoSpace.Substring(3);
+                lineAfterHeader = lineNoSpace[3..];
             }
             else if (lineNoSpace.StartsWith("When"))
             {
-                lineAfterHeader = lineNoSpace.Substring(4);
+                lineAfterHeader = lineNoSpace[4..];
             }
             else if (lineNoSpace.StartsWith("Then"))
             {
-                lineAfterHeader = lineNoSpace.Substring(4);
+                lineAfterHeader = lineNoSpace[4..];
             }
             else
             {
@@ -96,7 +96,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         {
             while (line.StartsWith(" ") || line.StartsWith("\t"))
             {
-                line = line.Substring(1);
+                line = line[1..];
             }
 
             return line;

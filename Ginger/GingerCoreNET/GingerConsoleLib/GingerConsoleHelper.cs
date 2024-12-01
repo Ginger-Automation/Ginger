@@ -74,15 +74,18 @@ namespace Amdocs.Ginger.CoreNET.GingerConsoleLib
             string cmd = "dotnet " + GingerConsoleDLL + " " + tempfile;
             //TODO: add option to send output to file 
 
-            System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);
-
-            // The following commands are needed to redirect the standard output.
-            // This means that it will be redirected to the Process.StandardOutput StreamReader.
-            procStartInfo.UseShellExecute = true; // false
+            System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd)
+            {
+                // The following commands are needed to redirect the standard output.
+                // This means that it will be redirected to the Process.StandardOutput StreamReader.
+                UseShellExecute = true // false
+            };
             // Do not create the black window.
             // Now we create a process, assign its ProcessStartInfo and start it
-            System.Diagnostics.Process proc = new System.Diagnostics.Process();
-            proc.StartInfo = procStartInfo;
+            System.Diagnostics.Process proc = new System.Diagnostics.Process
+            {
+                StartInfo = procStartInfo
+            };
             proc.Start();
             // Get the output into a string
             return proc;

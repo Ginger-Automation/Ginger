@@ -134,20 +134,21 @@ namespace GingerTest
         }
 
         [TestMethod]
-        
+
         public void AddApplication()
         {
             EnvironmentsPOM EnvsPOM = mGingerAutomator.MainWindowPOM.GotoEnvironments();
-            ApplicationPlatform applicationPlatform = new ApplicationPlatform();
+            ApplicationPlatform applicationPlatform = new ApplicationPlatform
+            {
+                AppName = "Web-App-Manas",
+                Platform = ePlatformType.Web
+            };
 
-            applicationPlatform.AppName = "Web-App-Manas";
-            applicationPlatform.Platform = ePlatformType.Web;
-            
             WorkSpace.Instance.Solution.ApplicationPlatforms.Add(applicationPlatform);
 
             ProjEnvironment e1 = new ProjEnvironment() { Name = "aaa" };
             e1.AddApplications(WorkSpace.Instance.Solution.ApplicationPlatforms);
-            
+
             ObservableList<EnvApplication> expectedApplicationList = e1.Applications;
 
             string txt = e1.RepositorySerializer.SerializeToString(e1);
@@ -183,7 +184,7 @@ namespace GingerTest
 
         }
 
-    // TODO: FIXME not showing in tree b is false
+        // TODO: FIXME not showing in tree b is false
         [TestMethod]
         [Timeout(60000)]
         public void ChangeEnvNameOnDiskUpdateObjandShowinTree()

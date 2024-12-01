@@ -16,12 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Telemetry;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
@@ -31,7 +29,6 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
@@ -40,8 +37,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         static Newtonsoft.Json.JsonSerializer mJsonSerializer;
         public TextFileRepository()
         {
-            mJsonSerializer = new Newtonsoft.Json.JsonSerializer();
-            mJsonSerializer.NullValueHandling = NullValueHandling.Ignore;
+            mJsonSerializer = new Newtonsoft.Json.JsonSerializer
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
         }
 
         public override void RunSetUpdate(LiteDB.ObjectId runSetLiteDbId, LiteDB.ObjectId runnerLiteDbId, GingerExecutionEngine gingerRunner)
@@ -304,7 +303,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
             try
             {
-                DirectoryInfo di = new (logFolder);
+                DirectoryInfo di = new(logFolder);
                 di.Delete(true);
             }
             catch (Exception ex)

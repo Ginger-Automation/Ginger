@@ -43,7 +43,7 @@ namespace GingerCore.Variables
         public string VariableName { get; set; }
 
         [IsSerializedForLocalRepository]
-        public List<string> VariableValues = new List<string>();
+        public List<string> VariableValues = [];
 
         public override string ItemName
         {

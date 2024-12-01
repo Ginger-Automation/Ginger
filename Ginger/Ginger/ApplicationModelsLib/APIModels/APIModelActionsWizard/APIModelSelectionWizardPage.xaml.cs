@@ -46,10 +46,14 @@ namespace Ginger.ApiModelsFolder
             xApiModelsGrid.Title = "API Models";
             xApiModelsGrid.SetTitleStyle((Style)TryFindResource("@ucGridTitleLightStyle"));
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationAPIModel.Name), Header = "API Name", ReadOnly = true, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationAPIModel.Description), Header = "Description", ReadOnly = true, AllowSorting = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ApplicationAPIModel.Name), Header = "API Name", ReadOnly = true, AllowSorting = true },
+                new GridColView() { Field = nameof(ApplicationAPIModel.Description), Header = "Description", ReadOnly = true, AllowSorting = true },
+            ]
+            };
 
             xApiModelsGrid.SetAllColumnsDefaultView(view);
             xApiModelsGrid.InitViewItems();

@@ -121,8 +121,10 @@ namespace GingerWPFUnitTest.POMs
         public void DoMouseEnterEvent()
         {
             UIElement b = (UIElement)dependencyObject;
-            MouseEventArgs e = new MouseEventArgs(Mouse.PrimaryDevice, 0);
-            e.RoutedEvent = Mouse.MouseEnterEvent;
+            MouseEventArgs e = new MouseEventArgs(Mouse.PrimaryDevice, 0)
+            {
+                RoutedEvent = Mouse.MouseEnterEvent
+            };
             b.RaiseEvent(e);
             SleepWithDoEvents(100);
         }

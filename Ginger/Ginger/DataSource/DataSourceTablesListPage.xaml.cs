@@ -30,8 +30,8 @@ namespace Ginger.DataSource
     /// </summary>
     public partial class DataSourceTablesListPage : Page
     {
-        ObservableList<DataSourceBase> mDSList = new ObservableList<DataSourceBase>();
-        ObservableList<DataSourceTable> mDSTableList = new ObservableList<DataSourceTable>();
+        ObservableList<DataSourceBase> mDSList = [];
+        ObservableList<DataSourceTable> mDSTableList = [];
         DataSourceTable.eDSTableType mDSTableType;
 
         string mDataSourceName;
@@ -50,7 +50,7 @@ namespace Ginger.DataSource
                 return;
             }
 
-            List<string> mDSNames = new List<string>();
+            List<string> mDSNames = [];
             foreach (DataSourceBase ds in mDSList)
             {
                 mDSNames.Add(ds.Name);
@@ -77,11 +77,12 @@ namespace Ginger.DataSource
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button okBtn = new Button();
-            okBtn.Content = "OK";
+            Button okBtn = new Button
+            {
+                Content = "OK"
+            };
             okBtn.Click += new RoutedEventHandler(OKButton_Click);
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(okBtn);
+            ObservableList<Button> winButtons = [okBtn];
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, true, "Cancel");
         }
@@ -131,11 +132,11 @@ namespace Ginger.DataSource
                     //
                     ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ds.FilePath);
 
-                    List<string> dsTableNames = new List<string>();
+                    List<string> dsTableNames = [];
                     mDSTableList = ds.GetTablesList();
                     if (mDSTableList != null)
                     {
-                        ObservableList<DataSourceTable> custTableList = new ObservableList<DataSourceTable>();
+                        ObservableList<DataSourceTable> custTableList = [];
                         foreach (DataSourceTable dst in mDSTableList)
                         {
                             if (dst.DSTableType == mDSTableType)

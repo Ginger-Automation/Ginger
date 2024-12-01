@@ -97,7 +97,7 @@ namespace GingerCore
 
         #region Activity-Error Handler Mapping
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> MappedErrorHandlers { get; set; } = new ObservableList<Guid>();
+        public ObservableList<Guid> MappedErrorHandlers { get; set; } = [];
 
         eHandlerMappingType mErrorHandlerMappingType;
 
@@ -116,7 +116,7 @@ namespace GingerCore
         }
         #endregion
 
-        public bool IsNotGherkinOptimizedActivity { get { return ActivitiesGroupID != "Optimized Activities" && ActivitiesGroupID != "Optimized Activities - Not in Use"; } }
+        public bool IsNotGherkinOptimizedActivity { get { return ActivitiesGroupID is not "Optimized Activities" and not "Optimized Activities - Not in Use"; } }
 
         private bool mAGSelected;
         public bool AGSelected { get { return mAGSelected; } set { if (mAGSelected != value) { mAGSelected = value; OnPropertyChanged(nameof(AGSelected)); } } }
@@ -517,17 +517,15 @@ namespace GingerCore
         /// <summary>
         /// Been used to identify if Acts were lazy loaded already or not
         /// </summary>
-        public bool ActsLazyLoad { get { return (mActs != null) ? mActs.LazyLoad : false; } }
+        public bool ActsLazyLoad { get { return (mActs != null) && mActs.LazyLoad; } }
         [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.StringData)]
         [IsSerializedForLocalRepository]
         public ObservableList<IAct> Acts
         {
             get
             {
-                if (mActs == null)
-                {
-                    mActs = new ObservableList<IAct>();
-                }
+                mActs ??= [];
+
                 if (mActs.LazyLoad)
                 {
                     mActs.LoadLazyInfo();
@@ -550,17 +548,15 @@ namespace GingerCore
         /// <summary>
         /// Been used to identify if Activity Variables were lazy loaded already or not
         /// </summary>
-        public bool VariablesLazyLoad { get { return (mVariables != null) ? mVariables.LazyLoad : false; } }
+        public bool VariablesLazyLoad { get { return (mVariables != null) && mVariables.LazyLoad; } }
         [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.StringData)]
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables
         {
             get
             {
-                if (mVariables == null)
-                {
-                    mVariables = new ObservableList<VariableBase>();
-                }
+                mVariables ??= [];
+
                 if (mVariables.LazyLoad)
                 {
                     mVariables.LoadLazyInfo();
@@ -578,7 +574,7 @@ namespace GingerCore
         }
 
 
-        private ObservableList<Consumer> mConsumerApplications = new();
+        private ObservableList<Consumer> mConsumerApplications = [];
         [IsSerializedForLocalRepository]
         public ObservableList<Consumer> ConsumerApplications
         {
@@ -597,7 +593,7 @@ namespace GingerCore
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> Tags = new ObservableList<Guid>();
+        public ObservableList<Guid> Tags = [];
 
         public override bool FilterBy(eFilterBy filterType, object obj)
         {
@@ -757,7 +753,7 @@ namespace GingerCore
         public override string GetNameForFileName() { return ActivityName; }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableDependency> VariablesDependencies { get; set; } = new ObservableList<VariableDependency>();
+        public ObservableList<VariableDependency> VariablesDependencies { get; set; } = [];
 
         /// <summary>
         /// Check if the Activity supposed to be executed according to it variables dependencies configurations
@@ -933,10 +929,7 @@ namespace GingerCore
                 action.ParentGuid = action.Guid;
                 oldNewActionGuidList.Add(new(action.ParentGuid, action.Guid));
             }
-            foreach (VariableBase variable in copy.Variables)
-            {
-                variable.ParentGuid = variable.Guid;
-            }
+
             foreach (FlowControl fc in copy.Acts.SelectMany(a => a.FlowControls))
             {
                 Guid targetGuid = fc.GetGuidFromValue();
@@ -1200,7 +1193,7 @@ namespace GingerCore
                     return false;
             }
         }
-        
+
 
         public override bool IsLinkedItem
         {
@@ -1285,5 +1278,56 @@ namespace GingerCore
             }
         }
 
+        /// <summary>
+        /// Compares this instance with another Activity instance to determine if they are equal.
+        /// </summary>
+        /// <param name="other">The other Activity instance to compare with.</param>
+        /// <returns>True if the instances are equal; otherwise, false.</returns>
+        public bool AreEqual(Activity other)
+        {
+            if (other == null || this.Acts.Count != other.Acts.Count || this.Variables.Count != other.Variables.Count)
+            {
+                return false;
+            }
+
+            if (this.ActivityName != other.ActivityName || this.TargetApplication != other.TargetApplication ||
+                   this.Type != other.Type || this.ActivitiesGroupID != other.ActivitiesGroupID)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < this.Acts.Count; i++)
+            {
+                if (!this.Acts[i].AreEqual(other.Acts[i]))
+                {
+                    return false;
+                }
+            }
+
+            for (int i = 0; i < this.Variables.Count; i++)
+            {
+                if (!this.Variables[i].AreEqual(other.Variables[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Compares this instance with another object to determine if they are equal.
+        /// </summary>
+        /// <param name="obj">The object to compare with.</param>
+        /// <returns>True if the objects are equal; otherwise, false.</returns>
+        public bool AreEqual(object obj)
+        {
+            if (obj == null || obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+
+            return AreEqual(obj as Activity);
+        }
     }
 }

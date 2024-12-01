@@ -49,10 +49,10 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
         public List<string> ItemTypesList = Enum.GetNames(typeof(GlobalSolution.eImportItemType)).ToList();
 
         public ObservableList<GlobalSolutionItem> ItemTypeListToImport = null;
-        public ObservableList<GlobalSolutionItem> ItemsListToImport = new ObservableList<GlobalSolutionItem>();
-        public ObservableList<GlobalSolutionItem> SelectedItemsListToImport = new ObservableList<GlobalSolutionItem>();
-        public List<VariableBase> VariableListToImport = new List<VariableBase>();
-        public List<EnvApplication> EnvAppListToImport = new List<EnvApplication>();
+        public ObservableList<GlobalSolutionItem> ItemsListToImport = [];
+        public ObservableList<GlobalSolutionItem> SelectedItemsListToImport = [];
+        public List<VariableBase> VariableListToImport = [];
+        public List<EnvApplication> EnvAppListToImport = [];
 
         NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
         public ImportItemWizard()
@@ -66,7 +66,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             AddPage(Name: "Select Solution Items", Title: "Select Solution Items", SubTitle: "Select Solution Items...", Page: new SelectItemFromSolutionPage());
 
             AddPage(Name: "Solution Items Dependency Validation", Title: "Solution Items Dependency Validation", SubTitle: "Solution Items Dependency Validation...", Page: new ItemDependancyPage());
-            
+
             DisableNavigationList(); //disable the direct navigation of pages
         }
 
@@ -263,7 +263,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 {
                     BusinessFlow businessFlow = (BusinessFlow)repoItemToImport;
                     //Lazy load activities and actions
-                    foreach(Activity activity in businessFlow.Activities)
+                    foreach (Activity activity in businessFlow.Activities)
                     {
                         _ = activity.Acts;
                     }

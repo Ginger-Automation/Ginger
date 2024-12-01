@@ -38,7 +38,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
         // For production
         internal ActScreenShotHandler(ActScreenShot act, IBrowser browser) :
-            this(act, browser, screenInfo: TargetFrameworkHelper.Helper, screenCapture: TargetFrameworkHelper.Helper, bitmapOperations: TargetFrameworkHelper.Helper) { }
+            this(act, browser, screenInfo: TargetFrameworkHelper.Helper, screenCapture: TargetFrameworkHelper.Helper, bitmapOperations: TargetFrameworkHelper.Helper)
+        { }
 
         // All dependencies are injected, used for unit testing
         internal ActScreenShotHandler(ActScreenShot act, IBrowser browser, IScreenInfo screenInfo, IScreenCapture screenCapture, IBitmapOperations bitmapOperations)
@@ -104,12 +105,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         private IEnumerable<(string name, string filepath)> CaptureAllDesktopScreens()
         {
             List<(string name, string filepath)> savedImages = [];
-            
+
             for (int screenIndex = 0; screenIndex < _screenInfo.ScreenCount(); screenIndex++)
             {
                 Point position = _screenInfo.ScreenPosition(screenIndex);
                 Size size = _screenInfo.ScreenSize(screenIndex);
-                
+
                 byte[] image = _screenCapture.Capture(position, size, ImageFormat.Png);
 
                 string name = _screenInfo.ScreenName(screenIndex);

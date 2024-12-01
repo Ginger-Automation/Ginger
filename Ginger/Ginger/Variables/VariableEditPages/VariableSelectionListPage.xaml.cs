@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore.Variables;
@@ -58,9 +57,10 @@ namespace Ginger.Variables
 
         private void SetOptionalValuesGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(OptionalValue.Value), WidthWeight = 10 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = [new GridColView() { Field = nameof(OptionalValue.Value), WidthWeight = 10 }]
+            };
             grdOptionalValues.SetAllColumnsDefaultView(view);
             grdOptionalValues.InitViewItems();
         }

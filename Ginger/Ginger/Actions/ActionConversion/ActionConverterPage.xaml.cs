@@ -41,7 +41,7 @@ namespace Ginger.Actions.ActionConversion
         private Solution mSolution;
         private BusinessFlow mBusinessFlow;
         private bool isGridSet = false;
-        ObservableList<ConvertableActionDetails> lstActionToBeConverted = new ObservableList<ConvertableActionDetails>();
+        ObservableList<ConvertableActionDetails> lstActionToBeConverted = [];
 
         GenericWindow _pageGenericWin = null;
 
@@ -120,10 +120,14 @@ namespace Ginger.Actions.ActionConversion
 
         private void SetGridsView()
         {
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.SelectedForConversion), WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select" });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.ActivityName), WidthWeight = 15, Header = "Name of " + GingerDicser.GetTermResValue(eTermResKey.Activity) });
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(Activity.SelectedForConversion), WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select" },
+                new GridColView() { Field = nameof(Activity.ActivityName), WidthWeight = 15, Header = "Name of " + GingerDicser.GetTermResValue(eTermResKey.Activity) },
+            ]
+            };
             grdGroups.SetAllColumnsDefaultView(defView);
             grdGroups.InitViewItems();
             grdGroups.SetTitleLightStyle = true;
@@ -136,13 +140,16 @@ namespace Ginger.Actions.ActionConversion
                 return;
             }
             //Set the Data Grid columns
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Selected), Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.SourceActionTypeName), WidthWeight = 15, Header = "Source Action Type" });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Activities), WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.TargetActionTypeName), WidthWeight = 15, Header = "Target Action Type" });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ConvertableActionDetails.Selected), Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox },
+                new GridColView() { Field = nameof(ConvertableActionDetails.SourceActionTypeName), WidthWeight = 15, Header = "Source Action Type" },
+                new GridColView() { Field = nameof(ConvertableActionDetails.Activities), WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) },
+                new GridColView() { Field = nameof(ConvertableActionDetails.TargetActionTypeName), WidthWeight = 15, Header = "Target Action Type" },
+            ]
+            };
             gridConvertibleActions.SetAllColumnsDefaultView(view);
             gridConvertibleActions.InitViewItems();
             gridConvertibleActions.SetTitleLightStyle = true;
@@ -156,7 +163,7 @@ namespace Ginger.Actions.ActionConversion
                 if (mBusinessFlow.CurrentActivity != null)
                 {
                     string allProperties = string.Empty;
-                    PropertyChangedEventManager.AddHandler(source: ((Activity)mBusinessFlow.CurrentActivity), handler: CurrentActivity_PropertyChanged, propertyName: allProperties);
+                    PropertyChangedEventManager.AddHandler(source: mBusinessFlow.CurrentActivity, handler: CurrentActivity_PropertyChanged, propertyName: allProperties);
                 }
             }
         }
@@ -179,7 +186,7 @@ namespace Ginger.Actions.ActionConversion
             // fetch list of existing platforms in the business flow
             List<ePlatformType> lstExistingPlatform = mSolution.ApplicationPlatforms.Where(x => mBusinessFlow.TargetApplications
                                                .Any(a => a.Name == x.AppName)).Select(x => x.Platform).ToList();
-            Dictionary<ePlatformType, string> lstMissingPlatform = new Dictionary<ePlatformType, string>();
+            Dictionary<ePlatformType, string> lstMissingPlatform = [];
             // create list of missing platforms
             foreach (ConvertableActionDetails ACH in lstActionToBeConverted)
             {
@@ -361,10 +368,12 @@ namespace Ginger.Actions.ActionConversion
                             ConvertableActionDetails existingConvertibleActionType = lstActionToBeConverted.FirstOrDefault(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName());
                             if (existingConvertibleActionType == null)
                             {
-                                ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails();
-                                newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
-                                newConvertibleActionType.SourceActionType = act.GetType();
-                                newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
+                                ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails
+                                {
+                                    SourceActionTypeName = act.ActionDescription.ToString(),
+                                    SourceActionType = act.GetType(),
+                                    TargetActionType = ((IObsoleteAction)act).TargetAction()
+                                };
                                 if (newConvertibleActionType.TargetActionType == null)
                                 {
                                     continue;

@@ -19,7 +19,6 @@ limitations under the License.
 using AlmDataContractsStd.Enums;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.ALMLib.DataContract;
 using Amdocs.Ginger.Repository;
 using Ginger.ALM.JIRA;
 using Ginger.ALM.JIRA.TreeViewItems;
@@ -165,7 +164,7 @@ namespace Ginger.ALM.Repository
                         {
                             item.ExternalID = null;
                         }
-                        return ExportBFToALMXtended(businessFlow,performSaveAfterExport,almConectStyle);
+                        return ExportBFToALMXtended(businessFlow, performSaveAfterExport, almConectStyle);
                     }
                     else
                     {
@@ -232,13 +231,13 @@ namespace Ginger.ALM.Repository
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                     Reporter.HideStatusMessage();
                 }
-                if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
+                if (almConectStyle is not eALMConnectType.Auto and not eALMConnectType.Silence)
                 {
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
                 }
                 return true;
             }
-            else if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
+            else if (almConectStyle is not eALMConnectType.Auto and not eALMConnectType.Silence)
             {
                 Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, responseStr);
             }
@@ -312,7 +311,7 @@ namespace Ginger.ALM.Repository
         {
             if (selectedTests != null && selectedTests.Any())
             {
-                ObservableList<JiraTestSet> testSetsItemsToImport = new ObservableList<JiraTestSet>();
+                ObservableList<JiraTestSet> testSetsItemsToImport = [];
                 foreach (GingerCore.ALM.JIRA.JiraTestSet selectedTS in selectedTests)
                 {
                     try
@@ -327,7 +326,7 @@ namespace Ginger.ALM.Repository
                         }
                         else
                         {
-                            Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists,selectedTS.Name);
+                            Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, selectedTS.Name);
                             if (userSelection == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                             {
                                 if (File.Exists(existedBF.FilePath))
@@ -349,7 +348,7 @@ namespace Ginger.ALM.Repository
 
                                 Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
                             }
-                            else if(userSelection == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                            else if (userSelection == Amdocs.Ginger.Common.eUserMsgSelection.No)
                             {
                                 SetImportedTS(jiraImportedTSData, importDestinationPath);
 
@@ -561,12 +560,12 @@ namespace Ginger.ALM.Repository
                 }
                 return true; //Browse Dialog Canceled
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Error in loading ALM configurations",ex.InnerException);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in loading ALM configurations", ex.InnerException);
                 return false;
             }
-            
+
         }
 
         public override string SelectALMTestLabPath()

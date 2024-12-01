@@ -47,9 +47,11 @@ namespace GingerWPF.SolutionLib
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new System.Windows.Forms.FolderBrowserDialog();
-            dlg.Description = "Select Solution folder";
-            dlg.RootFolder = Environment.SpecialFolder.MyComputer;
+            var dlg = new System.Windows.Forms.FolderBrowserDialog
+            {
+                Description = "Select Solution folder",
+                RootFolder = Environment.SpecialFolder.MyComputer
+            };
             if (mSolution.Folder != string.Empty)
             {
                 dlg.SelectedPath = mSolution.Folder;

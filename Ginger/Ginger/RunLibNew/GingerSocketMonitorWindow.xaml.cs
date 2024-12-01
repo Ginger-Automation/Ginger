@@ -88,7 +88,7 @@ namespace Ginger.Drivers.CommunicationProtocol
 
         public void ShowMonitor(GingerNodeProxy gingerNodeProxy)
         {
-            GingerSocketLogs = new ObservableList<GingerSocketLog>();
+            GingerSocketLogs = [];
             MainListView.ItemsSource = GingerSocketLogs;
             this.Show();
         }

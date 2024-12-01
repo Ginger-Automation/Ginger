@@ -43,7 +43,7 @@ namespace Ginger.ReporterLib
             messageBoxResult = defualtResualt;
 
             if (txt.Length > 200)
-            { 
+            {
                 this.Width = 530;
                 this.Height = 230;
             }

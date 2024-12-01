@@ -16,25 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.VariablesLib;
+using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using Amdocs.Ginger.Common.VariablesLib;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
-using Microsoft.VisualStudio.Services.Common;
 
 namespace Ginger.UserControlsLib
 {
@@ -43,14 +35,14 @@ namespace Ginger.UserControlsLib
     /// </summary>
     public partial class MultiSelectComboBox : UserControl
     {
-        public  ObservableCollection<Node> _nodeList;
+        public ObservableCollection<Node> _nodeList;
         private object obj;
         private string AttrName;
         private bool ShowEnumDesc = false;
         public MultiSelectComboBox()
         {
             InitializeComponent();
-            _nodeList = new ObservableCollection<Node>();
+            _nodeList = [];
         }
 
         #region Dependency Properties
@@ -125,22 +117,21 @@ namespace Ginger.UserControlsLib
 
         private static void OnOperationSelectedValuesPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            var control = sender as MultiSelectComboBox;
-            if (control != null)
+            if (sender is MultiSelectComboBox control)
             {
                 control.OperationSelectedValuesPropertyChanged((ObservableList<OperationValues>)args.NewValue);
             }
         }
 
         private void OperationSelectedValuesPropertyChanged(ObservableList<OperationValues> oprationSelectedValues)
-        {            
+        {
             OnPropertyChanged(nameof(OperationSelectedItems));
             SelectedItems = OperationSelectedItems;
-            if (this.ItemsSource.Count > 0 && this.SelectedItems !=null && this.ItemsSource.Count == this.SelectedItems.Count)
+            if (this.ItemsSource.Count > 0 && this.SelectedItems != null && this.ItemsSource.Count == this.SelectedItems.Count)
             {
-                foreach(Node node in _nodeList)
+                foreach (Node node in _nodeList)
                 {
-                    if(node.Title == "All")
+                    if (node.Title == "All")
                     {
                         node.IsSelected = true;
                     }
@@ -163,12 +154,12 @@ namespace Ginger.UserControlsLib
         public void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             CheckBox clickedBox = (CheckBox)sender;
-           
+
             if (clickedBox.Content.ToString() == "All")
             {
                 foreach (Node node in _nodeList)
-                {                  
-                   node.IsSelected = (bool)clickedBox.IsChecked;                                      
+                {
+                    node.IsSelected = (bool)clickedBox.IsChecked;
                 }
 
             }
@@ -210,10 +201,10 @@ namespace Ginger.UserControlsLib
                     {
                         _nodeList.FirstOrDefault(i => i.Title == "All").IsSelected = false;
                     }
-                       
+
                 }
-                
-                
+
+
             }
             SetSelectedItems();
             SetText();
@@ -227,7 +218,7 @@ namespace Ginger.UserControlsLib
         {
             foreach (OperationValues keyValue in SelectedItems)
             {
-                if(ShowEnumDesc)
+                if (ShowEnumDesc)
                 {
                     Node node = _nodeList.FirstOrDefault(i => i._title == keyValue.Value);
                     if (node != null)
@@ -243,15 +234,15 @@ namespace Ginger.UserControlsLib
                         node.IsSelected = true;
                     }
                 }
-                
+
             }
         }
 
         private void SetSelectedItems()
         {
-            ObservableList<OperationValues> temp = new ObservableList<OperationValues>();
+            ObservableList<OperationValues> temp = [];
             if (SelectedItems == null)
-                SelectedItems = new ObservableList<OperationValues>();
+                SelectedItems = [];
             SelectedItems.Clear();
             foreach (Node node in _nodeList)
             {
@@ -299,12 +290,12 @@ namespace Ginger.UserControlsLib
 
                     }
                 }
-                
+
             }
             OperationSelectedItems = new ObservableList<OperationValues>(temp);
         }
 
-        public void Init(object obj, string AttrName,bool ShowEnumDesc = false)
+        public void Init(object obj, string AttrName, bool ShowEnumDesc = false)
         {
             //// If the VE is on stand alone form:
             this.obj = obj;
@@ -318,14 +309,14 @@ namespace Ginger.UserControlsLib
             _nodeList.Clear();
 
             var objectlist = this.ItemsSource.Select(x => x.Value);
-            this.ShowEnumDesc = objectlist.Any(x => x is OperationValues ? !string.IsNullOrEmpty(((OperationValues)x).DisplayName) : false);
+            this.ShowEnumDesc = objectlist.Any(x => x is OperationValues && !string.IsNullOrEmpty(((OperationValues)x).DisplayName));
             if (this.ItemsSource.Count > 0)
             {
                 _nodeList.Add(new Node("All", this.ShowEnumDesc));
             }
             foreach (KeyValuePair<string, object> keyValue in this.ItemsSource)
             {
-                Node node = new Node(keyValue.Key,this.ShowEnumDesc);
+                Node node = new Node(keyValue.Key, this.ShowEnumDesc);
                 _nodeList.Add(node);
             }
             MultiSelectCombo.ItemsSource = _nodeList;
@@ -388,7 +379,7 @@ namespace Ginger.UserControlsLib
         private bool _isSelected;
         public bool _ShowEnumDesc = false;
         #region ctor
-        public Node(string title,bool ShowEnumDesc)
+        public Node(string title, bool ShowEnumDesc)
         {
             Title = title;
             _ShowEnumDesc = ShowEnumDesc;

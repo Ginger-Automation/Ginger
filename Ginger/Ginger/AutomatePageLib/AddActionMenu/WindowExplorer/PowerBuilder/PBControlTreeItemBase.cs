@@ -56,7 +56,7 @@ namespace Ginger.Drivers.PowerBuilder
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> list = new List<ITreeViewItem>();
+            List<ITreeViewItem> list = [];
             List<ElementInfo> Childrens = base.UIAElementInfo.WindowExplorer.GetElementChildren(base.UIAElementInfo);
 
             foreach (ElementInfo EI in Childrens)
@@ -111,7 +111,7 @@ namespace Ginger.Drivers.PowerBuilder
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
             // Base class returns empty list. sub classed to return application action list
-            ObservableList<Act> list = new ObservableList<Act>();
+            ObservableList<Act> list = [];
             return list;
         }
 
@@ -229,8 +229,10 @@ namespace Ginger.Drivers.PowerBuilder
             }
 
             // we need to put all the minimal attr so calc when needed
-            UIAElementInfo EI = new UIAElementInfo();
-            EI.ElementObject = elementInfo.ElementObject;  // The most important, the rest will be lazy loading
+            UIAElementInfo EI = new UIAElementInfo
+            {
+                ElementObject = elementInfo.ElementObject  // The most important, the rest will be lazy loading
+            };
             treeItem.UIAElementInfo = EI;
 
             return treeItem;

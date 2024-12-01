@@ -54,13 +54,13 @@ namespace Ginger.GherkinLib
         GenericWindow genWin;
         public BusinessFlow mBizFlow;
 
-        ObservableList<GherkinScenarioDefinition> mGherkinScenarioDefinition = new ObservableList<GherkinScenarioDefinition>();
-        ObservableList<GherkinStep> mGherkinSteps = new ObservableList<GherkinStep>();
-        ObservableList<GherkinTag> mTags = new ObservableList<GherkinTag>();
+        ObservableList<GherkinScenarioDefinition> mGherkinScenarioDefinition = [];
+        ObservableList<GherkinStep> mGherkinSteps = [];
+        ObservableList<GherkinTag> mTags = [];
 
-        ObservableList<GherkinParserException> mErrorsList = new ObservableList<GherkinParserException>();
-        ObservableList<GherkinStep> mOptimizedSteps = new ObservableList<GherkinStep>();
-        ObservableList<Guid> mSolTags = new ObservableList<Guid>();
+        ObservableList<GherkinParserException> mErrorsList = [];
+        ObservableList<GherkinStep> mOptimizedSteps = [];
+        ObservableList<Guid> mSolTags = [];
 
         ActivitiesRepositoryPage ARP;
 
@@ -187,7 +187,7 @@ namespace Ginger.GherkinLib
                 mSolTags.ClearAll();
                 foreach (GherkinTag tag in mTags)
                 {
-                    Guid guid = GetTagInSolution(tag.Name.Substring(1));
+                    Guid guid = GetTagInSolution(tag.Name[1..]);
                     if (guid != Guid.Empty && !mSolTags.Contains(guid))
                     {
                         mSolTags.Add(guid);
@@ -195,7 +195,7 @@ namespace Ginger.GherkinLib
                 }
                 foreach (var c in gherkinDocument.Feature.Children)
                 {
-                    if (c.Keyword == "Scenario" || c.Keyword == "Scenario Outline")
+                    if (c.Keyword is "Scenario" or "Scenario Outline")
                     {
                         WriteTXT("Keyword:" + c.Keyword);
                         WriteTXT("Name:" + c.Name);
@@ -205,7 +205,7 @@ namespace Ginger.GherkinLib
                             foreach (Tag t in ((Gherkin.Ast.Scenario)c).Tags)
                             {
                                 mTags.Add(new GherkinTag(t));
-                                Guid guid = GetTagInSolution(t.Name.Substring(1));
+                                Guid guid = GetTagInSolution(t.Name[1..]);
                                 if (guid != Guid.Empty && !mSolTags.Contains(guid))
                                 {
                                     mSolTags.Add(guid);
@@ -218,7 +218,7 @@ namespace Ginger.GherkinLib
                             foreach (Tag t in ((Gherkin.Ast.ScenarioOutline)c).Tags)
                             {
                                 mTags.Add(new GherkinTag(t));
-                                Guid guid = GetTagInSolution(t.Name.Substring(1));
+                                Guid guid = GetTagInSolution(t.Name[1..]);
                                 if (guid != Guid.Empty && !mSolTags.Contains(guid))
                                 {
                                     mSolTags.Add(guid);
@@ -229,16 +229,18 @@ namespace Ginger.GherkinLib
                 }
                 foreach (var c in gherkinDocument.Feature.Children)
                 {
-                    if (c.Keyword == "Scenario" || c.Keyword == "Scenario Outline")
+                    if (c.Keyword is "Scenario" or "Scenario Outline")
                     {
                         foreach (var step in c.Steps)
                         {
                             WriteTXT("Keyword:" + step.Keyword);
                             WriteTXT("Text:" + step.Text);
 
-                            GherkinStep GS = new GherkinStep();
-                            GS.Text = step.Text;
-                            GS.Step = step;
+                            GherkinStep GS = new GherkinStep
+                            {
+                                Text = step.Text,
+                                Step = step
+                            };
                             mGherkinSteps.Add(GS);
 
                             String GherkingActivityName = GherkinGeneral.GetActivityGherkinName(step.Text);
@@ -246,10 +248,12 @@ namespace Ginger.GherkinLib
                             GherkinStep OptimizedStep = SearchStepInOptimizedSteps(GherkingActivityName);
                             if (OptimizedStep == null)
                             {
-                                GherkinStep NewOptimizedStep = new GherkinStep();
-                                NewOptimizedStep.Text = GherkingActivityName;
-                                NewOptimizedStep.Counter = 1;
-                                NewOptimizedStep.ColorIndex = ColorIndex;
+                                GherkinStep NewOptimizedStep = new GherkinStep
+                                {
+                                    Text = GherkingActivityName,
+                                    Counter = 1,
+                                    ColorIndex = ColorIndex
+                                };
                                 ColorIndex++;
                                 NewOptimizedStep.AutomationStatus = GetStepAutomationStatus(GherkingActivityName);
                                 GS.AutomationStatus = NewOptimizedStep.AutomationStatus;
@@ -377,7 +381,7 @@ namespace Ginger.GherkinLib
                 return "Pending BF Creation";
             }
 
-            Activity a1 = (Activity)(from x in mBizFlow.Activities where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
+            Activity a1 = (from x in mBizFlow.Activities where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
             if (a1 != null)
             {
                 if (a1.AutomationStatus == eActivityAutomationStatus.Automated)
@@ -409,8 +413,10 @@ namespace Ginger.GherkinLib
                 int i = a.ActivityName.IndexOf("%p" + c);
                 if (i > 0)
                 {
-                    VariableString v = new VariableString();
-                    v.Name = "p" + c;
+                    VariableString v = new VariableString
+                    {
+                        Name = "p" + c
+                    };
                     a.Variables.Add(v);
                 }
                 else
@@ -430,10 +436,12 @@ namespace Ginger.GherkinLib
                 string ColName = General.GetStringBetween(activityName, "<", ">");
                 if (!string.IsNullOrEmpty(ColName))
                 {
-                    VariableSelectionList v = new VariableSelectionList();
-                    v.Name = ColName;
+                    VariableSelectionList v = new VariableSelectionList
+                    {
+                        Name = ColName
+                    };
                     a.Variables.Add(v);
-                    activityName = activityName.Substring(activityName.IndexOf(">") + 1);
+                    activityName = activityName[(activityName.IndexOf(">") + 1)..];
                 }
                 else
                 {
@@ -481,7 +489,7 @@ namespace Ginger.GherkinLib
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            ObservableList<Button> winButtons = new ObservableList<Button>();
+            ObservableList<Button> winButtons = [];
 
             Button ImportButton = new Button();
 
@@ -534,9 +542,10 @@ namespace Ginger.GherkinLib
         {
             if (!isBFexists)
             {
-                BusinessFlowsFolderTreeItem bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>(), eBusinessFlowsTreeViewMode.ReadOnly);
-
-                bfsFolder.IsGingerDefualtFolder = true;
+                BusinessFlowsFolderTreeItem bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>(), eBusinessFlowsTreeViewMode.ReadOnly)
+                {
+                    IsGingerDefualtFolder = true
+                };
                 SingleItemTreeViewSelectionPage mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);
 
                 List<object> selectedBfs = mTargetFolderSelectionPage.ShowAsWindow();
@@ -575,26 +584,30 @@ namespace Ginger.GherkinLib
         {
             // We put all template optimized activity in Activities Group 
 
-            ActivitiesGroup AG = (ActivitiesGroup)(from x in mBizFlow.ActivitiesGroups where x.Name == "Optimized Activities" select x).FirstOrDefault();
+            ActivitiesGroup AG = (from x in mBizFlow.ActivitiesGroups where x.Name == "Optimized Activities" select x).FirstOrDefault();
 
             if (AG == null)
             {
-                AG = new ActivitiesGroup();
-                AG.Name = "Optimized Activities";
+                AG = new ActivitiesGroup
+                {
+                    Name = "Optimized Activities"
+                };
                 mBizFlow.ActivitiesGroups.Add(AG);
             }
-            ActivitiesGroup AG1 = (ActivitiesGroup)(from x in mBizFlow.ActivitiesGroups where x.Name == "Optimized Activities - Not in Use" select x).FirstOrDefault();
+            ActivitiesGroup AG1 = (from x in mBizFlow.ActivitiesGroups where x.Name == "Optimized Activities - Not in Use" select x).FirstOrDefault();
             if (AG1 == null)
             {
-                AG1 = new ActivitiesGroup();
-                AG1.Name = "Optimized Activities - Not in Use";
+                AG1 = new ActivitiesGroup
+                {
+                    Name = "Optimized Activities - Not in Use"
+                };
                 mBizFlow.ActivitiesGroups.Add(AG1);
             }
 
             for (int i = 0; i < AG.ActivitiesIdentifiers.Count; i++)
             {
                 ActivityIdentifiers ia = AG.ActivitiesIdentifiers[i];
-                Activity a1 = (Activity)(from x in mBizFlow.Activities where x.Guid == ia.ActivityGuid select x).FirstOrDefault();
+                Activity a1 = (from x in mBizFlow.Activities where x.Guid == ia.ActivityGuid select x).FirstOrDefault();
                 if (!AG1.CheckActivityInGroup(a1))
                 {
                     AG1.AddActivityToGroup(a1);
@@ -604,13 +617,13 @@ namespace Ginger.GherkinLib
             // Search each activity if not found create new
             foreach (GherkinStep GH in mOptimizedSteps)
             {
-                Activity a1 = (Activity)(from x in mBizFlow.Activities where x.ActivityName == GH.Text select x).FirstOrDefault();
+                Activity a1 = (from x in mBizFlow.Activities where x.ActivityName == GH.Text select x).FirstOrDefault();
                 if (a1 == null)
                 {
                     if (GH.AutomationStatus == "Automated in Shared Repo - ")
                     {
                         ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                        Activity a2 = (Activity)
+                        Activity a2 =
                             (from x in activities where x.ActivityName == GH.Text select x).FirstOrDefault();
                         //FIXME
                         if (a2 != null)
@@ -621,11 +634,13 @@ namespace Ginger.GherkinLib
                     }
                     else
                     {
-                        Activity a = new Activity();
-                        a.ActivityName = GH.Text;
-                        a.Active = false;
-                        a.TargetApplication = WorkSpace.Instance.Solution.MainApplication;
-                        a.ActionRunOption = eActionRunOption.ContinueActionsRunOnFailure;
+                        Activity a = new Activity
+                        {
+                            ActivityName = GH.Text,
+                            Active = false,
+                            TargetApplication = WorkSpace.Instance.Solution.MainApplication,
+                            ActionRunOption = eActionRunOption.ContinueActionsRunOnFailure
+                        };
                         CreateActivityVariables(a);
                         CreateActivitySelectionVariables(a);
                         mBizFlow.AddActivity(a, AG);
@@ -639,7 +654,7 @@ namespace Ginger.GherkinLib
             }
             foreach (ActivityIdentifiers ia in AG1.ActivitiesIdentifiers)
             {
-                Activity a1 = (Activity)
+                Activity a1 =
                     (from x in mBizFlow.Activities where x.Guid == ia.ActivityGuid select x).FirstOrDefault();
                 if (AG.CheckActivityInGroup(a1))
                 {
@@ -654,7 +669,7 @@ namespace Ginger.GherkinLib
         {
             if (TagName.StartsWith("@"))
             {
-                TagName = TagName.Substring(1);
+                TagName = TagName[1..];
             }
 
             Guid TagGuid = (from x in WorkSpace.Instance.Solution.Tags where x.Name == TagName select x.Guid).FirstOrDefault();
@@ -699,9 +714,11 @@ namespace Ginger.GherkinLib
         {
             featureFileName = FileName;
             GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(FileName) + " , Target " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": N/A", (Style)TryFindResource("@ucGridTitleLightStyle"));
-            GherkinDcoumentEditor g = new GherkinDcoumentEditor();
-            g.OptimizedSteps = mOptimizedSteps;
-            g.OptimizedTags = mTags;
+            GherkinDcoumentEditor g = new GherkinDcoumentEditor
+            {
+                OptimizedSteps = mOptimizedSteps,
+                OptimizedTags = mTags
+            };
             GherkinTextEditor.Init(FileName, g, true);
             mSolTags.ClearAll();
             foreach (GherkinTag tag in mTags)
@@ -766,7 +783,7 @@ namespace Ginger.GherkinLib
         private void SetErrorsGridView()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             view.GridColsView = viewCols;
 
             viewCols.Add(new GridColView() { Field = GherkinParserException.Fields.ErrorImage, Header = " ", WidthWeight = 10, BindingMode = System.Windows.Data.BindingMode.OneWay, MaxWidth = 20, StyleType = GridColView.eGridColStyleType.Image });
@@ -819,7 +836,7 @@ namespace Ginger.GherkinLib
         void SetScenariosGridView()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             view.GridColsView = viewCols;
 
             viewCols.Add(new GridColView() { Field = GherkinScenarioDefinition.Fields.Name, WidthWeight = 30, BindingMode = System.Windows.Data.BindingMode.OneWay });
@@ -850,7 +867,7 @@ namespace Ginger.GherkinLib
         {
             if (isBFexists) { UpdateBFButton.Content = "Create " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow); } else { UpdateBFButton.Content = "Update " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow); }
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             view.GridColsView = viewCols;
 
             viewCols.Add(new GridColView() { Field = GherkinStep.Fields.Text, WidthWeight = 200, BindingMode = System.Windows.Data.BindingMode.OneWay });
@@ -864,7 +881,7 @@ namespace Ginger.GherkinLib
         void SetTagsGrid()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             view.GridColsView = viewCols;
 
             viewCols.Add(new GridColView() { Field = GherkinTag.Fields.Name, WidthWeight = 200, BindingMode = System.Windows.Data.BindingMode.OneWay });
@@ -889,7 +906,7 @@ namespace Ginger.GherkinLib
         void SetStepsGridView()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             view.GridColsView = viewCols;
 
             viewCols.Add(new GridColView() { Field = GherkinStep.Fields.Text, WidthWeight = 200, BindingMode = System.Windows.Data.BindingMode.OneWay });

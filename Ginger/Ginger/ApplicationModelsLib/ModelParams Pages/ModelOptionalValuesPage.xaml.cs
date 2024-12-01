@@ -16,8 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger;
@@ -54,7 +52,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             if (!mSelectionModePage)
             {
                 PropertyChangedEventManager.AddHandler(source: mParentObject.OptionalValuesList, handler: mAMDP_PropertyChanged, propertyName: allProperties);
-                
+
                 OptionalValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddOptionalValue));
                 OptionalValuesGrid.SetbtnDeleteHandler(btnDelete_Click);
                 OptionalValuesGrid.SetbtnClearAllHandler(btnClearAll_Click);
@@ -107,8 +105,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
         private void SetOptionalValuesGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = []
+            };
 
             if (!mSelectionModePage)
             {
@@ -117,7 +117,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 {
                     WeakEventManager<DataGrid, DataGridBeginningEditEventArgs>.AddHandler(source: OptionalValuesGrid.Grid, eventName: nameof(DataGrid.BeginningEdit), handler: grdMain_BeginningEdit);
                     WeakEventManager<DataGrid, DataGridCellEditEndingEventArgs>.AddHandler(source: OptionalValuesGrid.Grid, eventName: nameof(DataGrid.CellEditEnding), handler: grdMain_CellEditEnding);
-                    
+
                 }
             }
             else
@@ -167,8 +167,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         {
             OptionalValuesGrid.Grid.CommitEdit(DataGridEditingUnit.Row, true);
 
-            OptionalValue newVal = new OptionalValue(string.Empty);
-            newVal.IsDefault = true;
+            OptionalValue newVal = new OptionalValue(string.Empty)
+            {
+                IsDefault = true
+            };
             mParentObject.OptionalValuesList.Add(newVal);
 
             OptionalValuesGrid.Grid.SelectedItem = newVal;
@@ -226,9 +228,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         {
             List<OptionalValue> OptionalValuesToRemove = new List<OptionalValue>();
             foreach (OptionalValue selectedOV in OptionalValuesGrid.Grid.SelectedItems)
-            { OptionalValuesToRemove.Add(selectedOV); }
+            {
+                OptionalValuesToRemove.Add(selectedOV);
+            }
 
-            foreach (OptionalValue OV in OptionalValuesToRemove)
+            foreach (OptionalValue OV in OptionalValuesGrid.Grid.SelectedItems)
             {
                 if (OV != null && !OV.Value.Equals(GlobalAppModelParameter.CURRENT_VALUE))
                 {
@@ -249,14 +253,16 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
         public bool ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button OKButton = new Button();
-            OKButton.Content = "OK";
+            Button OKButton = new Button
+            {
+                Content = "OK"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: OKButton, eventName: nameof(ButtonBase.Click), handler: OKButton_Click);
 
             if (mSelectionModePage)
             { OptionalValuesGrid.ShowToolsBar = Visibility.Collapsed; }
 
-            GenericWindow.LoadGenericWindow(ref mWin, null, windowStyle, this.Title, this, new ObservableList<Button> { OKButton }, showClosebtn: false);
+            GenericWindow.LoadGenericWindow(ref mWin, null, windowStyle, this.Title, this, [OKButton], showClosebtn: false);
 
             return editWasDone;
         }

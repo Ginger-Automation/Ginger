@@ -53,7 +53,7 @@ namespace Ginger.Reports
 
             foreach (BusinessFlowReport BFR in BizFlows)
             {
-                BusinessFlow BF = (BusinessFlow)BFR.GetBusinessFlow();
+                BusinessFlow BF = BFR.GetBusinessFlow();
                 bftable = "";
                 string runColor = "#00000";
                 TableSize = TableSize + 16.7;
@@ -84,7 +84,7 @@ namespace Ginger.Reports
                 foreach (Activity a in BF.Activities.Where(a => a.GetType() != typeof(IErrorHandler) && a.Active == true).ToList())
                 {
                     //Added as part of resolving defect 2147
-                    if (a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)   //(a.ElapsedSecs == null) 
+                    if (a.Status is Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending or Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)   //(a.ElapsedSecs == null) 
                     {
                         a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                     }

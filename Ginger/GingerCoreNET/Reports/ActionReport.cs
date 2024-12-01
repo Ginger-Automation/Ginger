@@ -199,13 +199,13 @@ namespace Ginger.Reports
                 if (inputValues == null)
                 {
                     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    inputValues = mAction.InputValues.Select(a => GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(                       
+                    inputValues = mAction.InputValues.Select(a => GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(
                         $"{a.Param}_:_{a.Value}_:_{a.DisplayValue}")).ToList();
 
                     if ((mAction.GetInputValueListForVEProcessing() != null) && (mAction.GetInputValueListForVEProcessing().Any()))
                     {
-                        mAction.GetInputValueListForVEProcessing().ForEach(x => 
-                        x.ForEach(a => 
+                        mAction.GetInputValueListForVEProcessing().ForEach(x =>
+                        x.ForEach(a =>
                         inputValues.Add(GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(
                                 $"{a.Param}_:_{a.Value}_:_{a.DisplayValue}"))));
                     }
@@ -377,7 +377,7 @@ namespace Ginger.Reports
         private string error = string.Empty;
         private long? elapsed = 0;
         public string screenShots = string.Empty;
-        public List<string> screenShotsList = new List<string>();
+        public List<string> screenShotsList = [];
 
         public bool IsPassed { get { return mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed; } }
         public bool IsFailed { get { return mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed; } }
@@ -427,13 +427,15 @@ namespace Ginger.Reports
         {
             get
             {
-                List<ReturnValueReport> list = new List<ReturnValueReport>();
+                List<ReturnValueReport> list = [];
                 int i = 0;
                 foreach (ActReturnValue ARV in mAction.ReturnValues)
                 {
                     i++;
-                    ReturnValueReport ar = new ReturnValueReport(ARV);
-                    ar.Seq = i;
+                    ReturnValueReport ar = new ReturnValueReport(ARV)
+                    {
+                        Seq = i
+                    };
                     list.Add(ar);
                 }
 
@@ -447,9 +449,11 @@ namespace Ginger.Reports
         {
             if (mContext != null)
             {
-                ValueExpression VE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
-                VE.DecryptFlag = false;
-                VE.Value = value;
+                ValueExpression VE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false)
+                {
+                    DecryptFlag = false,
+                    Value = value
+                };
 
                 return VE.ValueCalculated;
             }

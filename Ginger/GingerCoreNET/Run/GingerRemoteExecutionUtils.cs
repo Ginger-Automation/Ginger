@@ -45,11 +45,11 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts solutionGuid  : {soluionGuid} GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result.ToString()}");
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts solutionGuid  : {soluionGuid} GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result}");
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result.ToString()}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result}");
                         }
 
                     }
@@ -75,12 +75,12 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts runsetGuid  : {runsetGuid} GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result.ToString()}");
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts runsetGuid  : {runsetGuid} GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result}");
 
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result.ToString()}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result}");
                         }
 
                     }
@@ -105,7 +105,7 @@ namespace Amdocs.Ginger.CoreNET
         private List<RunSetReport> ConvertResponsInRunsetReport(string result)
         {
             var runsetHLInfoResponses = JsonConvert.DeserializeObject<List<RunsetHLInfoResponse>>(result);
-            List<RunSetReport> runSetReports = new List<RunSetReport>();
+            List<RunSetReport> runSetReports = [];
 
             foreach (var runsetHLInfo in runsetHLInfoResponses)
             {

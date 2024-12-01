@@ -34,19 +34,23 @@ namespace Ginger.WindowExplorer.ASCF
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-            ActASCFBrowserElement a2 = new ActASCFBrowserElement();
-            a2.Description = "Set " + ASCFBrowserElementInfo.Path + " Value";
-            a2.LocateBy = eLocateBy.ByID;
-            a2.LocateValue = ASCFBrowserElementInfo.Path;
-            a2.ControlAction = ActASCFBrowserElement.eControlAction.SetValue;
-            a2.Value = "ABC";
+            ObservableList<Act> list = [];
+            ActASCFBrowserElement a2 = new ActASCFBrowserElement
+            {
+                Description = "Set " + ASCFBrowserElementInfo.Path + " Value",
+                LocateBy = eLocateBy.ByID,
+                LocateValue = ASCFBrowserElementInfo.Path,
+                ControlAction = ActASCFBrowserElement.eControlAction.SetValue,
+                Value = "ABC"
+            };
             list.Add(a2);
 
-            ActASCFBrowserElement a1 = new ActASCFBrowserElement();
-            a1.Description = "Get Value";
-            a1.LocateBy = eLocateBy.ByName;
-            a1.LocateValue = ASCFBrowserElementInfo.Path;
+            ActASCFBrowserElement a1 = new ActASCFBrowserElement
+            {
+                Description = "Get Value",
+                LocateBy = eLocateBy.ByName,
+                LocateValue = ASCFBrowserElementInfo.Path
+            };
             list.Add(a1);
 
             list.Add(new ActASCFBrowserElement()

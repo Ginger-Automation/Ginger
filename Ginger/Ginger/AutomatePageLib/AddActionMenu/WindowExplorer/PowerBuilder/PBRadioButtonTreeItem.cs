@@ -34,31 +34,29 @@ namespace Ginger.Drivers.PowerBuilder
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Select item " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.Select
-            });
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Get Value " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.GetValue
-            });
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Is Selected " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.IsSelected
-            });
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Click " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.Click
-            });
+            ObservableList<Act> list =
+            [
+                new ActPBControl()
+                {
+                    Description = "Select item " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActPBControl.eControlAction.Select
+                },
+                new ActPBControl()
+                {
+                    Description = "Get Value " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActPBControl.eControlAction.GetValue
+                },
+                new ActPBControl()
+                {
+                    Description = "Is Selected " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActPBControl.eControlAction.IsSelected
+                },
+                new ActPBControl()
+                {
+                    Description = "Click " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActPBControl.eControlAction.Click
+                },
+            ];
 
             return list;
         }

@@ -48,20 +48,20 @@ namespace Ginger.WindowExplorer.Appium
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Click",
-                GenElementAction = ActGenElement.eGenElementAction.Click
-            });
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Get Custom Attribute text",
-                GenElementAction = ActGenElement.eGenElementAction.GetCustomAttribute,
-                Value = "text"
-            });
+            ObservableList<Act> list =
+            [
+                new ActGenElement()
+                {
+                    Description = "Click",
+                    GenElementAction = ActGenElement.eGenElementAction.Click
+                },
+                new ActGenElement()
+                {
+                    Description = "Get Custom Attribute text",
+                    GenElementAction = ActGenElement.eGenElementAction.GetCustomAttribute,
+                    Value = "text"
+                },
+            ];
 
             return list;
         }
@@ -73,7 +73,7 @@ namespace Ginger.WindowExplorer.Appium
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> list = new List<ITreeViewItem>();
+            List<ITreeViewItem> list = [];
             List<ElementInfo> Childrens = ElementInfo.WindowExplorer.GetElementChildren(ElementInfo);
 
             foreach (ElementInfo EI in Childrens)

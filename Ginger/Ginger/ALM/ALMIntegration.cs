@@ -33,7 +33,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
@@ -144,8 +143,10 @@ namespace Ginger.ALM
             ALMConfig DefaultAlm = ALMCore.AlmConfigs.FirstOrDefault(x => x.AlmType == AlmType);
             if (DefaultAlm == null)
             {
-                DefaultAlm = new ALMConfig();
-                DefaultAlm.AlmType = AlmType;
+                DefaultAlm = new ALMConfig
+                {
+                    AlmType = AlmType
+                };
                 ALMCore.AlmConfigs.Add(DefaultAlm);
             }
             DefaultAlm.DefaultAlm = true;
@@ -157,8 +158,10 @@ namespace Ginger.ALM
             ALMUserConfig AlmUserConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == almType);
             if (AlmUserConfig == null)
             {
-                AlmUserConfig = new ALMUserConfig();
-                AlmUserConfig.AlmType = almType;
+                AlmUserConfig = new ALMUserConfig
+                {
+                    AlmType = almType
+                };
                 WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(AlmUserConfig);
             }
 
@@ -270,7 +273,7 @@ namespace Ginger.ALM
         public List<string> GetALMDomains(eALMConnectType almConectStyle)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            List<string> domainList = new List<string>();
+            List<string> domainList = [];
             if (AutoALMServerConnect(almConectStyle))
             {
                 domainList = AlmCore.GetALMDomains();
@@ -331,7 +334,7 @@ namespace Ginger.ALM
         public Dictionary<string, string> GetALMDomainProjects(string ALMDomain, eALMConnectType almConectStyle)
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            Dictionary<string, string> projectsList = new Dictionary<string, string>();
+            Dictionary<string, string> projectsList = [];
             if (AutoALMServerConnect(almConectStyle))
             {
                 projectsList = AlmCore.GetALMDomainProjects(ALMDomain);
@@ -342,7 +345,7 @@ namespace Ginger.ALM
         }
 
 
-        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> BusinessFlows, ref string result, PublishToALMConfig publishToALMConfig, eALMConnectType almConnectionType, bool exectutedFromAutomateTab = false,Context mContext = null)
+        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> BusinessFlows, ref string result, PublishToALMConfig publishToALMConfig, eALMConnectType almConnectionType, bool exectutedFromAutomateTab = false, Context mContext = null)
         {
             ObservableList<ExternalItemFieldBase> solutionAlmFields = null;
             try
@@ -385,7 +388,7 @@ namespace Ginger.ALM
         {
             Mouse.OverrideCursor = Cursors.Wait;
             Reporter.ToLog(eLogLevel.INFO, ("Update selected " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " of " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ":" + businessFlow.Name + " from ALM"));
-            IValueExpression mAGVE = new GingerCore.ValueExpression(new ProjEnvironment(), businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+            IValueExpression mAGVE = new GingerCore.ValueExpression(new ProjEnvironment(), businessFlow, [], false, "", false);
             businessFlow.CalculateExternalId(mAGVE);
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
@@ -401,7 +404,7 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = Cursors.Wait;
             Reporter.ToLog(eLogLevel.INFO, ("Update " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " from ALM"));
 
-            IValueExpression mVE = new GingerCore.ValueExpression(new ProjEnvironment(), businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+            IValueExpression mVE = new GingerCore.ValueExpression(new ProjEnvironment(), businessFlow, [], false, "", false);
             businessFlow.CalculateExternalId(mVE);
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
@@ -555,17 +558,17 @@ namespace Ginger.ALM
 
         public ObservableList<ExternalItemFieldBase> GetALMItemFieldsREST(bool online, AlmDataContractsStd.Enums.ResourceType resourceType, BackgroundWorker bw = null)
         {
-            ObservableList<ExternalItemFieldBase> latestALMFieldsREST = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> latestALMFieldsREST = [];
             if (ALMIntegration.Instance.AutoALMProjectConnect())
             {
-                latestALMFieldsREST = AlmCore.GetALMItemFields(null, online, (AlmDataContractsStd.Enums.ResourceType)resourceType);
+                latestALMFieldsREST = AlmCore.GetALMItemFields(null, online, resourceType);
             }
             return latestALMFieldsREST;
         }
 
         public Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
         {
-            Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
+            Dictionary<Guid, string> defectsOpeningResults = [];
             if (ALMIntegration.Instance.AutoALMProjectConnect())
             {
                 defectsOpeningResults = AlmCore.CreateNewALMDefects(defectsForOpening, defectsFields, true);
@@ -584,7 +587,7 @@ namespace Ginger.ALM
         }
         internal ObservableList<ExternalItemFieldBase> GetUpdatedFields(ObservableList<ExternalItemFieldBase> mItemsFields, bool online, BackgroundWorker bw = null)
         {
-            ObservableList<ExternalItemFieldBase> updatedFields = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> updatedFields = [];
             if (ALMCore.AlmItemFields != null)
             {
                 foreach (ExternalItemFieldBase defaultField in ALMCore.AlmItemFields)
@@ -598,7 +601,7 @@ namespace Ginger.ALM
                             if ((defaultField.PossibleValues.Count == 0 && currentField.SelectedValue != defaultField.SelectedValue) || (defaultField.PossibleValues.Count > 0 && defaultField.PossibleValues.Contains(currentField.SelectedValue) && currentField.SelectedValue != defaultField.PossibleValues[0]))
                             {
                                 currentField.ToUpdate = true;
-                               
+
                             }
                             else
                             {
@@ -765,9 +768,9 @@ namespace Ginger.ALM
                                 && publishToALMConfig.ALMTestSetLevel == PublishToALMConfig.eALMTestSetLevel.RunSet)
             {
                 ALMIntegration.Instance.UpdateALMType(ALMCore.GetDefaultAlmConfig().AlmType);
-               
+
                 WorkSpace.Instance.Solution.ExternalItemsFields.ClearAll();
-                
+
                 foreach (ExternalItemFieldBase field in solutionAlmFields)
                 {
                     WorkSpace.Instance.Solution.ExternalItemsFields.Add(field);
@@ -789,7 +792,7 @@ namespace Ginger.ALM
                 if (publishToALMConfig.AlmFields != null && publishToALMConfig.AlmFields.Any())
                 {
                     WorkSpace.Instance.Solution.ExternalItemsFields.ClearAll();
-                    
+
                     foreach (ExternalItemFieldBase field in publishToALMConfig.AlmFields)
                     {
                         WorkSpace.Instance.Solution.ExternalItemsFields.Add(field);

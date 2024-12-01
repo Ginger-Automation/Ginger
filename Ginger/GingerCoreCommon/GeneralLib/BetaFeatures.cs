@@ -34,7 +34,7 @@ namespace Amdocs.Ginger.Common
         public event PropertyChangedEventHandler PropertyChanged;
 
         [JsonProperty]
-        ObservableList<BetaFeature> mFeatures = new ObservableList<BetaFeature>();
+        ObservableList<BetaFeature> mFeatures = [];
 
         // General flags
 

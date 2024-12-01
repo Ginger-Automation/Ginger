@@ -16,11 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Amdocs.Ginger.Repository;
 
 namespace Amdocs.Ginger.Common.VariablesLib
@@ -55,7 +50,7 @@ namespace Amdocs.Ginger.Common.VariablesLib
             }
             set
             {
-                if(mDisplayName != value)
+                if (mDisplayName != value)
                 {
                     mDisplayName = value;
                     OnPropertyChanged(nameof(DisplayName));
@@ -63,10 +58,10 @@ namespace Amdocs.Ginger.Common.VariablesLib
             }
         }
 
-        public override string ItemName 
-        { 
+        public override string ItemName
+        {
             get;
-            set; 
+            set;
         }
     }
 }

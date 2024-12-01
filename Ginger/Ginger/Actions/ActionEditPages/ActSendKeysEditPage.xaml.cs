@@ -42,99 +42,145 @@ namespace Ginger.Actions
 
         public List<ComboItem> GeneratecomboBoxItemsListSendkeys()
         {
-            List<ComboItem> comboBoxItemsList = new List<ComboItem>();
+            List<ComboItem> comboBoxItemsList = [];
 
-            ComboItem CBI1 = new ComboItem();
+            ComboItem CBI1 = new ComboItem
+            {
+                text = "{BACKSPACE}"
+            };
             CBI1.text = "{BACKSPACE}";
-            CBI1.text = "{BACKSPACE}";
 
-            ComboItem CBI2 = new ComboItem();
-            CBI2.text = "{BREAK}";
-            CBI2.Value = "{BREAK}";
+            ComboItem CBI2 = new ComboItem
+            {
+                text = "{BREAK}",
+                Value = "{BREAK}"
+            };
 
-            ComboItem CBI3 = new ComboItem();
-            CBI3.text = "{DELETE}";
-            CBI3.Value = "{DELETE}";
+            ComboItem CBI3 = new ComboItem
+            {
+                text = "{DELETE}",
+                Value = "{DELETE}"
+            };
 
-            ComboItem CBI4 = new ComboItem();
-            CBI4.text = "{CAPSLOCK}";
-            CBI4.Value = "{CAPSLOCK}";
+            ComboItem CBI4 = new ComboItem
+            {
+                text = "{CAPSLOCK}",
+                Value = "{CAPSLOCK}"
+            };
 
-            ComboItem CBI5 = new ComboItem();
-            CBI5.text = "DOWN ARROW";
-            CBI5.Value = "{DOWN}";
+            ComboItem CBI5 = new ComboItem
+            {
+                text = "DOWN ARROW",
+                Value = "{DOWN}"
+            };
 
-            ComboItem CBI6 = new ComboItem();
-            CBI6.text = "{END}";
-            CBI6.Value = "{END}";
+            ComboItem CBI6 = new ComboItem
+            {
+                text = "{END}",
+                Value = "{END}"
+            };
 
-            ComboItem CBI7 = new ComboItem();
-            CBI7.text = "{ENTER}";
-            CBI7.Value = "{ENTER}";
+            ComboItem CBI7 = new ComboItem
+            {
+                text = "{ENTER}",
+                Value = "{ENTER}"
+            };
 
-            ComboItem CBI8 = new ComboItem();
-            CBI8.text = "{ESC}";
-            CBI8.Value = "{ESC}";
+            ComboItem CBI8 = new ComboItem
+            {
+                text = "{ESC}",
+                Value = "{ESC}"
+            };
 
-            ComboItem CBI9 = new ComboItem();
-            CBI9.text = "{HELP}";
-            CBI9.Value = "{HELP}";
+            ComboItem CBI9 = new ComboItem
+            {
+                text = "{HELP}",
+                Value = "{HELP}"
+            };
 
-            ComboItem CBI10 = new ComboItem();
-            CBI10.text = "{HOME}";
-            CBI10.Value = "{HOME}";
+            ComboItem CBI10 = new ComboItem
+            {
+                text = "{HOME}",
+                Value = "{HOME}"
+            };
 
-            ComboItem CBI11 = new ComboItem();
-            CBI11.text = "{INSERT}";
-            CBI11.Value = "{INSERT}";
+            ComboItem CBI11 = new ComboItem
+            {
+                text = "{INSERT}",
+                Value = "{INSERT}"
+            };
 
-            ComboItem CBI12 = new ComboItem();
-            CBI12.text = "{LEFT}";
-            CBI12.Value = "{LEFT}";
+            ComboItem CBI12 = new ComboItem
+            {
+                text = "{LEFT}",
+                Value = "{LEFT}"
+            };
 
-            ComboItem CBI13 = new ComboItem();
-            CBI13.text = "{HOME}";
-            CBI13.Value = "{HOME}";
+            ComboItem CBI13 = new ComboItem
+            {
+                text = "{HOME}",
+                Value = "{HOME}"
+            };
 
-            ComboItem CBI14 = new ComboItem();
-            CBI14.text = "{NUMLOCK}";
-            CBI14.Value = "{NUMLOCK}";
+            ComboItem CBI14 = new ComboItem
+            {
+                text = "{NUMLOCK}",
+                Value = "{NUMLOCK}"
+            };
 
-            ComboItem CBI15 = new ComboItem();
-            CBI15.text = "{PGDN}";
-            CBI15.Value = "{PGDN}";
+            ComboItem CBI15 = new ComboItem
+            {
+                text = "{PGDN}",
+                Value = "{PGDN}"
+            };
 
-            ComboItem CBI16 = new ComboItem();
-            CBI16.text = "PAGE UP";
-            CBI16.Value = "{PGUP}";
+            ComboItem CBI16 = new ComboItem
+            {
+                text = "PAGE UP",
+                Value = "{PGUP}"
+            };
 
-            ComboItem CBI17 = new ComboItem();
-            CBI17.text = "{RIGHT}";
-            CBI17.Value = "{RIGHT}";
+            ComboItem CBI17 = new ComboItem
+            {
+                text = "{RIGHT}",
+                Value = "{RIGHT}"
+            };
 
-            ComboItem CBI18 = new ComboItem();
-            CBI18.text = "{SCROLLLOCK}";
-            CBI18.Value = "{SCROLLLOCK}";
+            ComboItem CBI18 = new ComboItem
+            {
+                text = "{SCROLLLOCK}",
+                Value = "{SCROLLLOCK}"
+            };
 
-            ComboItem CBI19 = new ComboItem();
-            CBI19.text = "{TAB}";
-            CBI19.Value = "{TAB}";
+            ComboItem CBI19 = new ComboItem
+            {
+                text = "{TAB}",
+                Value = "{TAB}"
+            };
 
-            ComboItem CBI20 = new ComboItem();
-            CBI20.text = "{UP}";
-            CBI20.Value = "{UP}";
+            ComboItem CBI20 = new ComboItem
+            {
+                text = "{UP}",
+                Value = "{UP}"
+            };
 
-            ComboItem CBI21 = new ComboItem();
-            CBI21.text = "+";
-            CBI21.Value = "+";
+            ComboItem CBI21 = new ComboItem
+            {
+                text = "+",
+                Value = "+"
+            };
 
-            ComboItem CBI22 = new ComboItem();
-            CBI22.text = "^";
-            CBI22.Value = "^";
+            ComboItem CBI22 = new ComboItem
+            {
+                text = "^",
+                Value = "^"
+            };
 
-            ComboItem CBI23 = new ComboItem();
-            CBI23.text = "%";
-            CBI23.Value = "%";
+            ComboItem CBI23 = new ComboItem
+            {
+                text = "%",
+                Value = "%"
+            };
 
             comboBoxItemsList.Add(CBI1);
             comboBoxItemsList.Add(CBI2);

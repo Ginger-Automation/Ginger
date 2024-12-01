@@ -19,14 +19,11 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi;
 using Amdocs.Ginger.Repository;
-using GingerCore.GeneralLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NuGet.Frameworks;
 using System;
 using System.IO;
 using System.Linq;
-using YamlDotNet.RepresentationModel;
 
 namespace UnitTests.NonUITests.AutoPilot
 {
@@ -62,7 +59,7 @@ namespace UnitTests.NonUITests.AutoPilot
             mTestHelper.TestCleanup();
         }
 
-        
+
         [TestMethod]
         [Timeout(60000)]
         public void Swagger2JsonCheckHeaderAndParamsCount()
@@ -70,7 +67,7 @@ namespace UnitTests.NonUITests.AutoPilot
             //Arrange
             SwaggerParser parserForBillingAccount = new SwaggerParser();
             string createPaymentProfileFileName = TestResources.GetTestResourcesFile(@"Swagger" + Path.DirectorySeparatorChar + "petstore_swagger.json");
-            ObservableList<ApplicationAPIModel> requests = new ObservableList<ApplicationAPIModel>();
+            ObservableList<ApplicationAPIModel> requests = [];
 
             //Act   
             requests = parserForBillingAccount.ParseDocument(createPaymentProfileFileName, requests);
@@ -96,7 +93,7 @@ namespace UnitTests.NonUITests.AutoPilot
             //Arrange
             SwaggerParser parserForBillingAccount = new SwaggerParser();
             string createPaymentProfileFileName = TestResources.GetTestResourcesFile(@"Swagger" + Path.DirectorySeparatorChar + "petstore_versionthree.json");
-            ObservableList<ApplicationAPIModel> requests = new ObservableList<ApplicationAPIModel>();
+            ObservableList<ApplicationAPIModel> requests = [];
             string requestBody;
 
             //Act   
@@ -131,10 +128,10 @@ namespace UnitTests.NonUITests.AutoPilot
             //Arrange
             SwaggerParser parserForBillingAccount = new SwaggerParser();
             string createPaymentProfileFileName = TestResources.GetTestResourcesFile(@"Swagger" + Path.DirectorySeparatorChar + "CommissionAPI.yml");
-            ObservableList<ApplicationAPIModel> requests = new ObservableList<ApplicationAPIModel>();
+            ObservableList<ApplicationAPIModel> requests = [];
 
             //Act   
-            requests = parserForBillingAccount.ParseDocument(createPaymentProfileFileName,requests);
+            requests = parserForBillingAccount.ParseDocument(createPaymentProfileFileName, requests);
             ApplicationAPIModel RequestToTest = requests.Where(x => x.Name == @"Get commission type list").ElementAt(0);
 
             //Assert
@@ -146,7 +143,7 @@ namespace UnitTests.NonUITests.AutoPilot
 
             RequestToTest = requests.Where(x => x.Name == @"Update account-JSON").ElementAt(0);
             Assert.AreEqual(3, RequestToTest.ReturnValues.Count, "SwaggerCheckResponseParameterCount");
-            string requestBody = @"{" + Environment.NewLine + "\"accountId\": \"<ACCOUNTID>\"," + Environment.NewLine + "\"name\": \"<NAME>\"," + Environment.NewLine + "\"parentAccount\": \"<PARENTACCOUNT>\""  + Environment.NewLine + "}";
+            string requestBody = @"{" + Environment.NewLine + "\"accountId\": \"<ACCOUNTID>\"," + Environment.NewLine + "\"name\": \"<NAME>\"," + Environment.NewLine + "\"parentAccount\": \"<PARENTACCOUNT>\"" + Environment.NewLine + "}";
             Assert.AreEqual(requestBody.Replace(" ", ""), RequestToTest.RequestBody.Replace(" ", ""), "CheckResponseBody");
 
         }
@@ -158,7 +155,7 @@ namespace UnitTests.NonUITests.AutoPilot
             //Arrange
             SwaggerParser parserForBillingAccount = new SwaggerParser();
             string createPaymentProfileFileName = TestResources.GetTestResourcesFile(@"Swagger" + Path.DirectorySeparatorChar + "PetStoreOAS2.yml");
-            ObservableList<ApplicationAPIModel> requests = new ObservableList<ApplicationAPIModel>();
+            ObservableList<ApplicationAPIModel> requests = [];
 
             //Act   
             requests = parserForBillingAccount.ParseDocument(createPaymentProfileFileName, requests);
@@ -186,7 +183,7 @@ namespace UnitTests.NonUITests.AutoPilot
             //Arrange
             SwaggerParser parserForBillingAccount = new SwaggerParser();
             string createPaymentProfileFileName = TestResources.GetTestResourcesFile(@"Swagger" + Path.DirectorySeparatorChar + "petstore_versionthree.json");
-            ObservableList<ApplicationAPIModel> requests = new ObservableList<ApplicationAPIModel>();
+            ObservableList<ApplicationAPIModel> requests = [];
             ObservableList<OptionalValue> optionalValueContainer;
             ApplicationAPIModel RequestToTest;
 

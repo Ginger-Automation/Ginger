@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace Ginger.ConflictResolve
 {
@@ -58,9 +57,11 @@ namespace Ginger.ConflictResolve
 
         public StackPanel Header()
         {
-            StackPanel headerStackPanel = new();
-            headerStackPanel.Orientation = Orientation.Horizontal;
-           
+            StackPanel headerStackPanel = new()
+            {
+                Orientation = Orientation.Horizontal
+            };
+
             ImageMakerControl itemImage = GetItemImage();
             headerStackPanel.Children.Add(itemImage);
 
@@ -124,8 +125,8 @@ namespace Ginger.ConflictResolve
 
         public bool IsExpandable()
         {
-            return 
-                _comparison.HasChildComparisons && 
+            return
+                _comparison.HasChildComparisons &&
                 _comparison.ChildComparisons.Any();
         }
 

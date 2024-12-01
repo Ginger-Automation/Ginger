@@ -188,17 +188,11 @@ namespace Ginger.Exports.ExportToJava
         {
             string s = GetDriverfindElem(act.LocateBy, act.LocateValue);
 
-            switch (act.LinkAction)
+            s += act.LinkAction switch
             {
-                case ActLink.eLinkAction.Click:
-                    s += ".Click()";
-                    break;
-
-                default:
-                    //temp to show something
-                    s += "." + Missing + act.LinkAction + " " + act.Value;
-                    break;
-            }
+                ActLink.eLinkAction.Click => ".Click()",
+                _ => "." + Missing + act.LinkAction + " " + act.Value,//temp to show something
+            };
             s += ";";
             WriteLine(s);
         }
@@ -207,17 +201,11 @@ namespace Ginger.Exports.ExportToJava
         {
             string s = GetDriverfindElem(act.LocateBy, act.LocateValue);
 
-            switch (act.ButtonAction)
+            s += act.ButtonAction switch
             {
-                case ActButton.eButtonAction.Click:
-                    s += ".Click()";
-                    break;
-
-                default:
-                    //temp to show something
-                    s += "." + Missing + act.ButtonAction + " " + act.Value;
-                    break;
-            }
+                ActButton.eButtonAction.Click => ".Click()",
+                _ => "." + Missing + act.ButtonAction + " " + act.Value,//temp to show something
+            };
             s += ";";
             WriteLine(s);
         }

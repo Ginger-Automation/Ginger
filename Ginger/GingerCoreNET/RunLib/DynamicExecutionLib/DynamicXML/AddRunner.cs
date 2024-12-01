@@ -30,8 +30,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public string RunMode { get; set; }
 
-        public List<SetAgent> SetAgents { get; set; } = new List<SetAgent>();
+        public List<SetAgent> SetAgents { get; set; } = [];
 
-        public List<AddBusinessFlow> AddBusinessFlows { get; set; } = new List<AddBusinessFlow>();
+        public List<AddBusinessFlow> AddBusinessFlows { get; set; } = [];
     }
 }

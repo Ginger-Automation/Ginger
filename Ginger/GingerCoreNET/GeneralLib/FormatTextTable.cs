@@ -25,8 +25,8 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
     public class FormatTextTable
     {
         DataTable logDataTable = new DataTable();
-        List<string> HeadersList = new List<string>();
-        List<int> ColumnLength = new List<int>();
+        List<string> HeadersList = [];
+        List<int> ColumnLength = [];
 
         public void AddRowHeader(List<string> headerList)
         {

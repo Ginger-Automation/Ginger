@@ -57,7 +57,7 @@ namespace Ginger.UserControlsLib
             InitializeComponent();
 
             this.DataContextChanged += UCComboBox_DataContextChanged;
-            
+
         }
 
         private void UCComboBox_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -152,9 +152,11 @@ namespace Ginger.UserControlsLib
                 Type Etype = comboBoxEnumItemsList[0].GetType();
                 foreach (object item in comboBoxEnumItemsList)
                 {
-                    ComboItem CEI = new ComboItem();
-                    CEI.text = GingerCore.General.GetEnumValueDescription(Etype, item);
-                    CEI.Value = item;
+                    ComboItem CEI = new ComboItem
+                    {
+                        text = GingerCore.General.GetEnumValueDescription(Etype, item),
+                        Value = item
+                    };
                     ComboBox.Items.Add(CEI);
                 }
             }

@@ -173,7 +173,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void ActionsConversionHandler(object sender, System.Windows.RoutedEventArgs e)
         {
-            ObservableList<BusinessFlow> lst = new ObservableList<BusinessFlow>();
+            ObservableList<BusinessFlow> lst = [];
             var items = ((Amdocs.Ginger.Repository.RepositoryFolder<GingerCore.BusinessFlow>)((ITreeViewItem)this).NodeObject()).GetFolderItemsRecursive();
             foreach (var bf in items)
             {
@@ -190,12 +190,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
         /// <param name="e"></param>
         private async void LegacyActionsRemoveHandler(object sender, RoutedEventArgs e)
         {
-            ObservableList<BusinessFlowToConvert> lstBFToConvert = new ObservableList<BusinessFlowToConvert>();
+            ObservableList<BusinessFlowToConvert> lstBFToConvert = [];
             var items = ((RepositoryFolder<BusinessFlow>)((ITreeViewItem)this).NodeObject()).GetFolderItemsRecursive();
             foreach (var bf in items)
             {
-                BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
-                flowToConvert.BusinessFlow = (GingerCore.BusinessFlow)bf;
+                BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert
+                {
+                    BusinessFlow = bf
+                };
                 lstBFToConvert.Add(flowToConvert);
             }
             ActionConversionUtils utils = new ActionConversionUtils();
@@ -279,8 +281,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     }
                     if (importedBF.TargetApplications.Count == 0)
                     {
-                        TargetApplication ta = new TargetApplication();
-                        ta.AppName = WorkSpace.Instance.Solution.ApplicationPlatforms[0].AppName;
+                        TargetApplication ta = new TargetApplication
+                        {
+                            AppName = WorkSpace.Instance.Solution.ApplicationPlatforms[0].AppName
+                        };
                         importedBF.TargetApplications.Add(ta);
                     }
 

@@ -102,8 +102,10 @@ namespace GingerCoreCommonTest.VariableTests
         public void TimerVar_TestTimerInMS()
         {
             //Arrange
-            VariableTimer variableTimer = new VariableTimer();
-            variableTimer.TimerUnit = VariableTimer.eTimerUnit.MilliSeconds;
+            VariableTimer variableTimer = new VariableTimer
+            {
+                TimerUnit = VariableTimer.eTimerUnit.MilliSeconds
+            };
 
             //Act
             variableTimer.StartTimer();
@@ -120,8 +122,10 @@ namespace GingerCoreCommonTest.VariableTests
         public void TimerVar_TestTimerInSec()
         {
             //Arrange
-            VariableTimer variableTimer = new VariableTimer();
-            variableTimer.TimerUnit = VariableTimer.eTimerUnit.Seconds;
+            VariableTimer variableTimer = new VariableTimer
+            {
+                TimerUnit = VariableTimer.eTimerUnit.Seconds
+            };
 
             //Act
             variableTimer.StartTimer();
@@ -137,8 +141,10 @@ namespace GingerCoreCommonTest.VariableTests
         public void TimerVar_TestTimerInMin()
         {
             //Arrange
-            VariableTimer variableTimer = new VariableTimer();
-            variableTimer.TimerUnit = VariableTimer.eTimerUnit.Minutes;
+            VariableTimer variableTimer = new VariableTimer
+            {
+                TimerUnit = VariableTimer.eTimerUnit.Minutes
+            };
 
             //Act
             variableTimer.StartTimer();

@@ -42,11 +42,11 @@ namespace GingerCoreNET.Application_Models
 
         public bool IsAutoLearned { get { return ElementInfo.IsAutoLearned; } }
 
-        public ObservableList<DeltaElementLocator> Locators = new ObservableList<DeltaElementLocator>();
+        public ObservableList<DeltaElementLocator> Locators = [];
 
-        public ObservableList<DeltaElementLocator> FriendlyLocators = new ObservableList<DeltaElementLocator>();
+        public ObservableList<DeltaElementLocator> FriendlyLocators = [];
 
-        public ObservableList<DeltaControlProperty> Properties = new ObservableList<DeltaControlProperty>();
+        public ObservableList<DeltaControlProperty> Properties = [];
 
         public object OriginalElementGroup { get { return ElementInfo.ElementGroup; } }
 
@@ -116,7 +116,7 @@ namespace GingerCoreNET.Application_Models
             }
             set
             {
-                switch(value)
+                switch (value)
                 {
                     case eMappingStatus.DeletedElement:
                         MappedElementInfo = string.Empty;
@@ -131,7 +131,7 @@ namespace GingerCoreNET.Application_Models
                         }
                         break;
                 }
-                mMappingElementStatus = value;               
+                mMappingElementStatus = value;
                 OnPropertyChanged(nameof(MappingElementStatus));
             }
         }

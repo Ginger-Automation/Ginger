@@ -34,12 +34,14 @@ namespace Ginger.WindowExplorer.Java
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-            list.Add(new ActJavaElement()
-            {
-                Description = "Set Component Date",
-                ControlAction = ActJavaElement.eControlAction.SelectDate
-            });
+            ObservableList<Act> list =
+            [
+                new ActJavaElement()
+                {
+                    Description = "Set Component Date",
+                    ControlAction = ActJavaElement.eControlAction.SelectDate
+                },
+            ];
             return list;
         }
     }

@@ -37,23 +37,23 @@ namespace Ginger.Drivers.PowerBuilder
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActTableElement()
-            {
-                Description = "Set table cell" + UIAElementInfo.ElementObject + " Value",
-                RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
-                ControlAction = ActTableElement.eTableAction.SetValue,
-                LocateX = "0",
-                LocateY = "0"
-            });
-
-            list.Add(new ActTableElement()
-            {
-                Description = "Get Cell Value",
-                RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
-                ControlAction = ActTableElement.eTableAction.GetValue,
-            });
+            ObservableList<Act> list =
+            [
+                new ActTableElement()
+                {
+                    Description = "Set table cell" + UIAElementInfo.ElementObject + " Value",
+                    RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
+                    ControlAction = ActTableElement.eTableAction.SetValue,
+                    LocateX = "0",
+                    LocateY = "0"
+                },
+                new ActTableElement()
+                {
+                    Description = "Get Cell Value",
+                    RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
+                    ControlAction = ActTableElement.eTableAction.GetValue,
+                },
+            ];
             return list;
         }
 

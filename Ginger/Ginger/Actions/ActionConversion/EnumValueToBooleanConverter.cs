@@ -24,7 +24,7 @@ namespace Ginger.Actions.ActionConversion
     public class EnumValueToBooleanConverter<TEnum> : IValueConverter where TEnum : struct, Enum
     {
         public TEnum ValueToCheck { get; set; }
-        public bool IsCheckEqual {  get; set; }
+        public bool IsCheckEqual { get; set; }
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if (Enum.TryParse(value?.ToString(), out TEnum enumValue))

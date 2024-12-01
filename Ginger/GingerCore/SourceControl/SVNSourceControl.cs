@@ -36,7 +36,7 @@ namespace GingerCore.SourceControl
     public class SVNSourceControl : SourceControlBase
     {
         SvnClient client;
-        public List<string> mConflictsPaths = new List<string>();
+        public List<string> mConflictsPaths = [];
 
         public override string Name { get { return "SVN"; } }
 
@@ -112,7 +112,7 @@ namespace GingerCore.SourceControl
             try
             {
                 int lastDotIndex = Path.LastIndexOf(".");
-                if (lastDotIndex != -1 && Path.Substring(lastDotIndex).ToUpper() == ".XML" && ShowIndicationkForLockedItems)
+                if (lastDotIndex != -1 && Path[lastDotIndex..].ToUpper() == ".XML" && ShowIndicationkForLockedItems)
                 {
 
                     Collection<SvnListEventArgs> ListEventArgs;
@@ -165,7 +165,7 @@ namespace GingerCore.SourceControl
                 Init();
             }
 
-            ObservableList<SourceControlFileInfo> files = new ObservableList<SourceControlFileInfo>();
+            ObservableList<SourceControlFileInfo> files = [];
 
             System.Collections.ObjectModel.Collection<SvnStatusEventArgs> statuses;
             try
@@ -175,7 +175,7 @@ namespace GingerCore.SourceControl
                 foreach (SvnStatusEventArgs arg in statuses)
                 {
                     string path = arg.FullPath;
-                    if(PathIsDirectory(path))
+                    if (PathIsDirectory(path))
                     {
                         path += @"\";
                     }
@@ -185,18 +185,20 @@ namespace GingerCore.SourceControl
                         continue;
                     }
 
-                    if (System.IO.Path.GetExtension(arg.FullPath) == ".ldb" || System.IO.Path.GetExtension(arg.FullPath) == ".ignore")
+                    if (System.IO.Path.GetExtension(arg.FullPath) is ".ldb" or ".ignore")
                     {
                         continue;
                     }
 
-                    SourceControlFileInfo SCFI = new SourceControlFileInfo();
-                    SCFI.Path = arg.FullPath;
-                    SCFI.SolutionPath = arg.FullPath.Replace(SolutionFolder, @"~\");
+                    SourceControlFileInfo SCFI = new SourceControlFileInfo
+                    {
+                        Path = arg.FullPath,
+                        SolutionPath = arg.FullPath.Replace(SolutionFolder, @"~\"),
 
-                    SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.Unknown;
-                    SCFI.Selected = true;
-                    SCFI.Diff = "";
+                        Status = SourceControlFileInfo.eRepositoryItemStatus.Unknown,
+                        Selected = true,
+                        Diff = ""
+                    };
                     if (arg.LocalContentStatus == SvnStatus.Modified)
                     {
                         SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.Modified;
@@ -264,8 +266,10 @@ namespace GingerCore.SourceControl
             try
             {
                 MemoryStream objMemoryStream = new MemoryStream();
-                SvnDiffArgs da = new SvnDiffArgs();
-                da.IgnoreAncestry = true;
+                SvnDiffArgs da = new SvnDiffArgs
+                {
+                    IgnoreAncestry = true
+                };
                 da.DiffArguments.Add("-b");
                 da.DiffArguments.Add("-w");
 
@@ -364,8 +368,10 @@ namespace GingerCore.SourceControl
         public override bool CommitChanges(string Comments, ref string error)
         {
             //Commit Changes
-            SvnCommitArgs ca = new SvnCommitArgs();
-            ca.LogMessage = Comments;
+            SvnCommitArgs ca = new SvnCommitArgs
+            {
+                LogMessage = Comments
+            };
             try
             {
                 client.Commit(SolutionFolder);
@@ -382,8 +388,10 @@ namespace GingerCore.SourceControl
         public override bool CommitAndCheckinChanges(ICollection<string> Paths, string Comments, ref string error, ref List<string> conflictsPaths, bool includLockedFiles = false)
         {
             //Commit Changes
-            SvnCommitArgs ca = new SvnCommitArgs();
-            ca.LogMessage = Comments;
+            SvnCommitArgs ca = new SvnCommitArgs
+            {
+                LogMessage = Comments
+            };
             SvnCommitResult result;
             try
             {
@@ -396,8 +404,10 @@ namespace GingerCore.SourceControl
                         Uri targetUri = GetRemoteUriFromPath(file, out ListEventArgs);
                         if (ListEventArgs != null && ListEventArgs[0].Lock != null)
                         {
-                            SvnUnlockArgs args = new SvnUnlockArgs();
-                            args.BreakLock = true;
+                            SvnUnlockArgs args = new SvnUnlockArgs
+                            {
+                                BreakLock = true
+                            };
                             unlockResult = client.RemoteUnlock(targetUri, args);
                             if (unlockResult == false && Reporter.ToUser(eUserMsgKey.SourceControlUnlockFaild, file, targetUri.ToString()) == eUserMsgSelection.No)
                             {
@@ -463,8 +473,10 @@ namespace GingerCore.SourceControl
                 relativePath = relativePath.Replace(SolutionFolder, "");
                 Uri targetUri = new Uri(SourceControlURL + relativePath);
                 SvnTarget target = SvnTarget.FromUri(targetUri);
-                SvnListArgs args = new SvnListArgs();
-                args.RetrieveLocks = true;
+                SvnListArgs args = new SvnListArgs
+                {
+                    RetrieveLocks = true
+                };
                 client.GetList(target, args, out ListEventArgs);
 
                 return targetUri;
@@ -519,8 +531,10 @@ namespace GingerCore.SourceControl
                 {
                     if ((Reporter.ToUser(eUserMsgKey.SourceControlFileLockedByAnotherUser, Path, ListEventArgs[0].Lock.Owner, ListEventArgs[0].Lock.Comment) == eUserMsgSelection.Yes))
                     {
-                        SvnUnlockArgs args = new SvnUnlockArgs();
-                        args.BreakLock = true;
+                        SvnUnlockArgs args = new SvnUnlockArgs
+                        {
+                            BreakLock = true
+                        };
                         result = client.RemoteUnlock(targetUri, args);
                     }
                     else
@@ -576,7 +590,7 @@ namespace GingerCore.SourceControl
             string mineFilePath = conflictedFilePath + ".mine";
             bool wasMineFileFound = File.Exists(mineFilePath);
             localContent = string.Empty;
-            if(wasMineFileFound)
+            if (wasMineFileFound)
             {
                 localContent = File.ReadAllText(mineFilePath);
             }
@@ -611,7 +625,7 @@ namespace GingerCore.SourceControl
         {
             try
             {
-                if(client == null)
+                if (client == null)
                 {
                     Init();
                 }
@@ -621,7 +635,7 @@ namespace GingerCore.SourceControl
                 remoteContent = new StreamReader(remoteContentStream).ReadToEnd();
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
                 remoteContent = string.Empty;
@@ -674,7 +688,7 @@ namespace GingerCore.SourceControl
             int leadingContentLength = startMarkerIndex;
             if (leadingContentLength >= 0)
             {
-                leadingContent = conflictedContent.Substring(0, leadingContentLength);
+                leadingContent = conflictedContent[..leadingContentLength];
             }
 
             return leadingContent;
@@ -707,7 +721,7 @@ namespace GingerCore.SourceControl
             int startMarkerIndex = conflictedContent.IndexOf(ConflictStartMarker);
             int startMarkerCRLFIndex = conflictedContent.IndexOf(CR_LF, startMarkerIndex);
             int partitionMarkerIndex = conflictedContent.IndexOf(ConflictFirstPartitionMarker);
-            if(partitionMarkerIndex == -1)
+            if (partitionMarkerIndex == -1)
             {
                 partitionMarkerIndex = conflictedContent.IndexOf(ConflictSecondPartitionMarker);
             }
@@ -776,14 +790,14 @@ namespace GingerCore.SourceControl
             int endMarkerIndex = conflictedContent.IndexOf(ConflictEndMarker);
             int endMarkerCRLFIndex = conflictedContent.IndexOf(CR_LF, endMarkerIndex);
             int trailingContentStartIndex = endMarkerCRLFIndex + CR_LF.Length;
-            string trailingContent = conflictedContent.Substring(trailingContentStartIndex);
+            string trailingContent = conflictedContent[trailingContentStartIndex..];
             return trailingContent;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override bool ResolveConflictWithContent(string path, string content, ref string error)
         {
-            if(client == null)
+            if (client == null)
             {
                 Init();
             }
@@ -799,7 +813,7 @@ namespace GingerCore.SourceControl
 
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 error = ex.Message + Environment.NewLine + ex.InnerException;
                 return false;
@@ -865,7 +879,7 @@ namespace GingerCore.SourceControl
 
         public override ObservableList<SolutionInfo> GetProjectsList()
         {
-            ObservableList<SolutionInfo> SourceControlSolutions = new ObservableList<SolutionInfo>();
+            ObservableList<SolutionInfo> SourceControlSolutions = [];
 
             //check which path to show to download
             string localPath = SourceControlLocalFolder;
@@ -901,9 +915,9 @@ namespace GingerCore.SourceControl
                     else if (sLine.StartsWith("  <li><a href=\""))
                     {
                         int start = sLine.IndexOf("\"");
-                        sLine = sLine.Substring(start + 1);
+                        sLine = sLine[(start + 1)..];
                         int end = sLine.IndexOf("\"");
-                        string SolutionName = sLine.Substring(0, end - 1);
+                        string SolutionName = sLine[..(end - 1)];
 
                         if (!SolutionName.Contains("."))
                         {
@@ -936,8 +950,10 @@ namespace GingerCore.SourceControl
 
         private void AddSolution(ObservableList<SolutionInfo> SourceControlSolutions, string LocalFolder, string SourceControlLocation)
         {
-            SolutionInfo sol = new SolutionInfo();
-            sol.LocalFolder = LocalFolder;
+            SolutionInfo sol = new SolutionInfo
+            {
+                LocalFolder = LocalFolder
+            };
             if (Directory.Exists(sol.LocalFolder))
             {
                 sol.ExistInLocaly = true;
@@ -997,7 +1013,7 @@ namespace GingerCore.SourceControl
 
                     request.Timeout = SourceControlTimeout * 1000;
                     request.Credentials = new System.Net.NetworkCredential(SourceControlUser, SourceControlPass);
-                    response = (WebResponse)request.GetResponse();
+                    response = request.GetResponse();
                 }
                 else if (SourceControlURL.ToUpper().Trim().StartsWith("SVN"))
                 {
@@ -1082,15 +1098,16 @@ namespace GingerCore.SourceControl
                 Collection<SvnListEventArgs> ListEventArgs;
                 Uri targetUri = GetRemoteUriFromPath(path, out ListEventArgs);
 
-                SourceControlItemInfoDetails SCIID = new SourceControlItemInfoDetails();
-
-                SCIID.ShowFileInfo = true;
-                SCIID.FilePath = info.Path;
-                SCIID.FileWorkingDirectory = info.WorkingCopyRoot;
-                SCIID.ShowChangeInfo = true;
-                SCIID.LastChangeAuthor = info.LastChangeAuthor;
-                SCIID.LastChangeRevision = " " + info.LastChangeRevision;
-                SCIID.LastChangeTime = " " + info.LastChangeTime.ToLocalTime();
+                SourceControlItemInfoDetails SCIID = new SourceControlItemInfoDetails
+                {
+                    ShowFileInfo = true,
+                    FilePath = info.Path,
+                    FileWorkingDirectory = info.WorkingCopyRoot,
+                    ShowChangeInfo = true,
+                    LastChangeAuthor = info.LastChangeAuthor,
+                    LastChangeRevision = " " + info.LastChangeRevision,
+                    LastChangeTime = " " + info.LastChangeTime.ToLocalTime()
+                };
 
                 if (ListEventArgs != null && ListEventArgs[0].Lock != null)
                 {
@@ -1142,15 +1159,17 @@ namespace GingerCore.SourceControl
                 SvnInfoEventArgs info;
                 client.GetInfo(SolutionFolder, out info);
 
-                SourceControlItemInfoDetails SCIID = new SourceControlItemInfoDetails();
-                SCIID.ShowRepositoryInfo = true;
-                SCIID.RepositoryRoot = " " + info.RepositoryRoot;
-                SCIID.RepositoryPath = info.FullPath;
-                SCIID.RepositoryId = " " + info.RepositoryId;
-                SCIID.WorkingCopyRoot = " " + info.WorkingCopyRoot;
-                SCIID.WorkingCopySize = " " + info.WorkingCopySize;
-                SCIID.CopyFromRevision = "  " + info.CopyFromRevision;
-                SCIID.Revision = " " + info.Revision;
+                SourceControlItemInfoDetails SCIID = new SourceControlItemInfoDetails
+                {
+                    ShowRepositoryInfo = true,
+                    RepositoryRoot = " " + info.RepositoryRoot,
+                    RepositoryPath = info.FullPath,
+                    RepositoryId = " " + info.RepositoryId,
+                    WorkingCopyRoot = " " + info.WorkingCopyRoot,
+                    WorkingCopySize = " " + info.WorkingCopySize,
+                    CopyFromRevision = "  " + info.CopyFromRevision,
+                    Revision = " " + info.Revision
+                };
                 return SCIID;
             }
             catch (Exception ex)

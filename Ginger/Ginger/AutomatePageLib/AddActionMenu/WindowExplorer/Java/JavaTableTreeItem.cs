@@ -28,7 +28,7 @@ namespace Ginger.WindowExplorer.Java
 {
     public class JavaTableTreeItem : JavaElementTreeItem, ITreeViewItem, IWindowExplorerTreeItem
     {
-        ObservableList<Act> mAvailableActions = new ObservableList<Act>();
+        ObservableList<Act> mAvailableActions = [];
         UIElementTableConfigPage mUIElementTableConfigPage = null;
         StackPanel ITreeViewItem.Header()
         {

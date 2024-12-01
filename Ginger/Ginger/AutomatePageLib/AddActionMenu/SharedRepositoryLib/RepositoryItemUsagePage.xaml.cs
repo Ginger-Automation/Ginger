@@ -42,7 +42,7 @@ namespace Ginger.Repository
         private GenericWindow _pageGenericWin = null;
 
         private readonly RepositoryItemBase mRepoItem;
-        public ObservableList<RepositoryItemUsage> RepoItemUsages = new ObservableList<RepositoryItemUsage>();
+        public ObservableList<RepositoryItemUsage> RepoItemUsages = [];
         private bool mIncludeOriginal = false;
         private readonly RepositoryItemBase mOriginalItem;
         public object extraDetails = null;
@@ -361,19 +361,21 @@ namespace Ginger.Repository
                 usageGrid.Title = "'" + ((VariableBase)mRepoItem).Name + "' " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Repository Item Usages";
             }
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView()
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
             {
-                Field = RepositoryItemUsage.Fields.Selected,
-                WidthWeight = 1,
-                StyleType = GridColView.eGridColStyleType.Template,
-                CellTemplate = ucGrid.GetGridCheckBoxTemplate(nameof(RepositoryItemUsage.Fields.Selected), nameof(RepositoryItemUsage.IsDisabled), FindResource("@GridCellCheckBoxStyle") as Style)
-            });
-
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.HostBizFlowPath, Header = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), WidthWeight = 25, ReadOnly = true });
-            if (mRepoItem is Act || mRepoItem is VariableBase)
+                GridColsView =
+            [
+                new GridColView()
+                {
+                    Field = RepositoryItemUsage.Fields.Selected,
+                    WidthWeight = 1,
+                    StyleType = GridColView.eGridColStyleType.Template,
+                    CellTemplate = ucGrid.GetGridCheckBoxTemplate(nameof(RepositoryItemUsage.Fields.Selected), nameof(RepositoryItemUsage.IsDisabled), FindResource("@GridCellCheckBoxStyle") as Style)
+                },
+                new GridColView() { Field = RepositoryItemUsage.Fields.HostBizFlowPath, Header = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), WidthWeight = 25, ReadOnly = true },
+            ]
+            };
+            if (mRepoItem is Act or VariableBase)
             {
                 view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.HostActivityName, Header = GingerDicser.GetTermResValue(eTermResKey.Activity), WidthWeight = 25, ReadOnly = true });
             }
@@ -425,17 +427,19 @@ namespace Ginger.Repository
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button UpdateAllButton = new Button();
-            UpdateAllButton.Content = "Update All Selected";
+            Button UpdateAllButton = new Button
+            {
+                Content = "Update All Selected"
+            };
             UpdateAllButton.Click += new RoutedEventHandler(UpdateAllButton_Click);
 
-            Button SaveAllBizFlowsButton = new Button();
-            SaveAllBizFlowsButton.Content = "Save All Updated Usages";
+            Button SaveAllBizFlowsButton = new Button
+            {
+                Content = "Save All Updated Usages"
+            };
             SaveAllBizFlowsButton.Click += new RoutedEventHandler(SaveAllBizFlowsButton_Click);
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(SaveAllBizFlowsButton);
-            winButtons.Add(UpdateAllButton);
+            ObservableList<Button> winButtons = [SaveAllBizFlowsButton, UpdateAllButton];
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Repository Item Usage", this, winButtons, true, "Close");
         }
@@ -501,8 +505,8 @@ namespace Ginger.Repository
                     foreach (var usage in RepoItemUsages)
                     {
                         StartProcessingIcon();
-                        if (usage.Status == RepositoryItemUsage.eStatus.Updated ||
-                               usage.Status == RepositoryItemUsage.eStatus.SaveFailed)
+                        if (usage.Status is RepositoryItemUsage.eStatus.Updated or
+                               RepositoryItemUsage.eStatus.SaveFailed)
                         {
                             try
                             {

@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.Run;
 using Ginger.Reports;
@@ -71,10 +70,12 @@ namespace GingerCoreNETUnitTest.Reports
         public void RunFlowAndCreateReport()
         {
             //Arrange
-            BusinessFlow mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "BF TEst timeline events listener";
-            mBF.Active = true;
+            BusinessFlow mBF = new BusinessFlow
+            {
+                Activities = [],
+                Name = "BF TEst timeline events listener",
+                Active = true
+            };
             Activity activitiy1 = new Activity() { Active = true };
             activitiy1.Active = true;
             mBF.Activities.Add(activitiy1);

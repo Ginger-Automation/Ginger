@@ -93,7 +93,7 @@ namespace GingerCore.DataSource
         public eDSType DSType { get; set; }
 
         //Do not use this Observable List
-        public ObservableList<DataSourceTable> DSTableList = new ObservableList<DataSourceTable>();
+        public ObservableList<DataSourceTable> DSTableList = [];
 
 
         public override string ItemName
@@ -194,7 +194,7 @@ namespace GingerCore.DataSource
 
         public void UpdateDSNameChangeInItem(object item, string prevVarName, string newVarName, ref bool namechange)
         {
-            var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+            var properties = item.GetType().GetMembers().Where(x => x.MemberType is MemberTypes.Property or MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
                 if (Amdocs.Ginger.Common.GeneralLib.General.IsFieldToAvoidInVeFieldSearch(mi.Name))
@@ -226,7 +226,7 @@ namespace GingerCore.DataSource
 
                 if (value is IObservableList)
                 {
-                    List<dynamic> list = new List<dynamic>();
+                    List<dynamic> list = [];
                     foreach (object o in value)
                     {
                         UpdateDSNameChangeInItem(o, prevVarName, newVarName, ref namechange);

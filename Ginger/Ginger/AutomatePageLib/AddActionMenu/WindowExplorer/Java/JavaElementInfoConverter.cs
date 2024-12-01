@@ -31,68 +31,100 @@ namespace Ginger.WindowExplorer.Java
             switch (JEI.ElementTypeEnum)
             {
                 case eElementType.TextBox:
-                    JavaTextBoxTreeItem JTBTI = new JavaTextBoxTreeItem();
-                    JTBTI.JavaElementInfo = JEI;
+                    JavaTextBoxTreeItem JTBTI = new JavaTextBoxTreeItem
+                    {
+                        JavaElementInfo = JEI
+                    };
                     return JTBTI;
                 case eElementType.Button:
-                    JavaButtonTreeItem JBTI = new JavaButtonTreeItem();
-                    JBTI.JavaElementInfo = JEI;
+                    JavaButtonTreeItem JBTI = new JavaButtonTreeItem
+                    {
+                        JavaElementInfo = JEI
+                    };
                     return JBTI;
                 case eElementType.Label:
-                    JavaLabelTreeItem JLTI = new JavaLabelTreeItem();
-                    JLTI.JavaElementInfo = JEI;
+                    JavaLabelTreeItem JLTI = new JavaLabelTreeItem
+                    {
+                        JavaElementInfo = JEI
+                    };
                     return JLTI;
                 case eElementType.Browser:
-                    JavaBrowserTreeItem JBRTI = new JavaBrowserTreeItem();
-                    JBRTI.JavaElementInfo = JEI;
+                    JavaBrowserTreeItem JBRTI = new JavaBrowserTreeItem
+                    {
+                        JavaElementInfo = JEI
+                    };
                     return JBRTI;
                 case eElementType.CheckBox:
-                    JavaCheckBoxTreeItem JCBTI = new JavaCheckBoxTreeItem();
-                    JCBTI.JavaElementInfo = JEI;
+                    JavaCheckBoxTreeItem JCBTI = new JavaCheckBoxTreeItem
+                    {
+                        JavaElementInfo = JEI
+                    };
                     return JCBTI;
                 case eElementType.RadioButton:
-                    JavaRadioButtonTreeItem JRBTI = new JavaRadioButtonTreeItem();
-                    JRBTI.JavaElementInfo = JEI;
+                    JavaRadioButtonTreeItem JRBTI = new JavaRadioButtonTreeItem
+                    {
+                        JavaElementInfo = JEI
+                    };
                     return JRBTI;
                 case eElementType.DatePicker:
-                    JavaDatePickerTreeItem JDP = new JavaDatePickerTreeItem();
-                    JDP.JavaElementInfo = JEI;
+                    JavaDatePickerTreeItem JDP = new JavaDatePickerTreeItem
+                    {
+                        JavaElementInfo = JEI
+                    };
                     return JDP;
                 case eElementType.ComboBox:
-                    JavaComboBoxTreeItem JCoBTI = new JavaComboBoxTreeItem();
-                    JCoBTI.JavaElementInfo = JEI;
+                    JavaComboBoxTreeItem JCoBTI = new JavaComboBoxTreeItem
+                    {
+                        JavaElementInfo = JEI
+                    };
                     return JCoBTI;
                 case eElementType.List:
-                    JavaListTreeItem JLiTI = new JavaListTreeItem();
-                    JLiTI.JavaElementInfo = JEI;
+                    JavaListTreeItem JLiTI = new JavaListTreeItem
+                    {
+                        JavaElementInfo = JEI
+                    };
                     return JLiTI;
                 case eElementType.Table:
-                    JavaTableTreeItem JTiTI = new JavaTableTreeItem();
-                    JTiTI.JavaElementInfo = JEI;
+                    JavaTableTreeItem JTiTI = new JavaTableTreeItem
+                    {
+                        JavaElementInfo = JEI
+                    };
                     return JTiTI;
                 case eElementType.ScrollBar:
-                    JavaScrollTreeItem JSTI = new JavaScrollTreeItem();
-                    JSTI.JavaElementInfo = JEI;
+                    JavaScrollTreeItem JSTI = new JavaScrollTreeItem
+                    {
+                        JavaElementInfo = JEI
+                    };
                     return JSTI;
                 case eElementType.TreeView:
-                    JavaTreeTreeItem JTRTI = new JavaTreeTreeItem();
-                    JTRTI.JavaElementInfo = JEI;
+                    JavaTreeTreeItem JTRTI = new JavaTreeTreeItem
+                    {
+                        JavaElementInfo = JEI
+                    };
                     return JTRTI;
                 case eElementType.MenuItem:
-                    JavaMenuTreeItem JMTI = new JavaMenuTreeItem();
-                    JMTI.JavaElementInfo = JEI;
+                    JavaMenuTreeItem JMTI = new JavaMenuTreeItem
+                    {
+                        JavaElementInfo = JEI
+                    };
                     return JMTI;
                 case eElementType.Tab:
-                    JavaTabTreeItem JTTI = new JavaTabTreeItem();
-                    JTTI.JavaElementInfo = JEI;
+                    JavaTabTreeItem JTTI = new JavaTabTreeItem
+                    {
+                        JavaElementInfo = JEI
+                    };
                     return JTTI;
                 case eElementType.Iframe:
-                    JavaInternalFrameTitleTreeItem JIFTTI = new JavaInternalFrameTitleTreeItem();
-                    JIFTTI.JavaElementInfo = JEI;
+                    JavaInternalFrameTitleTreeItem JIFTTI = new JavaInternalFrameTitleTreeItem
+                    {
+                        JavaElementInfo = JEI
+                    };
                     return JIFTTI;
                 default:
-                    JavaElementTreeItem JETI = new JavaElementTreeItem();
-                    JETI.JavaElementInfo = JEI;
+                    JavaElementTreeItem JETI = new JavaElementTreeItem
+                    {
+                        JavaElementInfo = JEI
+                    };
                     return JETI;
             }
         }

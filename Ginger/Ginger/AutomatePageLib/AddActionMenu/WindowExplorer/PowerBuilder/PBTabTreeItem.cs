@@ -33,19 +33,19 @@ namespace Ginger.Drivers.PowerBuilder
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Select Tab ",
-                ControlAction = ActPBControl.eControlAction.Select
-            });
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Select Tab by Index Number",
-                ControlAction = ActPBControl.eControlAction.SelectByIndex
-            });
+            ObservableList<Act> list =
+            [
+                new ActPBControl()
+                {
+                    Description = "Select Tab ",
+                    ControlAction = ActPBControl.eControlAction.Select
+                },
+                new ActPBControl()
+                {
+                    Description = "Select Tab by Index Number",
+                    ControlAction = ActPBControl.eControlAction.SelectByIndex
+                },
+            ];
 
             return list;
         }

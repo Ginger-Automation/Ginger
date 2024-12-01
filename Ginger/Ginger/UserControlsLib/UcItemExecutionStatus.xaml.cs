@@ -199,29 +199,33 @@ namespace Ginger.UserControlsLib.UCListView
                     }
                     //create new image because the Running icon causing the image to turn and there is no way to reset it in FontAwosome 
                     xPolygonStatusImagePnl.Children.Clear();
-                    Amdocs.Ginger.UserControls.ImageMakerControl xPolygonStatusImage = new Amdocs.Ginger.UserControls.ImageMakerControl();
-                    xPolygonStatusImage.ImageType = mStatusImage;
-                    xPolygonStatusImage.Foreground = Brushes.White;
-                    xPolygonStatusImage.SetAsFontImageWithSize = StatusSize;
-                    xPolygonStatusImage.Width = StatusSize;
-                    xPolygonStatusImage.Height = StatusSize;
-                    xPolygonStatusImage.ImageToolTip = statusLbl;
-                    xPolygonStatusImage.ToolTip = statusLbl;
+                    Amdocs.Ginger.UserControls.ImageMakerControl xPolygonStatusImage = new Amdocs.Ginger.UserControls.ImageMakerControl
+                    {
+                        ImageType = mStatusImage,
+                        Foreground = Brushes.White,
+                        SetAsFontImageWithSize = StatusSize,
+                        Width = StatusSize,
+                        Height = StatusSize,
+                        ImageToolTip = statusLbl,
+                        ToolTip = statusLbl
+                    };
                     xPolygonStatusImagePnl.Children.Add(xPolygonStatusImage);
                     break;
 
                 case eStatusViewMode.Image:
                     xStatusImagePnl.Children.Clear();
-                    Amdocs.Ginger.UserControls.ImageMakerControl xExecutionStatusImage = new Amdocs.Ginger.UserControls.ImageMakerControl(); //creating new each time due to Spin issue
-                    xExecutionStatusImage.ImageType = mStatusImage;
-                    xExecutionStatusImage.ImageForeground = (SolidColorBrush)mStatusBrush;
-                    xExecutionStatusImage.SetAsFontImageWithSize = StatusSize;
-                    xExecutionStatusImage.Width = StatusSize;
-                    xExecutionStatusImage.Height = StatusSize;
-                    xExecutionStatusImage.HorizontalAlignment = HorizontalAlignment.Center;
-                    xExecutionStatusImage.VerticalAlignment = VerticalAlignment.Center;
-                    xExecutionStatusImage.ImageToolTip = statusLbl;
-                    xExecutionStatusImage.ToolTip = statusLbl;
+                    Amdocs.Ginger.UserControls.ImageMakerControl xExecutionStatusImage = new Amdocs.Ginger.UserControls.ImageMakerControl
+                    {
+                        ImageType = mStatusImage,
+                        ImageForeground = (SolidColorBrush)mStatusBrush,
+                        SetAsFontImageWithSize = StatusSize,
+                        Width = StatusSize,
+                        Height = StatusSize,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        ImageToolTip = statusLbl,
+                        ToolTip = statusLbl
+                    }; //creating new each time due to Spin issue
                     xStatusImagePnl.Children.Add(xExecutionStatusImage);
                     break;
 

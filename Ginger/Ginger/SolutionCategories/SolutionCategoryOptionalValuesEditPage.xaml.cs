@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Ginger.UserControls;
 using System.Collections.Generic;
@@ -47,9 +46,10 @@ namespace Ginger.SolutionCategories
         {
             this.Title = mSolutionCategory.Category.ToString() + " " + "Category Optional Values";
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(SolutionCategoryValue.Value), WidthWeight = 10 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = [new GridColView() { Field = nameof(SolutionCategoryValue.Value), WidthWeight = 10 }]
+            };
             xOptionalValuesGrid.SetAllColumnsDefaultView(view);
             xOptionalValuesGrid.InitViewItems();
 
@@ -96,7 +96,7 @@ namespace Ginger.SolutionCategories
             }
         }
 
-        List<SolutionCategoryValue> mCopiedItems = new List<SolutionCategoryValue>();
+        List<SolutionCategoryValue> mCopiedItems = [];
         private void BtnCopyClicked(object sender, RoutedEventArgs e)
         {
             mCopiedItems.Clear();
@@ -118,14 +118,16 @@ namespace Ginger.SolutionCategories
 
         public bool ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button OKButton = new Button();
-            OKButton.Content = "OK";
+            Button OKButton = new Button
+            {
+                Content = "OK"
+            };
             OKButton.Click += new RoutedEventHandler(OKButton_Click);
 
             this.Width = 300;
             this.Height = 300;
 
-            GenericWindow.LoadGenericWindow(ref mWin, null, windowStyle, this.Title, this, new ObservableList<Button> { OKButton }, showClosebtn: false);
+            GenericWindow.LoadGenericWindow(ref mWin, null, windowStyle, this.Title, this, [OKButton], showClosebtn: false);
 
             return mEditWasDone;
         }

@@ -76,7 +76,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eButtonAction)GetOrCreateInputParam<eButtonAction>(nameof(ButtonAction), eButtonAction.Click);
+                return GetOrCreateInputParam<eButtonAction>(nameof(ButtonAction), eButtonAction.Click);
             }
             set
             {
@@ -120,7 +120,7 @@ namespace GingerCore.Actions
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.Web || platform == ePlatformType.NA || platform == ePlatformType.Mobile)
+            if (platform is ePlatformType.Web or ePlatformType.NA or ePlatformType.Mobile)
             {
                 return true;
             }
@@ -140,15 +140,11 @@ namespace GingerCore.Actions
             if (currentType == typeof(ActUIElement))
             {
                 // check special cases, where name should be changed. Than at default case - all names that have no change
-                switch (this.ButtonAction)
+                newAct.ElementAction = this.ButtonAction switch
                 {
-                    case eButtonAction.IsDisplayed:
-                        newAct.ElementAction = ActUIElement.eElementAction.IsVisible;
-                        break;
-                    default:
-                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.ButtonAction.ToString());
-                        break;
-                }
+                    eButtonAction.IsDisplayed => ActUIElement.eElementAction.IsVisible,
+                    _ => (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.ButtonAction.ToString()),
+                };
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);

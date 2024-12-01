@@ -48,7 +48,7 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
             this.Folder = node.TryGetItem("name").ToString();
             this.TestSetName = node.TryGetItem("name").ToString();
             this.TestSetID = node.TryGetItem("id").ToString();
-            this.TestSetStatuses = new List<string[]>();
+            this.TestSetStatuses = [];
         }
 
         StackPanel ITreeViewItem.Header()

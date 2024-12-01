@@ -125,13 +125,13 @@ namespace Amdocs.Ginger.Common.GeneralLib
         /// <returns></returns>
         public static bool IsFieldToAvoidInVeFieldSearch(string fieldName)
         {
-            if (fieldName == "BackupDic" || fieldName == "GetNameForFileName" || fieldName == "FilePath" || fieldName == "FileName" ||
-                fieldName == "ObjFileExt" || fieldName == "ItemNameField" || fieldName == "ItemImageType" || fieldName == "ItemName" ||
-                fieldName == "RelativeFilePath" ||
-                fieldName == "ObjFolderName" || fieldName == "ContainingFolder" || fieldName == "ContainingFolderFullPath" ||
-                fieldName == "ActInputValues" || fieldName == "ActReturnValues" || fieldName == "ActFlowControls" ||
-                fieldName == "ScreenShots" ||
-                fieldName == "ListStringValue" || fieldName == "ListDynamicValue" || fieldName == "ValueExpression")
+            if (fieldName is "BackupDic" or "GetNameForFileName" or "FilePath" or "FileName" or
+                "ObjFileExt" or "ItemNameField" or "ItemImageType" or "ItemName" or
+                "RelativeFilePath" or
+                "ObjFolderName" or "ContainingFolder" or "ContainingFolderFullPath" or
+                "ActInputValues" or "ActReturnValues" or "ActFlowControls" or
+                "ScreenShots" or
+                "ListStringValue" or "ListDynamicValue" or "ValueExpression")
             {
                 return true;
             }
@@ -145,14 +145,14 @@ namespace Amdocs.Ginger.Common.GeneralLib
         public static Tuple<int, int> RecalculatingSizeWithKeptRatio(Tuple<int, int> a, int boxWidth, int boxHight)
         {
             //calculate the ratio
-            double dbl = (double)a.Item1 / (double)a.Item2;
-            if ((int)((double)boxHight * dbl) <= boxWidth)
+            double dbl = a.Item1 / (double)a.Item2;
+            if ((int)(boxHight * dbl) <= boxWidth)
             {
-                return new Tuple<int, int>((int)((double)boxHight * dbl), boxHight);
+                return new Tuple<int, int>((int)(boxHight * dbl), boxHight);
             }
             else
             {
-                return new Tuple<int, int>(boxWidth, (int)((double)boxWidth / dbl));
+                return new Tuple<int, int>(boxWidth, (int)(boxWidth / dbl));
             }
         }
 
@@ -175,14 +175,14 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
 
             //calculate the ratio
-            double dbl = (double)Img.Width / (double)Img.Height;
-            if ((int)((double)boxHight * dbl) <= boxWidth)
+            double dbl = Img.Width / (double)Img.Height;
+            if ((int)(boxHight * dbl) <= boxWidth)
             {
-                return new Tuple<int, int>((int)((double)boxHight * dbl), boxHight);
+                return new Tuple<int, int>((int)(boxHight * dbl), boxHight);
             }
             else
             {
-                return new Tuple<int, int>(boxWidth, (int)((double)boxWidth / dbl));
+                return new Tuple<int, int>(boxWidth, (int)(boxWidth / dbl));
             }
         }
 
@@ -338,13 +338,15 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
         public static List<XmlNodeItem> GetXMLNodesItems(XmlDocument xmlDoc, bool DisableProhibitDtd = false)
         {
-            List<XmlNodeItem> returnDict = new List<XmlNodeItem>();
+            List<XmlNodeItem> returnDict = [];
             XmlReader rdr1 = XmlReader.Create(new System.IO.StringReader(xmlDoc.InnerXml));
             XmlReader rdr = null;
             if (DisableProhibitDtd)
             {
-                XmlReaderSettings settings = new XmlReaderSettings();
-                settings.DtdProcessing = DtdProcessing.Parse;
+                XmlReaderSettings settings = new XmlReaderSettings
+                {
+                    DtdProcessing = DtdProcessing.Parse
+                };
 
                 rdr = XmlReader.Create(new System.IO.StringReader(xmlDoc.InnerXml), settings);
             }
@@ -356,9 +358,9 @@ namespace Amdocs.Ginger.Common.GeneralLib
             XmlReader subrdr = null;
             string Elm = "";
 
-            ArrayList ls = new ArrayList();
-            Dictionary<string, int> lspath = new Dictionary<string, int>();
-            List<string> DeParams = new List<string>();
+            ArrayList ls = [];
+            Dictionary<string, int> lspath = [];
+            List<string> DeParams = [];
             while (rdr.Read())
             {
                 if (rdr.NodeType == XmlNodeType.Element)
@@ -446,16 +448,14 @@ namespace Amdocs.Ginger.Common.GeneralLib
         public static string CorrectJSON(string WrongJson)
         {
             string CleanJson = WrongJson.Replace("\\", "");
-            string CleanJson1 = CleanJson.Substring(CleanJson.IndexOf("{"));
-            string CleanJson2 = CleanJson1.Substring(0, CleanJson1.LastIndexOf("}") + 1);
+            string CleanJson1 = CleanJson[CleanJson.IndexOf("{")..];
+            string CleanJson2 = CleanJson1[..(CleanJson1.LastIndexOf("}") + 1)];
             return CleanJson2;
         }
 
         public static List<T> ConvertObservableListToList<T>(ObservableList<T> List)
         {
-            List<T> ObservableList = new List<T>();
-            foreach (T o in List)
-                ObservableList.Add(o);
+            List<T> ObservableList = [.. List];
             return ObservableList;
         }
         public static bool isDesignMode()
@@ -484,7 +484,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
         {
             if (json.StartsWith("["))
             {
-                Dictionary<string, object> dictionary = new Dictionary<string, object>();
+                Dictionary<string, object> dictionary = [];
 
                 JArray a = JArray.Parse(json);
 

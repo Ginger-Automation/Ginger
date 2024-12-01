@@ -18,25 +18,9 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Repository;
-using Ginger;
-using Ginger.UserControlsLib;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.DataSource;
-using GingerCore.Environments;
-using GingerCore.GeneralLib;
-using GingerWPF.WizardLib;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace Amdocs.Ginger.CoreNET.Application_Models
 {
@@ -47,9 +31,9 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             var mModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
             if (isCopy)
             {
-                newModelGlobalParam.PlaceHolder = "{" + (!string.IsNullOrEmpty(newModelGlobalParam.PlaceHolder) ? newModelGlobalParam.PlaceHolder.Replace("{","").Replace("}","") : newModelGlobalParam.PlaceHolder) + "_Copy}";
+                newModelGlobalParam.PlaceHolder = "{" + (!string.IsNullOrEmpty(newModelGlobalParam.PlaceHolder) ? newModelGlobalParam.PlaceHolder.Replace("{", "").Replace("}", "") : newModelGlobalParam.PlaceHolder) + "_Copy}";
             }
-            else if(string.IsNullOrEmpty(newModelGlobalParam.PlaceHolder))
+            else if (string.IsNullOrEmpty(newModelGlobalParam.PlaceHolder))
             {
                 newModelGlobalParam.PlaceHolder = "{NewGlobalParameter}";
             }
@@ -87,7 +71,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                     counter++;
                 }
 
-                if(newModelGlobalParam.PlaceHolder.Contains(newModelGlobalParam.PlaceHolder))
+                if (newModelGlobalParam.PlaceHolder.Contains(newModelGlobalParam.PlaceHolder))
                 {
                     while ((mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == "{" + (!string.IsNullOrEmpty(newModelGlobalParam.PlaceHolder) ? newModelGlobalParam.PlaceHolder.Replace("{", "").Replace("}", "") : newModelGlobalParam.PlaceHolder) + counter.ToString() + "}")) != null)
                     {
@@ -100,23 +84,27 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                     newModelGlobalParam.PlaceHolder = "{NewGlobalParameter_" + counter.ToString() + "}";
                 }
 
-                
+
             }
         }
 
         public static void AddGlobalParametertoAPIGlobalParameterList(ObservableList<GlobalAppModelParameter> APIGlobalParamList, GlobalAppModelParameter GAMP)
         {
-            GlobalAppModelParameter newAPIGlobalParam = new GlobalAppModelParameter();
-            newAPIGlobalParam.Guid = GAMP.Guid;
-            newAPIGlobalParam.CurrentValue = GAMP.CurrentValue;
-            newAPIGlobalParam.PlaceHolder = GAMP.PlaceHolder;
-            newAPIGlobalParam.Description = GAMP.Description;
+            GlobalAppModelParameter newAPIGlobalParam = new GlobalAppModelParameter
+            {
+                Guid = GAMP.Guid,
+                CurrentValue = GAMP.CurrentValue,
+                PlaceHolder = GAMP.PlaceHolder,
+                Description = GAMP.Description
+            };
             foreach (OptionalValue ov in GAMP.OptionalValuesList)
             {
-                OptionalValue newOV = new OptionalValue();
-                newOV.Guid = ov.Guid;
-                newOV.Value = ov.Value;
-                newOV.IsDefault = ov.IsDefault;
+                OptionalValue newOV = new OptionalValue
+                {
+                    Guid = ov.Guid,
+                    Value = ov.Value,
+                    IsDefault = ov.IsDefault
+                };
                 newAPIGlobalParam.OptionalValuesList.Add(newOV);
             }
             APIGlobalParamList.Add(newAPIGlobalParam);

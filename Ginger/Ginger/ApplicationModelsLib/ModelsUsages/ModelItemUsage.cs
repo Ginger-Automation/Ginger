@@ -90,7 +90,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
             }
         }
 
-        ObservableList<string> mItemParts = new ObservableList<string>();
+        ObservableList<string> mItemParts = [];
         public ObservableList<string> ItemParts
         {
             get

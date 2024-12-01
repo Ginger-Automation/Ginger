@@ -47,10 +47,10 @@ namespace Ginger.Run
         public int Validations { get; set; }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableBase> ExecutionVariabeles = new ObservableList<VariableBase>();
+        public ObservableList<VariableBase> ExecutionVariabeles = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<FlowControl> ExecutionBFFlowControls = new ObservableList<FlowControl>();
+        public ObservableList<FlowControl> ExecutionBFFlowControls = [];
 
         public string PublishStatus
         {
@@ -77,7 +77,7 @@ namespace Ginger.Run
         {
             get
             {
-                return BusinessFlowExecLoggerFolder == null || BusinessFlowExecLoggerFolder == string.Empty ? false : true;
+                return BusinessFlowExecLoggerFolder != null && BusinessFlowExecLoggerFolder != string.Empty;
             }
         }
 

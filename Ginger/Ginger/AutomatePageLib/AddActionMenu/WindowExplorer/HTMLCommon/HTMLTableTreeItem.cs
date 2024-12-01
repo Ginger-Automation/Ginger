@@ -28,7 +28,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
     class HTMLTableTreeItem : HTMLElementTreeItemBase, ITreeViewItem, IWindowExplorerTreeItem
     {
         Page mHTMLTablePage;
-        ObservableList<Act> mAvailableActions = new ObservableList<Act>();
+        ObservableList<Act> mAvailableActions = [];
         StackPanel ITreeViewItem.Header()
         {
             return TreeViewUtils.CreateItemHeader(ElementInfo.ElementTitle, ElementInfo.GetElementTypeImage(eElementType.Table));

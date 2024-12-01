@@ -34,7 +34,7 @@ namespace Ginger.WindowExplorer.ASCF
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
+            ObservableList<Act> list = [];
 
             if (ASCFBrowserElementInfo.HasID())
             {

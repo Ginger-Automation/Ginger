@@ -29,7 +29,6 @@ using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using GingerCore;
-using GingerCore.Drivers;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -132,11 +131,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (this.IsVisible && MainAddActionsNavigationPage.IsPanelExpanded)
             {
-                if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
+                if (e.PropertyName is nameof(mContext.Activity) or nameof(mContext.Target))
                 {
                     UpdatePOMTree();
                 }
-                if (e.PropertyName is nameof(mContext.Agent) || e.PropertyName is nameof(mContext.AgentStatus))
+                if (e.PropertyName is nameof(mContext.Agent) or nameof(mContext.AgentStatus))
                 {
                     mAgent = mContext.Agent;
                     mPOMListHelper.Context.Agent = mContext.Agent;
@@ -226,7 +225,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             if (mSelectedElement != null)
             {
-               mWinExplorer.HighLightElement(mSelectedElement, true, mPOM?.MappedUIElements);
+                mWinExplorer.HighLightElement(mSelectedElement, true, mPOM?.MappedUIElements);
             }
         }
         private bool ValidateDriverAvalability()

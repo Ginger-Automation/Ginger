@@ -63,7 +63,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            List<ITreeViewItem> Childrens = [];
 
             AddsubFolders(Path, Childrens);
 

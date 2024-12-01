@@ -381,7 +381,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             //Arrange
             NewPayLoad pl = new NewPayLoad("Package wth list of Payloads");
 
-            List<NewPayLoad> list = new List<NewPayLoad>();
+            List<NewPayLoad> list = [];
 
             NewPayLoad pl1 = new NewPayLoad("PL1");
             pl1.AddValue("ABC");

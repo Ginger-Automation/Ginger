@@ -16,19 +16,19 @@ limitations under the License.
 */
 #endregion
 
-using Ginger.Configurations;
-using Amdocs.Ginger.Common;
 using amdocs.ginger.GingerCoreNET;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System;
-using IdentityModel.Client;
-using System.IdentityModel.Tokens.Jwt;
+using Amdocs.Ginger.Common;
+using Ginger.Configurations;
 using Ginger.Environments.GingerOpsEnvWizardLib;
 using GingerCore;
-using static Ginger.Environments.GingerOpsEnvWizardLib.GingerOpsAPIResponseInfo;
+using IdentityModel.Client;
+using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using static Ginger.Environments.GingerOpsEnvWizardLib.GingerOpsAPIResponseInfo;
 
 namespace Ginger.ExternalConfigurations
 {
@@ -146,7 +146,7 @@ namespace Ginger.ExternalConfigurations
                     }
                 }
 
-                string apiUrl = $"{GingerOpsUserConfig.AccountUrl}/Report/GetGingerAnalyticsProjects";
+                string apiUrl = $"{GingerOpsUserConfig.AccountUrl}/Project/GetProjects";
 
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
                 var response = await client.GetStringAsync(apiUrl);
@@ -163,7 +163,7 @@ namespace Ginger.ExternalConfigurations
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error fetching data from GingerOps API", ex);
-                return new Dictionary<string, GingerOpsProject>();
+                return [];
             }
         }
         public async Task<Dictionary<string, GingerOpsArchitectureB>> FetchEnvironmentDataFromGOps(string architectureId, Dictionary<string, GingerOpsArchitectureB> architectureListGOps, bool publishedEnvironment = true)
@@ -186,7 +186,7 @@ namespace Ginger.ExternalConfigurations
                     }
                 }
 
-                string apiUrl = $"{GingerOpsUserConfig.AccountUrl}/Report/GetGingerAnalyticsEnvironmentsByArchitecture/{publishedEnvironment}?architectureIds={architectureId}";
+                string apiUrl = $"{GingerOpsUserConfig.AccountUrl}/Environment/GetEnvironments/{publishedEnvironment}?architectureIds={architectureId}";
 
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
 
@@ -204,7 +204,7 @@ namespace Ginger.ExternalConfigurations
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error fetching data from GingerOps API", ex);
-                return new Dictionary<string, GingerOpsArchitectureB>();
+                return [];
             }
         }
         public async Task<Dictionary<string, GingerOpsEnvironmentB>> FetchApplicationDataFromGOps(string environmentId, Dictionary<string, GingerOpsEnvironmentB> environmentListGOps)
@@ -227,7 +227,7 @@ namespace Ginger.ExternalConfigurations
                     }
                 }
 
-                string apiUrl = $"{GingerOpsUserConfig.AccountUrl}/Report/GetGingerAnalyticsApplicationByEnvironment?environmentIds={environmentId}";
+                string apiUrl = $"{GingerOpsUserConfig.AccountUrl}/Application/GetApplications?environmentIds={environmentId}";
 
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
 
@@ -245,7 +245,7 @@ namespace Ginger.ExternalConfigurations
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error fetching data from GingerOps API", ex);
-                return new Dictionary<string, GingerOpsEnvironmentB>();
+                return [];
             }
         }
 

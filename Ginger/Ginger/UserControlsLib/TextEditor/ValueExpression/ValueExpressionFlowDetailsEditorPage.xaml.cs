@@ -22,7 +22,6 @@ using Ginger.UserControlsLib.TextEditor.Common;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.Environments;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -47,49 +46,21 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             mSelectedContentArgs = SelectedContentArgs;
             mObj = obj;
 
-            List<string> lst = new List<string>();
+            List<string> lst = [];
             PropertyInfo[] properties = null;
             FieldInfo[] fields = null;
-            Type objType;
-            switch (mObj)
+            var objType = mObj switch
             {
-                case GingerCore.ValueExpression.eFlowDetailsObjects.Solution:
-                    objType = typeof(Ginger.SolutionGeneral.Solution);
-                    break;
-                case GingerCore.ValueExpression.eFlowDetailsObjects.Environment:
-                    objType = typeof(ProjEnvironment);
-                    break;
-                case GingerCore.ValueExpression.eFlowDetailsObjects.Runset:
-                    objType = typeof(RunSetConfig);
-                    break;
-                case GingerCore.ValueExpression.eFlowDetailsObjects.Runner:
-                    objType = typeof(GingerExecutionEngine);
-                    break;
-                case GingerCore.ValueExpression.eFlowDetailsObjects.BusinessFlow:
-                case GingerCore.ValueExpression.eFlowDetailsObjects.PreviousBusinessFlow:
-                case GingerCore.ValueExpression.eFlowDetailsObjects.LastFailedBusinessFlow:
-                    objType = typeof(BusinessFlow);
-                    break;
-                case GingerCore.ValueExpression.eFlowDetailsObjects.ActivitiesGroup:
-                case GingerCore.ValueExpression.eFlowDetailsObjects.ErrorHandlerOriginActivitiesGroup:
-                    objType = typeof(ActivitiesGroup);
-                    break;
-                case GingerCore.ValueExpression.eFlowDetailsObjects.Activity:
-                case GingerCore.ValueExpression.eFlowDetailsObjects.PreviousActivity:
-                case GingerCore.ValueExpression.eFlowDetailsObjects.ErrorHandlerOriginActivity:
-                case GingerCore.ValueExpression.eFlowDetailsObjects.LastFailedActivity:
-                    objType = typeof(Activity);
-                    break;
-                case GingerCore.ValueExpression.eFlowDetailsObjects.Action:
-                case GingerCore.ValueExpression.eFlowDetailsObjects.PreviousAction:
-                case GingerCore.ValueExpression.eFlowDetailsObjects.LastFailedAction:
-                case GingerCore.ValueExpression.eFlowDetailsObjects.ErrorHandlerOriginAction:
-                    objType = typeof(GingerCore.Actions.Act);
-                    break;
-                default:
-                    throw new KeyNotFoundException();
-            }
-
+                GingerCore.ValueExpression.eFlowDetailsObjects.Solution => typeof(Ginger.SolutionGeneral.Solution),
+                GingerCore.ValueExpression.eFlowDetailsObjects.Environment => typeof(ProjEnvironment),
+                GingerCore.ValueExpression.eFlowDetailsObjects.Runset => typeof(RunSetConfig),
+                GingerCore.ValueExpression.eFlowDetailsObjects.Runner => typeof(GingerExecutionEngine),
+                GingerCore.ValueExpression.eFlowDetailsObjects.BusinessFlow or GingerCore.ValueExpression.eFlowDetailsObjects.PreviousBusinessFlow or GingerCore.ValueExpression.eFlowDetailsObjects.LastFailedBusinessFlow => typeof(BusinessFlow),
+                GingerCore.ValueExpression.eFlowDetailsObjects.ActivitiesGroup or GingerCore.ValueExpression.eFlowDetailsObjects.ErrorHandlerOriginActivitiesGroup => typeof(ActivitiesGroup),
+                GingerCore.ValueExpression.eFlowDetailsObjects.Activity or GingerCore.ValueExpression.eFlowDetailsObjects.PreviousActivity or GingerCore.ValueExpression.eFlowDetailsObjects.ErrorHandlerOriginActivity or GingerCore.ValueExpression.eFlowDetailsObjects.LastFailedActivity => typeof(Activity),
+                GingerCore.ValueExpression.eFlowDetailsObjects.Action or GingerCore.ValueExpression.eFlowDetailsObjects.PreviousAction or GingerCore.ValueExpression.eFlowDetailsObjects.LastFailedAction or GingerCore.ValueExpression.eFlowDetailsObjects.ErrorHandlerOriginAction => typeof(GingerCore.Actions.Act),
+                _ => throw new KeyNotFoundException(),
+            };
             properties = objType.GetProperties();
             fields = objType.GetFields();
 
@@ -119,9 +90,9 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
         public void UpdateContent()
         {
             string v = (string)fieldList.SelectedItem;
-            string txt = mSelectedContentArgs.TextEditor.Text.Substring(0, mSelectedContentArgs.StartPos);
+            string txt = mSelectedContentArgs.TextEditor.Text[..mSelectedContentArgs.StartPos];
             txt += "{FD Object=" + mObj + " Field=" + v + "}";
-            txt += mSelectedContentArgs.TextEditor.Text.Substring(mSelectedContentArgs.EndPos + 1);
+            txt += mSelectedContentArgs.TextEditor.Text[(mSelectedContentArgs.EndPos + 1)..];
             mSelectedContentArgs.TextEditor.Text = txt;
         }
     }

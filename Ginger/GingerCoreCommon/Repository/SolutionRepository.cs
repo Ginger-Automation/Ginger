@@ -44,8 +44,8 @@ namespace Amdocs.Ginger.Repository
         /// <summary>
         /// List of files and folders to exclude from solution load and Source Control
         /// </summary>
-        private static List<string> mSolutionPathsToAvoid = new List<string>()
-        {
+        private static List<string> mSolutionPathsToAvoid =
+        [
              @"AutoSave\",
              @"Recover\",
              @"RecentlyUsed.dat",
@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.Repository
              @"SharedRepository\Actions\PrevVerions\",
              @"SharedRepository\Variables\PrevVerions\",
              @"SharedRepository\ActivitiesGroup\PrevVerions\"
-        };
+        ];
 
         private List<string> mCalculatedSolutionPathsToAvoid = null;
 
@@ -84,15 +84,15 @@ namespace Amdocs.Ginger.Repository
 
         private string mSolutionFolderPath;
         public string SolutionFolder { get { return mSolutionFolderPath; } }
-        private List<RepositoryFolderBase> mSolutionRootFolders = new List<RepositoryFolderBase>();
+        private List<RepositoryFolderBase> mSolutionRootFolders = [];
         public List<RepositoryFolderBase> SolutionRootFolders
         {
             get { return mSolutionRootFolders; }
         }
 
-        public ObservableList<RepositoryItemBase> ModifiedFiles = new ObservableList<RepositoryItemBase>();
+        public ObservableList<RepositoryItemBase> ModifiedFiles = [];
 
-        Dictionary<Type, SolutionRepositoryItemInfoBase> mSolutionRepositoryItemInfoDictionary = new Dictionary<Type, SolutionRepositoryItemInfoBase>();
+        Dictionary<Type, SolutionRepositoryItemInfoBase> mSolutionRepositoryItemInfoDictionary = [];
         public bool IsItemTypeHandled(RepositoryItemBase repositoryItem)
         {
             SolutionRepositoryItemInfoBase SRII = null;
@@ -236,7 +236,7 @@ namespace Amdocs.Ginger.Repository
         public RepositoryItemBase GetRepositoryItemByPath(string filePath)
         {
             RepositoryItemBase repoItem = null;
-            ObservableList<RepositoryItemBase> repoItemList = new ObservableList<RepositoryItemBase>();
+            ObservableList<RepositoryItemBase> repoItemList = [];
             RepositoryFolderBase repositoryFolderBase = GetRepositoryFolderByPath(Path.GetDirectoryName(filePath));
             if (repositoryFolderBase != null)
             {
@@ -437,7 +437,7 @@ namespace Amdocs.Ginger.Repository
 
             //List only need directories which have repo items // But we say all rename to get all repo or...
             //Do not add documents, ExecutionResults, HTMLReports
-            ConcurrentBag<RepositoryFile> fileEntries = new ConcurrentBag<RepositoryFile>();
+            ConcurrentBag<RepositoryFile> fileEntries = [];
 
             Parallel.ForEach(mSolutionRootFolders, folder =>
             {
@@ -491,7 +491,7 @@ namespace Amdocs.Ginger.Repository
         {
             if (mCalculatedSolutionPathsToAvoid == null)
             {
-                mCalculatedSolutionPathsToAvoid = new List<string>();
+                mCalculatedSolutionPathsToAvoid = [];
                 foreach (string path in mSolutionPathsToAvoid)
                 {
                     mCalculatedSolutionPathsToAvoid.Add(Path.GetFullPath(Path.Combine(SolutionFolder, path)));
@@ -510,15 +510,17 @@ namespace Amdocs.Ginger.Repository
 
         public void AddItemInfo<T>(string pattern, string rootFolder, bool containRepositoryItems, string displayName, string PropertyNameForFileName)
         {
-            SolutionRepositoryItemInfo<T> SRII = new SolutionRepositoryItemInfo<T>();
-            SRII.ItemFileSystemRootFolder = rootFolder;
-            SRII.PropertyForFileName = PropertyNameForFileName;
-            SRII.Pattern = pattern;
-            SRII.DisplayName = displayName;
+            SolutionRepositoryItemInfo<T> SRII = new SolutionRepositoryItemInfo<T>
+            {
+                ItemFileSystemRootFolder = rootFolder,
+                PropertyForFileName = PropertyNameForFileName,
+                Pattern = pattern,
+                DisplayName = displayName
+            };
             SRII.ItemRootReposiotryfolder = new RepositoryFolder<T>(this, SRII, pattern, rootFolder, containRepositoryItems, displayName, true);
 
             mSolutionRepositoryItemInfoDictionary.Add(typeof(T), SRII);
-            mSolutionRootFolders.Add((RepositoryFolderBase)SRII.ItemRootRepositoryFolder);
+            mSolutionRootFolders.Add(SRII.ItemRootRepositoryFolder);
         }
 
         public SolutionRepositoryItemInfoBase GetSolutionRepositoryItemInfo(Type type)
@@ -647,7 +649,7 @@ namespace Amdocs.Ginger.Repository
                     if (fileName.Length > 255)
                     {
                         noOfCharToEscape = filefullPath.Length + 2 - 255;
-                        newFileName = fileName.Substring(0, fileName.Length - noOfCharToEscape);   //TODO: validate that works as expected using unit test !!!!!!!!!! file extension must remain or give err
+                        newFileName = fileName[..^noOfCharToEscape];   //TODO: validate that works as expected using unit test !!!!!!!!!! file extension must remain or give err
 
                         newFileName = newFileName + "~1";
                         newFileName = repositoryItemInfoBaseType.Pattern.Replace("*", newFileName);
@@ -657,7 +659,7 @@ namespace Amdocs.Ginger.Repository
                     if (filefullPath.Length > 260 && fileName.Length > 3)
                     {
                         noOfCharToEscape = filefullPath.Length - 257;
-                        newFileName = fileName.Substring(0, fileName.Length - noOfCharToEscape);
+                        newFileName = fileName[..^noOfCharToEscape];
 
                         if (newFileName.Length < 3)
                         {
@@ -800,7 +802,7 @@ namespace Amdocs.Ginger.Repository
 
                 if (targetFileName.Length > 255)
                 {
-                    targetFileName = targetFileName.Substring(0, 250) + new Random().Next(1000).ToString();
+                    targetFileName = targetFileName[..250] + new Random().Next(1000).ToString();
                 }
 
                 try

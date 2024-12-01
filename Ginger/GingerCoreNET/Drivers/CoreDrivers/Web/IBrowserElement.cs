@@ -16,13 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.UIElement;
 using Deque.AxeCore.Commons;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 #nullable enable

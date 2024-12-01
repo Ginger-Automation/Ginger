@@ -17,15 +17,9 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.Run;
-using GingerCore;
 using Newtonsoft.Json;
 
 namespace Ginger.Configurations
@@ -67,8 +61,10 @@ namespace Ginger.Configurations
 
         public ObservableList<AccessibilityRuleData> GetAccessibilityRules(string AccessbiltyString)
         {
-            Root data = new();
-            data.accessibilityRules = [];
+            Root data = new()
+            {
+                accessibilityRules = []
+            };
             try
             {
                 data = JsonConvert.DeserializeObject<Root>(AccessbiltyString);
@@ -86,7 +82,7 @@ namespace Ginger.Configurations
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-}
+    }
 
     public class Root
     {

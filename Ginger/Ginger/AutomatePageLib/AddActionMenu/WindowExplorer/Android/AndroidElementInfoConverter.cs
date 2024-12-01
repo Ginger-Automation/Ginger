@@ -30,23 +30,15 @@ namespace Ginger.WindowExplorer.Android
 
             AndroidElementInfo AEI = (AndroidElementInfo)EI;
 
-            switch (AEI.ElementType)
+            return AEI.ElementType switch
             {
-                case "android.widget.Button":
-                    return new AndroidWidgetButtonTreeItem() { AndroidElementInfo = AEI };
-                case "android.widget.CheckBox":
-                    return new AndroidWidgetCheckBoxTreeItem() { AndroidElementInfo = AEI };
-                case "android.widget.TextView":
-                    return new AndroidWidgetTextViewTreeItem() { AndroidElementInfo = AEI };
-                case "android.widget.ImageView":
-                    return new AndroidWidgetImageTreeItem() { AndroidElementInfo = AEI };
-                case "android.widget.EditText":
-                    return new AndroidWidgetEditTextTreeItem() { AndroidElementInfo = AEI };
-
-                default:
-                    // return simple basic Android TVI
-                    return new AndroidElementTreeItemBase() { AndroidElementInfo = AEI };
-            }
+                "android.widget.Button" => new AndroidWidgetButtonTreeItem() { AndroidElementInfo = AEI },
+                "android.widget.CheckBox" => new AndroidWidgetCheckBoxTreeItem() { AndroidElementInfo = AEI },
+                "android.widget.TextView" => new AndroidWidgetTextViewTreeItem() { AndroidElementInfo = AEI },
+                "android.widget.ImageView" => new AndroidWidgetImageTreeItem() { AndroidElementInfo = AEI },
+                "android.widget.EditText" => new AndroidWidgetEditTextTreeItem() { AndroidElementInfo = AEI },
+                _ => new AndroidElementTreeItemBase() { AndroidElementInfo = AEI },// return simple basic Android TVI
+            };
         }
     }
 }

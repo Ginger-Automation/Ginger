@@ -51,7 +51,7 @@ namespace Ginger.Variables
             xDBAccEndPoint.Init(context, database, nameof(Database.User));
             xDBAccKey.Init(context, database, nameof(Database.Pass));
             xDatabaseConnectionString.Init(context, database, nameof(Database.ConnectionString));
-            xDatabaseConnectionString.Row.Height = new System.Windows.GridLength(100); 
+            xDatabaseConnectionString.Row.Height = new System.Windows.GridLength(100);
             xDatabaseConnectionString.ValueTextBox.Height = 40;
             ((DatabaseOperations)this.database.DatabaseOperations).NameBeforeEdit = this.database.Name;
 

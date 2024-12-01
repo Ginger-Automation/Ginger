@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
@@ -45,12 +44,16 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
         public void InitParamSelectionGrid()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.ParamLevel), Header = "Level", WidthWeight = 35, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.PlaceHolder), Header = "Place Holder", WidthWeight = 100, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.Description), Header = "Description", WidthWeight = 150, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.OptionalValuesString), Header = "Optional Values", WidthWeight = 80, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(AppModelParameter.ParamLevel), Header = "Level", WidthWeight = 35, AllowSorting = true },
+                new GridColView() { Field = nameof(AppModelParameter.PlaceHolder), Header = "Place Holder", WidthWeight = 100, AllowSorting = true },
+                new GridColView() { Field = nameof(AppModelParameter.Description), Header = "Description", WidthWeight = 150, AllowSorting = true },
+                new GridColView() { Field = nameof(AppModelParameter.OptionalValuesString), Header = "Optional Values", WidthWeight = 80, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
+            ]
+            };
 
             xModelParamSelectionGrid.ShowTitle = Visibility.Collapsed;
             xModelParamSelectionGrid.SetAllColumnsDefaultView(view);
@@ -62,17 +65,18 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
         public AppModelParameter ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button selectBtn = new Button();
-            selectBtn.Content = "Select";
+            Button selectBtn = new Button
+            {
+                Content = "Select"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: selectBtn, eventName: nameof(ButtonBase.Click), handler: selectBtn_Click);
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(selectBtn);
+            ObservableList<Button> winButtons = [selectBtn];
 
             xModelParamSelectionGrid.ShowToolsBar = Visibility.Collapsed;
             xModelParamSelectionGrid.Grid.IsReadOnly = true;
             WeakEventManager<Control, MouseButtonEventArgs>.AddHandler(source: xModelParamSelectionGrid, eventName: nameof(Control.MouseDoubleClick), handler: selectBtn_Click);
-            
+
 
             GenericWindow.LoadGenericWindow(ref mGenericWindow, null, windowStyle, "Expected Value Parameter Selection", this, winButtons, true, "Cancel", CloseWinClicked);
             return SelectedParameter;

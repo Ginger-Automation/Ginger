@@ -33,31 +33,29 @@ namespace Ginger.WindowExplorer.HTMLCommon
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Set " + this.ElementInfo.ElementTitle + " Value",
-                GenElementAction = ActGenElement.eGenElementAction.SetValue
-            });
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Send Keys " + this.ElementInfo.ElementTitle + " Value",
-                GenElementAction = ActGenElement.eGenElementAction.SendKeys
-            });
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Get " + this.ElementInfo.ElementTitle + " Value",
-                GenElementAction = ActGenElement.eGenElementAction.GetValue
-            });
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Check " + this.ElementInfo.ElementTitle + " is Enabled",
-                GenElementAction = ActGenElement.eGenElementAction.Enabled
-            });
+            ObservableList<Act> list =
+            [
+                new ActGenElement()
+                {
+                    Description = "Set " + this.ElementInfo.ElementTitle + " Value",
+                    GenElementAction = ActGenElement.eGenElementAction.SetValue
+                },
+                new ActGenElement()
+                {
+                    Description = "Send Keys " + this.ElementInfo.ElementTitle + " Value",
+                    GenElementAction = ActGenElement.eGenElementAction.SendKeys
+                },
+                new ActGenElement()
+                {
+                    Description = "Get " + this.ElementInfo.ElementTitle + " Value",
+                    GenElementAction = ActGenElement.eGenElementAction.GetValue
+                },
+                new ActGenElement()
+                {
+                    Description = "Check " + this.ElementInfo.ElementTitle + " is Enabled",
+                    GenElementAction = ActGenElement.eGenElementAction.Enabled
+                },
+            ];
 
             AddGeneralHTMLActions(list);
 

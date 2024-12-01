@@ -40,7 +40,7 @@ namespace Ginger.UserControlsLib.PieChart
             object item = element.Tag;
 
             // find the item container
-            DependencyObject container = (DependencyObject)Helpers.FindElementOfTypeUp(element, typeof(ListBoxItem));
+            DependencyObject container = Helpers.FindElementOfTypeUp(element, typeof(ListBoxItem));
 
             // locate the items control which it belongs to
             ItemsControl owner = ItemsControl.ItemsControlFromItemContainer(container);

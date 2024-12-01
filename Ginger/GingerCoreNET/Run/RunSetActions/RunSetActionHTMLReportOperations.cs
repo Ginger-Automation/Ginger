@@ -42,8 +42,10 @@ namespace Ginger.Run.RunSetActions
         {
             get
             {
-                ValueExpression mVE = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
-                mVE.Value = RunSetActionHTMLReport.HTMLReportFolderName;
+                ValueExpression mVE = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false)
+                {
+                    Value = RunSetActionHTMLReport.HTMLReportFolderName
+                };
                 return mHTMLReportFolderNameCalculated = mVE.ValueCalculated;
             }
         }
@@ -138,7 +140,7 @@ namespace Ginger.Run.RunSetActions
             }
             else
             {
-                webReporterRunner.RunNewHtmlReport(Path.Combine(reportsResultFolder, $"{reportName}_{DateTime.UtcNow.ToString("yyyymmddhhmmssfff")}"), null, null, false);
+                webReporterRunner.RunNewHtmlReport(Path.Combine(reportsResultFolder, $"{reportName}_{DateTime.UtcNow:yyyymmddhhmmssfff}"), null, null, false);
             }
         }
 

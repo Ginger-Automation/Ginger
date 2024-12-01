@@ -39,7 +39,7 @@ namespace GingerCore.Variables
         public override string VariableType
         {
             get { return "Selection List"; }
-        }            
+        }
         private bool mIsLoopEnabled = true;
         [IsSerializedForLocalRepository(true)]
         public bool IsLoopEnabled
@@ -54,10 +54,10 @@ namespace GingerCore.Variables
                 }
             }
         }
-        
+
         private bool mIsDynamicValueModificationEnabled;
 
-        [IsSerializedForLocalRepository(false)]      
+        [IsSerializedForLocalRepository(false)]
         public bool IsDynamicValueModificationEnabled
         {
             get { return mIsDynamicValueModificationEnabled; }
@@ -81,7 +81,7 @@ namespace GingerCore.Variables
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<OptionalValue> OptionalValuesList = new ObservableList<OptionalValue>();
+        public ObservableList<OptionalValue> OptionalValuesList = [];
 
         public string SelectedValue { set { Value = value; OnPropertyChanged(nameof(SelectedValue)); } get { return Value; } }
 
@@ -110,7 +110,7 @@ namespace GingerCore.Variables
             else if (IsDynamicValueModificationEnabled)
             {
                 OptionalValuesList.Add(new OptionalValue(value));
-                Value = OptionalValuesList[OptionalValuesList.Count - 1].Value;
+                Value = OptionalValuesList[^1].Value;
                 return true;
             }
             else
@@ -191,7 +191,7 @@ namespace GingerCore.Variables
             try
             {
                 List<string> valsList = (new List<string>(valsString.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)));
-                ObservableList<OptionalValue> valsObservList = new ObservableList<OptionalValue>();
+                ObservableList<OptionalValue> valsObservList = [];
                 foreach (string val in valsList)
                     valsObservList.Add(new OptionalValue(val));
                 return valsObservList;
@@ -199,16 +199,18 @@ namespace GingerCore.Variables
             catch
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Cannot Convert Optional Values String To List - " + valsString);
-                return new ObservableList<OptionalValue>();
+                return [];
             }
         }
 
         public override List<string> GetExtraParamsList()
         {
-            List<string> extraParamsDescription = new List<string>();
-            extraParamsDescription.Add("Index=1");
-            extraParamsDescription.Add("GetLength=True");
-            extraParamsDescription.Add("IsContains=");
+            List<string> extraParamsDescription =
+            [
+                "Index=1",
+                "GetLength=True",
+                "IsContains=",
+            ];
             return extraParamsDescription;
         }
 
@@ -240,7 +242,7 @@ namespace GingerCore.Variables
                         }
                     case "GetLength":
                         {
-                            if (keyValuePair.Value == "True" || keyValuePair.Value == "true")
+                            if (keyValuePair.Value is "True" or "true")
                             {
                                 return OptionalValuesList.Count.ToString();
                             }
@@ -333,10 +335,12 @@ namespace GingerCore.Variables
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
-            List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
-            supportedOperations.Add(VariableBase.eSetValueOptions.SetValue);
-            supportedOperations.Add(VariableBase.eSetValueOptions.AutoGenerateValue);
-            supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
+            List<VariableBase.eSetValueOptions> supportedOperations =
+            [
+                VariableBase.eSetValueOptions.SetValue,
+                VariableBase.eSetValueOptions.AutoGenerateValue,
+                VariableBase.eSetValueOptions.ResetValue,
+            ];
             if (IsDynamicValueModificationEnabled)
             {
                 supportedOperations.Add(VariableBase.eSetValueOptions.DynamicValueDeletion);

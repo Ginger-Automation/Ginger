@@ -32,7 +32,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace GingerCoreNETUnitTests.SolutionTestsLib
 {
@@ -230,8 +229,10 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void VerifySerialzedAttrDefaultValueWithChange()
         {
             //Arrange
-            BusinessFlow BF = new BusinessFlow("BF2");
-            BF.Source = BusinessFlow.eSource.Gherkin;
+            BusinessFlow BF = new BusinessFlow("BF2")
+            {
+                Source = BusinessFlow.eSource.Gherkin
+            };
 
             //Act
             string xml = RS.SerializeToString(BF);
@@ -248,8 +249,10 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void RepositoryItemKey()
         {
             //Arrange
-            ApplicationPOMModel POM = new ApplicationPOMModel();
-            POM.Name = "POM1";
+            ApplicationPOMModel POM = new ApplicationPOMModel
+            {
+                Name = "POM1"
+            };
             RepositoryItemKey key = POM.Key;
 
             //Act
@@ -269,14 +272,18 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         {
             //Arrange
             ApplicationAPIModel API = new ApplicationAPIModel();
-            RepositoryItemKey Tag1 = new RepositoryItemKey();
-            Tag1.ItemName = "Tag1";
-            Tag1.Guid = Guid.NewGuid();
+            RepositoryItemKey Tag1 = new RepositoryItemKey
+            {
+                ItemName = "Tag1",
+                Guid = Guid.NewGuid()
+            };
             API.TagsKeys.Add(Tag1);
 
-            RepositoryItemKey Tag2 = new RepositoryItemKey();
-            Tag2.ItemName = "Tag2";
-            Tag2.Guid = Guid.NewGuid();
+            RepositoryItemKey Tag2 = new RepositoryItemKey
+            {
+                ItemName = "Tag2",
+                Guid = Guid.NewGuid()
+            };
             API.TagsKeys.Add(Tag2);
 
             //Act
@@ -294,13 +301,17 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void POMWithTargetApplicationKey()
         {
             //Arrange
-            ApplicationPlatform AP = new ApplicationPlatform();
-            AP.AppName = "App1";
+            ApplicationPlatform AP = new ApplicationPlatform
+            {
+                AppName = "App1"
+            };
             RepositoryItemKey key = AP.Key;
 
-            ApplicationPOMModel POM = new ApplicationPOMModel();
-            POM.Name = "POM1";
-            POM.TargetApplicationKey = AP.Key;
+            ApplicationPOMModel POM = new ApplicationPOMModel
+            {
+                Name = "POM1",
+                TargetApplicationKey = AP.Key
+            };
 
 
             //Act
@@ -324,12 +335,18 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             //Arrange
 
             //Act
-            RunSetConfig RSC = new RunSetConfig();
-            RSC.Name = "UT RSC1";
-            GingerRunner ARC1 = new GingerRunner();
-            ARC1.Name = " Agent 1";
-            BusinessFlowRun BFR = new BusinessFlowRun();
-            BFR.BusinessFlowName = "BF1";
+            RunSetConfig RSC = new RunSetConfig
+            {
+                Name = "UT RSC1"
+            };
+            GingerRunner ARC1 = new GingerRunner
+            {
+                Name = " Agent 1"
+            };
+            BusinessFlowRun BFR = new BusinessFlowRun
+            {
+                BusinessFlowName = "BF1"
+            };
             ARC1.BusinessFlowsRunList.Add(BFR);
             RSC.GingerRunners.Add(ARC1);
             // RSC .SaveToFile(@"c:\temp\UTRSC1.xml");
@@ -428,11 +445,13 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void ActivitiesLazyLoadViaStringData()
         {
             //arrange
-            ObservableList<Activity> activities = new ObservableList<Activity>();
+            ObservableList<Activity> activities = [];
             string activityXml = File.ReadAllText(TestResources.GetTestResourcesFile(@"XML" + Path.DirectorySeparatorChar + "ActivityTest.Ginger.Activity.xml"));
-            activities.LazyLoadDetails = new LazyLoadListDetails();
-            activities.LazyLoadDetails.Config = new LazyLoadListConfig() { LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData };
-            activities.LazyLoadDetails.DataAsString = activityXml;
+            activities.LazyLoadDetails = new LazyLoadListDetails
+            {
+                Config = new LazyLoadListConfig() { LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData },
+                DataAsString = activityXml
+            };
 
             //act
             if (activities.LazyLoad)
@@ -452,9 +471,12 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void ActivitiesLazyLoadViaNodeLPath()
         {
             //arragne
-            ObservableList<Activity> activities = new ObservableList<Activity>();
-            activities.LazyLoadDetails = new LazyLoadListDetails() { XmlFilePath = Path.Combine(TestResources.GetTestResourcesFolder(@"XML"), "ActivityTest.Ginger.Activity.xml") };
-            activities.LazyLoadDetails.Config = new LazyLoadListConfig() { LazyLoadType = LazyLoadListConfig.eLazyLoadType.NodePath, ListName = nameof(BusinessFlow.Activities) };
+            ObservableList<Activity> activities = [];
+            activities.LazyLoadDetails = new LazyLoadListDetails
+            {
+                XmlFilePath = Path.Combine(TestResources.GetTestResourcesFolder(@"XML"), "ActivityTest.Ginger.Activity.xml"),
+                Config = new LazyLoadListConfig() { LazyLoadType = LazyLoadListConfig.eLazyLoadType.NodePath, ListName = nameof(BusinessFlow.Activities) }
+            };
 
             //act
             if (activities.LazyLoad)

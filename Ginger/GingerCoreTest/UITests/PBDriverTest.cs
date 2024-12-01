@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
@@ -65,17 +64,24 @@ namespace UnitTest
             }
 
             mGR = new GingerRunner();
-            mGR.Executor = new GingerExecutionEngine(mGR);
-
-            mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
-            mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "BF Test PB Driver";
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.PowerBuilder;
+            mGR.Executor = new GingerExecutionEngine(mGR)
+            {
+                CurrentSolution = new Ginger.SolutionGeneral.Solution()
+            };
+            mBF = new BusinessFlow
+            {
+                Activities = [],
+                Name = "BF Test PB Driver"
+            };
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.PowerBuilder
+            };
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "PBTestAPP" });
-            Activity activity = new Activity();
-            activity.TargetApplication = "PBTestApp";
+            Activity activity = new Activity
+            {
+                TargetApplication = "PBTestApp"
+            };
             mBF.Activities.Add(activity);
             mBF.CurrentActivity = activity;
 
@@ -88,20 +94,23 @@ namespace UnitTest
             ((AgentOperations)a.AgentOperations).Driver = mDriver;
             a.DriverType = Agent.eDriverType.PowerBuilder;
 
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [a];
 
-            ApplicationAgent AA = new ApplicationAgent();
-            AA.AppName = "PBTestApp";
-            AA.Agent = a;
+            ApplicationAgent AA = new ApplicationAgent
+            {
+                AppName = "PBTestApp",
+                Agent = a
+            };
             mGR.ApplicationAgents.Add(AA);
             mGR.Executor.CurrentBusinessFlow = mBF;
             mGR.Executor.SetCurrentActivityAgent();
             // Do Switch Window, to be ready for actions
-            ActSwitchWindow c = new ActSwitchWindow();
-            c.LocateBy = eLocateBy.ByTitle;
-            c.LocateValue = "Simple Page";
-            c.WaitTime = 10;
+            ActSwitchWindow c = new ActSwitchWindow
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValue = "Simple Page",
+                WaitTime = 10
+            };
             mGR.Executor.RunAction(c, false);
         }
 
@@ -134,13 +143,15 @@ namespace UnitTest
         public void SetTextField_tb_lastname()
         {
             //Arrange                        
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "sle_acc_text";
-            c.Value = "Jenny";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.SetValue,
+                AddNewReturnParams = true,
+                LocateValue = "sle_acc_text",
+                Value = "Jenny",
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -148,12 +159,14 @@ namespace UnitTest
             mGR.Executor.RunAction(c, false);
 
 
-            ActPBControl act = new ActPBControl();
-            act.LocateBy = eLocateBy.ByName;
-            act.ControlAction = ActPBControl.eControlAction.GetValue;
-            act.LocateValue = "sle_acc_text";
-            act.AddNewReturnParams = true;
-            act.Active = true;
+            ActPBControl act = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetValue,
+                LocateValue = "sle_acc_text",
+                AddNewReturnParams = true,
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
@@ -177,21 +190,25 @@ namespace UnitTest
         {
             //Arrange                        
             // Put value in the field
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.LocateValue = "sle_acc_text";
-            c.Value = "ABCDEF";
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.SetValue,
+                LocateValue = "sle_acc_text",
+                Value = "ABCDEF"
+            };
             mGR.Executor.RunAction(c);
 
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             // Prep Get Value Action
-            ActPBControl act = new ActPBControl();
-            act.LocateBy = eLocateBy.ByName;
-            act.ControlAction = ActPBControl.eControlAction.GetValue;
-            act.LocateValue = "sle_acc_text";
-            act.Active = true;
+            ActPBControl act = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetValue,
+                LocateValue = "sle_acc_text",
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
@@ -208,13 +225,15 @@ namespace UnitTest
         public void Senkeys_textbox()
         {
             //Arrange                        
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByXPath;
-            c.ControlAction = ActPBControl.eControlAction.SendKeys;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "/mle_acc_notes";
-            c.Value = "Ginger";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.SendKeys,
+                AddNewReturnParams = true,
+                LocateValue = "/mle_acc_notes",
+                Value = "Ginger",
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -222,12 +241,14 @@ namespace UnitTest
             mGR.Executor.RunAction(c, false);
 
 
-            ActPBControl act = new ActPBControl();
-            act.LocateBy = eLocateBy.ByXPath;
-            act.ControlAction = ActPBControl.eControlAction.GetValue;
-            act.LocateValue = "/mle_acc_notes";
-            act.AddNewReturnParams = true;
-            act.Active = true;
+            ActPBControl act = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.GetValue,
+                LocateValue = "/mle_acc_notes",
+                AddNewReturnParams = true,
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
@@ -249,13 +270,15 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetControlProperty_Value()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "address";
-            c.Value = "Value";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetControlProperty,
+                AddNewReturnParams = true,
+                LocateValue = "address",
+                Value = "Value",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -278,11 +301,13 @@ namespace UnitTest
         {
 
             // Window Maximize
-            ActWindow actWinMax = new ActWindow();
-            actWinMax.LocateBy = eLocateBy.ByTitle;
-            actWinMax.LocateValue = "Simple Page";
-            actWinMax.WindowActionType = ActWindow.eWindowActionType.Maximize;
-            actWinMax.Active = true;
+            ActWindow actWinMax = new ActWindow
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValue = "Simple Page",
+                WindowActionType = ActWindow.eWindowActionType.Maximize,
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(actWinMax);
             mBF.CurrentActivity.Acts.CurrentItem = actWinMax;
@@ -293,11 +318,13 @@ namespace UnitTest
             Assert.AreEqual(actWinMax.Error, null, "Act.Error");
 
             // Window minimize
-            ActWindow actWinMin = new ActWindow();
-            actWinMin.LocateBy = eLocateBy.ByTitle;
-            actWinMin.LocateValue = "Simple Page";
-            actWinMin.WindowActionType = ActWindow.eWindowActionType.Minimize;
-            actWinMin.Active = true;
+            ActWindow actWinMin = new ActWindow
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValue = "Simple Page",
+                WindowActionType = ActWindow.eWindowActionType.Minimize,
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(actWinMin);
             mBF.CurrentActivity.Acts.CurrentItem = actWinMin;
@@ -308,11 +335,13 @@ namespace UnitTest
             Assert.AreEqual(actWinMin.Error, null, "Act.Error");
 
             // Window Restore
-            ActWindow actWinRes = new ActWindow();
-            actWinRes.LocateBy = eLocateBy.ByTitle;
-            actWinRes.LocateValue = "Simple Page";
-            actWinRes.WindowActionType = ActWindow.eWindowActionType.Restore;
-            actWinRes.Active = true;
+            ActWindow actWinRes = new ActWindow
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValue = "Simple Page",
+                WindowActionType = ActWindow.eWindowActionType.Restore,
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(actWinRes);
             mBF.CurrentActivity.Acts.CurrentItem = actWinRes;
@@ -332,19 +361,23 @@ namespace UnitTest
         {
 
             // click click me button
-            ActPBControl act = new ActPBControl();
-            act.LocateBy = eLocateBy.ByName;
-            act.ControlAction = ActPBControl.eControlAction.Click;
-            act.LocateValue = "Click Me";
-            // act.LocateValueCalculated = "1021";
-            act.Active = true;
+            ActPBControl act = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Click,
+                LocateValue = "Click Me",
+                // act.LocateValueCalculated = "1021";
+                Active = true
+            };
 
             // Click OK on the msgbox
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValue = "OK";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Click,
+                LocateValue = "OK",
+                Active = true
+            };
 
             //Act
 
@@ -370,20 +403,24 @@ namespace UnitTest
         {
 
             // click click me button
-            ActPBControl act = new ActPBControl();
-            act.LocateBy = eLocateBy.ByName;
-            act.ControlAction = ActPBControl.eControlAction.ClickXY;
-            act.LocateValue = "Click Me";
-            act.Value = "2,2";
-            // act.LocateValueCalculated = "1021";
-            act.Active = true;
+            ActPBControl act = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.ClickXY,
+                LocateValue = "Click Me",
+                Value = "2,2",
+                // act.LocateValueCalculated = "1021";
+                Active = true
+            };
 
             // Click OK on the msgbox
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValue = "OK";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Click,
+                LocateValue = "OK",
+                Active = true
+            };
 
             //Act
 
@@ -409,19 +446,23 @@ namespace UnitTest
         {
 
             // click click me button
-            ActPBControl act = new ActPBControl();
-            act.LocateBy = eLocateBy.ByName;
-            act.ControlAction = ActPBControl.eControlAction.DoubleClick;
-            act.LocateValue = "Click Me";
-            // act.LocateValueCalculated = "1021";
-            act.Active = true;
+            ActPBControl act = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.DoubleClick,
+                LocateValue = "Click Me",
+                // act.LocateValueCalculated = "1021";
+                Active = true
+            };
 
             // Click OK on the msgbox
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValue = "OK";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Click,
+                LocateValue = "OK",
+                Active = true
+            };
 
             //Act
 
@@ -446,13 +487,15 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetControlProperty_AutomationId_Button()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "Click Me";
-            c.Value = "AutomationId";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetControlProperty,
+                AddNewReturnParams = true,
+                LocateValue = "Click Me",
+                Value = "AutomationId",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -470,13 +513,15 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetControlProperty_ClassName_Button()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "Click Me";
-            c.Value = "ClassName";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetControlProperty,
+                AddNewReturnParams = true,
+                LocateValue = "Click Me",
+                Value = "ClassName",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -494,13 +539,15 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetControlProperty_IsKeyboardFocusable_Button()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "Click Me";
-            c.Value = "IsKeyboardFocusable";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetControlProperty,
+                AddNewReturnParams = true,
+                LocateValue = "Click Me",
+                Value = "IsKeyboardFocusable",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -518,12 +565,14 @@ namespace UnitTest
         [Timeout(60000)]
         public void IsExist_Button()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.IsExist;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "Tabbed";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.IsExist,
+                AddNewReturnParams = true,
+                LocateValue = "Tabbed",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -540,11 +589,13 @@ namespace UnitTest
         [Timeout(60000)]
         public void SmartSync_WaitUntilDisplay_Button()
         {
-            ActSmartSync act = new ActSmartSync();
-            act.LocateBy = eLocateBy.ByName;
-            act.SmartSyncAction = ActSmartSync.eSmartSyncAction.WaitUntilDisplay;
-            act.LocateValue = "Click Me";
-            act.Active = true;
+            ActSmartSync act = new ActSmartSync
+            {
+                LocateBy = eLocateBy.ByName,
+                SmartSyncAction = ActSmartSync.eSmartSyncAction.WaitUntilDisplay,
+                LocateValue = "Click Me",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
@@ -563,25 +614,29 @@ namespace UnitTest
         public void SetCheckboxValue_ByName()
         {
             //Arrange                        
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.LocateValue = "Works in Amdocs";
-            //c.ValueForDriver = "Checked";
-            c.Value = "Checked";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.SetValue,
+                LocateValue = "Works in Amdocs",
+                //c.ValueForDriver = "Checked";
+                Value = "Checked",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
             mGR.Executor.RunAction(c, false);
 
 
-            ActPBControl act = new ActPBControl();
-            act.LocateBy = eLocateBy.ByName;
-            act.ControlAction = ActPBControl.eControlAction.GetValue;
-            act.LocateValue = "Works in Amdocs";
-            act.Active = true;
-            act.AddNewReturnParams = true;
+            ActPBControl act = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetValue,
+                LocateValue = "Works in Amdocs",
+                Active = true,
+                AddNewReturnParams = true
+            };
 
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
@@ -608,23 +663,27 @@ namespace UnitTest
         {
             //Arrange      
             // Put value in the field
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.LocateValue = "Works in Amdocs";
-            c.Value = "Checked";
-            c.AddNewReturnParams = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.SetValue,
+                LocateValue = "Works in Amdocs",
+                Value = "Checked",
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             mGR.Executor.RunAction(c, false);
 
             // Prep Get Value Action
-            ActPBControl act = new ActPBControl();
-            act.LocateBy = eLocateBy.ByName;
-            act.ControlAction = ActPBControl.eControlAction.GetValue;
-            act.LocateValue = "Works in Amdocs";
-            act.Active = true;
-            act.AddNewReturnParams = true;
+            ActPBControl act = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetValue,
+                LocateValue = "Works in Amdocs",
+                Active = true,
+                AddNewReturnParams = true
+            };
 
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
@@ -644,25 +703,29 @@ namespace UnitTest
         {//Arrange                        
 
             // Put value in the field
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.LocateValue = "cbx_acc_check";
-            c.ValueForDriver = "Checked";
-            c.Value = "Checked";
-            c.AddNewReturnParams = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.SetValue,
+                LocateValue = "cbx_acc_check",
+                ValueForDriver = "Checked",
+                Value = "Checked",
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             mGR.Executor.RunAction(c, false);
 
             //toggle
-            ActPBControl c1 = new ActPBControl();
-            c1.LocateBy = eLocateBy.ByName;
-            c1.ControlAction = ActPBControl.eControlAction.Toggle;
-            c1.LocateValue = "cbx_acc_check";
-            c1.AddNewReturnParams = true;
-            c1.ItemName = "Toggle Checkbox cbx_acc_check";
-            c1.Active = true;
+            ActPBControl c1 = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Toggle,
+                LocateValue = "cbx_acc_check",
+                AddNewReturnParams = true,
+                ItemName = "Toggle Checkbox cbx_acc_check",
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(c1);
             mBF.CurrentActivity.Acts.CurrentItem = c1;
@@ -672,10 +735,12 @@ namespace UnitTest
 
 
             // Prep Get Value Action
-            ActPBControl act = new ActPBControl();
-            act.LocateBy = eLocateBy.ByName;
-            act.ControlAction = ActPBControl.eControlAction.GetValue;
-            act.LocateValue = "cbx_acc_check";
+            ActPBControl act = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetValue,
+                LocateValue = "cbx_acc_check"
+            };
             c1.ItemName = "Toggle Checkbox cbx_acc_check";
             act.AddNewReturnParams = true;
             act.Active = true;
@@ -698,11 +763,13 @@ namespace UnitTest
         public void IsCheckboxEnabled_ByName()
         {
             //Arrange                        
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.IsEnabled;
-            c.LocateValue = "Works in Amdocs";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.IsEnabled,
+                LocateValue = "Works in Amdocs",
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -719,12 +786,14 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetControlProperty_ToggleState()
         {
-            ActPBControl act = new ActPBControl();
-            act.LocateBy = eLocateBy.ByName;
-            act.ControlAction = ActPBControl.eControlAction.GetValue;
-            act.LocateValue = "Illinois Resident";
-            act.Active = true;
-            act.AddNewReturnParams = true;
+            ActPBControl act = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetValue,
+                LocateValue = "Illinois Resident",
+                Active = true,
+                AddNewReturnParams = true
+            };
 
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
@@ -737,13 +806,15 @@ namespace UnitTest
             string actual = act.GetReturnParam("Actual");
             if (actual.Equals("Checked"))
             {
-                act = new ActPBControl();
-                act.LocateBy = eLocateBy.ByName;
-                act.ControlAction = ActPBControl.eControlAction.SetValue;
-                act.LocateValue = "Illinois Resident";
-                act.Value = "Unchecked";
-                act.Active = true;
-                act.AddNewReturnParams = true;
+                act = new ActPBControl
+                {
+                    LocateBy = eLocateBy.ByName,
+                    ControlAction = ActPBControl.eControlAction.SetValue,
+                    LocateValue = "Illinois Resident",
+                    Value = "Unchecked",
+                    Active = true,
+                    AddNewReturnParams = true
+                };
 
                 mBF.CurrentActivity.Acts.Add(act);
                 mBF.CurrentActivity.Acts.CurrentItem = act;
@@ -761,23 +832,27 @@ namespace UnitTest
         public void SelectRadioButton_Bachelors()
         {
             //Select the radio button
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.Select;
-            c.LocateValue = "Bachelors";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Select,
+                LocateValue = "Bachelors",
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
             mGR.Executor.RunAction(c, false);
 
-            ActPBControl act = new ActPBControl();
-            act.LocateBy = eLocateBy.ByName;
-            act.ControlAction = ActPBControl.eControlAction.IsSelected;
-            act.LocateValue = "Bachelors";
-            act.AddNewReturnParams = true;
-            act.Active = true;
+            ActPBControl act = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.IsSelected,
+                LocateValue = "Bachelors",
+                AddNewReturnParams = true,
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
@@ -798,11 +873,13 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetValueRadioButton_Bachelors()
         {
-            ActPBControl c1 = new ActPBControl();
-            c1.LocateBy = eLocateBy.ByName;
-            c1.ControlAction = ActPBControl.eControlAction.Select;
-            c1.LocateValue = "Bachelors";
-            c1.Active = true;
+            ActPBControl c1 = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Select,
+                LocateValue = "Bachelors",
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(c1);
             mBF.CurrentActivity.Acts.CurrentItem = c1;
@@ -810,12 +887,14 @@ namespace UnitTest
             mGR.Executor.RunAction(c1, false);
 
             //Select the radio button
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.IsSelected;
-            c.LocateValue = "Bachelors";
-            c.AddNewReturnParams = true;
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.IsSelected,
+                LocateValue = "Bachelors",
+                AddNewReturnParams = true,
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -833,11 +912,13 @@ namespace UnitTest
         public void IsSelectedRadioButton_Masters()
         {
             //Select the radio button
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.Select;
-            c.LocateValue = "Masters";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Select,
+                LocateValue = "Masters",
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -867,11 +948,13 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetTitleBarText_SimplePage()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByAutomationID;
-            c.ControlAction = ActPBControl.eControlAction.GetValue;
-            c.LocateValue = "1010";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByAutomationID,
+                ControlAction = ActPBControl.eControlAction.GetValue,
+                LocateValue = "1010",
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -889,11 +972,13 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetTextByName_name()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetValue;
-            c.LocateValue = "name_t";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetValue,
+                LocateValue = "name_t",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -910,13 +995,15 @@ namespace UnitTest
         public void SelectComboBoxItem_Indian()
         {
 
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.Select;
-            c.LocateValue = "ddlb_acc_nationality";
-            c.Value = "Indian";
-            c.AddNewReturnParams = true;
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Select,
+                LocateValue = "ddlb_acc_nationality",
+                Value = "Indian",
+                AddNewReturnParams = true,
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -927,12 +1014,14 @@ namespace UnitTest
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
             Assert.AreEqual(c.Error, null, "Act.Error");
 
-            c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByXPath;
-            c.ControlAction = ActPBControl.eControlAction.GetSelected;
-            c.LocateValue = "/[AutomationId:1021]";
-            c.AddNewReturnParams = true;
-            c.Active = true;
+            c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.GetSelected,
+                LocateValue = "/[AutomationId:1021]",
+                AddNewReturnParams = true,
+                Active = true
+            };
 
             mGR.Executor.RunAction(c, false);
 
@@ -948,25 +1037,29 @@ namespace UnitTest
         public void GetSelectedItem_ComboBox()
         {
 
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByXPath;
-            c.ControlAction = ActPBControl.eControlAction.Select;
-            c.LocateValue = "/[AutomationId:1021]";
-            c.Value = "India";
-            c.AddNewReturnParams = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.Select,
+                LocateValue = "/[AutomationId:1021]",
+                Value = "India",
+                AddNewReturnParams = true,
 
-            c.Active = true;
+                Active = true
+            };
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             mGR.Executor.RunAction(c, false);
 
-            c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByXPath;
-            c.ControlAction = ActPBControl.eControlAction.GetSelected;
-            c.LocateValue = "/[AutomationId:1021]";
-            c.AddNewReturnParams = true;
-            c.Active = true;
+            c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.GetSelected,
+                LocateValue = "/[AutomationId:1021]",
+                AddNewReturnParams = true,
+                Active = true
+            };
 
             mGR.Executor.RunAction(c, false);
             //Assert
@@ -981,11 +1074,13 @@ namespace UnitTest
         public void GetAllItems_ComboBox()
         {
 
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByXPath;
-            c.ControlAction = ActPBControl.eControlAction.GetSelected;
-            c.LocateValue = "/[AutomationId:1004]";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.GetSelected,
+                LocateValue = "/[AutomationId:1004]",
+                Active = true
+            };
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -1002,21 +1097,25 @@ namespace UnitTest
         [Timeout(60000)]
         public void ClickListBoxItem_English()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.Select;
-            c.LocateValue = "English";
-            c.ItemName = "Select item English";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Select,
+                LocateValue = "English",
+                ItemName = "Select item English",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
             mGR.Executor.RunAction(c, false);
 
-            ActPBControl act = new ActPBControl();
-            act.LocateBy = eLocateBy.ByName;
-            act.ControlAction = ActPBControl.eControlAction.GetSelected;
-            act.LocateValue = "lb_acc_language";
+            ActPBControl act = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetSelected,
+                LocateValue = "lb_acc_language"
+            };
             act.LocateValue = "lb_acc_language";
             act.AddNewReturnParams = true;
             act.Active = true;
@@ -1036,22 +1135,26 @@ namespace UnitTest
         [Ignore]
         public void GetSelectedItems_ListBox()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.Select;
-            c.LocateValue = "English";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Select,
+                LocateValue = "English",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
             mGR.Executor.RunAction(c, false);
 
-            c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetSelected;
-            c.LocateValue = "lb_acc_language";
-            c.AddNewReturnParams = true;
-            c.Active = true;
+            c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetSelected,
+                LocateValue = "lb_acc_language",
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             mGR.Executor.RunAction(c, false);
@@ -1069,12 +1172,14 @@ namespace UnitTest
         public void GetAllItems_ListBox()
         {
 
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetValue;
-            c.LocateValue = "lb_acc_language";
-            c.AddNewReturnParams = true;
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetValue,
+                LocateValue = "lb_acc_language",
+                AddNewReturnParams = true,
+                Active = true
+            };
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -1090,13 +1195,15 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetControlProperty_IsOffScreen_ListBox()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "Spanish";
-            c.Value = "IsOffScreen";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetControlProperty,
+                AddNewReturnParams = true,
+                LocateValue = "Spanish",
+                Value = "IsOffScreen",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -1114,13 +1221,15 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetControlProperty_NameProperty_ListBox()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "Spanish";
-            c.Value = "Name";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetControlProperty,
+                AddNewReturnParams = true,
+                LocateValue = "Spanish",
+                Value = "Name",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -1138,13 +1247,15 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetControlProperty_LocalizedControlType_ListBox()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "Spanish";
-            c.Value = "LocalizedControlType";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetControlProperty,
+                AddNewReturnParams = true,
+                LocateValue = "Spanish",
+                Value = "LocalizedControlType",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -1162,13 +1273,15 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetControlProperty_IsPassword_ListBox()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "Spanish";
-            c.Value = "IsPassword";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetControlProperty,
+                AddNewReturnParams = true,
+                LocateValue = "Spanish",
+                Value = "IsPassword",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -1186,13 +1299,15 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetControlProperty_IsEnabled_ListBox()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "Spanish";
-            c.Value = "IsEnabled";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetControlProperty,
+                AddNewReturnParams = true,
+                LocateValue = "Spanish",
+                Value = "IsEnabled",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -1210,13 +1325,15 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetControlProperty_IsSelected_ListBox()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "Spanish";
-            c.Value = "IsSelected";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetControlProperty,
+                AddNewReturnParams = true,
+                LocateValue = "Spanish",
+                Value = "IsSelected",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -1234,13 +1351,15 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetControlProperty_Xpath_ListBox()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "Spanish";
-            c.Value = "XPATH";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetControlProperty,
+                AddNewReturnParams = true,
+                LocateValue = "Spanish",
+                Value = "XPATH",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -1258,13 +1377,15 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetControlProperty_GetFieldValue_ListBox()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetFieldValue;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "lb_acc_language";
-            c.Value = "English";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetFieldValue,
+                AddNewReturnParams = true,
+                LocateValue = "lb_acc_language",
+                Value = "English",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -1285,22 +1406,26 @@ namespace UnitTest
         public void GetDialogTitle_ClickMeButton()
         {
 
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValue = "Click Me";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Click,
+                LocateValue = "Click Me",
+                Active = true
+            };
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             mGR.Executor.RunAction(c, false);
 
-            c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetTitle;
-            c.LocateValue = "MsgBox Test";
-            c.AddNewReturnParams = true;
-            c.Active = true;
+            c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetTitle,
+                LocateValue = "MsgBox Test",
+                AddNewReturnParams = true,
+                Active = true
+            };
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -1323,22 +1448,26 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetDialogText_ClickMeButton()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValue = "Click Me";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Click,
+                LocateValue = "Click Me",
+                Active = true
+            };
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             mGR.Executor.RunAction(c, false);
 
-            c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetValue;
-            c.LocateValue = "MsgBox Test";
-            c.AddNewReturnParams = true;
-            c.Active = true;
+            c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetValue,
+                LocateValue = "MsgBox Test",
+                AddNewReturnParams = true,
+                Active = true
+            };
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -1365,12 +1494,14 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetAllMenuBarElements()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetValue;
-            c.LocateValue = "Application";
-            c.AddNewReturnParams = true;
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetValue,
+                LocateValue = "Application",
+                AddNewReturnParams = true,
+                Active = true
+            };
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -1385,12 +1516,14 @@ namespace UnitTest
         [Ignore]
         public void ClickMenuItem()
         {
-            ActMenuItem c = new ActMenuItem();
-            c.LocateBy = eLocateBy.ByName;
-            c.MenuAction = ActMenuItem.eMenuAction.Click;
-            c.LocateValue = "File|New";
-            c.AddNewReturnParams = true;
-            c.Active = true;
+            ActMenuItem c = new ActMenuItem
+            {
+                LocateBy = eLocateBy.ByName,
+                MenuAction = ActMenuItem.eMenuAction.Click,
+                LocateValue = "File|New",
+                AddNewReturnParams = true,
+                Active = true
+            };
 
             //Act
             mBF.CurrentActivity.Acts.Add(c);
@@ -1400,12 +1533,14 @@ namespace UnitTest
             Assert.AreEqual(c.Status, eRunStatus.Passed, "c.Status");
             Assert.AreEqual(c.Error, null, "c.Error");
 
-            ActPBControl pbAct = new ActPBControl();
-            pbAct.LocateBy = eLocateBy.ByXPath;
-            pbAct.ControlAction = ActPBControl.eControlAction.Click;
-            pbAct.LocateValue = "/Menu/OK";
-            pbAct.Wait = 5;
-            pbAct.Active = true;
+            ActPBControl pbAct = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.Click,
+                LocateValue = "/Menu/OK",
+                Wait = 5,
+                Active = true
+            };
             //Act
             mBF.CurrentActivity.Acts.Add(pbAct);
             mBF.CurrentActivity.Acts.CurrentItem = pbAct;
@@ -1420,12 +1555,14 @@ namespace UnitTest
         [Ignore]
         public void ExpandMenuItem()
         {
-            ActMenuItem c = new ActMenuItem();
-            c.LocateBy = eLocateBy.ByName;
-            c.MenuAction = ActMenuItem.eMenuAction.Expand;
-            c.LocateValue = "File";
-            c.AddNewReturnParams = true;
-            c.Active = true;
+            ActMenuItem c = new ActMenuItem
+            {
+                LocateBy = eLocateBy.ByName,
+                MenuAction = ActMenuItem.eMenuAction.Expand,
+                LocateValue = "File",
+                AddNewReturnParams = true,
+                Active = true
+            };
 
             //Act
             mBF.CurrentActivity.Acts.Add(c);
@@ -1435,13 +1572,15 @@ namespace UnitTest
             Assert.AreEqual(c.Status, eRunStatus.Passed, "c.Status");
             Assert.AreEqual(c.Error, null, "c.Error");
 
-            ActPBControl pbAct = new ActPBControl();
-            pbAct.LocateBy = eLocateBy.ByName;
-            pbAct.ControlAction = ActPBControl.eControlAction.IsExist;
-            pbAct.LocateValue = "New";
-            pbAct.Wait = 5;
-            pbAct.Active = true;
-            pbAct.AddNewReturnParams = true;
+            ActPBControl pbAct = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.IsExist,
+                LocateValue = "New",
+                Wait = 5,
+                Active = true,
+                AddNewReturnParams = true
+            };
             //Act
             mBF.CurrentActivity.Acts.Add(pbAct);
             mBF.CurrentActivity.Acts.CurrentItem = pbAct;
@@ -1459,25 +1598,29 @@ namespace UnitTest
         [Timeout(60000)]
         public void SetTextBoxValue_ByXpath()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByXPath;
-            c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.LocateValue = "sle_acc_text";
-            c.Value = "Hello From Xpath";
-            c.AddNewReturnParams = true;
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.SetValue,
+                LocateValue = "sle_acc_text",
+                Value = "Hello From Xpath",
+                AddNewReturnParams = true,
+                Active = true
+            };
 
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             mGR.Executor.RunAction(c, false);
 
-            c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByXPath;
-            c.ControlAction = ActPBControl.eControlAction.GetValue;
-            c.LocateValue = "sle_acc_text";
-            c.AddNewReturnParams = true;
-            c.Active = true;
+            c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.GetValue,
+                LocateValue = "sle_acc_text",
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -1493,23 +1636,27 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetTextBoxValue_ByXpath()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByXPath;
-            c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.LocateValue = "sle_acc_text";
-            c.Value = "Hello From Xpath";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.SetValue,
+                LocateValue = "sle_acc_text",
+                Value = "Hello From Xpath",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
             mGR.Executor.RunAction(c, false);
 
-            c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByXPath;
-            c.ControlAction = ActPBControl.eControlAction.GetValue;
-            c.LocateValue = "[AutomationId:1026]";
-            c.AddNewReturnParams = true;
-            c.Active = true;
+            c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.GetValue,
+                LocateValue = "[AutomationId:1026]",
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -1526,23 +1673,27 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetTextBoxValue_ByXpathWithValueProperty()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByXPath;
-            c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.LocateValue = "sle_acc_text";
-            c.Value = "Jinendra";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.SetValue,
+                LocateValue = "sle_acc_text",
+                Value = "Jinendra",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
             mGR.Executor.RunAction(c, false);
 
-            c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByXPath;
-            c.ControlAction = ActPBControl.eControlAction.GetValue;
-            c.LocateValue = "[Value:Jinendra]";
-            c.AddNewReturnParams = true;
-            c.Active = true;
+            c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.GetValue,
+                LocateValue = "[Value:Jinendra]",
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -1558,25 +1709,28 @@ namespace UnitTest
         [Ignore]
         public void SelectCountry_ByXpathWithMultipleProperty()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByXPath;
-            c.ControlAction = ActPBControl.eControlAction.Select;
-            c.LocateValue = "/[[AutomationId:1006][Name:]]";
-            c.Value = "India";
-            c.AddNewReturnParams = true;
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.Select,
+                LocateValue = "/[[AutomationId:1006][Name:]]",
+                Value = "India",
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
             mGR.Executor.RunAction(c, false);
 
-            c = new ActPBControl();
-
-            c.LocateBy = eLocateBy.ByXPath;
-            c.ControlAction = ActPBControl.eControlAction.GetSelected;
-            c.LocateValue = "/[[AutomationId:1006][Name:]]";
-            c.AddNewReturnParams = true;
-            c.Active = true;
+            c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.GetSelected,
+                LocateValue = "/[[AutomationId:1006][Name:]]",
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -1592,25 +1746,27 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetText_TableActionGrid()
         {
-            ActTableElement actGrid = new ActTableElement();
-            actGrid.ByRandRow = false;
-            actGrid.BySelectedRow = false;
-            actGrid.ByWhere = true;
-            actGrid.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle;
-            actGrid.ControlAction = ActTableElement.eTableAction.GetValue;
-            actGrid.LocateColTitle = "address";
-            actGrid.LocateRowType = "Where";
-            actGrid.LocateRowValue = "";
-            actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
-            actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
-            actGrid.AddNewReturnParams = true;
-            actGrid.WhereColumnTitle = "name";
-            actGrid.WhereColumnValue = "Yaron";
-            actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
-            actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-            actGrid.LocateValue = "dw_acc_grd";
-            actGrid.LocateBy = eLocateBy.ByName;
-            actGrid.Active = true;
+            ActTableElement actGrid = new ActTableElement
+            {
+                ByRandRow = false,
+                BySelectedRow = false,
+                ByWhere = true,
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle,
+                ControlAction = ActTableElement.eTableAction.GetValue,
+                LocateColTitle = "address",
+                LocateRowType = "Where",
+                LocateRowValue = "",
+                RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle,
+                AddNewReturnParams = true,
+                WhereColumnTitle = "name",
+                WhereColumnValue = "Yaron",
+                WhereOperator = ActTableElement.eRunColOperator.Equals,
+                WhereProperty = ActTableElement.eRunColPropertyValue.Value,
+                LocateValue = "dw_acc_grd",
+                LocateBy = eLocateBy.ByName,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
             mGR.Executor.RunAction(actGrid, false);
@@ -1625,27 +1781,29 @@ namespace UnitTest
         [Timeout(60000)]
         public void SetText_TableActionGrid()
         {
-            ActTableElement actGrid1 = new ActTableElement();
-            actGrid1.ByRandRow = false;
-            actGrid1.BySelectedRow = false;
-            actGrid1.ByWhere = true;
-            actGrid1.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle;
-            actGrid1.ControlAction = ActTableElement.eTableAction.SetValue;
-            actGrid1.LocateColTitle = "address";
+            ActTableElement actGrid1 = new ActTableElement
+            {
+                ByRandRow = false,
+                BySelectedRow = false,
+                ByWhere = true,
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle,
+                ControlAction = ActTableElement.eTableAction.SetValue,
+                LocateColTitle = "address",
 
-            actGrid1.WhereColumnTitle = "name";
-            actGrid1.WhereColumnValue = "Ravi";
-            actGrid1.LocateRowType = "Where";
-            actGrid1.LocateRowValue = "";
-            actGrid1.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
-            actGrid1.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
+                WhereColumnTitle = "name",
+                WhereColumnValue = "Ravi",
+                LocateRowType = "Where",
+                LocateRowValue = "",
+                RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle,
 
-            actGrid1.WhereOperator = ActTableElement.eRunColOperator.Equals;
-            actGrid1.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-            actGrid1.LocateValue = "dw_acc_grd";
-            actGrid1.LocateBy = eLocateBy.ByName;
-            actGrid1.Value = "3909 Inverness Rd";
-            actGrid1.Active = true;
+                WhereOperator = ActTableElement.eRunColOperator.Equals,
+                WhereProperty = ActTableElement.eRunColPropertyValue.Value,
+                LocateValue = "dw_acc_grd",
+                LocateBy = eLocateBy.ByName,
+                Value = "3909 Inverness Rd",
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(actGrid1);
 
@@ -1654,20 +1812,22 @@ namespace UnitTest
             mGR.Executor.RunAction(actGrid1, false);
 
             //Assert
-            ActTableElement actGrid = new ActTableElement();
-            actGrid.ByRandRow = false;
-            actGrid.BySelectedRow = false;
-            actGrid.ByWhere = true;
-            actGrid.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle;
-            actGrid.ControlAction = ActTableElement.eTableAction.GetValue;
-            actGrid.LocateColTitle = "address";
+            ActTableElement actGrid = new ActTableElement
+            {
+                ByRandRow = false,
+                BySelectedRow = false,
+                ByWhere = true,
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle,
+                ControlAction = ActTableElement.eTableAction.GetValue,
+                LocateColTitle = "address",
 
-            actGrid.WhereColumnTitle = "name";
-            actGrid.WhereColumnValue = "Ravi";
-            actGrid.LocateRowType = "Where";
-            actGrid.LocateRowValue = "";
-            actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
-            actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
+                WhereColumnTitle = "name",
+                WhereColumnValue = "Ravi",
+                LocateRowType = "Where",
+                LocateRowValue = "",
+                RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle
+            };
             actGrid.WhereColumnTitle = "name";
 
             actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
@@ -1693,20 +1853,22 @@ namespace UnitTest
         [Timeout(60000)]
         public void Click_TableAction()
         {
-            ActTableElement actGrid = new ActTableElement();
-            actGrid.ByRandRow = false;
-            actGrid.BySelectedRow = false;
-            actGrid.ByWhere = true;
-            actGrid.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle;
-            actGrid.ControlAction = ActTableElement.eTableAction.Click;
-            actGrid.LocateColTitle = "address";
+            ActTableElement actGrid = new ActTableElement
+            {
+                ByRandRow = false,
+                BySelectedRow = false,
+                ByWhere = true,
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle,
+                ControlAction = ActTableElement.eTableAction.Click,
+                LocateColTitle = "address",
 
-            actGrid.WhereColumnTitle = "name";
-            actGrid.WhereColumnValue = "Ravi";
-            actGrid.LocateRowType = "Where";
-            actGrid.LocateRowValue = "";
-            actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
-            actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
+                WhereColumnTitle = "name",
+                WhereColumnValue = "Ravi",
+                LocateRowType = "Where",
+                LocateRowValue = "",
+                RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle
+            };
             actGrid.WhereColumnTitle = "name";
 
             actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
@@ -1731,20 +1893,22 @@ namespace UnitTest
         [Timeout(60000)]
         public void DoubleClick_TableAction()
         {
-            ActTableElement actGrid = new ActTableElement();
-            actGrid.ByRandRow = false;
-            actGrid.BySelectedRow = false;
-            actGrid.ByWhere = true;
-            actGrid.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle;
-            actGrid.ControlAction = ActTableElement.eTableAction.DoubleClick;
-            actGrid.LocateColTitle = "address";
+            ActTableElement actGrid = new ActTableElement
+            {
+                ByRandRow = false,
+                BySelectedRow = false,
+                ByWhere = true,
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle,
+                ControlAction = ActTableElement.eTableAction.DoubleClick,
+                LocateColTitle = "address",
 
-            actGrid.WhereColumnTitle = "name";
-            actGrid.WhereColumnValue = "Ravi";
-            actGrid.LocateRowType = "Where";
-            actGrid.LocateRowValue = "";
-            actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
-            actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
+                WhereColumnTitle = "name",
+                WhereColumnValue = "Ravi",
+                LocateRowType = "Where",
+                LocateRowValue = "",
+                RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle
+            };
             actGrid.WhereColumnTitle = "name";
 
             actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
@@ -1768,21 +1932,23 @@ namespace UnitTest
         [Timeout(60000)]
         public void ClickXY_TableAction()
         {
-            ActTableElement actGrid = new ActTableElement();
-            actGrid.ByRandRow = false;
-            actGrid.BySelectedRow = false;
-            actGrid.ByWhere = true;
-            actGrid.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle;
-            actGrid.ControlAction = ActTableElement.eTableAction.ClickXY;
-            actGrid.Value = "2,2";
-            actGrid.LocateColTitle = "address";
+            ActTableElement actGrid = new ActTableElement
+            {
+                ByRandRow = false,
+                BySelectedRow = false,
+                ByWhere = true,
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle,
+                ControlAction = ActTableElement.eTableAction.ClickXY,
+                Value = "2,2",
+                LocateColTitle = "address",
 
-            actGrid.WhereColumnTitle = "name";
-            actGrid.WhereColumnValue = "Ravi";
-            actGrid.LocateRowType = "Where";
-            actGrid.LocateRowValue = "";
-            actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
-            actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
+                WhereColumnTitle = "name",
+                WhereColumnValue = "Ravi",
+                LocateRowType = "Where",
+                LocateRowValue = "",
+                RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle
+            };
             actGrid.WhereColumnTitle = "name";
 
             actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
@@ -1809,28 +1975,30 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetText_TableActionGrid_OnRowNumColNum()
         {
-            ActTableElement actGrid = new ActTableElement();
-            actGrid.AddNewReturnParams = true;
-            actGrid.ByRandRow = false;
-            actGrid.ByRowNum = true;
-            actGrid.BySelectedRow = false;
-            actGrid.ByWhere = false;
-            actGrid.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum;
-            actGrid.ControlAction = ActTableElement.eTableAction.GetValue;
-            actGrid.LocateBy = eLocateBy.ByName;
-            actGrid.LocateColTitle = "0";
-            actGrid.LocateRowType = "Row Number";//
-            actGrid.LocateRowValue = "1";//
-            actGrid.LocateValue = "none";
+            ActTableElement actGrid = new ActTableElement
+            {
+                AddNewReturnParams = true,
+                ByRandRow = false,
+                ByRowNum = true,
+                BySelectedRow = false,
+                ByWhere = false,
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum,
+                ControlAction = ActTableElement.eTableAction.GetValue,
+                LocateBy = eLocateBy.ByName,
+                LocateColTitle = "0",
+                LocateRowType = "Row Number",//
+                LocateRowValue = "1",//
+                LocateValue = "none",
 
-            actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
-            actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
-            actGrid.WhereColumnTitle = null;
-            actGrid.WhereColumnValue = null;
-            actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
-            actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
+                RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle,
+                WhereColumnTitle = null,
+                WhereColumnValue = null,
+                WhereOperator = ActTableElement.eRunColOperator.Equals,
+                WhereProperty = ActTableElement.eRunColPropertyValue.Value,
 
-            actGrid.Active = true;
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
 
@@ -1845,28 +2013,30 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetText_TableActionGrid_OnRowNumColTitle()
         {
-            ActTableElement actGrid = new ActTableElement();
-            actGrid.AddNewReturnParams = true;
-            actGrid.ByRandRow = false;
-            actGrid.ByRowNum = true;
-            actGrid.BySelectedRow = false;
-            actGrid.ByWhere = true;
-            actGrid.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle;
-            actGrid.ControlAction = ActTableElement.eTableAction.GetValue;
-            actGrid.LocateBy = eLocateBy.ByName;
-            actGrid.LocateColTitle = "name";
-            actGrid.LocateRowType = "Row Number";//
-            actGrid.LocateRowValue = "1";//       
-            actGrid.LocateValue = "none";
+            ActTableElement actGrid = new ActTableElement
+            {
+                AddNewReturnParams = true,
+                ByRandRow = false,
+                ByRowNum = true,
+                BySelectedRow = false,
+                ByWhere = true,
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle,
+                ControlAction = ActTableElement.eTableAction.GetValue,
+                LocateBy = eLocateBy.ByName,
+                LocateColTitle = "name",
+                LocateRowType = "Row Number",//
+                LocateRowValue = "1",//       
+                LocateValue = "none",
 
-            actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
-            actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
-            actGrid.WhereColumnTitle = null;
-            actGrid.WhereColumnValue = null;
-            actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
-            actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
+                RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle,
+                WhereColumnTitle = null,
+                WhereColumnValue = null,
+                WhereOperator = ActTableElement.eRunColOperator.Equals,
+                WhereProperty = ActTableElement.eRunColPropertyValue.Value,
 
-            actGrid.Active = true;
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
 
@@ -1881,27 +2051,29 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetText_TableActionGrid_OnAnyRowColNum()
         {
-            ActTableElement actGrid = new ActTableElement();
-            actGrid.AddNewReturnParams = true;
-            actGrid.ByRandRow = false;
-            actGrid.ByRowNum = true;
-            actGrid.BySelectedRow = false;
-            actGrid.ByWhere = true;
-            actGrid.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum;
-            actGrid.ControlAction = ActTableElement.eTableAction.GetValue;
-            actGrid.LocateBy = eLocateBy.ByName;
-            actGrid.LocateColTitle = "1";
-            actGrid.LocateRowType = "Any Row";// 
-            actGrid.LocateValue = "none";
+            ActTableElement actGrid = new ActTableElement
+            {
+                AddNewReturnParams = true,
+                ByRandRow = false,
+                ByRowNum = true,
+                BySelectedRow = false,
+                ByWhere = true,
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum,
+                ControlAction = ActTableElement.eTableAction.GetValue,
+                LocateBy = eLocateBy.ByName,
+                LocateColTitle = "1",
+                LocateRowType = "Any Row",// 
+                LocateValue = "none",
 
-            actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
-            actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
-            actGrid.WhereColumnTitle = null;
-            actGrid.WhereColumnValue = null;
-            actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
-            actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
+                RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle,
+                WhereColumnTitle = null,
+                WhereColumnValue = null,
+                WhereOperator = ActTableElement.eRunColOperator.Equals,
+                WhereProperty = ActTableElement.eRunColPropertyValue.Value,
 
-            actGrid.Active = true;
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
 
@@ -1920,28 +2092,30 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetText_TableActionGrid_OnAnyRowColtitle()
         {
-            ActTableElement actGrid = new ActTableElement();
-            actGrid.AddNewReturnParams = true;
-            actGrid.ByRandRow = false;
-            actGrid.ByRowNum = true;
-            actGrid.BySelectedRow = false;
-            actGrid.ByWhere = true;
-            actGrid.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle;
+            ActTableElement actGrid = new ActTableElement
+            {
+                AddNewReturnParams = true,
+                ByRandRow = false,
+                ByRowNum = true,
+                BySelectedRow = false,
+                ByWhere = true,
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle,
 
-            actGrid.ControlAction = ActTableElement.eTableAction.GetValue;
-            actGrid.LocateBy = eLocateBy.ByName;
-            actGrid.LocateColTitle = "name";
-            actGrid.LocateRowType = "Any Row";// 
-            actGrid.LocateValue = "none";
+                ControlAction = ActTableElement.eTableAction.GetValue,
+                LocateBy = eLocateBy.ByName,
+                LocateColTitle = "name",
+                LocateRowType = "Any Row",// 
+                LocateValue = "none",
 
-            actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
-            actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
-            actGrid.WhereColumnTitle = null;
-            actGrid.WhereColumnValue = null;
-            actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
-            actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
+                RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle,
+                WhereColumnTitle = null,
+                WhereColumnValue = null,
+                WhereOperator = ActTableElement.eRunColOperator.Equals,
+                WhereProperty = ActTableElement.eRunColPropertyValue.Value,
 
-            actGrid.Active = true;
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
 
@@ -1961,25 +2135,27 @@ namespace UnitTest
 
         public void GetText_TableActionGrid_OnColNumwhereColTitle()
         {
-            ActTableElement actGrid = new ActTableElement();
-            actGrid.ByRandRow = false;
-            actGrid.BySelectedRow = false;
-            actGrid.ByWhere = true;
-            actGrid.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum;
-            actGrid.ControlAction = ActTableElement.eTableAction.GetValue;
-            actGrid.LocateColTitle = "1";
-            actGrid.LocateRowType = "Where";
-            actGrid.LocateRowValue = "";
-            actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
-            actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
-            actGrid.AddNewReturnParams = true;
-            actGrid.WhereColumnTitle = "name";
-            actGrid.WhereColumnValue = "Yaron";
-            actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
-            actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-            actGrid.LocateValue = "dw_acc_grd";
-            actGrid.LocateBy = eLocateBy.ByName;
-            actGrid.Active = true;
+            ActTableElement actGrid = new ActTableElement
+            {
+                ByRandRow = false,
+                BySelectedRow = false,
+                ByWhere = true,
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum,
+                ControlAction = ActTableElement.eTableAction.GetValue,
+                LocateColTitle = "1",
+                LocateRowType = "Where",
+                LocateRowValue = "",
+                RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle,
+                AddNewReturnParams = true,
+                WhereColumnTitle = "name",
+                WhereColumnValue = "Yaron",
+                WhereOperator = ActTableElement.eRunColOperator.Equals,
+                WhereProperty = ActTableElement.eRunColPropertyValue.Value,
+                LocateValue = "dw_acc_grd",
+                LocateBy = eLocateBy.ByName,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
             mGR.Executor.RunAction(actGrid, false);
@@ -1994,25 +2170,27 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetText_TableActionGrid_OnColTitlewhereColTitle()
         {
-            ActTableElement actGrid = new ActTableElement();
-            actGrid.ByRandRow = false;
-            actGrid.BySelectedRow = false;
-            actGrid.ByWhere = true;
-            actGrid.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle;
-            actGrid.ControlAction = ActTableElement.eTableAction.GetValue;
-            actGrid.LocateColTitle = "address";
-            actGrid.LocateRowType = "Where";
-            actGrid.LocateRowValue = "";
-            actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
-            actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
-            actGrid.AddNewReturnParams = true;
-            actGrid.WhereColumnTitle = "name";
-            actGrid.WhereColumnValue = "Yaron";
-            actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
-            actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-            actGrid.LocateValue = "dw_acc_grd";
-            actGrid.LocateBy = eLocateBy.ByName;
-            actGrid.Active = true;
+            ActTableElement actGrid = new ActTableElement
+            {
+                ByRandRow = false,
+                BySelectedRow = false,
+                ByWhere = true,
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle,
+                ControlAction = ActTableElement.eTableAction.GetValue,
+                LocateColTitle = "address",
+                LocateRowType = "Where",
+                LocateRowValue = "",
+                RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle,
+                AddNewReturnParams = true,
+                WhereColumnTitle = "name",
+                WhereColumnValue = "Yaron",
+                WhereOperator = ActTableElement.eRunColOperator.Equals,
+                WhereProperty = ActTableElement.eRunColPropertyValue.Value,
+                LocateValue = "dw_acc_grd",
+                LocateBy = eLocateBy.ByName,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
             mGR.Executor.RunAction(actGrid, false);
@@ -2026,25 +2204,27 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetText_TableActionGrid_OnColNumwhereColNum()
         {
-            ActTableElement actGrid = new ActTableElement();
-            actGrid.ByRandRow = false;
-            actGrid.BySelectedRow = false;
-            actGrid.ByWhere = true;
-            actGrid.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum;
-            actGrid.ControlAction = ActTableElement.eTableAction.GetValue;
-            actGrid.LocateColTitle = "1";
-            actGrid.LocateRowType = "Where";
-            actGrid.LocateRowValue = "";
-            actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
-            actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColNum;
-            actGrid.AddNewReturnParams = true;
-            actGrid.WhereColumnTitle = "0";
-            actGrid.WhereColumnValue = "Yaron";
-            actGrid.WhereOperator = ActTableElement.eRunColOperator.Contains;
-            actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-            actGrid.LocateValue = "dw_acc_grd";
-            actGrid.LocateBy = eLocateBy.ByName;
-            actGrid.Active = true;
+            ActTableElement actGrid = new ActTableElement
+            {
+                ByRandRow = false,
+                BySelectedRow = false,
+                ByWhere = true,
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum,
+                ControlAction = ActTableElement.eTableAction.GetValue,
+                LocateColTitle = "1",
+                LocateRowType = "Where",
+                LocateRowValue = "",
+                RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColNum,
+                AddNewReturnParams = true,
+                WhereColumnTitle = "0",
+                WhereColumnValue = "Yaron",
+                WhereOperator = ActTableElement.eRunColOperator.Contains,
+                WhereProperty = ActTableElement.eRunColPropertyValue.Value,
+                LocateValue = "dw_acc_grd",
+                LocateBy = eLocateBy.ByName,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
             mGR.Executor.RunAction(actGrid, false);
@@ -2058,25 +2238,27 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetText_TableActionGrid_OnColTitlewhereColNum()
         {
-            ActTableElement actGrid = new ActTableElement();
-            actGrid.ByRandRow = false;
-            actGrid.BySelectedRow = false;
-            actGrid.ByWhere = true;
-            actGrid.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle;
-            actGrid.ControlAction = ActTableElement.eTableAction.GetValue;
-            actGrid.LocateColTitle = "address";
-            actGrid.LocateRowType = "Where";
-            actGrid.LocateRowValue = "";
-            actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
-            actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColNum;
-            actGrid.AddNewReturnParams = true;
-            actGrid.WhereColumnTitle = "0";
-            actGrid.WhereColumnValue = "Yaron";
-            actGrid.WhereOperator = ActTableElement.eRunColOperator.Contains;
-            actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-            actGrid.LocateValue = "dw_acc_grd";
-            actGrid.LocateBy = eLocateBy.ByName;
-            actGrid.Active = true;
+            ActTableElement actGrid = new ActTableElement
+            {
+                ByRandRow = false,
+                BySelectedRow = false,
+                ByWhere = true,
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle,
+                ControlAction = ActTableElement.eTableAction.GetValue,
+                LocateColTitle = "address",
+                LocateRowType = "Where",
+                LocateRowValue = "",
+                RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColNum,
+                AddNewReturnParams = true,
+                WhereColumnTitle = "0",
+                WhereColumnValue = "Yaron",
+                WhereOperator = ActTableElement.eRunColOperator.Contains,
+                WhereProperty = ActTableElement.eRunColPropertyValue.Value,
+                LocateValue = "dw_acc_grd",
+                LocateBy = eLocateBy.ByName,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
             mGR.Executor.RunAction(actGrid, false);
@@ -2090,28 +2272,30 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetRowCount_TableActionGrid()
         {
-            ActTableElement actGrid = new ActTableElement();
-            actGrid.AddNewReturnParams = true;
-            actGrid.ByRandRow = false;
-            actGrid.ByRowNum = true;
-            actGrid.BySelectedRow = false;
-            actGrid.ByWhere = true;
-            actGrid.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum;
-            actGrid.ControlAction = ActTableElement.eTableAction.GetRowCount;
-            actGrid.LocateBy = eLocateBy.ByName;
-            actGrid.LocateColTitle = "1";
-            actGrid.LocateRowType = "Row Number";//
-            actGrid.LocateRowValue = "1";//
-            actGrid.LocateValue = "none";
+            ActTableElement actGrid = new ActTableElement
+            {
+                AddNewReturnParams = true,
+                ByRandRow = false,
+                ByRowNum = true,
+                BySelectedRow = false,
+                ByWhere = true,
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum,
+                ControlAction = ActTableElement.eTableAction.GetRowCount,
+                LocateBy = eLocateBy.ByName,
+                LocateColTitle = "1",
+                LocateRowType = "Row Number",//
+                LocateRowValue = "1",//
+                LocateValue = "none",
 
-            actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
-            actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
-            actGrid.WhereColumnTitle = null;
-            actGrid.WhereColumnValue = null;
-            actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
-            actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
+                RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle,
+                WhereColumnTitle = null,
+                WhereColumnValue = null,
+                WhereOperator = ActTableElement.eRunColOperator.Equals,
+                WhereProperty = ActTableElement.eRunColPropertyValue.Value,
 
-            actGrid.Active = true;
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
 
@@ -2129,57 +2313,71 @@ namespace UnitTest
         [Timeout(60000)]
         public void TestClickAndValidate_isExist()
         {
-            ActUIElement actUI = new ActUIElement();
-            actUI.Active = true;
-            actUI.AddNewReturnParams = true;
-            actUI.ElementAction = ActUIElement.eElementAction.ClickAndValidate;
-            actUI.ElementLocateBy = eLocateBy.ByName;
-            actUI.ElementLocateValue = "Click Me";
-            actUI.ElementType = eElementType.Button;
-            actUI.LocateValue = "Click Me";
-            actUI.LocateBy = eLocateBy.ByName;
+            ActUIElement actUI = new ActUIElement
+            {
+                Active = true,
+                AddNewReturnParams = true,
+                ElementAction = ActUIElement.eElementAction.ClickAndValidate,
+                ElementLocateBy = eLocateBy.ByName,
+                ElementLocateValue = "Click Me",
+                ElementType = eElementType.Button,
+                LocateValue = "Click Me",
+                LocateBy = eLocateBy.ByName
+            };
 
 
-            ActInputValue iv = new ActInputValue();
-            iv.ItemName = "ClickType";
-            iv.Param = "ClickType";
-            iv.Value = "InvokeClick";
-            iv.ValueForDriver = "InvokeClick";
+            ActInputValue iv = new ActInputValue
+            {
+                ItemName = "ClickType",
+                Param = "ClickType",
+                Value = "InvokeClick",
+                ValueForDriver = "InvokeClick"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "ValidationType";
-            iv.Param = "ValidationType";
-            iv.Value = "Exist";
-            iv.ValueForDriver = "Exist";
+            iv = new ActInputValue
+            {
+                ItemName = "ValidationType",
+                Param = "ValidationType",
+                Value = "Exist",
+                ValueForDriver = "Exist"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "ValidationElement";
-            iv.Param = "ValidationElement";
-            iv.Value = "Text";
-            iv.ValueForDriver = "Text";
+            iv = new ActInputValue
+            {
+                ItemName = "ValidationElement",
+                Param = "ValidationElement",
+                Value = "Text",
+                ValueForDriver = "Text"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "ValidationElementLocateBy";
-            iv.Param = "ValidationElementLocateBy";
-            iv.Value = "ByName";
-            iv.ValueForDriver = "ByName";
+            iv = new ActInputValue
+            {
+                ItemName = "ValidationElementLocateBy",
+                Param = "ValidationElementLocateBy",
+                Value = "ByName",
+                ValueForDriver = "ByName"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "ValidationElementLocatorValue";
-            iv.Param = "ValidationElementLocatorValue";
-            iv.Value = "Button is Clicked";
-            iv.ValueForDriver = "Button is Clicked";
+            iv = new ActInputValue
+            {
+                ItemName = "ValidationElementLocatorValue",
+                Param = "ValidationElementLocatorValue",
+                Value = "Button is Clicked",
+                ValueForDriver = "Button is Clicked"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "LoopThroughClicks";
-            iv.Param = "LoopThroughClicks";
-            iv.Value = "false";
-            iv.ValueForDriver = "false";
+            iv = new ActInputValue
+            {
+                ItemName = "LoopThroughClicks",
+                Param = "LoopThroughClicks",
+                Value = "false",
+                ValueForDriver = "false"
+            };
             actUI.ActInputValues.Add(iv);
 
             mBF.CurrentActivity.Acts.Add(actUI);
@@ -2196,66 +2394,82 @@ namespace UnitTest
         [Timeout(60000)]
         public void TestClickAndValidate_NotExist()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValue = "Click Me";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Click,
+                LocateValue = "Click Me",
+                Active = true
+            };
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             mGR.Executor.RunAction(c, false);
 
-            ActUIElement actUI = new ActUIElement();
-            actUI.Active = true;
-            actUI.AddNewReturnParams = true;
-            actUI.ElementAction = ActUIElement.eElementAction.ClickAndValidate;
-            actUI.ElementLocateBy = eLocateBy.ByXPath;
-            actUI.ElementLocateValue = "/MsgBox Test/OK";
-            actUI.ElementType = eElementType.Button;
-            actUI.LocateValue = "/MsgBox Test/OK";
-            actUI.LocateBy = eLocateBy.ByXPath;
+            ActUIElement actUI = new ActUIElement
+            {
+                Active = true,
+                AddNewReturnParams = true,
+                ElementAction = ActUIElement.eElementAction.ClickAndValidate,
+                ElementLocateBy = eLocateBy.ByXPath,
+                ElementLocateValue = "/MsgBox Test/OK",
+                ElementType = eElementType.Button,
+                LocateValue = "/MsgBox Test/OK",
+                LocateBy = eLocateBy.ByXPath
+            };
 
-            ActInputValue iv = new ActInputValue();
-            iv.ItemName = "ClickType";
-            iv.Param = "ClickType";
-            iv.Value = "InvokeClick";
-            iv.ValueForDriver = "InvokeClick";
+            ActInputValue iv = new ActInputValue
+            {
+                ItemName = "ClickType",
+                Param = "ClickType",
+                Value = "InvokeClick",
+                ValueForDriver = "InvokeClick"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "ValidationType";
-            iv.Param = "ValidationType";
-            iv.Value = "NotExist";
-            iv.ValueForDriver = "NotExist";
+            iv = new ActInputValue
+            {
+                ItemName = "ValidationType",
+                Param = "ValidationType",
+                Value = "NotExist",
+                ValueForDriver = "NotExist"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "ValidationElement";
-            iv.Param = "ValidationElement";
-            iv.Value = "Text";
-            iv.ValueForDriver = "Text";
+            iv = new ActInputValue
+            {
+                ItemName = "ValidationElement",
+                Param = "ValidationElement",
+                Value = "Text",
+                ValueForDriver = "Text"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "ValidationElementLocateBy";
-            iv.Param = "ValidationElementLocateBy";
-            iv.Value = "ByName";
-            iv.ValueForDriver = "ByName";
+            iv = new ActInputValue
+            {
+                ItemName = "ValidationElementLocateBy",
+                Param = "ValidationElementLocateBy",
+                Value = "ByName",
+                ValueForDriver = "ByName"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "ValidationElementLocatorValue";
-            iv.Param = "ValidationElementLocatorValue";
-            iv.Value = "Button is Clicked";
-            iv.ValueForDriver = "Button is Clicked";
+            iv = new ActInputValue
+            {
+                ItemName = "ValidationElementLocatorValue",
+                Param = "ValidationElementLocatorValue",
+                Value = "Button is Clicked",
+                ValueForDriver = "Button is Clicked"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "LoopThroughClicks";
-            iv.Param = "LoopThroughClicks";
-            iv.Value = "false";
-            iv.ValueForDriver = "false";
+            iv = new ActInputValue
+            {
+                ItemName = "LoopThroughClicks",
+                Param = "LoopThroughClicks",
+                Value = "false",
+                ValueForDriver = "false"
+            };
             actUI.ActInputValues.Add(iv);
 
             mBF.CurrentActivity.Acts.Add(actUI);
@@ -2271,56 +2485,70 @@ namespace UnitTest
         [Timeout(60000)]
         public void TestClickAndValidate_isEnabled()
         {
-            ActUIElement actUI = new ActUIElement();
-            actUI.Active = true;
-            actUI.AddNewReturnParams = true;
-            actUI.ElementAction = ActUIElement.eElementAction.ClickAndValidate;
-            actUI.ElementLocateBy = eLocateBy.ByName;
-            actUI.ElementLocateValue = "Tabbed";
-            actUI.ElementType = eElementType.Button;
-            actUI.LocateBy = eLocateBy.ByName;
+            ActUIElement actUI = new ActUIElement
+            {
+                Active = true,
+                AddNewReturnParams = true,
+                ElementAction = ActUIElement.eElementAction.ClickAndValidate,
+                ElementLocateBy = eLocateBy.ByName,
+                ElementLocateValue = "Tabbed",
+                ElementType = eElementType.Button,
+                LocateBy = eLocateBy.ByName
+            };
             actUI.LocateValue = actUI.ElementLocateValue;
 
-            ActInputValue iv = new ActInputValue();
-            iv.ItemName = "ClickType";
-            iv.Param = "ClickType";
-            iv.Value = "InvokeClick";
-            iv.ValueForDriver = "InvokeClick";
+            ActInputValue iv = new ActInputValue
+            {
+                ItemName = "ClickType",
+                Param = "ClickType",
+                Value = "InvokeClick",
+                ValueForDriver = "InvokeClick"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "ValidationType";
-            iv.Param = "ValidationType";
-            iv.Value = "IsEnabled";
-            iv.ValueForDriver = "IsEnabled";
+            iv = new ActInputValue
+            {
+                ItemName = "ValidationType",
+                Param = "ValidationType",
+                Value = "IsEnabled",
+                ValueForDriver = "IsEnabled"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "ValidationElement";
-            iv.Param = "ValidationElement";
-            iv.Value = "Button";
-            iv.ValueForDriver = "Button";
+            iv = new ActInputValue
+            {
+                ItemName = "ValidationElement",
+                Param = "ValidationElement",
+                Value = "Button",
+                ValueForDriver = "Button"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "ValidationElementLocateBy";
-            iv.Param = "ValidationElementLocateBy";
-            iv.Value = "ByName";
-            iv.ValueForDriver = "ByName";
+            iv = new ActInputValue
+            {
+                ItemName = "ValidationElementLocateBy",
+                Param = "ValidationElementLocateBy",
+                Value = "ByName",
+                ValueForDriver = "ByName"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "ValidationElementLocatorValue";
-            iv.Param = "ValidationElementLocatorValue";
-            iv.Value = "Exit";
-            iv.ValueForDriver = "Exit";
+            iv = new ActInputValue
+            {
+                ItemName = "ValidationElementLocatorValue",
+                Param = "ValidationElementLocatorValue",
+                Value = "Exit",
+                ValueForDriver = "Exit"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "LoopThroughClicks";
-            iv.Param = "LoopThroughClicks";
-            iv.Value = "false";
-            iv.ValueForDriver = "false";
+            iv = new ActInputValue
+            {
+                ItemName = "LoopThroughClicks",
+                Param = "LoopThroughClicks",
+                Value = "false",
+                ValueForDriver = "false"
+            };
             actUI.ActInputValues.Add(iv);
 
             mBF.CurrentActivity.Acts.Add(actUI);
@@ -2328,11 +2556,13 @@ namespace UnitTest
 
             mGR.Executor.RunAction(actUI, false);
 
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValue = "Exit";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Click,
+                LocateValue = "Exit",
+                Active = true
+            };
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -2349,67 +2579,83 @@ namespace UnitTest
         [Timeout(60000)]
         public void TestClickAndValidate_LoopThroughClicks()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValue = "Click Me";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Click,
+                LocateValue = "Click Me",
+                Active = true
+            };
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             mGR.Executor.RunAction(c, false);
 
-            ActUIElement actUI = new ActUIElement();
-            actUI.Active = true;
-            actUI.AddNewReturnParams = true;
-            actUI.ElementAction = ActUIElement.eElementAction.ClickAndValidate;
-            actUI.ElementLocateBy = eLocateBy.ByXPath;
-            actUI.ElementLocateValue = "/MsgBox Test/OK";
-            actUI.ElementType = eElementType.Button;
-            actUI.LocateBy = eLocateBy.ByXPath;
+            ActUIElement actUI = new ActUIElement
+            {
+                Active = true,
+                AddNewReturnParams = true,
+                ElementAction = ActUIElement.eElementAction.ClickAndValidate,
+                ElementLocateBy = eLocateBy.ByXPath,
+                ElementLocateValue = "/MsgBox Test/OK",
+                ElementType = eElementType.Button,
+                LocateBy = eLocateBy.ByXPath
+            };
             actUI.LocateValue = actUI.ElementLocateValue;
 
-            ActInputValue iv = new ActInputValue();
-            iv.ItemName = "ClickType";
-            iv.Param = "ClickType";
-            iv.Value = "InvokeClick";
-            iv.ValueForDriver = "InvokeClick";
+            ActInputValue iv = new ActInputValue
+            {
+                ItemName = "ClickType",
+                Param = "ClickType",
+                Value = "InvokeClick",
+                ValueForDriver = "InvokeClick"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "ValidationType";
-            iv.Param = "ValidationType";
-            iv.Value = "NotExist";
-            iv.ValueForDriver = "NotExist";
+            iv = new ActInputValue
+            {
+                ItemName = "ValidationType",
+                Param = "ValidationType",
+                Value = "NotExist",
+                ValueForDriver = "NotExist"
+            };
             actUI.ActInputValues.Add(iv);
 
 
-            iv = new ActInputValue();
-            iv.ItemName = "ValidationElement";
-            iv.Param = "ValidationElement";
-            iv.Value = "button";
-            iv.ValueForDriver = "button";
+            iv = new ActInputValue
+            {
+                ItemName = "ValidationElement",
+                Param = "ValidationElement",
+                Value = "button",
+                ValueForDriver = "button"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "ValidationElementLocateBy";
-            iv.Param = "ValidationElementLocateBy";
-            iv.Value = "ByName";
-            iv.ValueForDriver = "ByName";
+            iv = new ActInputValue
+            {
+                ItemName = "ValidationElementLocateBy",
+                Param = "ValidationElementLocateBy",
+                Value = "ByName",
+                ValueForDriver = "ByName"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "ValidationElementLocatorValue";
-            iv.Param = "ValidationElementLocatorValue";
-            iv.Value = "OK";
-            iv.ValueForDriver = "OK";
+            iv = new ActInputValue
+            {
+                ItemName = "ValidationElementLocatorValue",
+                Param = "ValidationElementLocatorValue",
+                Value = "OK",
+                ValueForDriver = "OK"
+            };
             actUI.ActInputValues.Add(iv);
 
-            iv = new ActInputValue();
-            iv.ItemName = "LoopThroughClicks";
-            iv.Param = "LoopThroughClicks";
-            iv.Value = "true";
-            iv.ValueForDriver = "true";
+            iv = new ActInputValue
+            {
+                ItemName = "LoopThroughClicks",
+                Param = "LoopThroughClicks",
+                Value = "true",
+                ValueForDriver = "true"
+            };
             actUI.ActInputValues.Add(iv);
 
             mBF.CurrentActivity.Acts.Add(actUI);
@@ -2428,13 +2674,15 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetControlProperty_Text_Text()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "name_t";
-            c.Value = "Text";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.GetControlProperty,
+                AddNewReturnParams = true,
+                LocateValue = "name_t",
+                Value = "Text",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -2452,12 +2700,14 @@ namespace UnitTest
         [Timeout(60000)]
         public void GetTitle_Text()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByXPath;
-            c.ControlAction = ActPBControl.eControlAction.GetTitle;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "/st_acc_label";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.GetTitle,
+                AddNewReturnParams = true,
+                LocateValue = "/st_acc_label",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -2477,23 +2727,27 @@ namespace UnitTest
         [Timeout(60000)]
         public void SelectByIndex_Tab()
         {
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.Click;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "Tabbed";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Click,
+                AddNewReturnParams = true,
+                LocateValue = "Tabbed",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
             mGR.Executor.RunAction(c, false);
 
-            c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;
-            c.ControlAction = ActPBControl.eControlAction.IsExist;
-            c.AddNewReturnParams = true;
-            c.LocateValue = "Check if you live in USA";
-            c.Active = true;
+            c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.IsExist,
+                AddNewReturnParams = true,
+                LocateValue = "Check if you live in USA",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -2503,24 +2757,28 @@ namespace UnitTest
 
             if (actual.Equals("True"))
             {
-                c = new ActPBControl();
-                c.LocateBy = eLocateBy.ByXPath;
-                c.ControlAction = ActPBControl.eControlAction.SelectByIndex;
-                c.AddNewReturnParams = true;
-                c.LocateValue = "/Tabbed Page/[AutomationId:1002]";
-                c.Value = "2";
-                c.Active = true;
+                c = new ActPBControl
+                {
+                    LocateBy = eLocateBy.ByXPath,
+                    ControlAction = ActPBControl.eControlAction.SelectByIndex,
+                    AddNewReturnParams = true,
+                    LocateValue = "/Tabbed Page/[AutomationId:1002]",
+                    Value = "2",
+                    Active = true
+                };
                 mBF.CurrentActivity.Acts.Add(c);
                 mBF.CurrentActivity.Acts.CurrentItem = c;
                 //Act
                 mGR.Executor.RunAction(c, false);
 
-                c = new ActPBControl();
-                c.LocateBy = eLocateBy.ByName;
-                c.ControlAction = ActPBControl.eControlAction.IsExist;
-                c.AddNewReturnParams = true;
-                c.LocateValue = "none";
-                c.Active = true;
+                c = new ActPBControl
+                {
+                    LocateBy = eLocateBy.ByName,
+                    ControlAction = ActPBControl.eControlAction.IsExist,
+                    AddNewReturnParams = true,
+                    LocateValue = "none",
+                    Active = true
+                };
                 mBF.CurrentActivity.Acts.Add(c);
                 mBF.CurrentActivity.Acts.CurrentItem = c;
                 //Act
@@ -2534,12 +2792,14 @@ namespace UnitTest
                 Assert.AreEqual(actual, "True", "True");
             }
 
-            ActPBControl c1 = new ActPBControl();
-            c1.LocateBy = eLocateBy.ByName;
-            c1.ControlAction = ActPBControl.eControlAction.Click;
-            c1.LocateValue = "Exit";
-            c1.AddNewReturnParams = true;
-            c1.Active = true;
+            ActPBControl c1 = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.Click,
+                LocateValue = "Exit",
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c1);
             mBF.CurrentActivity.Acts.CurrentItem = c1;
             mGR.Executor.RunAction(c1, false);

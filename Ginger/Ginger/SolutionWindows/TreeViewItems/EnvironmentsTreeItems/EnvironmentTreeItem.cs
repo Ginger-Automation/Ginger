@@ -88,7 +88,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private List<ITreeViewItem> GetChildrenList()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            List<ITreeViewItem> Childrens = [];
 
             // Add Apps            
             foreach (EnvApplication app in ProjEnvironment.Applications.OrderBy(nameof(EnvApplication.Name)))
@@ -150,10 +150,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void AddApplication(object sender, RoutedEventArgs e)
         {
-            var ApplicationPlatforms = WorkSpace.Instance.Solution.ApplicationPlatforms.Where((app) => !ProjEnvironment.CheckIfApplicationPlatformExists(app.Guid , app.AppName))?.ToList();
-            
-            
-            
+            var ApplicationPlatforms = WorkSpace.Instance.Solution.ApplicationPlatforms.Where((app) => !ProjEnvironment.CheckIfApplicationPlatformExists(app.Guid, app.AppName))?.ToList();
+
+
+
             string appName = string.Empty;
             ObservableList<ApplicationPlatform> DisplayedApplicationPlatforms = GingerCore.General.ConvertListToObservableList(ApplicationPlatforms);
 
@@ -169,15 +169,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
 
                 ObservableList<ProjEnvironment> AllEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
-                if(AllEnvironments.Count > 1)
+                if (AllEnvironments.Count > 1)
                 {
-                     eUserMsgSelection eUserMsg = Reporter.ToUser(eUserMsgKey.PublishApplicationToOtherEnv);
+                    eUserMsgSelection eUserMsg = Reporter.ToUser(eUserMsgKey.PublishApplicationToOtherEnv);
 
                     if (eUserMsg.Equals(eUserMsgSelection.Yes))
                     {
                         AllEnvironments.ForEach((env) =>
                         {
-                            if (!env.Guid.Equals(ProjEnvironment.Guid) && !SelectedApplications.Any((app)=>env.CheckIfApplicationPlatformExists(app.Guid , app.AppName)))
+                            if (!env.Guid.Equals(ProjEnvironment.Guid) && !SelectedApplications.Any((app) => env.CheckIfApplicationPlatformExists(app.Guid, app.AppName)))
                             {
                                 env.AddApplications(SelectedApplications);
                                 env.OnPropertyChanged(nameof(env.Applications));
@@ -189,7 +189,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 mTreeView?.Tree?.RefreshSelectedTreeNodeParent();
             }
         }
-  
+
 
 
 

@@ -40,7 +40,7 @@ namespace Ginger.MenusLib
 
         static SingleItemTreeViewExplorerPage mBusFlowsPage;
         static NewAutomatePage mNewAutomatePage;
-       
+
         public static TwoLevelMenuPage MenusPage
         {
             get
@@ -121,7 +121,7 @@ namespace Ginger.MenusLib
             {
                 ITreeViewItem iv = (ITreeViewItem)i.Tag;
 
-                if (iv.NodeObject() != null && iv.NodeObject() is BusinessFlow)
+                if (iv.NodeObject() is not null and BusinessFlow)
                 {
                     App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, (BusinessFlow)iv.NodeObject());
                 }
@@ -130,19 +130,19 @@ namespace Ginger.MenusLib
 
         private static BusinessFlow GetBusinessFlowToAutomate()
         {
-            if (mBusFlowsPage.SelectedItemObject != null && mBusFlowsPage.SelectedItemObject is BusinessFlow)
+            if (mBusFlowsPage.SelectedItemObject is not null and BusinessFlow)
             {
                 return (BusinessFlow)mBusFlowsPage.SelectedItemObject;
             }
             else if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Count > 0)
             {
-                return (BusinessFlow)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()[0];
+                return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()[0];
             }
             else
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, prefixString: "Please first add and select"));
                 return null;
-             }
+            }
 
         }
 

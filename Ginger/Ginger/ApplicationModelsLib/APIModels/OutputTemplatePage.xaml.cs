@@ -46,7 +46,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             mPageViewMode = pageViewMode;
 
-            if (pageViewMode == Ginger.General.eRIPageViewMode.View || pageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
+            if (pageViewMode is Ginger.General.eRIPageViewMode.View or Ginger.General.eRIPageViewMode.ViewAndExecute)
             {
                 xOutputValuesGrid.ShowAdd = Visibility.Collapsed;
                 xOutputValuesGrid.ShowUpDown = Visibility.Collapsed;
@@ -139,9 +139,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void SetActReturnValuesGrid()
         {
             GridViewDef SimView = new GridViewDef(eGridView.All.ToString());
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             SimView.GridColsView = viewCols;
-            bool setColumnsReadOnly = (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute);
+            bool setColumnsReadOnly = (mPageViewMode is Ginger.General.eRIPageViewMode.View or Ginger.General.eRIPageViewMode.ViewAndExecute);
 
             //Simulation view
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Active, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox, ReadOnly = setColumnsReadOnly });
@@ -154,9 +154,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             viewCols.Add(new GridColView() { Field = "Clear Store To", Header = "Clear Store To", ReadOnly = setColumnsReadOnly, WidthWeight = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ClearStoreToBtnTemplate"] });
 
             //Default mode view
-            GridViewDef defView = new GridViewDef(eGridView.NonSimulation.ToString());
-            defView.GridColsView = new ObservableList<GridColView>();
-            ObservableList<GridColView> defviewCols = new ObservableList<GridColView>();
+            GridViewDef defView = new GridViewDef(eGridView.NonSimulation.ToString())
+            {
+                GridColsView = []
+            };
+            ObservableList<GridColView> defviewCols = [];
             defView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.SimulatedActual, Visible = false, ReadOnly = setColumnsReadOnly });
             defView.GridColsView.Add(new GridColView() { Field = "....", Visible = false, ReadOnly = setColumnsReadOnly });
 

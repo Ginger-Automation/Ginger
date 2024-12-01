@@ -22,7 +22,6 @@ using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.PlugInsLib;
-using log4net.Plugin;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -37,7 +36,7 @@ namespace Amdocs.Ginger.Repository
         private ObservableList<PluginPackage> mPluginPackages;
         SolutionRepository mSolutionRepository;
 
-        ObservableList<PluginProcessWrapper> mProcesses = new ObservableList<PluginProcessWrapper>();
+        ObservableList<PluginProcessWrapper> mProcesses = [];
 
         public ObservableList<PluginProcessWrapper> PluginProcesses
         {
@@ -266,7 +265,7 @@ namespace Amdocs.Ginger.Repository
             ObservableList<PluginPackage> installedPlugins = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
             foreach (OnlinePluginPackage onlinePluginPackage in list)
             {
-                PluginPackage pluginPackage = installedPlugins.FirstOrDefault(x=> x.PluginId == onlinePluginPackage.Id);
+                PluginPackage pluginPackage = installedPlugins.FirstOrDefault(x => x.PluginId == onlinePluginPackage.Id);
                 if (pluginPackage != null)
                 {
                     onlinePluginPackage.CurrentPackage = pluginPackage.PluginPackageVersion;
@@ -277,7 +276,7 @@ namespace Amdocs.Ginger.Repository
         }
 
         //Cache is session info + enable to add isSession info directly
-        public Dictionary<string, bool> PluginServiceIsSeesionDictionary = new Dictionary<string, bool>();
+        public Dictionary<string, bool> PluginServiceIsSeesionDictionary = [];
 
         public bool IsSessionService(string pluginId, string serviceId)
         {

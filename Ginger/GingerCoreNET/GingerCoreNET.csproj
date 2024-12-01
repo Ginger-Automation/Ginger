@@ -32,12 +32,9 @@
     <Compile Remove="DataBaseAbstarct\**" />
     <Compile Remove="GeneralLib\JSON\**" />
     <Compile Remove="NewFolder1\**" />
-    <Compile Remove="NewFolder\**" />
     <EmbeddedResource Remove="DataBaseAbstarct\**" />
     <EmbeddedResource Remove="GeneralLib\JSON\**" />
     <EmbeddedResource Remove="NewFolder1\**" />
-    <EmbeddedResource Remove="NewFolder\**" />
-    <None Remove="NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,7 +51,6 @@
     <None Remove="DLLS\JiraRepositoryStd.dll" />
     <None Remove="DLLS\LibGit2Sharp.dll" />
     <None Remove="DLLS\OctaneInteractionStd.dll" />
-    <None Remove="DLLS\OctaneRepositoryStd.dll" />
     <None Remove="DLLS\SikuliStandardNet.dll" />
     <None Remove="DLLS\ZephyrEntStdSDK.dll" />
     <None Remove="DLLS\Zepyhr_Ent_Repository_Std.dll" />
@@ -62,9 +58,7 @@
     <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporter.css" />
     <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporterElements.js" />
     <None Remove="Drivers\WebServicesDriver\WebServicesDriverWindow.xaml" />
-    <None Remove="log4netLib\log4net.config" />
-    <None Remove="Reports\Ginger-Web-Client\main.83a800d55fc7d8ada5fd.js" />
-    <None Remove="Reports\Ginger-Web-Client\styles.ec0b85177c760405ccbd.css" />
+    <None Remove="log4netLib\log4net.config" />    
     <None Remove="Reports\GingerExecutionReport\assets\css\bootstrap.css" />
     <None Remove="Reports\GingerExecutionReport\assets\css\font-awesome.css" />
     <None Remove="Reports\GingerExecutionReport\assets\css\styles.css" />
@@ -122,9 +116,6 @@
     </Content>
     <Content Include="DLLS\LibGit2Sharp.dll" />
     <Content Include="DLLS\OctaneInteractionStd.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DLLS\OctaneRepositoryStd.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLS\SikuliStandardNet.dll">
@@ -357,24 +348,41 @@
     <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
     <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj" />
     <ProjectReference Include="..\GingerUtils\GingerUtils.csproj" />
-    <ProjectReference Include="..\VisualRegressionTracker\VisualRegressionTracker.csproj" />
   </ItemGroup>
 
   <ItemGroup>            
     <Reference Include="ACL_Data_Contract">
       <HintPath>DLLS\ACL_Data_Contract.dll</HintPath>
+    </Reference>            
+    <Reference Include="ACL_Utils_Server">
+      <HintPath>DLLS\ACL_Utils_Server.dll</HintPath>
     </Reference>
     <Reference Include="AlmDataContractsStd">
       <HintPath>DLLS\AlmDataContractsStd.dll</HintPath>
     </Reference>
+    <Reference Include="ALMFactory">
+      <HintPath>DLLS\ALMFactory.dll</HintPath>
+    </Reference>
+    <Reference Include="AlmFactoryStd">
+      <HintPath>DLLS\AlmFactoryStd.dll</HintPath>
+    </Reference>
+    <Reference Include="ALMRepository">
+      <HintPath>DLLS\ALMRepository.dll</HintPath>
+    </Reference>
     <Reference Include="AlmRepositoryStd">
       <HintPath>DLLS\AlmRepositoryStd.dll</HintPath>
+    </Reference>
+    <Reference Include="ALMRestClient">
+      <HintPath>DLLS\ALMRestClient.dll</HintPath>
+    </Reference>
+    <Reference Include="ALMRestClientStd">
+      <HintPath>DLLS\ALMRestClientStd.dll</HintPath>
     </Reference>
     <Reference Include="ALM_CommonStd">
       <HintPath>DLLS\ALM_CommonStd.dll</HintPath>
     </Reference>
     <Reference Include="AzureDevOpsRepo">
-      <HintPath>..\..\..\..\ALMInteraction\AzureRepositoryStd\bin\Debug\net8.0\AzureDevOpsRepo.dll</HintPath>
+      <HintPath>DLLS\AzureDevOpsRepo.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>
@@ -382,32 +390,77 @@
     <Reference Include="GingerHbaseFilter">
       <HintPath>DLLS\GingerHbaseFilter.dll</HintPath>
     </Reference>
+    <Reference Include="Interop.TDAPIOLELib">
+      <HintPath>DLLS\Interop.TDAPIOLELib.dll</HintPath>
+    </Reference>
     <Reference Include="JiraRepositoryStd">
       <HintPath>DLLS\JiraRepositoryStd.dll</HintPath>
     </Reference>
     <Reference Include="LibGit2Sharp">
       <HintPath>DLLS\LibGit2Sharp.dll</HintPath>
     </Reference>
+    <Reference Include="ObjectsUtils">
+      <HintPath>DLLS\ObjectsUtils.dll</HintPath>
+    </Reference>
     <Reference Include="OctaneRepositoryStd">
       <HintPath>DLLS\OctaneRepositoryStd.dll</HintPath>
+    </Reference>
+    <Reference Include="OctaneSdkStandard">
+      <HintPath>DLLS\OctaneSdkStandard.dll</HintPath>
     </Reference>
     <Reference Include="OctaneStdSDK">
       <HintPath>DLLS\OctaneStdSDK.dll</HintPath>
     </Reference>
+    <Reference Include="Octane_Repository">
+      <HintPath>DLLS\Octane_Repository.dll</HintPath>
+    </Reference>
+    <Reference Include="Open3270">
+      <HintPath>..\Ginger\DLLs\Open3270.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <HintPath>DLLS\PresentationCore.dll</HintPath>
+    </Reference>
     <Reference Include="protobuf-net">
       <HintPath>DLLS\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="QcRepository">
+      <HintPath>DLLS\QcRepository.dll</HintPath>
     </Reference>
     <Reference Include="QCRestClientStd">
       <HintPath>DLLS\QCRestClientStd.dll</HintPath>
     </Reference>
+    <Reference Include="QCRest_Repository">
+      <HintPath>DLLS\QCRest_Repository.dll</HintPath>
+    </Reference>
+    <Reference Include="QTestAPI">
+      <HintPath>DLLS\QTestAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="QTestAPIStd">
+      <HintPath>DLLS\QTestAPIStd.dll</HintPath>
+    </Reference>
+    <Reference Include="QTestRepository">
+      <HintPath>DLLS\QTestRepository.dll</HintPath>
+    </Reference>
+    <Reference Include="RQMExport">
+      <HintPath>DLLS\RQMExport.dll</HintPath>
+    </Reference>
     <Reference Include="RQMExportStd">
       <HintPath>DLLS\RQMExportStd.dll</HintPath>
+    </Reference>
+    <Reference Include="RQM_Repository">
+      <HintPath>DLLS\RQM_Repository.dll</HintPath>
     </Reference>
     <Reference Include="RQM_RepositoryStd">
       <HintPath>DLLS\RQM_RepositoryStd.dll</HintPath>
     </Reference>
     <Reference Include="SikuliStandardNet">
       <HintPath>DLLS\SikuliStandardNet.dll</HintPath>
+    </Reference>
+    <Reference Include="SubAppUtils">
+      <HintPath>DLLS\SubAppUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="VisualRegressionTracker">
+      <HintPath>DLLS\VisualRegressionTracker.dll</HintPath>
     </Reference>
     <Reference Include="ZephyrEntStdSDK">
       <HintPath>DLLS\ZephyrEntStdSDK.dll</HintPath>
@@ -494,31 +547,13 @@
     <None Update="Reports\Ginger-Web-Client\3rdpartylicenses.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\action.795b7e06e6b88b4068e3.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Reports\Ginger-Web-Client\action.af98bbd1754385a7.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\action.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\activity-group.355933e47571cc698b58.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\activity-group.5e6f5d94c20cb106.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\activity-group.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\activity.a8034329b96ac82995e8.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Reports\Ginger-Web-Client\activity.eba30472b17cb8f3.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\activity.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\assets\artifacts\test.txt">
@@ -728,16 +763,7 @@
     <None Update="Reports\Ginger-Web-Client\assets\images\white-arrow-down%402x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\css\layout-alive.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\css\layout-alive.scss">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Reports\Ginger-Web-Client\assets\layout\css\layout-report.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\css\layout-report.scss">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\Montserrat\eot\Montserrat-Bold.eot">
@@ -800,66 +826,6 @@
     <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\Montserrat\woff\Montserrat-Regular.woff">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.eot">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.woff">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.woff2">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-700.eot">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-700.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-700.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-700.woff">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-700.woff2">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-italic.eot">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-italic.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-italic.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-italic.woff">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-italic.woff2">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-regular.eot">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-regular.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-regular.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-regular.woff">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-regular.woff2">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Reports\Ginger-Web-Client\assets\layout\images\amdocs.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -896,16 +862,28 @@
     <None Update="Reports\Ginger-Web-Client\assets\loaders.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\layout\_config.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\assets\sass\layout\_content.scss">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\assets\sass\layout\_dashboard.scss">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\layout\_documentation.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\assets\sass\layout\_exception.scss">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\assets\sass\layout\_footer.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\layout\_help.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\layout\_invoice.scss">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\assets\sass\layout\_landing.scss">
@@ -923,6 +901,9 @@
     <None Update="Reports\Ginger-Web-Client\assets\sass\layout\_megamenu.scss">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\layout\_mixins.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\assets\sass\layout\_rightsidebar.scss">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -935,6 +916,9 @@
     <None Update="Reports\Ginger-Web-Client\assets\sass\layout\_topbar.scss">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\layout\_typography.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\assets\sass\layout\_usermenu.scss">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -942,6 +926,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\assets\sass\layout\_variables.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\layout\_widgets.scss">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\assets\sass\overrides\_layout_styles.scss">
@@ -956,121 +943,283 @@
     <None Update="Reports\Ginger-Web-Client\assets\sass\overrides\_theme_variables.scss">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\button\_button.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\button\_speeddial.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\button\_splitbutton.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\data\_carousel.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\data\_datatable.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\data\_dataview.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\data\_filter.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\data\_fullcalendar.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\data\_orderlist.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\data\_organizationchart.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\data\_paginator.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\data\_picklist.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\data\_timeline.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\data\_tree.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\data\_treetable.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\data\_virtualscroller.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\file\_fileupload.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_autocomplete.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_calendar.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_cascadeselect.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_checkbox.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_chips.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_colorpicker.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_dropdown.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_editor.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_inputgroup.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_inputmask.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_inputnumber.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_inputswitch.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_inputtext.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_listbox.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_multiselect.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_password.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_radiobutton.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_rating.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_selectbutton.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_slider.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_togglebutton.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\input\_treeselect.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\menu\_breadcrumb.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\menu\_contextmenu.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\menu\_dock.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\menu\_megamenu.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\menu\_menu.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\menu\_menubar.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\menu\_panelmenu.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\menu\_slidemenu.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\menu\_steps.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\menu\_tabmenu.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\menu\_tieredmenu.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\messages\_inlinemessage.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\messages\_message.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\messages\_toast.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\misc\_avatar.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\misc\_badge.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\misc\_blockui.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\misc\_chip.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\misc\_inplace.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\misc\_progressbar.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\misc\_scrolltop.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\misc\_skeleton.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\misc\_tag.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\misc\_terminal.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\multimedia\_galleria.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\multimedia\_image.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\overlay\_confirmpopup.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\overlay\_dialog.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\overlay\_overlaypanel.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\overlay\_sidebar.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\overlay\_tooltip.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\panel\_accordion.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\panel\_card.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\panel\_divider.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\panel\_fieldset.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\panel\_panel.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\panel\_scrollpanel.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\panel\_splitter.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\panel\_tabview.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\components\panel\_toolbar.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\_colors.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\_common.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\_components.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\sass\theme\theme-base\_mixins.scss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\assets\sass\theme\_theme.scss">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\assets\sass\theme\_variables.scss">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\assets\sass\theme_core\_buttons.scss">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\sass\theme_core\_common.scss">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\sass\theme_core\_core.scss">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\sass\theme_core\_data.scss">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\sass\theme_core\_forms.scss">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\sass\theme_core\_menus.scss">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\sass\theme_core\_messages.scss">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\sass\theme_core\_misc.scss">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\sass\theme_core\_mixins.scss">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\sass\theme_core\_overlays.scss">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\sass\theme_core\_panels.scss">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Reports\Ginger-Web-Client\assets\sass\_fonts.scss">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\sass\_mixins.scss">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\sass\_variables.scss">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\assets\screenshots\ScreenShot_1_1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\assets\theme\theme-alive.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\theme\theme-alive.scss">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Reports\Ginger-Web-Client\assets\theme\theme-report.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\theme\theme-report.scss">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\color.6441e63a57ccc5105bad.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\color.c7a33805ffda0d32bd2a.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\color.dae87a04d07ca92b.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\color.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Reports\Ginger-Web-Client\favicon.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\flow.670a5098a09377f33ddb.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\flow.736b7298d34267d4.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\flow.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.1e59d2330b4c6deb84b3.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.20fd1704ea223900efa9.woff2">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.2b13baa7dd4f54c9.eot">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.674f50d287a8c48dc19b.eot">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.8a7cb27d142e3e19.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.8b43027f47b20503057d.eot">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.912ec66d7572ff821749.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.af7ae505a9eed503f8b8.woff2">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.b06871f281fee6b241d6.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.c1e38fd9e0e74ba58f7a.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.cf011583fb81df9f.woff">
@@ -1082,283 +1231,28 @@
     <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.e9955780856cf8aa.woff2">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.eot">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.f691f37e57f04c152e23.woff">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.fee66e712a8a08eef580.woff">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.woff">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.woff2">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\hue.0614c27197fc3ce572e1.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Reports\Ginger-Web-Client\hue.8b1818380241e6ac.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\hue.f8505bd4d6f3e3aa435b.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\hue.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\line.567f57385ea3dde2c9ae.gif">
+    <None Update="Reports\Ginger-Web-Client\main.2ad51ab896990d24.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\loading.8732a6660b528fadfaeb.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es2015.0f9f167139a9a9213c38.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es2015.36910dcefaaf2cf0c47c.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es2015.4f5035e3f674fad257ae.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es2015.dc498bf7897879d127bf.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es2015.e34ae47b01aae731b7d5.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es2015.f6965e40fcdabf83b4c5.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es2015.fe0340fc97e6970ace5b.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es2015.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es2015.js.map">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es5.0f9f167139a9a9213c38.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es5.36910dcefaaf2cf0c47c.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es5.4f5035e3f674fad257ae.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es5.dc498bf7897879d127bf.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es5.e34ae47b01aae731b7d5.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es5.f6965e40fcdabf83b4c5.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es5.fe0340fc97e6970ace5b.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es5.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main-es5.js.map">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.015f76cbde0590f1.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.0271dbc8168ef484.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.0ee51aa14e6f51e3992e.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.139c267c5febab4e.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.159642e2f8ca5229.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.2503092842e110f5.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.271e67578fb12021.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.38bb56b87fd01368.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.4273d22ab483b161.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.438b2e8802ab272e.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.4a6e5def8906895a.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.53bcca0065aceb0defb0.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.5badfb6abcbc6624.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.5c9395fe36c9ac94e13c.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.618eecd26592a6e1.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.6a73809b9e1090f3.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.70d98b264f802619.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.72d7e6bca361b785.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.91db0eebf33b3c8a828d.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.9a7f41ac158394ee2cff.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.9ebb2efed994571f.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.9fb32635369394e3.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.a85721ac59f1d0ff0fe1.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.ac18b79c87efc4589d26.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.acf1aa309189b63a.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.aea3c5e58155eec5.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.b42b139d50cbe944.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.bd5c247671b567e1.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.c61ea14b4b7835ba.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.d56e5665895d802f.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.da916f1c43a294a6c5ed.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.e0f1daaae814e3b9.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.e76244f45a5a7b7b107d.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>    
-    <None Update="Reports\Ginger-Web-Client\main.f7cb1b55c32902c7.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>    
-    <None Update="Reports\Ginger-Web-Client\main.fa57425f00e55f41.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>    
-    <None Update="Reports\Ginger-Web-Client\main.fac0119b7c90c3dc.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\main.fffc10dee05b7289f76b.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\password-meter.d59e6dc2616c53ce8e77.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\polyfills-es2015.b64edbbc782daecaca9c.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\polyfills-es2015.eda3fa3705f6bd6b723b.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\polyfills-es2015.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\polyfills-es2015.js.map">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\polyfills-es5.83c8ab955a385f8b7738.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\polyfills-es5.c2a19f4dcc4a194f5f4a.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\polyfills-es5.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\polyfills-es5.js.map">
+    <None Update="Reports\Ginger-Web-Client\main.50dca4a1d8ae08b9.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\polyfills.ab6619d5cdfdf12c.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\polyfills.ad3825fe2ad2e1a7698a.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\polyfills.df76418418e1f9a7a012.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Reports\Ginger-Web-Client\primeicons.0112589c5695a9ed.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\primeicons.38d77552b0353684a208.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\primeicons.3a0d4a58da62cf7c55bb.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\primeicons.473e2a746d3c151d7dca.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\primeicons.71bb3d79dcf18b45ae84.woff">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\primeicons.943ab24c43224d29.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\primeicons.b8eccb1059ea5faaf6d8.eot">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Reports\Ginger-Web-Client\primeicons.ba3f916dfb64be8c.woff2">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\primeicons.c55d94a248721abbd220.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\primeicons.dfbfef2de4bfb34e9722.eot">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\primeicons.e61f3495a7ecd3d571a4.woff">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\primeicons.eot">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\primeicons.f8b9e8a4e401b603.woff">
@@ -1367,115 +1261,19 @@
     <None Update="Reports\Ginger-Web-Client\primeicons.ffecb2549ad1765a.eot">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\primeicons.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\primeicons.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\primeicons.woff">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Reports\Ginger-Web-Client\run-set.c981cf629e96b973.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\run-set.db21c10c6089c194ff3c.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\run-set.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\runner.14f2b8f5bd46da01.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\runner.e037f074ff6b4e698976.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\runner.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\runtime-es2015.73eddf504454d1691310.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\runtime-es2015.a077b361125e449a4bfb.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\runtime-es2015.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\runtime-es2015.js.map">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\runtime-es5.73eddf504454d1691310.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\runtime-es5.a077b361125e449a4bfb.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\runtime-es5.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\runtime-es5.js.map">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Reports\Ginger-Web-Client\runtime.72529e3751757ee6.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\runtime.ec2944dd8b20ec099bf3.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\scripts.0c9bb5729d3a5de56a22.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\scripts.9aa141af6e0119c2bcf8.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\scripts.be6ecf7cc5d670a5.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\scripts.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\scripts.js.map">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\styles.0220388bb37cc84c.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Reports\Ginger-Web-Client\styles.0decbea244bacf15.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>   
-    <None Update="Reports\Ginger-Web-Client\styles.2f15af51caafc14d831e.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\styles.3702b93d5b8caa280f0d.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\styles.549ea4385fd8ba5d.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\styles.c77db239a1dbff874057.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\styles.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\styles.css.map">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\styles.d68bd4172acd061a314e.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\vendor-es2015.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\vendor-es2015.js.map">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\vendor-es5.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\vendor-es5.js.map">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\HTMLTemplates\viewreport.html">

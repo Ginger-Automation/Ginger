@@ -90,7 +90,7 @@ namespace GingerCore.GingerOCR
                             if (lineTxt.Contains(label))
                             {
                                 int indexOf = lineTxt.IndexOf(label) + label.Length;
-                                txtOutput = lineTxt.Substring(indexOf);
+                                txtOutput = lineTxt[indexOf..];
                                 return txtOutput;
                             }
                         } while (iter.Next(PageIteratorLevel.TextLine));
@@ -104,10 +104,10 @@ namespace GingerCore.GingerOCR
             return txtOutput;
         }
 
-        public static string ReadTextFromImageBetweenStrings(string imageFilePath, string firstLabel, string secondLabel , ref string err)
+        public static string ReadTextFromImageBetweenStrings(string imageFilePath, string firstLabel, string secondLabel, ref string err)
         {
             Page pageObj = GetPageObjectFromFilePath(imageFilePath);
-            return ReadTextBetweenTwoLabels(firstLabel, secondLabel, pageObj , ref err);
+            return ReadTextBetweenTwoLabels(firstLabel, secondLabel, pageObj, ref err);
         }
 
         private static string ReadTextFromByteArray(byte[] byteArray)
@@ -134,7 +134,7 @@ namespace GingerCore.GingerOCR
 
         private static List<byte[]> GetPngByteArrayFromPdf(string pdfFilePath, string pageNum, int dpi, string password = null)
         {
-            List<byte[]> lstPngByte = new List<byte[]>();
+            List<byte[]> lstPngByte = [];
             byte[] pdfByteArray = File.ReadAllBytes(pdfFilePath);
             List<string> lstPageNum = GetListOfPageNos(pageNum);
             foreach (string pgNum in lstPageNum)
@@ -272,7 +272,7 @@ namespace GingerCore.GingerOCR
                                     if (lineTxt.Contains(label))
                                     {
                                         int indexOf = lineTxt.IndexOf(label) + label.Length;
-                                        resultTxt = lineTxt.Substring(indexOf);
+                                        resultTxt = lineTxt[indexOf..];
                                         break;
                                     }
                                 } while (iter.Next(PageIteratorLevel.TextLine));
@@ -296,7 +296,7 @@ namespace GingerCore.GingerOCR
             return resultTxt;
         }
 
-        public static string ReadTextBetweenLabelsPdf(string pdfFilePath, string firstLabel, string secondLabel, string pageNum, int dpi, ref string err ,string password = null)
+        public static string ReadTextBetweenLabelsPdf(string pdfFilePath, string firstLabel, string secondLabel, string pageNum, int dpi, ref string err, string password = null)
         {
             if (!string.IsNullOrEmpty(pageNum))
             {
@@ -305,7 +305,7 @@ namespace GingerCore.GingerOCR
                 {
                     Page pageObj = GetPageObjectFromByteArray(pngByte);
                     return ReadTextBetweenTwoLabels(firstLabel, secondLabel, pageObj, ref err);
-                    
+
                 }
             }
             else
@@ -315,15 +315,15 @@ namespace GingerCore.GingerOCR
                 {
                     Page pageObj = GetPageObjectFromByteArray(byteArray);
                     return ReadTextBetweenTwoLabels(firstLabel, secondLabel, pageObj, ref err);
-                    
+
                 }
             }
             return string.Empty;
         }
-        private static string ReadTextBetweenTwoLabels(string firstLabel, string secondLabel, Page pageObj , ref string err)
+        private static string ReadTextBetweenTwoLabels(string firstLabel, string secondLabel, Page pageObj, ref string err)
         {
             StringBuilder resultTxt = new();
-            int firstIndexOf  = -1;
+            int firstIndexOf = -1;
             int secondIndexOf = -1;
             using (pageObj)
             {
@@ -336,13 +336,13 @@ namespace GingerCore.GingerOCR
                         {
                             // GetText reads the text according to the PageIteratorLevel
                             string lineTxt = iter.GetText(PageIteratorLevel.TextLine);
-                                                        
+
                             // If the firstLabel index isn't found , this block finds the index of the first label.
                             if (firstIndexOf == -1)//
                             {
                                 firstIndexOf = lineTxt.IndexOf(firstLabel);
                                 // if the firstLabel exists in the current textLine , check if the secondLabel exists in the same line as well.
-                                if(firstIndexOf != -1)
+                                if (firstIndexOf != -1)
                                 {
 
                                     // the search of the second label should start from the end of the firstLabel
@@ -352,7 +352,7 @@ namespace GingerCore.GingerOCR
                                     // Math.Min is added just in case firstIndexOf + firstLabel.Length > lineTxt.Length which would throw an exception.
 
                                     secondIndexOf = lineTxt.IndexOf(secondLabel, Math.Min((firstIndexOf + firstLabel.Length), lineTxt.Length));
-                                    
+
                                     // if the second label exists in the same txtLine append the string between the two labels and break from the loop to return the result
                                     if (secondIndexOf != -1)
                                     {
@@ -370,7 +370,7 @@ namespace GingerCore.GingerOCR
                                 }
 
                             }
-                            
+
 
                             // if the firstLabel already exists , find the second label
                             else
@@ -389,7 +389,7 @@ namespace GingerCore.GingerOCR
                                 {
                                     resultTxt.Append(lineTxt);
                                 }
-                                
+
                             }
                         } while (iter.Next(PageIteratorLevel.TextLine));
 
@@ -404,18 +404,18 @@ namespace GingerCore.GingerOCR
 
 
             // if the either or both of the labels aren't found then this error is printed on the execution section.
-            if(firstIndexOf == -1 || secondIndexOf == -1)
+            if (firstIndexOf == -1 || secondIndexOf == -1)
             {
                 err = "Text Between the two mentioned labels does not exist, Please try entering different values";
             }
 
 
-            return (firstIndexOf != -1 && secondIndexOf != -1) ?  resultTxt.ToString() : string.Empty;
+            return (firstIndexOf != -1 && secondIndexOf != -1) ? resultTxt.ToString() : string.Empty;
         }
 
         public static Dictionary<string, object> ReadTextFromPdfAllPages(string pdfFilePath, int dpi, string password = null)
         {
-            Dictionary<string, object> dctOutput = new Dictionary<string, object>();
+            Dictionary<string, object> dctOutput = [];
 
             try
             {
@@ -617,7 +617,7 @@ namespace GingerCore.GingerOCR
 
         private static List<string> GetListOfPageNos(string pageNumber)
         {
-            List<string> lstPageNos = new List<string>();
+            List<string> lstPageNos = [];
             try
             {
                 bool isParse = true;

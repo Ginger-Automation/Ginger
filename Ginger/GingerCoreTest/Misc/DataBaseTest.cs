@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
 using Ginger.Run;
@@ -54,10 +53,12 @@ namespace UnitTests.NonUITests
             mGR = new GingerRunner();
             mGR.Executor = new GingerExecutionEngine(mGR);
 
-            mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "DB Test";
-            mBF.Active = true;
+            mBF = new BusinessFlow
+            {
+                Activities = [],
+                Name = "DB Test",
+                Active = true
+            };
 
             Activity activity = new Activity();
             mBF.Activities.Add(activity);
@@ -83,7 +84,7 @@ namespace UnitTests.NonUITests
             db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];
             Boolean b = db.DatabaseOperations.Connect();
             //List<string> recs = new List<string>();
-            List<object> recs = new List<object>();
+            List<object> recs = [];
             if (b)
             {
 
@@ -113,7 +114,7 @@ namespace UnitTests.NonUITests
             Boolean b = db.DatabaseOperations.Connect();
             if (b)
             {
-               List<string> tables = await db.DatabaseOperations.GetTablesListAsync();
+                List<string> tables = await db.DatabaseOperations.GetTablesListAsync();
                 db.DatabaseOperations.CloseConnection();
             }
 
@@ -251,21 +252,27 @@ namespace UnitTests.NonUITests
         [Timeout(60000)]
         public void MongoDbFreeSQL()
         {
-            ActDBValidation actDB = new ActDBValidation();
-            actDB.DBValidationType = ActDBValidation.eDBValidationType.FreeSQL;
+            ActDBValidation actDB = new ActDBValidation
+            {
+                DBValidationType = ActDBValidation.eDBValidationType.FreeSQL,
 
-            actDB.AppName = "DB";
-            actDB.DBName = "MongoDb";
-            actDB.SQL = "db.products.find( {} )";
+                AppName = "DB",
+                DBName = "MongoDb",
+                SQL = "db.products.find( {} )"
+            };
 
             mBF.CurrentActivity.Acts.Add(actDB);
             mBF.CurrentActivity.Acts.CurrentItem = actDB;
 
-            ProjEnvironment projEnvironment = new ProjEnvironment();
-            projEnvironment.Name = "MongoDbApp";
+            ProjEnvironment projEnvironment = new ProjEnvironment
+            {
+                Name = "MongoDbApp"
+            };
 
-            EnvApplication envApplication = new EnvApplication();
-            envApplication.Name = "DB";
+            EnvApplication envApplication = new EnvApplication
+            {
+                Name = "DB"
+            };
 
             Database db = new Database();
             DatabaseOperations databaseOperations = new DatabaseOperations(db);
@@ -288,21 +295,27 @@ namespace UnitTests.NonUITests
         [Timeout(60000)]
         public void MongoDbRecordCount()
         {
-            ActDBValidation actDB = new ActDBValidation();
-            actDB.DBValidationType = ActDBValidation.eDBValidationType.RecordCount;
+            ActDBValidation actDB = new ActDBValidation
+            {
+                DBValidationType = ActDBValidation.eDBValidationType.RecordCount,
 
-            actDB.AppName = "DB";
-            actDB.DBName = "MongoDb";
-            actDB.SQL = "products";
+                AppName = "DB",
+                DBName = "MongoDb",
+                SQL = "products"
+            };
 
             mBF.CurrentActivity.Acts.Add(actDB);
             mBF.CurrentActivity.Acts.CurrentItem = actDB;
 
-            ProjEnvironment projEnvironment = new ProjEnvironment();
-            projEnvironment.Name = "MongoDbApp";
+            ProjEnvironment projEnvironment = new ProjEnvironment
+            {
+                Name = "MongoDbApp"
+            };
 
-            EnvApplication envApplication = new EnvApplication();
-            envApplication.Name = "DB";
+            EnvApplication envApplication = new EnvApplication
+            {
+                Name = "DB"
+            };
 
             Database db = new Database();
             DatabaseOperations databaseOperations = new DatabaseOperations(db);
@@ -325,21 +338,27 @@ namespace UnitTests.NonUITests
         [Timeout(60000)]
         public void MongoDbUpdateDB()
         {
-            ActDBValidation actDB = new ActDBValidation();
-            actDB.DBValidationType = ActDBValidation.eDBValidationType.UpdateDB;
+            ActDBValidation actDB = new ActDBValidation
+            {
+                DBValidationType = ActDBValidation.eDBValidationType.UpdateDB,
 
-            actDB.AppName = "DB";
-            actDB.DBName = "MongoDb";
-            actDB.SQL = "db.inventory.updateOne({ item: \"paper\" },{$set: { \"size.uom\": \"cm\", status: \"P\" }})";
+                AppName = "DB",
+                DBName = "MongoDb",
+                SQL = "db.inventory.updateOne({ item: \"paper\" },{$set: { \"size.uom\": \"cm\", status: \"P\" }})"
+            };
 
             mBF.CurrentActivity.Acts.Add(actDB);
             mBF.CurrentActivity.Acts.CurrentItem = actDB;
 
-            ProjEnvironment projEnvironment = new ProjEnvironment();
-            projEnvironment.Name = "MongoDbApp";
+            ProjEnvironment projEnvironment = new ProjEnvironment
+            {
+                Name = "MongoDbApp"
+            };
 
-            EnvApplication envApplication = new EnvApplication();
-            envApplication.Name = "DB";
+            EnvApplication envApplication = new EnvApplication
+            {
+                Name = "DB"
+            };
 
             Database db = new Database();
             DatabaseOperations databaseOperations = new DatabaseOperations(db);
@@ -364,11 +383,15 @@ namespace UnitTests.NonUITests
         public void RenameDBName()
         {
             //Arrange
-            ProjEnvironment projEnvironment = new ProjEnvironment();
-            projEnvironment.Name = "MongoDbApp";
+            ProjEnvironment projEnvironment = new ProjEnvironment
+            {
+                Name = "MongoDbApp"
+            };
 
-            EnvApplication envApplication = new EnvApplication();
-            envApplication.Name = "DB";
+            EnvApplication envApplication = new EnvApplication
+            {
+                Name = "DB"
+            };
 
             Database db = new Database();
             DatabaseOperations databaseOperations = new DatabaseOperations(db);
@@ -380,11 +403,13 @@ namespace UnitTests.NonUITests
             projEnvironment.Applications.Add(envApplication);
             mGR.ProjEnvironment = projEnvironment;
 
-            ActDBValidation actDB = new ActDBValidation();
-            actDB.DBValidationType = ActDBValidation.eDBValidationType.UpdateDB;
+            ActDBValidation actDB = new ActDBValidation
+            {
+                DBValidationType = ActDBValidation.eDBValidationType.UpdateDB,
 
-            actDB.AppName = "DB";
-            actDB.DBName = "MongoDb";
+                AppName = "DB",
+                DBName = "MongoDb"
+            };
 
             mBF.CurrentActivity.Acts.Add(actDB);
             mBF.CurrentActivity.Acts.CurrentItem = actDB;

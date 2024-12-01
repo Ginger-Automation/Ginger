@@ -62,7 +62,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
             //Load BF
             BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
 
-            ObservableList<AnalyzerItemBase> mIssues = new ObservableList<AnalyzerItemBase>();
+            ObservableList<AnalyzerItemBase> mIssues = [];
             AnalyzerUtils mAnalyzerUtils = new AnalyzerUtils();
             WorkSpace.Instance.SolutionRepository = SR;
 
@@ -87,7 +87,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
             BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
 
 
-            ObservableList<AnalyzerItemBase> mIssues = new ObservableList<AnalyzerItemBase>();
+            ObservableList<AnalyzerItemBase> mIssues = [];
             AnalyzerUtils mAnalyzerUtils = new AnalyzerUtils();
             WorkSpace.Instance.SolutionRepository = SR;
 
@@ -112,7 +112,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
             BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
 
 
-            ObservableList<AnalyzerItemBase> mIssues = new ObservableList<AnalyzerItemBase>();
+            ObservableList<AnalyzerItemBase> mIssues = [];
             AnalyzerUtils mAnalyzerUtils = new AnalyzerUtils();
             WorkSpace.Instance.SolutionRepository = SR;
 
@@ -144,7 +144,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
             BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
 
 
-            ObservableList<AnalyzerItemBase> mIssues = new ObservableList<AnalyzerItemBase>();
+            ObservableList<AnalyzerItemBase> mIssues = [];
             AnalyzerUtils mAnalyzerUtils = new AnalyzerUtils();
             WorkSpace.Instance.SolutionRepository = SR;
 

@@ -37,7 +37,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         // ObservableList<PluginPackage> Plugins;
 
-        public List<object> services = new List<object>();
+        public List<object> services = [];
 
         public readonly string Name;
 
@@ -59,7 +59,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         }
         public static List<DriverInfo> GetDriversforPlatform(ePlatformType platformType)
         {
-            List<DriverInfo> driverTypes = new List<DriverInfo>();
+            List<DriverInfo> driverTypes = [];
 
             if (platformType != ePlatformType.Service)
             {
@@ -71,7 +71,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private static List<DriverInfo> GetServices(ePlatformType platformType)
         {
-            List<DriverInfo> PlatformServices = new List<DriverInfo>();
+            List<DriverInfo> PlatformServices = [];
 
             ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
             string PlatformInterface = string.Empty;

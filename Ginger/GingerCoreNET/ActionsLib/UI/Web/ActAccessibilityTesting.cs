@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.VariablesLib;
@@ -226,7 +225,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 if (value != mStandardList)
                 {
                     mStandardList = value;
-                    OnPropertyChanged(nameof(StandardList));               
+                    OnPropertyChanged(nameof(StandardList));
                 }
             }
         }
@@ -297,7 +296,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         {
             get
             {
-               return GetRuleList();
+                return GetRuleList();
             }
         }
 
@@ -309,7 +308,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             AccessibilityConfiguration mAccessibilityConfiguration;
             if (WorkSpace.Instance.SolutionRepository != null)
             {
-                if(!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<AccessibilityConfiguration>().Any())
+                if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<AccessibilityConfiguration>().Any())
                 {
                     mAccessibilityConfiguration = new();
                 }
@@ -320,9 +319,9 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             }
             else
             {
-                mAccessibilityConfiguration = new ();
+                mAccessibilityConfiguration = new();
             }
-            mAccessibilityConfiguration.ExcludedRules = mAccessibilityConfiguration.ExcludedRules != null ? mAccessibilityConfiguration.ExcludedRules : new();
+            mAccessibilityConfiguration.ExcludedRules = mAccessibilityConfiguration.ExcludedRules != null ? mAccessibilityConfiguration.ExcludedRules : [];
             ObservableList<AccessibilityRuleData> ruleDatalist;
             try
             {
@@ -330,7 +329,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 ruleDatalist = AccessibilityRuleDataObjet.GetAccessibilityRules(AccessbiltyString);
                 foreach (AccessibilityRuleData ruleData in ruleDatalist)
                 {
-                    if (mAccessibilityConfiguration.ExcludedRules != null && mAccessibilityConfiguration.ExcludedRules.Select(x=>x.RuleID).Contains(ruleData.RuleID))
+                    if (mAccessibilityConfiguration.ExcludedRules != null && mAccessibilityConfiguration.ExcludedRules.Select(x => x.RuleID).Contains(ruleData.RuleID))
                     {
                         ruleData.Active = false;
                     }
@@ -526,7 +525,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
             doc.DocumentNode.SelectSingleNode("//script").InnerHtml = EmbeddedResourceProvider.ReadEmbeddedFile("htmlReporterElements.js");
 
-            doc.Save(destination, Encoding.UTF8);            
+            doc.Save(destination, Encoding.UTF8);
         }
 
         private static void GetReadableAxeResults(AxeResultItem[] results, ResultType type, HtmlDocument doc, HtmlNode body)
@@ -764,14 +763,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             return count;
         }
 
-        public void AnalyzerAccessibility(IWebDriver Driver,IWebElement element)
+        public void AnalyzerAccessibility(IWebDriver Driver, IWebElement element)
         {
             AxeBuilder axeBuilder = null;
             try
             {
-                Artifacts = new ObservableList<ArtifactDetails>();
+                Artifacts = [];
                 axeBuilder = CreateAxeBuilder(Driver);
-                if(Status == eRunStatus.Failed && !string.IsNullOrEmpty(Error))
+                if (Status == eRunStatus.Failed && !string.IsNullOrEmpty(Error))
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Error: {Error}");
                     return;
@@ -846,7 +845,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                     Error = "Standard list is empty or not set.";
                     return axeBuilder;
                 }
-              
+
 
                 if (SeverityList != null && SeverityList.Any())
                 {
@@ -880,7 +879,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                     return axeBuilder;
                 }
 
-                
+
             }
             return axeBuilder;
         }
@@ -920,7 +919,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 }
 
             }
-            
+
             var jsonresponse = JsonConvert.SerializeObject(axeResult, Newtonsoft.Json.Formatting.Indented);
             RawResponseValues = jsonresponse;
             AddOrUpdateReturnParamActual(ParamName: "Raw Response", ActualValue: jsonresponse);
@@ -961,7 +960,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             }
         }
 
-        
+
     }
 
     internal static class EmbeddedResourceProvider

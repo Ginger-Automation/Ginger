@@ -366,9 +366,8 @@ namespace GingerTest
             {
                 return new RepositoryItemKey() { Guid = Guid.NewGuid(), ItemName = "NewItem" };
             }
-            else if (CurrentValue is List<string>)
+            else if (CurrentValue is List<string> lst)
             {
-                List<string> lst = (List<string>)CurrentValue;
                 lst.Add("Another item");
                 return CurrentValue;
             }
@@ -379,7 +378,7 @@ namespace GingerTest
         string prop;
         private void RIPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName != nameof(RepositoryItemBase.DirtyStatus) && e.PropertyName != nameof(RepositoryItemBase.DirtyStatusImage))
+            if (e.PropertyName is not (nameof(RepositoryItemBase.DirtyStatus)) and not (nameof(RepositoryItemBase.DirtyStatusImage)))
             {
                 prop = e.PropertyName;
             }

@@ -16,12 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Ginger.Run;
-using GingerCore.Actions;
-using GingerCore.Drivers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using static Ginger.Run.RunSetsExecutionsHistoryPage;
 
 namespace GingerTest.Run

@@ -32,7 +32,7 @@ namespace Amdocs.Ginger.CoreNET.ALMLib.DataContract
 
         public ALMTestCaseStep()
         {
-            ElementsField = new Dictionary<string, object>();
+            ElementsField = [];
         }
 
         public ALMTestCaseStep ParseXML(XElement fields)

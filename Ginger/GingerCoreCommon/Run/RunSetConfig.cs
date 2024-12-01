@@ -31,7 +31,6 @@ using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
-using Ginger.SolutionGeneral;
 
 namespace Ginger.Run
 {
@@ -56,7 +55,7 @@ namespace Ginger.Run
         /// <summary>
         /// List of all the agents and the Virtual ones mapped during run with runner guid
         /// </summary>
-        public Dictionary<Guid, List<IAgent>> ActiveAgentListWithRunner = new Dictionary<Guid, List<IAgent>>();
+        public Dictionary<Guid, List<IAgent>> ActiveAgentListWithRunner = [];
 
 
         private bool mIsRunning;
@@ -251,7 +250,7 @@ namespace Ginger.Run
         /// <summary>
         /// Been used to identify if Activity Variables were lazy loaded already or not
         /// </summary>
-        public bool GingerRunnersLazyLoad { get { return (mGingerRunners != null) ? mGingerRunners.LazyLoad : false; } }
+        public bool GingerRunnersLazyLoad { get { return (mGingerRunners != null) && mGingerRunners.LazyLoad; } }
         [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.NodePath)]
         [IsSerializedForLocalRepository]
         public ObservableList<GingerRunner> GingerRunners
@@ -260,7 +259,7 @@ namespace Ginger.Run
             {
                 if (mGingerRunners == null)
                 {
-                    mGingerRunners = new ObservableList<GingerRunner>();
+                    mGingerRunners = [];
                 }
                 if (mGingerRunners.LazyLoad)
                 {
@@ -280,10 +279,10 @@ namespace Ginger.Run
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<RunSetActionBase> RunSetActions = new ObservableList<RunSetActionBase>();
+        public ObservableList<RunSetActionBase> RunSetActions = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> Tags = new ObservableList<Guid>();
+        public ObservableList<Guid> Tags = [];
 
         public override string GetNameForFileName() { return Name; }
 
@@ -401,8 +400,8 @@ namespace Ginger.Run
         }
 
         private bool _isVirtual;
-        public bool IsVirtual 
-        { 
+        public bool IsVirtual
+        {
             get => _isVirtual;
             set
             {
@@ -411,7 +410,7 @@ namespace Ginger.Run
                     _isVirtual = value;
                     OnPropertyChanged(nameof(IsVirtual));
                 }
-            } 
+            }
         }
 
         public void UpdateRunnersBusinessFlowRunsList()
@@ -440,7 +439,7 @@ namespace Ginger.Run
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<SolutionCategoryDefinition> CategoriesDefinitions = new ObservableList<SolutionCategoryDefinition>();
+        public ObservableList<SolutionCategoryDefinition> CategoriesDefinitions = [];
 
         [IsSerializedForLocalRepository]
         public SelfHealingConfig SelfHealingConfiguration = new SelfHealingConfig();

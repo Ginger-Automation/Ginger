@@ -97,17 +97,21 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 //start waiting for incoming data async - non blocking
 
                 // Create the state object.  
-                mGingerSocketInfo = new GingerSocketInfo();
-                mGingerSocketInfo.Socket = socket;
-                mGingerSocketInfo.MessageHandler = MessageHandler;
+                mGingerSocketInfo = new GingerSocketInfo
+                {
+                    Socket = socket,
+                    MessageHandler = MessageHandler
+                };
                 mGingerSocketInfo.Receive();   // not blocking
 
 
                 // if there is code here it will run - no wait
 
                 //TODO: handshake: version, security, encryption
-                NewPayLoad HandShake1 = new NewPayLoad("GetSession", "v1");
-                HandShake1.PaylodType = NewPayLoad.ePaylodType.SocketRequest;
+                NewPayLoad HandShake1 = new NewPayLoad("GetSession", "v1")
+                {
+                    PaylodType = NewPayLoad.ePaylodType.SocketRequest
+                };
                 NewPayLoad RC = SendSocketPayLoad(HandShake1);
                 if (RC.Name == "SessionID")
                 {
@@ -127,8 +131,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
         public void CloseConnection()
         {
-            NewPayLoad payload = new NewPayLoad("NodeClosing", SessionID);
-            payload.PaylodType = NewPayLoad.ePaylodType.SocketRequest;
+            NewPayLoad payload = new NewPayLoad("NodeClosing", SessionID)
+            {
+                PaylodType = NewPayLoad.ePaylodType.SocketRequest
+            };
             NewPayLoad RC = SendSocketPayLoad(payload);
         }
 

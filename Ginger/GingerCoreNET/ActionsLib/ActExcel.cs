@@ -208,7 +208,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eExcelActionType)GetOrCreateInputParam<eExcelActionType>(nameof(ExcelActionType), eExcelActionType.ReadData);
+                return GetOrCreateInputParam<eExcelActionType>(nameof(ExcelActionType), eExcelActionType.ReadData);
             }
             set
             {
@@ -253,7 +253,7 @@ namespace GingerCore.Actions
 
         public override void Execute()
         {
-            if (!CheckMandatoryFieldsExists(new List<string>() { nameof(CalculatedFileName), nameof(CalculatedSheetName) }))
+            if (!CheckMandatoryFieldsExists([nameof(CalculatedFileName), nameof(CalculatedSheetName)]))
             {
                 return;
             }
@@ -297,8 +297,8 @@ namespace GingerCore.Actions
                     // Regex used to split the string by Capital Letters eg: SheetName becomes Sheet Name
                     var splitBetCapLetters = new Regex(@"(?<=[A-Z])(?=[A-Z][a-z]) | (?<=[^A-Z])(?=[A-Z]) | (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
                     // if the field name startwith Calculated then consider the substring after 'Calculated' otherwise use the field itself
-                    string substr = indexOfField != -1 ? field.Substring(indexOfField + calculated.Length) : field;
-                    string actualFieldValue = splitBetCapLetters.Replace( substr, " ") ;
+                    string substr = indexOfField != -1 ? field[(indexOfField + calculated.Length)..] : field;
+                    string actualFieldValue = splitBetCapLetters.Replace(substr, " ");
                     this.Error = $"The Mandatory field : {actualFieldValue} cannot be empty";
                     return false;
                 }
@@ -311,36 +311,36 @@ namespace GingerCore.Actions
             try
             {
                 DataTable excelDataTable = excelOperator.ReadCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, CalculatedHeaderRowNum);
-               
-                    if (!string.IsNullOrEmpty(SelectRowsWhere) && !SelectAllRows)
+
+                if (!string.IsNullOrEmpty(SelectRowsWhere) && !SelectAllRows)
+                {
+
+                    if (excelDataTable == null)
                     {
-                       
-                        if (excelDataTable == null)
-                        {
-                            Error = SelectAllRows ? "No Cells Found" : "Given Cell [" + CalculatedFilter + "] contains empty value";
-                            return;
-                        }
-                        else 
-                        {
-                            string CellValue = excelDataTable.Rows[0][0].ToString();
-                            AddOrUpdateReturnParamActual(excelDataTable.Columns[0].ColumnName, CellValue);
-                        }
+                        Error = SelectAllRows ? "No Cells Found" : "Given Cell [" + CalculatedFilter + "] contains empty value";
+                        return;
                     }
                     else
                     {
-                        for (int j = 0; j < excelDataTable.Rows.Count; j++)
-                        {
-                            DataRow r = excelDataTable.Rows[j];
-                            //Read data to return values
-                            // in case the user didn't select cols then get all excel output columns
-                            for (int i = 0; i < excelDataTable.Columns.Count; i++)
-                            {
-                                AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, ((object)r[i]).ToString(), (j + 1).ToString() + (i + 1).ToString());
-                            }
-                        }
-
+                        string CellValue = excelDataTable.Rows[0][0].ToString();
+                        AddOrUpdateReturnParamActual(excelDataTable.Columns[0].ColumnName, CellValue);
                     }
-                
+                }
+                else
+                {
+                    for (int j = 0; j < excelDataTable.Rows.Count; j++)
+                    {
+                        DataRow r = excelDataTable.Rows[j];
+                        //Read data to return values
+                        // in case the user didn't select cols then get all excel output columns
+                        for (int i = 0; i < excelDataTable.Columns.Count; i++)
+                        {
+                            AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, r[i].ToString(), (j + 1).ToString() + (i + 1).ToString());
+                        }
+                    }
+
+                }
+
             }
             catch (Exception ex)
             {
@@ -361,12 +361,12 @@ namespace GingerCore.Actions
                         {
                             if (SelectAllRows)
                             {
-                                AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, ((object)r[i]).ToString(), "" + (j + 1).ToString());
+                                AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, r[i].ToString(), "" + (j + 1).ToString());
 
                             }
                             else
                             {
-                                AddOrUpdateReturnParamActual(excelDataTable.Columns[i].ColumnName, ((object)r[i]).ToString());
+                                AddOrUpdateReturnParamActual(excelDataTable.Columns[i].ColumnName, r[i].ToString());
                             }
                         }
                     }
@@ -375,7 +375,7 @@ namespace GingerCore.Actions
                     {
                         if (!String.IsNullOrWhiteSpace(SetDataUsed))
                         {
-                            isUpdated = excelOperator.UpdateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, FieldsValueToTupleList(CalculatedSetDataUsed),CalculatedHeaderRowNum);
+                            isUpdated = excelOperator.UpdateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, FieldsValueToTupleList(CalculatedSetDataUsed), CalculatedHeaderRowNum);
                         }
                     }
                     else
@@ -387,7 +387,7 @@ namespace GingerCore.Actions
                                 Error += "Missing or Invalid Primary Key";
                                 return;
                             }
-                            isUpdated = excelOperator.UpdateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, FieldsValueToTupleList(CalculatedSetDataUsed), CalculatedHeaderRowNum,CalculatedPrimaryKeyFilter(excelDataTable.Rows[0]));
+                            isUpdated = excelOperator.UpdateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, FieldsValueToTupleList(CalculatedSetDataUsed), CalculatedHeaderRowNum, CalculatedPrimaryKeyFilter(excelDataTable.Rows[0]));
                         }
                     }
                     if (!isUpdated)
@@ -402,7 +402,7 @@ namespace GingerCore.Actions
             }
             catch (Exception ex)
             {
-                if(ex.Message!=null && ex.Message.StartsWith("Cannot find column"))
+                if (ex.Message != null && ex.Message.StartsWith("Cannot find column"))
                 {
                     Error = $"{ex.Message} at Row Number {HeaderRowNum}";
                 }
@@ -417,10 +417,12 @@ namespace GingerCore.Actions
         {
             try
             {
-                List<Tuple<string, object>> cellValuesToUpdateList = new List<Tuple<string, object>>();
-                cellValuesToUpdateList.AddRange(FieldsValueToTupleList(CalculatedSetDataUsed));
-                cellValuesToUpdateList.AddRange(FieldsValueToTupleList(CalculatedColMappingRules));
-                DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows , CalculatedHeaderRowNum);
+                List<Tuple<string, object>> cellValuesToUpdateList =
+                [
+                    .. FieldsValueToTupleList(CalculatedSetDataUsed),
+                    .. FieldsValueToTupleList(CalculatedColMappingRules),
+                ];
+                DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, CalculatedHeaderRowNum);
                 if (excelDataTable == null)
                 {
                     Error = "Table return no Rows with given filter";
@@ -433,7 +435,7 @@ namespace GingerCore.Actions
                     this.ExInfo = "Write action done";
                     if (cellValuesToUpdateList.Count > 0)
                     {
-                        bool isUpdated = string.IsNullOrEmpty(CalculatedPrimaryKeyFilter(r)) ? excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList,CalculatedHeaderRowNum) :
+                        bool isUpdated = string.IsNullOrEmpty(CalculatedPrimaryKeyFilter(r)) ? excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList, CalculatedHeaderRowNum) :
                             excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList, CalculatedHeaderRowNum, CalculatedPrimaryKeyFilter(r));
                     }
                 }
@@ -455,7 +457,7 @@ namespace GingerCore.Actions
         }
         private List<Tuple<string, object>> FieldsValueToTupleList(string updatedFieldsValue)
         {
-            List<Tuple<string, object>> columnNameAndValue = new List<Tuple<string, object>>();
+            List<Tuple<string, object>> columnNameAndValue = [];
 
             if (String.IsNullOrEmpty(updatedFieldsValue))
             {
@@ -495,7 +497,7 @@ namespace GingerCore.Actions
         }
         internal static ObservableList<ActReturnValue> GetVarColsFromString(string sVarCols)
         {
-            ObservableList<ActReturnValue> VarCols = new ObservableList<ActReturnValue>();
+            ObservableList<ActReturnValue> VarCols = [];
 
             string[] VarColMap = sVarCols.Split(',');
 

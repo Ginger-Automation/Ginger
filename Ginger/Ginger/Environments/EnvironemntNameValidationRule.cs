@@ -39,7 +39,7 @@ namespace Ginger.Environments
         }
         private bool IsEnvNameExist(string value)
         {
-            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Any(x=>x.Name == value);
+            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Any(x => x.Name == value);
         }
     }
 

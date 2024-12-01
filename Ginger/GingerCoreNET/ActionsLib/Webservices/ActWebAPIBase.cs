@@ -96,31 +96,28 @@ namespace GingerCore.Actions.WebServices
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> DynamicElements = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> DynamicElements = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> HttpHeaders = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> HttpHeaders = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<WebAPIKeyBodyValues> RequestKeyValues = new ObservableList<WebAPIKeyBodyValues>();
+        public ObservableList<WebAPIKeyBodyValues> RequestKeyValues = [];
 
         //CREATE LIST OF ActInputValue for each field which requires expression calculation
         private ObservableList<ActInputValue> FormDataToAIVConverter(ObservableList<WebAPIKeyBodyValues> BodyKeyValueList)
         {
-            ObservableList<ActInputValue> fa = new ObservableList<ActInputValue>();
+            ObservableList<ActInputValue> fa = [];
             foreach (WebAPIKeyBodyValues wiv in RequestKeyValues)
             {
-                fa.Add((ActInputValue)wiv);
+                fa.Add(wiv);
             }
             return fa;
         }
 
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
         {
-            List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>();
-            list.Add(DynamicElements);
-            list.Add(HttpHeaders);
-            list.Add(FormDataToAIVConverter(RequestKeyValues));
+            List<ObservableList<ActInputValue>> list = [DynamicElements, HttpHeaders, FormDataToAIVConverter(RequestKeyValues)];
 
             return list;
         }
@@ -272,7 +269,7 @@ namespace GingerCore.Actions.WebServices
 
                 if (mAct.UseLegacyJSONParsing)
                 {
-                    List<General.XmlNodeItem> outputTagsList = new List<General.XmlNodeItem>();
+                    List<General.XmlNodeItem> outputTagsList = [];
                     outputTagsList = General.GetXMLNodesItems(doc, true);
                     foreach (General.XmlNodeItem outputItem in outputTagsList)
                     {
@@ -312,7 +309,7 @@ namespace GingerCore.Actions.WebServices
             if (mAct.UseLegacyJSONParsing)
             {
 
-                if (((ResponseMessage[0] == '[') && (ResponseMessage[ResponseMessage.Length - 1] == ']')))
+                if (((ResponseMessage[0] == '[') && (ResponseMessage[^1] == ']')))
                 {
                     doc = JsonConvert.DeserializeXmlNode("{\"root\":" + ResponseMessage + "}", "root");
                 }
@@ -329,7 +326,7 @@ namespace GingerCore.Actions.WebServices
 
                 }
 
-                List<General.XmlNodeItem> outputTagsList = new List<General.XmlNodeItem>();
+                List<General.XmlNodeItem> outputTagsList = [];
                 outputTagsList = General.GetXMLNodesItems(doc, true);
                 foreach (General.XmlNodeItem outputItem in outputTagsList)
                 {

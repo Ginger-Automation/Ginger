@@ -16,15 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Bogus;
 using LiteDB;
 using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Telemetry
@@ -87,7 +84,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             {
                 using LiteDatabase db = NewLiteDb();
                 ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
-    
+
                 collection.InsertBulk(logs, batchSize: 5000);
             });
         }
@@ -131,7 +128,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
                 using LiteDatabase db = NewLiteDb();
                 ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
-                
+
                 IEnumerable<TelemetryLogRecord> logsInDB = collection.Find(log => ids.Contains(log.Id)).ToList();
 
                 foreach (TelemetryLogRecord logInDB in logsInDB)
@@ -157,7 +154,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             return await Task.Run(() =>
             {
                 IEnumerable<string> ids = exclude.Select(l => l.Id);
-                
+
                 using LiteDatabase db = NewLiteDb();
                 ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
 

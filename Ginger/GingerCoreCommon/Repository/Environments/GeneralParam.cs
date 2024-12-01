@@ -105,7 +105,7 @@ namespace Amdocs.Ginger.Repository
 
         public static void UpdateNameChangeInItem(object item, string app, string prevVarName, string newVarName, ref bool ItemWasChanged)
         {
-            var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+            var properties = item.GetType().GetMembers().Where(x => x.MemberType is MemberTypes.Property or MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
                 if (Common.GeneralLib.General.IsFieldToAvoidInVeFieldSearch(mi.Name))
@@ -128,16 +128,16 @@ namespace Amdocs.Ginger.Repository
                     }
                 }
                 else if (mi.MemberType == MemberTypes.Field)
-                { 
-                    value = item.GetType().GetField(mi.Name).GetValue(item); 
+                {
+                    value = item.GetType().GetField(mi.Name).GetValue(item);
                 }
 
                 if (value is IObservableList)
                 {
-                    List<dynamic> list = new List<dynamic>();
+                    List<dynamic> list = [];
                     foreach (object o in value)
-                    { 
-                        UpdateNameChangeInItem(o, app, prevVarName, newVarName, ref ItemWasChanged); 
+                    {
+                        UpdateNameChangeInItem(o, app, prevVarName, newVarName, ref ItemWasChanged);
                     }
                 }
                 else
@@ -174,12 +174,12 @@ namespace Amdocs.Ginger.Repository
 
         public static bool IsParamBeingUsedInBFs(object action, string appName, string paramOldName)
         {
-            var actionMembers = action.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+            var actionMembers = action.GetType().GetMembers().Where(x => x.MemberType is MemberTypes.Property or MemberTypes.Field);
             foreach (MemberInfo mi in actionMembers)
             {
                 if (Common.GeneralLib.General.IsFieldToAvoidInVeFieldSearch(mi.Name))
-                { 
-                    continue; 
+                {
+                    continue;
                 }
 
                 dynamic value = GetActionMemberValue(action, mi);

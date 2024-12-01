@@ -77,7 +77,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
                 Reporter.ToUser(eUserMsgKey.ClickElementAgain);
             }
 
-            if (x == "undefined" || x == "undefined")
+            if (x is "undefined" or "undefined")
             {
                 ((SeleniumDriver)ElementInfo.WindowExplorer).StartClickEvent(ElementInfo);
                 Reporter.ToUser(eUserMsgKey.ClickElementAgain);

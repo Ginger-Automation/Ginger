@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
@@ -52,11 +51,15 @@ namespace Ginger.Agents
         {
             xAgentsGrd.SetTitleLightStyle = true;
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(Agent.Name), WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(Agent.Notes), WidthWeight = 80 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(Agent.DriverType), WidthWeight = 150 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(Agent.Name), WidthWeight = 150 },
+                new GridColView() { Field = nameof(Agent.Notes), WidthWeight = 80 },
+                new GridColView() { Field = nameof(Agent.DriverType), WidthWeight = 150 },
+            ]
+            };
             xAgentsGrd.SetAllColumnsDefaultView(view);
             xAgentsGrd.InitViewItems();
             xAgentsGrd.ShowTagsFilter = Visibility.Visible;

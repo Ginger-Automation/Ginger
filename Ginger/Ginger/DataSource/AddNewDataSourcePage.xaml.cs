@@ -22,7 +22,6 @@ using Amdocs.Ginger.Repository;
 using GingerCore.DataSource;
 using GingerCoreNET.DataSource;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -113,7 +112,7 @@ namespace Ginger.DataSource
             //validate details
             if (FilePathTextBox.Text.Trim() == string.Empty)
             {
-                Reporter.ToUser(eUserMsgKey.MissingNewDSDetails, "File Path"); 
+                Reporter.ToUser(eUserMsgKey.MissingNewDSDetails, "File Path");
                 return;
             }
             else if (DSTypeComboBox.SelectedItem == null)
@@ -127,7 +126,7 @@ namespace Ginger.DataSource
             mDSDetails.Name = DSName.Text;
             if (!Directory.Exists(Path.GetDirectoryName(mDSDetails.FileFullPath)))
             {
-                Reporter.ToUser(eUserMsgKey.InvalidDSPath, Path.GetDirectoryName(mDSDetails.FileFullPath)); 
+                Reporter.ToUser(eUserMsgKey.InvalidDSPath, Path.GetDirectoryName(mDSDetails.FileFullPath));
                 return;
             }
 

@@ -6,7 +6,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.SolutionTreeViewLib
     // List<>
     public class ObjectContextMenu
     {
-        public List<ObjectContextMenuItem> Items = new List<ObjectContextMenuItem>();
+        public List<ObjectContextMenuItem> Items = [];
 
         public void AddItem(string Text, Action Action)
         {

@@ -95,7 +95,7 @@ namespace Ginger.ALM.MapToALMWizard
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Failed Set Mapped ALM Test Set data",ex);
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed Set Mapped ALM Test Set data", ex);
                         }
                     }).ConfigureAwait(true);
                     ChangeTestSetPageVisibility();

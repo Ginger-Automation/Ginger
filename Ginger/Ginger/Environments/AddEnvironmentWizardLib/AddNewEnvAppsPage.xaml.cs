@@ -18,14 +18,12 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.UIElement;
 using Ginger.SolutionWindows;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
-using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -43,12 +41,16 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
         {
             InitializeComponent();
             xAddApplicationToSolution.ButtonTextSize = 12;
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Active), Header = " ", StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Name), Header = GingerDicser.GetTermResValue(eTermResKey.TargetApplication), WidthWeight = 60 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Platform), Header = "Platform Type", WidthWeight = 40 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(EnvApplication.Active), Header = " ", StyleType = GridColView.eGridColStyleType.CheckBox },
+                new GridColView() { Field = nameof(EnvApplication.Name), Header = GingerDicser.GetTermResValue(eTermResKey.TargetApplication), WidthWeight = 60 },
+                new GridColView() { Field = nameof(EnvApplication.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 },
+                new GridColView() { Field = nameof(EnvApplication.Platform), Header = "Platform Type", WidthWeight = 40 },
+            ]
+            };
 
             SelectApplicationGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All Applications", new RoutedEventHandler(CheckUnCheckAllApplications));
 
@@ -103,8 +105,13 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
 
                     foreach (ApplicationPlatform appPlat in WorkSpace.Instance.Solution.ApplicationPlatforms)
                     {
-                        EnvApplication envApp = new EnvApplication() { Name = appPlat.AppName, Platform  = appPlat.Platform, ParentGuid = appPlat.Guid};
-                        envApp.Active = true;
+                        EnvApplication envApp = new EnvApplication
+                        {
+                            Name = appPlat.AppName,
+                            Platform = appPlat.Platform,
+                            ParentGuid = appPlat.Guid,
+                            Active = true
+                        };
                         mWizard.apps.Add(envApp);
                     }
 
@@ -140,10 +147,15 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
             ApplicationPlatform? selectedApp = null;
             applicationPage.ShowAsWindow(ref selectedApp);
 
-            if (selectedApp!=null) 
-            { 
-                EnvApplication envApp = new EnvApplication() { Name = selectedApp.AppName, Platform = selectedApp.Platform, ParentGuid = selectedApp.Guid};
-                envApp.Active = true;
+            if (selectedApp != null)
+            {
+                EnvApplication envApp = new EnvApplication
+                {
+                    Name = selectedApp.AppName,
+                    Platform = selectedApp.Platform,
+                    ParentGuid = selectedApp.Guid,
+                    Active = true
+                };
                 mWizard.apps.Add(envApp);
             }
         }

@@ -68,23 +68,25 @@ namespace GingerWPF
             Console.SetOut(this.mOutput);
             Console.SetError(this.mErrors);
 
-            Button CopyToClipboradBtn = new Button();
-            CopyToClipboradBtn.Content = "Copy to Clipboard";
+            Button CopyToClipboradBtn = new Button
+            {
+                Content = "Copy to Clipboard"
+            };
             CopyToClipboradBtn.Click += new RoutedEventHandler(CopyToClipboradBtn_Click);
 
-            Button clearConsoleButton = new Button();
-            clearConsoleButton.Content = "Clear";
+            Button clearConsoleButton = new Button
+            {
+                Content = "Clear"
+            };
             clearConsoleButton.Click += new RoutedEventHandler(ClearButton_Click);
 
-            Button onTopButton = new Button();
-            onTopButton.Content = "Pin on Top";
+            Button onTopButton = new Button
+            {
+                Content = "Pin on Top"
+            };
             onTopButton.Click += new RoutedEventHandler(OnTopButton_Click);
 
-            Amdocs.Ginger.Common.ObservableList<Button> winButtons = new Amdocs.Ginger.Common.ObservableList<Button>();
-
-            winButtons.Add(onTopButton);
-            winButtons.Add(clearConsoleButton);
-            winButtons.Add(CopyToClipboradBtn);
+            Amdocs.Ginger.Common.ObservableList<Button> winButtons = [onTopButton, clearConsoleButton, CopyToClipboradBtn];
 
             this.Width = 800;
             this.Height = 600;
@@ -94,7 +96,7 @@ namespace GingerWPF
         private void CopyToClipboradBtn_Click(object sender, RoutedEventArgs e)
         {
             //  GingerCore.General.SetClipboardText(output.GetText()+"\n"+ errors.GetText());
-             GingerCore.General.SetClipboardText(xConsoleTextBlock.Text);
+            GingerCore.General.SetClipboardText(xConsoleTextBlock.Text);
         }
 
         private void CloseWindow(object sender, EventArgs e)

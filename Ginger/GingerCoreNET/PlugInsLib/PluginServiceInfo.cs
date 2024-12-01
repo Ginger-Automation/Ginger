@@ -35,16 +35,16 @@ namespace Amdocs.Ginger.Common
         public bool IsSession { get; set; }
 
         [JsonProperty]
-        public List<string> Interfaces { get; set; } = new List<string>();
+        public List<string> Interfaces { get; set; } = [];
 
 
-        readonly List<PluginServiceActionInfo> mActions = new List<PluginServiceActionInfo>();
+        readonly List<PluginServiceActionInfo> mActions = [];
 
         [JsonProperty]
         public List<PluginServiceActionInfo> Actions { get { return mActions; } }
 
         [JsonProperty]
-        public List<PluginServiceConfigInfo> Configs { get; set; } = new List<PluginServiceConfigInfo>();
+        public List<PluginServiceConfigInfo> Configs { get; set; } = [];
 
 
     }

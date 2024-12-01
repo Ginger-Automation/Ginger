@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Azure.Identity;
 using Microsoft.Graph;
@@ -24,8 +25,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Amdocs.Ginger.Common;
-using GingerCore.Actions.Communication;
 
 namespace GingerCore.GeneralLib
 {
@@ -55,7 +54,7 @@ namespace GingerCore.GeneralLib
             IEnumerable<ICollectionPage<Message>> messageCollections;
             if (filters.Folder == EmailReadFilters.eFolderFilter.All)
             {
-                messageCollections = new List<ICollectionPage<Message>>() { await GetUserMessages(graphServiceClient, filters) };
+                messageCollections = [await GetUserMessages(graphServiceClient, filters)];
             }
             else
             {
@@ -69,7 +68,7 @@ namespace GingerCore.GeneralLib
             GraphServiceClient graphServiceClient, Action<ReadEmail> emailProcessor)
         {
             IEnumerable<string> expectedRecipients = null;
-            int  count = 1;
+            int count = 1;
             if (!string.IsNullOrEmpty(filters.To))
             {
                 expectedRecipients = filters.To.Split(";", StringSplitOptions.RemoveEmptyEntries);
@@ -100,7 +99,7 @@ namespace GingerCore.GeneralLib
                             if (!DoesSatisfyBodyFilter(message, filters.Body))
                             {
                                 return true;
-                            }                                                      
+                            }
                             if (filters.MarkRead)
                             {
                                 MarkEmailAsRead(graphServiceClient, message);
@@ -109,8 +108,8 @@ namespace GingerCore.GeneralLib
                             count++;
                             return true;
                         });
-                    
-                        await messageIterator.IterateAsync();                                       
+
+                    await messageIterator.IterateAsync();
                 }
             }
             catch (Exception ex)
@@ -159,20 +158,20 @@ namespace GingerCore.GeneralLib
                 return true;
             }
             IEnumerable<string> actualRecipients = message.ToRecipients.Where(r => r.EmailAddress != null && !string.IsNullOrEmpty(r.EmailAddress.Address)).Select(recipient => recipient.EmailAddress.Address);
-            if ((actualRecipients == null) || (actualRecipients.Count() == 0) )
+            if ((actualRecipients == null) || (actualRecipients.Count() == 0))
             {
                 return false;
             }
             else
             {
                 return HasAllExpectedRecipient(expectedRecipients, actualRecipients);
-            }           
+            }
         }
 
         private async Task<bool> DoesSatisfyAttachmentFilter(GraphServiceClient graphServiceClient, Message message, EmailReadFilters filters)
         {
-            if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Either ||
-                filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.No)
+            if (filters.HasAttachments is EmailReadFilters.eHasAttachmentsFilter.Either or
+                EmailReadFilters.eHasAttachmentsFilter.No)
             {
                 return true;
             }
@@ -292,8 +291,8 @@ namespace GingerCore.GeneralLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in checking recipient criteria.", ex);               
-                return false;          
+                Reporter.ToLog(eLogLevel.ERROR, "Error in checking recipient criteria.", ex);
+                return false;
             }
             return true;
         }
@@ -311,7 +310,7 @@ namespace GingerCore.GeneralLib
                 TokenCredentialOptions options = new()
                 {
                     AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
-                };               
+                };
                 UsernamePasswordCredential userNamePasswordCredential = new(config.UserEmail, config.UserPassword, config.TenantId, config.ClientId, options);
 
                 return new GraphServiceClient(userNamePasswordCredential, Scopes);
@@ -384,7 +383,7 @@ namespace GingerCore.GeneralLib
         private async Task<IEnumerable<IMailFolderMessagesCollectionPage>> GetFoldersMessages(GraphServiceClient graphServiceClient, EmailReadFilters filters)
         {
             IEnumerable<string> folderNames = filters.FolderNames.Split(";", StringSplitOptions.RemoveEmptyEntries);
-            List<IMailFolderMessagesCollectionPage> foldersMessages = new();
+            List<IMailFolderMessagesCollectionPage> foldersMessages = [];
             foreach (string folderName in folderNames)
             {
                 foldersMessages.Add(await GetFolderMessages(folderName, graphServiceClient, filters));
@@ -508,7 +507,7 @@ namespace GingerCore.GeneralLib
 
         private IEnumerable<string> SplitFolderNames(string aggregatedfolderName)
         {
-            List<string> folderNames = new();
+            List<string> folderNames = [];
             StringBuilder folderNameBuilder = new();
             char prevChar = '\0';
             foreach (char currentChar in aggregatedfolderName)
@@ -639,12 +638,12 @@ namespace GingerCore.GeneralLib
                     Attachments = attachments
                 };
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error in ConvertMessageToReadEmail, fail to convert the message.", ex);
                 return null;
             }
-           
+
         }
     }
 }

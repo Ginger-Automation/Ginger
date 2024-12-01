@@ -85,7 +85,7 @@ namespace Ginger.Variables
             xVarNameTxtBox.GotFocus += XVarNameTxtBox_GotFocus;
             xVarNameTxtBox.LostFocus += XVarNameTxtBox_LostFocus;
 
-            if (parent.GOpsFlag)
+            if (parent is not null && parent.GOpsFlag)
             {
                 xVarNameTxtBox.IsEnabled = false;
                 xVarDescritpiontxtBox.IsEnabled = false;
@@ -158,7 +158,7 @@ namespace Ginger.Variables
             mVariable.PropertyChanged += mVariable_PropertyChanged;
             LoadVarPage();
 
-            if(parent is EnvApplication)
+            if (parent is EnvApplication)
             {
                 LinkedVariableStackPanel.Visibility = Visibility.Collapsed;
                 xTagsViewer.Visibility = Visibility.Collapsed;
@@ -170,7 +170,7 @@ namespace Ginger.Variables
 
             if (mVariable.Tags == null)
             {
-                mVariable.Tags = new ObservableList<Guid>();
+                mVariable.Tags = [];
             }
             xTagsViewer.Init(mVariable.Tags);
 
@@ -235,10 +235,10 @@ namespace Ginger.Variables
 
         public bool ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free, bool startupLocationWithOffset = false)
         {
-            ObservableList<Button> winButtons = new ObservableList<Button>();
+            ObservableList<Button> winButtons = [];
 
             string[] varTypeElems = mVariable.GetType().ToString().Split('.');
-            string varType = varTypeElems[varTypeElems.Length - 1];
+            string varType = varTypeElems[^1];
 
             string title = "Edit " + RemoveVariableWord(mVariable.VariableUIType) + " " + GingerDicser.GetTermResValue(eTermResKey.Variable);
 
@@ -247,22 +247,28 @@ namespace Ginger.Variables
                 case VariableEditPage.eEditMode.Default:
                 case VariableEditPage.eEditMode.Global:
                 case VariableEditPage.eEditMode.View:
-                    Button okBtn = new Button();
-                    okBtn.Content = "Ok";
+                    Button okBtn = new Button
+                    {
+                        Content = "Ok"
+                    };
                     okBtn.Click += new RoutedEventHandler(okBtn_Click);
                     winButtons.Add(okBtn);
                     break;
                 case VariableEditPage.eEditMode.SharedRepository:
                     title = "Edit Shared Repository " + RemoveVariableWord(mVariable.VariableUIType) + " " + GingerDicser.GetTermResValue(eTermResKey.Variable);
-                    Button saveBtn = new Button();
-                    saveBtn.Content = "Save";
+                    Button saveBtn = new Button
+                    {
+                        Content = "Save"
+                    };
                     saveBtn.Click += new RoutedEventHandler(saveBtn_Click);
                     winButtons.Add(saveBtn);
                     break;
                 case VariableEditPage.eEditMode.FindAndReplace:
                     title = "Edit " + RemoveVariableWord(mVariable.VariableUIType) + " " + GingerDicser.GetTermResValue(eTermResKey.Variable);
-                    Button FindAndRepalceSaveBtn = new Button();
-                    FindAndRepalceSaveBtn.Content = "Save";
+                    Button FindAndRepalceSaveBtn = new Button
+                    {
+                        Content = "Save"
+                    };
                     FindAndRepalceSaveBtn.Click += new RoutedEventHandler(FindAndRepalceSaveBtn_Click);
                     winButtons.Add(FindAndRepalceSaveBtn);
                     break;
@@ -270,21 +276,27 @@ namespace Ginger.Variables
 
             if (editMode != eEditMode.View)
             {
-                Button undoBtn = new Button();
-                undoBtn.Content = "Undo & Close";
+                Button undoBtn = new Button
+                {
+                    Content = "Undo & Close"
+                };
                 undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
                 winButtons.Add(undoBtn);
-                if (!(mVariable is VariableString) && !(mVariable is VariableSelectionList) && !(mVariable is VariableDynamic))
+                if (mVariable is not VariableString and not VariableSelectionList and not VariableDynamic)
                 {
-                    Button AutoValueBtn = new Button();
-                    AutoValueBtn.Content = "Generate Auto Value";
+                    Button AutoValueBtn = new Button
+                    {
+                        Content = "Generate Auto Value"
+                    };
                     AutoValueBtn.Click += new RoutedEventHandler(AutoValueBtn_Click);
                     winButtons.Add(AutoValueBtn);
                 }
-                if (!(mVariable is VariableRandomString) && !(mVariable is VariableRandomNumber))
+                if (mVariable is not VariableRandomString and not VariableRandomNumber)
                 {
-                    Button resetBtn = new Button();
-                    resetBtn.Content = "Reset Value";
+                    Button resetBtn = new Button
+                    {
+                        Content = "Reset Value"
+                    };
                     resetBtn.Click += new RoutedEventHandler(resetBtn_Click);
                     winButtons.Add(resetBtn);
                 }
@@ -374,7 +386,7 @@ namespace Ginger.Variables
         {
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xLinkedvariableCombo, ComboBox.SelectedValueProperty, mVariable, nameof(VariableBase.LinkedVariableName));
 
-            List<string> varsList = new List<string>();
+            List<string> varsList = [];
             xLinkedvariableCombo.ItemsSource = varsList;
             varsList.Add(string.Empty); //added to allow unlinking of variable
 
@@ -412,12 +424,14 @@ namespace Ginger.Variables
             {
                 try
                 {
-                    ActSetVariableValue setValueAct = new ActSetVariableValue();
-                    setValueAct.VariableName = mVariable.LinkedVariableName;
-                    setValueAct.SetVariableValueOption = VariableBase.eSetValueOptions.SetValue;
-                    setValueAct.Value = mVariable.Value;
-                    setValueAct.RunOnBusinessFlow = mContext.BusinessFlow;
-                    setValueAct.Context = mContext;
+                    ActSetVariableValue setValueAct = new ActSetVariableValue
+                    {
+                        VariableName = mVariable.LinkedVariableName,
+                        SetVariableValueOption = VariableBase.eSetValueOptions.SetValue,
+                        Value = mVariable.Value,
+                        RunOnBusinessFlow = mContext.BusinessFlow,
+                        Context = mContext
+                    };
                     setValueAct.Execute();
 
                     if (string.IsNullOrEmpty(setValueAct.Error) == false)
@@ -479,9 +493,8 @@ namespace Ginger.Variables
                         });
                     }
                 }
-                else if (mParent is BusinessFlow)
+                else if (mParent is BusinessFlow bf)
                 {
-                    BusinessFlow bf = (BusinessFlow)mParent;
                     bf.SetUniqueVariableName(mVariable);
                     Parallel.ForEach(bf.Activities, activity =>
                     {
@@ -492,9 +505,8 @@ namespace Ginger.Variables
                         });
                     });
                 }
-                else if (mParent is Activity)
+                else if (mParent is Activity activ)
                 {
-                    Activity activ = (Activity)mParent;
                     activ.SetUniqueVariableName(mVariable);
                     Parallel.ForEach(activ.Acts, action =>
                     {
@@ -502,16 +514,15 @@ namespace Ginger.Variables
                         VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
                     });
                 }
-                else if (mParent is EnvApplication)
-                {   
-                    EnvApplication envApplication = (EnvApplication)mParent;
+                else if (mParent is EnvApplication envApplication)
+                {
                     envApplication.SetUniqueVariableName(mVariable);
 
                     ObservableList<BusinessFlow> bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
-                    foreach (BusinessFlow bf in bfs)
+                    foreach (BusinessFlow businessFlow in bfs)
                     {
-                        foreach (Activity activity in bf.Activities)
+                        foreach (Activity activity in businessFlow.Activities)
                         {
                             foreach (Act action in activity.Acts)
                             {

@@ -83,12 +83,12 @@ namespace GingerCore.XPathParser
         private static bool IsStep(LexKind lexKind)
         {
             return (
-                lexKind == LexKind.Dot ||
-                lexKind == LexKind.DotDot ||
-                lexKind == LexKind.At ||
-                lexKind == LexKind.Axis ||
-                lexKind == LexKind.Star ||
-                lexKind == LexKind.Name   // NodeTest is also Name
+                lexKind is LexKind.Dot or
+                LexKind.DotDot or
+                LexKind.At or
+                LexKind.Axis or
+                LexKind.Star or
+                LexKind.Name   // NodeTest is also Name
             );
         }
 
@@ -209,8 +209,8 @@ namespace GingerCore.XPathParser
         private static bool IsReverseAxis(XPathAxis axis)
         {
             return (
-                axis == XPathAxis.Ancestor || axis == XPathAxis.Preceding ||
-                axis == XPathAxis.AncestorOrSelf || axis == XPathAxis.PrecedingSibling
+                axis is XPathAxis.Ancestor or XPathAxis.Preceding or
+                XPathAxis.AncestorOrSelf or XPathAxis.PrecedingSibling
             );
         }
 
@@ -538,7 +538,7 @@ namespace GingerCore.XPathParser
         */
         private Node ParseFunctionCall()
         {
-            List<Node> argList = new List<Node>();
+            List<Node> argList = [];
             string name = scanner.Name;
             string prefix = scanner.Prefix;
             int startChar = scanner.LexStart;

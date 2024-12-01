@@ -39,7 +39,7 @@ namespace Amdocs.Ginger.Plugin.Core
         {
             if (InvalidValue == null)
             {
-                InvalidValue = new List<int>();
+                InvalidValue = [];
             }
             InvalidValue.Add(invalidValue);
         }
@@ -48,7 +48,7 @@ namespace Amdocs.Ginger.Plugin.Core
         {
             if (InvalidValue == null)
             {
-                InvalidValue = new List<int>();
+                InvalidValue = [];
             }
             InvalidValue.AddRange(invalidValues);
         }

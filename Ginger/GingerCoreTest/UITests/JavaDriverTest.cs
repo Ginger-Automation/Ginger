@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -68,21 +67,29 @@ namespace UnitTests.UITests.JavaDriverTest
 
                 mGR = new GingerRunner();
                 mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
-                mBF = new BusinessFlow();
-                mBF.Activities = new ObservableList<Activity>();
-                mBF.Name = "BF Test Java Driver";
-                Platform p = new Platform();
-                p.PlatformType = ePlatformType.Java;
+                mBF = new BusinessFlow
+                {
+                    Activities = [],
+                    Name = "BF Test Java Driver"
+                };
+                Platform p = new Platform
+                {
+                    PlatformType = ePlatformType.Java
+                };
                 mBF.TargetApplications.Add(new TargetApplication() { AppName = "JavaTestApp" });
-                Activity activity = new Activity();
-                activity.TargetApplication = "JavaTestApp";
+                Activity activity = new Activity
+                {
+                    TargetApplication = "JavaTestApp"
+                };
                 mBF.Activities.Add(activity);
                 mBF.CurrentActivity = activity;
 
-                ActLaunchJavaWSApplication LJA = new ActLaunchJavaWSApplication();
-                LJA.LaunchJavaApplication = true;
-                LJA.LaunchWithAgent = true;
-                LJA.WaitForWindowTitle = "Java Swing";
+                ActLaunchJavaWSApplication LJA = new ActLaunchJavaWSApplication
+                {
+                    LaunchJavaApplication = true,
+                    LaunchWithAgent = true,
+                    WaitForWindowTitle = "Java Swing"
+                };
                 LJA.AddOrUpdateInputParamValue(ActLaunchJavaWSApplication.Fields.PortConfigParam, ActLaunchJavaWSApplication.ePortConfigType.Manual.ToString());
                 LJA.Port = "9898";
                 LJA.URL = TestResources.GetTestResourcesFile(@"JavaTestApp\JavaTestApp.jar");
@@ -95,27 +102,32 @@ namespace UnitTests.UITests.JavaDriverTest
                 //   throw new Exception(LJA.Error);
                 //}
 
-                mDriver = new JavaDriver(mBF);
-                mDriver.JavaAgentHost = "127.0.0.1";
-                mDriver.JavaAgentPort = 9898;
-                mDriver.CommandTimeout = 120;
-                mDriver.cancelAgentLoading = false;
-                mDriver.DriverLoadWaitingTime = 30;
-                mDriver.ImplicitWait = 30;
+                mDriver = new JavaDriver(mBF)
+                {
+                    JavaAgentHost = "127.0.0.1",
+                    JavaAgentPort = 9898,
+                    CommandTimeout = 120,
+                    cancelAgentLoading = false,
+                    DriverLoadWaitingTime = 30,
+                    ImplicitWait = 30
+                };
                 mDriver.StartDriver();
-                Agent a = new Agent();
-                a.Active = true;
-                a.DriverType = Agent.eDriverType.JavaDriver;
+                Agent a = new Agent
+                {
+                    Active = true,
+                    DriverType = Agent.eDriverType.JavaDriver,
 
-                a.Name = "Java Agent";
+                    Name = "Java Agent"
+                };
                 ((AgentOperations)a.AgentOperations).Driver = mDriver;
 
-                ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-                ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
+                ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [a];
 
-                ApplicationAgent AA = new ApplicationAgent();
-                AA.AppName = "JavaTestApp";
-                AA.Agent = a;
+                ApplicationAgent AA = new ApplicationAgent
+                {
+                    AppName = "JavaTestApp",
+                    Agent = a
+                };
                 mBF.CurrentActivity.CurrentAgent = a;
                 mGR.ApplicationAgents.Add(AA);
                 mGR.Executor.CurrentBusinessFlow = mBF;
@@ -136,10 +148,12 @@ namespace UnitTests.UITests.JavaDriverTest
         [ClassCleanup()]
         public static void ClassCleanup()
         {
-            ActWindow AWC = new ActWindow();
-            AWC.LocateBy = eLocateBy.ByTitle;
-            AWC.LocateValue = "Java";
-            AWC.WindowActionType = ActWindow.eWindowActionType.Close;
+            ActWindow AWC = new ActWindow
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValue = "Java",
+                WindowActionType = ActWindow.eWindowActionType.Close
+            };
             mGR.Executor.RunAction(AWC, false);
             mGR.Executor.StopAgents();
             // mDriver.CloseDriver();
@@ -161,18 +175,20 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void SetTextFieldValue()
         {
-            ActJavaElement a = new ActJavaElement();
-            a.LocateBy = eLocateBy.ByName;
-            a.LocateValueCalculated = "txtEmployeeID";
-            a.ControlAction = ActJavaElement.eControlAction.SetValue;
-            a.Value = RandomString(5);
-            a.Active = true;
+            ActJavaElement a = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "txtEmployeeID",
+                ControlAction = ActJavaElement.eControlAction.SetValue,
+                Value = RandomString(5),
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
 
             mGR.Executor.RunAction(a, false);
             //TODO: Find a better way to get ExInfo.
-            String ExInfo = a.ExInfo.Substring(a.ExInfo.LastIndexOf("M -") + 4);
+            String ExInfo = a.ExInfo[(a.ExInfo.LastIndexOf("M -") + 4)..];
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
             Assert.AreEqual(a.Error, null, "Act.Error");
             Assert.AreEqual(ExInfo, "Text Field Value Set to - " + a.Value, "ExInfo");
@@ -192,11 +208,13 @@ namespace UnitTests.UITests.JavaDriverTest
             plText.ClosePackage();
             mDriver.Send(plText);
 
-            ActJavaElement a = new ActJavaElement();
-            a.LocateBy = eLocateBy.ByName;
-            a.LocateValueCalculated = "txtEmployeeID";
-            a.ControlAction = ActJavaElement.eControlAction.GetValue;
-            a.Active = true;
+            ActJavaElement a = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "txtEmployeeID",
+                ControlAction = ActJavaElement.eControlAction.GetValue,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             a.AddNewReturnParams = true;
@@ -212,11 +230,13 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void IsTextFieldEnabled()
         {
-            ActJavaElement a = new ActJavaElement();
-            a.LocateBy = eLocateBy.ByName;
-            a.LocateValueCalculated = "txtEmployeeID";
-            a.ControlAction = ActJavaElement.eControlAction.IsEnabled;
-            a.Active = true;
+            ActJavaElement a = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "txtEmployeeID",
+                ControlAction = ActJavaElement.eControlAction.IsEnabled,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             a.AddNewReturnParams = true;
@@ -232,28 +252,32 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void AsyncDialogClickandDismiss()
         {
-            ActJavaElement asyncClickAction = new ActJavaElement();
-            asyncClickAction.LocateBy = eLocateBy.ByName;
-            asyncClickAction.LocateValueCalculated = "btnSubmit";
-            asyncClickAction.ControlAction = ActJavaElement.eControlAction.AsyncClick;
-            asyncClickAction.Active = true;
+            ActJavaElement asyncClickAction = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "btnSubmit",
+                ControlAction = ActJavaElement.eControlAction.AsyncClick,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(asyncClickAction);
             mBF.CurrentActivity.Acts.CurrentItem = asyncClickAction;
 
             mGR.Executor.RunAction(asyncClickAction, false);
 
             //TODO: Find a better way to get ExInfo.
-            String ExInfo = asyncClickAction.ExInfo.Substring(asyncClickAction.ExInfo.LastIndexOf("M -") + 4);
+            String ExInfo = asyncClickAction.ExInfo[(asyncClickAction.ExInfo.LastIndexOf("M -") + 4)..];
 
             Assert.AreEqual(ExInfo, "Click Activity Passed", "ExInfo");
             Assert.AreEqual(asyncClickAction.Error, null, "Act.Error");
 
             System.Threading.Thread.Sleep(500);
-            ActJavaElement acceptdialogAction = new ActJavaElement();
-            acceptdialogAction.LocateBy = eLocateBy.ByTitle;
-            acceptdialogAction.LocateValueCalculated = "Message";
-            acceptdialogAction.ControlAction = ActJavaElement.eControlAction.AcceptDialog;
-            acceptdialogAction.Active = true;
+            ActJavaElement acceptdialogAction = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValueCalculated = "Message",
+                ControlAction = ActJavaElement.eControlAction.AcceptDialog,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(acceptdialogAction);
             mBF.CurrentActivity.Acts.CurrentItem = acceptdialogAction;
 
@@ -268,18 +292,20 @@ namespace UnitTests.UITests.JavaDriverTest
         public void GetDialogText()
         {
             //*************Create Dialog*********************//
-            ActJavaElement actClickSubmitBtn = new ActJavaElement();
-            actClickSubmitBtn.LocateBy = eLocateBy.ByName;
-            actClickSubmitBtn.LocateValueCalculated = "btnSubmit";
-            actClickSubmitBtn.ControlAction = ActJavaElement.eControlAction.AsyncClick;
-            actClickSubmitBtn.Active = true;
+            ActJavaElement actClickSubmitBtn = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "btnSubmit",
+                ControlAction = ActJavaElement.eControlAction.AsyncClick,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actClickSubmitBtn);
             mBF.CurrentActivity.Acts.CurrentItem = actClickSubmitBtn;
             mGR.Executor.RunAction(actClickSubmitBtn, false);
 
             // Remove Timestamp from ExInfo
             //TODO: Find a better way to get ExInfo.
-            String ExInfo = actClickSubmitBtn.ExInfo.Substring(actClickSubmitBtn.ExInfo.LastIndexOf("M -") + 4);
+            String ExInfo = actClickSubmitBtn.ExInfo[(actClickSubmitBtn.ExInfo.LastIndexOf("M -") + 4)..];
 
             Assert.AreEqual(ExInfo, "Click Activity Passed", "ExInfo");
             Assert.AreEqual(actClickSubmitBtn.Error, null, "Act.Error");
@@ -287,12 +313,14 @@ namespace UnitTests.UITests.JavaDriverTest
             System.Threading.Thread.Sleep(500);
 
             //*************Get a Dialog Text*********************//
-            ActJavaElement actGetDialogText = new ActJavaElement();
-            actGetDialogText.LocateBy = eLocateBy.ByTitle;
-            actGetDialogText.LocateValueCalculated = "Message";
-            actGetDialogText.ControlAction = ActJavaElement.eControlAction.GetDialogText;
-            actGetDialogText.AddNewReturnParams = true;
-            actGetDialogText.Active = true;
+            ActJavaElement actGetDialogText = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValueCalculated = "Message",
+                ControlAction = ActJavaElement.eControlAction.GetDialogText,
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actGetDialogText);
             mBF.CurrentActivity.Acts.CurrentItem = actGetDialogText;
             mGR.Executor.RunAction(actGetDialogText, false);
@@ -303,11 +331,13 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actGetDialogText.Error, null, "Act.Error");
 
             //*************Close Dialog*********************//
-            ActJavaElement actAcceptDialog = new ActJavaElement();
-            actAcceptDialog.LocateBy = eLocateBy.ByTitle;
-            actAcceptDialog.LocateValueCalculated = "Message";
-            actAcceptDialog.ControlAction = ActJavaElement.eControlAction.AcceptDialog;
-            actAcceptDialog.Active = true;
+            ActJavaElement actAcceptDialog = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValueCalculated = "Message",
+                ControlAction = ActJavaElement.eControlAction.AcceptDialog,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actAcceptDialog);
             mBF.CurrentActivity.Acts.CurrentItem = actAcceptDialog;
 
@@ -322,21 +352,25 @@ namespace UnitTests.UITests.JavaDriverTest
         public void AcceptDialog()
         {
             //*************Create Dialog*********************//
-            ActJavaElement actClickSubmitBtn = new ActJavaElement();
-            actClickSubmitBtn.LocateBy = eLocateBy.ByName;
-            actClickSubmitBtn.LocateValueCalculated = "btnSubmit";
-            actClickSubmitBtn.ControlAction = ActJavaElement.eControlAction.AsyncClick;
-            actClickSubmitBtn.Active = true;
+            ActJavaElement actClickSubmitBtn = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "btnSubmit",
+                ControlAction = ActJavaElement.eControlAction.AsyncClick,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actClickSubmitBtn);
             mBF.CurrentActivity.Acts.CurrentItem = actClickSubmitBtn;
             mGR.Executor.RunAction(actClickSubmitBtn, false);
 
             //*************Accept Dialog*********************//
-            ActJavaElement actAcceptDialog = new ActJavaElement();
-            actAcceptDialog.LocateBy = eLocateBy.ByTitle;
-            actAcceptDialog.LocateValueCalculated = "Message";
-            actAcceptDialog.ControlAction = ActJavaElement.eControlAction.AcceptDialog;
-            actAcceptDialog.Active = true;
+            ActJavaElement actAcceptDialog = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValueCalculated = "Message",
+                ControlAction = ActJavaElement.eControlAction.AcceptDialog,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actAcceptDialog);
             mBF.CurrentActivity.Acts.CurrentItem = actAcceptDialog;
 
@@ -356,13 +390,15 @@ namespace UnitTests.UITests.JavaDriverTest
             PLSwitch.ClosePackage();
             PayLoad RCSwitch = mDriver.Send(PLSwitch);
 
-            ActJavaElement actSelectTab = new ActJavaElement();
-            actSelectTab.LocateBy = eLocateBy.ByName;
-            actSelectTab.LocateValueCalculated = "TabbedPane1";
-            actSelectTab.ControlAction = ActJavaElement.eControlAction.Select;
-            actSelectTab.Value = "tab1";
+            ActJavaElement actSelectTab = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "TabbedPane1",
+                ControlAction = ActJavaElement.eControlAction.Select,
+                Value = "tab1",
 
-            actSelectTab.Active = true;
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actSelectTab);
             mBF.CurrentActivity.Acts.CurrentItem = actSelectTab;
             //Act
@@ -370,11 +406,13 @@ namespace UnitTests.UITests.JavaDriverTest
 
             string xpath = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JOptionPane[0]/OptionPane.buttonArea/[[Name:OptionPane.button][ClassName:javax.swing.JButton][Value:No]]";
             //*************Create Dialog*********************//
-            ActJavaElement actClickTabBtn = new ActJavaElement();
-            actClickTabBtn.LocateBy = eLocateBy.ByName;
-            actClickTabBtn.LocateValueCalculated = "btnClickTab1";
-            actClickTabBtn.ControlAction = ActJavaElement.eControlAction.AsyncClick;
-            actClickTabBtn.Active = true;
+            ActJavaElement actClickTabBtn = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "btnClickTab1",
+                ControlAction = ActJavaElement.eControlAction.AsyncClick,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actClickTabBtn);
             mBF.CurrentActivity.Acts.CurrentItem = actClickTabBtn;
             mGR.Executor.RunAction(actClickTabBtn, false);
@@ -392,11 +430,13 @@ namespace UnitTests.UITests.JavaDriverTest
             Request.ClosePackage();
             PayLoad Response = mDriver.Send(Request);
             //*************Choose No Button Dialog(Yes\No)*********************//
-            ActJavaElement actChoosetDialog = new ActJavaElement();
-            actChoosetDialog.LocateBy = eLocateBy.ByXPath;
-            actChoosetDialog.LocateValueCalculated = xpath;
-            actChoosetDialog.ControlAction = ActJavaElement.eControlAction.Click;
-            actChoosetDialog.Active = true;
+            ActJavaElement actChoosetDialog = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByXPath,
+                LocateValueCalculated = xpath,
+                ControlAction = ActJavaElement.eControlAction.Click,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actChoosetDialog);
             mBF.CurrentActivity.Acts.CurrentItem = actChoosetDialog;
 
@@ -424,11 +464,13 @@ namespace UnitTests.UITests.JavaDriverTest
 
             string nameIndex = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JOptionPane[0]/OptionPane.buttonArea/Name:OptionPane.button[1]";
             //*************Create Dialog*********************//
-            ActJavaElement actClickTabBtn = new ActJavaElement();
-            actClickTabBtn.LocateBy = eLocateBy.ByName;
-            actClickTabBtn.LocateValueCalculated = "btnClickTab1";
-            actClickTabBtn.ControlAction = ActJavaElement.eControlAction.AsyncClick;
-            actClickTabBtn.Active = true;
+            ActJavaElement actClickTabBtn = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "btnClickTab1",
+                ControlAction = ActJavaElement.eControlAction.AsyncClick,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actClickTabBtn);
             mBF.CurrentActivity.Acts.CurrentItem = actClickTabBtn;
             mGR.Executor.RunAction(actClickTabBtn, false);
@@ -446,11 +488,13 @@ namespace UnitTests.UITests.JavaDriverTest
             Request.ClosePackage();
             PayLoad Response = mDriver.Send(Request);
             //*************Choose No Button Dialog(Yes\No)*********************//
-            ActJavaElement actChoosetDialog = new ActJavaElement();
-            actChoosetDialog.LocateBy = eLocateBy.ByXPath;
-            actChoosetDialog.LocateValueCalculated = nameIndex;
-            actChoosetDialog.ControlAction = ActJavaElement.eControlAction.Click;
-            actChoosetDialog.Active = true;
+            ActJavaElement actChoosetDialog = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByXPath,
+                LocateValueCalculated = nameIndex,
+                ControlAction = ActJavaElement.eControlAction.Click,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actChoosetDialog);
             mBF.CurrentActivity.Acts.CurrentItem = actChoosetDialog;
 
@@ -482,18 +526,20 @@ namespace UnitTests.UITests.JavaDriverTest
             PLClick.ClosePackage();
             mDriver.Send(PLClick);
 
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.GetValue;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
+            ActJavaElement actJavaElement = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActJavaElement.eControlAction.GetValue,
+                LocateValueCalculated = "countriesTree",
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actJavaElement);
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
             mGR.Executor.RunAction(actJavaElement, false);
             //TODO: Find a better way to get ExInfo.
-            String ExInfo = actJavaElement.ExInfo.Substring(actJavaElement.ExInfo.LastIndexOf("M -") + 4);
+            String ExInfo = actJavaElement.ExInfo[(actJavaElement.ExInfo.LastIndexOf("M -") + 4)..];
             Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
             Assert.AreEqual(actJavaElement.ActReturnValues.FirstOrDefault().Actual, "Canada", "ExInfo");
             Assert.AreEqual(actJavaElement.Error, null, "Act.Error");
@@ -507,13 +553,15 @@ namespace UnitTests.UITests.JavaDriverTest
         public void ClickTreeNodeWithSlash()
         {
             //Arrange
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Value = "US/California//Texas";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
+            ActJavaElement actJavaElement = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActJavaElement.eControlAction.Click,
+                LocateValueCalculated = "countriesTree",
+                Value = "US/California//Texas",
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actJavaElement);
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
@@ -544,13 +592,15 @@ namespace UnitTests.UITests.JavaDriverTest
         {
 
             //Arrange
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Value = "Canada/Texas";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
+            ActJavaElement actJavaElement = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActJavaElement.eControlAction.Click,
+                LocateValueCalculated = "countriesTree",
+                Value = "Canada/Texas",
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actJavaElement);
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
@@ -570,13 +620,15 @@ namespace UnitTests.UITests.JavaDriverTest
         {
 
             //Arrange
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Value = "India";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
+            ActJavaElement actJavaElement = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActJavaElement.eControlAction.Click,
+                LocateValueCalculated = "countriesTree",
+                Value = "India",
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actJavaElement);
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
@@ -599,13 +651,15 @@ namespace UnitTests.UITests.JavaDriverTest
             //Texas should be selected and not the first one
 
             //Arrange
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Value = "Us/Texas";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
+            ActJavaElement actJavaElement = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActJavaElement.eControlAction.Click,
+                LocateValueCalculated = "countriesTree",
+                Value = "Us/Texas",
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actJavaElement);
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
@@ -645,13 +699,15 @@ namespace UnitTests.UITests.JavaDriverTest
             //Then Texas & Florida should be selected
 
             //Arrange
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Value = "Us/Texas &";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
+            ActJavaElement actJavaElement = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActJavaElement.eControlAction.Click,
+                LocateValueCalculated = "countriesTree",
+                Value = "Us/Texas &",
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actJavaElement);
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
@@ -690,13 +746,15 @@ namespace UnitTests.UITests.JavaDriverTest
             //Then Florida should be selected
 
             //Arrange
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Value = "Us/Flori";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
+            ActJavaElement actJavaElement = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActJavaElement.eControlAction.Click,
+                LocateValueCalculated = "countriesTree",
+                Value = "Us/Flori",
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actJavaElement);
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
@@ -735,13 +793,15 @@ namespace UnitTests.UITests.JavaDriverTest
             //Then Texa should be selected
 
             //Arrange
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Value = "Us/Tex";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
+            ActJavaElement actJavaElement = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActJavaElement.eControlAction.Click,
+                LocateValueCalculated = "countriesTree",
+                Value = "Us/Tex",
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actJavaElement);
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
@@ -780,13 +840,15 @@ namespace UnitTests.UITests.JavaDriverTest
             //Then Ontario should be selected
 
             //Arrange
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Value = "Can/Ontario";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
+            ActJavaElement actJavaElement = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActJavaElement.eControlAction.Click,
+                LocateValueCalculated = "countriesTree",
+                Value = "Can/Ontario",
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actJavaElement);
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
@@ -825,13 +887,15 @@ namespace UnitTests.UITests.JavaDriverTest
             //Then Texas should be selected
 
             //Arrange
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Value = "U/Texas";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
+            ActJavaElement actJavaElement = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActJavaElement.eControlAction.Click,
+                LocateValueCalculated = "countriesTree",
+                Value = "U/Texas",
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actJavaElement);
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
@@ -863,13 +927,15 @@ namespace UnitTests.UITests.JavaDriverTest
 
             //Arrange
 
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Value = "US";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
+            ActJavaElement actJavaElement = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActJavaElement.eControlAction.Click,
+                LocateValueCalculated = "countriesTree",
+                Value = "US",
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actJavaElement);
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
@@ -909,13 +975,15 @@ namespace UnitTests.UITests.JavaDriverTest
 
 
 
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Value = "Ontario";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
+            ActJavaElement actJavaElement = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActJavaElement.eControlAction.Click,
+                LocateValueCalculated = "countriesTree",
+                Value = "Ontario",
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actJavaElement);
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
@@ -944,18 +1012,20 @@ namespace UnitTests.UITests.JavaDriverTest
         public void DoubleClickTreeNode()
         {
 
-            ActJavaElement doubleClickAction = new ActJavaElement();
-            doubleClickAction.LocateBy = eLocateBy.ByName;
-            doubleClickAction.ControlAction = ActJavaElement.eControlAction.DoubleClick;
-            doubleClickAction.Active = true;
-            doubleClickAction.LocateValueCalculated = "countriesTree";
-            doubleClickAction.Value = "US";
+            ActJavaElement doubleClickAction = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActJavaElement.eControlAction.DoubleClick,
+                Active = true,
+                LocateValueCalculated = "countriesTree",
+                Value = "US"
+            };
             mBF.CurrentActivity.Acts.Add(doubleClickAction);
             mBF.CurrentActivity.Acts.CurrentItem = doubleClickAction;
 
             mGR.Executor.RunAction(doubleClickAction, false);
             //TODO: Find a better way to get ExInfo.
-            String ExInfo = doubleClickAction.ExInfo.Substring(doubleClickAction.ExInfo.LastIndexOf("M -") + 4);
+            String ExInfo = doubleClickAction.ExInfo[(doubleClickAction.ExInfo.LastIndexOf("M -") + 4)..];
             Assert.AreEqual(eRunStatus.Passed, doubleClickAction.Status, "Action Status");
             Assert.AreEqual(ExInfo, "Click Activity Passed", "ExInfo");
             Assert.AreEqual(doubleClickAction.Error, null, "Act.Error");
@@ -967,13 +1037,15 @@ namespace UnitTests.UITests.JavaDriverTest
         public void ClickNotExistChildNodeValidationTest()
         {
             //Arrange
-            ActJavaElement actJavaElement = new ActJavaElement();
-            actJavaElement.LocateBy = eLocateBy.ByName;
-            actJavaElement.ControlAction = ActJavaElement.eControlAction.Click;
-            actJavaElement.LocateValueCalculated = "countriesTree";
-            actJavaElement.Value = "US/Ontario";
-            actJavaElement.Active = true;
-            actJavaElement.AddNewReturnParams = true;
+            ActJavaElement actJavaElement = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActJavaElement.eControlAction.Click,
+                LocateValueCalculated = "countriesTree",
+                Value = "US/Ontario",
+                Active = true,
+                AddNewReturnParams = true
+            };
 
             mBF.CurrentActivity.Acts.Add(actJavaElement);
 
@@ -993,12 +1065,14 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ClickMenu()
         {
-            ActJavaElement menuClickAction = new ActJavaElement();
-            menuClickAction.LocateBy = eLocateBy.ByName;
-            menuClickAction.LocateValueCalculated = "fileMenu";
-            menuClickAction.Value = "";
-            menuClickAction.ControlAction = ActJavaElement.eControlAction.Click;
-            menuClickAction.Active = true;
+            ActJavaElement menuClickAction = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "fileMenu",
+                Value = "",
+                ControlAction = ActJavaElement.eControlAction.Click,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(menuClickAction);
             mBF.CurrentActivity.Acts.CurrentItem = menuClickAction;
 
@@ -1009,12 +1083,14 @@ namespace UnitTests.UITests.JavaDriverTest
 
             System.Threading.Thread.Sleep(100);
 
-            ActJavaElement submenuClickAction_1 = new ActJavaElement();
-            submenuClickAction_1.LocateBy = eLocateBy.ByName;
-            submenuClickAction_1.LocateValueCalculated = "newMenuItem";
-            submenuClickAction_1.Value = "";
-            submenuClickAction_1.ControlAction = ActJavaElement.eControlAction.Click;
-            submenuClickAction_1.Active = true;
+            ActJavaElement submenuClickAction_1 = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "newMenuItem",
+                Value = "",
+                ControlAction = ActJavaElement.eControlAction.Click,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(submenuClickAction_1);
             mBF.CurrentActivity.Acts.CurrentItem = submenuClickAction_1;
 
@@ -1026,12 +1102,14 @@ namespace UnitTests.UITests.JavaDriverTest
             System.Threading.Thread.Sleep(100);
 
             // Click Document SubMenu;
-            ActJavaElement submenuClickAction_2 = new ActJavaElement();
-            submenuClickAction_2.LocateBy = eLocateBy.ByName;
-            submenuClickAction_2.LocateValueCalculated = "documentSubMenuItem";
-            submenuClickAction_2.Value = "";
-            submenuClickAction_2.ControlAction = ActJavaElement.eControlAction.AsyncClick;
-            submenuClickAction_2.Active = true;
+            ActJavaElement submenuClickAction_2 = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "documentSubMenuItem",
+                Value = "",
+                ControlAction = ActJavaElement.eControlAction.AsyncClick,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(submenuClickAction_2);
             mBF.CurrentActivity.Acts.CurrentItem = submenuClickAction_2;
 
@@ -1043,11 +1121,13 @@ namespace UnitTests.UITests.JavaDriverTest
             System.Threading.Thread.Sleep(100);
 
             //*************Dismiss Dialog*********************//
-            ActJavaElement actDismissDialog = new ActJavaElement();
-            actDismissDialog.LocateBy = eLocateBy.ByTitle;
-            actDismissDialog.LocateValueCalculated = "Menu Click Info";
-            actDismissDialog.ControlAction = ActJavaElement.eControlAction.DismissDialog;
-            actDismissDialog.Active = true;
+            ActJavaElement actDismissDialog = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValueCalculated = "Menu Click Info",
+                ControlAction = ActJavaElement.eControlAction.DismissDialog,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actDismissDialog);
             mBF.CurrentActivity.Acts.CurrentItem = actDismissDialog;
 
@@ -1062,14 +1142,16 @@ namespace UnitTests.UITests.JavaDriverTest
         public void GetButtonText()
         {
 
-            ActJavaElement a = new ActJavaElement();
-            a.LocateBy = eLocateBy.ByName;
-            a.LocateValueCalculated = "btnSubmit";
-            a.ControlAction = ActJavaElement.eControlAction.GetValue;
+            ActJavaElement a = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "btnSubmit",
+                ControlAction = ActJavaElement.eControlAction.GetValue,
 
-            a.AddNewReturnParams = true;
+                AddNewReturnParams = true,
 
-            a.Active = true;
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
@@ -1085,14 +1167,16 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void IsButtonEnabled()
         {
-            ActJavaElement a = new ActJavaElement();
-            a.LocateBy = eLocateBy.ByName;
-            a.LocateValueCalculated = "btnSubmit";
-            a.ControlAction = ActJavaElement.eControlAction.IsEnabled;
+            ActJavaElement a = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "btnSubmit",
+                ControlAction = ActJavaElement.eControlAction.IsEnabled,
 
-            a.AddNewReturnParams = true;
+                AddNewReturnParams = true,
 
-            a.Active = true;
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
@@ -1108,11 +1192,13 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ToggleCheckBox()
         {
-            ActJavaElement a = new ActJavaElement();
-            a.LocateBy = eLocateBy.ByName;
-            a.LocateValueCalculated = "cbWorksAtAmdocs";
-            a.ControlAction = ActJavaElement.eControlAction.Toggle;
-            a.Active = true;
+            ActJavaElement a = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "cbWorksAtAmdocs",
+                ControlAction = ActJavaElement.eControlAction.Toggle,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
@@ -1127,11 +1213,13 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void IfCheckboxChecked()
         {
-            ActJavaElement a = new ActJavaElement();
-            a.LocateBy = eLocateBy.ByName;
-            a.LocateValueCalculated = "cbWorksAtAmdocs";
-            a.ControlAction = ActJavaElement.eControlAction.IsChecked;
-            a.Active = true;
+            ActJavaElement a = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "cbWorksAtAmdocs",
+                ControlAction = ActJavaElement.eControlAction.IsChecked,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             mGR.Executor.RunAction(a, false);
@@ -1143,12 +1231,14 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void GetCheckBoxValue()
         {
-            ActJavaElement a = new ActJavaElement();
-            a.LocateBy = eLocateBy.ByName;
-            a.LocateValueCalculated = "cbWorksAtAmdocs";
-            a.ControlAction = ActJavaElement.eControlAction.GetValue;
-            a.AddNewReturnParams = true;
-            a.Active = true;
+            ActJavaElement a = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "cbWorksAtAmdocs",
+                ControlAction = ActJavaElement.eControlAction.GetValue,
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
@@ -1164,12 +1254,14 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void IsCheckBoxEnabled()
         {
-            ActJavaElement a = new ActJavaElement();
-            a.LocateBy = eLocateBy.ByName;
-            a.LocateValueCalculated = "cbWorksAtAmdocs";
-            a.ControlAction = ActJavaElement.eControlAction.IsEnabled;
-            a.AddNewReturnParams = true;
-            a.Active = true;
+            ActJavaElement a = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "cbWorksAtAmdocs",
+                ControlAction = ActJavaElement.eControlAction.IsEnabled,
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
@@ -1185,11 +1277,13 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void SelectRadioButton()
         {
-            ActJavaElement a = new ActJavaElement();
-            a.LocateBy = eLocateBy.ByName;
-            a.LocateValueCalculated = "rbBachelor";
-            a.ControlAction = ActJavaElement.eControlAction.Select;
-            a.Active = true;
+            ActJavaElement a = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "rbBachelor",
+                ControlAction = ActJavaElement.eControlAction.Select,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
@@ -1203,12 +1297,14 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void GetRadioButtonValue()
         {
-            ActJavaElement a = new ActJavaElement();
-            a.LocateBy = eLocateBy.ByName;
-            a.LocateValueCalculated = "rbBachelor";
-            a.ControlAction = ActJavaElement.eControlAction.GetValue;
-            a.AddNewReturnParams = true;
-            a.Active = true;
+            ActJavaElement a = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "rbBachelor",
+                ControlAction = ActJavaElement.eControlAction.GetValue,
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
@@ -1224,12 +1320,14 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void IsRadioButtonSelected()
         {
-            ActJavaElement a = new ActJavaElement();
-            a.LocateBy = eLocateBy.ByName;
-            a.LocateValueCalculated = "rbBachelor";
-            a.ControlAction = ActJavaElement.eControlAction.IsEnabled;
-            a.AddNewReturnParams = true;
-            a.Active = true;
+            ActJavaElement a = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "rbBachelor",
+                ControlAction = ActJavaElement.eControlAction.IsEnabled,
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
@@ -1245,12 +1343,14 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void SelectComboBoxValue()
         {
-            ActJavaElement a = new ActJavaElement();
-            a.LocateBy = eLocateBy.ByName;
-            a.LocateValueCalculated = "Country";
-            a.Value = "India";
-            a.ControlAction = ActJavaElement.eControlAction.Select;
-            a.Active = true;
+            ActJavaElement a = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "Country",
+                Value = "India",
+                ControlAction = ActJavaElement.eControlAction.Select,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
@@ -1264,13 +1364,15 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void GetComboBoxSelectedValue()
         {
-            ActJavaElement a = new ActJavaElement();
-            a.LocateBy = eLocateBy.ByName;
-            a.LocateValueCalculated = "Country";
-            a.Value = "India";
-            a.ControlAction = ActJavaElement.eControlAction.GetValue;
-            a.AddNewReturnParams = true;
-            a.Active = true;
+            ActJavaElement a = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "Country",
+                Value = "India",
+                ControlAction = ActJavaElement.eControlAction.GetValue,
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
@@ -1285,12 +1387,14 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void SetTabSelected()
         {
-            ActJavaElement actSelectTab = new ActJavaElement();
-            actSelectTab.LocateBy = eLocateBy.ByName;
-            actSelectTab.LocateValueCalculated = "TabbedPane1";
-            actSelectTab.ControlAction = ActJavaElement.eControlAction.Select;
-            actSelectTab.Value = "tab2";
-            actSelectTab.Active = true;
+            ActJavaElement actSelectTab = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "TabbedPane1",
+                ControlAction = ActJavaElement.eControlAction.Select,
+                Value = "tab2",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actSelectTab);
             mBF.CurrentActivity.Acts.CurrentItem = actSelectTab;
             //Act
@@ -1305,12 +1409,14 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void GetSelectedTabText()
         {
-            ActJavaElement actSelectTab = new ActJavaElement();
-            actSelectTab.LocateBy = eLocateBy.ByName;
-            actSelectTab.LocateValueCalculated = "TabbedPane1";
-            actSelectTab.ControlAction = ActJavaElement.eControlAction.Select;
-            actSelectTab.Value = "tab2";
-            actSelectTab.Active = true;
+            ActJavaElement actSelectTab = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "TabbedPane1",
+                ControlAction = ActJavaElement.eControlAction.Select,
+                Value = "tab2",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actSelectTab);
             mBF.CurrentActivity.Acts.CurrentItem = actSelectTab;
             //Act
@@ -1320,13 +1426,15 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(eRunStatus.Passed, actSelectTab.Status, "Action Status");
             Assert.AreEqual(actSelectTab.Error, null, "Act.Error");
 
-            ActJavaElement a = new ActJavaElement();
-            a.LocateBy = eLocateBy.ByName;
-            a.LocateValueCalculated = "TabbedPane1";
-            a.ControlAction = ActJavaElement.eControlAction.GetValue;
-            // a.Value = "98";
-            //a.ValueForDriver = "ABC";
-            a.Active = true;
+            ActJavaElement a = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "TabbedPane1",
+                ControlAction = ActJavaElement.eControlAction.GetValue,
+                // a.Value = "98";
+                //a.ValueForDriver = "ABC";
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             a.AddNewReturnParams = true;
@@ -1343,11 +1451,13 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ClickButton()
         {
-            ActJavaElement a = new ActJavaElement();
-            a.LocateBy = eLocateBy.ByName;
-            a.LocateValueCalculated = "btnClickMe5";
-            a.ControlAction = ActJavaElement.eControlAction.Click;
-            a.Active = true;
+            ActJavaElement a = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "btnClickMe5",
+                ControlAction = ActJavaElement.eControlAction.Click,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
@@ -1355,7 +1465,7 @@ namespace UnitTests.UITests.JavaDriverTest
 
             //Assert
             //TODO: Find a better way to get ExInfo.
-            String ExInfo = a.ExInfo.Substring(a.ExInfo.LastIndexOf("M -") + 4);
+            String ExInfo = a.ExInfo[(a.ExInfo.LastIndexOf("M -") + 4)..];
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
             Assert.AreEqual(ExInfo, "Click Activity Passed", "ExInfo");
             Assert.AreEqual(a.Error, null, "Act.Error");
@@ -1366,12 +1476,14 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void GetSelectedInternalFrameTitle()
         {
-            ActJavaElement actSelectInternalFrame = new ActJavaElement();
-            actSelectInternalFrame.LocateBy = eLocateBy.ByName;
-            actSelectInternalFrame.LocateValueCalculated = "Internal Frame 1";
-            actSelectInternalFrame.ControlAction = ActJavaElement.eControlAction.GetName;
-            actSelectInternalFrame.AddNewReturnParams = true;
-            actSelectInternalFrame.Active = true;
+            ActJavaElement actSelectInternalFrame = new ActJavaElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "Internal Frame 1",
+                ControlAction = ActJavaElement.eControlAction.GetName,
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actSelectInternalFrame);
             mBF.CurrentActivity.Acts.CurrentItem = actSelectInternalFrame;
             //Act
@@ -1391,7 +1503,7 @@ namespace UnitTests.UITests.JavaDriverTest
         public void SetValueInTableCell()
         {
             PayLoad PLTable = new PayLoad("TableAction");
-            List<String> Locators = new List<string>();
+            List<String> Locators = [];
             PLTable.AddValue(ActTableElement.eTableAction.DoubleClick.ToString());
             PLTable.AddValue(eLocateBy.ByXPath.ToString());
             PLTable.AddValue("/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:empDetails][ClassName:javax.swing.JTable]]");
@@ -1404,33 +1516,35 @@ namespace UnitTests.UITests.JavaDriverTest
             PLTable.ClosePackage();
             mDriver.Send(PLTable);
 
-            ActTableElement actTableElement = new ActTableElement();
-            actTableElement.ControlAction = ActTableElement.eTableAction.SetValue;
-            actTableElement.LocateBy = eLocateBy.ByXPath;
-            actTableElement.LocateValueCalculated = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:empDetails][ClassName:javax.swing.JTable]]";
-            actTableElement.ByRowNum = true;
-            actTableElement.Value = RandomString(5);
-            actTableElement.ValueForDriver = RandomString(5);
-            actTableElement.LocateRowType = "Row Number";
-            actTableElement.LocateRowValue = "1";
-            actTableElement.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum;
-            actTableElement.LocateColTitle = "1";
+            ActTableElement actTableElement = new ActTableElement
+            {
+                ControlAction = ActTableElement.eTableAction.SetValue,
+                LocateBy = eLocateBy.ByXPath,
+                LocateValueCalculated = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:empDetails][ClassName:javax.swing.JTable]]",
+                ByRowNum = true,
+                Value = RandomString(5),
+                ValueForDriver = RandomString(5),
+                LocateRowType = "Row Number",
+                LocateRowValue = "1",
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum,
+                LocateColTitle = "1",
 
 
-            actTableElement.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
-            actTableElement.WhereColumnTitle = null;
-            actTableElement.WhereColumnValue = null;
-            actTableElement.WhereOperator = ActTableElement.eRunColOperator.Equals;
-            actTableElement.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle,
+                WhereColumnTitle = null,
+                WhereColumnValue = null,
+                WhereOperator = ActTableElement.eRunColOperator.Equals,
+                WhereProperty = ActTableElement.eRunColPropertyValue.Value,
 
-            actTableElement.Active = true;
-            actTableElement.AddNewReturnParams = true;
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actTableElement);
             mBF.CurrentActivity.Acts.CurrentItem = actTableElement;
             mGR.Executor.RunAction(actTableElement, false);
             //TODO: Find a better way to get ExInfo.
             //Notice: [IndexOf("-")+2] and [LastIndexOf("-")+2] not work with a different format of Date and String(in case we have additional '-'). 
-            String ExInfo = actTableElement.ExInfo.Substring(actTableElement.ExInfo.LastIndexOf("M -") + 4);
+            String ExInfo = actTableElement.ExInfo[(actTableElement.ExInfo.LastIndexOf("M -") + 4)..];
             Assert.AreEqual(eRunStatus.Passed, actTableElement.Status, "Action Status");
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
             Assert.AreEqual(ExInfo, "Text Field Value Set to - " + actTableElement.Value, "ExInfo");
@@ -1440,17 +1554,19 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ActivateRowInTable()
         {
-            ActTableElement actTableElement = new ActTableElement();
-            actTableElement.LocateBy = eLocateBy.ByXPath;
-            actTableElement.LocateValueCalculated = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:empDetails][ClassName:javax.swing.JTable]]";
-            actTableElement.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum;
-            actTableElement.LocateColTitle = "1";
-            actTableElement.ByRowNum = true;
-            actTableElement.LocateRowType = "Row Number";
-            actTableElement.LocateRowValue = "1";
-            actTableElement.ControlAction = ActTableElement.eTableAction.ActivateRow;
-            actTableElement.Active = true;
-            actTableElement.AddNewReturnParams = true;
+            ActTableElement actTableElement = new ActTableElement
+            {
+                LocateBy = eLocateBy.ByXPath,
+                LocateValueCalculated = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:empDetails][ClassName:javax.swing.JTable]]",
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum,
+                LocateColTitle = "1",
+                ByRowNum = true,
+                LocateRowType = "Row Number",
+                LocateRowValue = "1",
+                ControlAction = ActTableElement.eTableAction.ActivateRow,
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actTableElement);
             mBF.CurrentActivity.Acts.CurrentItem = actTableElement;
             actTableElement.AddNewReturnParams = true;
@@ -1465,17 +1581,19 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void GetValueFromTable()
         {
-            ActTableElement actTableElement = new ActTableElement();
-            actTableElement.LocateBy = eLocateBy.ByXPath;
-            actTableElement.LocateValueCalculated = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:empDetails][ClassName:javax.swing.JTable]]";
-            actTableElement.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum;
-            actTableElement.LocateColTitle = "0";
-            actTableElement.ByRowNum = true;
-            actTableElement.LocateRowType = "Row Number";
-            actTableElement.LocateRowValue = "1";
-            actTableElement.ControlAction = ActTableElement.eTableAction.GetValue;
-            actTableElement.Active = true;
-            actTableElement.AddNewReturnParams = true;
+            ActTableElement actTableElement = new ActTableElement
+            {
+                LocateBy = eLocateBy.ByXPath,
+                LocateValueCalculated = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:empDetails][ClassName:javax.swing.JTable]]",
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum,
+                LocateColTitle = "0",
+                ByRowNum = true,
+                LocateRowType = "Row Number",
+                LocateRowValue = "1",
+                ControlAction = ActTableElement.eTableAction.GetValue,
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actTableElement);
             mBF.CurrentActivity.Acts.CurrentItem = actTableElement;
             actTableElement.AddNewReturnParams = true;
@@ -1491,17 +1609,19 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void GetRowCountFromTable()
         {
-            ActTableElement actTableElement = new ActTableElement();
-            actTableElement.LocateBy = eLocateBy.ByXPath;
-            actTableElement.LocateValueCalculated = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:empDetails][ClassName:javax.swing.JTable]]";
-            actTableElement.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum;
-            actTableElement.LocateColTitle = "1";
-            actTableElement.ByRowNum = true;
-            actTableElement.LocateRowType = "Row Number";
-            actTableElement.LocateRowValue = "1";
-            actTableElement.ControlAction = ActTableElement.eTableAction.GetRowCount;
-            actTableElement.Active = true;
-            actTableElement.AddNewReturnParams = true;
+            ActTableElement actTableElement = new ActTableElement
+            {
+                LocateBy = eLocateBy.ByXPath,
+                LocateValueCalculated = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:empDetails][ClassName:javax.swing.JTable]]",
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum,
+                LocateColTitle = "1",
+                ByRowNum = true,
+                LocateRowType = "Row Number",
+                LocateRowValue = "1",
+                ControlAction = ActTableElement.eTableAction.GetRowCount,
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actTableElement);
             mBF.CurrentActivity.Acts.CurrentItem = actTableElement;
             actTableElement.AddNewReturnParams = true;
@@ -1517,17 +1637,19 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void CheckIsCellVisibleInTable()
         {
-            ActTableElement actTableElement = new ActTableElement();
-            actTableElement.LocateBy = eLocateBy.ByXPath;
-            actTableElement.LocateValueCalculated = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:empDetails][ClassName:javax.swing.JTable]]";
-            actTableElement.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum;
-            actTableElement.LocateColTitle = "1";
-            actTableElement.ByRowNum = true;
-            actTableElement.LocateRowType = "Row Number";
-            actTableElement.LocateRowValue = "1";
-            actTableElement.ControlAction = ActTableElement.eTableAction.IsVisible;
-            actTableElement.Active = true;
-            actTableElement.AddNewReturnParams = true;
+            ActTableElement actTableElement = new ActTableElement
+            {
+                LocateBy = eLocateBy.ByXPath,
+                LocateValueCalculated = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:empDetails][ClassName:javax.swing.JTable]]",
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum,
+                LocateColTitle = "1",
+                ByRowNum = true,
+                LocateRowType = "Row Number",
+                LocateRowValue = "1",
+                ControlAction = ActTableElement.eTableAction.IsVisible,
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actTableElement);
             mBF.CurrentActivity.Acts.CurrentItem = actTableElement;
             actTableElement.AddNewReturnParams = true;
@@ -1543,17 +1665,19 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void CheckIsCellEnabledInTable()
         {
-            ActTableElement actTableElement = new ActTableElement();
-            actTableElement.LocateBy = eLocateBy.ByXPath;
-            actTableElement.LocateValueCalculated = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:empDetails][ClassName:javax.swing.JTable]]";
-            actTableElement.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum;
-            actTableElement.LocateColTitle = "1";
-            actTableElement.ByRowNum = true;
-            actTableElement.LocateRowType = "Row Number";
-            actTableElement.LocateRowValue = "1";
-            actTableElement.ControlAction = ActTableElement.eTableAction.IsCellEnabled;
-            actTableElement.Active = true;
-            actTableElement.AddNewReturnParams = true;
+            ActTableElement actTableElement = new ActTableElement
+            {
+                LocateBy = eLocateBy.ByXPath,
+                LocateValueCalculated = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:empDetails][ClassName:javax.swing.JTable]]",
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum,
+                LocateColTitle = "1",
+                ByRowNum = true,
+                LocateRowType = "Row Number",
+                LocateRowValue = "1",
+                ControlAction = ActTableElement.eTableAction.IsCellEnabled,
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actTableElement);
             mBF.CurrentActivity.Acts.CurrentItem = actTableElement;
             actTableElement.AddNewReturnParams = true;
@@ -1569,22 +1693,24 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void GetValueFromTableUsingWhereClause()
         {
-            ActTableElement actTableElement = new ActTableElement();
-            actTableElement.LocateBy = eLocateBy.ByXPath;
-            actTableElement.LocateValueCalculated = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:empDetails][ClassName:javax.swing.JTable]]";
-            actTableElement.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum;
-            actTableElement.LocateColTitle = "0";
-            actTableElement.ByWhere = true;
-            actTableElement.LocateRowType = "Where";
-            actTableElement.LocateRowValue = "";
-            actTableElement.WhereColSelector = ActTableElement.eRunColSelectorValue.ColNum;
-            actTableElement.WhereColumnTitle = "1";
-            actTableElement.WhereOperator = ActTableElement.eRunColOperator.Equals;
-            actTableElement.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-            actTableElement.WhereColumnValue = "Jinendra";
-            actTableElement.ControlAction = ActTableElement.eTableAction.GetValue;
-            actTableElement.Active = true;
-            actTableElement.AddNewReturnParams = true;
+            ActTableElement actTableElement = new ActTableElement
+            {
+                LocateBy = eLocateBy.ByXPath,
+                LocateValueCalculated = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:empDetails][ClassName:javax.swing.JTable]]",
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum,
+                LocateColTitle = "0",
+                ByWhere = true,
+                LocateRowType = "Where",
+                LocateRowValue = "",
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColNum,
+                WhereColumnTitle = "1",
+                WhereOperator = ActTableElement.eRunColOperator.Equals,
+                WhereProperty = ActTableElement.eRunColPropertyValue.Value,
+                WhereColumnValue = "Jinendra",
+                ControlAction = ActTableElement.eTableAction.GetValue,
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actTableElement);
             mBF.CurrentActivity.Acts.CurrentItem = actTableElement;
             actTableElement.AddNewReturnParams = true;
@@ -1600,29 +1726,31 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void DoubleClickOnTableCell()
         {
-            ActTableElement actTableElement = new ActTableElement();
-            actTableElement.LocateBy = eLocateBy.ByXPath;
-            actTableElement.LocateValueCalculated = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:empDetails][ClassName:javax.swing.JTable]]";
-            actTableElement.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum;
-            actTableElement.LocateColTitle = "0";
-            actTableElement.ByWhere = true;
-            actTableElement.LocateRowType = "Where";
-            actTableElement.LocateRowValue = "";
-            actTableElement.WhereColSelector = ActTableElement.eRunColSelectorValue.ColNum;
-            actTableElement.WhereColumnTitle = "1";
-            actTableElement.WhereOperator = ActTableElement.eRunColOperator.Equals;
-            actTableElement.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-            actTableElement.WhereColumnValue = "Jinendra";
-            actTableElement.ControlAction = ActTableElement.eTableAction.DoubleClick;
-            actTableElement.Active = true;
-            actTableElement.AddNewReturnParams = true;
+            ActTableElement actTableElement = new ActTableElement
+            {
+                LocateBy = eLocateBy.ByXPath,
+                LocateValueCalculated = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:empDetails][ClassName:javax.swing.JTable]]",
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum,
+                LocateColTitle = "0",
+                ByWhere = true,
+                LocateRowType = "Where",
+                LocateRowValue = "",
+                WhereColSelector = ActTableElement.eRunColSelectorValue.ColNum,
+                WhereColumnTitle = "1",
+                WhereOperator = ActTableElement.eRunColOperator.Equals,
+                WhereProperty = ActTableElement.eRunColPropertyValue.Value,
+                WhereColumnValue = "Jinendra",
+                ControlAction = ActTableElement.eTableAction.DoubleClick,
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(actTableElement);
             mBF.CurrentActivity.Acts.CurrentItem = actTableElement;
 
             mGR.Executor.RunAction(actTableElement, false);
             //TODO: Find a better way to get ExInfo.
             //Notice: [IndexOf("-")+2] and [LastIndexOf("-")+2] not work with a different format of Date and String(in case we have additional '-'). 
-            String ExInfo = actTableElement.ExInfo.Substring(actTableElement.ExInfo.LastIndexOf("M -") + 4);
+            String ExInfo = actTableElement.ExInfo[(actTableElement.ExInfo.LastIndexOf("M -") + 4)..];
             Assert.AreEqual(eRunStatus.Passed, actTableElement.Status, "Action Status");
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
             Assert.AreEqual(ExInfo, "Double Click Activity Passed", "ExInfo");
@@ -1635,14 +1763,16 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ACtUIElementGetValue()
         {
-            ActUIElement action = new ActUIElement();
-            action.ElementLocateBy = eLocateBy.ByName;
-            action.ElementLocateValue = "jtxtArea";
-            action.ValueForDriver = "jtxtArea";
-            action.AddNewReturnParams = true;
+            ActUIElement action = new ActUIElement
+            {
+                ElementLocateBy = eLocateBy.ByName,
+                ElementLocateValue = "jtxtArea",
+                ValueForDriver = "jtxtArea",
+                AddNewReturnParams = true,
 
-            action.ElementAction = ActUIElement.eElementAction.GetValue;
-            action.Active = true;
+                ElementAction = ActUIElement.eElementAction.GetValue,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
@@ -1659,13 +1789,15 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ACtUIElementSetValue()
         {
-            ActUIElement action = new ActUIElement();
-            action.ElementLocateBy = eLocateBy.ByName;
-            action.ElementLocateValue = "jtxtArea";
-            action.ValueForDriver = "jtxtArea";
+            ActUIElement action = new ActUIElement
+            {
+                ElementLocateBy = eLocateBy.ByName,
+                ElementLocateValue = "jtxtArea",
+                ValueForDriver = "jtxtArea",
 
-            action.ElementAction = ActUIElement.eElementAction.SetValue;
-            action.Value = "Testing";
+                ElementAction = ActUIElement.eElementAction.SetValue,
+                Value = "Testing"
+            };
             action.ValueForDriver = "Testing";
             action.Active = true;
             mBF.CurrentActivity.Acts.Add(action);
@@ -1685,14 +1817,16 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ACtUIElementIsEnabled()
         {
-            ActUIElement action = new ActUIElement();
-            action.ElementLocateBy = eLocateBy.ByName;
-            action.ElementLocateValue = "btnClickMe5";
-            action.ValueForDriver = "btnClickMe5";
-            action.ElementType = eElementType.Button;
-            action.ElementAction = ActUIElement.eElementAction.IsEnabled;
-            action.Active = true;
-            action.AddNewReturnParams = true;
+            ActUIElement action = new ActUIElement
+            {
+                ElementLocateBy = eLocateBy.ByName,
+                ElementLocateValue = "btnClickMe5",
+                ValueForDriver = "btnClickMe5",
+                ElementType = eElementType.Button,
+                ElementAction = ActUIElement.eElementAction.IsEnabled,
+                Active = true,
+                AddNewReturnParams = true
+            };
 
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
@@ -1710,13 +1844,15 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ACtUIElementButtonClick()
         {
-            ActUIElement action = new ActUIElement();
-            action.ElementLocateBy = eLocateBy.ByName;
-            action.ElementLocateValue = "btnClickMe5";
-            action.ValueForDriver = "btnClickMe5";
-            action.ElementType = eElementType.Button;
-            action.ElementAction = ActUIElement.eElementAction.Click;
-            action.Active = true;
+            ActUIElement action = new ActUIElement
+            {
+                ElementLocateBy = eLocateBy.ByName,
+                ElementLocateValue = "btnClickMe5",
+                ValueForDriver = "btnClickMe5",
+                ElementType = eElementType.Button,
+                ElementAction = ActUIElement.eElementAction.Click,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
@@ -1734,12 +1870,14 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ACtUIElementSelectComboBoxValue()
         {
-            ActUIElement action = new ActUIElement();
-            action.ElementLocateBy = eLocateBy.ByName;
-            action.ElementLocateValue = "Country";
-            action.Value = "India";
-            action.ElementAction = ActUIElement.eElementAction.Select;
-            action.Active = true;
+            ActUIElement action = new ActUIElement
+            {
+                ElementLocateBy = eLocateBy.ByName,
+                ElementLocateValue = "Country",
+                Value = "India",
+                ElementAction = ActUIElement.eElementAction.Select,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
             //Act
@@ -1756,12 +1894,14 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ActUISwitchWindowActionTest()
         {
-            ActUIElement action = new ActUIElement();
-            action.ElementLocateBy = eLocateBy.ByTitle;
-            action.ElementLocateValue = "Java Swing";
-            action.Active = true;
-            action.ElementAction = ActUIElement.eElementAction.Switch;
-            action.ElementType = eElementType.Window;
+            ActUIElement action = new ActUIElement
+            {
+                ElementLocateBy = eLocateBy.ByTitle,
+                ElementLocateValue = "Java Swing",
+                Active = true,
+                ElementAction = ActUIElement.eElementAction.Switch,
+                ElementType = eElementType.Window
+            };
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
@@ -1777,11 +1917,13 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ActSwitchWindowActionWithNegativeSynTimeTest()
         {
-            ActSwitchWindow action = new ActSwitchWindow();
-            action.LocateBy = eLocateBy.ByTitle;
-            action.LocateValue = "Java Swing";
-            action.Active = true;
-            action.WaitTime = -1;
+            ActSwitchWindow action = new ActSwitchWindow
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValue = "Java Swing",
+                Active = true,
+                WaitTime = -1
+            };
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
@@ -1798,11 +1940,13 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ActSwitchWindowActionWithSynTimeTest()
         {
-            ActSwitchWindow action = new ActSwitchWindow();
-            action.LocateBy = eLocateBy.ByTitle;
-            action.LocateValue = "Java Swing";
-            action.Active = true;
-            action.WaitTime = 90;
+            ActSwitchWindow action = new ActSwitchWindow
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValue = "Java Swing",
+                Active = true,
+                WaitTime = 90
+            };
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
@@ -1819,10 +1963,12 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ActSwitchWindowActionWithNoSyncTimeTest()
         {
-            ActSwitchWindow action = new ActSwitchWindow();
-            action.LocateBy = eLocateBy.ByTitle;
-            action.LocateValue = "Java Swing";
-            action.Active = true;
+            ActSwitchWindow action = new ActSwitchWindow
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValue = "Java Swing",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
@@ -1844,13 +1990,15 @@ namespace UnitTests.UITests.JavaDriverTest
         public void ActSmartSyncTest()
         {
             //Arrange
-            ActSmartSync action = new ActSmartSync();
-            action.LocateBy = eLocateBy.ByName;
-            action.LocateValue = "jtxtArea";
-            action.SmartSyncAction = ActSmartSync.eSmartSyncAction.WaitUntilDisplay;
+            ActSmartSync action = new ActSmartSync
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValue = "jtxtArea",
+                SmartSyncAction = ActSmartSync.eSmartSyncAction.WaitUntilDisplay,
 
-            action.WaitTime = 20;
-            action.Active = true;
+                WaitTime = 20,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
@@ -1870,9 +2018,11 @@ namespace UnitTests.UITests.JavaDriverTest
         public void ActScreenShootAction()
         {
             CleanTempFolder();
-            ActScreenShot action = new ActScreenShot();
-            action.TakeScreenShot = true;
-            action.WindowsToCapture = Act.eWindowsToCapture.OnlyActiveWindow;
+            ActScreenShot action = new ActScreenShot
+            {
+                TakeScreenShot = true,
+                WindowsToCapture = Act.eWindowsToCapture.OnlyActiveWindow
+            };
             action.AddOrUpdateInputParamValueAndCalculatedValue(ActScreenShot.Fields.SaveToFileName, TestResources.GetTestResourcesFolder(@"Temp"));
 
             action.Active = true;
@@ -1905,12 +2055,14 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ActWindowActionIsExistWindowTest()
         {
-            ActWindow action = new ActWindow();
-            action.LocateBy = eLocateBy.ByTitle;
-            action.LocateValue = "Java Swing";
-            action.WindowActionType = ActWindow.eWindowActionType.IsExist;
-            action.Active = true;
-            action.AddNewReturnParams = true;
+            ActWindow action = new ActWindow
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValue = "Java Swing",
+                WindowActionType = ActWindow.eWindowActionType.IsExist,
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
@@ -1928,13 +2080,15 @@ namespace UnitTests.UITests.JavaDriverTest
         [Timeout(60000)]
         public void ActWindowActionCloseWindowTest()
         {
-            ActWindow action = new ActWindow();
-            action.LocateBy = eLocateBy.ByTitle;
-            action.LocateValue = "Java Swing";
-            action.WindowActionType = ActWindow.eWindowActionType.Close;
-            action.Active = true;
-            action.AddNewReturnParams = true;
-            action.StatusConverter = eStatusConverterOptions.AlwaysPass;
+            ActWindow action = new ActWindow
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValue = "Java Swing",
+                WindowActionType = ActWindow.eWindowActionType.Close,
+                Active = true,
+                AddNewReturnParams = true,
+                StatusConverter = eStatusConverterOptions.AlwaysPass
+            };
 
             //action.StatusConverter = eStatusConverterOptions.
             mBF.CurrentActivity.Acts.Add(action);

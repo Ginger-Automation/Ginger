@@ -100,7 +100,7 @@ namespace Ginger.AnalyzerLib
         {
             get
             {
-                if (CanAutoFix == eCanFix.Yes || CanAutoFix == eCanFix.Maybe)
+                if (CanAutoFix is eCanFix.Yes or eCanFix.Maybe)
                 {
                     return true;
                 }
@@ -136,19 +136,13 @@ namespace Ginger.AnalyzerLib
         {
             get
             {
-                switch (Severity)
+                return Severity switch
                 {
-                    case eSeverity.Critical:
-                    case eSeverity.High:
-                        return eImageType.HighWarn;
-                    case eSeverity.Medium:
-                        return eImageType.MediumWarn;
-                    case eSeverity.Low:
-                        return eImageType.LowWarn;
-                    default:
-                        return eImageType.LowWarn;
-                }
-
+                    eSeverity.Critical or eSeverity.High => eImageType.HighWarn,
+                    eSeverity.Medium => eImageType.MediumWarn,
+                    eSeverity.Low => eImageType.LowWarn,
+                    _ => eImageType.LowWarn,
+                };
             }
         }
         public event PropertyChangedEventHandler PropertyChanged;

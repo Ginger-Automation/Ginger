@@ -36,7 +36,7 @@ namespace Ginger.BusinessFlowWindows
     //TODO: not use? delete or recycle - might be good idea...
     public partial class EditLocatorsWindow : Window
     {
-        ObservableList<Act> Locators = new ObservableList<Act>();
+        ObservableList<Act> Locators = [];
         UIAutomation UIA = new UIAutomation();
 
         public static string sMultiLocatorVals { get; set; }
@@ -49,15 +49,17 @@ namespace Ginger.BusinessFlowWindows
 
         public void SetGridView()
         {
-            List<string> lstLocateBy = new List<string>();
+            List<string> lstLocateBy = [];
             Type Etype = eLocateBy.ByID.GetType();
             foreach (object item in Enum.GetValues(Etype))
             {
                 lstLocateBy.Add(item.ToString());
             }
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = []
+            };
 
             LocatorsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddLocator));
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.LocateBy, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = lstLocateBy.ToList() });

@@ -16,9 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Repository;
-using GingerCore;
 using Newtonsoft.Json.Linq;
 using NSwag;
 using System;
@@ -64,7 +62,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             if (Swaggerdoc.SchemaType.ToString() == "Swagger2")
             {
                 SwaggerVer2 s2 = new SwaggerVer2();
-                SwaggerModels = s2.SwaggerTwo(Swaggerdoc,SwaggerModels);
+                SwaggerModels = s2.SwaggerTwo(Swaggerdoc, SwaggerModels);
             }
             else
             {

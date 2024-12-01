@@ -23,7 +23,6 @@ using Ginger.BusinessFlowPages;
 using Ginger.Reports;
 using Ginger.Run;
 using Ginger.UserControls;
-using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.GeneralLib;
@@ -118,12 +117,16 @@ namespace Ginger.WindowExplorer
             AvailableLocatorsGrid.AddButton("Test", TestSelectedLocator);
             AvailableLocatorsGrid.AddButton("Test All", TestAllLocators);
 
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), WidthWeight = 10 });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), WidthWeight = 30 });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 20 });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Count), WidthWeight = 10 });
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ElementLocator.LocateBy), WidthWeight = 10 },
+                new GridColView() { Field = nameof(ElementLocator.LocateValue), WidthWeight = 30 },
+                new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 20 },
+                new GridColView() { Field = nameof(ElementLocator.Count), WidthWeight = 10 },
+            ]
+            };
 
             AvailableLocatorsGrid.SetAllColumnsDefaultView(defView);
             AvailableLocatorsGrid.InitViewItems();
@@ -149,9 +152,10 @@ namespace Ginger.WindowExplorer
 
         private void InitActionsGrid()
         {
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = Act.Fields.Description, WidthWeight = 10 });
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = [new GridColView() { Field = Act.Fields.Description, WidthWeight = 10 }]
+            };
             AvailableControlActionsGrid.SetAllColumnsDefaultView(defView);
             AvailableControlActionsGrid.InitViewItems();
             AvailableControlActionsGrid.DataSourceList = mActions;
@@ -199,11 +203,11 @@ namespace Ginger.WindowExplorer
                 actUI.ElementLocateBy = EL.LocateBy;
                 actUI.ElementLocateValue = EL.LocateValue;
                 //TODO: Remove below  if once one of the field from Value and Value to select is removed
-                if (actUI.ElementAction == ActUIElement.eElementAction.Click
-                    || actUI.ElementAction == ActUIElement.eElementAction.Select
-                    || actUI.ElementAction == ActUIElement.eElementAction.GetControlProperty
-                    || actUI.ElementAction == ActUIElement.eElementAction.AsyncSelect
-                    || actUI.ElementAction == ActUIElement.eElementAction.SelectByIndex)
+                if (actUI.ElementAction is ActUIElement.eElementAction.Click
+                    or ActUIElement.eElementAction.Select
+                    or ActUIElement.eElementAction.GetControlProperty
+                    or ActUIElement.eElementAction.AsyncSelect
+                    or ActUIElement.eElementAction.SelectByIndex)
                 {
                     actUI.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, act.Value);
                 }
@@ -231,7 +235,7 @@ namespace Ginger.WindowExplorer
             //We came from ActionEditPage 
             if (mAction != null)
             {
-                act = (Act)((Act)(mAction)).CreateCopy();
+                act = (Act)mAction.CreateCopy();
             }
             else
             {
@@ -244,7 +248,7 @@ namespace Ginger.WindowExplorer
             if (ag != null)
             {
                 mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
-                ((Agent)ag.Agent).AgentOperations.RunAction(act);
+                ag.Agent.AgentOperations.RunAction(act);
             }
 
             TestStatusTextBlock.Text = string.Empty;

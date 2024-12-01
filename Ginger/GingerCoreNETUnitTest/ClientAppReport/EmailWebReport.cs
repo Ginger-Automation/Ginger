@@ -69,9 +69,11 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             WorkSpace.Instance.OpenSolution(mSolutionFolder);
             WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = Ginger.Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
-            RunsetExecutor runsetExecutor = new RunsetExecutor();
-            runsetExecutor.RunsetExecutionEnvironment = (from x in SR.GetAllRepositoryItems<ProjEnvironment>() where x.Name == "Default" select x).SingleOrDefault();
-            runsetExecutor.RunSetConfig = (from x in SR.GetAllRepositoryItems<RunSetConfig>() where x.Name == "Default Run Set" select x).SingleOrDefault();
+            RunsetExecutor runsetExecutor = new RunsetExecutor
+            {
+                RunsetExecutionEnvironment = (from x in SR.GetAllRepositoryItems<ProjEnvironment>() where x.Name == "Default" select x).SingleOrDefault(),
+                RunSetConfig = (from x in SR.GetAllRepositoryItems<RunSetConfig>() where x.Name == "Default Run Set" select x).SingleOrDefault()
+            };
             WorkSpace.Instance.RunsetExecutor = runsetExecutor;
             WorkSpace.Instance.RunsetExecutor.InitRunners();
         }
@@ -105,13 +107,17 @@ namespace GingerCoreNETUnitTest.ClientAppReport
         {
             //Arrange
             // Create config file
-            CLIHelper cLIHelper = new CLIHelper();
-            cLIHelper.RunAnalyzer = true;
-            cLIHelper.ShowAutoRunWindow = false;
-            cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
-            RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
-            runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
-            runSetAutoRunConfiguration.SelectedCLI = new CLIArgs();
+            CLIHelper cLIHelper = new CLIHelper
+            {
+                RunAnalyzer = true,
+                ShowAutoRunWindow = false,
+                DownloadUpgradeSolutionFromSourceControl = false
+            };
+            RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper)
+            {
+                ConfigFileFolderPath = mTempFolder,
+                SelectedCLI = new CLIArgs()
+            };
             CLIProcessor CLI = new CLIProcessor();
 
             // Act

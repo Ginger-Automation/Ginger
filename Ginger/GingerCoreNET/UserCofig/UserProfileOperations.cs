@@ -94,7 +94,7 @@ namespace Ginger
 
             CleanRecentSolutionsList();
 
-            mRecentSolutionsAsObjects = new ObservableList<Solution>();
+            mRecentSolutionsAsObjects = [];
             int counter = 0;
             foreach (string s in UserProfile.RecentSolutions)
             {
@@ -250,7 +250,7 @@ namespace Ginger
                     string solName = WorkSpace.Instance.Solution.Name + "***";
                     existingSolMapping = existingSolMapping.Replace(solName, string.Empty);
                     List<string> appAgentMapping = existingSolMapping.Split(new char[] { '#' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                    Dictionary<string, string> mappingDic = new Dictionary<string, string>();
+                    Dictionary<string, string> mappingDic = [];
                     foreach (string mapping in appAgentMapping)
                     {
                         string[] appAgent = mapping.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);

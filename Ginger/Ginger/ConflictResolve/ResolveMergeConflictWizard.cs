@@ -16,21 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Repository;
-using Ginger.SourceControl;
 using Ginger.WizardLib;
-using GingerCore;
-using GingerTest.WizardLib;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ginger.ConflictResolve
 {
@@ -52,9 +43,9 @@ namespace Ginger.ConflictResolve
         private void AddPages()
         {
             AddPage(
-                Name: "Introduction", 
-                Title: "Introduction", 
-                SubTitle: "Conflict Resolve Introduction", 
+                Name: "Introduction",
+                Title: "Introduction",
+                SubTitle: "Conflict Resolve Introduction",
                 Page: new WizardIntroPage("/ConflictResolve/ConflictResolveIntro.md"));
 
             AddPage(
@@ -64,7 +55,7 @@ namespace Ginger.ConflictResolve
                 new ConflictViewPage());
 
             Type? conflictedItemType = GetConflictedItemType();
-            if(conflictedItemType != null && AnalyeMergedPage.IsTypeSupportedForIsolatedAnalyzation(conflictedItemType))
+            if (conflictedItemType != null && AnalyeMergedPage.IsTypeSupportedForIsolatedAnalyzation(conflictedItemType))
             {
                 _analyzeMergedPage = new();
                 AddPage(
@@ -89,7 +80,7 @@ namespace Ginger.ConflictResolve
                 return localItem.GetType();
             }
             RepositoryItemBase? remoteItem = _conflict.GetRemoteItem();
-            if(remoteItem != null)
+            if (remoteItem != null)
             {
                 return remoteItem.GetType();
             }

@@ -37,14 +37,14 @@ namespace Ginger.Actions.XML
         {
             InitializeComponent();
             this.mAct = (ActXMLTagValidation)act;
-            
+
             //// Bind Controls
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(XMLFileTextBox, TextBox.TextProperty, mAct.InputFile, nameof(ActInputValue.Value));
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ReqisFromFile, CheckBox.IsCheckedProperty, mAct, "ReqisFromFile");
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(chkReadJustAttributeValues, CheckBox.IsCheckedProperty, mAct, nameof(ActXMLTagValidation.ReadJustXMLAttributeValues));            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(chkReadJustAttributeValues, CheckBox.IsCheckedProperty, mAct, nameof(ActXMLTagValidation.ReadJustXMLAttributeValues));
 
-            xDocumentTypeComboBox.Init(mAct, ActXMLTagValidation.Fields.DocumentType, typeof(ActXMLTagValidation.eDocumentType),xDocumentTypeComboBox_SelectionChanged);
+            xDocumentTypeComboBox.Init(mAct, ActXMLTagValidation.Fields.DocumentType, typeof(ActXMLTagValidation.eDocumentType), xDocumentTypeComboBox_SelectionChanged);
 
             XMLFileTextBox.Init(Context.GetAsContext(mAct.Context), mAct.InputFile);
 
@@ -75,11 +75,14 @@ namespace Ginger.Actions.XML
 
         private void SetGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Path", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Attribute", WidthWeight = 150 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ActInputValue.Param), Header = "Path", WidthWeight = 150 },
+                new GridColView() { Field = nameof(ActInputValue.Value), Header = "Attribute", WidthWeight = 150 },
+            ]
+            };
 
             DynamicParametersGrid.SetAllColumnsDefaultView(view);
             DynamicParametersGrid.InitViewItems();
@@ -132,7 +135,7 @@ namespace Ginger.Actions.XML
         {
             if (mAct.DocumentType == ActXMLTagValidation.eDocumentType.XML)
             {
-                grRowReadJustAttributeValues.Visibility = Visibility.Visible;                   
+                grRowReadJustAttributeValues.Visibility = Visibility.Visible;
             }
             else
             {

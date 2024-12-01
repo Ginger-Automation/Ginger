@@ -87,9 +87,11 @@ namespace Ginger.Reports
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            Button SaveAllButton = new Button();
-            SaveAllButton.Content = "Ok";
+            ObservableList<Button> winButtons = [];
+            Button SaveAllButton = new Button
+            {
+                Content = "Ok"
+            };
             SaveAllButton.Click += new RoutedEventHandler(OkButton_Click);
             winButtons.Add(SaveAllButton);
 

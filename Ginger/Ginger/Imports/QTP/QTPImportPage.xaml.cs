@@ -59,17 +59,17 @@ namespace Ginger.Imports.QTP
         public GenericWindow _pageGenericWin = null;
 
         //List and Dictionaries
-        public Dictionary<string, string> Dictionary_Variables = new Dictionary<string, string>();
-        public List<ObjectRepositoryItem> Objectlist_ORI = new List<ObjectRepositoryItem>();
-        public List<BusFunction> BusList = new List<BusFunction>();
-        public List<string> ListOfSelectedGuis = new List<string>();
-        public ObservableList<TargetBase> TargetApplicationsList = new ObservableList<TargetBase>();
+        public Dictionary<string, string> Dictionary_Variables = [];
+        public List<ObjectRepositoryItem> Objectlist_ORI = [];
+        public List<BusFunction> BusList = [];
+        public List<string> ListOfSelectedGuis = [];
+        public ObservableList<TargetBase> TargetApplicationsList = [];
 
         // Data Table
         public DataTable dt_BizFlow = new DataTable();
 
         //Objects
-        public ObservableList<ConvertedCodeLine> mCCL = new ObservableList<ConvertedCodeLine>();
+        public ObservableList<ConvertedCodeLine> mCCL = [];
         public BusinessFlow mBusinessFlow = new BusinessFlow();
         public CommonFunctionConvertor mCommonFunctionConvertor = new CommonFunctionConvertor();
 
@@ -107,10 +107,14 @@ namespace Ginger.Imports.QTP
             CommonFunctionMappingUCGrid.btnEdit.AddHandler(Button.ClickEvent, new RoutedEventHandler(EditAction));
             CommonFunctionMappingUCGrid.DataSourceList = mCommonFunctionConvertor.CommonFunctionMappingList;
 
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = CommonFunctionMapping.Fields.Function_Name, Header = "Function_Name", WidthWeight = 10, });
-            defView.GridColsView.Add(new GridColView() { Field = CommonFunctionMapping.Fields.Action_Description, Header = "Action_Description", WidthWeight = 10, BindingMode = BindingMode.OneWay });
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = CommonFunctionMapping.Fields.Function_Name, Header = "Function_Name", WidthWeight = 10, },
+                new GridColView() { Field = CommonFunctionMapping.Fields.Action_Description, Header = "Action_Description", WidthWeight = 10, BindingMode = BindingMode.OneWay },
+            ]
+            };
 
             CommonFunctionMappingUCGrid.SetAllColumnsDefaultView(defView);
             CommonFunctionMappingUCGrid.InitViewItems();
@@ -127,25 +131,28 @@ namespace Ginger.Imports.QTP
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
             // for "Convert" Button in dialog
-            Button ConvertButton = new Button();
-            ConvertButton.Content = "Convert";
+            Button ConvertButton = new Button
+            {
+                Content = "Convert"
+            };
             ConvertButton.Click += new RoutedEventHandler(ConvertButton_Click);
 
             // for "Save To Business Flow" Button in dialog
-            Button SaveBusinessFlowButton = new Button();
-            SaveBusinessFlowButton.Content = "Save to " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+            Button SaveBusinessFlowButton = new Button
+            {
+                Content = "Save to " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)
+            };
             SaveBusinessFlowButton.Click += new RoutedEventHandler(SaveBusinessFlowButton_Button_Click);
 
             // for "Clear" Button in dialog
-            Button ClearGrid = new Button();
-            ClearGrid.Content = "Clear Grid";
+            Button ClearGrid = new Button
+            {
+                Content = "Clear Grid"
+            };
             ClearGrid.Click += new RoutedEventHandler(ClearGrid_Button_Click);
 
             // Create button list
-            ObservableList<Button> Buttons = new ObservableList<Button>();
-            Buttons.Add(ClearGrid);
-            Buttons.Add(SaveBusinessFlowButton);
-            Buttons.Add(ConvertButton);
+            ObservableList<Button> Buttons = [ClearGrid, SaveBusinessFlowButton, ConvertButton];
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, Buttons);
         }
 
@@ -167,28 +174,16 @@ namespace Ginger.Imports.QTP
         //Handles the Combo box status and Lines Converted section in bottom of the dialog
         private void FilterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            IEnumerable<ConvertedCodeLine> FilterdCCLs;
-            ObservableList<ConvertedCodeLine> CCLs = new ObservableList<ConvertedCodeLine>();
+            ObservableList<ConvertedCodeLine> CCLs = [];
             eFilter mFilter = (eFilter)FilterComboBox.SelectedValue;
-            switch (mFilter)
+            var FilterdCCLs = mFilter switch
             {
-                case eFilter.AllLines:
-                    FilterdCCLs = from x in mCCL select x;
-                    break;
-                case eFilter.ConvertedtoScript:
-                    FilterdCCLs = from x in mCCL where x.Status == ConvertedCodeLine.eStatus.ConvertedToScript select x;
-                    break;
-                case eFilter.Ignored:
-                    FilterdCCLs = from x in mCCL where x.Status == ConvertedCodeLine.eStatus.Ignored select x;
-                    break;
-                case eFilter.NotConverted:
-                    FilterdCCLs = from x in mCCL where x.Status == ConvertedCodeLine.eStatus.Unknown select x;
-                    break;
-                default:
-                    FilterdCCLs = null;
-                    break;
-            }
-
+                eFilter.AllLines => from x in mCCL select x,
+                eFilter.ConvertedtoScript => from x in mCCL where x.Status == ConvertedCodeLine.eStatus.ConvertedToScript select x,
+                eFilter.Ignored => from x in mCCL where x.Status == ConvertedCodeLine.eStatus.Ignored select x,
+                eFilter.NotConverted => from x in mCCL where x.Status == ConvertedCodeLine.eStatus.Unknown select x,
+                _ => null,
+            };
             foreach (ConvertedCodeLine CCL in FilterdCCLs)
             {
                 CCLs.Add(CCL);
@@ -210,8 +205,10 @@ namespace Ginger.Imports.QTP
         // Handles browsing of Repository File (xml) from user desktop
         private void QTPObjectRepositoryBrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new System.Windows.Forms.OpenFileDialog();
-            dlg.Title = "Select UFT Object Repository File";
+            var dlg = new System.Windows.Forms.OpenFileDialog
+            {
+                Title = "Select UFT Object Repository File"
+            };
 
             System.Windows.Forms.DialogResult result = dlg.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)
@@ -274,7 +271,7 @@ namespace Ginger.Imports.QTP
             //Extract Objects from XML repository
             ProcessUFTObjectRepository();
 
-            mBusinessFlow.Activities = new ObservableList<Activity>();
+            mBusinessFlow.Activities = [];
 
             if (ListOfSelectedGuis.Count != 0)
             {
@@ -303,8 +300,10 @@ namespace Ginger.Imports.QTP
                     for (int i = Pos; i < BusCodeLines.Length; i++)
                     {
                         BusLineUpper = BusCodeLines[i].ToUpper();
-                        ConvertedCodeLine BusCCL = new ConvertedCodeLine();
-                        BusCCL.CodeLine = BusCodeLines[i];
+                        ConvertedCodeLine BusCCL = new ConvertedCodeLine
+                        {
+                            CodeLine = BusCodeLines[i]
+                        };
                         ProcessCodeLine_QTP(BusCCL);
                     }
                 }
@@ -323,7 +322,7 @@ namespace Ginger.Imports.QTP
                 //to Show only Converted Script as default
                 FilterComboBox.SelectedValue = "ConvertedtoScript";
                 IEnumerable<ConvertedCodeLine> FilterdCCLs;
-                ObservableList<ConvertedCodeLine> CCLs = new ObservableList<ConvertedCodeLine>();
+                ObservableList<ConvertedCodeLine> CCLs = [];
                 FilterdCCLs = from x in mCCL where x.Status == ConvertedCodeLine.eStatus.ConvertedToScript select x;
 
                 foreach (ConvertedCodeLine CCL in FilterdCCLs)
@@ -359,19 +358,23 @@ namespace Ginger.Imports.QTP
             mCommonFunctionConvertor.CommonFunctionMappingList.Add(CFM2);
 
             CommonFunctionMapping CFM3 = new CommonFunctionMapping();
-            ActGenElement a3 = new ActGenElement();
-            a3.Description = "General Web Element - WebEditTxt";
-            a3.LocateBy = eLocateBy.ByName;
-            a3.LocateValue = "{OR ObjName={Param1} PropName=_path}";
+            ActGenElement a3 = new ActGenElement
+            {
+                Description = "General Web Element - WebEditTxt",
+                LocateBy = eLocateBy.ByName,
+                LocateValue = "{OR ObjName={Param1} PropName=_path}"
+            };
             CFM3.Function_Name = "WebEditTxtChange";
             CFM3.TargetAction = a3;
             mCommonFunctionConvertor.CommonFunctionMappingList.Add(CFM3);
 
             CommonFunctionMapping CFM4 = new CommonFunctionMapping();
-            ActGenElement a4 = new ActGenElement();
-            a4.Description = "General Web Element - WebButtonClick";
-            a4.LocateBy = eLocateBy.ByName;
-            a4.LocateValue = "{OR ObjName={Param1} PropName=name}";
+            ActGenElement a4 = new ActGenElement
+            {
+                Description = "General Web Element - WebButtonClick",
+                LocateBy = eLocateBy.ByName,
+                LocateValue = "{OR ObjName={Param1} PropName=name}"
+            };
             CFM4.Function_Name = "WebButtonClick";
             CFM4.TargetAction = a4;
             mCommonFunctionConvertor.CommonFunctionMappingList.Add(CFM4);
@@ -390,12 +393,14 @@ namespace Ginger.Imports.QTP
         private void AddAction(object sender, RoutedEventArgs e)
         {
 
-            ObservableList<IAct> ActionsList = new ObservableList<IAct>();
+            ObservableList<IAct> ActionsList = [];
 
             // We create one dummy activity in case we convert code without function
-            mBusinessFlow.Activities = new ObservableList<Activity>();
-            Activity at = new Activity();
-            at.ActivityName = "Activity1";
+            mBusinessFlow.Activities = [];
+            Activity at = new Activity
+            {
+                ActivityName = "Activity1"
+            };
             mBusinessFlow.Activities.Add(at);
             mBusinessFlow.CurrentActivity = at;
             mBusinessFlow.CurrentActivity.TargetApplication = WorkSpace.Instance.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
@@ -407,8 +412,10 @@ namespace Ginger.Imports.QTP
             // We will get only one action currently
             Act a = (Act)ActionsList[0];
 
-            CommonFunctionMapping CFM = new CommonFunctionMapping();
-            CFM.TargetAction = a;
+            CommonFunctionMapping CFM = new CommonFunctionMapping
+            {
+                TargetAction = a
+            };
 
             mCommonFunctionConvertor.CommonFunctionMappingList.Add(CFM);
         }
@@ -416,12 +423,16 @@ namespace Ginger.Imports.QTP
         private void SetActivitiesGridView()
         {
             //# Default View for Import from UFT Dialog
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = ConvertedCodeLine.Fields.Checked, WidthWeight = 5, StyleType = Ginger.UserControls.GridColView.eGridColStyleType.CheckBox, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = ConvertedCodeLine.Fields.CodeLine, Header = "Code Line", WidthWeight = 10 });
-            defView.GridColsView.Add(new GridColView() { Field = ConvertedCodeLine.Fields.Converted, WidthWeight = 10 });
-            defView.GridColsView.Add(new GridColView() { Field = ConvertedCodeLine.Fields.Status, WidthWeight = 2 });
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = ConvertedCodeLine.Fields.Checked, WidthWeight = 5, StyleType = Ginger.UserControls.GridColView.eGridColStyleType.CheckBox, ReadOnly = true },
+                new GridColView() { Field = ConvertedCodeLine.Fields.CodeLine, Header = "Code Line", WidthWeight = 10 },
+                new GridColView() { Field = ConvertedCodeLine.Fields.Converted, WidthWeight = 10 },
+                new GridColView() { Field = ConvertedCodeLine.Fields.Status, WidthWeight = 2 },
+            ]
+            };
 
             ResultsDataGrid.SetAllColumnsDefaultView(defView);
             ResultsDataGrid.InitViewItems();
@@ -431,8 +442,10 @@ namespace Ginger.Imports.QTP
         private void ScriptFileBrowseButton_Click(object sender, RoutedEventArgs e)
         {
             string path = "";
-            var dlg = new System.Windows.Forms.OpenFileDialog();
-            dlg.Title = "Select GUI Script File";
+            var dlg = new System.Windows.Forms.OpenFileDialog
+            {
+                Title = "Select GUI Script File"
+            };
             System.Windows.Forms.DialogResult result = dlg.ShowDialog();
 
             if (result == System.Windows.Forms.DialogResult.OK)
@@ -446,10 +459,12 @@ namespace Ginger.Imports.QTP
         {
             foreach (KeyValuePair<string, string> entry in Dictionary_Variables)
             {
-                VariableString v = new VariableString();
-                v.Description = GingerDicser.GetTermResValue(eTermResKey.Variable) + " added from Calendar";
-                v.Name = entry.Key;
-                v.Value = entry.Value;
+                VariableString v = new VariableString
+                {
+                    Description = GingerDicser.GetTermResValue(eTermResKey.Variable) + " added from Calendar",
+                    Name = entry.Key,
+                    Value = entry.Value
+                };
                 v.CreateCopy();
                 mBusinessFlow.AddVariable(v);
             }
@@ -476,14 +491,16 @@ namespace Ginger.Imports.QTP
                     {
                         int pos = fName.IndexOf("(");
                         int len = fName.Length;
-                        string midString = fName.Substring(pos);
+                        string midString = fName[pos..];
                         fName = fName.Replace(midString, "");
                     }
 
                     if (ListOfSelectedGuis.Contains(fName))
                     {
-                        ConvertedCodeLine CL = new ConvertedCodeLine();
-                        CL.CodeLine = line;
+                        ConvertedCodeLine CL = new ConvertedCodeLine
+                        {
+                            CodeLine = line
+                        };
                         CreateActivity(fName, CL);
                         while (!line.Contains("End Function") || line.Contains("End Sub"))
                         {
@@ -516,7 +533,7 @@ namespace Ginger.Imports.QTP
                 CCL.Converted = "Empty Line";
                 CCL.Status = ConvertedCodeLine.eStatus.Ignored;
             }
-            else if (CodeLineUpper == "END IF" || CodeLineUpper == "ELSE" || CodeLineUpper == "END FUNCTION" || CodeLineUpper == "EXIT FUNCTION" || CodeLineUpper == "END SUB")
+            else if (CodeLineUpper is "END IF" or "ELSE" or "END FUNCTION" or "EXIT FUNCTION" or "END SUB")
             {
                 // do nothing 
                 CCL.Converted = "Ignored (End if/Else/End Function/Sub)";
@@ -531,9 +548,11 @@ namespace Ginger.Imports.QTP
 
         public void ProcessCodeLine(string CodeLine)
         {
-            ConvertedCodeLine CCL = new ConvertedCodeLine();
-            CCL.CodeLine = CodeLine;
-            CCL.Status = ConvertedCodeLine.eStatus.Unknown;
+            ConvertedCodeLine CCL = new ConvertedCodeLine
+            {
+                CodeLine = CodeLine,
+                Status = ConvertedCodeLine.eStatus.Unknown
+            };
             CodeLine = CodeLine.Trim();
             string CodeLineUpper = CodeLine.ToUpper();
 
@@ -549,7 +568,7 @@ namespace Ginger.Imports.QTP
                 CCL.Converted = "Empty Line";
                 CCL.Status = ConvertedCodeLine.eStatus.Ignored;
             }
-            else if (CodeLineUpper == "END IF" || CodeLineUpper == "ELSE" || CodeLineUpper == "END FUNCTION" || CodeLineUpper == "EXIT FUNCTION" || CodeLineUpper == "END SUB")
+            else if (CodeLineUpper is "END IF" or "ELSE" or "END FUNCTION" or "EXIT FUNCTION" or "END SUB")
             {
                 // do nothing 
                 CCL.Converted = "Ignored (End if/Else/End Function/Sub)";
@@ -600,8 +619,10 @@ namespace Ginger.Imports.QTP
         void CreateActivity(string ActivityName, ConvertedCodeLine CCL)
         {
             //Create a New Activity with the Function/Sub Name
-            Activity a = new Activity();
-            a.Description = GingerDicser.GetTermResValue(eTermResKey.Activity) + " Created for " + ActivityName + " function ";
+            Activity a = new Activity
+            {
+                Description = GingerDicser.GetTermResValue(eTermResKey.Activity) + " Created for " + ActivityName + " function "
+            };
             if (ActivityName.Contains("fGui"))
             {
                 ActivityName = ActivityName.Replace("fGui", "");
@@ -658,7 +679,7 @@ namespace Ginger.Imports.QTP
                     type = "Edit Box";
                     SetValueinObject = GetStringBetween(CodeLine, ".WebEdit(\"", "\")");
 
-                    varName = CodeLine.Substring(CodeLine.IndexOf("GlobalDictionary")).Replace("GlobalDictionary", "").Trim();
+                    varName = CodeLine[CodeLine.IndexOf("GlobalDictionary")..].Replace("GlobalDictionary", "").Trim();
                     varName = varName.Replace("(", "").Replace(")", "");
                     value = "{Var Name=" + varName + "}";
 
@@ -667,12 +688,14 @@ namespace Ginger.Imports.QTP
                 }
 
                 // Add Action to biz flow
-                ActGenElement act = new ActGenElement();
-                act.Value = value.Replace("\"", "").Replace("\"", "");
-                act.GenElementAction = ActGenElement.eGenElementAction.SetValue;
-                act.LocateBy = eLocateBy.ByXPath;
-                act.LocateValue = xpath;
-                act.Description = "Set value in " + SetValueinObject + " " + type;
+                ActGenElement act = new ActGenElement
+                {
+                    Value = value.Replace("\"", "").Replace("\"", ""),
+                    GenElementAction = ActGenElement.eGenElementAction.SetValue,
+                    LocateBy = eLocateBy.ByXPath,
+                    LocateValue = xpath,
+                    Description = "Set value in " + SetValueinObject + " " + type
+                };
                 mBusinessFlow.AddAct(act);
                 CCL.Converted = "New Action - ActGenElement.SetValue : LocateValue=" + act.LocateValue + ", Value=" + act.Value;
                 CCL.Status = ConvertedCodeLine.eStatus.ConvertedToScript;
@@ -701,38 +724,42 @@ namespace Ginger.Imports.QTP
                 // for Values to Set
                 if (CodeLine.Contains("Set \""))  // For hard coded values
                 {
-                    value = GetStringBetween(CodeLine, "Set \"", CodeLine[CodeLine.Length - 1].ToString());
+                    value = GetStringBetween(CodeLine, "Set \"", CodeLine[^1].ToString());
                 }
                 else if (CodeLine.Contains("GlobalDictionary"))
                 {
-                    varName = CodeLine.Substring(CodeLine.IndexOf("GlobalDictionary")).Replace("GlobalDictionary", "").Trim();
+                    varName = CodeLine[CodeLine.IndexOf("GlobalDictionary")..].Replace("GlobalDictionary", "").Trim();
                     varName = varName.Replace("(", "").Replace(")", "");
                     value = "{Var Name=" + varName + "}";
                 }
                 else if (CodeLine.Contains("Globaldictionary"))
                 {
-                    varName = CodeLine.Substring(CodeLine.IndexOf("Globaldictionary")).Replace("Globaldictionary", "").Trim();
+                    varName = CodeLine[CodeLine.IndexOf("Globaldictionary")..].Replace("Globaldictionary", "").Trim();
                     varName = varName.Replace("(", "").Replace(")", "");
                     value = "{Var Name=" + varName + "}";
                 }
                 else if (!CodeLine.Contains("GlobalDictionary") && !CodeLine.Contains("Globaldictionary"))  // for variables declared using Dim
                 {
-                    varName = CodeLine.Substring(CodeLine.IndexOf("Set")).Replace("Set", "").Trim();
+                    varName = CodeLine[CodeLine.IndexOf("Set")..].Replace("Set", "").Trim();
                     value = "{Var Name=" + varName + "}";
-                    VariableString v = new VariableString();
-                    v.Description = GingerDicser.GetTermResValue(eTermResKey.Variable) + " added by UFT Script";
-                    v.Name = varName;
-                    v.Value = value;
+                    VariableString v = new VariableString
+                    {
+                        Description = GingerDicser.GetTermResValue(eTermResKey.Variable) + " added by UFT Script",
+                        Name = varName,
+                        Value = value
+                    };
                     mBusinessFlow.AddVariable(v);
                 }
 
                 // Add Action to biz flow
-                ActGenElement act = new ActGenElement();
-                act.Value = value.Replace("\"", "").Replace("\"", "");
-                act.GenElementAction = ActGenElement.eGenElementAction.SetValue;
-                act.LocateBy = eLocateBy.ByXPath;
-                act.LocateValue = xpath;
-                act.Description = "Set value in " + SetValueinObject + " " + type;
+                ActGenElement act = new ActGenElement
+                {
+                    Value = value.Replace("\"", "").Replace("\"", ""),
+                    GenElementAction = ActGenElement.eGenElementAction.SetValue,
+                    LocateBy = eLocateBy.ByXPath,
+                    LocateValue = xpath,
+                    Description = "Set value in " + SetValueinObject + " " + type
+                };
                 mBusinessFlow.AddAct(act);
                 CCL.Converted = "New Action - ActGenElement.SetValue : LocateValue=" + act.LocateValue + ", Value=" + act.Value;
                 CCL.Status = ConvertedCodeLine.eStatus.ConvertedToScript;
@@ -777,12 +804,14 @@ namespace Ginger.Imports.QTP
                 }
 
                 // Add Action to biz flow
-                ActGenElement act = new ActGenElement();
-                act.Value = "";
-                act.LocateBy = eLocateBy.ByXPath;
-                act.LocateValue = xpath;
-                act.GenElementAction = ActGenElement.eGenElementAction.Click;
-                act.Description = "Click on " + SetValueinObject + " " + type;
+                ActGenElement act = new ActGenElement
+                {
+                    Value = "",
+                    LocateBy = eLocateBy.ByXPath,
+                    LocateValue = xpath,
+                    GenElementAction = ActGenElement.eGenElementAction.Click,
+                    Description = "Click on " + SetValueinObject + " " + type
+                };
                 mBusinessFlow.AddAct(act);
 
                 CCL.Converted = "New Action - ActGenElement.Click : LocateValue=" + act.LocateValue; // +", Value=" + act.Value;
@@ -812,38 +841,42 @@ namespace Ginger.Imports.QTP
                 //For Values to Set
                 if (CodeLine.Contains("Select \""))  // For hard coded values
                 {
-                    value = GetStringBetween(CodeLine, "Select \"", CodeLine[CodeLine.Length - 1].ToString());
+                    value = GetStringBetween(CodeLine, "Select \"", CodeLine[^1].ToString());
                 }
                 else if (CodeLine.Contains("GlobalDictionary"))
                 {
-                    varName = CodeLine.Substring(CodeLine.IndexOf("GlobalDictionary")).Replace("GlobalDictionary", "").Trim();
+                    varName = CodeLine[CodeLine.IndexOf("GlobalDictionary")..].Replace("GlobalDictionary", "").Trim();
                     varName = varName.Replace("(", "").Replace(")", "");
                     value = "{Var Name=" + varName + "}";
                 }
                 else if (CodeLine.Contains("Globaldictionary"))
                 {
-                    varName = CodeLine.Substring(CodeLine.IndexOf("Globaldictionary")).Replace("Globaldictionary", "").Trim();
+                    varName = CodeLine[CodeLine.IndexOf("Globaldictionary")..].Replace("Globaldictionary", "").Trim();
                     varName = varName.Replace("(", "").Replace(")", "");
                     value = "{Var Name=" + varName + "}";
                 }
                 else
                 {
-                    varName = CodeLine.Substring(CodeLine.IndexOf("Select ")).Replace("Select ", "").Trim();
+                    varName = CodeLine[CodeLine.IndexOf("Select ")..].Replace("Select ", "").Trim();
                     value = "{Var Name=" + varName + "}";
-                    VariableString v = new VariableString();
-                    v.Description = GingerDicser.GetTermResValue(eTermResKey.Variable) + " added by UFT Script";
-                    v.Name = varName;
-                    v.Value = value;
+                    VariableString v = new VariableString
+                    {
+                        Description = GingerDicser.GetTermResValue(eTermResKey.Variable) + " added by UFT Script",
+                        Name = varName,
+                        Value = value
+                    };
                     mBusinessFlow.AddVariable(v);
                 }
 
                 // Add Action to biz flow
-                ActGenElement act = new ActGenElement();
-                act.Value = value;
-                act.LocateBy = eLocateBy.ByXPath;
-                act.LocateValue = xpath;
-                act.GenElementAction = ActGenElement.eGenElementAction.SetValue;
-                act.Description = "Select value from " + SetValueinObject + " " + type;
+                ActGenElement act = new ActGenElement
+                {
+                    Value = value,
+                    LocateBy = eLocateBy.ByXPath,
+                    LocateValue = xpath,
+                    GenElementAction = ActGenElement.eGenElementAction.SetValue,
+                    Description = "Select value from " + SetValueinObject + " " + type
+                };
                 mBusinessFlow.AddAct(act);
                 CCL.Converted = "New Action - ActGenElement.SetValue : LocateValue=" + act.LocateValue + ", Value=" + act.Value;
                 CCL.Status = ConvertedCodeLine.eStatus.ConvertedToScript;
@@ -856,9 +889,11 @@ namespace Ginger.Imports.QTP
                 string URL = GetStringBetween(CodeLine, ".Navigate(\"", "\")");
 
                 // Add Action to biz flow
-                ActGotoURL act = new ActGotoURL();
-                act.Value = URL;
-                act.Description = "Navigate to URL";
+                ActGotoURL act = new ActGotoURL
+                {
+                    Value = URL,
+                    Description = "Navigate to URL"
+                };
                 mBusinessFlow.AddAct(act);
                 CCL.Converted = "New Action - ActGotoURL : " + URL;
                 CCL.Status = ConvertedCodeLine.eStatus.ConvertedToScript;
@@ -871,9 +906,11 @@ namespace Ginger.Imports.QTP
                 string URL = GetStringBetween(CodeLine, "iexplore.exe\",\"", "\"");
 
                 // Add Action to biz flow
-                ActGotoURL act = new ActGotoURL();
-                act.Value = URL;
-                act.Description = "Navigate to URL";
+                ActGotoURL act = new ActGotoURL
+                {
+                    Value = URL,
+                    Description = "Navigate to URL"
+                };
                 mBusinessFlow.AddAct(act);
                 CCL.Converted = "New Action - ActGotoURL : " + URL;
                 CCL.Status = ConvertedCodeLine.eStatus.ConvertedToScript;
@@ -881,8 +918,10 @@ namespace Ginger.Imports.QTP
             else if (CodeLine.Contains("fDBCheck") || CodeLine.Contains("fDBActivities")) //ASAP function
             {
                 // Temp until we read the SQL from common.xls
-                ActDBValidation act = new ActDBValidation();
-                act.Description = "DB Action-Configure Manually";
+                ActDBValidation act = new ActDBValidation
+                {
+                    Description = "DB Action-Configure Manually"
+                };
                 mBusinessFlow.AddAct(act);
                 CCL.Converted = "New Action - DB Action ";
                 CCL.Status = ConvertedCodeLine.eStatus.ConvertedToScript;
@@ -906,7 +945,7 @@ namespace Ginger.Imports.QTP
 
             if ((Pos2 - Pos1) > 0)
             {
-                str = STR.Substring(Pos1, Pos2 - Pos1);
+                str = STR[Pos1..Pos2];
                 return str;
             }
             else

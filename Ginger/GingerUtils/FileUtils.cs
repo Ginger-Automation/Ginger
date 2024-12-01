@@ -40,7 +40,7 @@ namespace GingerUtils
         /// <param name="targetDirectory">target directory where renamed file need to be saaved</param>
         /// <param name="extension">Optional extension for renamed file, default is old</param>
         /// <returns></returns>
-        public static bool RenameFile(string sourceFilePath, string targetDirectory, string extension= "Old")
+        public static bool RenameFile(string sourceFilePath, string targetDirectory, string extension = "Old")
         {
             try
             {

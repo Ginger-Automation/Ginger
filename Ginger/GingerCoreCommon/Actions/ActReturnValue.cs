@@ -76,28 +76,29 @@ namespace Amdocs.Ginger.Repository
         public string ParamCalculated { get; set; }
 
         [IsSerializedForLocalRepository]
-        public string Param 
+        public string Param
         {
-            get { return mParam; } 
-            set { if (mParam != value) { mParam = value; OnPropertyChanged(Fields.Param); } } 
+            get { return mParam; }
+            set { if (mParam != value) { mParam = value; OnPropertyChanged(Fields.Param); } }
         }
 
         private string mDescription;
 
         [IsSerializedForLocalRepository]
-        public string Description { 
-            get 
-            { 
-                return mDescription; 
-            } 
-            set 
-            { 
-                if (mDescription != value) 
-                { 
-                    mDescription = value; 
-                    OnPropertyChanged(Fields.Description); 
-                } 
-            } 
+        public string Description
+        {
+            get
+            {
+                return mDescription;
+            }
+            set
+            {
+                if (mDescription != value)
+                {
+                    mDescription = value;
+                    OnPropertyChanged(Fields.Description);
+                }
+            }
         }
 
         public string PathCalculated { get; set; }

@@ -52,7 +52,7 @@ namespace Ginger.Reports
 
         protected string BizFlowHTMLColumns(BusinessFlowReport BFR)
         {
-            BusinessFlow BF = (BusinessFlow)BFR.GetBusinessFlow();
+            BusinessFlow BF = BFR.GetBusinessFlow();
             XElement xe = new XElement("div", BF.Name);
             xe.Add(new XElement("td", BF.ElapsedSecs));
 

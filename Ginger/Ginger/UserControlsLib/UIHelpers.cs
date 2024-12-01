@@ -51,8 +51,7 @@ namespace Ginger.Util
             }
 
             //check if the parent matches the type we're looking for
-            T parent = parentObject as T;
-            if (parent != null)
+            if (parentObject is T parent)
             {
                 return parent;
             }
@@ -79,9 +78,8 @@ namespace Ginger.Util
                 return null;
             }
 
-            ContentElement contentElement = child as ContentElement;
 
-            if (contentElement != null)
+            if (child is ContentElement contentElement)
             {
                 DependencyObject parent = ContentOperations.GetParent(contentElement);
                 if (parent != null)
@@ -89,8 +87,7 @@ namespace Ginger.Util
                     return parent;
                 }
 
-                FrameworkContentElement fce = contentElement as FrameworkContentElement;
-                return fce != null ? fce.Parent : null;
+                return contentElement is FrameworkContentElement fce ? fce.Parent : null;
             }
 
             //if it's not a ContentElement, rely on VisualTreeHelper
@@ -149,9 +146,7 @@ namespace Ginger.Util
         public static T TryFindFromPoint<T>(UIElement reference, Point point)
           where T : DependencyObject
         {
-            DependencyObject element = reference.InputHitTest(point)
-                                         as DependencyObject;
-            if (element == null)
+            if (reference.InputHitTest(point) is not DependencyObject element)
             {
                 return null;
             }
@@ -189,8 +184,7 @@ namespace Ginger.Util
             {
                 var child = VisualTreeHelper.GetChild(parent, i);
                 // If the child is not of the request child type child
-                T childType = child as T;
-                if (childType == null)
+                if (child is not T childType)
                 {
                     // recursively drill down the tree
                     foundChild = FindChild<T>(child, childName);
@@ -203,9 +197,8 @@ namespace Ginger.Util
                 }
                 else if (!string.IsNullOrEmpty(childName))
                 {
-                    var frameworkElement = child as FrameworkElement;
                     // If the child's name is set for search
-                    if (frameworkElement != null && frameworkElement.Name == childName)
+                    if (child is FrameworkElement frameworkElement && frameworkElement.Name == childName)
                     {
                         // if the child's name is of the request name
                         foundChild = (T)child;
@@ -242,8 +235,7 @@ namespace Ginger.Util
             }
 
             // check if the parent matches the type we’re looking for
-            T parent = parentObject as T;
-            if (parent != null)
+            if (parentObject is T parent)
             {
                 return parent;
             }

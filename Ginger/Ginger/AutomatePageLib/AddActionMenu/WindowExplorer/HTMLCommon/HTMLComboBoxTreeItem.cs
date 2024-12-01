@@ -35,32 +35,31 @@ namespace Ginger.WindowExplorer.HTMLCommon
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-            list.Add(new ActGenElement()
-            {
-                Description = "Select From Drop Down Value of '" + this.ElementInfo.ElementTitle + "' ",
-                GenElementAction = ActGenElement.eGenElementAction.SelectFromDropDown
-            });
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Get Value of '" + this.ElementInfo.ElementTitle + "' ",
-                GenElementAction = ActGenElement.eGenElementAction.GetValue
-            });
-
-            list.Add(new ActGenElement()
-            {
-                //TODO: make me work
-                Description = "Validate All Options of '" + this.ElementInfo.ElementTitle + "'",
-                GenElementAction = ActGenElement.eGenElementAction.GetValue
-            });
-
-            list.Add(new ActGenElement()
-            {
-                //TODO: make me work
-                Description = "Select From Drop Down (By Index) Value of '" + this.ElementInfo.ElementTitle + "'",
-                GenElementAction = ActGenElement.eGenElementAction.SelectFromDropDownByIndex
-            });
+            ObservableList<Act> list =
+            [
+                new ActGenElement()
+                {
+                    Description = "Select From Drop Down Value of '" + this.ElementInfo.ElementTitle + "' ",
+                    GenElementAction = ActGenElement.eGenElementAction.SelectFromDropDown
+                },
+                new ActGenElement()
+                {
+                    Description = "Get Value of '" + this.ElementInfo.ElementTitle + "' ",
+                    GenElementAction = ActGenElement.eGenElementAction.GetValue
+                },
+                new ActGenElement()
+                {
+                    //TODO: make me work
+                    Description = "Validate All Options of '" + this.ElementInfo.ElementTitle + "'",
+                    GenElementAction = ActGenElement.eGenElementAction.GetValue
+                },
+                new ActGenElement()
+                {
+                    //TODO: make me work
+                    Description = "Select From Drop Down (By Index) Value of '" + this.ElementInfo.ElementTitle + "'",
+                    GenElementAction = ActGenElement.eGenElementAction.SelectFromDropDownByIndex
+                },
+            ];
 
             AddGeneralHTMLActions(list);
             return list;

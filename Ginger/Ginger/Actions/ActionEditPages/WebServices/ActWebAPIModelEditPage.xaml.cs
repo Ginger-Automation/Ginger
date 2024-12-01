@@ -77,8 +77,10 @@ namespace Ginger.Actions.WebServices
 
         private void SetFieldsGrid()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = []
+            };
             APIModelParamsValueUCGrid.AddToolbarTool(eImageType.DataSource, "Map API Parameters to DataSource", new RoutedEventHandler(MapOutputToDataSource));
 
             view.GridColsView.Add(new GridColView() { Field = nameof(EnhancedActInputValue.Param), Header = "Parameter", WidthWeight = 20, ReadOnly = true });
@@ -101,11 +103,7 @@ namespace Ginger.Actions.WebServices
                 int currNumOfActParams = mAct.APIModelParamsValue.Count;
                 int numOfAPIParams = 0;
 
-                List<EnhancedActInputValue> OldAPIModelParamsValue = new List<EnhancedActInputValue>();
-                foreach (EnhancedActInputValue value in mAct.APIModelParamsValue)
-                {
-                    OldAPIModelParamsValue.Add(value);
-                }
+                List<EnhancedActInputValue> OldAPIModelParamsValue = [.. mAct.APIModelParamsValue];
 
                 mAct.APIModelParamsValue.Clear();
 
@@ -115,7 +113,7 @@ namespace Ginger.Actions.WebServices
                     {
                         numOfAPIParams++;
                         EnhancedActInputValue paramToUpdate = OldAPIModelParamsValue.FirstOrDefault(x => x.ParamGuid == AMDP.Guid);
-                        
+
                         if (paramToUpdate != null) //Param already been in the action list, just update his values
                         {
                             paramToUpdate.OptionalValues.Clear();
@@ -137,8 +135,10 @@ namespace Ginger.Actions.WebServices
                         else //Param is new add it to the list
                         {
                             ShowNotification = true;
-                            paramToUpdate = new EnhancedActInputValue();
-                            paramToUpdate.ParamGuid = AMDP.Guid;
+                            paramToUpdate = new EnhancedActInputValue
+                            {
+                                ParamGuid = AMDP.Guid
+                            };
                             foreach (OptionalValue OP in AMDP.OptionalValuesList)
                             {
                                 paramToUpdate.OptionalValues.Add(OP.Value);
@@ -261,7 +261,7 @@ namespace Ginger.Actions.WebServices
 
         private void UpdateOptionalValuesAndParams(bool showParametersUpdatedMessage = false)
         {
-            APIModelTextBox.Text = AAMB.FilePath.Substring(0, AAMB.FilePath.LastIndexOf("\\")).Substring(mAPIModelFolder.FolderFullPath.Length) + @"\" + AAMB.ItemName;
+            APIModelTextBox.Text = AAMB.FilePath[..AAMB.FilePath.LastIndexOf("\\")][mAPIModelFolder.FolderFullPath.Length..] + @"\" + AAMB.ItemName;
             if (UpdateParamsEnhancedLists(AAMB.MergedParamsList) && showParametersUpdatedMessage)
             {
                 Reporter.ToUser(eUserMsgKey.APIParametersListUpdated);
@@ -336,9 +336,11 @@ namespace Ginger.Actions.WebServices
                 string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(requestContent);
                 if (System.IO.File.Exists(tempFilePath))
                 {
-                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
-                    docPage.Width = 800;
-                    docPage.Height = 800;
+                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty)
+                    {
+                        Width = 800,
+                        Height = 800
+                    };
                     docPage.ShowAsWindow("Raw Request Preview");
                     System.IO.File.Delete(tempFilePath);
                     return;

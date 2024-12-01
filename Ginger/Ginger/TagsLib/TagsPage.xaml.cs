@@ -72,7 +72,7 @@ namespace Ginger.TagsLib
                 }
                 else
                 {
-                    mTags = new ObservableList<RepositoryItemTag>();
+                    mTags = [];
                 }
             }
             xTagsGrid.DataSourceList = mTags;
@@ -82,11 +82,13 @@ namespace Ginger.TagsLib
         {
             foreach (RepositoryItemTag tag in mTags)
             {
-                RepositoryItemTag newTag = new RepositoryItemTag();
-                newTag.Guid = tag.Guid;
-                newTag.Name = tag.Name;
-                newTag.Description = tag.Description;
-                newTag.ItemName = tag.ItemName;
+                RepositoryItemTag newTag = new RepositoryItemTag
+                {
+                    Guid = tag.Guid,
+                    Name = tag.Name,
+                    Description = tag.Description,
+                    ItemName = tag.ItemName
+                };
             }
         }
 
@@ -104,10 +106,14 @@ namespace Ginger.TagsLib
                 xTagsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddButton));
             }
 
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = RepositoryItemTag.Fields.Name, Header = "Name", WidthWeight = 40 });
-            defView.GridColsView.Add(new GridColView() { Field = RepositoryItemTag.Fields.Description, Header = "Description", WidthWeight = 40 });
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = RepositoryItemTag.Fields.Name, Header = "Name", WidthWeight = 40 },
+                new GridColView() { Field = RepositoryItemTag.Fields.Description, Header = "Description", WidthWeight = 40 },
+            ]
+            };
             xTagsGrid.SetAllColumnsDefaultView(defView);
             xTagsGrid.InitViewItems();
 
@@ -125,11 +131,12 @@ namespace Ginger.TagsLib
             this.Height = 400;
             this.Width = 400;
 
-            Button saveBtn = new Button();
-            saveBtn.Content = "Save";
+            Button saveBtn = new Button
+            {
+                Content = "Save"
+            };
             saveBtn.Click += new RoutedEventHandler(saveBtn_Click);
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(saveBtn);
+            ObservableList<Button> winButtons = [saveBtn];
 
             GingerCore.General.LoadGenericWindow(ref genWin, null, eWindowShowStyle.Free, "Solution Tags Edit Page", this, winButtons, closeEventHandler: closeBtn_Click);
         }

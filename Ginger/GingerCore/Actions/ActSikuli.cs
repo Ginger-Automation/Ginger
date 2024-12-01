@@ -89,7 +89,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eActSikuliOperation)GetOrCreateInputParam<eActSikuliOperation>(nameof(ActSikuliOperation), eActSikuliOperation.Click);
+                return GetOrCreateInputParam<eActSikuliOperation>(nameof(ActSikuliOperation), eActSikuliOperation.Click);
             }
             set
             {
@@ -167,7 +167,7 @@ namespace GingerCore.Actions
 
         public override eImageType Image { get { return eImageType.BullsEye; } }
 
-        private List<UIAuto.AutomationElement> lstWindows = new List<UIAuto.AutomationElement>();
+        private List<UIAuto.AutomationElement> lstWindows = [];
 
         public static new partial class Fields
         {
@@ -314,8 +314,10 @@ namespace GingerCore.Actions
                             string txtOutput = GingerOCR.GingerOcrOperations.ReadTextFromImage(sikuliPattern.ImagePath);
                             if (!string.IsNullOrEmpty(txtOutput))
                             {
-                                Dictionary<string, object> dctOutput = new Dictionary<string, object>();
-                                dctOutput.Add("output", txtOutput);
+                                Dictionary<string, object> dctOutput = new Dictionary<string, object>
+                                {
+                                    { "output", txtOutput }
+                                };
                                 AddToOutputValues(dctOutput);
                             }
                             else
@@ -360,7 +362,7 @@ namespace GingerCore.Actions
             }
         }
 
-        List<string> ActiveProcessWindowsList = new List<string>();
+        List<string> ActiveProcessWindowsList = [];
 
         public List<string> ActiveProcessWindows
         {
@@ -373,8 +375,10 @@ namespace GingerCore.Actions
 
         void RefreshActiveProcessesTitles()
         {
-            UIAComWrapperHelper uiHelper = new UIAComWrapperHelper();
-            uiHelper.mPlatform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Windows;
+            UIAComWrapperHelper uiHelper = new UIAComWrapperHelper
+            {
+                mPlatform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Windows
+            };
             List<object> lstAppWindow = uiHelper.GetListOfWindows();
             ActiveProcessWindowsList.Clear();
             lstWindows.Clear();
@@ -504,7 +508,7 @@ namespace GingerCore.Actions
             }
             else
             {
-                if (result < 0 || result > 100)
+                if (result is < 0 or > 100)
                 {
                     Error = "Percentage Similarity should be between 0-100";
                     return false;
@@ -549,7 +553,7 @@ namespace GingerCore.Actions
 
         private List<int> GetCustomResolutionValues()
         {
-            List<int> lstVal = new List<int>();
+            List<int> lstVal = [];
             switch (ChangeAppWindowSize)
             {
                 case eChangeAppWindowSize.Resolution640x480:

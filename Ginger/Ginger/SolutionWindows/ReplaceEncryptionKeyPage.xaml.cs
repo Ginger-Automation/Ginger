@@ -69,13 +69,16 @@ namespace Ginger.SolutionWindows
 
         private void SetGridsView()
         {
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-
-            defView.GridColsView.Add(new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.ParentType), WidthWeight = 5, Header = "Item Type", ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.Name), WidthWeight = 8, Header = "Item Name", ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.ParentName), WidthWeight = 7, Header = "Parent Name", ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.Password), WidthWeight = 10, Header = "Value" });
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.ParentType), WidthWeight = 5, Header = "Item Type", ReadOnly = true },
+                new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.Name), WidthWeight = 8, Header = "Item Name", ReadOnly = true },
+                new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.ParentName), WidthWeight = 7, Header = "Parent Name", ReadOnly = true },
+                new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.Password), WidthWeight = 10, Header = "Value" },
+            ]
+            };
             xSolutionPasswordsParamtersGrid.SetAllColumnsDefaultView(defView);
             xSolutionPasswordsParamtersGrid.InitViewItems();
             xSolutionPasswordsParamtersGrid.SetTitleLightStyle = true;
@@ -96,28 +99,36 @@ namespace Ginger.SolutionWindows
                 }
             }
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            uOkBtn = new Button();
-            uOkBtn.Content = "Ok";
+            ObservableList<Button> winButtons = [];
+            uOkBtn = new Button
+            {
+                Content = "Ok"
+            };
             uOkBtn.Click += new RoutedEventHandler(OkBtn_Click);
             uOkBtn.Visibility = Visibility.Collapsed;
 
-            uSaveKeyBtn = new Button();
-            uSaveKeyBtn.Content = "Save Key";
+            uSaveKeyBtn = new Button
+            {
+                Content = "Save Key"
+            };
             uSaveKeyBtn.Click += new RoutedEventHandler(SaveKeyBtn_Click);
 
-            uCloseBtn = new Button();
-            uCloseBtn.Content = "Cancel";
+            uCloseBtn = new Button
+            {
+                Content = "Cancel"
+            };
             uCloseBtn.Click += new RoutedEventHandler(CloseBtn_Click);
             winButtons.Add(uCloseBtn);
             winButtons.Add(uSaveKeyBtn);
             winButtons.Add(uOkBtn);
-            loaderElement = new ImageMakerControl();
-            loaderElement.Name = "xProcessingImage";
-            loaderElement.Height = 30;
-            loaderElement.Width = 30;
-            loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
-            loaderElement.Visibility = Visibility.Collapsed;
+            loaderElement = new ImageMakerControl
+            {
+                Name = "xProcessingImage",
+                Height = 30,
+                Width = 30,
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing,
+                Visibility = Visibility.Collapsed
+            };
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Replace/Forget Encryption key", this, winButtons, false, "Cancel", CloseBtn_Click, false, loaderElement);
             return validKeyAdded;
@@ -459,7 +470,7 @@ namespace Ginger.SolutionWindows
 
         private async Task LoadEncryptedParamtersList()
         {
-            ObservableList<GingerCore.Variables.VariablePasswordString> variables = new ObservableList<GingerCore.Variables.VariablePasswordString>();
+            ObservableList<GingerCore.Variables.VariablePasswordString> variables = [];
             await Task.Run(() =>
             {
                 this.ShowLoader();
@@ -598,12 +609,14 @@ namespace Ginger.SolutionWindows
 
         private VariablePasswordString CreatePasswordVariable(string itemName, string parentType, string parentName, Guid guid)
         {
-            VariablePasswordString variablePassword = new VariablePasswordString();
-            variablePassword.Name = itemName;
-            variablePassword.ParentType = parentType;
-            variablePassword.ParentName = parentName;
-            variablePassword.Guid = guid;
-            variablePassword.Password = "";
+            VariablePasswordString variablePassword = new VariablePasswordString
+            {
+                Name = itemName,
+                ParentType = parentType,
+                ParentName = parentName,
+                Guid = guid,
+                Password = ""
+            };
             return variablePassword;
         }
 
@@ -619,7 +632,7 @@ namespace Ginger.SolutionWindows
                     varReencryptedCount += await ReEncryptGlobalVariables(oldKey);
                     varReencryptedCount += await ReEncryptEnvironmentPasswordValues(oldKey);
                     varReencryptedCount += await ReEncryptRunsetOperationsPassowrdValues(oldKey);
-                    varReencryptedCount += await ReEncryptSharedRepositoryPasswordValues(oldKey);                  
+                    varReencryptedCount += await ReEncryptSharedRepositoryPasswordValues(oldKey);
                 }
                 catch (Exception ex)
                 {

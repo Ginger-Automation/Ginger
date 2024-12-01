@@ -80,12 +80,11 @@ namespace GingerCore.Actions
 
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> ActionGrid = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> ActionGrid = [];
 
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
         {
-            List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>();
-            list.Add(ActionGrid);
+            List<ObservableList<ActInputValue>> list = [ActionGrid];
             return list;
         }
 

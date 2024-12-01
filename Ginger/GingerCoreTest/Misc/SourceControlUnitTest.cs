@@ -80,7 +80,7 @@ namespace UnitTests.NonUITests
         {
             //Arrange
             TestConnection(SourceControlURL, SourceControlUser, SourceControlPass, SourceControlType);
-            ObservableList<SolutionInfo> SourceControlSolutions = new ObservableList<SolutionInfo>();
+            ObservableList<SolutionInfo> SourceControlSolutions = [];
 
             //Act
             SourceControlSolutions = SourceControl.GetProjectsList();
@@ -143,9 +143,8 @@ namespace UnitTests.NonUITests
             File.WriteAllText(Path.Combine(workingDirectory, "Dummy.txt"), File.ReadAllText(Path.Combine(workingDirectory, "Dummy.txt")).Replace("123", "1234"));
             string error = string.Empty;
             bool checkin = false;
-            List<string> pathsToCommit = new List<string>();
-            pathsToCommit.Add(Path.Combine(workingDirectory, "Dummy.txt"));
-            List<string> conflictsPaths = new List<string>();
+            List<string> pathsToCommit = [Path.Combine(workingDirectory, "Dummy.txt")];
+            List<string> conflictsPaths = [];
 
             //Act
             checkin = SourceControl.CommitAndCheckinChanges(pathsToCommit, "aaa", ref error, ref conflictsPaths, false);

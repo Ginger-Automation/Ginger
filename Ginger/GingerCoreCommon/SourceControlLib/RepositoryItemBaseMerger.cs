@@ -20,8 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Amdocs.Ginger.Repository;
 
 #nullable enable
@@ -178,7 +176,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     throw new InvalidOperationException($"No appropriate {nameof(Comparison)} found for merging type {type.FullName}.");
                 }
 
-                System.Collections.ArrayList items = new();
+                System.Collections.ArrayList items = [];
 
                 foreach (Comparison itemComparison in comparisonForMerge.ChildComparisons)
                 {
@@ -186,7 +184,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     {
                         items.Add(itemComparison.Data);
                     }
-                    else if (itemComparison.State == Comparison.StateType.Added || itemComparison.State == Comparison.StateType.Deleted)
+                    else if (itemComparison.State is Comparison.StateType.Added or Comparison.StateType.Deleted)
                     {
                         if (itemComparison.Selected && IsUniqueRIBItem(items, itemComparison.Data))
                         {
@@ -212,7 +210,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
 
         private static bool IsUniqueRIBItem(System.Collections.IEnumerable itemCollection, object? item)
         {
-            if(item == null || item is not RepositoryItemBase)
+            if (item is null or not RepositoryItemBase)
             {
                 return true;
             }
@@ -220,9 +218,9 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             RepositoryItemBase ribItem = (RepositoryItemBase)item;
 
             bool isUnique = true;
-            foreach(object? collectionItem in itemCollection)
+            foreach (object? collectionItem in itemCollection)
             {
-                if(collectionItem is RepositoryItemBase ribCollectionItem && ribCollectionItem.Guid == ribItem.Guid)
+                if (collectionItem is RepositoryItemBase ribCollectionItem && ribCollectionItem.Guid == ribItem.Guid)
                 {
                     isUnique = false;
                     break;

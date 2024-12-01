@@ -175,7 +175,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
         }
 
-        private ObservableList<DiameterAVP> mAvpList = new ObservableList<DiameterAVP>();
+        private ObservableList<DiameterAVP> mAvpList = [];
         public ObservableList<DiameterAVP> AvpList
         {
             get

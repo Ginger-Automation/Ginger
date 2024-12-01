@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Ginger.UserControls;
 using GingerCore.Environments;
 using System.Windows;
@@ -61,12 +60,16 @@ namespace Ginger.Environments
             grdAppLogins.ShowRefresh = Visibility.Collapsed;
             grdAppLogins.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddLogin));
             //Set the Data Grid columns
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(LoginUser.Type), Header = "Type", WidthWeight = 150 }); //TODO: to show types in combo box?
-            view.GridColsView.Add(new GridColView() { Field = nameof(LoginUser.UserProfileName), Header = "User Profile Name", WidthWeight = 200 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(LoginUser.Username), Header = "User Name", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(LoginUser.Password), Header = "Password", WidthWeight = 150 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(LoginUser.Type), Header = "Type", WidthWeight = 150 }, //TODO: to show types in combo box?
+                new GridColView() { Field = nameof(LoginUser.UserProfileName), Header = "User Profile Name", WidthWeight = 200 },
+                new GridColView() { Field = nameof(LoginUser.Username), Header = "User Name", WidthWeight = 150 },
+                new GridColView() { Field = nameof(LoginUser.Password), Header = "Password", WidthWeight = 150 },
+            ]
+            };
             grdAppLogins.SetAllColumnsDefaultView(view);
             grdAppLogins.InitViewItems();
         }

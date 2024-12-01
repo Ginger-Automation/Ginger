@@ -19,17 +19,17 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.Configurations;
+using Ginger.ExternalConfigurations;
 using Ginger.GeneralWindows;
 using Ginger.Reports;
 using Ginger.SolutionWindows;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.TagsLib;
 using Ginger.TwoLevelMenuLib;
+using GingerCore;
 using GingerWPF.UserControlsLib;
 using System;
 using System.Windows.Controls;
-using GingerCore;
-using Ginger.ExternalConfigurations;
 
 namespace Ginger.ConfigurationsLib
 {
@@ -120,8 +120,10 @@ namespace Ginger.ConfigurationsLib
 
         private static Page AgentsList()
         {
-            AgentsFolderTreeItem AgentsRoot = new AgentsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<GingerCore.Agent>());
-            AgentsRoot.IsGingerDefualtFolder = true;
+            AgentsFolderTreeItem AgentsRoot = new AgentsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<GingerCore.Agent>())
+            {
+                IsGingerDefualtFolder = true
+            };
             SingleItemTreeViewExplorerPage agentsPage = new SingleItemTreeViewExplorerPage("Agents", eImageType.Agent, AgentsRoot, AgentsRoot.SaveAllTreeFolderItemsHandler, AgentsRoot.AddItemHandler, isSaveButtonHidden: true, showTitle: true);
             return agentsPage;
         }
@@ -134,9 +136,11 @@ namespace Ginger.ConfigurationsLib
 
         private static Page ReportsList()
         {
-            HTMLGingerReportsTreeItem reportsRoot = new HTMLGingerReportsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<HTMLReportConfiguration>());
-            reportsRoot.IsGingerDefualtFolder = true;
-            SingleItemTreeViewExplorerPage reportsPage = new SingleItemTreeViewExplorerPage("Reports Templates", eImageType.Report, reportsRoot, reportsRoot.SaveAllTreeFolderItemsHandler, reportsRoot.AddItemHandler, isSaveButtonHidden: true, showTitle:true);
+            HTMLGingerReportsTreeItem reportsRoot = new HTMLGingerReportsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<HTMLReportConfiguration>())
+            {
+                IsGingerDefualtFolder = true
+            };
+            SingleItemTreeViewExplorerPage reportsPage = new SingleItemTreeViewExplorerPage("Reports Templates", eImageType.Report, reportsRoot, reportsRoot.SaveAllTreeFolderItemsHandler, reportsRoot.AddItemHandler, isSaveButtonHidden: true, showTitle: true);
             return reportsPage;
         }
 

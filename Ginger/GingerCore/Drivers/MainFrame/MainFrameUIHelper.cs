@@ -91,15 +91,15 @@ namespace GingerCore.Drivers.MainFrame
 
             if (XF.Attributes.Protected && !String.IsNullOrEmpty(XF.Text))
             {
-                return (Control)AddLabel(XF);
+                return AddLabel(XF);
             }
             else if (XF.Attributes.FieldType == "Hidden")
             {
-                return (Control)AddPasswordBox(XF);
+                return AddPasswordBox(XF);
             }
             else
             {
-                return (Control)AddTextBox(XF);
+                return AddTextBox(XF);
             }
         }
 
@@ -112,45 +112,25 @@ namespace GingerCore.Drivers.MainFrame
 
             if (XF.Attributes.Foreground != null)
             {
-                switch (XF.Attributes.Foreground)
+                return XF.Attributes.Foreground switch
                 {
-                    case "neutralBlack":
-                        return new SolidColorBrush(Colors.Black);
-
-                    case "blue":
-                        return new SolidColorBrush(Colors.SkyBlue);
-
-                    case "red":
-                        return new SolidColorBrush(Colors.Red);
-                    case "pink":
-                        return new SolidColorBrush(Colors.Pink);
-                    case "green":
-                        return new SolidColorBrush(Colors.Green);
-
-                    case "turquoise":
-                        return new SolidColorBrush(Colors.Turquoise);
-                    case "yellow":
-                        return new SolidColorBrush(Colors.Yellow);
-                    case "neutralWhite":
-                        return new SolidColorBrush(Colors.WhiteSmoke);
-                    case "black":
-                        return new SolidColorBrush(Colors.Black);
-                    case "deepBlue":
-                        return new SolidColorBrush(Colors.DeepSkyBlue);
-                    case "orange":
-                        return new SolidColorBrush(Colors.Orange);
-                    case "purple":
-                        return new SolidColorBrush(Colors.Purple);
-                    case "paleGreen":
-                        return new SolidColorBrush(Colors.PaleGreen);
-                    case "paleTurquoise":
-                        return new SolidColorBrush(Colors.PaleTurquoise);
-                    case "grey":
-                        return new SolidColorBrush(Colors.Gray);
-                    case "white":
-                    default:
-                        return new SolidColorBrush(Colors.White);
-                }
+                    "neutralBlack" => new SolidColorBrush(Colors.Black),
+                    "blue" => new SolidColorBrush(Colors.SkyBlue),
+                    "red" => new SolidColorBrush(Colors.Red),
+                    "pink" => new SolidColorBrush(Colors.Pink),
+                    "green" => new SolidColorBrush(Colors.Green),
+                    "turquoise" => new SolidColorBrush(Colors.Turquoise),
+                    "yellow" => new SolidColorBrush(Colors.Yellow),
+                    "neutralWhite" => new SolidColorBrush(Colors.WhiteSmoke),
+                    "black" => new SolidColorBrush(Colors.Black),
+                    "deepBlue" => new SolidColorBrush(Colors.DeepSkyBlue),
+                    "orange" => new SolidColorBrush(Colors.Orange),
+                    "purple" => new SolidColorBrush(Colors.Purple),
+                    "paleGreen" => new SolidColorBrush(Colors.PaleGreen),
+                    "paleTurquoise" => new SolidColorBrush(Colors.PaleTurquoise),
+                    "grey" => new SolidColorBrush(Colors.Gray),
+                    _ => new SolidColorBrush(Colors.White),
+                };
             }
             else
             {
@@ -170,17 +150,16 @@ namespace GingerCore.Drivers.MainFrame
             {
                 dots += ".";
             }
-            List<object> LO = new List<object>();
-
-            LO.Add(mDriver);
-            LO.Add(MFDW);
+            List<object> LO = [mDriver, MFDW];
             MFDW.HeightPerRow = ConsoleCanvas.ActualHeight / mDriver.MFRows;
 
-            Label l = new Label();
-            l.FontSize = 20;
-            l.Tag = LO;
-            l.Foreground = Brushes.White;
-            l.FontFamily = new FontFamily("Courier New");
+            Label l = new Label
+            {
+                FontSize = 20,
+                Tag = LO,
+                Foreground = Brushes.White,
+                FontFamily = new FontFamily("Courier New")
+            };
             ConsoleCanvas.Children.Add(l);
             l.Content = dots;
             l.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
@@ -341,11 +320,12 @@ namespace GingerCore.Drivers.MainFrame
                 {
                     try
                     {
-                        ActMainframeSetText AMFST = new ActMainframeSetText();
-
-                        AMFST.LocateBy = eLocateBy.ByCaretPosition;
-                        AMFST.LocateValue = XF.Location.position.ToString();
-                        AMFST.Value = Command;
+                        ActMainframeSetText AMFST = new ActMainframeSetText
+                        {
+                            LocateBy = eLocateBy.ByCaretPosition,
+                            LocateValue = XF.Location.position.ToString(),
+                            Value = Command
+                        };
                         if (mdriver.mBusinessFlow == null)
                         {
                             return;
@@ -359,7 +339,7 @@ namespace GingerCore.Drivers.MainFrame
                             AMFST.Description = "Set Text: " + Command;
                         }
 
-                        mdriver.mBusinessFlow.CurrentActivity.Acts.Add((Actions.Act)AMFST);
+                        mdriver.mBusinessFlow.CurrentActivity.Acts.Add(AMFST);
                     }
                     finally
                     {
@@ -384,11 +364,14 @@ namespace GingerCore.Drivers.MainFrame
 
         private static Label AddLabel(XMLScreenField x)
         {
-            Label l = new Label() { Content = x.Text };
-            l.BorderThickness = new Thickness(1);
-            l.BorderBrush = Brushes.White;
-            l.FontFamily = new FontFamily("Courier New");
-            l.Background = Brushes.Black;
+            Label l = new Label
+            {
+                Content = x.Text,
+                BorderThickness = new Thickness(1),
+                BorderBrush = Brushes.White,
+                FontFamily = new FontFamily("Courier New"),
+                Background = Brushes.Black
+            };
             return l;
         }
     }

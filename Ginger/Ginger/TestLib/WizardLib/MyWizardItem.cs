@@ -43,7 +43,7 @@ namespace GingerTest.WizardLib
         public eColor Color { get; set; }
 
         // Must have at least one row
-        public ObservableList<MyWizardSubItem> SubItems = new ObservableList<MyWizardSubItem>();
+        public ObservableList<MyWizardSubItem> SubItems = [];
 
     }
 }

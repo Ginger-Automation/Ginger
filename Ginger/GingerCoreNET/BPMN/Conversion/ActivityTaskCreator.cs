@@ -22,12 +22,8 @@ using Amdocs.Ginger.CoreNET.BPMN.Models;
 using Amdocs.Ginger.CoreNET.BPMN.Utils;
 using GingerCore;
 using GingerCore.Activities;
-using GingerCore.FlowControlLib;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
@@ -54,7 +50,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             }
             else
             {
-                tasksForActivity = new List<Task>() { CreateTasksForUIActivity() };
+                tasksForActivity = [CreateTasksForUIActivity()];
             }
 
             return tasksForActivity;
@@ -94,13 +90,13 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             Task responseSourceTask = targetAppParticipant.Process.AddTask<SendTask>(name: $"{_activity.ActivityName}_ResponseSource");
             Task responseTargetTask = consumerParticipant.Process.AddTask<ReceiveTask>(name: $"{_activity.ActivityName}_ResponseTarget");
 
-            IEnumerable<Task> tasksForActivity = new List<Task>()
-            {
+            IEnumerable<Task> tasksForActivity =
+            [
                 requestSourceTask,
                 requestTargetTask,
                 responseSourceTask,
                 responseTargetTask
-            };
+            ];
 
             Flow requestFlow = Flow.Create(name: $"{_activity.ActivityName}_IN", requestSourceTask, requestTargetTask);
 

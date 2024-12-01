@@ -289,7 +289,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Java }; } }
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return [ePlatformType.Java]; } }
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType actionPlatform)
         {
             if (actionPlatform == ePlatformType.Java)
@@ -378,40 +378,13 @@ namespace GingerCore.Actions
 
         private ActUIElement.eElementAction GetTableElementActionType(eTableAction controlAction)
         {
-            ActUIElement.eElementAction elementAction;
-            switch (controlAction)
+            var elementAction = controlAction switch
             {
-                case eTableAction.SetValue:
-                case eTableAction.SetFocus:
-                case eTableAction.GetValue:
-                case eTableAction.Toggle:
-                case eTableAction.Click:
-                case eTableAction.SelectDate:
-                case eTableAction.Type:
-                case eTableAction.WinClick:
-                case eTableAction.AsyncClick:
-                case eTableAction.IsCellEnabled:
-                case eTableAction.IsVisible:
-                case eTableAction.DoubleClick:
-                case eTableAction.MousePressAndRelease:
-                case eTableAction.SendKeys:
-                case eTableAction.IsChecked:
-                    elementAction = ActUIElement.eElementAction.TableCellAction;
-                    break;
-
-                case eTableAction.GetSelectedRow:
-                case eTableAction.ActivateRow:
-                    elementAction = ActUIElement.eElementAction.TableRowAction;
-                    break;
-
-                case eTableAction.GetRowCount:
-                    elementAction = ActUIElement.eElementAction.TableAction;
-                    break;
-                default:
-                    elementAction = ActUIElement.eElementAction.Unknown;
-                    break;
-            }
-
+                eTableAction.SetValue or eTableAction.SetFocus or eTableAction.GetValue or eTableAction.Toggle or eTableAction.Click or eTableAction.SelectDate or eTableAction.Type or eTableAction.WinClick or eTableAction.AsyncClick or eTableAction.IsCellEnabled or eTableAction.IsVisible or eTableAction.DoubleClick or eTableAction.MousePressAndRelease or eTableAction.SendKeys or eTableAction.IsChecked => ActUIElement.eElementAction.TableCellAction,
+                eTableAction.GetSelectedRow or eTableAction.ActivateRow => ActUIElement.eElementAction.TableRowAction,
+                eTableAction.GetRowCount => ActUIElement.eElementAction.TableAction,
+                _ => ActUIElement.eElementAction.Unknown,
+            };
             return elementAction;
         }
 

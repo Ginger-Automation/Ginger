@@ -23,9 +23,9 @@ namespace Ginger.Imports.UFT
     public class BusFunctionHandler
     {
         //Class level variables
-        public List<BusFunction> BusList = new List<BusFunction>();
-        public List<string> GuiFunctionList = new List<string>();
-        public List<string> ASAPBuiltInFunctionList = new List<string>();
+        public List<BusFunction> BusList = [];
+        public List<string> GuiFunctionList = [];
+        public List<string> ASAPBuiltInFunctionList = [];
 
         public List<BusFunction> ProcessBusScript(string sBUSfilePath)
         {
@@ -39,7 +39,7 @@ namespace Ginger.Imports.UFT
             ASAPBuiltInFunctionList.Add("fGuiClickPageActionButton");
             ASAPBuiltInFunctionList.Add("fGuiClickObject");
 
-            List<string> GuiList = new List<string>();
+            List<string> GuiList = [];
             string[] CodeLines = System.IO.File.ReadAllLines(sBUSfilePath);
             string BusFuncName = "";
             foreach (string CodeLine in CodeLines)
@@ -233,7 +233,7 @@ namespace Ginger.Imports.UFT
 
             if (Pos2 > Pos1)
             {
-                str = STR.Substring(Pos1, Pos2 - Pos1);
+                str = STR[Pos1..Pos2];
                 return str;
             }
 

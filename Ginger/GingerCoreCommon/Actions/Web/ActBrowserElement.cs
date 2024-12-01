@@ -262,7 +262,7 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue(nameof(NetworkUrl), value);
                 OnPropertyChanged(nameof(NetworkUrl));
             }
-        }       
+        }
 
         public string GetName()
         {
@@ -339,7 +339,7 @@ namespace GingerCore.Actions
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> UpdateOperationInputValues = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> UpdateOperationInputValues = [];
         public string sBlockedUrls
         {
             get

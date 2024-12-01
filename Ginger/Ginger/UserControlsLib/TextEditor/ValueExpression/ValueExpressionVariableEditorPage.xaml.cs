@@ -42,7 +42,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             mSelectedContentArgs = SelectedContentArgs;
             var = variable;
 
-            List<string> lst = new List<string>();
+            List<string> lst = [];
             List<string> lstExtraParams;
 
 
@@ -90,17 +90,17 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             string v = (string)VarsList.SelectedItem;
             if (!string.IsNullOrEmpty(v))
             {
-                string txt = mSelectedContentArgs.TextEditor.Text.Substring(0, mSelectedContentArgs.StartPos);
+                string txt = mSelectedContentArgs.TextEditor.Text[..mSelectedContentArgs.StartPos];
                 txt += "{Var Name=" + v + "}";
-                txt += mSelectedContentArgs.TextEditor.Text.Substring(mSelectedContentArgs.EndPos + 1);
+                txt += mSelectedContentArgs.TextEditor.Text[(mSelectedContentArgs.EndPos + 1)..];
                 mSelectedContentArgs.TextEditor.Text = txt;
             }
             else
             {
                 v = (string)VarsListExtraParams.SelectedItem;
-                string txt = mSelectedContentArgs.TextEditor.Text.Substring(0, mSelectedContentArgs.StartPos);
+                string txt = mSelectedContentArgs.TextEditor.Text[..mSelectedContentArgs.StartPos];
                 txt += "{Var Name=" + var.Name + ", " + v + "}";
-                txt += mSelectedContentArgs.TextEditor.Text.Substring(mSelectedContentArgs.EndPos + 1);
+                txt += mSelectedContentArgs.TextEditor.Text[(mSelectedContentArgs.EndPos + 1)..];
                 mSelectedContentArgs.TextEditor.Text = txt;
             }
 

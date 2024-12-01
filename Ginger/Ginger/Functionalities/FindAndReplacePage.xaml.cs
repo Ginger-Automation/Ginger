@@ -53,10 +53,10 @@ namespace Ginger.Functionalities
     {
         private GenericWindow _pageGenericWin = null;
         object mItemToSearchOn;
-        private ObservableList<FoundItem> mFoundItemsList = new ObservableList<FoundItem>();
-        private List<FindItemType> mMainItemsTypeList = new List<FindItemType>();
-        private List<FindItemType> mSubItemsTypeList = new List<FindItemType>();
-        private List<ItemToSearchIn> mItemsToSearchIn = new List<ItemToSearchIn>();
+        private ObservableList<FoundItem> mFoundItemsList = [];
+        private List<FindItemType> mMainItemsTypeList = [];
+        private List<FindItemType> mSubItemsTypeList = [];
+        private List<ItemToSearchIn> mItemsToSearchIn = [];
         private FindItemType mMainItemType;
         private Type mSubItemType;
         private string mFindWhat;
@@ -117,25 +117,32 @@ namespace Ginger.Functionalities
         {
             //# Find View 
             //GridViewDef mReplaceView = new GridViewDef(eGridView.ReplaceView.ToString());
-            GridViewDef mReplaceView = new GridViewDef(GridViewDef.DefaultViewName);
-            mReplaceView.GridColsView = new ObservableList<GridColView>();
-            mReplaceView.GridColsView.Add(new GridColView() { Field = nameof(FoundItem.IsSelected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["IsSelectedTemplate"] });
-            mReplaceView.GridColsView.Add(new GridColView() { Field = nameof(FoundItem.OriginObjectType), Header = "Item Type", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true });
-            mReplaceView.GridColsView.Add(new GridColView() { Field = nameof(FoundItem.OriginObjectName), Header = "Item Name", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true, Style = FindResource("@DataGridColumn_Bold") as Style });
-            mReplaceView.GridColsView.Add(new GridColView() { Field = nameof(FoundItem.ParentItemPath), Header = "Item Path", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true });
-            mReplaceView.GridColsView.Add(new GridColView() { Field = nameof(FoundItem.ItemParent), Header = "Item Parent", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true });
-            mReplaceView.GridColsView.Add(new GridColView() { Field = nameof(FoundItem.FoundField), Header = "Found Field", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true, Style = FindResource("@DataGridColumn_Bold") as Style });
-            mReplaceView.GridColsView.Add(new GridColView() { Field = nameof(FoundItem.FieldValue), Header = "Field Value", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true, Style = FindResource("@DataGridColumn_Bold") as Style });
-
-            //mReplaceView.GridColsView.Add(new GridColView() { Field = nameof(FoundItem.StatusIcon), Header = "", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, AllowSorting = true, MaxWidth = 20 });
-            mReplaceView.GridColsView.Add(new GridColView() { Field = nameof(FoundItem.Status), Header = "Status", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true });
-            mReplaceView.GridColsView.Add(new GridColView() { Field = "View Details", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["ViewDetailsButton"] });
+            GridViewDef mReplaceView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(FoundItem.IsSelected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["IsSelectedTemplate"] },
+                new GridColView() { Field = nameof(FoundItem.OriginObjectType), Header = "Item Type", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
+                new GridColView() { Field = nameof(FoundItem.OriginObjectName), Header = "Item Name", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true, Style = FindResource("@DataGridColumn_Bold") as Style },
+                new GridColView() { Field = nameof(FoundItem.ParentItemPath), Header = "Item Path", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
+                new GridColView() { Field = nameof(FoundItem.ItemParent), Header = "Item Parent", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
+                new GridColView() { Field = nameof(FoundItem.FoundField), Header = "Found Field", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true, Style = FindResource("@DataGridColumn_Bold") as Style },
+                new GridColView() { Field = nameof(FoundItem.FieldValue), Header = "Field Value", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true, Style = FindResource("@DataGridColumn_Bold") as Style },
+                //mReplaceView.GridColsView.Add(new GridColView() { Field = nameof(FoundItem.StatusIcon), Header = "", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, AllowSorting = true, MaxWidth = 20 });
+                new GridColView() { Field = nameof(FoundItem.Status), Header = "Status", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
+                new GridColView() { Field = "View Details", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["ViewDetailsButton"] },
+            ]
+            };
             xFoundItemsGrid.SetAllColumnsDefaultView(mReplaceView);
 
-            GridViewDef mFineView = new GridViewDef(eGridView.FindView.ToString());
-            mFineView.GridColsView = new ObservableList<GridColView>();
-            mFineView.GridColsView.Add(new GridColView() { Field = nameof(FoundItem.IsSelected), Visible = false });
-            mFineView.GridColsView.Add(new GridColView() { Field = nameof(FoundItem.Status), Visible = false });
+            GridViewDef mFineView = new GridViewDef(eGridView.FindView.ToString())
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(FoundItem.IsSelected), Visible = false },
+                new GridColView() { Field = nameof(FoundItem.Status), Visible = false },
+            ]
+            };
             xFoundItemsGrid.AddCustomView(mFineView);
 
 
@@ -242,7 +249,7 @@ namespace Ginger.Functionalities
             mMainItemsTypeList.Add(new FindItemType { Name = GingerDicser.GetTermResValue(eTermResKey.Activity), Type = typeof(Activity), GetItemsToSearchIn = GetActivitiesToSearchIn });
             mMainItemsTypeList.Add(new FindItemType { Name = "Action", Type = typeof(Act), HasSubType = true, GetItemsToSearchIn = GetActionsToSearchIn, GetSubItems = GetPlatformsActions });
             mMainItemsTypeList.Add(new FindItemType { Name = GingerDicser.GetTermResValue(eTermResKey.Variable), Type = typeof(VariableBase), HasSubType = true, GetItemsToSearchIn = GetVariablesToSearchIn, GetSubItems = GetVariables });
-            if (mContext == eContext.RunsetPage || mContext == eContext.SolutionPage)
+            if (mContext is eContext.RunsetPage or eContext.SolutionPage)
             {
                 mMainItemsTypeList.Add(new FindItemType { Name = GingerDicser.GetTermResValue(eTermResKey.RunSet), Type = typeof(RunSetActionBase), GetItemsToSearchIn = GetRunSetsToSearchIn });
             }
@@ -328,20 +335,12 @@ namespace Ginger.Functionalities
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
         {
-            string title;
-            switch (mContext)
+            var title = mContext switch
             {
-                case eContext.AutomatePage:
-                    title = string.Format("Find & Replace in '{0}' {1}", ((BusinessFlow)mItemToSearchOn).Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-                    break;
-                case eContext.RunsetPage:
-                    title = string.Format("Find in '{0}' {1}", WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
-                    break;
-                default:
-                    title = "Find & Replace";
-                    break;
-
-            }
+                eContext.AutomatePage => string.Format("Find & Replace in '{0}' {1}", ((BusinessFlow)mItemToSearchOn).Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)),
+                eContext.RunsetPage => string.Format("Find in '{0}' {1}", WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet)),
+                _ => "Find & Replace",
+            };
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this);
         }
 
@@ -747,7 +746,7 @@ namespace Ginger.Functionalities
                     break;
 
                 case eContext.AutomatePage:
-                    AddVariableFromBusinessFlowList(new ObservableList<BusinessFlow>() { ((BusinessFlow)mItemToSearchOn) });
+                    AddVariableFromBusinessFlowList([((BusinessFlow)mItemToSearchOn)]);
                     break;
 
                 case eContext.RunsetPage:
@@ -877,8 +876,8 @@ namespace Ginger.Functionalities
 
         private List<FindItemType> GetPlatformsActions()
         {
-            ObservableList<Act> Acts = new ObservableList<Act>();
-            List<FindItemType> ActsSubItemList = new List<FindItemType>();
+            ObservableList<Act> Acts = [];
+            List<FindItemType> ActsSubItemList = [];
 
             Assembly[] assemblies = { AppDomain.CurrentDomain.Load("GingerCore"), AppDomain.CurrentDomain.Load("GingerCoreCommon"), AppDomain.CurrentDomain.Load("GingerCoreNet") };
 
@@ -908,8 +907,8 @@ namespace Ginger.Functionalities
 
         private List<FindItemType> GetApplicationModels()
         {
-            ObservableList<ApplicationModelBase> ApplicationModels = new ObservableList<ApplicationModelBase>();
-            List<FindItemType> APMsSubItemList = new List<FindItemType>();
+            ObservableList<ApplicationModelBase> ApplicationModels = [];
+            List<FindItemType> APMsSubItemList = [];
 
             // !!! remove hard coded and use typeof
             AppDomain.CurrentDomain.Load("GingerCoreCommon");
@@ -939,8 +938,8 @@ namespace Ginger.Functionalities
 
         private List<FindItemType> GetVariables()
         {
-            ObservableList<VariableBase> Variables = new ObservableList<VariableBase>();
-            List<FindItemType> VariablesSubItemList = new List<FindItemType>();
+            ObservableList<VariableBase> Variables = [];
+            List<FindItemType> VariablesSubItemList = [];
 
             // !!!! remove hard code and use typeof
             AppDomain.CurrentDomain.Load("GingerCoreCommon");
@@ -1058,11 +1057,11 @@ namespace Ginger.Functionalities
 
             if (mContext == eContext.AutomatePage)
             {
-                if (Parent != null && Parent is BusinessFlow)
+                if (Parent is not null and BusinessFlow)
                 {
                     w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.Default, Parent as BusinessFlow);
                 }
-                else if (Parent != null && Parent is Activity)
+                else if (Parent is not null and Activity)
                 {
                     w = new VariableEditPage(variableToView, null, true, VariableEditPage.eEditMode.Default, Parent as Activity);
                 }
@@ -1071,7 +1070,7 @@ namespace Ginger.Functionalities
                     w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.SharedRepository, Parent);
                 }
             }
-            else if (Parent != null && (Parent is Solution || Parent is BusinessFlow || Parent is Activity))
+            else if (Parent is not null and (Solution or BusinessFlow or Activity))
             {
                 w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.FindAndReplace, Parent);
             }
@@ -1089,7 +1088,7 @@ namespace Ginger.Functionalities
         private void ViewActivity(FoundItem activityToViewFoundItem)
         {
             Activity activity = (Activity)activityToViewFoundItem.OriginObject;
-            RepositoryItemBase Parent = (RepositoryItemBase)activityToViewFoundItem.ParentItemToSave;
+            RepositoryItemBase Parent = activityToViewFoundItem.ParentItemToSave;
             GingerWPF.BusinessFlowsLib.ActivityPage w;
             if (mContext == eContext.SolutionPage)
             {
@@ -1113,7 +1112,7 @@ namespace Ginger.Functionalities
         private void ViewBusinessFlow(FoundItem businessFlowToViewFoundItem)
         {
             BusinessFlow businessFlow = (BusinessFlow)businessFlowToViewFoundItem.OriginObject;
-            RepositoryItemBase Parent = (RepositoryItemBase)businessFlowToViewFoundItem.ParentItemToSave;
+            RepositoryItemBase Parent = businessFlowToViewFoundItem.ParentItemToSave;
             GingerWPF.BusinessFlowsLib.BusinessFlowViewPage w = null;
             if (mContext == eContext.RunsetPage)
             {
@@ -1234,7 +1233,7 @@ namespace Ginger.Functionalities
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Faile to Save",ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Faile to Save", ex);
             }
         }
 

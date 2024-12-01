@@ -96,7 +96,7 @@ namespace GingerCore
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ErrorDetails> ErrorStringList = new ObservableList<ErrorDetails>();
+        public ObservableList<ErrorDetails> ErrorStringList = [];
 
         public override eImageType ItemImageType
         {
@@ -126,13 +126,11 @@ namespace GingerCore
         {
             get
             {
-                switch (HandlerType)
+                return HandlerType switch
                 {
-                    case eHandlerType.Popup_Handler:
-                        return GingerDicser.GetTermResValue(eTermResKey.Activity, "Pop Up Handler");
-                    default:
-                        return GingerDicser.GetTermResValue(eTermResKey.Activity, "Error Handler");
-                }
+                    eHandlerType.Popup_Handler => GingerDicser.GetTermResValue(eTermResKey.Activity, "Pop Up Handler"),
+                    _ => GingerDicser.GetTermResValue(eTermResKey.Activity, "Error Handler"),
+                };
             }
         }
     }

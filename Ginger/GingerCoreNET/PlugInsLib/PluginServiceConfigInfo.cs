@@ -34,6 +34,6 @@ namespace Amdocs.Ginger.Common.Repository.PlugInsLib
         [JsonProperty]
         public string DefaultValue { get; set; }
         [JsonProperty]
-        public List<string> OptionalValues { get; set; } = new List<string>();
+        public List<string> OptionalValues { get; set; } = [];
     }
 }

@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
@@ -48,15 +47,18 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             xUnmappedElementsGrid.SetTitleLightStyle = true;
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Selected), Header = "", StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTitle), Header = "Element Title", WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Value), WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementType), Header = "Element Type", WidthWeight = 60 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Path), WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.XPath), WidthWeight = 150 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ElementInfo.Selected), Header = "", StyleType = GridColView.eGridColStyleType.CheckBox },
+                new GridColView() { Field = nameof(ElementInfo.ElementTitle), Header = "Element Title", WidthWeight = 100 },
+                new GridColView() { Field = nameof(ElementInfo.Value), WidthWeight = 100 },
+                new GridColView() { Field = nameof(ElementInfo.ElementType), Header = "Element Type", WidthWeight = 60 },
+                new GridColView() { Field = nameof(ElementInfo.Path), WidthWeight = 100 },
+                new GridColView() { Field = nameof(ElementInfo.XPath), WidthWeight = 150 },
+            ]
+            };
 
             xUnmappedElementsGrid.AddToolbarTool("@Import_16x16.png", "Add Items to mapped list", new RoutedEventHandler(AddButtonClicked));
             xUnmappedElementsGrid.SetAllColumnsDefaultView(view);

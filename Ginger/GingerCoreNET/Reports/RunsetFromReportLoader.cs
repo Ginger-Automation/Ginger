@@ -59,7 +59,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
             if (runset != null && runset.IsVirtual)
             {
                 runset.Guid = runsetId;
-                runset.Description = $"ExecutionId: {runsetReport.GUID}\nExecutionTime: {runsetReport.StartTimeStamp.ToString("O")}";
+                runset.Description = $"ExecutionId: {runsetReport.GUID}\nExecutionTime: {runsetReport.StartTimeStamp:O}";
             }
 
             return runset;
@@ -103,12 +103,12 @@ namespace Amdocs.Ginger.CoreNET.Reports
             {
                 response = await _executionHandlerAPIClient.GetExecutionDetailsAsync(executionId, options);
             }
-            catch(InvalidOperationException)
+            catch (InvalidOperationException)
             {
                 //case: URL is invalid like, someDummyText
                 throw new InvalidOperationException($"Please make sure that the Execution Handler URL on the 'Execution Logger Configurations' page under 'Reports' tab is entered correctly.");
             }
-            catch(Exception)
+            catch (Exception)
             {
                 //case: URL has invalid host name like, https://someDummyHost/ExecuterHandlerService
                 //default case: Any other form of exception
@@ -121,7 +121,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
             }
 
             GingerExecConfig executionConfig = JsonSerializer.Deserialize<GingerExecConfig>(
-                response.RequestDetails.ExecutionConfigurations, 
+                response.RequestDetails.ExecutionConfigurations,
                 new JsonSerializerOptions()
                 {
                     Converters = { new JsonStringEnumConverter() }

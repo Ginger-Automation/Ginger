@@ -74,7 +74,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.VariablesLib
                 d0_1 = d0_1 / 10M;
             }
 
-            decimal d = d0_1 * (decimal)Math.Abs(Max - Min) + Min;
+            decimal d = d0_1 * Math.Abs(Max - Min) + Min;
 
             if (integer)
             {

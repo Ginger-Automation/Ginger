@@ -43,10 +43,8 @@ namespace GingerCore.Actions.VisualTesting
         void IVisualAnalyzer.Compare()
         {
             //TODO: use interface on the driver to get elements
-            if (mDriver is IVisualTestingDriver)
+            if (mDriver is IVisualTestingDriver d)
             {
-                IVisualTestingDriver d = (IVisualTestingDriver)mDriver;
-
                 string filename = mAct.GetFullFilePath(mAct.BaselineInfoFile);
                 VisualElementsInfo VE1 = VisualElementsInfo.Load(filename);
                 VE1.Bitmap = mAct.baseImage;

@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Common.SelfHealingLib;
-using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
@@ -141,8 +140,10 @@ namespace amdocs.ginger.GingerCoreNET
         public static void Init(IWorkSpaceEventHandler WSEH, bool startLocalGrid = true)
         {
 
-            mWorkSpace = new WorkSpace();
-            mWorkSpace.EventHandler = WSEH;
+            mWorkSpace = new WorkSpace
+            {
+                EventHandler = WSEH
+            };
             mWorkSpace.InitClassTypesDictionary();
             mWorkSpace.OSHelper = OperatingSystemBase.CurrentOperatingSystem;
             Instance.SharedRepositoryOperations = new SharedRepositoryOperations();
@@ -209,7 +210,7 @@ namespace amdocs.ginger.GingerCoreNET
                 }
 
                 WorkSpace.Instance.LocalGingerGrid?.Stop();
-                
+
                 Reporter.TelemetryQueueManager?.Dispose();
 
                 mWorkSpace = null;
@@ -373,7 +374,7 @@ namespace amdocs.ginger.GingerCoreNET
             if (RunningFromUnitTest)
             {
                 // happen when we close Ginger from unit tests
-                if (e.ExceptionObject is System.Runtime.InteropServices.InvalidComObjectException || e.ExceptionObject is System.Threading.Tasks.TaskCanceledException)
+                if (e.ExceptionObject is System.Runtime.InteropServices.InvalidComObjectException or System.Threading.Tasks.TaskCanceledException)
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "StandAloneThreadExceptionHandler: Running from unit test ignoring error on ginger close");
                     return;
@@ -567,7 +568,7 @@ namespace amdocs.ginger.GingerCoreNET
                 //Change sealights configurations object
                 Solution.SetSealightsOldConifurationsToNewObject();
 
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}' (Solution Id: {1})", solutionFolder,solution.Guid));
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}' (Solution Id: {1})", solutionFolder, solution.Guid));
                 SolutionLoaded = true;
                 return true;
             }
@@ -829,7 +830,7 @@ namespace amdocs.ginger.GingerCoreNET
                     //Check for change and update in Configurations tab
                     if (!globalParamInstance.PlaceHolder.Equals(apiGlobalParamInstance.PlaceHolder))
                     {
-                        AppModel.UpdateParamsPlaceholder(this, new List<string> { apiGlobalParamInstance.PlaceHolder }, globalParamInstance.PlaceHolder);
+                        AppModel.UpdateParamsPlaceholder(this, [apiGlobalParamInstance.PlaceHolder], globalParamInstance.PlaceHolder);
                         apiGlobalParamInstance.PlaceHolder = globalParamInstance.PlaceHolder;
                     }
                     apiGlobalParamInstance.CurrentValue = globalParamInstance.CurrentValue;
@@ -849,9 +850,11 @@ namespace amdocs.ginger.GingerCoreNET
                         apiGlobalParamInstance.OptionalValuesList.ClearAll();
                         foreach (OptionalValue ov in globalParamInstance.OptionalValuesList)
                         {
-                            OptionalValue newOV = new OptionalValue();
-                            newOV.Guid = ov.Guid;
-                            newOV.Value = ov.Value;
+                            OptionalValue newOV = new OptionalValue
+                            {
+                                Guid = ov.Guid,
+                                Value = ov.Value
+                            };
                             if (ov.IsDefault)
                             {
                                 newDefaultOV = ov.Guid.ToString();
@@ -896,11 +899,16 @@ namespace amdocs.ginger.GingerCoreNET
 
         public BusinessFlow GetNewBusinessFlow(string Name, bool setTargetApp = false)
         {
-            BusinessFlow newBF = new BusinessFlow();
-            newBF.Name = Name;
+            BusinessFlow newBF = new BusinessFlow
+            {
+                Name = Name
+            };
 
-            Activity defActivity = new Activity() { Active = true };
-            defActivity.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
+            Activity defActivity = new Activity
+            {
+                Active = true,
+                ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1"
+            };
             newBF.AddActivity(defActivity, newBF.AddActivitiesGroup());
             newBF.Activities.CurrentItem = defActivity;
             newBF.CurrentActivity = defActivity;
@@ -909,10 +917,10 @@ namespace amdocs.ginger.GingerCoreNET
             {
                 string mainAppName = WorkSpace.Instance.Solution.MainApplication;
                 ApplicationPlatform mainApp = WorkSpace.Instance.Solution.ApplicationPlatforms.First(ap => string.Equals(ap.AppName, mainAppName));
-                newBF.TargetApplications.Add(new TargetApplication() 
-                { 
-                    AppName = mainAppName, 
-                    ParentGuid =  mainApp.Guid
+                newBF.TargetApplications.Add(new TargetApplication()
+                {
+                    AppName = mainAppName,
+                    ParentGuid = mainApp.Guid
                 });
                 newBF.CurrentActivity.TargetApplication = newBF.TargetApplications[0].Name;
             }

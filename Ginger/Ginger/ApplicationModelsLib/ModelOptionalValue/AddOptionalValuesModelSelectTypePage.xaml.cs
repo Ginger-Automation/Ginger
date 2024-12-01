@@ -59,7 +59,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     GingerCore.General.FillComboFromEnumType(xSourceTypeComboBox, typeof(eSourceType), null);
                     break;
                 case eOptionalValuesTargetType.GlobalParams:
-                    GingerCore.General.FillComboFromEnumType(xSourceTypeComboBox, typeof(eSourceType), new List<object>() { eSourceType.Excel, eSourceType.DB });
+                    GingerCore.General.FillComboFromEnumType(xSourceTypeComboBox, typeof(eSourceType), [eSourceType.Excel, eSourceType.DB]);
                     break;
             }
 
@@ -71,9 +71,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 
         private void SetFieldsGrid()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(TemplateFile.FilePath), Header = "File Path" });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = [new GridColView() { Field = nameof(TemplateFile.FilePath), Header = "File Path" }]
+            };
             xImportOptionalValuesGrid.SetAllColumnsDefaultView(view);
             xImportOptionalValuesGrid.InitViewItems();
             xImportOptionalValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddOptioanlValueFile));
@@ -395,7 +396,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         private void FillSheetCombo()
         {
             mAddModelOptionalValuesWizard.ProcessStarted();
-            List<string> SheetsList = new List<string>();
+            List<string> SheetsList = [];
             try
             {
                 xSaveExcelLable.Visibility = Visibility.Collapsed;
@@ -446,7 +447,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             if (overrideFile)
             {
                 ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
-                List<AppParameters> parameters = new List<AppParameters>();
+                List<AppParameters> parameters = [];
                 if (mAddModelOptionalValuesWizard.ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Local)
                 {
                     foreach (var prms in mAddModelOptionalValuesWizard.mAAMB.AppModelParameters)
@@ -520,7 +521,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 try
                 {
-                    SqlConnectionStringBuilder scSB = new SqlConnectionStringBuilder();
+                    SqlConnectionStringBuilder scSB = [];
 
                     if (Regex.IsMatch(xBDHostTextBox.Text, "(Data Source=)", RegexOptions.IgnoreCase)
                         && Regex.IsMatch(xBDHostTextBox.Text, "(User ID=)", RegexOptions.IgnoreCase)

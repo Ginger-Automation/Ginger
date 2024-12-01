@@ -190,11 +190,13 @@ namespace GingerCore.Variables
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
-            List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
-            supportedOperations.Add(VariableBase.eSetValueOptions.StartTimer);
-            supportedOperations.Add(VariableBase.eSetValueOptions.StopTimer);
-            supportedOperations.Add(VariableBase.eSetValueOptions.ContinueTimer);
-            supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
+            List<VariableBase.eSetValueOptions> supportedOperations =
+            [
+                VariableBase.eSetValueOptions.StartTimer,
+                VariableBase.eSetValueOptions.StopTimer,
+                VariableBase.eSetValueOptions.ContinueTimer,
+                VariableBase.eSetValueOptions.ResetValue,
+            ];
             return supportedOperations;
         }
 

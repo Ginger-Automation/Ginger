@@ -39,15 +39,17 @@ namespace Ginger.ALM.Qtest.TreeViewItems
 
         public QtestModuleTreeItem(List<QTestAPIStdModel.ModuleResource> moduleChildrenResources)
         {
-            CurrentChildrens = new List<ITreeViewItem>();
+            CurrentChildrens = [];
             if (moduleChildrenResources != null)
             {
                 foreach (QTestAPIStdModel.ModuleResource module in moduleChildrenResources)
                 {
-                    QtestModuleTreeItem tvi = new QtestModuleTreeItem(module.Children);
-                    tvi.ID = module.Id.ToString();
-                    tvi.Path = module.Path;
-                    tvi.Name = module.Name;
+                    QtestModuleTreeItem tvi = new QtestModuleTreeItem(module.Children)
+                    {
+                        ID = module.Id.ToString(),
+                        Path = module.Path,
+                        Name = module.Name
+                    };
                     CurrentChildrens.Add(tvi);
                 }
             }

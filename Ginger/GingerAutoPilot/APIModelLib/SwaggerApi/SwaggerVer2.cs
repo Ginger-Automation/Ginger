@@ -16,15 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Repository;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Newtonsoft.Json;
-using NJsonSchema;
 using NSwag;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi
@@ -36,7 +31,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         public ObservableList<ApplicationAPIModel> SwaggerTwo(SwaggerDocument Swaggerdoc, ObservableList<ApplicationAPIModel> SwaggerModels)
         {
             swagTwo = Swaggerdoc;
-            
+
             var reqBodyNullExampleList = GetExamplesFromDefinitions(swagTwo);
 
             foreach (var paths in swagTwo.Paths)
@@ -170,7 +165,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                     break;
 
                             }
-                            SetOptionalValue(AAM.AppModelParameters, ExampleValueDict(Operation),enumExampleList);
+                            SetOptionalValue(AAM.AppModelParameters, ExampleValueDict(Operation), enumExampleList);
 
                         }
                         GenerateResponse(Operation, AAM);

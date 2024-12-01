@@ -27,7 +27,6 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
@@ -165,7 +164,7 @@ namespace GingerCore.Drivers.Common
         {
             string elementName = GetElementTitle(ei.ElementObject);
 
-            ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
+            ObservableList<ElementLocator> list = [];
             if (!string.IsNullOrEmpty(elementName))
             {
                 list.Add(new ElementLocator() { LocateBy = eLocateBy.ByName, LocateValue = elementName, Help = "Highly Recommended when Name is unique in page" });
@@ -253,17 +252,21 @@ namespace GingerCore.Drivers.Common
 
         public AppWindow GetAppWinodowForElement(object window, string title, AppWindow.eWindowType windowType)
         {
-            AppWindow AW = new AppWindow();
-            AW.Title = title;
+            AppWindow AW = new AppWindow
+            {
+                Title = title
+            };
 
             if (IsWindowValid(window))
             {
-                UIAElementInfo WEI = new UIAElementInfo();
-                WEI.ElementTitle = title;
-                WEI.ElementObject = window;
-                WEI.WindowExplorer = WindowExplorer;
-                WEI.XCordinate = double.Parse(GetControlPropertyValue(window, "XOffset"));
-                WEI.YCordinate = double.Parse(GetControlPropertyValue(window, "XOffset"));
+                UIAElementInfo WEI = new UIAElementInfo
+                {
+                    ElementTitle = title,
+                    ElementObject = window,
+                    WindowExplorer = WindowExplorer,
+                    XCordinate = double.Parse(GetControlPropertyValue(window, "XOffset")),
+                    YCordinate = double.Parse(GetControlPropertyValue(window, "XOffset"))
+                };
                 AW.RefObject = WEI;
                 AW.WindowType = windowType;
             }
@@ -288,7 +291,7 @@ namespace GingerCore.Drivers.Common
                     // Remove the highlighter by asking the window to repaint
                     // Better repaint the whole window, caused some glitched when trying to repaint just the control window
                     HandlePaintWindow(GetCurrentWindow());
-                    RedrawWindow((IntPtr)LastHighLightHWND, IntPtr.Zero, IntPtr.Zero, 0x0400/*RDW_FRAME*/ | 0x0100/*RDW_UPDATENOW*/ | 0x0001/*RDW_INVALIDATE*/);
+                    RedrawWindow(LastHighLightHWND, IntPtr.Zero, IntPtr.Zero, 0x0400/*RDW_FRAME*/ | 0x0100/*RDW_UPDATENOW*/ | 0x0001/*RDW_INVALIDATE*/);
                 }
 
                 if (WEI.ElementObject == null)
@@ -304,7 +307,7 @@ namespace GingerCore.Drivers.Common
                 LastHighLightHWND = hwnd;
 
                 // If user have multiple screens, get the one where the current window is displayed, resolve issue of highlighter not working when app window on secondary monitor
-                System.Windows.Forms.Screen scr = System.Windows.Forms.Screen.FromHandle((IntPtr)hwnd);
+                System.Windows.Forms.Screen scr = System.Windows.Forms.Screen.FromHandle(hwnd);
                 HighlightRect(r, scr, WEI);
             }
             else
@@ -340,13 +343,15 @@ namespace GingerCore.Drivers.Common
             }
 
             int hdc = CreateDC(scr.DeviceName, null, null, IntPtr.Zero);
-            Graphics graphics = Graphics.FromHdc((IntPtr)hdc);
+            Graphics graphics = Graphics.FromHdc(hdc);
 
-            System.Drawing.Rectangle CalculatedRect = new System.Drawing.Rectangle();
-            CalculatedRect.X = (int)r.Left - scr.Bounds.X - 1;
-            CalculatedRect.Y = (int)r.Top - scr.Bounds.Y - 1;
-            CalculatedRect.Width = (int)r.Width;
-            CalculatedRect.Height = (int)r.Height;
+            System.Drawing.Rectangle CalculatedRect = new System.Drawing.Rectangle
+            {
+                X = r.Left - scr.Bounds.X - 1,
+                Y = r.Top - scr.Bounds.Y - 1,
+                Width = r.Width,
+                Height = r.Height
+            };
 
             graphics.DrawRectangle(new System.Drawing.Pen(System.Drawing.Color.Red, 2), CalculatedRect);
 

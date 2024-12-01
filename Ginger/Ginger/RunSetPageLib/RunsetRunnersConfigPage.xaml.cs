@@ -27,7 +27,7 @@ namespace Ginger.Run
     {
         GenericWindow mGenWin = null;
         RunSetConfig mRunSetConfig = null;
-      
+
         public RunsetRunnersConfigPage(RunSetConfig runSetConfig)
         {
             InitializeComponent();
