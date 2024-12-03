@@ -32,6 +32,9 @@ namespace Ginger.External.Katalon
         {
             switch (e.EventType)
             {
+                case EventType.Active:
+                    _wizard.mWizardWindow?.SetFinishButtonEnabled(false);
+                    break;
                 case EventType.LeavingForNextPage:
                     if (string.IsNullOrWhiteSpace(_wizard.SelectedDirectory))
                     {

@@ -31,7 +31,11 @@ namespace Ginger.External.Katalon
 
         public void WizardEvent(WizardEventArgs e)
         {
-            if (e.EventType == EventType.Prev && _wizard.GetCurrentPage().Page == this)
+            if (e.EventType == EventType.Active)
+            {
+                _wizard.mWizardWindow?.SetFinishButtonEnabled(true);
+            }
+            else if (e.EventType == EventType.Prev && _wizard.GetCurrentPage().Page == this)
             {
                 e.CancelEvent = true;
             }
