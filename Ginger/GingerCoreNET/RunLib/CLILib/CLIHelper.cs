@@ -396,10 +396,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         List<AccountReportBusinessFlow> accountReportBusinessFlows = accountReportApiHandler.GetBusinessflowExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
                         if (accountReportBusinessFlows != null && accountReportBusinessFlows.Count > 0)
                         {
-                            if (accountReportBusinessFlows.Any(x => x.RunStatus.Equals(eRunStatus.Failed)))
+                            if (accountReportBusinessFlows.Any(x => x.RunStatus.Equals(AccountReport.Contracts.Enum.eExecutionStatus.Failed)))
                             {
                               
-                                var FailedBFGuidList = accountReportBusinessFlows.Where(x => x.RunStatus.Equals(eRunStatus.Failed)).Select(x => x.InstanceGUID);
+                                var FailedBFGuidList = accountReportBusinessFlows.Where(x => x.RunStatus.Equals(AccountReport.Contracts.Enum.eExecutionStatus.Failed)).Select(x => x.InstanceGUID);
                                 foreach (GingerRunner runner in mRunsetExecutor.RunSetConfig.GingerRunners)
                                 {
                                     foreach(BusinessFlowRun business in runner.BusinessFlowsRunList)

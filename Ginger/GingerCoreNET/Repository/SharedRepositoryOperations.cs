@@ -104,14 +104,15 @@ namespace Ginger.Repository
                             }
                             srAction.ParentGuid = Guid.Empty;
                         }
-                        foreach (VariableBase srVariable in srActivity.Variables)
-                        {
-                            if (srVariable.ParentGuid != Guid.Empty)
-                            {
-                                srVariable.Guid = srVariable.ParentGuid;
-                            }
-                            srVariable.ParentGuid = Guid.Empty;
-                        }
+                        //foreach (VariableBase srVariable in srActivity.Variables)
+                        //{
+                        //    if (srVariable.ParentGuid != Guid.Empty)
+                        //    {
+                        //        srVariable.Guid = srVariable.ParentGuid;
+                        //    }
+                        //    srVariable.ParentGuid = Guid.Empty;
+                        //}//Commented for Etisalat variable duplicate issue
+
                         foreach (Act action in srActivity.Acts.Cast<Act>())
                         {
                             foreach (FlowControl fc in action.FlowControls)
@@ -135,10 +136,10 @@ namespace Ginger.Repository
                         {
                             bfAction.ParentGuid = bfAction.Guid;
                         }
-                        foreach (VariableBase bfVariable in bfActivity.Variables)
-                        {
-                            bfVariable.ParentGuid = bfVariable.Guid;
-                        }
+                        //foreach (VariableBase bfVariable in bfActivity.Variables)
+                        //{
+                        //    bfVariable.ParentGuid = bfVariable.Guid;
+                        //}//Commented for Etisalat variable duplicate issue
                     }
                 }
 
@@ -629,14 +630,16 @@ namespace Ginger.Repository
                     }
                     action.ParentGuid = Guid.Empty;
                 }
-                foreach(VariableBase variable in sharedActivity.Variables)
-                {
-                    if (variable.ParentGuid != Guid.Empty)
-                    {
-                        variable.Guid = variable.ParentGuid;
-                    }
-                    variable.ParentGuid = Guid.Empty;
-                }
+
+                //foreach(VariableBase variable in sharedActivity.Variables)
+                //{
+                //    if (variable.ParentGuid != Guid.Empty)
+                //    {
+                //        variable.Guid = variable.ParentGuid;
+                //    }
+                //    variable.ParentGuid = Guid.Empty;
+                //}///Commented for Etisalat Duplicate variable issue 
+
                 foreach(FlowControl fc in sharedActivity.Acts.SelectMany(a => a.FlowControls))
                 {
                     Guid targetGuid = fc.GetGuidFromValue();
