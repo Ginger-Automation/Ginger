@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         {
             return _act.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == nameof(ActBrowserElement.eMonitorUrl.SelectedUrl)
                 && _act.UpdateOperationInputValues != null
-                && _act.UpdateOperationInputValues.Any(x => !string.IsNullOrEmpty(x.ValueForDriver) && requestUrl.ToLower().Contains(x.ValueForDriver.ToLower()));
+                && _act.UpdateOperationInputValues.Any(x => ( !string.IsNullOrEmpty(x.ValueForDriver) ? requestUrl.ToLower().Contains(x.ValueForDriver.ToLower()) : (!string.IsNullOrEmpty(x.Value) && requestUrl.ToLower().Contains(x.Value.ToLower()))));
         }
 
         public string CreateNetworkLogFile(string Filename, List<Tuple<string, object>> networkLogList)

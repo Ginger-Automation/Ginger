@@ -8391,7 +8391,6 @@ namespace GingerCore.Drivers
 
         public async void ActBrowserElementHandler(ActBrowserElement act)
         {
-            _BrowserHelper = new BrowserHelper(act);
             try
             {
                 string AgentType = GetAgentAppName();
@@ -8663,6 +8662,7 @@ namespace GingerCore.Drivers
                         break;
                     case ActBrowserElement.eControlAction.StartMonitoringNetworkLog:
                         mAct = act;
+                        _BrowserHelper = new BrowserHelper(mAct);
                         SetUPDevTools(Driver);
                         StartMonitoringNetworkLog(Driver).GetAwaiter().GetResult();
                         break;
