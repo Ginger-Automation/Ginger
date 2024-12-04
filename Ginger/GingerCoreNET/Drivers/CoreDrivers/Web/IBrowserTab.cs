@@ -94,7 +94,5 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task CloseAsync();
         
         public Task StartListenDialogsAsync();
-
-        public Task StopListenDialogsAsync();
     }
 }
