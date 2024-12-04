@@ -177,6 +177,7 @@ namespace Ginger.External.Katalon
             switch (e.EventType)
             {
                 case EventType.Active:
+                    _wizard.mWizardWindow?.SetFinishButtonEnabled(false);
                     _ = ImportPOMsAsync();
                     break;
                 case EventType.LeavingForNextPage:
