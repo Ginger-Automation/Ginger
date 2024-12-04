@@ -912,17 +912,21 @@ namespace GingerCore.ALM.RQM
                         ItemType = jsonItemField.ItemType,
                         Mandatory = jsonItemField.Mandatory,
                         PossibleValues = jsonItemField.PossibleValues,
+                        PossibleValueKeys = jsonItemField.PossibleValueKeys,
                         ToUpdate = jsonItemField.ToUpdate,
-                        SelectedValue = jsonItemField.Selected
+                        SelectedValue = jsonItemField.Selected,
+                        SelectedValueKey = jsonItemField.SelectedKey,
                     };
 
                     if (jsonItemField.PossibleValues.Count > 0)
                     {
                         itemField.SelectedValue = jsonItemField.PossibleValues[0];
+                        itemField.SelectedValueKey = jsonItemField.PossibleValueKeys[0];
                     }
                     else
                     {
                         itemField.SelectedValue = "Unassigned";
+                        itemField.SelectedValueKey = string.Empty;
                     }
                     Reporter.ToLog(eLogLevel.DEBUG, "Item : " + Newtonsoft.Json.JsonConvert.SerializeObject(itemField));
                     ItemFieldsPossibleValues.Add(itemField);
@@ -945,7 +949,9 @@ namespace GingerCore.ALM.RQM
                     ItemType = field.ItemType,
                     Mandatory = field.Mandatory,
                     PossibleValues = field.PossibleValues,
+                    PossibleValueKeys = field.PossibleValueKeys,
                     Selected = field.SelectedValue,
+                    SelectedKey = field.SelectedValueKey,
                     ToUpdate = field.ToUpdate,
                     IsCustomField = field.IsCustomField,
                 };
@@ -1215,8 +1221,12 @@ namespace GingerCore.ALM.RQM
                         XNamespace ns = "http://www.w3.org/2005/Atom";
 
                         // Query the XML to get all titles inside entry nodes
+                        //var titles = doc.Descendants(ns + "entry")
+                        //                .Select(entry => entry.Element(ns + "title")?.Value)
+                        //                .Where(title => title != null);
+
                         var titles = doc.Descendants(ns + "entry")
-                                        .Select(entry => entry.Element(ns + "title")?.Value)
+                                        .Select(entry => entry)
                                         .Where(title => title != null);
 
                         PopulateLogOnFieldMappingwinodw(bw, $"Number of values populated :{titles.Count()}");
@@ -1229,13 +1239,22 @@ namespace GingerCore.ALM.RQM
                         {
                             foreach (var title in titles)
                             {
-                                field.PossibleValues.Add(title);
+                                field.PossibleValues.Add(title.Element(ns + "title")?.Value);
+                                string PossibleValueKey = title.Element(ns + "id")?.Value;
+                                string PossibleValueKeyID = PossibleValueKey[(PossibleValueKey.LastIndexOf(':') + 1)..];
+                                field.PossibleValueKeys.Add(PossibleValueKeyID);
                             }
 
                             // Set the first item as SelectedValue if PossibleValues is not empty
-                            if (field.PossibleValues.Count > 0)
+                            if (field.SelectedValue.Equals("Unassigned",StringComparison.CurrentCultureIgnoreCase) && field.PossibleValues.Count > 0)
                             {
                                 field.SelectedValue = field.PossibleValues[0];
+                                field.SelectedValueKey = field.PossibleValueKeys[0];
+                            }
+                            else
+                            {
+                               int SelectedElementIndex = field.PossibleValues.IndexOf(field.SelectedValue);
+                               field.SelectedValueKey = field.PossibleValueKeys[SelectedElementIndex];
                             }
                         }
                     }
