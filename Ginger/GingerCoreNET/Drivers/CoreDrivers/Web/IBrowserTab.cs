@@ -92,5 +92,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task<AxeResult?> TestAccessibilityAsync(AxeRunOptions? options = null);
 
         public Task CloseAsync();
+        
+        public Task StartListenDialogsAsync();
+
+        public Task StopListenDialogsAsync();
     }
 }

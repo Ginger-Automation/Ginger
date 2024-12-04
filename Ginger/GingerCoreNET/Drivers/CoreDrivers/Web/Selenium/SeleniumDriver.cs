@@ -11093,7 +11093,7 @@ namespace GingerCore.Drivers
         {
             try
             {
-                if (_BrowserHelper.ShouldMonitorAllUrls() || _BrowserHelper.ShouldMonitorUrl( e.RequestUrl))
+                if (_BrowserHelper.ShouldMonitorAllUrls() || _BrowserHelper.ShouldMonitorUrl(e.RequestUrl))
                 {
                     networkRequestLogList.Add(new Tuple<string, object>($"RequestUrl: {e.RequestUrl}", JsonConvert.SerializeObject(e, Formatting.Indented)));
                 }

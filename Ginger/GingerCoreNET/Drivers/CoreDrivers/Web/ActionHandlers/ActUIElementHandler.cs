@@ -693,6 +693,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         /// </summary>
         private async Task HandleAsyncClickAsync()
         {
+            await _browserTab.StartListenDialogsAsync();
             string script = "element => setTimeout(function() { element.click(); }, 100);";
             IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.ExecuteJavascriptAsync(script);
