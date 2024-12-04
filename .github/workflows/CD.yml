@@ -47,7 +47,7 @@ on:
           description: Release # The minor version of the release, e.g., 4 for the fourth release of the year
           type: number 
           required: true
-          default: '4'
+          default: '5'
         build:
           description: Beta # The build number, typically used for beta versions
           type: number 

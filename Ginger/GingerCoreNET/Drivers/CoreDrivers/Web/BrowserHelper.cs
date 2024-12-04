@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         {
             return _act.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == nameof(ActBrowserElement.eMonitorUrl.SelectedUrl)
                 && _act.UpdateOperationInputValues != null
-                && _act.UpdateOperationInputValues.Any(x => !string.IsNullOrEmpty(x.ValueForDriver) && requestUrl.ToLower().Contains(x.ValueForDriver.ToLower()));
+                && _act.UpdateOperationInputValues.Any(x => ( !string.IsNullOrEmpty(x.ValueForDriver) ? requestUrl.ToLower().Contains(x.ValueForDriver.ToLower()) : (!string.IsNullOrEmpty(x.Value) && requestUrl.ToLower().Contains(x.Value.ToLower()))));
         }
 
         public string CreateNetworkLogFile(string Filename, List<Tuple<string, object>> networkLogList)
@@ -51,7 +51,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
                     System.IO.Directory.CreateDirectory(FullDirectoryPath);
                 }
 
-                FullFilePath = $"FullDirectoryPath{Path.PathSeparator}{Filename}_{DateTime.Now.Day.ToString() }_{ DateTime.Now.Month.ToString() }_{ DateTime.Now.Year.ToString() }_{DateTime.Now.Millisecond.ToString()}.har";
+                FullFilePath = $"{FullDirectoryPath}{Path.DirectorySeparatorChar}{Filename}_{DateTime.Now.Day.ToString() }_{ DateTime.Now.Month.ToString() }_{ DateTime.Now.Year.ToString() }_{DateTime.Now.Millisecond.ToString()}.har";
                 if (!System.IO.File.Exists(FullFilePath))
                 {
                     string FileContent = JsonConvert.SerializeObject(networkLogList.Select(x => x.Item2).ToList());

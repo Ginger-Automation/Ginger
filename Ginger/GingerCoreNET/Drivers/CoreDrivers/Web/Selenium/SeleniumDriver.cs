@@ -8391,7 +8391,6 @@ namespace GingerCore.Drivers
 
         public async void ActBrowserElementHandler(ActBrowserElement act)
         {
-            _BrowserHelper = new BrowserHelper(act);
             try
             {
                 string AgentType = GetAgentAppName();
@@ -8663,6 +8662,7 @@ namespace GingerCore.Drivers
                         break;
                     case ActBrowserElement.eControlAction.StartMonitoringNetworkLog:
                         mAct = act;
+                        _BrowserHelper = new BrowserHelper(mAct);
                         SetUPDevTools(Driver);
                         StartMonitoringNetworkLog(Driver).GetAwaiter().GetResult();
                         break;
@@ -11093,7 +11093,7 @@ namespace GingerCore.Drivers
         {
             try
             {
-                if (_BrowserHelper.ShouldMonitorAllUrls() || _BrowserHelper.ShouldMonitorUrl( e.RequestUrl))
+                if (_BrowserHelper.ShouldMonitorAllUrls() || _BrowserHelper.ShouldMonitorUrl(e.RequestUrl))
                 {
                     networkRequestLogList.Add(new Tuple<string, object>($"RequestUrl: {e.RequestUrl}", JsonConvert.SerializeObject(e, Formatting.Indented)));
                 }
