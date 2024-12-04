@@ -161,11 +161,9 @@ namespace GingerCore.Actions
         }
         public override void Execute()
         {
-            ValueExpression VE = new()
-            {
-                Value = ScriptInterpreter
-            };
-            string calculatedScriptInterpreter = VE.ValueCalculated;
+            this.ValueExpression.Value = ScriptInterpreter;
+
+            string calculatedScriptInterpreter = this.ValueExpression.ValueCalculated;
             if (ScriptName == null && ScriptCommand == eScriptAct.Script)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Script file not Selected. Kindly select suitable file");
