@@ -505,7 +505,6 @@ namespace GingerCore.NoSqlBase
                         int path1 = 1;
                         scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
                         isDataFound = false;
-                        //           rowDataList = null;
                         while ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
                         {
                             isDataFound = true;
