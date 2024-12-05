@@ -925,6 +925,7 @@ namespace GingerCore.ALM.RQM
                     field.ItemType = fields[indx].ItemType;
                     field.Name = fields[indx].Name;
                     field.SelectedValue = fields[indx].SelectedValue;
+                    field.SelectedValueKey = fields[indx].SelectedValueKey;
                     field.ID = fields[indx].ID;
                     field.Type = fields[indx].Type;
                     field.TypeIdentifier = fields[indx].TypeIdentifier;
