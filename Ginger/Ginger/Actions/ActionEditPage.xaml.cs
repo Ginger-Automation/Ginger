@@ -453,7 +453,7 @@ namespace Ginger.Actions
             if (!datasourceGridToolbarItemsAdded)
             {
                 datasourceGridToolbarItemsAdded = true;
-                xDataSourceConfigGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Unchecked All", new RoutedEventHandler(CheckUnCheckGridRow));
+                xDataSourceConfigGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All", new RoutedEventHandler(CheckUnCheckGridRow));
             }
 
             if (mAction.ConfigOutputDS == true && mAction.DSOutputConfigParams.Count > 0)
@@ -1102,7 +1102,7 @@ namespace Ginger.Actions
         /// <summary>
         /// Handles the click event of the check-boxes within the ColumnMultiSelectComboBox.
         /// Updates the GridColsView of the customDynamicView based on the selected columns.
-        /// If the "All" check-box is clicked, it selects or deselected all columns accordingly.
+        /// If the "All" check-box is clicked, it selects or deselects all columns accordingly.
         /// Iterates through the node list to add the selected columns to the GridColsView.
         /// Updates the column count and sets the text of the ColumnMultiSelectComboBox to reflect the number of selected columns.
         /// If the action supports simulation, it adds simulated actual columns to the GridColsView.
