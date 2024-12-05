@@ -31,7 +31,6 @@ namespace Ginger.Actions
     /// </summary>
     public partial class ActGenerateFileFromTemplateEditPage : Page
     {
-        //'' public ActionEditPage actp;
 
         ActGenerateFileFromTemplate mAct { get; set; }
 
