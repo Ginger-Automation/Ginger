@@ -27,7 +27,9 @@ namespace GingerCore.External
         public string ItemType { get; set; }
         public bool Mandatory { get; set; }
         public ObservableList<string> PossibleValues { get; set; }
+        public ObservableList<string> PossibleValueKeys { get; set; }
         public string Selected { get; set; }
+        public string SelectedKey { get; set; }
         public bool ToUpdate { get; set; }
         public bool IsCustomField { get; set; }
     }
