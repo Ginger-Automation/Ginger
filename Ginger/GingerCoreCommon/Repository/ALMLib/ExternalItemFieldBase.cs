@@ -33,9 +33,9 @@ namespace Amdocs.Ginger.Repository
             public static string Type = "Type";
             public static string Mandatory = "Mandatory";
             public static string PossibleValues = "PossibleValues";
-            public const string PossibleValueKeys = "PossibleValueKeys";
+            public static string PossibleValueKeys = "PossibleValueKeys";
             public static string SelectedValue = "SelectedValue";
-            public const string SelectedValueKey = "SelectedValueKey";
+            public static string SelectedValueKey = "SelectedValueKey";
         }
 
         [IsSerializedForLocalRepository]
