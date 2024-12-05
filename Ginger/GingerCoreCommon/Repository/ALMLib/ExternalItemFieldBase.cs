@@ -33,9 +33,9 @@ namespace Amdocs.Ginger.Repository
             public static string Type = "Type";
             public static string Mandatory = "Mandatory";
             public static string PossibleValues = "PossibleValues";
-            public static string PossibleValueKeys = "PossibleValueKeys";
+            public const string PossibleValueKeys = "PossibleValueKeys";
             public static string SelectedValue = "SelectedValue";
-            public static string SelectedValueKey = "SelectedValueKey";
+            public const string SelectedValueKey = "SelectedValueKey";
         }
 
         [IsSerializedForLocalRepository]
@@ -150,7 +150,11 @@ namespace Amdocs.Ginger.Repository
             string ValueKey = string.Empty;
             if (!string.IsNullOrEmpty(SelectedValue))
             {
-                
+                if (mPossibleValues.Count != mPossibleValueKeys.Count)
+                {
+                    return mSelectedValueKey ?? string.Empty;
+                }
+
                 int indexofValue = mPossibleValues.IndexOf(SelectedValue);
 
                 if(indexofValue != -1)

@@ -1220,11 +1220,6 @@ namespace GingerCore.ALM.RQM
                         XDocument doc = XDocument.Parse(categoryfieldlist.responseText);
                         XNamespace ns = "http://www.w3.org/2005/Atom";
 
-                        // Query the XML to get all titles inside entry nodes
-                        //var titles = doc.Descendants(ns + "entry")
-                        //                .Select(entry => entry.Element(ns + "title")?.Value)
-                        //                .Where(title => title != null);
-
                         var titles = doc.Descendants(ns + "entry")
                                         .Select(entry => entry)
                                         .Where(title => title != null);
