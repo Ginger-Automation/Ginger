@@ -17,6 +17,8 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
+using Microsoft.CodeAnalysis;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -31,7 +33,9 @@ namespace Amdocs.Ginger.Repository
             public static string Type = "Type";
             public static string Mandatory = "Mandatory";
             public static string PossibleValues = "PossibleValues";
+            public static string PossibleValueKeys = "PossibleValueKeys";
             public static string SelectedValue = "SelectedValue";
+            public static string SelectedValueKey = "SelectedValueKey";
         }
 
         [IsSerializedForLocalRepository]
@@ -78,6 +82,20 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        ObservableList<string> mPossibleValueKeys = [];
+        public ObservableList<string> PossibleValueKeys
+        {
+            get
+            {
+                return mPossibleValueKeys;
+            }
+            set
+            {
+                mPossibleValueKeys = value;
+                OnPropertyChanged(Fields.PossibleValueKeys);
+            }
+        }
+
         string mSelectedValue;
         [IsSerializedForLocalRepository]
         public string SelectedValue
@@ -91,7 +109,26 @@ namespace Amdocs.Ginger.Repository
                 if (mSelectedValue != value)
                 {
                     mSelectedValue = value;
+                    SelectedValueKey = UpdateSelectedValueKey(mSelectedValue);
                     OnPropertyChanged(Fields.SelectedValue);
+                }
+            }
+        }
+
+        string mSelectedValueKey;
+        [IsSerializedForLocalRepository]
+        public string SelectedValueKey
+        {
+            get
+            {
+                return mSelectedValueKey;
+            }
+            set
+            {
+                if (mSelectedValueKey != value)
+                {
+                    mSelectedValueKey = value;
+                    OnPropertyChanged(Fields.SelectedValueKey);
                 }
             }
         }
@@ -107,5 +144,30 @@ namespace Amdocs.Ginger.Repository
                 this.Name = value;
             }
         }
+
+        public string UpdateSelectedValueKey(string SelectedValue)
+        {
+            string ValueKey = string.Empty;
+            if (!string.IsNullOrEmpty(SelectedValue))
+            {
+                if (mPossibleValues.Count != mPossibleValueKeys.Count)
+                {
+                    return mSelectedValueKey ?? string.Empty;
+                }
+
+                int indexofValue = mPossibleValues.IndexOf(SelectedValue);
+
+                if(indexofValue != -1)
+                {
+                    ValueKey = mPossibleValueKeys[indexofValue];
+                }
+                else
+                {
+                    ValueKey = mSelectedValueKey;
+                }
+            }
+            return ValueKey;
+        }
+
     }
 }
