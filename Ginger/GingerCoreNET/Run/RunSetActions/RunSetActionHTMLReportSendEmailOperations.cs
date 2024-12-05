@@ -1846,10 +1846,10 @@ namespace Ginger.Run.RunSetActions
             }
             try
             {
-                System.Drawing.Image img = System.Drawing.Image.FromFile(path);
+                IronSoftware.Drawing.AnyBitmap img = IronSoftware.Drawing.AnyBitmap.FromFile(path);
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    img.ExportStream(ms, IronSoftware.Drawing.AnyBitmap.ImageFormat.Png);
                     arr = ms.ToArray();
                 }
             }
