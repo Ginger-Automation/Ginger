@@ -161,9 +161,13 @@ namespace GingerCore.Actions
         }
         public override void Execute()
         {
-            this.ValueExpression.Value = ScriptInterpreter;
+            string calculatedScriptInterpreter = ScriptInterpreter;
+            if (this.ValueExpression != null)
+            {
+                this.ValueExpression.Value = ScriptInterpreter;
+                calculatedScriptInterpreter = this.ValueExpression.ValueCalculated;
+            }
 
-            string calculatedScriptInterpreter = this.ValueExpression.ValueCalculated;
             if (ScriptName == null && ScriptCommand == eScriptAct.Script)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Script file not Selected. Kindly select suitable file");
@@ -292,6 +296,10 @@ namespace GingerCore.Actions
                         else if (calculatedScriptInterpreter != null && calculatedScriptInterpreter.ToLower().Contains("perl.exe"))
                         {
                             TempFileName = CreateTempFile("pl");
+                        }
+                        else if (calculatedScriptInterpreter != null && calculatedScriptInterpreter.ToLower().Contains(".exe"))
+                        {
+                            TempFileName = CreateTempFile("log");
                         }
                         else
                         {
