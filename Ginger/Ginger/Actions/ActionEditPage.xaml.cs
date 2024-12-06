@@ -81,7 +81,6 @@ namespace Ginger.Actions
         private Act mAction;
         static public string sMultiLocatorVals = "";
         GenericWindow _pageGenericWin = null!;
-        //public ActionsPage ap;
 
         bool IsPageClosing = false;
 
@@ -718,7 +717,7 @@ namespace Ginger.Actions
             {
                 return; // no need to update the UI since we are closing, when done in Undo changes/Cancel 
             }
-            // we do restore and don't want to raise events which will cause exception  (a.Value = ""  - is the messer)
+            // we do restore and don't want to raise events which will cause exception  (a.Value = ""  - is the messier)
 
             if (mAction.ValueConfigsNeeded == false)
             {
@@ -1015,7 +1014,7 @@ namespace Ginger.Actions
                 supportSimulationCheckbox = xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns));
 
 
-                //Added the check box list in multiselected combo box
+                //Added the check box list in multi-selected combo box
                 columnMultiSelectComboBox.ItemsSource = new Dictionary<string, object>
                         {
                             { "Description", ActReturnValue.Fields.Description },
@@ -1101,9 +1100,9 @@ namespace Ginger.Actions
         }
 
         /// <summary>
-        /// Handles the click event of the checkboxes within the ColumnMultiSelectComboBox.
+        /// Handles the click event of the check-boxes within the ColumnMultiSelectComboBox.
         /// Updates the GridColsView of the customDynamicView based on the selected columns.
-        /// If the "All" checkbox is clicked, it selects or deselects all columns accordingly.
+        /// If the "All" check-box is clicked, it selects or deselects all columns accordingly.
         /// Iterates through the node list to add the selected columns to the GridColsView.
         /// Updates the column count and sets the text of the ColumnMultiSelectComboBox to reflect the number of selected columns.
         /// If the action supports simulation, it adds simulated actual columns to the GridColsView.
