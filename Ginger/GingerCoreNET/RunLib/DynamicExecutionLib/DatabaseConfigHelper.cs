@@ -16,8 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Ginger.ExecuterService.Contracts;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
+using GingerCore;
 using GingerCore.Environments;
 using System;
 using static GingerCore.Environments.Database;
@@ -76,10 +78,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public static Database CreateDatabaseFromConfig(DatabaseConfig databaseConfig)
         {
-            ValidateDatabaseConfig(databaseConfig);
+            ValidateDatabaseConfig(databaseConfig);            
             return new()
             {
-                ConnectionString = databaseConfig.ConnectionString,
+                ConnectionString = DecryptConnectionString(databaseConfig),
                 Name = databaseConfig.Name,
                 KeepConnectionOpen = databaseConfig.KeepConnectionOpen ?? false,
                 DBType = ConvertDBConfigTypeToDBType(databaseConfig.DBType)
@@ -88,11 +90,25 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public static void UpdateDatabaseFromConfig(DatabaseConfig db, ref Database dbFromGinger)
         {
-            ValidateDatabaseConfig(db);
+            ValidateDatabaseConfig(db);            
             dbFromGinger.Name = db.Name;
-            dbFromGinger.ConnectionString = db.ConnectionString;
+            dbFromGinger.ConnectionString = DecryptConnectionString(db);
             dbFromGinger.KeepConnectionOpen = db.KeepConnectionOpen ?? false;
             dbFromGinger.DBType = ConvertDBConfigTypeToDBType(db.DBType);
+        }
+
+        public static string DecryptConnectionString(DatabaseConfig db)
+        {
+            string DbConnectionString = string.Empty;
+            if (db.IsConnectionStringEncrypted == true)
+            {
+                DbConnectionString = EncryptionHandler.DecryptwithKey(db.ConnectionString, WorkSpace.Instance.Solution.EncryptionKey);
+            }
+            else
+            {
+                DbConnectionString = db.ConnectionString;
+            }
+            return DbConnectionString;
         }
     }
 }
