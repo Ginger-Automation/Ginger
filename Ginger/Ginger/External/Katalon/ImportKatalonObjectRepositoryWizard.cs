@@ -47,6 +47,7 @@ namespace Ginger.External.Katalon
             _importTargetDirectory = importTargetDirectory;
             POMViewModels = [];
             _selectedDirectory = string.Empty;
+            DisableBackBtnOnLastPage = true;
             AddPages();
         }
 
