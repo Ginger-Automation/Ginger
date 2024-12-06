@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="EqualityTests\" />
     <Folder Include="TestResources\" />
   </ItemGroup>
 
