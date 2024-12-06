@@ -380,10 +380,10 @@ namespace GingerCore.ALM
                         {
                             currentField.ToUpdate = true;
                             int SelectedElementIndex = latestField.PossibleValues.IndexOf(currentField.SelectedValue);
-                            if(SelectedElementIndex != -1)
+                            if (SelectedElementIndex != -1)
                             {
                                 currentField.SelectedValue = latestField.PossibleValues[SelectedElementIndex];
-                                currentField.SelectedValueKey = latestField.PossibleValueKeys[SelectedElementIndex];
+                                currentField.SelectedValueKey = latestField.PossibleValueKeys != null && latestField.PossibleValueKeys.Count > 0 ? latestField.PossibleValueKeys[SelectedElementIndex] : string.Empty;
                             }
                             else
                             {
