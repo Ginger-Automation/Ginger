@@ -750,6 +750,7 @@ namespace GingerCoreNET.GeneralLib
                     .FirstOrDefault(x => x.Name.Equals(externalItemField.Name, StringComparison.CurrentCultureIgnoreCase) && x.ProjectGuid == externalItemField.ProjectGuid);
 
                 string value = "";
+                string valuekey = "";
 
                 if (existingField == null)
                 {
@@ -757,12 +758,12 @@ namespace GingerCoreNET.GeneralLib
                     {
                         if (!string.IsNullOrEmpty(externalItemField.SelectedValue))
                         {
-                            value = externalItemField.SelectedValue;
-                        }
+                            value = externalItemField.SelectedValue;                        }
                         else
                         {
                             value = GetDefaultValue(externalItemField);
                         }
+                        valuekey = externalItemField.SelectedValueKey;
                     }
                 }
                 else
@@ -777,6 +778,7 @@ namespace GingerCoreNET.GeneralLib
                         {
                             value = GetDefaultValue(externalItemField);
                         }
+                        valuekey = externalItemField.SelectedValueKey;
                     }
                 }
                 return new ExternalItemFieldBase
@@ -787,7 +789,8 @@ namespace GingerCoreNET.GeneralLib
                     Type = externalItemField.Type,
                     Guid = externalItemField.Guid,
                     IsCustomField = externalItemField.IsCustomField,
-                    SelectedValue = value
+                    SelectedValue = value,
+                    SelectedValueKey = valuekey
                 };
             }
             catch (Exception ex)
@@ -807,6 +810,26 @@ namespace GingerCoreNET.GeneralLib
                 "SMALLSTRING" => "Dummy",
                 _ => externalItemField.SelectedValue
             };
+        }
+
+        public string UpdateSelectedValueKey(string SelectedValue, string ProjectGuid)
+        {
+            string ValueKey = string.Empty;
+            if (!string.IsNullOrEmpty(SelectedValue))
+            {
+                var existingField = WorkSpace.Instance.Solution.ExternalItemsFields
+                    .FirstOrDefault(x => x.Name.Equals(SelectedValue, StringComparison.CurrentCultureIgnoreCase) && x.ProjectGuid == ProjectGuid);
+
+
+                if (existingField != null)
+                {
+                    if (!string.IsNullOrEmpty(SelectedValue))
+                    {
+                        ValueKey = existingField.SelectedValueKey;
+                    }
+                }
+            }
+            return ValueKey;
         }
     }
 

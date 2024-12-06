@@ -226,9 +226,16 @@ namespace Ginger.WindowExplorer
                         inputPar.Value = "false";
                     }
                 }
-
-                (DefaultAction as ActUIElement).ElementData = mElementInfo.GetElementData();
-                DefaultAction.Description = string.Format("{0} : {1} - {2}", (DefaultAction as ActUIElement).ElementAction, mElementInfo.ElementTypeEnum.ToString(), mElementInfo.ElementName);
+                if(DefaultAction is ActUIElement)
+                {
+                    (DefaultAction as ActUIElement).ElementData = mElementInfo.GetElementData();
+                    DefaultAction.Description = string.Format("{0} : {1} - {2}", (DefaultAction as ActUIElement).ElementAction, mElementInfo.ElementTypeEnum.ToString(), mElementInfo.ElementName);
+                }
+                else if(DefaultAction is ActBrowserElement)
+                {
+                    DefaultAction.Description = string.Format("{0} : {1} - {2}", (DefaultAction as ActBrowserElement).ControlAction, mElementInfo.ElementTypeEnum.ToString(), mElementInfo.ElementName);
+                }
+                
                 SetActionDetails(DefaultAction);
                 actEditPage = new ActionEditPage(DefaultAction, General.eRIPageViewMode.Explorer);
 

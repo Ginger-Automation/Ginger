@@ -31,10 +31,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static GingerCore.Actions.ActDBValidation;
-using BinaryComparator = Microsoft.HBase.Client.Filters.BinaryComparator;
 using Cell = org.apache.hadoop.hbase.rest.protobuf.generated.Cell;
 using CompareFilter = Microsoft.HBase.Client.Filters.CompareFilter;
-using FamilyFilter = Microsoft.HBase.Client.Filters.FamilyFilter;
 using Filter = Microsoft.HBase.Client.Filters.Filter;
 using FilterList = Microsoft.HBase.Client.Filters.FilterList;
 using FirstKeyOnlyFilter = Microsoft.HBase.Client.Filters.FirstKeyOnlyFilter;
@@ -351,19 +349,11 @@ namespace GingerCore.NoSqlBase
             string SQLCalculated = VE.ValueCalculated;
             var ConnectionUri = new Uri(Db.DatabaseOperations.TNSCalculated);
             ClusterCredentials ClCredential = new(ConnectionUri, Db.DatabaseOperations.UserCalculated, Db.DatabaseOperations.PassCalculated);
+            CellSet next;
+            bool isDataFound = false;
+            int path = 1;
+            List<RowData> rowDataList = [];
 
-            requestOption = new RequestOptions
-            {
-                RetryPolicy = Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.RetryPolicy.NoRetry,
-                KeepAlive = true,
-                TimeoutMillis = 30000,
-                ReceiveBufferSize = 1048576,
-                SerializationBufferSize = 1048576,
-                UseNagle = false,
-                AlternativeEndpoint = "",
-                Port = ConnectionUri.Port,
-                AlternativeHost = null,
-            };
             try
             {
                 HBaseClient actionClient = new(ClCredential, requestOption);
@@ -408,50 +398,71 @@ namespace GingerCore.NoSqlBase
                             Reporter.ToLog(eLogLevel.ERROR, "The WherePart can not be empty");
                             break;
                         }
-
-                        familyName = actionClient.GetTableSchemaAsync(table, null).Result.columns.ToList()[0].name;
-
-                        scanner = getScanner(wherepart, familyName);
-                        scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
-                        int path = 1;
-
-                        CellSet currentColumnSet;
-                        bool columnFound = false;
-                        while ((currentColumnSet = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
+                        var familyNameList = actionClient.GetTableSchemaAsync(table, null).Result.columns.ToList();
+                        scanner = null;
+                        if (!familyNameList.Any())
                         {
-                            foreach (CellSet.Row row in currentColumnSet.rows)
-                            {
-                                string rowKey = _encoding.GetString(row.key);
-
-                                List<Cell> cells = row.values;
-
-                                foreach (Cell cell in cells)
-                                {
-                                    string columnName = ExtractColumnName(cell.column);
-                                    if (!string.IsNullOrEmpty(Querydata[1]))
-                                    {
-                                        columnName = Querydata[1] + ":" + columnName;
-                                    }
-                                    string columnValue = ExtractColumnValue(cell.data);
-
-                                    if (string.Equals(columnName, Act.Column))
-                                    {
-                                        Act.AddOrUpdateReturnParamActualWithPath(columnName, ExtractColumnValue(cell.data), path.ToString());
-                                        columnFound = true;
-                                        break;
-                                    }
-                                }
-                                if (columnFound)
-                                {
-                                    break;
-                                }
-                            }
-                            if (columnFound)
+                            throw new InvalidOperationException($"No column families found for table {table}");
+                        }
+                        foreach (var i in familyNameList)
+                        {
+                            familyName = i.name;
+                            scanner = getScanner(wherepart, familyName);
+                            scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
+                            if ((actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
                             {
                                 break;
                             }
+
+                        }
+                        string[] selectedcols = colpart.Split(",");
+                        List<string> columnNameList = [];
+                        foreach (string col in selectedcols)
+                        {
+                            columnNameList.Add(col.Trim());
+                        }
+                        scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
+
+                        while ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
+                        {
+                            isDataFound = true;
+                            foreach (CellSet.Row row in next.rows)
+                            {
+                                string rowKey = _encoding.GetString(row.key);
+                                List<Cell> cells = row.values;
+
+                                RowData rowData = new()
+                                {
+                                    RowKey = rowKey,
+                                    Columns = []
+                                };
+
+                                foreach (Cell c in cells)
+                                {
+                                    string columnName = ExtractColumnName(c.column);
+                                    string columnValue = ExtractColumnValue(c.data);
+                                    rowData.Columns[columnName] = columnValue;
+
+                                }
+                                rowDataList.Add(rowData);
+                            }
                         }
 
+                        foreach (var rowData in rowDataList)
+                        {
+                            foreach (var column in rowData.Columns)
+                            {
+                                if (columnNameList.Contains(column.Key))
+                                {
+                                    Act.AddOrUpdateReturnParamActualWithPath(column.Key, column.Value, path.ToString());
+                                }
+                            }
+                            path++;
+                        }
+                        if (!isDataFound)
+                        {
+                            throw new InvalidDataException("Data not found");
+                        }
                         break;
 
                     case eDBValidationType.FreeSQL:
@@ -461,14 +472,12 @@ namespace GingerCore.NoSqlBase
                             Reporter.ToLog(eLogLevel.ERROR, "The Query value can not be empty");
                             break;
                         }
-                        CellSet next;
                         table = ExtractTableName(SQLCalculated);
                         if (SQLCalculated.IndexOf(" where ", StringComparison.OrdinalIgnoreCase) >= 0)
                         {
                             wherepart = ExtractWherePart(SQLCalculated);
-                            var familyNameList = actionClient.GetTableSchemaAsync(table, null).Result.columns.ToList();
+                            familyNameList = actionClient.GetTableSchemaAsync(table, null).Result.columns.ToList();
                             scanner = null;
-                            //choose family name where column exsist
                             if (!familyNameList.Any())
                             {
                                 throw new InvalidOperationException($"No column families found for table {table}");
@@ -494,10 +503,8 @@ namespace GingerCore.NoSqlBase
                         string orderByColumnName = ExtractOrderByColumnName(SQLCalculated);
 
                         int path1 = 1;
-                        bool isDataFound = false;
-                        List<RowData> rowDataList = [];
                         scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
-
+                        isDataFound = false;
                         while ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
                         {
                             isDataFound = true;
@@ -514,12 +521,9 @@ namespace GingerCore.NoSqlBase
 
                                 foreach (Cell c in cells)
                                 {
-                                    //Add data in list
-
                                     string columnName = ExtractColumnName(c.column);
                                     string columnValue = ExtractColumnValue(c.data);
                                     rowData.Columns[columnName] = columnValue;
-
                                 }
 
 
@@ -549,8 +553,8 @@ namespace GingerCore.NoSqlBase
                         {
                             int selectIndex = SQLCalculated.IndexOf(" select ", StringComparison.OrdinalIgnoreCase);
                             int fromIndex = SQLCalculated.IndexOf(" from ", StringComparison.OrdinalIgnoreCase);
-                            string[] selectedcols = SQLCalculated.Trim().Substring(selectIndex + 8, fromIndex - selectIndex - 8).Split(",");
-                            List<string> columnNameList = [];
+                            selectedcols = SQLCalculated.Trim().Substring(selectIndex + 8, fromIndex - selectIndex - 8).Split(",");
+                            columnNameList = [];
                             foreach (string col in selectedcols)
                             {
                                 columnNameList.Add(col.Trim());
@@ -851,7 +855,7 @@ namespace GingerCore.NoSqlBase
         {
             throw new NotImplementedException();
         }
-        public List<string> HBTableList;
+
 
         /// <summary>
         /// Retrieves the list of tables from the specified keyspace in HBase.
@@ -860,117 +864,90 @@ namespace GingerCore.NoSqlBase
         /// <returns>A list of table names.</returns>
         public override List<string> GetTableList(string Keyspace)
         {
-            ClusterCredentials ClCredential = new(new System.Uri(this.connectionUrl), this.userName, this.password);
-            HBaseClient client1 = new(ClCredential);
-            HBTableList = [];
-            TableList tables = null!;
-            Task getTablesTask = Task.Run(() =>
-            {
-                try
-                {
-                    tables = client1.ListTablesAsync().Result;
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.WARN, "Unable to connect to Hbase and get table list ", ex);
-                }
-            });
+            List<string> HBTableList = [];
+            var ConnectionUri = new Uri(this.connectionUrl);
+            ClusterCredentials ClCredential = new(ConnectionUri, this.userName, this.password);
 
-            getTablesTask.Wait();
-            int i = tables.name.Count;
-            for (int j = 0; j < i; j++)
+            client = new HBaseClient(ClCredential, requestOption);
+
+            try
             {
-                HBTableList.Add(tables.name[j]);
+                TableList tables = new();
+                Task getTablesTask = Task.Run(() =>
+                {
+                    try
+                    {
+                        tables = client.ListTablesAsync().Result;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "Unable to connect to Hbase and get table list ", ex);
+                    }
+                });
+
+                getTablesTask.Wait();
+                foreach (var table in tables.name)
+                {
+
+                    HBTableList.Add(table);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Unable to connect to Hbase", ex);
             }
             return HBTableList;
         }
 
-        public List<string> ColumnList;
 
+
+        /// <summary>
+        /// Retrieves the list of columns from the specified table in HBase.
+        /// </summary>
+        /// <param name="Tablename">The name of the table from which to retrieve the column list.</param>
+        /// <returns>A list of column names.</returns>
         public override async Task<List<string>> GetColumnList(string Tablename)
         {
-            ColumnList = [];
-            ClusterCredentials ClCredential = new(new System.Uri(Db.DatabaseOperations.TNSCalculated), Db.DatabaseOperations.UserCalculated, Db.DatabaseOperations.PassCalculated);
-            HBaseClient client1 = new(ClCredential);
-            var result11 = client1.GetTableSchemaAsync(Tablename, null).Result.columns.ToList();
+            var ConnectionUri = new Uri(Db.DatabaseOperations.TNSCalculated);
+            ClusterCredentials ClCredential = new(ConnectionUri, Db.DatabaseOperations.UserCalculated, Db.DatabaseOperations.PassCalculated);
+            CellSet next;
+            List<string> columnList = [];
+            HBaseClient actionClient = new(ClCredential, requestOption);
+            Scanner scanner;
+            ScannerInformation scanInfo = null;
+            scanner = new Scanner();
 
-            if (result11.Count > 1)
+            Task getTablesTask = Task.Run(() =>
             {
-                for (int i = 0; i < result11.Count; i++)
-                {
-                    var tmp = result11[i].name;
-                    Scanner scanner = new();
-                    var filter = new FamilyFilter(CompareFilter.CompareOp.Equal, new BinaryComparator(Encoding.UTF8.GetBytes(tmp)));
-                    scanner.filter = filter?.ToEncodedString();
-                    RequestOptions scanOptions = RequestOptions.GetDefaultOptions();
-                    scanOptions.AlternativeEndpoint = "";
-                    ScannerInformation scanInfo = null;
-                    try
-                    {
-                        scanInfo = client1.CreateScannerAsync(Tablename, scanner, scanOptions).Result;
-                        CellSet next;
-                        while ((next = client1.ScannerGetNextAsync(scanInfo, scanOptions).Result) != null)
-                        {
-                            foreach (CellSet.Row row in next.rows)
-                            {
-                                List<Cell> cells = row.values;
-                                foreach (Cell c in cells)
-                                {
-                                    string columnName = ExtractColumnName(c.column);
-                                    if (!ColumnList.Contains(columnName))
-                                    {
-                                        ColumnList.Add(tmp + ":" + columnName);
-                                    }
-                                }
-                            }
-                        }
-
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.WARN, "Unable to connect to Hbase", ex);
-                        return null;
-                    }
-                }
-            }
-            else
-            {
-                Scanner scanner = new();
-                var filter = new FamilyFilter(CompareFilter.CompareOp.Equal, new BinaryComparator(Encoding.UTF8.GetBytes(result11[0].name)));
-                scanner.filter = filter.ToEncodedString();
-                RequestOptions scanOptions = RequestOptions.GetDefaultOptions();
-                scanOptions.AlternativeEndpoint = "";
-                ScannerInformation scanInfo;
                 try
                 {
-                    scanInfo = client1.CreateScannerAsync(Tablename, scanner, scanOptions).Result;
-                    CellSet next;
-                    while ((next = client1.ScannerGetNextAsync(scanInfo, scanOptions).Result) != null)
+                    scanInfo = actionClient.CreateScannerAsync(Tablename, scanner, requestOption).Result;
+                    while ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
                     {
                         foreach (CellSet.Row row in next.rows)
                         {
+                            string rowKey = _encoding.GetString(row.key);
                             List<Cell> cells = row.values;
                             foreach (Cell c in cells)
                             {
-                                string columnName = ExtractColumnName(c.column);
-                                if (!ColumnList.Contains(columnName))
-                                {
-                                    ColumnList.Add(columnName);
-                                }
+                                columnList.Add(ExtractColumnName(c.column));
 
                             }
+                            break;
                         }
                     }
-
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Unable to connect to Hbase", ex);
-                    return null;
+                    Reporter.ToLog(eLogLevel.WARN, "Unable to connect to Hbase and get Column list ", ex);
                 }
-            }
-            return ColumnList;
+            });
+
+            getTablesTask.Wait();
+            return columnList;
         }
+
 
         private string ExtractColumnName(Byte[] cellColumn)
         {

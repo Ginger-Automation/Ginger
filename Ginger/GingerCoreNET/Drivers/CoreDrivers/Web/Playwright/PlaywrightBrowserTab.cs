@@ -72,6 +72,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         List<Tuple<string, object>> networkRequestLogList;
         ActBrowserElement _act;
         public bool isNetworkLogMonitoringStarted = false;
+        public bool isDialogDismiss = true;
         IDialog dialogs;
 
         public bool IsClosed => _isClosed;
@@ -91,6 +92,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             _playwrightPage.Console -= OnConsoleMessage;
             _playwrightPage.Close -= OnPlaywrightPageClose;
+            _playwrightPage.Dialog -= OnPlaywrightDialog;
         }
 
         private void OnPlaywrightPageClose(object? sender, IPlaywrightPage e)
@@ -746,7 +748,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             try
             {
-                if (_BrowserHelper.ShouldMonitorAllUrls() || _BrowserHelper.ShouldMonitorUrl( request.Url))
+                if (_BrowserHelper.ShouldMonitorAllUrls() || _BrowserHelper.ShouldMonitorUrl(request.Url))
                 {
                     networkRequestLogList.Add(new Tuple<string, object>($"RequestUrl:{ request.Url}", JsonConvert.SerializeObject(request, Formatting.Indented,
                                                                                                                                 new JsonSerializerSettings
@@ -769,7 +771,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// <param name="response"></param>
         private async void OnNetworkResponseReceived(object? sender, IResponse response)
         {
-            await response.FinishedAsync();
             try
             {
                 if (response != null)
@@ -807,15 +808,23 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
         }
 
-        
 
-        
+
+
 
         private async void OnPlaywrightDialog(object? sender, IDialog e)
         {
             try
             {
-               dialogs = e;
+                if (isDialogDismiss)
+                {
+                    await e.DismissAsync();
+                }
+                else
+                {
+                    dialogs = e;
+                }
+
             }
             catch (Exception ex)
             {
@@ -833,6 +842,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 if (dialogs != null)
                 {
                     await dialogs.AcceptAsync();
+                    isDialogDismiss = true;
                 }
                 else
                 {
@@ -856,6 +866,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 if (dialogs != null)
                 {
                     await dialogs.DismissAsync();
+                    isDialogDismiss = true;
                 }
                 else
                 {
@@ -906,6 +917,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 if (dialogs != null)
                 {
                     await dialogs.AcceptAsync(promptText: MessageBoxText);
+                    isDialogDismiss = true;
                 }
                 else
                 {
@@ -918,6 +930,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 Reporter.ToLog(eLogLevel.ERROR, "Error While Accept Message", ex);
             }
 
+        }
+
+        public async Task StartListenDialogsAsync()
+        {
+            isDialogDismiss = false;
         }
     }
 
