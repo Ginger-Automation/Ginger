@@ -53,7 +53,7 @@ WORKDIR /GingerRuntime
 
 RUN ./selenium-manager/linux/selenium-manager --browser chrome
 RUN ./selenium-manager/linux/selenium-manager --browser firefox
-RUN ./selenium-manager/linux/selenium-manager --browser edge
+#RUN ./selenium-manager/linux/selenium-manager --browser edge
 
 # Specify the entry point
 ENTRYPOINT ["dotnet", "GingerRuntime.dll"]

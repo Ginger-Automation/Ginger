@@ -165,6 +165,13 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             try
             {
+                foreach (T data in updateData)
+                {
+                    if (data is LiteDbReportBase baseObj && baseObj._id == null)
+                    {
+                        baseObj._id = ObjectId.NewObjectId();
+                    }
+                }
                 using var db = new LiteDatabase(this.ConnectionString);
                 baseColl.Upsert(updateData);
             }

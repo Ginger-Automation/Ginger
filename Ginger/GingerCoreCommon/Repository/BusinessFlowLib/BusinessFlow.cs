@@ -2050,19 +2050,9 @@ namespace GingerCore
         {
             if (other == null || this.Name != other.Name
                  || this.Activities.Count != other.Activities.Count
-                 || this.Variables.Count != other.Variables.Count
-                 || this.TargetApplications.Count != other.TargetApplications.Count)
+                 || this.Variables.Count != other.Variables.Count)
             {
                 return false;
-            }
-
-            for (int i = 0; i < this.TargetApplications.Count; i++)
-            {
-                if (!other.TargetApplications.Any(f => f.Name.Equals(this.TargetApplications[i].Name)
-                        && f.Guid.Equals(this.TargetApplications[i].Guid)))
-                {
-                    return false;
-                }
             }
 
             for (int i = 0; i < this.Variables.Count; i++)
@@ -2072,6 +2062,8 @@ namespace GingerCore
                     return false;
                 }
             }
+
+            LoadLinkedActivities();
 
             for (int i = 0; i < this.Activities.Count; i++)
             {

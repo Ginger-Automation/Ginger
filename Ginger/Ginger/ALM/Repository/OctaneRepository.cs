@@ -169,7 +169,7 @@ namespace Ginger.ALM.Repository
             if (!String.IsNullOrEmpty(businessFlow.ExternalID))
             {
                 matchingTS = ((OctaneCore)ALMIntegration.Instance.AlmCore).GetTestSuiteById(businessFlow.ExternalID);
-                if (businessFlow.ALMTestSetLevel.Equals("RunSet", StringComparison.CurrentCultureIgnoreCase))
+                if (!string.IsNullOrEmpty(businessFlow.ALMTestSetLevel) && businessFlow.ALMTestSetLevel.Equals("RunSet", StringComparison.CurrentCultureIgnoreCase))
                 {
                     if (String.IsNullOrEmpty(testPlanUploadPath))
                     {
@@ -199,7 +199,7 @@ namespace Ginger.ALM.Repository
                         }
                     }
                 }
-                
+
             }
 
 
