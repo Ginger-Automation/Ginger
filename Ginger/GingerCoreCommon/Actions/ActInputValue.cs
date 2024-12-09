@@ -239,7 +239,9 @@ namespace Amdocs.Ginger.Repository
             }
 
             return this.Param == other.Param &&
-                    this.Value == other.Value;
+                ((this.Value == null && string.IsNullOrEmpty(other.Value))
+                || this.Value == other.Value);
+
         }
 
         /// <summary>
