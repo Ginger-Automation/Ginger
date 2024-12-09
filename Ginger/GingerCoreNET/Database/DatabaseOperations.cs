@@ -530,11 +530,7 @@ namespace GingerCore.Environments
                             databaseTableNames = objGingerCosmos.GetTableList(Keyspace);
                             break;
                         case eDBTypes.Hbase:
-                            GingerHbase ghbase = new GingerHbase(Database.TNS, Database.User, Database.Pass)
-                            {
-                                Db = Database
-                            };
-                            ghbase.Connect();
+                            GingerHbase ghbase = CreateHbaseClient();
                             databaseTableNames = ghbase.GetTableList(Keyspace);
                             break;
 
@@ -629,12 +625,7 @@ namespace GingerCore.Environments
             }
             else if (Database.DBType == Database.eDBTypes.Hbase)
             {
-                NoSqlBase.NoSqlBase NoSqlDriver = null;
-                NoSqlDriver = new GingerHbase(Database.TNS, Database.User, Database.Pass)
-                {
-                    Db = Database
-                };
-                NoSqlDriver.Connect();
+                NoSqlBase.NoSqlBase NoSqlDriver = CreateHbaseClient();
                 databaseColumnNames = await NoSqlDriver.GetColumnList(table);
             }
             else
@@ -672,7 +663,15 @@ namespace GingerCore.Environments
             }
             return databaseColumnNames;
         }
-
+        private GingerHbase CreateHbaseClient()
+        {
+            var ghbase = new GingerHbase(Database.TNS, Database.User, Database.Pass)
+            {
+                Db = Database
+            };
+            ghbase.Connect();
+            return ghbase;
+        }
         public string fUpdateDB(string updateCmd, bool commit)
         {
             string result = "";
