@@ -530,7 +530,11 @@ namespace GingerCore.Environments
                             databaseTableNames = objGingerCosmos.GetTableList(Keyspace);
                             break;
                         case eDBTypes.Hbase:
-                            GingerHbase ghbase = new GingerHbase(Database.TNS, Database.User, Database.Pass);
+                            GingerHbase ghbase = new GingerHbase(Database.TNS, Database.User, Database.Pass)
+                            {
+                                Db = Database
+                            };
+                            ghbase.Connect();
                             databaseTableNames = ghbase.GetTableList(Keyspace);
                             break;
 
@@ -626,9 +630,11 @@ namespace GingerCore.Environments
             else if (Database.DBType == Database.eDBTypes.Hbase)
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
-                NoSqlDriver = new GingerHbase(Database.TNS, Database.User, Database.Pass);
-                Database.ConnectionString = GetConnectionString();
-                NoSqlDriver.Db = Database;
+                NoSqlDriver = new GingerHbase(Database.TNS, Database.User, Database.Pass)
+                {
+                    Db = Database
+                };
+                NoSqlDriver.Connect();
                 databaseColumnNames = await NoSqlDriver.GetColumnList(table);
             }
             else
