@@ -78,7 +78,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public static Database CreateDatabaseFromConfig(DatabaseConfig databaseConfig)
         {
-            ValidateDatabaseConfig(databaseConfig);            
+            ValidateDatabaseConfig(databaseConfig);
             return new()
             {
                 ConnectionString = DecryptConnectionString(databaseConfig),
@@ -90,7 +90,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public static void UpdateDatabaseFromConfig(DatabaseConfig db, ref Database dbFromGinger)
         {
-            ValidateDatabaseConfig(db);            
+            ValidateDatabaseConfig(db);
             dbFromGinger.Name = db.Name;
             dbFromGinger.ConnectionString = DecryptConnectionString(db);
             dbFromGinger.KeepConnectionOpen = db.KeepConnectionOpen ?? false;
@@ -99,6 +99,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public static string DecryptConnectionString(DatabaseConfig db)
         {
+            if (db?.ConnectionString == null)
+            {
+                throw new ArgumentNullException(nameof(db), "Database config or connection string cannot be null");
+            }
+
+            if (WorkSpace.Instance?.Solution?.EncryptionKey == null)
+            {
+                throw new InvalidOperationException("Workspace solution encryption key not available");
+            }
             string DbConnectionString = string.Empty;
             if (db.IsConnectionStringEncrypted == true)
             {
