@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.Agents;
@@ -121,24 +122,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xPageURLTextBox.Init(null, mPOM, nameof(mPOM.PageURL));
 
             xTAlabel.Content = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}:";
-            FillTargetAppsComboBox();
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
-            xTagsViewer.Init(mPOM.TagsKeys);
-
-            BitmapSource source = null;
-            if (mPOM.ScreenShotImage != null)
-            {
-                source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mPOM.ScreenShotImage.ToString()));
-            }
-
-            mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
-            xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
-
-            mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage, editMode: mEditMode);
-            xUIElementsFrame.ClearAndSetContent(mPomAllElementsPage);
-            mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
-
-            UIElementTabTextBlockUpdate();
 
             mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
             ObservableList<Agent> optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
@@ -150,6 +133,26 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     agent.AgentOperations = agentOperations;
                 }
             }
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
+            xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);
+            FillTargetAppsComboBox();
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
+            xTagsViewer.Init(mPOM.TagsKeys);
+            BitmapSource source = null;
+            if (mPOM.ScreenShotImage != null)
+            {
+                source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mPOM.ScreenShotImage.ToString()));
+            }
+            mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
+            xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
+
+            mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage, editMode: mEditMode);
+            xUIElementsFrame.ClearAndSetContent(mPomAllElementsPage);
+            mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
+
+            UIElementTabTextBlockUpdate();
+
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
             xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);
 
@@ -218,12 +221,26 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mPOM.Key.ItemName + " Target Application was not found, please select new Target Application");
                 }
             }
+            TAComboBox();
+            xTargetApplicationComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
+            xTargetApplicationComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
+            CollectionChangedEventManager.AddHandler(source: WorkSpace.Instance.Solution.ApplicationPlatforms, handler: ApplicationPlatforms_CollectionChanged);
 
+        }
+        private void TAComboBox()
+        {
+            string appType = string.Empty;
+            bool isWebAppType = false;
+            if (mAgent != null)
+            {
+                appType = mAgent.DriverConfiguration.FirstOrDefault(p => string.Equals(p.Parameter, "AppType"))?.Value ?? "";
+                isWebAppType = string.Equals(appType, eAppType.Web.ToString());
+            }
             xTargetApplicationComboBox.ItemsSource = null;
             var targetPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
             if (targetPlatform != ePlatformType.NA)
             {
-                if (targetPlatform == ePlatformType.Mobile)
+                if (targetPlatform == ePlatformType.Mobile && isWebAppType)
                 {
                     xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Platform is ePlatformType.Mobile or ePlatformType.Web).ToList();
                 }
@@ -236,23 +253,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
             }
-            xTargetApplicationComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
-            xTargetApplicationComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
-            CollectionChangedEventManager.AddHandler(source: WorkSpace.Instance.Solution.ApplicationPlatforms, handler: ApplicationPlatforms_CollectionChanged);
 
         }
-
         private void ApplicationPlatforms_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            var targetPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
-            if (targetPlatform != ePlatformType.NA)
-            {
-                xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Platform == targetPlatform).ToList();
-            }
-            else
-            {
-                xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
-            }
+            TAComboBox();
         }
 
         private void xTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
