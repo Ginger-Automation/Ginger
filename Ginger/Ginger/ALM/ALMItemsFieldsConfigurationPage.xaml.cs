@@ -80,7 +80,14 @@ namespace Ginger.ALM
         {
             if (Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
-                RunWorker(true);
+                if (ALMIntegration.Instance.TestALMProjectConn(eALMConnectType.Silence))
+                {
+                    RunWorker(true);
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Error in Connection to ALM, Please check ALM Connection Settings");
+                }
             }
         }
 
