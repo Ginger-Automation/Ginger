@@ -109,7 +109,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 throw new InvalidOperationException("Workspace solution encryption key not available");
             }
             string DbConnectionString = string.Empty;
-            if (db.IsConnectionStringEncrypted == true)
+            if ((bool)db.IsConnectionStringEncrypted)
             {
                 DbConnectionString = EncryptionHandler.DecryptwithKey(db.ConnectionString, WorkSpace.Instance.Solution.EncryptionKey);
             }
