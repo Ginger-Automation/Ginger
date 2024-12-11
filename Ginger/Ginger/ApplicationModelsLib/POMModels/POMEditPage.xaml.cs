@@ -68,7 +68,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             set
             {
                 mAgent = value;
-                mPomAllElementsPage.SetAgent(mAgent);
+                mPomAllElementsPage?.SetAgent(mAgent);
                 if (mAgent != null)
                 {
                     mPOM.LastUsedAgent = mAgent.Guid;
@@ -124,7 +124,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xTAlabel.Content = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}:";
 
             mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
-            ObservableList<Agent> optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
+            ObservableList<Agent> optionalAgentsList = SupportedAgents();
             foreach (Agent agent in optionalAgentsList)
             {
                 if (agent.AgentOperations == null)
@@ -133,7 +134,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     agent.AgentOperations = agentOperations;
                 }
             }
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
             xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);
             FillTargetAppsComboBox();
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
@@ -221,13 +221,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mPOM.Key.ItemName + " Target Application was not found, please select new Target Application");
                 }
             }
-            TAComboBox();
+            SupportedTargetApplication();
             xTargetApplicationComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
             xTargetApplicationComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
             CollectionChangedEventManager.AddHandler(source: WorkSpace.Instance.Solution.ApplicationPlatforms, handler: ApplicationPlatforms_CollectionChanged);
 
         }
-        private void TAComboBox()
+        /// <summary>
+        /// Sets the supported target applications for the current POM based on the agent's configuration and platform type.
+        /// </summary>
+        private void SupportedTargetApplication()
         {
             string appType = string.Empty;
             bool isWebAppType = false;
@@ -253,11 +256,46 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
             }
+        }
 
+
+        /// <summary>
+        /// Returns a list of supported agents based on the application platform and agent type.
+        /// </summary>
+        /// <returns>ObservableList of supported agents.</returns>
+        private ObservableList<Agent> SupportedAgents()
+        {
+            string appType = string.Empty;
+            bool isWebAppType = false;
+            ObservableList<Agent> optionalAgentsList;
+            var lastAgentID = mPOM.LastUsedAgent;
+            var lastUsedAgent = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>()
+                                            .FirstOrDefault(x => x.Guid == lastAgentID);
+
+            if (lastUsedAgent != null)
+            {
+                appType = lastUsedAgent.DriverConfiguration.FirstOrDefault(p => string.Equals(p.Parameter, "AppType"))?.Value ?? string.Empty;
+                isWebAppType = string.Equals(appType, eAppType.Web.ToString(), StringComparison.OrdinalIgnoreCase);
+            }
+
+            mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
+
+            var agents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+
+            if (mAppPlatform == ePlatformType.Mobile && isWebAppType)
+            {
+                optionalAgentsList = GingerCore.General.ConvertListToObservableList(agents.Where(x => x.Platform is ePlatformType.Mobile or ePlatformType.Web).ToList());
+            }
+            else
+            {
+                optionalAgentsList = GingerCore.General.ConvertListToObservableList(agents.Where(x => x.Platform == mAppPlatform).ToList());
+            }
+
+            return optionalAgentsList;
         }
         private void ApplicationPlatforms_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            TAComboBox();
+            SupportedTargetApplication();
         }
 
         private void xTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
