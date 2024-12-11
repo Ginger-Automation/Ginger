@@ -402,27 +402,27 @@ namespace Ginger.Actions
                 }
 
                 await Task.Run(async () =>
-                {
-                    try
-                    {
-                        List<string> tables = await db.DatabaseOperations.GetTablesListAsync(KeySpace);
-                        if (tables != null)
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                foreach (string s in tables)
-                                {
-                                    TablesComboBox.Items.Add(s);
-                                }
-                            });
-                        }
-                        Reporter.HideStatusMessage();
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"{db.DatabaseOperations} failed to get tables", ex);
-                    }
-                });
+                   {
+                       try
+                       {
+                           List<string> tables = await db.DatabaseOperations.GetTablesListAsync(KeySpace);
+                           if (tables != null)
+                           {
+                               Dispatcher.Invoke(() =>
+                               {
+                                   foreach (string s in tables)
+                                   {
+                                       TablesComboBox.Items.Add(s);
+                                   }
+                               });
+                           }
+                           Reporter.HideStatusMessage();
+                       }
+                       catch (Exception ex)
+                       {
+                           Reporter.ToLog(eLogLevel.ERROR, $"{db.DatabaseOperations} failed to get tables", ex);
+                       }
+                   });
 
             }
             finally
