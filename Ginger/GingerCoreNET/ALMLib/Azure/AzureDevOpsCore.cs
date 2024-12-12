@@ -43,6 +43,7 @@ using OctaneStdSDK.Entities.Base;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -205,7 +206,7 @@ namespace GingerCore.ALM
 
                 if (!string.IsNullOrEmpty(tempDefectId))
                 {
-                    newWorkItem = workItemTrackingClient.UpdateWorkItemAsync(patchDocument,tempDefectId.ToInt32()).Result;
+                    newWorkItem = workItemTrackingClient.UpdateWorkItemAsync(patchDocument, tempDefectId.ToInt32()).Result;
                 }
                 else
                 {
@@ -231,35 +232,59 @@ namespace GingerCore.ALM
             }
 
             var attachmentPathsArray = attachmentPaths.Split(',');
+            dynamic attachment = null;
 
             foreach (var attachmentPath in attachmentPathsArray)
             {
-                try
-                {
-                    var attachment = wit.CreateAttachmentAsync(attachmentPath.Trim()).Result;
+                bool IsSuccess = false;
+                int retryCount = 5;
 
-                    patchDocument.Add(
-                        new JsonPatchOperation()
+                for (int attempt = 1; attempt <= retryCount; attempt++)
+                {
+                    try
+                    {
+                        Task.Run(async () =>
                         {
-                            Operation = Operation.Add,
-                            Path = "/relations/-",
-                            Value = new
+                            attachment = await wit.CreateAttachmentAsync(attachmentPath.Trim());
+                        }).Wait();
+
+                        patchDocument.Add(
+                            new JsonPatchOperation()
                             {
-                                rel = "AttachedFile",
-                                url = attachment.Url,
-                                attributes = new
+                                Operation = Operation.Add,
+                                Path = "/relations/-",
+                                Value = new
                                 {
-                                    comment = "Attached Screenshot"
+                                    rel = "AttachedFile",
+                                    url = attachment.Url,
+                                    attributes = new
+                                    {
+                                        comment = "Attached Screenshot"
+                                    }
                                 }
                             }
-                        }
-                    );
+                        );
+
+                        IsSuccess = true;
+                        break;
+                    }
+                    catch (IOException ioEx) when (ioEx.Message.Contains("being used by another process"))
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, $"Attempt {attempt} failed: File '{attachmentPath.Trim()}' is being used by another process. Retrying...");
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error adding attachment '{attachmentPath.Trim()}': {ex.Message}", ex);
+                        break;
+                    }
                 }
-                catch (Exception ex)
+
+                if (!IsSuccess)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Error adding attachment '{attachmentPath.Trim()}': {ex.Message}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to add attachment '{attachmentPath.Trim()}' after {retryCount} attempts.");
                 }
             }
+
             return patchDocument;
         }
 
