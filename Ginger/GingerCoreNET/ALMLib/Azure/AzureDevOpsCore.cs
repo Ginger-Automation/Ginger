@@ -46,6 +46,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using TestPlan = Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlan;
@@ -238,16 +239,38 @@ namespace GingerCore.ALM
             {
                 bool IsSuccess = false;
                 int retryCount = 5;
-
-                for (int attempt = 1; attempt <= retryCount; attempt++)
+                try
                 {
-                    try
+                    Task.Run(async () =>
                     {
-                        Task.Run(async () =>
+                        for (int attempt = 1; attempt <= retryCount; attempt++)
                         {
-                            attachment = await wit.CreateAttachmentAsync(attachmentPath.Trim());
-                        }).Wait();
+                            try
+                            {
+                                attachment = await wit.CreateAttachmentAsync(attachmentPath.Trim());
+                                IsSuccess = true;
+                                break;
+                            }
+                            catch (IOException ioEx) when (ioEx.Message.Contains("being used by another process"))
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, $"Attempt {attempt} failed: File '{attachmentPath.Trim()}' is being used by another process. Retrying...");
+                                Thread.Sleep(1000);
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error adding attachment '{attachmentPath.Trim()}': {ex.Message}", ex);
+                                break;
+                            }
+                        }
 
+                        if (!IsSuccess)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to add attachment '{attachmentPath.Trim()}' after {retryCount} attempts.");
+                        }
+                    }).Wait();
+
+                    if (IsSuccess)
+                    {
                         patchDocument.Add(
                             new JsonPatchOperation()
                             {
@@ -264,28 +287,19 @@ namespace GingerCore.ALM
                                 }
                             }
                         );
+                    }
 
-                        IsSuccess = true;
-                        break;
-                    }
-                    catch (IOException ioEx) when (ioEx.Message.Contains("being used by another process"))
-                    {
-                        Reporter.ToLog(eLogLevel.WARN, $"Attempt {attempt} failed: File '{attachmentPath.Trim()}' is being used by another process. Retrying...");
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error adding attachment '{attachmentPath.Trim()}': {ex.Message}", ex);
-                        break;
-                    }
                 }
 
-                if (!IsSuccess)
+                catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to add attachment '{attachmentPath.Trim()}' after {retryCount} attempts.");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error adding attachment '{attachmentPath.Trim()}': {ex.Message}", ex);
+                    break;
                 }
-            }
 
+            }
             return patchDocument;
+
         }
 
 
