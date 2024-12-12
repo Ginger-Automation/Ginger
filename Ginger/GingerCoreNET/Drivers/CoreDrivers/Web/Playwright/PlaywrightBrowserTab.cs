@@ -705,7 +705,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         {
                             int timeout = 60;
                             Stopwatch st = Stopwatch.StartNew();
-                            if (act.Timeout is not null || act.Timeout != 0)
+                            if (act.Timeout is not null && act.Timeout != 0)
                             {
                                 timeout = act.Timeout.Value;
                             }
