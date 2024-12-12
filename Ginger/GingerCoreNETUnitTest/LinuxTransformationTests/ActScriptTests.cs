@@ -23,6 +23,7 @@ using Amdocs.Ginger.CoreNET.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Variables;
 using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -80,6 +81,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 ScriptName = "VBSSum2Args.vbs",
                 ScriptCommand = ActScript.eScriptAct.Script
             };
+            actScript.ValueExpression = new ValueExpression(actScript, "");
             actScript.AddOrUpdateInputParamValueAndCalculatedValue("Var1", "56");
             actScript.AddOrUpdateInputParamValueAndCalculatedValue("Var2", "77");
             actScript.ScriptInterpreterType = ActScript.eScriptInterpreterType.VBS;
@@ -109,6 +111,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 ScriptName = "BATReturnParam.bat",
                 ScriptCommand = ActScript.eScriptAct.Script
             };
+            actScript.ValueExpression = new ValueExpression(actScript, "");
             actScript.AddOrUpdateInputParamValueAndCalculatedValue("Param", "BatFile");
             actScript.ScriptInterpreterType = ActScript.eScriptInterpreterType.BAT;
             actScript.ScriptPath = TestResources.GetTestResourcesFolder(@"Files");
@@ -135,7 +138,9 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             {
                 ScriptName = "BASHWithArgs.sh",
                 ScriptCommand = ActScript.eScriptAct.Script
+
             };
+            actScript.ValueExpression = new ValueExpression(actScript, "");
             actScript.AddOrUpdateInputParamValueAndCalculatedValue("v1", "Shell");
             actScript.AddOrUpdateInputParamValueAndCalculatedValue("v2", "You");
             actScript.ScriptInterpreterType = ActScript.eScriptInterpreterType.SH;
@@ -167,6 +172,8 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 AddNewReturnParams = true
             };
 
+            actScript.ValueExpression = new ValueExpression(actScript, "");
+
             //Act
             mGR.RunAction(actScript);
 
@@ -193,6 +200,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 Active = true,
                 AddNewReturnParams = true
             };
+            actScript.ValueExpression = new ValueExpression(actScript, "");
 
             //Act
             mGR.RunAction(actScript);
@@ -221,6 +229,8 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 AddNewReturnParams = true
             };
 
+            actScript.ValueExpression = new ValueExpression(actScript, "");
+
             //Act
             mGR.RunAction(actScript);
 
@@ -246,6 +256,8 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 ScriptCommand = ActScript.eScriptAct.FreeCommand,
                 AddNewReturnParams = true
             };
+
+            v.ValueExpression = new ValueExpression(v, "");
             v.AddOrUpdateInputParamCalculatedValue("Free Command", "NumberB=10\r\nNumberA=20\r\nDim Result\r\nResult= int(NumberA) + int(NumberB)\r\nWscript.Echo \"Add=\" & Result");
 
             v.Execute();
@@ -272,6 +284,8 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 AddNewReturnParams = true,
                 ScriptCommand = ActScript.eScriptAct.Script
             };
+
+            v.ValueExpression = new ValueExpression(v, "");
             v.AddOrUpdateInputParamCalculatedValue("p1", "5");
             v.AddOrUpdateInputParamCalculatedValue("p2", "7");
 
@@ -309,6 +323,8 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 ScriptCommand = ActScript.eScriptAct.FreeCommand,
                 AddNewReturnParams = true
             };
+
+            v.ValueExpression = new ValueExpression(v, "");
             v.AddOrUpdateInputParamCalculatedValue("Free Command", "@echo off \r\nSET /A a = 5 \r\nSET /A b = 10 \r\nSET /A c = %a% + %b% \r\necho Add=%c% ");
 
             //Act
@@ -337,6 +353,8 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 AddNewReturnParams = true,
                 ScriptCommand = ActScript.eScriptAct.Script
             };
+
+            v.ValueExpression = new ValueExpression(v, "");
             v.AddOrUpdateInputParamCalculatedValue("p1", "5");
             v.AddOrUpdateInputParamCalculatedValue("p2", "7");
 
@@ -352,6 +370,84 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             Assert.AreEqual(v.ReturnValues[0].Param, "Result");
             Assert.AreEqual(v.ReturnValues[0].Actual, "12");
 
+        }
+
+        /// <summary>
+        /// Test to verify the script interpreter path using a business flow variable.
+        /// </summary>
+        [Ignore]
+        [TestMethod]
+        public void ActScriptTestWithBFVariableInterpreterPath()
+        {
+            if (!isOSWindows)
+            {
+                return;
+            }
+
+            mGR.CurrentBusinessFlow.Variables.Add(new VariableString() { Name = "BF_TestPath", InitialStringValue = TestResources.GetTestResourcesFolder("Files") });
+
+            //Arrange
+            ActScript actScript = new ActScript
+            {
+                ScriptInterpreterType = ActScript.eScriptInterpreterType.Other,
+                ScriptInterpreter = "{Var Name=BF_TestPath}",
+                ScriptCommand = ActScript.eScriptAct.Script,
+                ScriptName = TestResources.GetTestResourcesFile(Path.Combine(@"Files", @"ScriptWithoutOutput.vbs")),
+                Active = true,
+                AddNewReturnParams = true,
+                ValueExpression = new ValueExpression(mGR.GingerRunner.ProjEnvironment, mGR.CurrentBusinessFlow, null)
+            };
+
+            actScript.ValueExpression = new ValueExpression(actScript, "");
+
+            //Act
+            string calculatedScriptInterpreter = actScript.ScriptInterpreter;
+            if (actScript.ValueExpression != null)
+            {
+                actScript.ValueExpression.Value = actScript.ScriptInterpreter;
+                calculatedScriptInterpreter = actScript.ValueExpression.ValueCalculated;
+            }
+
+            //Assert
+            Assert.AreEqual(calculatedScriptInterpreter, TestResources.GetTestResourcesFolder("Files"));
+        }
+
+
+        /// <summary>
+        /// Test to verify the script interpreter path using an activity variable.
+        /// </summary>
+        [TestMethod]
+        public void ActScriptTestWithActVariableInterpreterPath()
+        {
+            if (!isOSWindows)
+            {
+                return;
+            }
+
+            mGR.CurrentBusinessFlow.CurrentActivity.Variables.Add(new VariableString() { Name = "Act_TestPath", InitialStringValue = TestResources.GetTestResourcesFolder("Files") });
+
+            //Arrange
+            ActScript actScript = new ActScript
+            {
+                ScriptInterpreterType = ActScript.eScriptInterpreterType.Other,
+                ScriptInterpreter = "{Var Name=Act_TestPath}",
+                ScriptCommand = ActScript.eScriptAct.Script,
+                ScriptName = TestResources.GetTestResourcesFile(Path.Combine(@"Files", @"ScriptWithoutOutput.vbs")),
+                Active = true,
+                AddNewReturnParams = true,
+                ValueExpression = new ValueExpression(mGR.GingerRunner.ProjEnvironment, mGR.CurrentBusinessFlow, null)
+            };
+
+            //Act
+            string calculatedScriptInterpreter = actScript.ScriptInterpreter;
+            if (actScript.ValueExpression != null)
+            {
+                actScript.ValueExpression.Value = actScript.ScriptInterpreter;
+                calculatedScriptInterpreter = actScript.ValueExpression.ValueCalculated;
+            }
+            var a = TestResources.GetTestResourcesFolder("Files");
+            //Assert
+            Assert.AreEqual(calculatedScriptInterpreter, a);
         }
     }
 }

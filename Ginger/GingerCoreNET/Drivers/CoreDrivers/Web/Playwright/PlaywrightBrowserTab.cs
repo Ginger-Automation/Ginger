@@ -26,6 +26,7 @@ using Microsoft.Playwright;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -72,10 +73,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         List<Tuple<string, object>> networkRequestLogList;
         ActBrowserElement _act;
         public bool isNetworkLogMonitoringStarted = false;
+        public bool isDialogDismiss = true;
         IDialog dialogs;
 
         public bool IsClosed => _isClosed;
-        BrowserHelper _BrowserHelper; 
+        BrowserHelper _BrowserHelper;
 
         internal PlaywrightBrowserTab(IPlaywrightPage playwrightPage, IBrowserTab.OnTabClose onTabClose)
         {
@@ -91,6 +93,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             _playwrightPage.Console -= OnConsoleMessage;
             _playwrightPage.Close -= OnPlaywrightPageClose;
+            _playwrightPage.Dialog -= OnPlaywrightDialog;
         }
 
         private void OnPlaywrightPageClose(object? sender, IPlaywrightPage e)
@@ -629,17 +632,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             _BrowserHelper = new BrowserHelper(act);
             try
             {
-                    networkRequestLogList = [];
-                    networkResponseLogList = [];
-                    _playwrightPage.Request += OnNetworkRequestSent;
-                    _playwrightPage.Response += OnNetworkResponseReceived;
-                    isNetworkLogMonitoringStarted = true;
+                networkRequestLogList = [];
+                networkResponseLogList = [];
+                _playwrightPage.Request += OnNetworkRequestSent;
+                _playwrightPage.Response += OnNetworkResponseReceived;
+                isNetworkLogMonitoringStarted = true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
-            
+
         }
         /// <summary>
         /// This asynchronous method retrieves the captured network logs (requests and responses) for the current browser element and stores them in the act object.
@@ -693,12 +696,31 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             _BrowserHelper = new BrowserHelper(act);
             try
             {
-                await Task.Run(() =>
+                await Task.Run(async () =>
                 {
                     try
                     {
-                        _playwrightPage.Request -= OnNetworkRequestSent;
-                        _playwrightPage.Response -= OnNetworkResponseReceived;
+
+                        if (networkRequestLogList.Count != networkResponseLogList.Count)
+                        {
+                            int timeout = 60;
+                            Stopwatch st = Stopwatch.StartNew();
+                            if (act.Timeout is not null && act.Timeout != 0)
+                            {
+                                timeout = act.Timeout.Value;
+                            }
+                            st.Start();
+                            while (timeout != st.Elapsed.TotalSeconds)
+                            {
+                                if (networkRequestLogList.Count == networkResponseLogList.Count)
+                                {
+                                    break;
+                                }
+                                System.Threading.Thread.Sleep(1000);
+                            }
+                            st.Stop();
+                        }
+
                         isNetworkLogMonitoringStarted = false;
                         act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
                         act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
@@ -722,6 +744,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
                         Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);
                     }
+
+
                     catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
@@ -732,7 +756,25 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
-    
+            finally
+            {
+                DetachEvents();
+            }
+
+        }
+
+        private void DetachEvents()
+        {
+            try
+            {
+                _playwrightPage.Request -= OnNetworkRequestSent;
+                _playwrightPage.Response -= OnNetworkResponseReceived;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+
         }
 
 
@@ -746,15 +788,29 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             try
             {
-                if (_BrowserHelper.ShouldMonitorAllUrls() || _BrowserHelper.ShouldMonitorUrl( request.Url))
+                if (_BrowserHelper.ShouldMonitorAllUrls() || _BrowserHelper.ShouldMonitorUrl(request.Url))
                 {
-                    networkRequestLogList.Add(new Tuple<string, object>($"RequestUrl:{ request.Url}", JsonConvert.SerializeObject(request, Formatting.Indented,
+                    if (_act.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
+                    {
+                        if (request.ResourceType.Equals("XHR", StringComparison.CurrentCultureIgnoreCase) || request.ResourceType.Equals("FETCH", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            networkRequestLogList.Add(new Tuple<string, object>($"RequestUrl:{request.Url}", JsonConvert.SerializeObject(request, Formatting.Indented,
                                                                                                                                 new JsonSerializerSettings
                                                                                                                                 {
                                                                                                                                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                                                                                                                                })
-                ));
+                                                                                                                                })));
+                        }
+                    }
+                    else
+                    {
+                        networkRequestLogList.Add(new Tuple<string, object>($"RequestUrl:{request.Url}", JsonConvert.SerializeObject(request, Formatting.Indented,
+                                                                                                                                new JsonSerializerSettings
+                                                                                                                                {
+                                                                                                                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                                                                                                                })));
+                    }
                 }
+
             }
             catch (Exception ex)
             {
@@ -769,19 +825,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// <param name="response"></param>
         private async void OnNetworkResponseReceived(object? sender, IResponse response)
         {
-            await response.FinishedAsync();
             try
             {
+                await response.FinishedAsync();
                 if (response != null)
                 {
-                    string monitorType = _act.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value;
                     if (_BrowserHelper.ShouldMonitorAllUrls() || _BrowserHelper.ShouldMonitorUrl(response.Url))
                     {
                         if (_act.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
                         {
-                            if (response.Request.ResourceType.Equals("XHR",StringComparison.CurrentCultureIgnoreCase) || response.Request.ResourceType.Equals("FETCH", StringComparison.CurrentCultureIgnoreCase))
+                            if (response.Request.ResourceType.Equals("XHR", StringComparison.CurrentCultureIgnoreCase) || response.Request.ResourceType.Equals("FETCH", StringComparison.CurrentCultureIgnoreCase))
                             {
-                                networkResponseLogList.Add(new Tuple<string, object>($"ResponseUrl:{ response.Url}", JsonConvert.SerializeObject(response, Formatting.Indented,
+                                networkResponseLogList.Add(new Tuple<string, object>($"ResponseUrl:{response.Url}", JsonConvert.SerializeObject(response, Formatting.Indented,
                                                                                                                                     new JsonSerializerSettings
                                                                                                                                     {
                                                                                                                                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -807,15 +862,23 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
         }
 
-        
 
-        
+
+
 
         private async void OnPlaywrightDialog(object? sender, IDialog e)
         {
             try
             {
-               dialogs = e;
+                if (isDialogDismiss)
+                {
+                    await e.DismissAsync();
+                }
+                else
+                {
+                    dialogs = e;
+                }
+
             }
             catch (Exception ex)
             {
@@ -833,6 +896,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 if (dialogs != null)
                 {
                     await dialogs.AcceptAsync();
+                    isDialogDismiss = true;
                 }
                 else
                 {
@@ -856,6 +920,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 if (dialogs != null)
                 {
                     await dialogs.DismissAsync();
+                    isDialogDismiss = true;
                 }
                 else
                 {
@@ -906,11 +971,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 if (dialogs != null)
                 {
                     await dialogs.AcceptAsync(promptText: MessageBoxText);
+                    isDialogDismiss = true;
                 }
                 else
                 {
                     Reporter.ToLog(eLogLevel.WARN, "No dialog to accept.");
-                    
+
                 }
             }
             catch (Exception ex)
@@ -918,6 +984,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 Reporter.ToLog(eLogLevel.ERROR, "Error While Accept Message", ex);
             }
 
+        }
+
+        public async Task StartListenDialogsAsync()
+        {
+            isDialogDismiss = false;
         }
     }
 

@@ -174,8 +174,8 @@ namespace Ginger.SolutionAutoSaveAndRecover
                     return;
                 }
             }
-            WorkSpace.Instance.AppSolutionRecover.CleanUpRecoverFolder();
-            _pageGenericWin.Close();
+            WorkSpace.Instance?.AppSolutionRecover?.CleanUpRecoverFolder();
+            _pageGenericWin?.Close();
         }
 
         private async Task SetGridView()

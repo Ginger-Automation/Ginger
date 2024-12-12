@@ -63,7 +63,7 @@ namespace Ginger.Run
         private readonly RunsetFromReportLoader _runsetFromReportLoader;
 
         ObservableList<RunSetReport> mExecutionsHistoryList = [];
-        ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
+        ExecutionLoggerHelper executionLoggerHelper = new();
 
         private HttpClient? _httpClient;
         private Task<GraphQLResponse<GraphQLRunsetResponse>> response;
@@ -772,7 +772,11 @@ namespace Ginger.Run
 
         private void DeleteExecutionReports(System.Collections.IList runSetReports)
         {
-            bool remoteDeletionFlag = false;
+            if ((bool)remoteRadioButton.IsChecked)
+            {
+                Reporter.ToUser(eUserMsgKey.RemoteExecutionResultsCannotBeAccessed);
+                return;
+            }
             foreach (RunSetReport runSetReport in runSetReports)
             {
                 if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
@@ -789,11 +793,7 @@ namespace Ginger.Run
                     string runSetFolder = executionLoggerHelper.GetLoggerDirectory(runSetReport.LogFolder);
                     TextFileRepository.DeleteLocalData(runSetFolder);
                 }
-                else if ((bool)remoteRadioButton.IsChecked)
-                {
-                    Reporter.ToUser(eUserMsgKey.RemoteExecutionResultsCannotBeAccessed);
-                    remoteDeletionFlag = true;
-                }
+
             }
 
             if (xGridExecutionsHistory.Grid.SelectedItems.Count > 0)

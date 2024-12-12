@@ -164,17 +164,25 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
             try
             {
                 mWizard.ImportedEnvs.Clear();
-                if (xEnvironmentComboBox.SelectedItems.Count > 0)
+                if (xEnvironmentComboBox.SelectedItems != null)
                 {
-                    foreach (var env in xEnvironmentComboBox.SelectedItems)
+                    if (xEnvironmentComboBox.SelectedItems.Count > 0)
                     {
-                        await HandleEnvironmentSelection(env);
-                    }
+                        foreach (var env in xEnvironmentComboBox.SelectedItems)
+                        {
+                            await HandleEnvironmentSelection(env);
+                        }
 
-                    if (mWizard.ImportedEnvs.Any(k => k.GingerOpsStatus == "Import Successful"))
-                    {
-                        mWizard.mWizardWindow.SetFinishButtonEnabled(true);
+                        if (mWizard.ImportedEnvs.Any(k => k.GingerOpsStatus == "Import Successful"))
+                        {
+                            mWizard.mWizardWindow.SetFinishButtonEnabled(true);
+                        }
                     }
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.AskToSelectItem);
+                    mWizard.Prev();
                 }
             }
             catch (Exception ex)
