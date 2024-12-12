@@ -33,6 +33,7 @@ using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
@@ -134,14 +135,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     agent.AgentOperations = agentOperations;
                 }
             }
-            if (DefaultAgentGuid == null)
-            {
-                xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);
-            }
-            else
-            {
-                xAgentControlUC.Init(optionalAgentsList, (Guid)DefaultAgentGuid);
-            }
+            xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);
+
             FillTargetAppsComboBox();
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
             xTagsViewer.Init(mPOM.TagsKeys);
@@ -159,9 +154,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             UIElementTabTextBlockUpdate();
 
-
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
-            xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);
 
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEditPageExpander, Expander.IsExpandedProperty, mPOM, nameof(mPOM.IsCollapseDetailsExapander));
@@ -244,14 +236,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (targetPlatform != ePlatformType.NA)
             {
-                if (targetPlatform == ePlatformType.Mobile && MobileWebApptypeFlag)
-                {
-                    xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Platform is ePlatformType.Mobile or ePlatformType.Web).ToList();
-                }
-                else
-                {
-                    xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Platform == targetPlatform).ToList();
-                }
+                xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Platform == targetPlatform).ToList();
             }
             else
             {
@@ -259,8 +244,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        private bool MobileWebApptypeFlag = false;
-        private Guid? DefaultAgentGuid;
         /// <summary>
         /// Returns a list of supported agents based on the application platform and agent type.
         /// </summary>
@@ -271,9 +254,25 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             var agents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
 
-            if (mAppPlatform == ePlatformType.Mobile && MobileAgentAppTypeValidation())
+            if (mAppPlatform == ePlatformType.Web)
             {
-                optionalAgentsList = GingerCore.General.ConvertListToObservableList(agents.Where(x => x.Platform is ePlatformType.Mobile or ePlatformType.Web).ToList());
+                List<Agent> list = agents.Where(x => x.Platform == ePlatformType.Web).ToList();
+
+                foreach (var agent in agents)
+                {
+                    if (agent.Platform == ePlatformType.Mobile)
+                    {
+                        var appType = agent.DriverConfiguration.FirstOrDefault(p => string.Equals(p.Parameter, "AppType", StringComparison.OrdinalIgnoreCase))?.Value ?? string.Empty;
+
+                        if (string.Equals(appType, eAppType.Web.ToString(), StringComparison.OrdinalIgnoreCase))
+                        {
+                            list.Add(agent);
+                        }
+                    }
+                }
+
+                optionalAgentsList = GingerCore.General.ConvertListToObservableList(list);
+
             }
             else
             {
@@ -283,40 +282,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             return optionalAgentsList;
         }
 
-        /// <summary>
-        /// Validates if the last used agent is of type Web for Mobile platform.
-        /// </summary>
-        /// <returns>True if the last used agent is of type Web, otherwise false.</returns>
-        private bool MobileAgentAppTypeValidation()
-        {
-            MobileWebApptypeFlag = false;
-            DefaultAgentGuid = null;
 
-            var lastAgentID = mPOM.LastUsedAgent;
-            var agents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-            var lastUsedAgent = mAgent ?? agents.FirstOrDefault(x => x.Guid == lastAgentID);
-            bool isDefaultUsed = false;
-
-            if (lastUsedAgent == null)
-            {
-                lastUsedAgent = agents.FirstOrDefault(x => x.Platform == mAppPlatform);
-                isDefaultUsed = true;
-            }
-
-            if (lastUsedAgent != null)
-            {
-                var appType = lastUsedAgent.DriverConfiguration
-                    .FirstOrDefault(p => string.Equals(p.Parameter, "AppType", StringComparison.OrdinalIgnoreCase))?.Value ?? string.Empty;
-                MobileWebApptypeFlag = string.Equals(appType, eAppType.Web.ToString(), StringComparison.OrdinalIgnoreCase);
-
-                if (isDefaultUsed && MobileWebApptypeFlag)
-                {
-                    DefaultAgentGuid = lastUsedAgent.Guid;
-                }
-            }
-
-            return MobileWebApptypeFlag;
-        }
         private void ApplicationPlatforms_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             SupportedTargetApplication();
