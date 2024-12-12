@@ -258,16 +258,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 List<Agent> list = agents.Where(x => x.Platform == ePlatformType.Web).ToList();
 
-                foreach (var agent in agents)
+                foreach (var agent in agents.Where(a => a.Platform == ePlatformType.Mobile))
                 {
-                    if (agent.Platform == ePlatformType.Mobile)
-                    {
-                        var appType = agent.DriverConfiguration.FirstOrDefault(p => string.Equals(p.Parameter, "AppType", StringComparison.OrdinalIgnoreCase))?.Value ?? string.Empty;
+                    var appType = agent.DriverConfiguration.FirstOrDefault(p => string.Equals(p.Parameter, "AppType", StringComparison.OrdinalIgnoreCase))?.Value ?? string.Empty;
 
-                        if (string.Equals(appType, eAppType.Web.ToString(), StringComparison.OrdinalIgnoreCase))
-                        {
-                            list.Add(agent);
-                        }
+                    if (string.Equals(appType, nameof(eAppType.Web), StringComparison.OrdinalIgnoreCase))
+                    {
+                        list.Add(agent);
                     }
                 }
 
