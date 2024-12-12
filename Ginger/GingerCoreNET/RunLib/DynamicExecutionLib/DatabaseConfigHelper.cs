@@ -98,26 +98,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
         }
 
         public static string DecryptConnectionString(DatabaseConfig db)
-        {
-            if (db?.ConnectionString == null)
+        {                      
+            if (db.IsConnectionStringEncrypted!=null && db.IsConnectionStringEncrypted.Value)
             {
-                throw new ArgumentNullException(nameof(db), "Database config or connection string cannot be null");
-            }
-
-            if (WorkSpace.Instance?.Solution?.EncryptionKey == null)
-            {
-                throw new InvalidOperationException("Workspace solution encryption key not available");
-            }
-            string DbConnectionString = string.Empty;
-            if (db.IsConnectionStringEncrypted!=null && db.IsConnectionStringEncrypted == true)
-            {
-                DbConnectionString = EncryptionHandler.DecryptwithKey(db.ConnectionString, WorkSpace.Instance.Solution.EncryptionKey);
+                return EncryptionHandler.DecryptwithKey(db.ConnectionString, WorkSpace.Instance.Solution.EncryptionKey);
             }
             else
             {
-                DbConnectionString = db.ConnectionString;
-            }
-            return DbConnectionString;
+                return db.ConnectionString;
+            }          
         }
     }
 }
