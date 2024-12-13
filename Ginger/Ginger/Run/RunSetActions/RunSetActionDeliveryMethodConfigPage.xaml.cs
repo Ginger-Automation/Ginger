@@ -133,5 +133,34 @@ namespace Ginger.Run.RunSetActions
                 xSMTPPassTextBox.Text = EncryptionHandler.EncryptwithKey(xSMTPPassTextBox.Text);
             }
         }
+        /// <summary>
+        /// Handles the LostKeyboardFocus event for the CertificatePasswordUCValueExpression control.
+        /// Encrypts the password if needed.
+        /// </summary>
+        private void CertificatePasswordUCValueExpression_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        {
+            EncryptPasswordIfNeeded();
+        }
+
+        /// <summary>
+        /// Checks if the CertificatePasswordUCValueExpression contains a value expression.
+        /// </summary>
+        /// <returns>True if it is a value expression, otherwise false.</returns>
+        private bool IsPasswordValueExpression()
+        {
+            return ValueExpression.IsThisAValueExpression(CertificatePasswordUCValueExpression.ValueTextBox.Text);
+        }
+
+        /// <summary>
+        /// Encrypts the password in CertificatePasswordUCValueExpression if it is not already encrypted.
+        /// </summary>
+        private void EncryptPasswordIfNeeded()
+        {
+            string password = CertificatePasswordUCValueExpression.ValueTextBox.Text;
+            if (!string.IsNullOrEmpty(password) && !IsPasswordValueExpression() && !EncryptionHandler.IsStringEncrypted(password))
+            {
+                CertificatePasswordUCValueExpression.ValueTextBox.Text = EncryptionHandler.EncryptwithKey(password);
+            }
+        }
     }
 }

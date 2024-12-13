@@ -150,8 +150,12 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 { commandParam = commandParam + " -u" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Username) + Quotationmark; }
 
                 //The password to use in any authentications, overrides any password set for any TestRequests
-                if (!string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Password)))
-                { commandParam = commandParam + " -p" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Password) + Quotationmark; }
+                string password = mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Password);
+                if (!string.IsNullOrEmpty(password))
+                {
+                    var decryptedPassword = mAct.DecryptPassword(password, ValueExpression.IsThisAValueExpression(password));
+                    commandParam = commandParam + " -p" + Quotationmark + decryptedPassword + Quotationmark;
+                }
 
                 //The domain to use in any authentications, overrides any domain set for any TestRequests
                 if (!string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Domain)))

@@ -250,6 +250,7 @@ namespace GingerCore.Actions.WebAPI
                 {
                     string certificateKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
 
+                    certificateKey = mAct.DecryptPassword(certificateKey, ValueExpression.IsThisAValueExpression(certificateKey));
                     if (!string.IsNullOrEmpty(path))
                     {
                         if (string.IsNullOrEmpty(certificateKey))
@@ -863,8 +864,8 @@ namespace GingerCore.Actions.WebAPI
         {
             eContentType = (ApplicationAPIUtils.eContentType)mAct.GetInputParamCalculatedValue<ApplicationAPIUtils.eContentType>(ActWebAPIRest.Fields.ContentType);
 
-            if (ContentType == null)            
-            {                
+            if (ContentType == null)
+            {
                 switch (eContentType)
                 {
                     case ApplicationAPIUtils.eContentType.JSon:

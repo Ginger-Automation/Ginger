@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
+using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.WebServices;
 using System;
@@ -708,5 +709,36 @@ namespace Ginger.Actions.WebServices
             }
 
         }
+
+        /// <summary>
+        /// Handles the LostKeyboardFocus event of the PasswordTextBox control.
+        /// Encrypts the password if needed.
+        /// </summary>
+        private void PasswordTextBox_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        {
+            EncryptPasswordIfNeeded();
+        }
+        /// <summary>
+        /// Determines whether the password is a value expression.
+        /// </summary>
+        /// <returns>True if the password is a value expression; otherwise, false.</returns>
+        private bool IsPasswordValueExpression()
+        {
+            return ValueExpression.IsThisAValueExpression(mAct.GetInputParamValue(ActSoapUI.Fields.Password));
+        }
+
+        /// <summary>
+        /// Encrypts the password if it is not already encrypted and not a value expression.
+        /// </summary>
+        private void EncryptPasswordIfNeeded()
+        {
+            string password = mAct.GetInputParamValue(ActSoapUI.Fields.Password);
+            if (!string.IsNullOrEmpty(password) && !IsPasswordValueExpression() && !EncryptionHandler.IsStringEncrypted(password))
+            {
+                PasswordTextBox.ValueTextBox.Text = EncryptionHandler.EncryptwithKey(password);
+            }
+        }
+
+
     }
 }
