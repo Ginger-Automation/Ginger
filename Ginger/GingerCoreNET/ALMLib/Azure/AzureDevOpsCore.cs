@@ -43,8 +43,10 @@ using OctaneStdSDK.Entities.Base;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using TestPlan = Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlan;
@@ -205,7 +207,7 @@ namespace GingerCore.ALM
 
                 if (!string.IsNullOrEmpty(tempDefectId))
                 {
-                    newWorkItem = workItemTrackingClient.UpdateWorkItemAsync(patchDocument,tempDefectId.ToInt32()).Result;
+                    newWorkItem = workItemTrackingClient.UpdateWorkItemAsync(patchDocument, tempDefectId.ToInt32()).Result;
                 }
                 else
                 {
@@ -231,36 +233,73 @@ namespace GingerCore.ALM
             }
 
             var attachmentPathsArray = attachmentPaths.Split(',');
+            dynamic attachment = null;
 
             foreach (var attachmentPath in attachmentPathsArray)
             {
+                bool IsSuccess = false;
+                int retryCount = 5;
                 try
                 {
-                    var attachment = wit.CreateAttachmentAsync(attachmentPath.Trim()).Result;
-
-                    patchDocument.Add(
-                        new JsonPatchOperation()
+                    Task.Run(async () =>
+                    {
+                        for (int attempt = 1; attempt <= retryCount; attempt++)
                         {
-                            Operation = Operation.Add,
-                            Path = "/relations/-",
-                            Value = new
+                            try
                             {
-                                rel = "AttachedFile",
-                                url = attachment.Url,
-                                attributes = new
-                                {
-                                    comment = "Attached Screenshot"
-                                }
+                                attachment = await wit.CreateAttachmentAsync(attachmentPath.Trim());
+                                IsSuccess = true;
+                                break;
+                            }
+                            catch (IOException ioEx) when (ioEx.Message.Contains("being used by another process"))
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, $"Attempt {attempt} failed: File '{attachmentPath.Trim()}' is being used by another process. Retrying...");
+                                Thread.Sleep(1000);
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error adding attachment '{attachmentPath.Trim()}': {ex.Message}", ex);
+                                break;
                             }
                         }
-                    );
+
+                        if (!IsSuccess)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to add attachment '{attachmentPath.Trim()}' after {retryCount} attempts.");
+                        }
+                    }).Wait();
+
+                    if (IsSuccess)
+                    {
+                        patchDocument.Add(
+                            new JsonPatchOperation()
+                            {
+                                Operation = Operation.Add,
+                                Path = "/relations/-",
+                                Value = new
+                                {
+                                    rel = "AttachedFile",
+                                    url = attachment.Url,
+                                    attributes = new
+                                    {
+                                        comment = "Attached Screenshot"
+                                    }
+                                }
+                            }
+                        );
+                    }
+
                 }
+
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Error adding attachment '{attachmentPath.Trim()}': {ex.Message}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error adding attachment '{attachmentPath.Trim()}': {ex.Message}", ex);
+                    break;
                 }
+
             }
             return patchDocument;
+
         }
 
 
