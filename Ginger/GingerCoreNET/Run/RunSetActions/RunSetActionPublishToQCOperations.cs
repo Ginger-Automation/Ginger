@@ -289,26 +289,32 @@ namespace Ginger.Run.RunSetActions
 
                     foreach (BusinessFlow bFlowToUpdate in Bflist.Where(x => BFGuidlist.Contains(x.Guid)))
                     {
-                        ActivitiesGroup activitiesGroup = runsetConvertedbusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.ParentGuid == bFlowToUpdate.Guid);
-                        if (activitiesGroup != null)
+                        if (runsetConvertedbusinessFlow.ActivitiesGroups == null)
                         {
-                            if (!string.IsNullOrEmpty(bFlowToUpdate.ExternalID))
-                            {
-                                if (!General.isVariableUsed(bFlowToUpdate.ExternalID))
-                                {
-                                    bFlowToUpdate.ExternalID = !string.IsNullOrEmpty(activitiesGroup.ExternalID) ? activitiesGroup.ExternalID : bFlowToUpdate.ExternalID;
-                                }
-                            }
-                            else
-                            {
-                                bFlowToUpdate.ExternalID = activitiesGroup.ExternalID;
-                            }
+                            continue;
+                        }
 
-                            if (!string.IsNullOrEmpty(bFlowToUpdate.ExternalID))
+                        ActivitiesGroup activitiesGroup = runsetConvertedbusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.ParentGuid == bFlowToUpdate.Guid);
+
+                        if (activitiesGroup == null)
+                        {
+                            Reporter.ToLog(eLogLevel.INFO, $"No ActivitiesGroup found for BusinessFlow with Guid: {bFlowToUpdate.Guid}");
+                            continue;
+                        }
+
+                        if (!string.IsNullOrEmpty(bFlowToUpdate.ExternalID))
+                        {
+                            if (!General.isVariableUsed(bFlowToUpdate.ExternalID))
                             {
-                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bFlowToUpdate);
+                                bFlowToUpdate.ExternalID = !string.IsNullOrEmpty(activitiesGroup.ExternalID) ? activitiesGroup.ExternalID : bFlowToUpdate.ExternalID;
                             }
                         }
+                        else if (!string.IsNullOrEmpty(activitiesGroup.ExternalID))
+                        {
+                            bFlowToUpdate.ExternalID = activitiesGroup.ExternalID;
+                        }
+
+                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bFlowToUpdate);
                     }
                 }
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(runSetExec.RunSetConfig);
