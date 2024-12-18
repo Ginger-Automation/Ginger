@@ -233,42 +233,47 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
-        private void UpdateAlmIdtoRunset(BusinessFlow businessFlow, IReportInfo reportInfo)
+        /// <summary>
+        /// Updates the ALM ID in the Runset after exporting the RunSet to ALM when ALMTestSet Level is Runset
+        /// </summary>
+        /// <param name="runsetConvertedbusinessFlow"></param>
+        /// <param name="reportInfo"></param>
+        private void UpdateAlmIdtoRunset(BusinessFlow runsetConvertedbusinessFlow, IReportInfo reportInfo)
         {
             RunsetExecutor runSetExec = WorkSpace.Instance.RunsetExecutor;
             try
             {
-                if (reportInfo == null)
+                if (reportInfo == null || runsetConvertedbusinessFlow == null)
                 {
                     return;
                 }
-                if (businessFlow != null && !string.IsNullOrEmpty(businessFlow.ExternalID))
+                if (runsetConvertedbusinessFlow != null && !string.IsNullOrEmpty(runsetConvertedbusinessFlow.ExternalID))
                 {
                     if (!string.IsNullOrEmpty(runSetExec.RunSetConfig.ExternalID))
                     {
                         if (!General.isVariableUsed(runSetExec.RunSetConfig.ExternalID))
                         {
-                            runSetExec.RunSetConfig.ExternalID = businessFlow.ExternalID;
+                            runSetExec.RunSetConfig.ExternalID = runsetConvertedbusinessFlow.ExternalID;
                         }
                     }
                     else
                     {
-                        runSetExec.RunSetConfig.ExternalID = businessFlow.ExternalID;
+                        runSetExec.RunSetConfig.ExternalID = runsetConvertedbusinessFlow.ExternalID;
                     }
                 }
 
-                if (businessFlow != null && !string.IsNullOrEmpty(businessFlow.ExternalID2))
+                if (runsetConvertedbusinessFlow != null && !string.IsNullOrEmpty(runsetConvertedbusinessFlow.ExternalID2))
                 {
                     if (!string.IsNullOrEmpty(runSetExec.RunSetConfig.ExternalID2))
                     {
                         if (!General.isVariableUsed(runSetExec.RunSetConfig.ExternalID2))
                         {
-                            runSetExec.RunSetConfig.ExternalID2 = businessFlow.ExternalID2;
+                            runSetExec.RunSetConfig.ExternalID2 = runsetConvertedbusinessFlow.ExternalID2;
                         }
                     }
                     else
                     {
-                        runSetExec.RunSetConfig.ExternalID2 = businessFlow.ExternalID2;
+                        runSetExec.RunSetConfig.ExternalID2 = runsetConvertedbusinessFlow.ExternalID2;
                     }
                 }
 
@@ -282,27 +287,31 @@ namespace Ginger.Run.RunSetActions
                     List<Guid> BFGuidlist = runSetrunner.Executor.BusinessFlows.Select(x => x.Guid).ToList();
                     ObservableList<BusinessFlow> Bflist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
-                    foreach (BusinessFlow bFlow in Bflist.Where(x => BFGuidlist.Contains(x.Guid)))
+                    foreach (BusinessFlow bFlowToUpdate in Bflist.Where(x => BFGuidlist.Contains(x.Guid)))
                     {
-                        ActivitiesGroup activitiesGroup = businessFlow.ActivitiesGroups.FirstOrDefault(x => x.ParentGuid == bFlow.Guid);
+                        ActivitiesGroup activitiesGroup = runsetConvertedbusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.ParentGuid == bFlowToUpdate.Guid);
                         if (activitiesGroup != null)
                         {
-                            if (!string.IsNullOrEmpty(bFlow.ExternalID))
+                            if (!string.IsNullOrEmpty(bFlowToUpdate.ExternalID))
                             {
-                                if (!General.isVariableUsed(bFlow.ExternalID))
+                                if (!General.isVariableUsed(bFlowToUpdate.ExternalID))
                                 {
-                                    bFlow.ExternalID = !string.IsNullOrEmpty(activitiesGroup.ExternalID) ? activitiesGroup.ExternalID : bFlow.ExternalID;
+                                    bFlowToUpdate.ExternalID = !string.IsNullOrEmpty(activitiesGroup.ExternalID) ? activitiesGroup.ExternalID : bFlowToUpdate.ExternalID;
                                 }
                             }
                             else
                             {
-                                bFlow.ExternalID = activitiesGroup.ExternalID;
+                                bFlowToUpdate.ExternalID = activitiesGroup.ExternalID;
                             }
 
+                            if (!string.IsNullOrEmpty(bFlowToUpdate.ExternalID))
+                            {
+                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bFlowToUpdate);
+                            }
                         }
                     }
                 }
-
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(runSetExec.RunSetConfig);
             }
             catch (Exception ex)
             {
