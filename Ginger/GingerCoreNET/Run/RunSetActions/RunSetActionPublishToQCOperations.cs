@@ -247,7 +247,7 @@ namespace Ginger.Run.RunSetActions
                 {
                     return;
                 }
-                if (runsetConvertedbusinessFlow != null && !string.IsNullOrEmpty(runsetConvertedbusinessFlow.ExternalID))
+                if (!string.IsNullOrEmpty(runsetConvertedbusinessFlow.ExternalID))
                 {
                     if (!string.IsNullOrEmpty(runSetExec.RunSetConfig.ExternalID))
                     {
@@ -262,7 +262,7 @@ namespace Ginger.Run.RunSetActions
                     }
                 }
 
-                if (runsetConvertedbusinessFlow != null && !string.IsNullOrEmpty(runsetConvertedbusinessFlow.ExternalID2))
+                if (!string.IsNullOrEmpty(runsetConvertedbusinessFlow.ExternalID2))
                 {
                     if (!string.IsNullOrEmpty(runSetExec.RunSetConfig.ExternalID2))
                     {
