@@ -19,10 +19,12 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.UIElement;
 using static GingerCoreNET.SourceControl.SourceControlFileInfo;
 
 namespace GingerCoreNET.SourceControl
@@ -125,7 +127,7 @@ namespace GingerCoreNET.SourceControl
 
         public abstract bool GetLatest(string path, ref string error, ref List<string> conflictsPaths);
 
-        public abstract bool GetProject(string Path, string URI, ref string error);
+        public abstract bool GetProject(string Path, string URI, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default);
 
         public abstract void Init();
 
@@ -242,5 +244,18 @@ namespace GingerCoreNET.SourceControl
                 };
             });
         }
+        /* public event EventHandler<string> ProgressUpdated;
+         //  public event EventHandler<(int CompletedSteps, int TotalSteps)> ProgressBarUpdated;
+
+         protected virtual void NotifyProgressUpdated(string message)
+         {
+             ProgressUpdated?.Invoke(this, message);
+         }
+
+         *//*protected virtual void OnProgressBarUpdated(int completedSteps, int totalSteps)
+         {
+             ProgressBarUpdated?.Invoke(this, (completedSteps, totalSteps));
+         }*/
     }
+
 }

@@ -18,12 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.UserControls;
 using Ginger.UserControls;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -40,8 +42,10 @@ namespace Ginger.SourceControl
 
         SolutionInfo solutionInfo = null;
 
-        ImageMakerControl loaderElement = new ImageMakerControl();
-
+        ImageMakerControl loaderElement = new();
+        TextBlock progressText = new();
+        ProgressBar progressBar = new();
+        ProgressNotifier progressNotifier = new();
         GenericWindow genWin = null;
         Button downloadProjBtn = null;
 
@@ -63,7 +67,8 @@ namespace Ginger.SourceControl
 
             IsImportSolution = IsCalledFromImportPage;
             Init();
-
+            progressNotifier.ProgressText += HandleProgressUpdated;
+            progressNotifier.ProgressUpdated += HandleProgressBarUpdated;
         }
 
         private void Init()
@@ -258,7 +263,21 @@ namespace Ginger.SourceControl
 
         private async void GetProject_Click(object sender, RoutedEventArgs e)
         {
-            await DownloadSolution().ConfigureAwait(false);
+            try
+            {
+                if (SourceControlIntegration.BusyInProcessWhileDownloading)
+                {
+                    StopDownload();
+                }
+                else
+                {
+                    await DownloadSolution().ConfigureAwait(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error Occurred :", ex);
+            }
         }
 
         private void OpenSolution(string Path, string ProjectURI)
@@ -301,13 +320,23 @@ namespace Ginger.SourceControl
             };
             downloadProjBtn.Click += new RoutedEventHandler(GetProject_Click);
 
-            loaderElement.Name = "xProcessingImage";
-            loaderElement.Height = 30;
-            loaderElement.Width = 30;
-            loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
-            loaderElement.Visibility = Visibility.Collapsed;
+            progressBar.Name = "progressBar";
+            progressBar.Height = 16;
+            progressBar.VerticalAlignment = VerticalAlignment.Top;
+            progressBar.HorizontalAlignment = HorizontalAlignment.Stretch; // Set to Stretch to use available space
+            progressBar.Background = System.Windows.Media.Brushes.LightYellow;
+            progressBar.Foreground = System.Windows.Media.Brushes.ForestGreen;
+            progressBar.Visibility = Visibility.Collapsed;
+            progressBar.Margin = new Thickness(5, 5, 5, 0);
 
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Download Source Control Solution", this, [downloadProjBtn], true, "Close", null, false, loaderElement);
+            progressText.Name = "progressText";
+            progressText.HorizontalAlignment = HorizontalAlignment.Center;
+            progressText.Margin = new Thickness(0, 1, 0, 0); // Adjusted margin to add space between progressBar and progressText
+            progressText.VerticalAlignment = VerticalAlignment.Top; // Changed to Top to align below progressBar
+            progressText.Visibility = Visibility.Collapsed;
+            progressText.FontSize = 12;
+
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Download Source Control Solution", this, [downloadProjBtn], true, "Close", null, false, null, progressBar, progressText);
 
             if (solutionInfo != null)
             {
@@ -497,13 +526,15 @@ namespace Ginger.SourceControl
             try
             {
                 loaderElement.Visibility = Visibility.Visible;
+                progressText.Visibility = Visibility.Visible;
+                progressBar.Visibility = Visibility.Visible;
+                downloadProjBtn.Content = "Cancel Downloading";
                 if (SourceControlIntegration.BusyInProcessWhileDownloading)
                 {
                     Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                     return;
                 }
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
-
                 if (WorkSpace.Instance.UserProfile.SourceControlLocalFolder == string.Empty)
                 {
                     Reporter.ToUser(eUserMsgKey.SourceControlConnMissingLocalFolderInput);
@@ -526,8 +557,9 @@ namespace Ginger.SourceControl
                 {
                     ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL;
                 }
+                _cancellationTokenSource = new CancellationTokenSource();
+                bool getProjectResult = await Task.Run(() => SourceControlIntegration.GetProject(mSourceControl, solutionInfo.LocalFolder, ProjectURI, progressNotifier, _cancellationTokenSource.Token));
 
-                bool getProjectResult = await Task.Run(() => SourceControlIntegration.GetProject(mSourceControl, solutionInfo.LocalFolder, ProjectURI));
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
 
                 if (getProjectResult)
@@ -555,8 +587,49 @@ namespace Ginger.SourceControl
             finally
             {
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
+                downloadProjBtn.Content = "Download Selected Solution";
+                progressText.Text = "";
+                progressBar.Maximum = 100;
+                progressBar.Value = 0;
                 loaderElement.Visibility = Visibility.Collapsed;
+                progressText.Visibility = Visibility.Collapsed;
+                progressBar.Visibility = Visibility.Collapsed;
             }
+        }
+        /// <summary>
+        /// Stops the ongoing download process by canceling the associated cancellation token.
+        /// </summary>
+        private void StopDownload()
+        {
+            _cancellationTokenSource?.Cancel();
+        }
+        private CancellationTokenSource _cancellationTokenSource;
+        /// <summary>
+        /// Handles the progress update event by updating the progress text on the UI thread.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="message">The progress message.</param>
+        private void HandleProgressUpdated(object sender, string message)
+        {
+            if (string.IsNullOrEmpty(message))
+            {
+                return;
+            }
+            Dispatcher.Invoke(() => progressText.Text = message);
+        }
+
+        /// <summary>
+        /// Handles the progress bar update event by updating the progress bar value on the UI thread.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="progress">A tuple containing the completed steps and total steps.</param>
+        private void HandleProgressBarUpdated(object sender, (int CompletedSteps, int TotalSteps) progress)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                progressBar.Maximum = progress.TotalSteps;
+                progressBar.Value = progress.CompletedSteps;
+            });
         }
     }
 }

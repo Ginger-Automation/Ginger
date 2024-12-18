@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SourceControl;
 using SharpSvn;
 using System;
@@ -28,6 +29,7 @@ using System.Net;
 using System.Net.Security;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 
@@ -341,8 +343,7 @@ namespace GingerCore.SourceControl
             }
             return true;
         }
-
-        public override bool GetProject(string Path, string URI, ref string error)
+        public override bool GetProject(string Path, string URI, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
         {
             if (client == null)
             {

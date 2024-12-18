@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.SourceControlLib;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.SourceControl;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
@@ -149,14 +150,17 @@ namespace Ginger.SourceControl
             return true;
         }
 
-        public static bool GetProject(SourceControlBase SourceControl, string Path, string URI)
+        public static bool GetProject(SourceControlBase SourceControl, string Path, string URI, ProgressNotifier progressNotifier = null, System.Threading.CancellationToken cancellationToken = default)
         {
             try
             {
                 string error = string.Empty;
-                if (!SourceControl.GetProject(Path, URI, ref error))
+                if (!SourceControl.GetProject(Path, URI, ref error, progressNotifier, cancellationToken))
                 {
-                    Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
+                    }
                     return false;
                 }
                 return true;
@@ -167,7 +171,6 @@ namespace Ginger.SourceControl
                 return false;
             }
         }
-
 
 
         public static bool GetLatest(string path, SourceControlBase SourceControl)
