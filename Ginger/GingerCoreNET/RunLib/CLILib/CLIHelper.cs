@@ -20,6 +20,7 @@ using AccountReport.Contracts;
 using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.Repository;
 using Ginger;
@@ -76,6 +77,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SourceApplication;
         public string SourceApplicationUser;
 
+        ProgressNotifier progressNotifier = new();
         public bool SelfHealingCheckInConfigured;
 
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
@@ -561,12 +563,36 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         private void DownloadSolutionFromSourceControl()
         {
+            progressNotifier.ProgressUpdated += ProgressNotifier_ProgressUpdated;
             if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
             {
                 Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
-                if (!SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges))
+                if (!SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier))
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                }
+            }
+        }
+        int PercentageCount = 0;
+        int PercentageReached = 0;
+
+        /// <summary>
+        /// Updates the progress of the download and logs the progress percentage.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">A tuple containing the number of completed steps and the total number of steps.</param>
+        private void ProgressNotifier_ProgressUpdated(object sender, (int CompletedSteps, int TotalSteps) e)
+        {
+            int percentage = (e.CompletedSteps * 100) / e.TotalSteps;
+
+            if (percentage != 0 && percentage % 10 == 0 && percentage != PercentageCount && PercentageReached != 100)
+            {
+                PercentageCount = percentage;
+                Reporter.ToLog(eLogLevel.INFO, $"Download progress: {percentage}%)");
+
+                if (percentage == 100)
+                {
+                    PercentageReached = percentage;
                 }
             }
         }

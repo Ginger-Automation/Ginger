@@ -520,7 +520,7 @@ namespace Ginger.SourceControl
         }
 
 
-        public static bool DownloadSolution(string SolutionFolder, bool undoSolutionLocalChanges = false)
+        public static bool DownloadSolution(string SolutionFolder, bool undoSolutionLocalChanges = false, ProgressNotifier progressNotifier = null)
         {
             try
             {
@@ -693,7 +693,7 @@ namespace Ginger.SourceControl
                 }
                 else
                 {
-                    return getProjectResult = SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI);
+                    return getProjectResult = SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI, progressNotifier);
                 }
             }
             catch (Exception e)
