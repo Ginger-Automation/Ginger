@@ -101,7 +101,8 @@ namespace Ginger.Run
 
         private bool mStopRun = false;
         private bool mStopBusinessFlow = false;
-
+        public List<Act> errActivityActionList = [];
+        public List<ErrorHandler> errActivityList = [];
         private bool mCurrentActivityChanged = false;
         //private bool mErrorHandlerExecuted = false;
 
@@ -2079,44 +2080,61 @@ namespace Ginger.Run
         }
         private void AddErrorHandlerActivityInReport()
         {
-            ObservableList<ErrorHandler> errorActivities = new ObservableList<ErrorHandler>(CurrentBusinessFlow.Activities.Where(a => a.GetType() == typeof(ErrorHandler) && a.Status != eRunStatus.Skipped && a.Active == true
-              ).Cast<ErrorHandler>().ToList());
-
-            if (errorActivities.Count > 0)
+            try
             {
-                foreach (ErrorHandler errActivity in errorActivities)
-                {
-                    handlerPostExecutionAction = errActivity.ErrorHandlerPostExecutionAction;
-                    CurrentBusinessFlow.CurrentActivity = errActivity;
-                    SetCurrentActivityAgent();
-                    Stopwatch stE = new Stopwatch();
-                    stE.Start();
-                    NotifyActivityStart(errActivity);
-                    foreach (Act act in errActivity.Acts)
-                    {
-                        Stopwatch st = new Stopwatch();
-                        st.Start();
-                        if (act.Active)
-                        {
-                            CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
-                            if (errActivity.HandlerType == eHandlerType.Popup_Handler)
-                            {
-                                act.Timeout = 1;
-                            }
+                ObservableList<ErrorHandler> errorActivities = new ObservableList<ErrorHandler>(CurrentBusinessFlow.Activities.Where(a => a.GetType() == typeof(ErrorHandler) && a.Status != eRunStatus.Skipped && a.Active == true
+                     ).Cast<ErrorHandler>().ToList());
 
-                            NotifyActionStart(act);
-                            ProcessStoretoValue(act);
-                            UpdateDSReturnValues(act);
-                            CalculateActionFinalStatus(act);
-                            NotifyActionEnd(act);
+                if (errorActivities.Count > 0)
+                {
+                    foreach (ErrorHandler errActivity in errorActivities)
+                    {
+                        var currentActivity = errActivityList.Find(k => errActivity.Guid == k.Guid);
+
+                        if (currentActivity != null)
+                        {
+                            handlerPostExecutionAction = errActivity.ErrorHandlerPostExecutionAction;
+                            CurrentBusinessFlow.CurrentActivity = errActivity;
+                            SetCurrentActivityAgent();
+                            Stopwatch stE = new Stopwatch();
+                            stE.Start();
+                            NotifyActivityStart(currentActivity);
+                            foreach (Act act in errActivity.Acts)
+                            {
+                                var currentAction = errActivityActionList.Find(k => act.Guid == k.Guid);
+                                if (currentAction != null)
+                                {
+                                    Stopwatch st = new Stopwatch();
+                                    st.Start();
+                                    if (currentAction.Active)
+                                    {
+                                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = currentAction;
+                                        if (currentActivity.HandlerType == eHandlerType.Popup_Handler)
+                                        {
+                                            currentAction.Timeout = 1;
+                                        }
+
+                                        NotifyActionStart(currentAction);
+                                        ProcessStoretoValue(currentAction);
+                                        UpdateDSReturnValues(currentAction);
+                                        CalculateActionFinalStatus(currentAction);
+                                        st.Stop();
+                                        NotifyActionEnd(currentAction);
+                                    }
+                                }
+                            }
+                            SetBusinessFlowActivitiesAndActionsSkipStatus();
+                            CalculateActivityFinalStatus(currentActivity);
+                            stE.Stop();
+                            NotifyActivityEnd(currentActivity);
                         }
-                        st.Stop();
                     }
-                    SetBusinessFlowActivitiesAndActionsSkipStatus();
-                    CalculateActivityFinalStatus(errActivity);
-                    stE.Stop();
-                    NotifyActivityEnd(errActivity);
                 }
+            }
+            catch (Exception ex)
+            {
+
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to add Error Handler Activity : {ex.Message}");
             }
         }
 
@@ -2176,7 +2194,7 @@ namespace Ginger.Run
                             ProcessStoretoValue(act);
                             UpdateDSReturnValues(act);
                             CalculateActionFinalStatus(act);
-                            NotifyActionEnd(act);
+                            errActivityActionList.Add(act);
                         }
                         st.Stop();
                     }
@@ -2186,6 +2204,7 @@ namespace Ginger.Run
                     Reporter.ToLog(eLogLevel.INFO, "Error Handler '" + errActivity.ActivityName.ToString() + "' Ended");
                     CurrentBusinessFlow.CurrentActivity.EndTimeStamp = DateTime.UtcNow;
                     errActivity.Elapsed = stE.ElapsedMilliseconds;
+                    errActivityList.Add(errActivity);
                 }
 
                 if (handlerPostExecutionAction is eErrorHandlerPostExecutionAction.ReRunBusinessFlow or

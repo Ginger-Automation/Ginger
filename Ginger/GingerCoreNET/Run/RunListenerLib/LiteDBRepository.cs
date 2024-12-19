@@ -238,8 +238,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     liteDbActionList.AddRange(ARToUpdate[0].ActionsColl);
                 }
             }
-            // removing any error handler activity items from the list, this is done for adding ErrAcr in Report, No Impact on others
-            liteDbActionList.RemoveAll(k => activity.Acts.Any(x => x.Guid != k.GUID));
             AR.AllActionsColl.AddRange(liteDbActionList);
             AR.ChildExecutableItemsCount = activity.Acts.Count(x => x.Active && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Blocked));
             AR.ChildExecutedItemsCount = activity.Acts.Count(x => x.Status is eRunStatus.Passed or eRunStatus.Failed or eRunStatus.FailIgnored);
