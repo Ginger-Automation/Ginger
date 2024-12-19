@@ -609,7 +609,7 @@ namespace GingerCore.Actions
             catch (Exception ex)
             {
 
-                Reporter.ToLog(eLogLevel.ERROR, $"In Sikuli Action : {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error executing Sikuli Action : {ex.Message}");
             }
         }
     }
