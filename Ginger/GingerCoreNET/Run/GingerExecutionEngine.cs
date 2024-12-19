@@ -2077,7 +2077,7 @@ namespace Ginger.Run
                 }
             }
         }
-        private void ExecuteErrorActivities()
+        private void AddErrorHandlerActivityInReport()
         {
             ObservableList<ErrorHandler> errorActivities = new ObservableList<ErrorHandler>(CurrentBusinessFlow.Activities.Where(a => a.GetType() == typeof(ErrorHandler) && a.Status != eRunStatus.Skipped && a.Active == true
               ).Cast<ErrorHandler>().ToList());
@@ -2092,7 +2092,6 @@ namespace Ginger.Run
                     Stopwatch stE = new Stopwatch();
                     stE.Start();
                     NotifyActivityStart(errActivity);
-                    CurrentBusinessFlow.CurrentActivity.StartTimeStamp = DateTime.UtcNow;
                     foreach (Act act in errActivity.Acts)
                     {
                         Stopwatch st = new Stopwatch();
@@ -4556,7 +4555,7 @@ namespace Ginger.Run
 
                 if (mStopRun == false)
                 {
-                    ExecuteErrorActivities();
+                    AddErrorHandlerActivityInReport();
                     ExecuteCleanUpActivities();
                 }
                 SetBusinessFlowActivitiesAndActionsSkipStatus();
