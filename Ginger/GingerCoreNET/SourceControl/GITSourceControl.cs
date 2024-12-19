@@ -500,7 +500,7 @@ namespace GingerCore.SourceControl
                 {
                     co.OnCheckoutProgress = (path, completedSteps, totalSteps) =>
                     {
-                        progressNotifier.NotifyProgressDetailText($"{path} {completedSteps}/{totalSteps}");
+                        progressNotifier.NotifyProgressDetailText($"{completedSteps}/{totalSteps}");
                         progressNotifier.NotifyProgressUpdated(completedSteps, totalSteps);
                     };
                 }

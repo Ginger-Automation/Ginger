@@ -244,18 +244,7 @@ namespace GingerCoreNET.SourceControl
                 };
             });
         }
-        /* public event EventHandler<string> ProgressUpdated;
-         //  public event EventHandler<(int CompletedSteps, int TotalSteps)> ProgressBarUpdated;
 
-         protected virtual void NotifyProgressUpdated(string message)
-         {
-             ProgressUpdated?.Invoke(this, message);
-         }
-
-         *//*protected virtual void OnProgressBarUpdated(int completedSteps, int totalSteps)
-         {
-             ProgressBarUpdated?.Invoke(this, (completedSteps, totalSteps));
-         }*/
     }
 
 }

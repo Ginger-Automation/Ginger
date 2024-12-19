@@ -594,6 +594,7 @@ namespace Ginger.SourceControl
                 loaderElement.Visibility = Visibility.Collapsed;
                 progressText.Visibility = Visibility.Collapsed;
                 progressBar.Visibility = Visibility.Collapsed;
+                _cancellationTokenSource.Dispose();
             }
         }
         /// <summary>
