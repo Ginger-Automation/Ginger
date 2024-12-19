@@ -55,7 +55,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         private ObjectId lastBfObjId;
         private int actionSeq = 0;
         private int activitySeq = 0;
-        private int ErrActSeq = 0;
         private int acgSeq = 0;
         private int bfSeq = 0;
 
