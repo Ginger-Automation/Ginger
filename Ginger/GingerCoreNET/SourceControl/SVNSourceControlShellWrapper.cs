@@ -134,7 +134,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
             throw new NotImplementedException();
         }
 
-        public override bool GetProject(string Path, string URI, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
+        public override bool GetProject(string Path, string URI, ref string error)
         {
             Console.WriteLine("Check Out");
 
@@ -251,6 +251,11 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
         public override bool UndoUncommitedChanges(List<SourceControlFileInfo> selectedFiles)
         {
             throw new NotImplementedException("UndoUncommitedChanges not Implemented");
+        }
+
+        public override bool GetProject(string Path, string URI, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

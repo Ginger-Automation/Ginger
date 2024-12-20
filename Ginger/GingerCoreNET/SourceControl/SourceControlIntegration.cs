@@ -651,15 +651,6 @@ namespace Ginger.SourceControl
                             ProjectURI += sol.SourceControlLocation;
                         }
 
-
-                        //if(WorkSpace.Instance.GingerCLIMode==Amdocs.Ginger.CoreNET.RunLib.CLILib.eGingerCLIMode.run)
-                        //{
-                        //    ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL;
-                        //}
-                        //else
-                        //{
-                        //    ProjectURI= WorkSpace.Instance.UserProfile.SourceControlURL + sol.SourceControlLocation;
-                        //}
                     }
 
                 }

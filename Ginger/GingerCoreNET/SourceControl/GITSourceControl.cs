@@ -443,6 +443,34 @@ namespace GingerCore.SourceControl
             }
         }
 
+        public override bool GetProject(string Path, string URI, ref string error)
+        {
+            if (!System.IO.Directory.Exists(Path))
+            {
+                System.IO.Directory.CreateDirectory(Path);
+            }
+
+            try
+
+            {
+                var fetchOptions = new FetchOptions
+                {
+                    CredentialsProvider = GetSourceCredentialsHandler(),
+                };
+                var co = new CloneOptions(fetchOptions)
+                {
+                    BranchName = string.IsNullOrEmpty(SourceControlBranch) ? "master" : SourceControlBranch,
+                };
+                RepositoryRootFolder = LibGit2Sharp.Repository.Clone(URI, Path, co);
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message + Environment.NewLine + ex.InnerException;
+                return false;
+            }
+            return true;
+        }
+
 
         /// <summary>
         /// Clones a Git repository to the specified path.

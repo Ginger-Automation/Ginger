@@ -343,7 +343,7 @@ namespace GingerCore.SourceControl
             }
             return true;
         }
-        public override bool GetProject(string Path, string URI, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
+        public override bool GetProject(string Path, string URI, ref string error)
         {
             if (client == null)
             {
@@ -1213,6 +1213,11 @@ namespace GingerCore.SourceControl
         public override bool UndoUncommitedChanges(List<SourceControlFileInfo> selectedFiles)
         {
             throw new NotImplementedException("UndoUncommitedChanges not Implemented");
+        }
+
+        public override bool GetProject(string Path, string URI, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

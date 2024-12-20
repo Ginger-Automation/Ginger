@@ -24,7 +24,6 @@ using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.Common.UIElement;
 using static GingerCoreNET.SourceControl.SourceControlFileInfo;
 
 namespace GingerCoreNET.SourceControl
@@ -127,7 +126,9 @@ namespace GingerCoreNET.SourceControl
 
         public abstract bool GetLatest(string path, ref string error, ref List<string> conflictsPaths);
 
-        public abstract bool GetProject(string Path, string URI, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default);
+        public abstract bool GetProject(string Path, string URI, ref string error);
+
+        public abstract bool GetProject(string Path, string URI, ref string error, Amdocs.Ginger.Common.UIElement.ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default);
 
         public abstract void Init();
 
