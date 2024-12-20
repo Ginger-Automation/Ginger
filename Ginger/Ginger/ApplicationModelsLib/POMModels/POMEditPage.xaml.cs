@@ -230,7 +230,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
         /// </summary>
         private void SupportedTargetApplication()
         {
-            xTargetApplicationComboBox.ItemsSource = null;
             var targetPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
 
             if (targetPlatform != ePlatformType.NA)
