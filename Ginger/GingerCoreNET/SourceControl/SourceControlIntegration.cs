@@ -155,7 +155,7 @@ namespace Ginger.SourceControl
             try
             {
                 string error = string.Empty;
-                if (!SourceControl.GetProject(Path, URI, ref error, progressNotifier, cancellationToken))
+                if (!SourceControl.GetProjectWithProgress(Path, URI, ref error, progressNotifier, cancellationToken))
                 {
                     if (!string.IsNullOrEmpty(error))
                     {

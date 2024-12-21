@@ -253,7 +253,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
             throw new NotImplementedException("UndoUncommitedChanges not Implemented");
         }
 
-        public override bool GetProject(string Path, string URI, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
+        public override bool GetProjectWithProgress(string Path, string URI, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

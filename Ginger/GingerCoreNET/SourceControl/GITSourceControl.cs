@@ -481,7 +481,7 @@ namespace GingerCore.SourceControl
         /// <param name="progressNotifier">Optional progress notifier for reporting progress.</param>
         /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
         /// <returns>True if the operation is successful, otherwise false.</returns>
-        public override bool GetProject(string path, string uri, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
+        public override bool GetProjectWithProgress(string path, string uri, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
         {
 
             try

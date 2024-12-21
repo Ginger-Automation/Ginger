@@ -128,7 +128,7 @@ namespace GingerCoreNET.SourceControl
 
         public abstract bool GetProject(string Path, string URI, ref string error);
 
-        public abstract bool GetProject(string Path, string URI, ref string error, Amdocs.Ginger.Common.UIElement.ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default);
+        public abstract bool GetProjectWithProgress(string Path, string URI, ref string error, Amdocs.Ginger.Common.UIElement.ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default);
 
         public abstract void Init();
 

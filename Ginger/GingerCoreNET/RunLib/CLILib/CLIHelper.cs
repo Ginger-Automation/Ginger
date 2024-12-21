@@ -563,7 +563,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         private void DownloadSolutionFromSourceControl()
         {
-            progressNotifier.ProgressText += ProgressNotifier_ProgressText; ;
+            progressNotifier.ProgressText += ProgressNotifier_ProgressText;
             if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
             {
                 Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
@@ -572,13 +572,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
                 }
             }
+            progressNotifier.ProgressText -= ProgressNotifier_ProgressText;
         }
 
         /// <summary>
         /// Logs the progress text to the reporter.
         /// </summary>
-        /// <param name="sender">The sender object.</param>
-        /// <param name="e">The progress text.</param>
+        /// <param name="sender">The ProgressNotifier that raised the event.</param>
+        /// <param name="e">The progress message describing the current download status.</param>
         private void ProgressNotifier_ProgressText(object sender, string e)
         {
             Reporter.ToLog(eLogLevel.INFO, e);
