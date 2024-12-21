@@ -563,16 +563,24 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         private void DownloadSolutionFromSourceControl()
         {
-            progressNotifier.ProgressText += ProgressNotifier_ProgressText;
-            if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
+            try
             {
-                Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
-                if (!SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier))
+                progressNotifier.ProgressText += ProgressNotifier_ProgressText;
+                if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                    Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
+                    if (!SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                    }
                 }
+                progressNotifier.ProgressText -= ProgressNotifier_ProgressText;
             }
-            progressNotifier.ProgressText -= ProgressNotifier_ProgressText;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+
+            }
         }
 
         /// <summary>

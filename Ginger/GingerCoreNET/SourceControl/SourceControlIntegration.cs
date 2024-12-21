@@ -684,7 +684,7 @@ namespace Ginger.SourceControl
                 }
                 else
                 {
-                    return getProjectResult = SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI, progressNotifier);
+                    return SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI, progressNotifier);
                 }
             }
             catch (Exception e)
