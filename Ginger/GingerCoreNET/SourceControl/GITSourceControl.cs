@@ -483,12 +483,13 @@ namespace GingerCore.SourceControl
         /// <returns>True if the operation is successful, otherwise false.</returns>
         public override bool GetProject(string path, string uri, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
         {
-            if (!System.IO.Directory.Exists(path))
-            {
-                System.IO.Directory.CreateDirectory(path);
-            }
+
             try
             {
+                if (!System.IO.Directory.Exists(path))
+                {
+                    System.IO.Directory.CreateDirectory(path);
+                }
                 var fetchOptions = new FetchOptions
                 {
                     CredentialsProvider = GetSourceCredentialsHandler(),
@@ -506,6 +507,11 @@ namespace GingerCore.SourceControl
                     };
                     fetchOptions.OnTransferProgress = progress =>
                     {
+                        if (progress.TotalObjects == 0)
+                        {
+                            progressNotifier.NotifyProgressDetailText("Initializing...");
+                            return true;
+                        }
                         double percentage = (double)progress.ReceivedObjects / progress.TotalObjects * 100;
                         progressNotifier.NotifyProgressDetailText($"{percentage:F2}%              {progress.ReceivedObjects}/{progress.TotalObjects} files downloaded.");
                         progressNotifier.NotifyProgressUpdated(progress.ReceivedObjects, progress.TotalObjects);

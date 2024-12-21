@@ -563,7 +563,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         private void DownloadSolutionFromSourceControl()
         {
-            progressNotifier.ProgressUpdated += ProgressNotifier_ProgressUpdated;
+            progressNotifier.ProgressText += ProgressNotifier_ProgressText; ;
             if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
             {
                 Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
@@ -573,28 +573,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
             }
         }
-        int PercentageCount = 0;
-        int PercentageReached = 0;
 
         /// <summary>
-        /// Updates the progress of the download and logs the progress percentage.
+        /// Logs the progress text to the reporter.
         /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">A tuple containing the number of completed steps and the total number of steps.</param>
-        private void ProgressNotifier_ProgressUpdated(object sender, (int CompletedSteps, int TotalSteps) e)
+        /// <param name="sender">The sender object.</param>
+        /// <param name="e">The progress text.</param>
+        private void ProgressNotifier_ProgressText(object sender, string e)
         {
-            int percentage = (e.CompletedSteps * 100) / e.TotalSteps;
-
-            if (percentage != 0 && percentage % 10 == 0 && percentage != PercentageCount && PercentageReached != 100)
-            {
-                PercentageCount = percentage;
-                Reporter.ToLog(eLogLevel.INFO, $"Download progress: {percentage}%)");
-
-                if (percentage == 100)
-                {
-                    PercentageReached = percentage;
-                }
-            }
+            Reporter.ToLog(eLogLevel.INFO, e);
         }
 
         internal void SetSourceControlBranch(string value)

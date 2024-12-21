@@ -616,7 +616,14 @@ namespace Ginger.SourceControl
             {
                 return;
             }
-            Dispatcher.Invoke(() => progressText.Text = message);
+            try
+            {
+                Dispatcher.Invoke(() => progressText.Text = message);
+            }
+            catch (TaskCanceledException e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, e.Message);
+            }
         }
 
         /// <summary>
@@ -626,11 +633,18 @@ namespace Ginger.SourceControl
         /// <param name="progress">A tuple containing the completed steps and total steps.</param>
         private void HandleProgressBarUpdated(object sender, (int CompletedSteps, int TotalSteps) progress)
         {
-            Dispatcher.Invoke(() =>
+            try
             {
-                progressBar.Maximum = progress.TotalSteps;
-                progressBar.Value = progress.CompletedSteps;
-            });
+                Dispatcher.Invoke(() =>
+                {
+                    progressBar.Maximum = progress.TotalSteps;
+                    progressBar.Value = progress.CompletedSteps;
+                });
+            }
+            catch (TaskCanceledException e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, e.Message);
+            }
         }
     }
 }
