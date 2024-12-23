@@ -667,34 +667,43 @@ namespace GingerCore.ALM.QCRestAPI
 
         private static ObservableList<ExternalItemFieldBase> GetALMItemFields()
         {
-            ObservableList<ExternalItemFieldBase> fields = [];
+            try
+            {
 
-            string testSetfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.TEST_SET);
-            List<QCField> testSetfieldsCollection = QCRestAPIConnect.GetFields(testSetfieldInRestSyntax);
+                ObservableList<ExternalItemFieldBase> fields = [];
 
-            string testCasefieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.TEST_CASE);
-            List<QCField> testCasefieldsCollection = QCRestAPIConnect.GetFields(testCasefieldInRestSyntax);
+                string testSetfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.TEST_SET);
+                List<QCField> testSetfieldsCollection = QCRestAPIConnect.GetFields(testSetfieldInRestSyntax);
 
-            string designStepfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.DESIGN_STEP);
-            List<QCField> designStepfieldsCollection = QCRestAPIConnect.GetFields(designStepfieldInRestSyntax);
+                string testCasefieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.TEST_CASE);
+                List<QCField> testCasefieldsCollection = QCRestAPIConnect.GetFields(testCasefieldInRestSyntax);
 
-            string testInstancefieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.TEST_CYCLE);
-            List<QCField> testInstancefieldsCollection = QCRestAPIConnect.GetFields(testInstancefieldInRestSyntax);
+                string designStepfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.DESIGN_STEP);
+                List<QCField> designStepfieldsCollection = QCRestAPIConnect.GetFields(designStepfieldInRestSyntax);
 
-            string designStepParamsfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.DESIGN_STEP_PARAMETERS);
-            List<QCField> designStepParamsfieldsCollection = QCRestAPIConnect.GetFields(designStepParamsfieldInRestSyntax);
+                string testInstancefieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.TEST_CYCLE);
+                List<QCField> testInstancefieldsCollection = QCRestAPIConnect.GetFields(testInstancefieldInRestSyntax);
 
-            string runfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.TEST_RUN);
-            List<QCField> runfieldsCollection = QCRestAPIConnect.GetFields(runfieldInRestSyntax);
+                string designStepParamsfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.DESIGN_STEP_PARAMETERS);
+                List<QCField> designStepParamsfieldsCollection = QCRestAPIConnect.GetFields(designStepParamsfieldInRestSyntax);
 
-            fields.Append(AddFieldsValues(testSetfieldsCollection, testSetfieldInRestSyntax));
-            fields.Append(AddFieldsValues(testCasefieldsCollection, testCasefieldInRestSyntax));
-            fields.Append(AddFieldsValues(designStepfieldsCollection, designStepfieldInRestSyntax));
-            fields.Append(AddFieldsValues(testInstancefieldsCollection, testInstancefieldInRestSyntax));
-            fields.Append(AddFieldsValues(designStepParamsfieldsCollection, designStepParamsfieldInRestSyntax));
-            fields.Append(AddFieldsValues(runfieldsCollection, runfieldInRestSyntax));
+                string runfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.TEST_RUN);
+                List<QCField> runfieldsCollection = QCRestAPIConnect.GetFields(runfieldInRestSyntax);
 
-            return fields;
+                fields.Append(AddFieldsValues(testSetfieldsCollection, testSetfieldInRestSyntax));
+                fields.Append(AddFieldsValues(testCasefieldsCollection, testCasefieldInRestSyntax));
+                fields.Append(AddFieldsValues(designStepfieldsCollection, designStepfieldInRestSyntax));
+                fields.Append(AddFieldsValues(testInstancefieldsCollection, testInstancefieldInRestSyntax));
+                fields.Append(AddFieldsValues(designStepParamsfieldsCollection, designStepParamsfieldInRestSyntax));
+                fields.Append(AddFieldsValues(runfieldsCollection, runfieldInRestSyntax));
+
+                return fields;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         public static ObservableList<ExternalItemFieldBase> GetALMItemFields(AlmDataContractsStd.Enums.ResourceType resourceType)
