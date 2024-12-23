@@ -220,9 +220,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mPOM.Key.ItemName + " Target Application was not found, please select new Target Application");
                 }
             }
+            xTargetApplicationComboBox.ItemsSource = null;
             SupportedTargetApplication();
-            xTargetApplicationComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
-            xTargetApplicationComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
             CollectionChangedEventManager.AddHandler(source: WorkSpace.Instance.Solution.ApplicationPlatforms, handler: ApplicationPlatforms_CollectionChanged);
 
         }
@@ -231,7 +230,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
         /// </summary>
         private void SupportedTargetApplication()
         {
-            xTargetApplicationComboBox.ItemsSource = null;
             var targetPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
 
             if (targetPlatform != ePlatformType.NA)
@@ -242,6 +240,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
             }
+            xTargetApplicationComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
+            xTargetApplicationComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
         }
 
         /// <summary>
