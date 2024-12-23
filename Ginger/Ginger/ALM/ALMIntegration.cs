@@ -589,7 +589,7 @@ namespace Ginger.ALM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"field are is Empty, Please check Permission", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Field are empty, please check permission", ex);
                 throw ex;
             }
         }
