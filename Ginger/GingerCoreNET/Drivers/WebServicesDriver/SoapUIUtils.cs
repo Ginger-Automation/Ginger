@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.WebServices;
+using GingerCoreNET.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -153,7 +154,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 string password = mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Password);
                 if (!string.IsNullOrEmpty(password))
                 {
-                    var decryptedPassword = Act.DecryptPassword(password, ValueExpression.IsThisAValueExpression(password), mAct);
+                    var decryptedPassword = General.DecryptPassword(password, ValueExpression.IsThisAValueExpression(password), mAct);
                     commandParam = commandParam + " -p" + Quotationmark + decryptedPassword + Quotationmark;
                 }
 

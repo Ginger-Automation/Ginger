@@ -2118,33 +2118,6 @@ namespace GingerCore.Actions
 
             return AreEqual(obj as Act);
         }
-
-        /// <summary>
-        /// Decrypts the given password. If the password is a value expression, it evaluates the expression before decryption.
-        /// </summary>
-        /// <param name="password">The password to decrypt.</param>
-        /// <param name="isPasswordValueExpression">Indicates if the password is a value expression.</param>
-        /// <param name="act">The Act instance containing the value expression.</param>
-        /// <returns>The decrypted password.</returns>
-        public static string DecryptPassword(string password, bool isPasswordValueExpression, Act act)
-        {
-            if (password == null)
-            {
-                return null;
-            }
-
-            string decryptedPassword = string.Empty;
-            string evaluatedValue = password;
-
-            if (isPasswordValueExpression)
-            {
-                act.ValueExpression.Value = password;
-                evaluatedValue = act.ValueExpression.ValueCalculated;
-            }
-
-            decryptedPassword = EncryptionHandler.IsStringEncrypted(evaluatedValue) ? EncryptionHandler.DecryptwithKey(evaluatedValue) : evaluatedValue;
-
-            return decryptedPassword;
-        }
+      
     }
 }

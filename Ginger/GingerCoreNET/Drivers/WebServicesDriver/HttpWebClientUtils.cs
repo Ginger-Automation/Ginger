@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Platform;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.WebServices;
+using GingerCoreNET.GeneralLib;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -250,7 +251,7 @@ namespace GingerCore.Actions.WebAPI
                 {
                     string certificateKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
 
-                    certificateKey = Act.DecryptPassword(certificateKey, ValueExpression.IsThisAValueExpression(certificateKey), mAct);
+                    certificateKey = General.DecryptPassword(certificateKey, ValueExpression.IsThisAValueExpression(certificateKey), mAct);
                     if (!string.IsNullOrEmpty(path))
                     {
                         if (string.IsNullOrEmpty(certificateKey))
