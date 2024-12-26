@@ -667,10 +667,11 @@ namespace GingerCore.ALM.QCRestAPI
 
         private static ObservableList<ExternalItemFieldBase> GetALMItemFields()
         {
+            ObservableList<ExternalItemFieldBase> fields = [];
             try
             {
 
-                ObservableList<ExternalItemFieldBase> fields = [];
+
 
                 string testSetfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.TEST_SET);
                 List<QCField> testSetfieldsCollection = QCRestAPIConnect.GetFields(testSetfieldInRestSyntax);
@@ -701,8 +702,8 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-
-                throw;
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get fields.Please check error logs", ex);
+                return fields;
             }
         }
 

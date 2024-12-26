@@ -589,8 +589,8 @@ namespace Ginger.ALM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Field are empty, please check permission", ex);
-                throw ex;
+                Reporter.ToLog(eLogLevel.ERROR, $"Field are empty, Please refer to the error log for details", ex);
+                throw;
             }
         }
         internal ObservableList<ExternalItemFieldBase> GetUpdatedFields(ObservableList<ExternalItemFieldBase> mItemsFields, bool online, BackgroundWorker bw = null)

@@ -183,10 +183,11 @@ namespace Ginger.ALM
             grdQCFields.DataSourceList = mItemsFields;
             if (isExceptionToGetFields)
             {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "ALM item fields population failed");
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "ALM item fields population failed,Please refer to the error log for details");
             }
             else
             {
+                isExceptionToGetFields = false;
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "ALM item fields population completed");
             }
 
