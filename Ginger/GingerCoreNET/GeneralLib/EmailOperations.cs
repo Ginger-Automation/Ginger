@@ -290,10 +290,6 @@ namespace GingerCore.GeneralLib
         }
         public string DecryptPassword(string password, bool isPasswordValueExpression)
         {
-            if (password == null)
-            {
-                return null;
-            }
             string decryptedPassword = string.Empty;
 
             if (isPasswordValueExpression)
