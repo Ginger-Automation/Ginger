@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.GeneralLib;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using CheckBox = System.Windows.Controls.CheckBox;
@@ -139,7 +140,14 @@ namespace Ginger.Run.RunSetActions
         /// </summary>
         private void CertificatePasswordUCValueExpression_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
         {
-            EncryptPasswordIfNeeded();
+            try
+            {
+                EncryptPasswordIfNeeded();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to encrypt certificate password", ex);
+            }
         }
 
         /// <summary>
@@ -148,7 +156,7 @@ namespace Ginger.Run.RunSetActions
         /// <returns>True if it is a value expression, otherwise false.</returns>
         private bool IsPasswordValueExpression()
         {
-            return ValueExpression.IsThisAValueExpression(CertificatePasswordUCValueExpression.ValueTextBox.Text);
+            return CertificatePasswordUCValueExpression?.ValueTextBox?.Text != null && ValueExpression.IsThisAValueExpression(CertificatePasswordUCValueExpression.ValueTextBox.Text);
         }
 
         /// <summary>
@@ -156,10 +164,21 @@ namespace Ginger.Run.RunSetActions
         /// </summary>
         private void EncryptPasswordIfNeeded()
         {
-            string password = CertificatePasswordUCValueExpression.ValueTextBox.Text;
-            if (!string.IsNullOrEmpty(password) && !IsPasswordValueExpression() && !EncryptionHandler.IsStringEncrypted(password))
+            try
             {
-                CertificatePasswordUCValueExpression.ValueTextBox.Text = EncryptionHandler.EncryptwithKey(password);
+                if (string.IsNullOrEmpty(CertificatePasswordUCValueExpression.ValueTextBox.Text))
+                {
+                    return;
+                }
+                string password = CertificatePasswordUCValueExpression.ValueTextBox.Text;
+                if (!string.IsNullOrEmpty(password) && !IsPasswordValueExpression() && !EncryptionHandler.IsStringEncrypted(password))
+                {
+                    CertificatePasswordUCValueExpression.ValueTextBox.Text = EncryptionHandler.EncryptwithKey(password);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to encrypt certificate password", ex);
             }
         }
     }

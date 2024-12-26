@@ -405,29 +405,6 @@ namespace GingerCore.Actions.WebServices
             ParseNodesToReturnParams(this, ResponseMessage);
         }
 
-        /// <summary>  
-        /// Decrypts the given password. If the password is an expression, it evaluates the expression first.  
-        /// </summary>  
-        /// <param name="password">The password to decrypt.</param>  
-        /// <param name="isPasswordValueExpression">Indicates if the password is an expression that needs to be evaluated.</param>  
-        /// <returns>The decrypted password.</returns>  
-        public string DecryptPassword(string password, bool isPasswordValueExpression)
-        {
-            string decryptedPassword = string.Empty;
 
-            if (isPasswordValueExpression)
-            {
-                this.ValueExpression.Value = password;
-                string evaluatedValue = this.ValueExpression.ValueCalculated;
-
-                decryptedPassword = EncryptionHandler.IsStringEncrypted(evaluatedValue) ? EncryptionHandler.DecryptwithKey(evaluatedValue) : evaluatedValue;
-            }
-            else
-            {
-                decryptedPassword = EncryptionHandler.IsStringEncrypted(password) ? EncryptionHandler.DecryptwithKey(password) : password;
-            }
-
-            return decryptedPassword;
-        }
     }
 }

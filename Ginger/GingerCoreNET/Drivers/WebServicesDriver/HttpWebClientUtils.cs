@@ -250,7 +250,7 @@ namespace GingerCore.Actions.WebAPI
                 {
                     string certificateKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
 
-                    certificateKey = mAct.DecryptPassword(certificateKey, ValueExpression.IsThisAValueExpression(certificateKey));
+                    certificateKey = Act.DecryptPassword(certificateKey, ValueExpression.IsThisAValueExpression(certificateKey), mAct);
                     if (!string.IsNullOrEmpty(path))
                     {
                         if (string.IsNullOrEmpty(certificateKey))

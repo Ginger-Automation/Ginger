@@ -150,7 +150,7 @@ namespace GingerCore.GeneralLib
                     string CertificateKey = Email.CertificatePasswordUCValueExpression;
                     if (!string.IsNullOrEmpty(CertificateKey))
                     {
-                        var decryptedPassword = DecryptPassword(CertificateKey, ValueExpression.IsThisAValueExpression(CertificateKey));
+                        CertificateKey = DecryptPassword(CertificateKey, ValueExpression.IsThisAValueExpression(CertificateKey));
                     }
                     string targetPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\EmailCertificates");//certificate is present in this folder //used this since relative path cannot be used during execution
                     string Certificatepath = Path.Combine(targetPath, CertificateName);
@@ -290,6 +290,10 @@ namespace GingerCore.GeneralLib
         }
         public string DecryptPassword(string password, bool isPasswordValueExpression)
         {
+            if (password == null)
+            {
+                return null;
+            }
             string decryptedPassword = string.Empty;
 
             if (isPasswordValueExpression)

@@ -153,7 +153,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 string password = mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Password);
                 if (!string.IsNullOrEmpty(password))
                 {
-                    var decryptedPassword = mAct.DecryptPassword(password, ValueExpression.IsThisAValueExpression(password));
+                    var decryptedPassword = Act.DecryptPassword(password, ValueExpression.IsThisAValueExpression(password), mAct);
                     commandParam = commandParam + " -p" + Quotationmark + decryptedPassword + Quotationmark;
                 }
 
