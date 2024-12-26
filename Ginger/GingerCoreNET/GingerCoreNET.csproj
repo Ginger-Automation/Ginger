@@ -49,7 +49,6 @@
     <None Remove="DLLS\AlmRepositoryStd.dll" />
     <None Remove="DLLS\GingerHbaseFilter.dll" />
     <None Remove="DLLS\JiraRepositoryStd.dll" />
-    <None Remove="DLLS\LibGit2Sharp.dll" />
     <None Remove="DLLS\OctaneInteractionStd.dll" />
     <None Remove="DLLS\SikuliStandardNet.dll" />
     <None Remove="DLLS\ZephyrEntStdSDK.dll" />
@@ -114,7 +113,6 @@
     <Content Include="DLLS\JiraRepositoryStd.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="DLLS\LibGit2Sharp.dll" />
     <Content Include="DLLS\OctaneInteractionStd.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -282,8 +280,9 @@
     
     <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
+    <PackageReference Include="LibGit2Sharp" Version="0.31.0" />
   
-    <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="2.0.278" />
+    <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="2.0.323" />
 	<PackageReference Include="LiteDB" Version="5.0.21" />
   
     <PackageReference Include="DocumentFormat.OpenXml" Version="3.0.1" />
