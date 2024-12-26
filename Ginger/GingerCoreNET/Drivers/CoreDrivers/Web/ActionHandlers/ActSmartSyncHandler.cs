@@ -37,35 +37,32 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                 st.Start();
                 IBrowserElement element;
 
-                switch (_actSmartSync.SmartSyncAction)
+                if (_actSmartSync.SmartSyncAction == ActSmartSync.eSmartSyncAction.WaitUntilDisplay)
                 {
-                    case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
-                        do
+                    do
+                    {
+                        if (st.ElapsedMilliseconds > MaxTimeout * 1000)
                         {
-                            if (st.ElapsedMilliseconds > MaxTimeout * 1000)
-                            {
-                                mAct.Error = "Smart Sync of WaitUntilDisplay is timeout";
-                                break;
-                            }
-                            await Task.Delay(100);
-                            element = await GetFirstMatchingElementAsync();
-                        } while (element == null || !await element.IsVisibleAsync() || !await element.IsEnabledAsync());
-                        break;
-
-                    case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
-                        do
-                        {
-                            if (st.ElapsedMilliseconds > MaxTimeout * 1000)
-                            {
-                                mAct.Error = "Smart Sync of WaitUntilDisapear is timeout";
-                                break;
-                            }
-                            await Task.Delay(100);
-                            element = await GetFirstMatchingElementAsync();
-                        } while (element != null);
-                        break;
+                            mAct.Error = "Smart Sync of WaitUntilDisplay is timeout";
+                            break;
+                        }
+                        await Task.Delay(100);
+                        element = await GetFirstMatchingElementAsync();
+                    } while (element == null || !await element.IsVisibleAsync() || !await element.IsEnabledAsync());
                 }
-
+                else if (_actSmartSync.SmartSyncAction == ActSmartSync.eSmartSyncAction.WaitUntilDisapear)
+                {
+                    do
+                    {
+                        if (st.ElapsedMilliseconds > MaxTimeout * 1000)
+                        {
+                            mAct.Error = "Smart Sync of WaitUntilDisapear is timeout";
+                            break;
+                        }
+                        await Task.Delay(100);
+                        element = await GetFirstMatchingElementAsync();
+                    } while (element != null);
+                }
             }
             finally
             {
