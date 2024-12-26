@@ -251,6 +251,21 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         }
                         actAccessibilityTestingHandler.HandleAsync().Wait();
                         break;
+                    case ActSmartSync actSmartSync:
+                        ActSmartSyncHandler actSmartSyncHandler = new(
+                            actSmartSync,
+                            _browser.CurrentWindow.CurrentTab,
+                            new BrowserElementLocator(
+                                _browser.CurrentWindow.CurrentTab,
+                                new()
+                                {
+                                    BusinessFlow = BusinessFlow,
+                                    Environment = Environment,
+                                    POMExecutionUtils = new POMExecutionUtils(act, act.LocateValue),
+                                    Agent = BusinessFlow.CurrentActivity.CurrentAgent,
+                                }));
+                        actSmartSyncHandler.HandleAsync(act).Wait();
+                        break;
                     default:
                         act.Error = $"This Action is not supported for Playwright driver";
                         break;
@@ -262,7 +277,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             message = string.Empty;
 
-            if (act is ActWithoutDriver or ActScreenShot or ActGotoURL or ActAccessibilityTesting)
+            if (act is ActWithoutDriver or ActScreenShot or ActGotoURL or ActAccessibilityTesting or ActSmartSync)
             {
                 return true;
             }
