@@ -270,10 +270,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         try
                         {
                             int smartSyncTimeout = DriverBase.GetMaxTimeout(actSmartSync) * 1000;
-                            if (smartSyncTimeout != browserOptions.Timeout)
-                            {
-                                browserOptions.Timeout = smartSyncTimeout;
-                            }
+                            browserOptions.Timeout = smartSyncTimeout;
                             actSmartSyncHandler.HandleAsync(act, smartSyncTimeout).Wait();
                         }
                         catch (Exception ex)
