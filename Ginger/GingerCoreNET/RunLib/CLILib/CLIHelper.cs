@@ -20,6 +20,7 @@ using AccountReport.Contracts;
 using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.Repository;
 using Ginger;
@@ -76,6 +77,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SourceApplication;
         public string SourceApplicationUser;
 
+        ProgressNotifier progressNotifier = new();
         public bool SelfHealingCheckInConfigured;
 
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
@@ -561,14 +563,34 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         private void DownloadSolutionFromSourceControl()
         {
-            if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
+            try
             {
-                Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
-                if (!SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges))
+                progressNotifier.ProgressText += ProgressNotifier_ProgressText;
+                if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                    Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
+                    if (!SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                    }
                 }
+                progressNotifier.ProgressText -= ProgressNotifier_ProgressText;
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+
+            }
+        }
+
+        /// <summary>
+        /// Logs the progress text to the reporter.
+        /// </summary>
+        /// <param name="sender">The ProgressNotifier that raised the event.</param>
+        /// <param name="e">The progress message describing the current download status.</param>
+        private void ProgressNotifier_ProgressText(object sender, string e)
+        {
+            Reporter.ToLog(eLogLevel.INFO, e);
         }
 
         internal void SetSourceControlBranch(string value)

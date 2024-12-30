@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
@@ -126,6 +127,8 @@ namespace GingerCoreNET.SourceControl
         public abstract bool GetLatest(string path, ref string error, ref List<string> conflictsPaths);
 
         public abstract bool GetProject(string Path, string URI, ref string error);
+
+        public abstract bool GetProjectWithProgress(string Path, string URI, ref string error, Amdocs.Ginger.Common.UIElement.ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default);
 
         public abstract void Init();
 
@@ -242,5 +245,7 @@ namespace GingerCoreNET.SourceControl
                 };
             });
         }
+
     }
+
 }
