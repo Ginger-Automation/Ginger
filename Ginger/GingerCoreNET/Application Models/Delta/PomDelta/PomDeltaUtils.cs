@@ -20,10 +20,12 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models;
+using Amdocs.Ginger.CoreNET.NewSelfHealing;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using NPOI.OpenXmlFormats.Dml;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -103,6 +105,7 @@ namespace GingerCoreNET.Application_Models
             finally
             {
                 IsLearning = false;
+                flag = !flag;
             }
         }
 
@@ -158,6 +161,8 @@ namespace GingerCoreNET.Application_Models
             //});
         }
 
+        private bool flag = true;
+
         private void ElementsListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
@@ -165,7 +170,20 @@ namespace GingerCoreNET.Application_Models
                 ElementInfo latestElement = (ElementInfo)e.NewItems[0];
                 try
                 {
-                    ElementInfo matchingOriginalElement = mIWindowExplorerDriver.GetMatchingElement(latestElement, POMElementsCopy);
+                    //TODO: using Property/Image matching should be user configurable
+                    const bool usePropertyMatching = true;
+                    const bool useImageMatching = true;
+
+                    ElementInfo matchingOriginalElement = FindMatchingOldElementByDriver(latestElement, POMElementsCopy);
+                    if (usePropertyMatching && matchingOriginalElement == null)
+                    {
+                        matchingOriginalElement = FindMatchingOldElementByProperty(latestElement, POMElementsCopy);
+                    }
+                    if (useImageMatching && matchingOriginalElement == null)
+                    {
+                        matchingOriginalElement = FindMatchingOldElementByImage(latestElement, POMElementsCopy);
+                    }
+                    
                     //Set element details
                     PomLearnUtils.SetLearnedElementDetails(latestElement);
 
@@ -192,6 +210,60 @@ namespace GingerCoreNET.Application_Models
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("POM Delta- failed to compare new learned element '{0}' with existing elements", latestElement.ElementName), ex);
                 }
             }
+        }
+
+        private ElementInfo FindMatchingOldElementByDriver(ElementInfo newElement, ObservableList<ElementInfo> oldElements)
+        {
+            return mIWindowExplorerDriver.GetMatchingElement(newElement, oldElements);
+        }
+
+        private ElementInfo FindMatchingOldElementByProperty(ElementInfo newElement, IEnumerable<ElementInfo> oldElements)
+        {
+            //TODO: acceptable value should be user configurable
+            const double acceptableMatchScore = 0.6;
+
+            ElementInfo bestMatchingOldElement = null;
+            double maxMatchScore = 0;
+
+            ElementPropertyMatcher elementPropertyMatcher = new();
+            foreach (ElementInfo oldElement in oldElements)
+            {
+                double matchScore = elementPropertyMatcher.Match(expected: newElement, actual: oldElement);
+                if (matchScore >= acceptableMatchScore && matchScore > maxMatchScore)
+                {
+                    maxMatchScore = matchScore;
+                    bestMatchingOldElement = oldElement;
+                }
+            }
+
+            return bestMatchingOldElement;
+        }
+
+        private ElementInfo FindMatchingOldElementByImage(ElementInfo newElement, IEnumerable<ElementInfo> oldElements)
+        {
+            if (string.IsNullOrWhiteSpace(newElement.ScreenShotImage))
+            {
+                return null;
+            }
+
+            //TODO: acceptable value should be user configurable
+            const double acceptableMatchScore = 0.6;
+
+            ElementInfo bestMatchingOldElement = null;
+            double maxMatchScore = 0;
+
+            ElementImageMatcher elementImageMatcher = new();
+            foreach (ElementInfo oldElement in oldElements)
+            {
+                double matchScore = elementImageMatcher.Match(expected: newElement, actual: oldElement);
+                if (matchScore >= acceptableMatchScore && matchScore > maxMatchScore)
+                {
+                    maxMatchScore = matchScore;
+                    bestMatchingOldElement = oldElement;
+                }
+            }
+
+            return bestMatchingOldElement;
         }
 
         private DeltaElementInfo ConvertElementToDelta(ElementInfo elementInfo, eDeltaStatus deltaStatus, object group, bool isSelected, string deltaExtraDetails)

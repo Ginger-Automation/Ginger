@@ -29,7 +29,7 @@ namespace Amdocs.Ginger.CoreNET.NewSelfHealing
                 throw new ArgumentNullException(paramName: nameof(actual));
             }
 
-            _logger?.LogTrace("matching expected element({expectedElementId}) with actual element({actualElementId})", expected.Guid, actual.Guid);
+            _logger?.LogTrace("matching expected element({expectedElementName}-{expectedElementId}) with actual element({actualElementName}-{actualElementId})", expected.ElementName, expected.Guid, actual.ElementName, actual.Guid);
 
             List<ControlProperty> expectedProperties = new((expected.Properties ?? []).Where(p => p != null));
             List<ControlProperty> actualProperties = new((actual.Properties ?? []).Where(p => p != null));
@@ -48,8 +48,8 @@ namespace Amdocs.Ginger.CoreNET.NewSelfHealing
                 totalScore += result.TotalScore;
             }
 
-            double matchScore = actualScore / totalScore;
-            _logger?.LogTrace("expected element({expectedElementId}) and actual element({actualElementId}) matched with score {matchScore}", expected.Guid, actual.Guid, matchScore);
+            double matchScore = Math.Round(actualScore / totalScore, 2);
+            _logger?.LogTrace("expected element({expectedElementName}-{expectedElementId}) and actual element({actualElementName}-{actualElementId}) matched with score {matchScore}", expected.ElementName, expected.Guid, actual.ElementName, actual.Guid, matchScore);
             return matchScore;
         }
 
@@ -125,7 +125,7 @@ namespace Amdocs.Ginger.CoreNET.NewSelfHealing
             return new()
             {
                 ActualScore = 0,
-                TotalScore = 0,
+                TotalScore = 1 * weightage,
             };
         }
 

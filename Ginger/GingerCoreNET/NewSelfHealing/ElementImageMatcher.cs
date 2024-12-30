@@ -1,28 +1,65 @@
-﻿using ImageDiff;
+﻿using Amdocs.Ginger.Common.UIElement;
 using ImageMagick;
+using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Runtime.Versioning;
-using System.Text;
-using System.Threading.Tasks;
 
+#nullable enable
 namespace Amdocs.Ginger.CoreNET.NewSelfHealing
 {
     internal sealed class ElementImageMatcher
     {
-        [SupportedOSPlatform("windows")]
-        internal double Match(string source, string target)
+        private readonly ILogger? _logger;
+
+        internal ElementImageMatcher(ILogger? logger = null)
         {
-            byte[] sourceBytes = Convert.FromBase64String(source);
-            byte[] targetBytes = Convert.FromBase64String(target);
+            _logger = logger;
+        }
 
-            MagickImage sourceImg = new(sourceBytes);
-            MagickImage targetImg = new(targetBytes);
+        internal double Match(ElementInfo expected, ElementInfo actual)
+        {
+            if (expected == null)
+            {
+                throw new ArgumentNullException(paramName: nameof(expected));
+            }
+            if (actual == null)
+            {
+                throw new ArgumentNullException(paramName: nameof(actual));
+            }
 
-            return sourceImg.Compare(targetImg, ErrorMetric.MeanSquared);
+            _logger?.LogTrace("matching expected element({expectedElementName}-{expectedElementId}) image with actual element({actualElementName}-{actualElementId}) image", expected.ElementName, expected.Guid, actual.ElementName, actual.Guid);
+
+            double matchScore;
+
+            if (string.IsNullOrWhiteSpace(expected.ScreenShotImage))
+            {
+                matchScore = 0;
+                _logger?.LogTrace("expected element({expectedElementName}-{expectedElementId}) does not have a screenshot image, match score {matchScore}", expected.ElementName, expected.Guid, matchScore);
+                return matchScore;
+            }
+
+            if (string.IsNullOrWhiteSpace(actual.ScreenShotImage))
+            {
+                matchScore = 0;
+                _logger?.LogTrace("actual element({actualElementName}-{actualElementId}) does not have a screenshot image, match score {matchScore}", actual.ElementName, actual.Guid, matchScore);
+                return matchScore;
+            }
+
+            byte[] expectedBytes = Convert.FromBase64String(expected.ScreenShotImage);
+            byte[] actualBytes = Convert.FromBase64String(actual.ScreenShotImage);
+
+            MagickImage expectedImg = new(expectedBytes);
+            MagickImage actualImg = new(actualBytes);
+
+            double differPixelCount = expectedImg.Compare(actualImg, ErrorMetric.Absolute);
+            _logger?.LogTrace("expected element({expectedElementName}-{expectedElementId}) image and actual element({actualElementName}-{actualElementId}) image differ by {differPixelCount} pixels", expected.ElementName, expected.Guid, actual.ElementName, actual.Guid, differPixelCount);
+
+            double totalPixelCount = expectedImg.Width * expectedImg.Height;
+            _logger?.LogTrace("expected element({expectedElementName}-{expectedElementId}) image contain {totalPixelCount} pixels", expected.ElementName, expected.Guid, totalPixelCount);
+
+            matchScore = Math.Round((totalPixelCount - differPixelCount) / totalPixelCount, 2);
+            _logger?.LogTrace("expected element({expectedElementName}-{expectedElementId}) image and actual element({actualElementName}-{actualElementId}) image matched with score {matchScore}", expected.ElementName, expected.Guid, actual.ElementName, actual.Guid, matchScore);
+
+            return matchScore;
         }
 
         /*
