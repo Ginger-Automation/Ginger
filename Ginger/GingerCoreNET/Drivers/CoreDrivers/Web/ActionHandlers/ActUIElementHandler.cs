@@ -722,16 +722,26 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
 
         /// <summary>
-        /// Handles sending keys to a browser element.
-        /// Retrieves the element, clears its current value, and sends the specified keys.
+        /// Handles sending keys to a browser element. 
+        /// If the element is a file input, it sets the file value. 
+        /// For other input types, it clears the current value and performs an operation based on the provided keys.
         /// </summary>
         private async Task HandleSendKeysAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
-            await element.ClearAsync();
             string keys = _act.GetInputParamCalculatedValue("Value");
-            Func<Task> elementOperation = ConvertSeleniumKeyIdentifierToElementOperation(keys, element);
-            await elementOperation();
+            string tagName = await element.TagNameAsync();
+            string type = await element.AttributeValueAsync("type");
+            if (string.Equals(tagName, IBrowserElement.InputTagName, StringComparison.OrdinalIgnoreCase) && string.Equals(type, "file", StringComparison.OrdinalIgnoreCase))
+            {
+                await element.SetFileValueAsync(keys);
+            }
+            else
+            {
+                await element.ClearAsync();
+                Func<Task> elementOperation = ConvertSeleniumKeyIdentifierToElementOperation(keys, element);
+                await elementOperation();
+            }
         }
 
         /// <summary>
