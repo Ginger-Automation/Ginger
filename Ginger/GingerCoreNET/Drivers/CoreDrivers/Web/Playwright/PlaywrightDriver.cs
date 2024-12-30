@@ -31,6 +31,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.Drivers;
 using GingerCore.Drivers.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using HtmlAgilityPack;
@@ -82,12 +83,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return null;
             }
         }
+        PlaywrightBrowser.Options browserOptions;
         public override void StartDriver()
         {
             ValidateBrowserTypeSupport(BrowserType);
 
             IPlaywright playwright = Microsoft.Playwright.Playwright.CreateAsync().Result;
-            PlaywrightBrowser.Options browserOptions = BuildPlaywrightBrowserOptions();
+            browserOptions = BuildPlaywrightBrowserOptions();
             if (BrowserPrivateMode)
             {
                 _browser = new PlaywrightNonPersistentBrowser(playwright, BrowserType, browserOptions, OnBrowserClose);
@@ -251,6 +253,35 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         }
                         actAccessibilityTestingHandler.HandleAsync().Wait();
                         break;
+                    case ActSmartSync actSmartSync:
+                        ActSmartSyncHandler actSmartSyncHandler = new(
+                            actSmartSync,
+                            _browser.CurrentWindow.CurrentTab,
+                            new BrowserElementLocator(
+                                _browser.CurrentWindow.CurrentTab,
+                                new()
+                                {
+                                    BusinessFlow = BusinessFlow,
+                                    Environment = Environment,
+                                    POMExecutionUtils = new POMExecutionUtils(act, act.LocateValue),
+                                    Agent = BusinessFlow.CurrentActivity.CurrentAgent,
+                                }));
+                        float? driverDefaultTimeout = browserOptions.Timeout;
+                        try
+                        {
+                            int smartSyncTimeout = DriverBase.GetMaxTimeout(actSmartSync) * 1000;
+                            browserOptions.Timeout = smartSyncTimeout;
+                            actSmartSyncHandler.HandleAsync(act, smartSyncTimeout).Wait();
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Error = ex.Message;
+                        }
+                        finally
+                        {
+                            browserOptions.Timeout = driverDefaultTimeout;
+                        }
+                        break;
                     default:
                         act.Error = $"This Action is not supported for Playwright driver";
                         break;
@@ -262,7 +293,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             message = string.Empty;
 
-            if (act is ActWithoutDriver or ActScreenShot or ActGotoURL or ActAccessibilityTesting)
+            if (act is ActWithoutDriver or ActScreenShot or ActGotoURL or ActAccessibilityTesting or ActSmartSync)
             {
                 return true;
             }
