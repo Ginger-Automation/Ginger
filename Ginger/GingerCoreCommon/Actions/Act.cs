@@ -2118,6 +2118,6 @@ namespace GingerCore.Actions
 
             return AreEqual(obj as Act);
         }
-
+      
     }
 }

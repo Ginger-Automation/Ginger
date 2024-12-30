@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.GeneralLib;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using CheckBox = System.Windows.Controls.CheckBox;
@@ -131,6 +132,53 @@ namespace Ginger.Run.RunSetActions
             if (!EncryptionHandler.IsStringEncrypted(xSMTPPassTextBox.Text))
             {
                 xSMTPPassTextBox.Text = EncryptionHandler.EncryptwithKey(xSMTPPassTextBox.Text);
+            }
+        }
+        /// <summary>
+        /// Handles the LostKeyboardFocus event for the CertificatePasswordUCValueExpression control.
+        /// Encrypts the password if needed.
+        /// </summary>
+        private void CertificatePasswordUCValueExpression_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        {
+            try
+            {
+                EncryptPasswordIfNeeded();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to encrypt certificate password", ex);
+            }
+        }
+
+        /// <summary>
+        /// Checks if the CertificatePasswordUCValueExpression contains a value expression.
+        /// </summary>
+        /// <returns>True if it is a value expression, otherwise false.</returns>
+        private bool IsPasswordValueExpression()
+        {
+            return CertificatePasswordUCValueExpression?.ValueTextBox?.Text != null && ValueExpression.IsThisAValueExpression(CertificatePasswordUCValueExpression.ValueTextBox.Text);
+        }
+
+        /// <summary>
+        /// Encrypts the password in CertificatePasswordUCValueExpression if it is not already encrypted.
+        /// </summary>
+        private void EncryptPasswordIfNeeded()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(CertificatePasswordUCValueExpression.ValueTextBox.Text))
+                {
+                    return;
+                }
+                string password = CertificatePasswordUCValueExpression.ValueTextBox.Text;
+                if (!string.IsNullOrEmpty(password) && !IsPasswordValueExpression() && !EncryptionHandler.IsStringEncrypted(password))
+                {
+                    CertificatePasswordUCValueExpression.ValueTextBox.Text = EncryptionHandler.EncryptwithKey(password);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to encrypt certificate password", ex);
             }
         }
     }
