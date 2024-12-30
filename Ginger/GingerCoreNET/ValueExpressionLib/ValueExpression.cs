@@ -93,24 +93,24 @@ namespace GingerCore
         private static string rxVare = "";
 
         // ^{} = exclude { inside or } inside - so we don't want to get var if there are 2 { - like VBS calc of 2 vars or if the } at the end
-        public static Regex rxVarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
+        public static Regex rxVarPattern = new(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
 
-        public static readonly Regex rxVarFormulaParams = new Regex(@"[A-Za-z]*=[^,}]*", RegexOptions.Compiled);
+        public static readonly Regex rxVarFormulaParams = new(@"[A-Za-z]*=[^,}]*", RegexOptions.Compiled);
 
-        public static Regex rxGlobalParamPattern = new Regex(@"({GlobalAppsModelsParam Name=(\D*\d*\s*)}})|({GlobalAppsModelsParam Name=(\D*\d*\s*)})", RegexOptions.Compiled);
+        public static Regex rxGlobalParamPattern = new(@"({GlobalAppsModelsParam Name=(\D*\d*\s*)}})|({GlobalAppsModelsParam Name=(\D*\d*\s*)})", RegexOptions.Compiled);
 
-        private static Regex rxDSPattern = new Regex(@"{(\bDS Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
-        public static Regex rxEnvParamPattern = new Regex(@"{(\bEnvParam App=)\w+\b[^{}]*}", RegexOptions.Compiled);
-        public static Regex rxEnvUrlPattern = new Regex(@"{(\bEnvURL App=)\w+\b[^{}]*}", RegexOptions.Compiled);
-        private static Regex rxFDPattern = new Regex(@"{(\bFD Object=)\w+\b[^{}]*}", RegexOptions.Compiled);
-        private static Regex rxExecutionJsonDataPattern = new Regex(@"{ExecutionJsonData}", RegexOptions.Compiled);
+        private static Regex rxDSPattern = new(@"{(\bDS Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
+        public static Regex rxEnvParamPattern = new(@"{(\bEnvParam App=)\w+\b[^{}]*}", RegexOptions.Compiled);
+        public static Regex rxEnvUrlPattern = new(@"{(\bEnvURL App=)\w+\b[^{}]*}", RegexOptions.Compiled);
+        private static Regex rxFDPattern = new(@"{(\bFD Object=)\w+\b[^{}]*}", RegexOptions.Compiled);
+        private static Regex rxExecutionJsonDataPattern = new(@"{ExecutionJsonData}", RegexOptions.Compiled);
 
-        private static Regex VBSRegex = new Regex(@"{[V|E|VBS]" + rxVar + "[^{}]*}", RegexOptions.Compiled);
-        private static Regex rxe = new Regex(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled | RegexOptions.Singleline);
+        private static Regex VBSRegex = new(@"{[V|E|VBS]" + rxVar + "[^{}]*}", RegexOptions.Compiled);
+        private static Regex rxe = new(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled | RegexOptions.Singleline);
 
-        private static Regex rNestedfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\(([^()])*\\)}", RegexOptions.Compiled);
-        private static Regex MockDataExpPattern = new Regex("{MockDataExp({.*}|[^{}]*)*}", RegexOptions.Compiled, new TimeSpan(0, 0, 5));
-        private static Regex CsExppattern = new Regex("{CS Exp({.*}|[^{}]*)*}", RegexOptions.Compiled);
+        private static Regex rNestedfunc = new("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\(([^()])*\\)}", RegexOptions.Compiled);
+        private static Regex MockDataExpPattern = new("{MockDataExp({.*}|[^{}]*)*}", RegexOptions.Compiled, new TimeSpan(0, 0, 5));
+        private static Regex CsExppattern = new("{CS Exp({.*}|[^{}]*)*}", RegexOptions.Compiled);
 
         // Enable setting value simply by assigned string, 
         // so no need to create new VE class everywhere in code

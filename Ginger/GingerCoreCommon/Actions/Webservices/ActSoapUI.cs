@@ -199,5 +199,6 @@ namespace GingerCore.Actions
                 return (System.IO.Directory.Exists(LastExecutionFolderPath));
             }
         }
+
     }
 }
