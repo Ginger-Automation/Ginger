@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using GingerUtils;
+using Amdocs.Ginger.CoreNET.Utility;
 using System;
 using System.ComponentModel;
 using System.IO;

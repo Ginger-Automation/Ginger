@@ -19,8 +19,8 @@ limitations under the License.
 using Amdocs.Ginger.CoreNET.BPMN.Conversion;
 using Amdocs.Ginger.CoreNET.BPMN.Models;
 using Amdocs.Ginger.CoreNET.BPMN.Serialization;
+using Amdocs.Ginger.CoreNET.Utility;
 using GingerCore.Activities;
-using GingerUtils;
 using System.IO;
 
 #nullable enable

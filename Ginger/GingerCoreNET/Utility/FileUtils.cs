@@ -18,7 +18,7 @@ limitations under the License.
 
 using System.IO;
 
-namespace GingerUtils
+namespace Amdocs.Ginger.CoreNET.Utility
 {
     public class FileUtils
     {
