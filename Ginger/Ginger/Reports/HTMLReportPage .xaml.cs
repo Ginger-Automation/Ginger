@@ -123,6 +123,17 @@ namespace Ginger.Reports
             }
             ActivityData = ActivityData.Replace("<!--ActionStart-->" + ActionTemplate + "<!--ActionEnd-->", ActionsData);
         }
+        
+        private Bitmap FileToBitmapImage(String path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return null;
+            }
+
+            Bitmap bmp = (Bitmap)Bitmap.FromFile(path);
+            return (bmp);
+        }
 
         private void ReplaceScreenshotTemplate(ref string ActivityData, List<string> ScreenShots)
         {
@@ -130,7 +141,7 @@ namespace Ginger.Reports
             ObservableList<Bitmap> Bitmp = [];
             foreach (String bitmapsource in ScreenShots)
             {
-                Bitmap bmp = Ginger.Utils.BitmapManager.FileToBitmapImage(bitmapsource);
+                Bitmap bmp = FileToBitmapImage(bitmapsource);
                 var txt = string.Empty;
 
                 //Bitmap bitmap;
