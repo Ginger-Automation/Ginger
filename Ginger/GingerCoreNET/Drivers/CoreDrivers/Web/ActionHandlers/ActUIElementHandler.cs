@@ -734,7 +734,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             string type = await element.AttributeValueAsync("type");
             if (string.Equals(tagName, IBrowserElement.InputTagName, StringComparison.OrdinalIgnoreCase) && string.Equals(type, "file", StringComparison.OrdinalIgnoreCase))
             {
-                await element.SetFileValueAsync(keys);
+                if (!string.IsNullOrEmpty(keys))
+                {
+                    await element.SetFileValueAsync(keys.Split(',').Select(path => path.Replace("\"", "").Trim()).ToArray());
+                }
             }
             else
             {
@@ -743,7 +746,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                 await elementOperation();
             }
         }
-
         /// <summary>
         /// Converts a Selenium key identifier to the corresponding element operation.
         /// Maps the key identifier to the appropriate key press action on the element.

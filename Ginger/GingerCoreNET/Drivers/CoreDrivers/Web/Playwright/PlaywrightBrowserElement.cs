@@ -1008,7 +1008,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// </summary>
         /// <param name="value">The file path to set.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public Task SetFileValueAsync(string value)
+        public Task SetFileValueAsync(string[] value)
         {
             if (_playwrightLocator != null)
             {
@@ -1026,7 +1026,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// <param name="playwrightLocator">The Playwright locator.</param>
         /// <param name="value">The file path to set.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private Task SetFileValueAsync(IPlaywrightLocator playwrightLocator, string value)
+        private Task SetFileValueAsync(IPlaywrightLocator playwrightLocator, string[] value)
         {
             return playwrightLocator.SetInputFilesAsync(value);
         }
@@ -1037,7 +1037,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// <param name="playwrightElementHandle">The Playwright element handle.</param>
         /// <param name="value">The file path to set.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private Task SetFileValueAsync(IPlaywrightElementHandle playwrightElementHandle, string value)
+        private Task SetFileValueAsync(IPlaywrightElementHandle playwrightElementHandle, string[] value)
         {
             return playwrightElementHandle.SetInputFilesAsync(value);
         }
