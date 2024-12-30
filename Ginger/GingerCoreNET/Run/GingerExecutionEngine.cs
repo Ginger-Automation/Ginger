@@ -31,6 +31,7 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger;
+using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
 using Ginger.Reports;
@@ -3329,7 +3330,7 @@ namespace Ginger.Run
                     if (ve.Value.Contains("{Actual}"))
                     {
                         //Replace to 
-                        if ((actReturnValue.Actual != null) && Ginger.Utils.StringManager.IsNumeric(actReturnValue.Actual))
+                        if ((actReturnValue.Actual != null) && StringManager.IsNumeric(actReturnValue.Actual))
                         {
                             ve.Value = ve.Value.Replace("{Actual}", actReturnValue.Actual);
                         }
@@ -3621,7 +3622,7 @@ namespace Ginger.Run
         public static void ReplaceActualPlaceHolder(ActReturnValue ARC)//currently used only for unit tests
         {
             string sEval;
-            if (Ginger.Utils.StringManager.IsNumeric(ARC.Actual))
+            if (StringManager.IsNumeric(ARC.Actual))
             {
                 sEval = ARC.ExpectedCalculated.Replace("{Actual}", ARC.Actual);
             }

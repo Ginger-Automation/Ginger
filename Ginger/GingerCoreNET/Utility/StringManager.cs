@@ -17,7 +17,7 @@ limitations under the License.
 #endregion
 
 
-namespace Ginger.Utils
+namespace Amdocs.Ginger.CoreNET.Utility
 {
     public class StringManager
     {
@@ -32,7 +32,7 @@ namespace Ginger.Utils
                 return false;
             }
 
-            foreach (char c in sValue)
+            foreach (var c in sValue)
             {
                 if (!char.IsDigit(c) && c != '.')
                 {
