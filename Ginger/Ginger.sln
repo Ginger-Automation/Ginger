@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerCoreCommon", "GingerC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerUtils", "GingerUtils\GingerUtils.csproj", "{80A06C2B-7DA2-4F78-BF2A-5C0234F2349E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerUtilsTest", "GingerUtilsTest\GingerUtilsTest.csproj", "{C5C54CA5-0CEB-4557-8D1B-3AF8557EB026}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerCoreCommonTest", "GingerCoreCommonTest\GingerCoreCommonTest.csproj", "{A9768CEB-0B89-4B04-BBC1-FE1E3A5A39F8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerCoreNET", "GingerCoreNET\GingerCoreNET.csproj", "{0C33C26A-5F96-4060-BB1B-583BE9EE8478}"
@@ -83,12 +81,6 @@ Global
 		{80A06C2B-7DA2-4F78-BF2A-5C0234F2349E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{80A06C2B-7DA2-4F78-BF2A-5C0234F2349E}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{80A06C2B-7DA2-4F78-BF2A-5C0234F2349E}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
-		{C5C54CA5-0CEB-4557-8D1B-3AF8557EB026}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C5C54CA5-0CEB-4557-8D1B-3AF8557EB026}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C5C54CA5-0CEB-4557-8D1B-3AF8557EB026}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C5C54CA5-0CEB-4557-8D1B-3AF8557EB026}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C5C54CA5-0CEB-4557-8D1B-3AF8557EB026}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C5C54CA5-0CEB-4557-8D1B-3AF8557EB026}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 		{A9768CEB-0B89-4B04-BBC1-FE1E3A5A39F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A9768CEB-0B89-4B04-BBC1-FE1E3A5A39F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9768CEB-0B89-4B04-BBC1-FE1E3A5A39F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
