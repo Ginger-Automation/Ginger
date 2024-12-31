@@ -16,13 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.Helpers;
+using GingerUtils.Helpers;
 using System;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
 
-namespace Amdocs.Ginger.Common.OS
+namespace GingerUtils.OS
 {
     public abstract class OperatingSystemBase
     {
@@ -43,7 +43,7 @@ namespace Amdocs.Ginger.Common.OS
             //not required on windows
             return path;
         }
-        public virtual string AdjustOSChars(String content)
+        public virtual string AdjustOSChars(string content)
         {
             //not required on windows
             return content;

@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using GingerUtils.TimeLine;
+using GingerUtils.TimeLineLib;
 using System.Windows;
 using System.Windows.Controls;
 

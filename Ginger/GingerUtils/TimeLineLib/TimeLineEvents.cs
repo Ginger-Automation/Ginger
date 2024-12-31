@@ -20,7 +20,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GingerUtils.TimeLine
+namespace GingerUtils.TimeLineLib
 {
     public class TimeLineEvents
     {

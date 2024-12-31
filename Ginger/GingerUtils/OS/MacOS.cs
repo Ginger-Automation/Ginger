@@ -17,7 +17,7 @@ limitations under the License.
 #endregion
 
 
-namespace Amdocs.Ginger.Common.OS
+namespace GingerUtils.OS
 {
     class MacOS : LinuxOS
     {

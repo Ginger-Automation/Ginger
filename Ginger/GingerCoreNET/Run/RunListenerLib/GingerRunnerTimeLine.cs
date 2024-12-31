@@ -18,7 +18,7 @@ limitations under the License.
 
 using GingerCore;
 using GingerCore.Actions;
-using GingerUtils.TimeLine;
+using GingerUtils.TimeLineLib;
 
 namespace Amdocs.Ginger.Run
 {

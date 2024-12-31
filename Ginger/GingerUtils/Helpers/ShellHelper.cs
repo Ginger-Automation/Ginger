@@ -20,7 +20,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Amdocs.Ginger.Common.Helpers
+namespace GingerUtils.Helpers
 {
     public static class ShellHelper
     {

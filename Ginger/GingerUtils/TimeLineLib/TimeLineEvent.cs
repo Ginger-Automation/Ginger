@@ -18,7 +18,7 @@ limitations under the License.
 
 using System.Collections.Generic;
 
-namespace GingerUtils.TimeLine
+namespace GingerUtils.TimeLineLib
 {
     public class TimeLineEvent
     {

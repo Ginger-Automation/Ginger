@@ -24,7 +24,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection;
 
-namespace Amdocs.Ginger.Common.OS
+namespace GingerUtils.OS
 {
     class LinuxOS : OperatingSystemBase
     {

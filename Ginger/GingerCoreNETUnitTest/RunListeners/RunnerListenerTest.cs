@@ -21,7 +21,7 @@ using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerTestHelper;
-using GingerUtils.TimeLine;
+using GingerUtils.TimeLineLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Threading;

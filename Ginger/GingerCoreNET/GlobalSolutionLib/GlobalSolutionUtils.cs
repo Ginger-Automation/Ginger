@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GlobalSolutionLib;
-using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
@@ -34,6 +33,7 @@ using GingerCore.Environments;
 using GingerCore.FlowControlLib;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerUtils.OS;
 using System;
 using System.Collections.Generic;
 using System.IO;
