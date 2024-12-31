@@ -28,9 +28,4 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="NetworkLib\" />
-    <Folder Include="ShellLib\" />
-  </ItemGroup>
-
 </Project>
