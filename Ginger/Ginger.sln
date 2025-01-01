@@ -30,8 +30,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{8E8355
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerConsoleTest", "GingerConsoleTest\GingerConsoleTest.csproj", "{44C2E969-CDDD-4D15-B663-84D262248DD7}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DE334450-46DA-434B-9CDC-9ADBA7C85CAD}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -129,12 +127,6 @@ Global
 		{D5329D81-7FF0-4AF1-B186-A2FD65EF0583}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D5329D81-7FF0-4AF1-B186-A2FD65EF0583}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D5329D81-7FF0-4AF1-B186-A2FD65EF0583}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
-		{44C2E969-CDDD-4D15-B663-84D262248DD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{44C2E969-CDDD-4D15-B663-84D262248DD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{44C2E969-CDDD-4D15-B663-84D262248DD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{44C2E969-CDDD-4D15-B663-84D262248DD7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{44C2E969-CDDD-4D15-B663-84D262248DD7}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
-		{44C2E969-CDDD-4D15-B663-84D262248DD7}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 		{82201CD7-CAE1-461A-B477-47FA92BC463E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{82201CD7-CAE1-461A-B477-47FA92BC463E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82201CD7-CAE1-461A-B477-47FA92BC463E}.Release|Any CPU.ActiveCfg = Release|Any CPU
