@@ -40,10 +40,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerHelper", "GingerHelper\GingerHelper.csproj", "{82201CD7-CAE1-461A-B477-47FA92BC463E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerWPFDriverWindow", "GingerWPFDriverWindow\GingerWPFDriverWindow.csproj", "{CA67E1DD-06CD-442D-AA1F-F4F01D6CA2C5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerWPFDriverWindowTest", "GingerWPFDriverWindowTest\GingerWPFDriverWindowTest.csproj", "{11D28BCF-EA5C-472A-A8FE-28DF1598A9E9}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerControls", "GingerControls\GingerControls.csproj", "{959E026A-240E-47FB-9815-5EE219EE8039}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerPluginCore", "GingerPluginCore\GingerPluginCore.csproj", "{67ECC7F4-78D3-4260-BBE1-20688942C6D1}"
@@ -133,18 +129,6 @@ Global
 		{82201CD7-CAE1-461A-B477-47FA92BC463E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{82201CD7-CAE1-461A-B477-47FA92BC463E}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{82201CD7-CAE1-461A-B477-47FA92BC463E}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
-		{CA67E1DD-06CD-442D-AA1F-F4F01D6CA2C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA67E1DD-06CD-442D-AA1F-F4F01D6CA2C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CA67E1DD-06CD-442D-AA1F-F4F01D6CA2C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CA67E1DD-06CD-442D-AA1F-F4F01D6CA2C5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CA67E1DD-06CD-442D-AA1F-F4F01D6CA2C5}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA67E1DD-06CD-442D-AA1F-F4F01D6CA2C5}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
-		{11D28BCF-EA5C-472A-A8FE-28DF1598A9E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{11D28BCF-EA5C-472A-A8FE-28DF1598A9E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{11D28BCF-EA5C-472A-A8FE-28DF1598A9E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{11D28BCF-EA5C-472A-A8FE-28DF1598A9E9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{11D28BCF-EA5C-472A-A8FE-28DF1598A9E9}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
-		{11D28BCF-EA5C-472A-A8FE-28DF1598A9E9}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 		{959E026A-240E-47FB-9815-5EE219EE8039}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{959E026A-240E-47FB-9815-5EE219EE8039}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{959E026A-240E-47FB-9815-5EE219EE8039}.Release|Any CPU.ActiveCfg = Release|Any CPU
