@@ -300,8 +300,8 @@ namespace GingerCore.Drivers
             return 0.5;
         }
 
-        Regex AttRegexWeb = new Regex("@[a-zA-Z]*", RegexOptions.Compiled);
-        Regex AttRegexMobile = new Regex("{[a-zA-Z]*}", RegexOptions.Compiled);
+        Regex AttRegexWeb = new("@[a-zA-Z]*", RegexOptions.Compiled);
+        Regex AttRegexMobile = new("{[a-zA-Z]*}", RegexOptions.Compiled);
         public ElementLocator GetUserDefinedCustomLocatorFromTemplates(string locatorTemplate, eLocateBy locateBy, List<ControlProperty> elementProperties)
         {
             try
@@ -379,7 +379,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        protected static int GetMaxTimeout(ActSmartSync act)
+        public static int GetMaxTimeout(ActSmartSync act)
         {
             try
             {

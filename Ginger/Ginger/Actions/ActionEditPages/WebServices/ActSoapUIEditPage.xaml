@@ -194,7 +194,7 @@
                                         <ColumnDefinition Width="200*"/>
                                     </Grid.ColumnDefinitions>
                                     <Label Style="{StaticResource @InputFieldLabelStyle}"  Grid.Column="0"  VerticalAlignment="Center" Margin="0,0,0,0">Password:</Label>
-                                    <Actions:UCValueExpression x:Name="PasswordTextBox"  Grid.Column="1"  VerticalAlignment="Center" ToolTip="The password to use in any authentications, overrides any password set for any TestRequests" />
+                                    <Actions:UCValueExpression x:Name="PasswordTextBox"  Grid.Column="1"  VerticalAlignment="Center" LostKeyboardFocus="PasswordTextBox_LostKeyboardFocus" ToolTip="The password to use in any authentications, overrides any password set for any TestRequests" />
                                 </Grid>
                             </StackPanel>
 
