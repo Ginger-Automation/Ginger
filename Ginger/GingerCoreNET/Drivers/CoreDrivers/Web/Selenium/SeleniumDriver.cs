@@ -399,7 +399,7 @@ namespace GingerCore.Drivers
         protected NgWebDriver ngDriver;
         private String DefaultWindowHandler = null;
 
-        private Proxy mProxy = new Proxy();
+        private Proxy mProxy = new();
 
         // FOr BMP - Browser Mob Proxy
         Server BMPServer;
@@ -5575,7 +5575,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        Regex AttRegex = new Regex("@[a-zA-Z]*", RegexOptions.Compiled);
+        Regex AttRegex = new("@[a-zA-Z]*", RegexOptions.Compiled);
         private void CreateXpathFromUserTemplate(string xPathTemplate, HTMLElementInfo hTMLElement)
         {
             try
@@ -10934,31 +10934,31 @@ namespace GingerCore.Drivers
         {
             try
             {
-                    if (isNetworkLogMonitoringStarted)
+                if (isNetworkLogMonitoringStarted)
+                {
+                    act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
+                    act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
+                    foreach (var val in networkRequestLogList.ToList())
                     {
-                        act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
-                        act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
-                        foreach (var val in networkRequestLogList.ToList())
-                        {
-                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
-                        }
+                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
+                    }
 
-                        foreach (var val in networkResponseLogList.ToList())
-                        {
-                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
-                        }
-                    }
-                    else
+                    foreach (var val in networkResponseLogList.ToList())
                     {
-                        act.ExInfo = $"Action is skipped,{nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
                     }
+                }
+                else
+                {
+                    act.ExInfo = $"Action is skipped,{nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
+                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
-            
+
 
         }
 
@@ -11022,11 +11022,11 @@ namespace GingerCore.Drivers
                     act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList(), Formatting.Indented));
                     foreach (var val in networkRequestLogList.ToList())
                     {
-                        act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
+                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
                     }
                     foreach (var val in networkResponseLogList.ToList())
                     {
-                        act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString() } {val.Item1}", Convert.ToString(val.Item2));
+                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
                     }
 
                     await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V127.Network.DisableCommandSettings());
@@ -11034,7 +11034,7 @@ namespace GingerCore.Drivers
                     devTools.CloseDevToolsSession();
 
                     string requestPath = _BrowserHelper.CreateNetworkLogFile("NetworklogRequest", networkRequestLogList);
-                    act.ExInfo = $"RequestFile : { requestPath }\n";
+                    act.ExInfo = $"RequestFile : {requestPath}\n";
                     string responsePath = _BrowserHelper.CreateNetworkLogFile("NetworklogResponse", networkResponseLogList);
                     act.ExInfo = $"{act.ExInfo} ResponseFile : {responsePath}\n";
 
@@ -11103,7 +11103,7 @@ namespace GingerCore.Drivers
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
-}
+        }
 
 
         private void OnNetworkResponseReceived(object sender, NetworkResponseReceivedEventArgs e)
@@ -11123,7 +11123,7 @@ namespace GingerCore.Drivers
                     }
                     else
                     {
-                        networkResponseLogList.Add(new Tuple<string, object>($"ResponseUrl:{e.ResponseUrl}",  JsonConvert.SerializeObject(e, Formatting.Indented)));
+                        networkResponseLogList.Add(new Tuple<string, object>($"ResponseUrl:{e.ResponseUrl}", JsonConvert.SerializeObject(e, Formatting.Indented)));
                     }
                 }
             }
