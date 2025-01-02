@@ -59,9 +59,29 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
 
 
-        [Option('e', "encryptionKey", Required = false, HelpText = "Provide the solution encryption key")]
+        [Option("encryptionKey", Required = false, HelpText = "Provide the solution encryption key")]
         public string EncryptionKey { get; set; }
 
+        [Option("executionId", Required = false, HelpText = "Provide the execution ID")]
+        public string ExecutionId { get; set; }
+
+        [Option("runSetId", Required = false, HelpText = "Provide the run set ID")]
+        public string RunSetId { get; set; }
+
+        [Option("runSetName", Required = false, HelpText = "Provide the run set name")]
+        public string RunSetName { get; set; }
+
+        [Option("businessFlowId", Required = false, HelpText = "Provide the business flow ID")]
+        public string BusinessFlowId { get; set; }
+
+        [Option("businessFlowName", Required = false, HelpText = "Provide the business flow name")]
+        public string BusinessFlowName { get; set; }
+
+        [Option("sharedActivityName", Required = false, HelpText = "Provide the shared activity name")]
+        public string SharedActivityName { get; set; }
+
+        [Option("sharedActivityId", Required = false, HelpText = "Provide the shared activity ID")]
+        public string SharedActivityId { get; set; }
 
     }
 

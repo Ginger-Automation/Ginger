@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.GeneralLib;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
@@ -211,6 +212,7 @@ namespace Ginger
 
                 WorkSpace.Instance.UserProfile.PropertyChanged += AskLisaPropertyChanged;
 
+                DoOptionsHandler.LoadRunSetConfigEvent += DoOptionsHandler_LoadRunSetConfigEvent;
             }
             catch (Exception ex)
             {
@@ -228,6 +230,13 @@ namespace Ginger
 
         }
 
+        private void DoOptionsHandler_LoadRunSetConfigEvent(object? sender, Run.RunSetConfig e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                xSolutionTabsListView.SelectedItem = xRunListItem;                
+            });
+        }
 
         private void AskLisaPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {

@@ -91,7 +91,7 @@ namespace Ginger.Run
         private FileSystemWatcher mBusinessFlowsXmlsChangeWatcher = null;
         private bool mRunSetBusinessFlowWasChanged = false;
         private bool mSolutionWasChanged = false;
-        Context mContext = new Context();
+        Context mContext = new();
         private readonly bool _ignoreValidationRules;
         private Task<GraphQLResponse<GraphQLRunsetResponse>> response;
         private GraphQLResponse<GraphQLRunsetResponse> data;
@@ -247,7 +247,7 @@ namespace Ginger.Run
                 }
             }
         }
-
+        
         private void LoadRunSetConfigBySelection(RunSetConfig defaultRunSet)
         {
             //hide current Run set UI

@@ -19,16 +19,22 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.AnalyzerLib;
+using Ginger.Run;
 using GingerCore;
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
 
     public class DoOptionsHandler
     {
+        public static event EventHandler<BusinessFlow> AutomateBusinessFlowEvent;
+        public static event EventHandler<RunSetConfig> LoadRunSetConfigEvent;
+        public static event EventHandler<string> LoadRunSetConfigEventWithExecutionId;
         DoOptions mOpts;
         CLIHelper mCLIHelper = new();
         public void Run(DoOptions opts)
@@ -46,7 +52,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     DoInfo();
                     break;
                 case DoOptions.DoOperation.open:
-                    DoOpen();
+                    DoOpenAsync();
                     break;
             }
         }
@@ -71,7 +77,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         /// </summary>
         /// <param name="solutionFolder">The folder path of the solution to open.</param>
         /// <param name="encryptionKey">The encryption key for the solution, if any.</param>
-        private void DoOpen()
+        private async Task DoOpenAsync()
         {
             string solutionFolder = mOpts.Solution;
             string encryptionKey = mOpts.EncryptionKey;
@@ -107,7 +113,115 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 if (!mCLIHelper.LoadSolution())
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                    return;
                 }
+
+            
+
+                if (!string.IsNullOrWhiteSpace(mOpts.ExecutionId))
+                {
+                    try
+                    {
+                        await System.Threading.Tasks.Task.Run(() =>
+                        {
+                            LoadRunSetConfigEvent?.Invoke(null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>()
+                          .FirstOrDefault());
+                            
+                        });
+
+                        LoadRunSetConfigEventWithExecutionId?.Invoke(sender: this, mOpts.ExecutionId);
+
+                    }
+                    catch { }
+                    finally
+                    {
+                    }
+                    return;
+                }
+                if (!string.IsNullOrWhiteSpace(mOpts.RunSetId))
+                {
+                    bool autoLoadLastRunSetFlag = WorkSpace.Instance.UserProfile.AutoLoadLastRunSet;
+                    Guid autoLoadLastRunSetGuid = WorkSpace.Instance.UserProfile.RecentRunset;
+                    try
+                    {
+
+                        ObservableList<RunSetConfig> allRunsets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                        RunSetConfig cliRunset = allRunsets.FirstOrDefault(runsets => runsets.Guid.ToString() == mOpts.RunSetId);
+
+                        if (cliRunset != null)
+                        {
+                            WorkSpace.Instance.UserProfile.AutoLoadLastRunSet = true;
+                            WorkSpace.Instance.UserProfile.RecentRunset = cliRunset.Guid;
+                            LoadRunSetConfigEvent?.Invoke(sender: this, cliRunset);
+                        }
+
+
+                    }
+                    catch { }
+                    finally
+                    {
+                        WorkSpace.Instance.UserProfile.AutoLoadLastRunSet = autoLoadLastRunSetFlag;
+                        WorkSpace.Instance.UserProfile.RecentRunset = autoLoadLastRunSetGuid;
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(mOpts.RunSetName))
+                {
+
+                    bool autoLoadLastRunSetFlag = WorkSpace.Instance.UserProfile.AutoLoadLastRunSet;
+                    Guid autoLoadLastRunSetGuid = WorkSpace.Instance.UserProfile.RecentRunset;
+                    try
+                    {
+
+                        ObservableList<RunSetConfig> allRunsets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                        RunSetConfig cliRunset = allRunsets.FirstOrDefault(runsets => runsets.Name == mOpts.RunSetName);
+
+                        if (cliRunset != null)
+                        {
+                            WorkSpace.Instance.UserProfile.AutoLoadLastRunSet = true;
+                            WorkSpace.Instance.UserProfile.RecentRunset = cliRunset.Guid;
+                            LoadRunSetConfigEvent?.Invoke(sender: this, cliRunset);
+                        }
+
+                    }
+                    catch { }
+                    finally
+                    {
+                        WorkSpace.Instance.UserProfile.AutoLoadLastRunSet = autoLoadLastRunSetFlag;
+                        WorkSpace.Instance.UserProfile.RecentRunset = autoLoadLastRunSetGuid;
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(mOpts.BusinessFlowId))
+                {
+                    var businessFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()
+                        .FirstOrDefault(bf => bf.Guid.ToString().Equals(mOpts.BusinessFlowId, StringComparison.OrdinalIgnoreCase));
+                    if (businessFlow != null)
+                    {
+                        AutomateBusinessFlowEvent?.Invoke(null, businessFlow);
+                        return;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(mOpts.BusinessFlowName))
+                {
+                    var businessFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()
+                        .FirstOrDefault(bf => bf.Name.Equals(mOpts.BusinessFlowName, StringComparison.OrdinalIgnoreCase));
+                    if (businessFlow != null)
+                    {
+                        AutomateBusinessFlowEvent?.Invoke(null, businessFlow);
+                        return;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(mOpts.SharedActivityId))
+                {
+                    //to do
+                }
+                if (!string.IsNullOrWhiteSpace(mOpts.SharedActivityName))
+                {
+                    //to do
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -115,6 +229,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 Reporter.ToLog(eLogLevel.ERROR, $"An unexpected error occurred while opening the solution in folder '{solutionFolder}'. Error: {ex.Message}");
             }
         }
+
+
         private void DoAnalyze()
         {
             WorkSpace.Instance.OpenSolution(mOpts.Solution);
@@ -155,6 +271,39 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
 
             }
+        }
+        public string GetFirstNonNullPropertyName()
+        {
+            if (!string.IsNullOrWhiteSpace(mOpts.ExecutionId))
+            {
+                return nameof(mOpts.ExecutionId);
+            }
+            if (!string.IsNullOrWhiteSpace(mOpts.RunSetId))
+            {
+                return nameof(mOpts.RunSetId);
+            }
+            if (!string.IsNullOrWhiteSpace(mOpts.RunSetName))
+            {
+                return nameof(mOpts.RunSetName);
+            }
+            if (!string.IsNullOrWhiteSpace(mOpts.BusinessFlowId))
+            {
+                return nameof(mOpts.BusinessFlowId);
+            }
+            if (!string.IsNullOrWhiteSpace(mOpts.BusinessFlowName))
+            {
+                return nameof(mOpts.BusinessFlowName);
+            }
+            if (!string.IsNullOrWhiteSpace(mOpts.SharedActivityId))
+            {
+                return nameof(mOpts.SharedActivityId);
+            }
+            if (!string.IsNullOrWhiteSpace(mOpts.SharedActivityName))
+            {
+                return nameof(mOpts.SharedActivityName);
+            }
+
+            return null;
         }
     }
 }
