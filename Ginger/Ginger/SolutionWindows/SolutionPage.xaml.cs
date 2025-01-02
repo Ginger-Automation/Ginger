@@ -87,13 +87,13 @@ namespace Ginger.SolutionWindows
             {
                 xLoadSolutionlbl.Visibility = Visibility.Visible;
                 xSolutionDetailsStack.Visibility = Visibility.Collapsed;
-                xCategoriesExpander.Visibility = Visibility.Collapsed;
+                //xCategoriesExpander.Visibility = Visibility.Collapsed;
             }
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
-            xCategoriesExpander.Visibility = Visibility.Visible;
+            //xCategoriesExpander.Visibility = Visibility.Visible;
             if (mSolutionCategoriesPage == null)
             {
                 mSolutionCategoriesPage = new SolutionCategoriesPage();
@@ -168,7 +168,7 @@ namespace Ginger.SolutionWindows
             UCEncryptionKey.UpdateKey.Visibility = Visibility.Visible;
             //xInvalidKeyLabel.Visibility = Visibility.Visible;
 
-            xCategoriesExpander.Visibility = Visibility.Collapsed;
+            //xCategoriesExpander.Visibility = Visibility.Collapsed;
 
 
             ObservableList<Button> winButtons = [];
