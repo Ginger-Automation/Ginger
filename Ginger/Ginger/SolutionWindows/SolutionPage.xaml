@@ -14,8 +14,15 @@
         <TabControl
             Style="{StaticResource SideNavTabControlStyle}">
             <TabItem
-                Style="{StaticResource SideNavTabItemStyle}"
-                Header="General">
+                Style="{StaticResource SideNavTabItemStyle}">
+                <TabItem.Header>
+                    <TextBlock
+                        Text="General"
+                        TextTrimming="CharacterEllipsis"
+                        FontFamily="Open Sans"
+                        FontSize="14"
+                        ToolTip="General" />
+                </TabItem.Header>
                 <TabItem.Content>
                     <Grid>
                         <Label
@@ -73,8 +80,15 @@
                 </TabItem.Content>
             </TabItem>
             <TabItem
-                Style="{StaticResource SideNavTabItemStyle}"
-                Header="Categories">
+                Style="{StaticResource SideNavTabItemStyle}">
+                <TabItem.Header>
+                    <TextBlock
+                        Text="Categories"
+                        TextTrimming="CharacterEllipsis"
+                        FontFamily="Open Sans"
+                        FontSize="14"
+                        ToolTip="Categories" />
+                </TabItem.Header>
                 <TabItem.Content>
                     <Frame
                         x:Name="xCategoriesFrame" />

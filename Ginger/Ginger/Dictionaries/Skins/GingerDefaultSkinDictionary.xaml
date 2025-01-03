@@ -4071,15 +4071,13 @@
                                 Height="18"
                                 VerticalAlignment="Center"
                                 Fill="#F05C62" />
-                            <TextBlock
-                                x:Name="HeaderTextBlock"
-                                Text="{TemplateBinding Header}"
-                                TextTrimming="CharacterEllipsis"
-                                FontFamily="Open Sans"
-                                FontSize="14"
-                                Padding="10 8"
-                                Width="190"
-                                ToolTip="{TemplateBinding Header}" />
+                            <Border
+                                Padding="10 8">
+                                <ContentPresenter
+                                    Content="{TemplateBinding Header}"
+                                    Width="160" 
+                                    Height="16"/>
+                            </Border>
                         </StackPanel>
                     </Border>
                     <ControlTemplate.Triggers>
