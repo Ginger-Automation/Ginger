@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
@@ -170,18 +171,26 @@ namespace GingerCoreNET.Application_Models
                 ElementInfo latestElement = (ElementInfo)e.NewItems[0];
                 try
                 {
-                    //TODO: using Property/Image matching should be user configurable
-                    const bool usePropertyMatching = true;
-                    const bool useImageMatching = true;
+                    bool usePropertyMatching = ShouldUsePropertyMatcherToFindOriginalElement();
+                    bool useImageMatching = ShouldUseImageMatcherToFindOriginalElement();
 
                     ElementInfo matchingOriginalElement = FindMatchingOldElementByDriver(latestElement, POMElementsCopy);
+                    string matchDetails = string.Empty;
                     if (usePropertyMatching && matchingOriginalElement == null)
                     {
-                        matchingOriginalElement = FindMatchingOldElementByProperty(latestElement, POMElementsCopy);
+                        matchingOriginalElement = FindMatchingOldElementByProperty(latestElement, POMElementsCopy, out double maxMatchScore);
+                        if (matchingOriginalElement != null)
+                        {
+                            matchDetails = $"found element by property with {(maxMatchScore * 100)}% match";
+                        }
                     }
                     if (useImageMatching && matchingOriginalElement == null)
                     {
-                        matchingOriginalElement = FindMatchingOldElementByImage(latestElement, POMElementsCopy);
+                        matchingOriginalElement = FindMatchingOldElementByImage(latestElement, POMElementsCopy, out double maxMatchScore);
+                        if (matchingOriginalElement != null)
+                        {
+                            matchDetails = $"found element by image with {(maxMatchScore * 100)}% match";
+                        }
                     }
                     
                     //Set element details
@@ -202,7 +211,7 @@ namespace GingerCoreNET.Application_Models
                     }
                     else//Existing Element
                     {
-                        SetMatchingElementDeltaDetails(matchingOriginalElement, latestElement);
+                        SetMatchingElementDeltaDetails(matchingOriginalElement, latestElement, matchDetails);
                     }
                 }
                 catch (Exception ex)
@@ -212,18 +221,41 @@ namespace GingerCoreNET.Application_Models
             }
         }
 
+        private bool ShouldUsePropertyMatcherToFindOriginalElement()
+        {
+            //TODO: allow to override this property per POM level
+            return WorkSpace.Instance.Solution.SelfHealingConfig.UsePropertyMatcher;
+        }
+
+        private bool ShouldUseImageMatcherToFindOriginalElement()
+        {
+            //TODO: allow to override this property per POM level
+            return WorkSpace.Instance.Solution.SelfHealingConfig.UseImageMatcher;
+        }
+
+        private double GetPropertyMatcherAcceptableScore()
+        {
+            //TODO: allow to override this property per POM level
+            return ((double)WorkSpace.Instance.Solution.SelfHealingConfig.PropertyMatcherAcceptableScore) / 100;
+        }
+
+        private double GetImageMatcherAcceptableScore()
+        {
+            //TODO: allow to override this property per POM level
+            return ((double)WorkSpace.Instance.Solution.SelfHealingConfig.ImageMatcherAcceptableScore) / 100;
+        }
+
         private ElementInfo FindMatchingOldElementByDriver(ElementInfo newElement, ObservableList<ElementInfo> oldElements)
         {
             return mIWindowExplorerDriver.GetMatchingElement(newElement, oldElements);
         }
 
-        private ElementInfo FindMatchingOldElementByProperty(ElementInfo newElement, IEnumerable<ElementInfo> oldElements)
+        private ElementInfo FindMatchingOldElementByProperty(ElementInfo newElement, IEnumerable<ElementInfo> oldElements, out double maxMatchScore)
         {
-            //TODO: acceptable value should be user configurable
-            const double acceptableMatchScore = 0.6;
+            double acceptableMatchScore = GetPropertyMatcherAcceptableScore();
 
             ElementInfo bestMatchingOldElement = null;
-            double maxMatchScore = 0;
+            maxMatchScore = 0;
 
             ElementPropertyMatcher elementPropertyMatcher = new();
             foreach (ElementInfo oldElement in oldElements)
@@ -239,18 +271,18 @@ namespace GingerCoreNET.Application_Models
             return bestMatchingOldElement;
         }
 
-        private ElementInfo FindMatchingOldElementByImage(ElementInfo newElement, IEnumerable<ElementInfo> oldElements)
+        private ElementInfo FindMatchingOldElementByImage(ElementInfo newElement, IEnumerable<ElementInfo> oldElements, out double maxMatchScore)
         {
+            maxMatchScore = 0;
+
             if (string.IsNullOrWhiteSpace(newElement.ScreenShotImage))
             {
                 return null;
             }
 
-            //TODO: acceptable value should be user configurable
-            const double acceptableMatchScore = 0.6;
+            double acceptableMatchScore = GetImageMatcherAcceptableScore();
 
             ElementInfo bestMatchingOldElement = null;
-            double maxMatchScore = 0;
 
             ElementImageMatcher elementImageMatcher = new();
             foreach (ElementInfo oldElement in oldElements)
@@ -311,7 +343,7 @@ namespace GingerCoreNET.Application_Models
             return newDeltaElement;
         }
 
-        public void SetMatchingElementDeltaDetails(ElementInfo existingElement, ElementInfo latestElement)
+        public void SetMatchingElementDeltaDetails(ElementInfo existingElement, ElementInfo latestElement, string matchDetails = "")
         {
             DeltaElementInfo matchedDeltaElement = new DeltaElementInfo();
             //copy possible customized fields from original
@@ -606,6 +638,11 @@ namespace GingerCoreNET.Application_Models
                 {
                     matchedDeltaElement.DeltaExtraDetails = "Unimportant differences exists";
                 }
+            }
+
+            if (!string.IsNullOrWhiteSpace(matchDetails))
+            {
+                matchedDeltaElement.DeltaExtraDetails += $" {matchDetails}";
             }
 
             DeltaViewElements.Add(matchedDeltaElement);

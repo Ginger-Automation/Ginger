@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.SelfHealingLib;
 using Ginger.SolutionCategories;
 using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib;
@@ -82,6 +83,14 @@ namespace Ginger.SolutionWindows
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Folder));
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AccountTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Account));
                 UCEncryptionKey.EncryptionKeyPasswordBox.Password = mSolution.EncryptionKey;
+            
+                BindingHandler.ObjFieldBinding(ByPropertyCheckBox, CheckBox.IsCheckedProperty, mSolution.SelfHealingConfig, nameof(SolutionSelfHealingConfig.UsePropertyMatcher));
+                BindingHandler.ObjFieldBinding(ByPropertyAcceptableScoreTextBox, TextBox.TextProperty, mSolution.SelfHealingConfig, nameof(SolutionSelfHealingConfig.PropertyMatcherAcceptableScore));
+                BindingHandler.ObjFieldBinding(ByImageCheckBox, CheckBox.IsCheckedProperty, mSolution.SelfHealingConfig, nameof(SolutionSelfHealingConfig.UseImageMatcher));
+                BindingHandler.ObjFieldBinding(ByImageAcceptableScoreTextBox, TextBox.TextProperty, mSolution.SelfHealingConfig, nameof(SolutionSelfHealingConfig.ImageMatcherAcceptableScore));
+
+                UpdateByPropertyScoreStackPanelVisibility();
+                UpdateByImageScoreStackPanelVisibility();
             }
             else
             {
@@ -89,6 +98,36 @@ namespace Ginger.SolutionWindows
                 xSolutionDetailsStack.Visibility = Visibility.Collapsed;
                 //xCategoriesExpander.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void UpdateByPropertyScoreStackPanelVisibility()
+        {
+            ByPropertyScoreStackPanel.Visibility = ByPropertyCheckBox.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void UpdateByImageScoreStackPanelVisibility()
+        {
+            ByImageScoreStackPanel.Visibility = ByImageCheckBox.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void ByPropertyCheckBox_IsCheckedChanged(object sender, RoutedEventArgs e)
+        {
+            UpdateByPropertyScoreStackPanelVisibility();
+        }
+
+        private void ByImageCheckBox_IsCheckedChanged(object sender, RoutedEventArgs e)
+        {
+            UpdateByImageScoreStackPanelVisibility();
+        }
+
+        private void ByPropertyAcceptableScoreTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = !(int.TryParse(ByPropertyAcceptableScoreTextBox.Text + e.Text, out int value) && value >= 1 && value <= 100);
+        }
+
+        private void ByImageAcceptableScoreTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = !(int.TryParse(ByImageAcceptableScoreTextBox.Text + e.Text, out int value) && value >= 1 && value <= 100);
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
