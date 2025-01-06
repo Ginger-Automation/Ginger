@@ -37,6 +37,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
     {
         public static event EventHandler<BusinessFlow> AutomateBusinessFlowEvent;
         public static event EventHandler<RunSetConfig> LoadRunSetConfigEvent;
+        public static event EventHandler<string> LoadSharedRepoEvent;
         private RunsetFromReportLoader _runsetFromReportLoader;
         DoOptions mOpts;
         CLIHelper mCLIHelper = new();
@@ -291,6 +292,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
                 if (!string.IsNullOrWhiteSpace(mOpts.SharedActivityId))
                 {
+                    LoadSharedRepoEvent?.Invoke(null, "Dummey");
                     //to do
                 }
                 if (!string.IsNullOrWhiteSpace(mOpts.SharedActivityName))

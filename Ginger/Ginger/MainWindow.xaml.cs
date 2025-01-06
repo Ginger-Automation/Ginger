@@ -213,6 +213,7 @@ namespace Ginger
                 WorkSpace.Instance.UserProfile.PropertyChanged += AskLisaPropertyChanged;
 
                 DoOptionsHandler.LoadRunSetConfigEvent += DoOptionsHandler_LoadRunSetConfigEvent;
+                DoOptionsHandler.LoadSharedRepoEvent += DoOptionsHandler_LoadSharedRepoEvent;
             }
             catch (Exception ex)
             {
@@ -230,11 +231,24 @@ namespace Ginger
 
         }
 
+        private void DoOptionsHandler_LoadSharedRepoEvent(object? sender, string s)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                if (xResourcesListItem.Tag == null)
+                {
+                    xResourcesListItem.Tag = ResourcesMenu.MenusPage;
+                }
+                xSolutionTabsListView.SelectedItem = xResourcesListItem;
+                ((TwoLevelMenuPage)xResourcesListItem.Tag).SelectTopMenu(0);
+                ((TwoLevelMenuPage)xResourcesListItem.Tag).xSubNavigationListView.SelectedIndex = 1;
+            });
+        }
         private void DoOptionsHandler_LoadRunSetConfigEvent(object? sender, Run.RunSetConfig e)
         {
             this.Dispatcher.Invoke(() =>
             {
-                xSolutionTabsListView.SelectedItem = xRunListItem;                
+                xSolutionTabsListView.SelectedItem = xRunListItem;
             });
         }
 
