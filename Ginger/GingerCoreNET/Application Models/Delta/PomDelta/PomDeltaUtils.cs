@@ -642,7 +642,11 @@ namespace GingerCoreNET.Application_Models
 
             if (!string.IsNullOrWhiteSpace(matchDetails))
             {
-                matchedDeltaElement.DeltaExtraDetails += $" {matchDetails}";
+                if (!string.IsNullOrEmpty(matchedDeltaElement.DeltaExtraDetails))
+                {
+                    matchedDeltaElement.DeltaExtraDetails += ", ";
+                }
+                matchedDeltaElement.DeltaExtraDetails += matchDetails;
             }
 
             DeltaViewElements.Add(matchedDeltaElement);
