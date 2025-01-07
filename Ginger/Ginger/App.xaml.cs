@@ -415,7 +415,7 @@ namespace Ginger
                 if (doOptions != null && !string.IsNullOrWhiteSpace(doOptions.Solution))
                 {
 
-                    new DoOptionsHandler().Run(doOptions);
+                    new DoOptionsHandler().RunAsync(doOptions);
 
 
                 }

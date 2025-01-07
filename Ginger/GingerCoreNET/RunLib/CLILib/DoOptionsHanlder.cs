@@ -38,10 +38,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public static event EventHandler<BusinessFlow> AutomateBusinessFlowEvent;
         public static event EventHandler<RunSetConfig> LoadRunSetConfigEvent;
         public static event EventHandler<string> LoadSharedRepoEvent;
-        private RunsetFromReportLoader _runsetFromReportLoader;
         DoOptions mOpts;
         CLIHelper mCLIHelper = new();
-        public void Run(DoOptions opts)
+        public async Task RunAsync(DoOptions opts)
         {
             mOpts = opts;
             switch (opts.Operation)
@@ -56,7 +55,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     DoInfo();
                     break;
                 case DoOptions.DoOperation.open:
-                    DoOpenAsync();
+                    await DoOpenAsync();
                     break;
             }
         }
@@ -124,7 +123,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
                 if (!string.IsNullOrWhiteSpace(mOpts.ExecutionId))
                 {
-                    bool runSetFoundByExecutionID = false;
                     bool autoLoadLastRunSetFlag = WorkSpace.Instance.UserProfile.AutoLoadLastRunSet;
                     try
                     {
@@ -138,66 +136,57 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                             if (response?.Data?.Runsets?.Nodes.Count == 1)
                             {
                                 var node = response.Data.Runsets.Nodes.First();
-                                
-                                    if (node.ExecutionId == Guid.Parse(mOpts.ExecutionId))
+
+                                if (node.ExecutionId == Guid.Parse(mOpts.ExecutionId))
+                                {
+                                    var runSetReport = new RunSetReport
                                     {
-                                        var runSetReport = new RunSetReport
-                                        {
-                                            GUID = node.ExecutionId.ToString(),
-                                            RunSetGuid = node.EntityId.Value,
-                                            Name = node.Name,
-                                        };
-                                        ObservableList<RunSetConfig> allRunsets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-                                        RunSetConfig cliRunset = allRunsets.FirstOrDefault(runsets => runsets.Guid == node.EntityId.Value);
-                                        if (cliRunset != null)
-                                        {
-                                            WorkSpace.Instance.UserProfile.RecentRunset = cliRunset.Guid;
-                                            WorkSpace.Instance.UserProfile.AutoLoadLastRunSet = true;
-                                            LoadRunSetConfigEvent?.Invoke(sender: this, cliRunset);
-                                        runSetFoundByExecutionID=true;
-                                            return;
-                                        }
-                                        else
-                                        {
-                                            if (await LoadVirtualRunset())
-                                            {
-                                            runSetFoundByExecutionID = true;
-                                            return;
-                                            }
-                                        }
+                                        GUID = node.ExecutionId.ToString(),
+                                        RunSetGuid = node.EntityId.Value,
+                                        Name = node.Name,
+                                    };
+                                    ObservableList<RunSetConfig> allRunsets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                                    RunSetConfig cliRunset = allRunsets.FirstOrDefault(runsets => runsets.Guid == node.EntityId.Value);
+                                    if (cliRunset != null)
+                                    {
+                                        WorkSpace.Instance.UserProfile.RecentRunset = cliRunset.Guid;
+                                        WorkSpace.Instance.UserProfile.AutoLoadLastRunSet = true;
+                                        LoadRunSetConfigEvent?.Invoke(sender: this, cliRunset);
+                                        return;
                                     }
                                     else
                                     {
                                         if (await LoadVirtualRunset())
                                         {
-                                        runSetFoundByExecutionID = true;
-                                        return;
+                                            return;
                                         }
                                     }
-                                
+                                }
+                                else
+                                {
+                                    if (await LoadVirtualRunset())
+                                    {
+                                        return;
+                                    }
+                                }
+
                             }
                             else
                             {
                                 if (await LoadVirtualRunset())
                                 {
-                                    runSetFoundByExecutionID = true;
                                     return;
                                 }
                             }
                         }
                         else
                         {
-                            if(await LoadVirtualRunset())
+                            if (await LoadVirtualRunset())
                             {
-                                runSetFoundByExecutionID = true;
                                 return;
-                            }  
+                            }
                         }
-
-                        if(!runSetFoundByExecutionID)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Runset not found by given Execution ID:{mOpts.ExecutionId}");
-                        }
+                        Reporter.ToLog(eLogLevel.ERROR, $"Runset not found by given Execution ID:{mOpts.ExecutionId}");
                     }
                     catch (Exception ex)
                     {
@@ -205,7 +194,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     }
                     finally
                     {
-                         WorkSpace.Instance.UserProfile.AutoLoadLastRunSet= autoLoadLastRunSetFlag;
+                        WorkSpace.Instance.UserProfile.AutoLoadLastRunSet = autoLoadLastRunSetFlag;
                     }
                 }
                 if (!string.IsNullOrWhiteSpace(mOpts.RunSetId))
@@ -312,7 +301,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         private async Task<bool> LoadVirtualRunset()
         {
             RunSetReport runsetReport = new() { GUID = mOpts.ExecutionId };
-            _runsetFromReportLoader = new RunsetFromReportLoader();
+            RunsetFromReportLoader _runsetFromReportLoader = new RunsetFromReportLoader();
             RunSetConfig? runset = await _runsetFromReportLoader.LoadAsync(runsetReport);
             if (runset != null)
             {
