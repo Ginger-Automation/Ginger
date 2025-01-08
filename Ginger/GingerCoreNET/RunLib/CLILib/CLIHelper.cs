@@ -566,7 +566,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             try
             {
                 progressNotifier.ProgressText += ProgressNotifier_ProgressText;
-                if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
+                if (!string.IsNullOrEmpty(SourceControlURL) && !string.IsNullOrEmpty(SourcecontrolUser) && !string.IsNullOrEmpty(sourceControlPass))
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
 
