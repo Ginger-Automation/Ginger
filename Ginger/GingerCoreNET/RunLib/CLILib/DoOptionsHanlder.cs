@@ -37,7 +37,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
     {
         public static event EventHandler<BusinessFlow> AutomateBusinessFlowEvent;
         public static event EventHandler<RunSetConfig> LoadRunSetConfigEvent;
-        public static event EventHandler<string> LoadSharedRepoEvent;
+        public static event EventHandler<Activity> LoadSharedRepoEvent;
         DoOptions mOpts;
         CLIHelper mCLIHelper = new();
         public async Task RunAsync(DoOptions opts)
@@ -113,7 +113,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     mCLIHelper.PasswordEncrypted(mOpts.PasswordEncrypted.ToString());
                 }
                 mCLIHelper.Solution = mOpts.Solution;
-                if (!mCLIHelper.LoadSolution())
+                if (! await mCLIHelper.LoadSolutionAsync())
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
                     return;
@@ -281,19 +281,35 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
                 if (!string.IsNullOrWhiteSpace(mOpts.SharedActivityId))
                 {
-                    LoadSharedRepoEvent?.Invoke(null, "Dummey");
-                    //to do
-                }
-                if (!string.IsNullOrWhiteSpace(mOpts.SharedActivityName))
-                {
-                    //to do
+                    var sharedActivity = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().FirstOrDefault(sa => sa.Guid.ToString().Equals(mOpts.SharedActivityId, StringComparison.OrdinalIgnoreCase));
+                    if (sharedActivity != null)
+                    {
+                        LoadSharedRepoEvent?.Invoke(null, sharedActivity);
+                        return;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Shared Activity not found by given id:{mOpts.SharedActivityId}");
+                    }
                 }
 
+                if (!string.IsNullOrWhiteSpace(mOpts.SharedActivityName))
+                {
+                    var sharedActivity = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().FirstOrDefault(sa => sa.ActivityName.Equals(mOpts.SharedActivityName, StringComparison.OrdinalIgnoreCase));
+                    if (sharedActivity != null)
+                    {
+                        LoadSharedRepoEvent?.Invoke(null, sharedActivity);
+                        return;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Shared Activity not found by given Name:{mOpts.SharedActivityName}");
+                    }
+                }
 
             }
             catch (Exception ex)
             {
-                // Handle any other unexpected errors
                 Reporter.ToLog(eLogLevel.ERROR, $"An unexpected error occurred while opening the solution in folder '{solutionFolder}'. Error: {ex.Message}");
             }
         }
@@ -354,38 +370,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
             }
         }
-        public string GetFirstNonNullPropertyName()
-        {
-            if (!string.IsNullOrWhiteSpace(mOpts.ExecutionId))
-            {
-                return nameof(mOpts.ExecutionId);
-            }
-            if (!string.IsNullOrWhiteSpace(mOpts.RunSetId))
-            {
-                return nameof(mOpts.RunSetId);
-            }
-            if (!string.IsNullOrWhiteSpace(mOpts.RunSetName))
-            {
-                return nameof(mOpts.RunSetName);
-            }
-            if (!string.IsNullOrWhiteSpace(mOpts.BusinessFlowId))
-            {
-                return nameof(mOpts.BusinessFlowId);
-            }
-            if (!string.IsNullOrWhiteSpace(mOpts.BusinessFlowName))
-            {
-                return nameof(mOpts.BusinessFlowName);
-            }
-            if (!string.IsNullOrWhiteSpace(mOpts.SharedActivityId))
-            {
-                return nameof(mOpts.SharedActivityId);
-            }
-            if (!string.IsNullOrWhiteSpace(mOpts.SharedActivityName))
-            {
-                return nameof(mOpts.SharedActivityName);
-            }
-
-            return null;
-        }
+       
     }
 }

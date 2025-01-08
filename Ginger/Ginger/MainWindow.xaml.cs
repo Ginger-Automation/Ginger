@@ -45,6 +45,8 @@ using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
+using GingerWPF.UserControlsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -231,7 +233,7 @@ namespace Ginger
 
         }
 
-        private void DoOptionsHandler_LoadSharedRepoEvent(object? sender, string s)
+        private void DoOptionsHandler_LoadSharedRepoEvent(object? sender, GingerCore.Activity activity)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -242,6 +244,9 @@ namespace Ginger
                 xSolutionTabsListView.SelectedItem = xResourcesListItem;
                 ((TwoLevelMenuPage)xResourcesListItem.Tag).SelectTopMenu(0);
                 ((TwoLevelMenuPage)xResourcesListItem.Tag).xSubNavigationListView.SelectedIndex = 1;
+
+                UCTreeView treeView = ((SingleItemTreeViewExplorerPage)ResourcesMenu.MenusPage.mTwoLevelMenu.MenuList[0].SubItems[1].ItemPage).xTreeView.Tree;
+                treeView.GetChildItembyNameandSelect(activity.ActivityName);
             });
         }
         private void DoOptionsHandler_LoadRunSetConfigEvent(object? sender, Run.RunSetConfig e)
