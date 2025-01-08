@@ -314,6 +314,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        /// <summary>
+        /// Loads a virtual runset based on the provided execution ID.
+        /// </summary>
+        /// <returns>True if the virtual runset is loaded successfully, otherwise false.</returns>
         private async Task<bool> LoadVirtualRunset()
         {
             RunSetReport runsetReport = new() { GUID = mOpts.ExecutionId };

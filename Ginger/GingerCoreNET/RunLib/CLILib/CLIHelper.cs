@@ -268,7 +268,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Unexpected error occurred while Loading the Solution", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Unexpected error occurred while opening the Solution", ex);
                 return false;
             }
         }

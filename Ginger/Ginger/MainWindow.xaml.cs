@@ -59,6 +59,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -233,27 +234,67 @@ namespace Ginger
 
         }
 
+
+        /// <summary>
+        /// Handles the event to load a shared repository.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="activity">The activity to load.</param>
         private void DoOptionsHandler_LoadSharedRepoEvent(object? sender, GingerCore.Activity activity)
         {
             this.Dispatcher.Invoke(() =>
             {
-                if (xResourcesListItem.Tag == null)
+                try
                 {
-                    xResourcesListItem.Tag = ResourcesMenu.MenusPage;
-                }
-                xSolutionTabsListView.SelectedItem = xResourcesListItem;
-                ((TwoLevelMenuPage)xResourcesListItem.Tag).SelectTopMenu(0);
-                ((TwoLevelMenuPage)xResourcesListItem.Tag).xSubNavigationListView.SelectedIndex = 1;
+                    if (xResourcesListItem.Tag == null)
+                    {
+                        xResourcesListItem.Tag = ResourcesMenu.MenusPage;
+                    }
+                    xSolutionTabsListView.SelectedItem = xResourcesListItem;
+                    var menuPage = xResourcesListItem.Tag as TwoLevelMenuPage;
+                    if (menuPage == null)
+                    {
+                        throw new InvalidOperationException("Menu page not initialized");
+                    }
+                    menuPage.SelectTopMenu(0);
+                    menuPage.xSubNavigationListView.SelectedIndex = 1;
 
-                UCTreeView treeView = ((SingleItemTreeViewExplorerPage)ResourcesMenu.MenusPage.mTwoLevelMenu.MenuList[0].SubItems[1].ItemPage).xTreeView.Tree;
-                treeView.GetChildItembyNameandSelect(activity.ActivityName);
+                    var treeView = ((SingleItemTreeViewExplorerPage)ResourcesMenu.MenusPage.mTwoLevelMenu.MenuList[0].SubItems[1].ItemPage)?.xTreeView?.Tree;
+                    if (treeView != null)
+                    {
+                        treeView.GetChildItembyNameandSelect(activity.ActivityName);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to load shared repository", ex);
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load shared repository: ", ex.Message);
+                }
             });
         }
+
+        /// <summary>
+        /// Handles the event to load a run set configuration.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The run set configuration to load.</param>
         private void DoOptionsHandler_LoadRunSetConfigEvent(object? sender, Run.RunSetConfig e)
         {
             this.Dispatcher.Invoke(() =>
             {
-                xSolutionTabsListView.SelectedItem = xRunListItem;
+                try
+                {
+                    if (xSolutionTabsListView == null || xRunListItem == null)
+                    {
+                        throw new InvalidOperationException("UI elements not initialized");
+                    }
+                    xSolutionTabsListView.SelectedItem = xRunListItem;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to load run set configuration", ex);
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load run set: " + ex.Message);
+                }
             });
         }
 
