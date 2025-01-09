@@ -2093,11 +2093,8 @@ namespace Ginger.Run
 
                         if (currentActivity != null)
                         {
-                            handlerPostExecutionAction = errActivity.ErrorHandlerPostExecutionAction;
                             CurrentBusinessFlow.CurrentActivity = errActivity;
-                            SetCurrentActivityAgent();
-                            Stopwatch stE = new Stopwatch();
-                            stE.Start();
+
                             NotifyActivityStart(currentActivity);
                             foreach (Act act in errActivity.Acts)
                             {
@@ -2109,23 +2106,14 @@ namespace Ginger.Run
                                     if (currentAction.Active)
                                     {
                                         CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = currentAction;
-                                        if (currentActivity.HandlerType == eHandlerType.Popup_Handler)
-                                        {
-                                            currentAction.Timeout = 1;
-                                        }
 
                                         NotifyActionStart(currentAction);
-                                        ProcessStoretoValue(currentAction);
-                                        UpdateDSReturnValues(currentAction);
-                                        CalculateActionFinalStatus(currentAction);
-                                        st.Stop();
+
                                         NotifyActionEnd(currentAction);
                                     }
                                 }
                             }
-                            SetBusinessFlowActivitiesAndActionsSkipStatus();
-                            CalculateActivityFinalStatus(currentActivity);
-                            stE.Stop();
+
                             NotifyActivityEnd(currentActivity);
                         }
                     }
