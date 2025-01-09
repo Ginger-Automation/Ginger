@@ -56,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.NewSelfHealing
             double totalPixelCount = expectedImg.Width * expectedImg.Height;
             _logger?.LogTrace("expected element({expectedElementName}-{expectedElementId}) image contain {totalPixelCount} pixels", expected.ElementName, expected.Guid, totalPixelCount);
 
-            matchScore = Math.Round((totalPixelCount - differPixelCount) / totalPixelCount, 2);
+            matchScore = Math.Round(Math.Max(totalPixelCount - differPixelCount, 0) / totalPixelCount, 2);
             _logger?.LogTrace("expected element({expectedElementName}-{expectedElementId}) image and actual element({actualElementName}-{actualElementId}) image matched with score {matchScore}", expected.ElementName, expected.Guid, actual.ElementName, actual.Guid, matchScore);
 
             return matchScore;

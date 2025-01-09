@@ -66,6 +66,8 @@ namespace GingerCoreNET.Application_Models
         public string SpecificFramePath { get; set; }
         public List<eElementType> SelectedElementTypesList { get; set; }
 
+        public bool AcceptElementFoundByMatcher { get; set; } = true;
+
         public PomDeltaUtils(ApplicationPOMModel pom, Agent agent)
         {
             POM = pom;
@@ -171,14 +173,17 @@ namespace GingerCoreNET.Application_Models
                 ElementInfo latestElement = (ElementInfo)e.NewItems[0];
                 try
                 {
+                    ElementInfo matchingOriginalElement = FindMatchingOldElementByDriver(latestElement, POMElementsCopy);
+                    bool elementFoundWithoutMatcher = matchingOriginalElement != null;
+
                     bool usePropertyMatching = ShouldUsePropertyMatcherToFindOriginalElement();
                     bool useImageMatching = ShouldUseImageMatcherToFindOriginalElement();
 
-                    ElementInfo matchingOriginalElement = FindMatchingOldElementByDriver(latestElement, POMElementsCopy);
                     string matchDetails = string.Empty;
                     if (usePropertyMatching && matchingOriginalElement == null)
                     {
-                        matchingOriginalElement = FindMatchingOldElementByProperty(latestElement, POMElementsCopy, out double maxMatchScore);
+                        ePlatformType platform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
+                        matchingOriginalElement = FindMatchingOldElementByProperty(latestElement, POMElementsCopy, platform, out double maxMatchScore);
                         if (matchingOriginalElement != null)
                         {
                             matchDetails = $"found element by property with {(maxMatchScore * 100)}% match";
@@ -192,7 +197,7 @@ namespace GingerCoreNET.Application_Models
                             matchDetails = $"found element by image with {(maxMatchScore * 100)}% match";
                         }
                     }
-                    
+
                     //Set element details
                     PomLearnUtils.SetLearnedElementDetails(latestElement);
 
@@ -209,9 +214,24 @@ namespace GingerCoreNET.Application_Models
                         }
                         DeltaViewElements.Add(ConvertElementToDelta(latestElement, eDeltaStatus.Added, groupToAddTo, true, "New element"));
                     }
-                    else//Existing Element
+                    else if (matchingOriginalElement != null && (elementFoundWithoutMatcher || AcceptElementFoundByMatcher))//Existing Element
                     {
                         SetMatchingElementDeltaDetails(matchingOriginalElement, latestElement, matchDetails);
+                    }
+                    else if (matchingOriginalElement != null)
+                    {
+                        object groupToAddTo;
+                        if (PomLearnUtils.SelectedElementTypesList.Contains(latestElement.ElementTypeEnum))
+                        {
+                            groupToAddTo = ApplicationPOMModel.eElementGroup.Mapped;
+                        }
+                        else
+                        {
+                            groupToAddTo = ApplicationPOMModel.eElementGroup.Unmapped;
+                        }
+                        DeltaElementInfo delta = ConvertElementToDelta(latestElement, eDeltaStatus.Added, groupToAddTo, true, "New element");
+                        delta.PredictedElementInfo = matchingOriginalElement;
+                        DeltaViewElements.Add(delta);
                     }
                 }
                 catch (Exception ex)
@@ -219,6 +239,13 @@ namespace GingerCoreNET.Application_Models
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("POM Delta- failed to compare new learned element '{0}' with existing elements", latestElement.ElementName), ex);
                 }
             }
+        }
+
+        private void SuggestPredictedElementForDelta(DeltaElementInfo originalElementDelta, ElementInfo predictedLatestElement)
+        {
+            originalElementDelta.MappedElementInfoName = predictedLatestElement.ElementName;
+            originalElementDelta.MappedElementInfo = predictedLatestElement.Guid.ToString();
+            originalElementDelta.MappingElementStatus = DeltaElementInfo.eMappingStatus.ReplaceExistingElement;
         }
 
         private bool ShouldUsePropertyMatcherToFindOriginalElement()
@@ -250,14 +277,19 @@ namespace GingerCoreNET.Application_Models
             return mIWindowExplorerDriver.GetMatchingElement(newElement, oldElements);
         }
 
-        private ElementInfo FindMatchingOldElementByProperty(ElementInfo newElement, IEnumerable<ElementInfo> oldElements, out double maxMatchScore)
+        private ElementInfo FindMatchingOldElementByProperty(ElementInfo newElement, IEnumerable<ElementInfo> oldElements, ePlatformType platform, out double maxMatchScore)
         {
             double acceptableMatchScore = GetPropertyMatcherAcceptableScore();
 
             ElementInfo bestMatchingOldElement = null;
             maxMatchScore = 0;
 
-            ElementPropertyMatcher elementPropertyMatcher = new();
+            ElementPropertyMatcher elementPropertyMatcher;
+            if (platform == ePlatformType.Mobile)
+                elementPropertyMatcher = new MobileElementPropertyMatcher();
+            else
+                elementPropertyMatcher = new();
+
             foreach (ElementInfo oldElement in oldElements)
             {
                 double matchScore = elementPropertyMatcher.Match(expected: newElement, actual: oldElement);
@@ -727,14 +759,28 @@ namespace GingerCoreNET.Application_Models
                     if (!matchingElementFound)
                     {
                         //Deleted
-                        DeltaViewElements.Add(ConvertElementToDelta(deletedElement, eDeltaStatus.Deleted, deletedElement.ElementGroup, true, "Element not found on page"));
+                        DeltaElementInfo delta = ConvertElementToDelta(deletedElement, eDeltaStatus.Deleted, deletedElement.ElementGroup, true, "Element not found on page");
+                        ElementInfo predictedLatestElement = DeltaViewElements.FirstOrDefault(d => d.PredictedElementInfo == deletedElement)?.ElementInfo;
+                        if (predictedLatestElement != null)
+                        {
+                            SuggestPredictedElementForDelta(delta, predictedLatestElement);
+                        }
+                        DeltaViewElements.Add(delta);
                     }
 
                 }
                 else
                 {
                     //unknown
-                    DeltaViewElements.Add(ConvertElementToDelta(deletedElement, eDeltaStatus.Unknown, deletedElement.ElementGroup, false, "Element exist on page but could not be compared"));
+                    DeltaElementInfo delta = ConvertElementToDelta(deletedElement, eDeltaStatus.Unknown, deletedElement.ElementGroup, false, "Element exist on page but could not be compared");
+                    ElementInfo predictedLatestElement = DeltaViewElements.FirstOrDefault(d => d.PredictedElementInfo == deletedElement)?.ElementInfo;
+                    if (predictedLatestElement != null)
+                    {
+                        SuggestPredictedElementForDelta(delta, predictedLatestElement);
+                        delta.DeltaStatus = eDeltaStatus.Deleted;
+                        delta.IsSelected = true;
+                    }
+                    DeltaViewElements.Add(delta);
                 }
             }
 

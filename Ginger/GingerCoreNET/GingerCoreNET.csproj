@@ -546,6 +546,9 @@
     <None Update="Images\%40ItemPrev.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="NewSelfHealing\SelfHealingPropertyWeightage.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\3rdpartylicenses.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
