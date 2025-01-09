@@ -180,6 +180,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
                     Reporter.ToLog(eLogLevel.ERROR, $"Starting remote execution failed, got back unsuccessful response code('{(int)response.StatusCode}').");
                     return false;
                 }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.INFO, $"Remote execution response Header{response.Headers}");
+                }
 
                 return true;
             }
