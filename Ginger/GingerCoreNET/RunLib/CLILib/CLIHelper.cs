@@ -38,6 +38,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using static GingerCoreNET.SourceControl.SourceControlBase;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
@@ -257,18 +258,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         /// Loads the solution.
         /// </summary>
         /// <returns>True if the solution is loaded successfully, otherwise false.</returns>
-        public bool LoadSolution()
+        public async Task<bool> LoadSolutionAsync()
         {
             try
             {
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution...");
-                // SetDebugLevel();//disabling because it is overwriting the UserProfile setting for logging level
-                DownloadSolutionFromSourceControl();
+                await DownloadSolutionFromSourceControl();
                 return OpenSolution();
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Unexpected error occurred while Loading the Solution", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Unexpected error occurred while opening the Solution", ex);
                 return false;
             }
         }
@@ -561,15 +561,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        private void DownloadSolutionFromSourceControl()
+        private async Task DownloadSolutionFromSourceControl()
         {
             try
             {
                 progressNotifier.ProgressText += ProgressNotifier_ProgressText;
-                if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
+                if (!string.IsNullOrEmpty(SourceControlURL) && !string.IsNullOrEmpty(SourcecontrolUser) && !string.IsNullOrEmpty(sourceControlPass))
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
-                    if (!SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier))
+
+                    bool solutionDownloadedSuccessfully = await Task.Run(() => SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier));
+                    if (!solutionDownloadedSuccessfully)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
                     }
