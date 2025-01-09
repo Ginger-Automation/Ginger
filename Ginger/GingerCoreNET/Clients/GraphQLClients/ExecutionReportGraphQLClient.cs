@@ -115,7 +115,7 @@ public class ExecutionReportGraphQLClient
             throw new ArgumentException("Execution ID cannot be empty.", nameof(executionId));
         }
 
-        const string paraList = "executionId, entityId, name, description, sourceApplication, sourceApplicationUser, startTime, endTime, elapsedEndTimeStamp, status";
+        const string paraList = "executionId, entityId, name";
 
         var queryInfo = new GraphQLQueryInfo
         {

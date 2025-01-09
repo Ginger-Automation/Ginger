@@ -69,12 +69,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
 
             return runset;
         }
-        public async Task<RunSetConfig?> LoadCLIAsync(string executionId)
-        {
-            RunSetConfig? runset = await GetRunsetFromExecutionHandler(executionId);
-           
-            return runset;
-        }
+      
         private RunSetConfig? GetRunsetFromSolutionRepository(Guid runsetId)
         {
             return WorkSpace
