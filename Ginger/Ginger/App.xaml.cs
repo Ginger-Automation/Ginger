@@ -412,10 +412,10 @@ namespace Ginger
 
                 StartGingerUI();
 
-                MainWindow.ShowStatus(eStatusMsgType.PROCESS, "Loading Ginger...");
+                
                 if (doOptions != null && !string.IsNullOrWhiteSpace(doOptions.Solution))
                 {
-
+                    MainWindow.ShowStatus(eStatusMsgType.PROCESS, "Loading Ginger Solution...");
                     new DoOptionsHandler().RunAsync(doOptions);
 
 
