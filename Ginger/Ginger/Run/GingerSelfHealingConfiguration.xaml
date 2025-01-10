@@ -32,7 +32,7 @@
                 NOTE: 
             </Run>
             <Run>
-                Elements compared by matchers will be accepted based on 'acceptable score' defined in the solution self healing configuration.
+                Elements compared by self healing matchers will be accepted based on 'acceptable score' defined in the solution self healing configuration.
             </Run>
         </TextBlock>
     </DockPanel>

@@ -184,7 +184,7 @@ namespace GingerCoreNET.Application_Models
                         if (matchingOriginalElement != null)
                         {
                             Reporter.ToLog(eLogLevel.INFO, $"predicted original element({matchingOriginalElement.ElementName}) for new element({latestElement.ElementName}) by property with {maxMatchScore * 100}% match");
-                            matchDetails = $"found element by property with {maxMatchScore * 100}% match";
+                            matchDetails = $"found by property ({maxMatchScore * 100}%)";
                         }
                     }
                     if (useImageMatching && matchingOriginalElement == null)
@@ -193,7 +193,7 @@ namespace GingerCoreNET.Application_Models
                         if (matchingOriginalElement != null)
                         {
                             Reporter.ToLog(eLogLevel.INFO, $"predicted original element({matchingOriginalElement.ElementName}) for new element({latestElement.ElementName}) by image with {maxMatchScore * 100}% match");
-                            matchDetails = $"found element by image with {(maxMatchScore * 100)}% match";
+                            matchDetails = $"found by image ({maxMatchScore * 100}%)";
                         }
                     }
 
