@@ -101,8 +101,6 @@ namespace Ginger.Run
 
         private bool mStopRun = false;
         private bool mStopBusinessFlow = false;
-        public List<Act> errActivityActionList = [];
-        public List<ErrorHandler> errActivityList = [];
         private bool mCurrentActivityChanged = false;
         //private bool mErrorHandlerExecuted = false;
 
@@ -2082,40 +2080,28 @@ namespace Ginger.Run
         {
             try
             {
-                ObservableList<ErrorHandler> errorActivities = new ObservableList<ErrorHandler>(CurrentBusinessFlow.Activities.Where(a => a.GetType() == typeof(ErrorHandler) && a.Status != eRunStatus.Skipped && a.Active == true
-                     ).Cast<ErrorHandler>().ToList());
+                ObservableList<Activity> errorActivities = new ObservableList<Activity>(CurrentBusinessFlow.Activities.Where(a => a.GetType() == typeof(ErrorHandler) && (a.Status == eRunStatus.Passed || a.Status == eRunStatus.Failed) && a.Active == true
+                     ).ToList());
 
                 if (errorActivities.Count > 0)
                 {
                     foreach (ErrorHandler errActivity in errorActivities)
                     {
-                        var currentActivity = errActivityList.Find(k => errActivity.Guid == k.Guid);
+                        CurrentBusinessFlow.CurrentActivity = errActivity;
 
-                        if (currentActivity != null)
+                        NotifyActivityStart(errActivity);
+                        foreach (Act act in errActivity.Acts)
                         {
-                            CurrentBusinessFlow.CurrentActivity = errActivity;
-
-                            NotifyActivityStart(currentActivity);
-                            foreach (Act act in errActivity.Acts)
+                            if (act.Active)
                             {
-                                var currentAction = errActivityActionList.Find(k => act.Guid == k.Guid);
-                                if (currentAction != null)
-                                {
-                                    Stopwatch st = new Stopwatch();
-                                    st.Start();
-                                    if (currentAction.Active)
-                                    {
-                                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = currentAction;
+                                CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
 
-                                        NotifyActionStart(currentAction);
+                                NotifyActionStart(act);
 
-                                        NotifyActionEnd(currentAction);
-                                    }
-                                }
+                                NotifyActionEnd(act);
                             }
-
-                            NotifyActivityEnd(currentActivity);
                         }
+                        NotifyActivityEnd(errActivity);
                     }
                 }
             }
@@ -2182,7 +2168,7 @@ namespace Ginger.Run
                             ProcessStoretoValue(act);
                             UpdateDSReturnValues(act);
                             CalculateActionFinalStatus(act);
-                            errActivityActionList.Add(act);
+                            NotifyActionEnd(act);
                         }
                         st.Stop();
                     }
@@ -2192,7 +2178,6 @@ namespace Ginger.Run
                     Reporter.ToLog(eLogLevel.INFO, "Error Handler '" + errActivity.ActivityName.ToString() + "' Ended");
                     CurrentBusinessFlow.CurrentActivity.EndTimeStamp = DateTime.UtcNow;
                     errActivity.Elapsed = stE.ElapsedMilliseconds;
-                    errActivityList.Add(errActivity);
                 }
 
                 if (handlerPostExecutionAction is eErrorHandlerPostExecutionAction.ReRunBusinessFlow or
