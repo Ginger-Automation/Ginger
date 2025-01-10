@@ -4037,7 +4037,10 @@
             Value="Left" />
         <Setter
             Property="BorderThickness"
-            Value="0" />
+            Value="1 0 0 0" />
+        <Setter
+            Property="BorderBrush"
+            Value="LightGray" />
     </Style>
     <Style
         x:Key="SideNavTabItemStyle"
