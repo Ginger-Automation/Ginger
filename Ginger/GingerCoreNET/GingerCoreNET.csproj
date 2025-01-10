@@ -279,6 +279,8 @@
     <PackageReference Include="HBaseNet" Version="0.1.0" />
     
     <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
+    
+    <PackageReference Include="ImageDiff" Version="1.0.1" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
     <PackageReference Include="LibGit2Sharp" Version="0.31.0" />
   
@@ -541,6 +543,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Images\%40ItemPrev.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="SelfHealingConfig\SelfHealingPropertyWeightage.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\3rdpartylicenses.txt">

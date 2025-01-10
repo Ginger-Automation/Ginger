@@ -24,6 +24,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
@@ -146,6 +147,26 @@ namespace Ginger.SolutionGeneral
                 {
                     return null;
                 }
+            }
+        }
+
+        private SolutionSelfHealingConfig _selfHealingConfig;
+
+        [IsSerializedForLocalRepository]
+        public SolutionSelfHealingConfig SelfHealingConfig
+        {
+            get
+            {
+                if (_selfHealingConfig == null)
+                {
+                    _selfHealingConfig = new();
+                }
+                return _selfHealingConfig;
+            }
+            set
+            {
+                _selfHealingConfig = value;
+                OnPropertyChanged(nameof(SelfHealingConfig));
             }
         }
 
