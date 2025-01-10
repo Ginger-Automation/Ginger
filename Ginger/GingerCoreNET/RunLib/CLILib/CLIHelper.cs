@@ -38,6 +38,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using static GingerCoreNET.SourceControl.SourceControlBase;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
@@ -565,16 +566,19 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             try
             {
-                progressNotifier.ProgressText += ProgressNotifier_ProgressText;
+                progressNotifier.ProgressUpdated += ProgressNotifier_ProgressUpdated;
                 if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
+                    //Console.WriteLine();
                     if (!SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier))
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
                     }
                 }
-                progressNotifier.ProgressText -= ProgressNotifier_ProgressText;
+                progressNotifier.ProgressUpdated -= ProgressNotifier_ProgressUpdated;
+                //Console.WriteLine();
+                Reporter.ToLog(eLogLevel.INFO, "Solution downloaded/updated successfully");
             }
             catch (Exception ex)
             {
@@ -584,14 +588,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
 
         /// <summary>
-        /// Logs the progress text to the reporter.
+        /// Updates the progress of the download and logs the progress percentage.
         /// </summary>
-        /// <param name="sender">The ProgressNotifier that raised the event.</param>
-        /// <param name="e">The progress message describing the current download status.</param>
-        private void ProgressNotifier_ProgressText(object sender, string e)
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">A tuple containing the number of completed steps and the total number of steps.</param>
+        private void ProgressNotifier_ProgressUpdated(object sender, (int CompletedSteps, int TotalSteps) e)
         {
-            Reporter.ToLog(eLogLevel.INFO, e);
+            try
+            {
+                Reporter.ToLog(eLogLevel.INFO, $"Download progress: {e.CompletedSteps / e.TotalSteps * 100}% Complete", overwriteCurrentLine: true);
+            }
+            catch (Exception t)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, t.Message);
+            }
         }
+
 
         internal void SetSourceControlBranch(string value)
         {
