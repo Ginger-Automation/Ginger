@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.NewSelfHealing
@@ -69,7 +66,10 @@ namespace Amdocs.Ginger.CoreNET.NewSelfHealing
                 weightageFromFile = tempWeightageFromFile;
                 unknownPropertyWeightage = mobile["unknown"]!.AsValue().GetValue<double>();
             }
-            catch(Exception) { }
+            catch(Exception ex) 
+            {
+                Debug.WriteLine($"Failed to load weightage file,\n{ex}");
+            }
         }
 
         protected override double GetPropertyWeightage(string? propertyName)

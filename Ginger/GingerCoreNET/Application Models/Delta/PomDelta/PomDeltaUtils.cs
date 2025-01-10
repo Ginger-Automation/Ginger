@@ -183,7 +183,8 @@ namespace GingerCoreNET.Application_Models
                         matchingOriginalElement = FindMatchingOldElementByProperty(latestElement, POMElementsCopy, platform, out double maxMatchScore);
                         if (matchingOriginalElement != null)
                         {
-                            matchDetails = $"found element by property with {(maxMatchScore * 100)}% match";
+                            Reporter.ToLog(eLogLevel.INFO, $"predicted original element({matchingOriginalElement.ElementName}) for new element({latestElement.ElementName}) by property with {maxMatchScore * 100}% match");
+                            matchDetails = $"found element by property with {maxMatchScore * 100}% match";
                         }
                     }
                     if (useImageMatching && matchingOriginalElement == null)
@@ -191,6 +192,7 @@ namespace GingerCoreNET.Application_Models
                         matchingOriginalElement = FindMatchingOldElementByImage(latestElement, POMElementsCopy, out double maxMatchScore);
                         if (matchingOriginalElement != null)
                         {
+                            Reporter.ToLog(eLogLevel.INFO, $"predicted original element({matchingOriginalElement.ElementName}) for new element({latestElement.ElementName}) by image with {maxMatchScore * 100}% match");
                             matchDetails = $"found element by image with {(maxMatchScore * 100)}% match";
                         }
                     }
@@ -283,17 +285,30 @@ namespace GingerCoreNET.Application_Models
 
             ElementPropertyMatcher elementPropertyMatcher;
             if (platform == ePlatformType.Mobile)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"using mobile property-matcher for finding match for new element({newElement.ElementName})");
                 elementPropertyMatcher = new MobileElementPropertyMatcher();
+            }
             else
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"using generic property-matcher for finding match for new element({newElement.ElementName})");
                 elementPropertyMatcher = new();
+            }
 
             foreach (ElementInfo oldElement in oldElements)
             {
-                double matchScore = elementPropertyMatcher.Match(expected: newElement, actual: oldElement);
-                if (matchScore >= acceptableMatchScore && matchScore > maxMatchScore)
+                try
                 {
-                    maxMatchScore = matchScore;
-                    bestMatchingOldElement = oldElement;
+                    double matchScore = elementPropertyMatcher.Match(expected: newElement, actual: oldElement);
+                    if (matchScore >= acceptableMatchScore && matchScore > maxMatchScore)
+                    {
+                        maxMatchScore = matchScore;
+                        bestMatchingOldElement = oldElement;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"error occurred while matching properties of new element({newElement.ElementName}) with old element({oldElement.ElementName})", ex);
                 }
             }
 
@@ -304,11 +319,6 @@ namespace GingerCoreNET.Application_Models
         {
             maxMatchScore = 0;
 
-            if (string.IsNullOrWhiteSpace(newElement.ScreenShotImage))
-            {
-                return null;
-            }
-
             double acceptableMatchScore = GetImageMatcherAcceptableScore();
 
             ElementInfo bestMatchingOldElement = null;
@@ -316,11 +326,18 @@ namespace GingerCoreNET.Application_Models
             ElementImageMatcher elementImageMatcher = new();
             foreach (ElementInfo oldElement in oldElements)
             {
-                double matchScore = elementImageMatcher.Match(expected: newElement, actual: oldElement);
-                if (matchScore >= acceptableMatchScore && matchScore > maxMatchScore)
+                try
                 {
-                    maxMatchScore = matchScore;
-                    bestMatchingOldElement = oldElement;
+                    double matchScore = elementImageMatcher.Match(expected: newElement, actual: oldElement);
+                    if (matchScore >= acceptableMatchScore && matchScore > maxMatchScore)
+                    {
+                        maxMatchScore = matchScore;
+                        bestMatchingOldElement = oldElement;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"error occurred while matching image of new element({newElement.ElementName}) with old element({oldElement.ElementName})", ex);
                 }
             }
 
