@@ -136,11 +136,16 @@ namespace Amdocs.Ginger.CoreNET.NewSelfHealing
             return 1;
         }
 
-        internal readonly struct PropertyMatchResult
+        internal readonly struct PropertyMatchResult : IEquatable<PropertyMatchResult>
         {
             internal required double ActualScore { get; init; }
 
             internal required double TotalScore { get; init; }
+
+            public bool Equals(PropertyMatchResult other)
+            {
+                return ActualScore == other.ActualScore && TotalScore == other.TotalScore;
+            }
         }
     }
 }

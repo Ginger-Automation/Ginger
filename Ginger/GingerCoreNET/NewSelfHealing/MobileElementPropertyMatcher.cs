@@ -30,14 +30,22 @@ namespace Amdocs.Ginger.CoreNET.NewSelfHealing
             LoadWeightageFromFile(out Dictionary<string, double>? weightageFromFile, out double? unknownPropertyWeightage);
 
             if (weightageFromFile != null)
+            {
                 Weightage = new Dictionary<string, double>(weightageFromFile);
+            }
             else
+            {
                 Weightage = new Dictionary<string, double>(DefaultWeightage);
+            }
 
             if (unknownPropertyWeightage != null)
+            {
                 UnknownPropertyWeightage = unknownPropertyWeightage.Value;
+            }
             else
+            {
                 UnknownPropertyWeightage = DefaultUnknownPropertyWeightage;
+            }
         }
 
         private static void LoadWeightageFromFile(out Dictionary<string, double>? weightageFromFile, out double? unknownPropertyWeightage)
