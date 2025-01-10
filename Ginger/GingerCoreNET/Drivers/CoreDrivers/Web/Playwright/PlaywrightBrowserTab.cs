@@ -710,7 +710,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                                 timeout = act.Timeout.Value;
                             }
                             st.Start();
-                            while (timeout != st.Elapsed.TotalSeconds)
+                            while (timeout <= st.Elapsed.TotalSeconds)
                             {
                                 if (networkRequestLogList.Count == networkResponseLogList.Count)
                                 {
