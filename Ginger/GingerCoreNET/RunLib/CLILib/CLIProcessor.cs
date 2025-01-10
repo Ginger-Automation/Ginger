@@ -115,7 +115,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
              {
                  try
                  {
-                     new DoOptionsHandler().Run(opts);
+                     new DoOptionsHandler().RunAsync(opts);
                      return 0;
                  }
                  catch (Exception ex)
@@ -320,7 +320,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
                 if (fileType is "config" or "dynamic")  // not needed for script
                 {
-                    if (!CLILoadAndPrepare(runsetConfigs: fileContent))
+                    if (!await CLILoadAndPrepare(runsetConfigs: fileContent))
                     {
                         Reporter.ToLog(eLogLevel.WARN, "Issue occurred while doing CLI Load and Prepare so aborting execution");
                         Environment.ExitCode = 1;
@@ -455,7 +455,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
 
             WorkSpace.Instance.RunningInExecutionMode = true;
-            if (!CLILoadAndPrepare())
+            if (!await CLILoadAndPrepare())
             {
                 Reporter.ToLog(eLogLevel.WARN, "Issue occurred while doing CLI Load and Prepare so aborting execution");
                 Environment.ExitCode = 1;
@@ -572,13 +572,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.CloseSolution();
         }
 
-        private bool CLILoadAndPrepare(string runsetConfigs = "")
+        private async Task<bool> CLILoadAndPrepare(string runsetConfigs = "")
         {
             try
             {
-                if (!mCLIHelper.LoadSolution())
+                if (! await mCLIHelper.LoadSolutionAsync())
                 {
-                    return false;//failed to load Solution;
+                    return false; // failed to load Solution;
                 }
 
                 if (!string.IsNullOrEmpty(runsetConfigs))
@@ -588,12 +588,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
                 if (!mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
                 {
-                    return false;//failed to load Run set
+                    return false; // failed to load Run set
                 }
 
                 if (!mCLIHelper.PrepareRunsetForExecution())
                 {
-                    return false; //Failed to perform execution preparations
+                    return false; // Failed to perform execution preparations
                 }
 
                 // Check for any Sealights Settings
@@ -602,7 +602,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     return false;
                 }
 
-                //set source app and user
+                // set source app and user
                 mCLIHelper.SetSourceAppAndUser();
 
                 mCLIHelper.SetTestArtifactsFolder();
