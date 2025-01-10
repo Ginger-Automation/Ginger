@@ -108,7 +108,6 @@ namespace GingerCoreNET.Application_Models
             finally
             {
                 IsLearning = false;
-                flag = !flag;
             }
         }
 
@@ -163,8 +162,6 @@ namespace GingerCoreNET.Application_Models
             mIWindowExplorerDriver.CollectOriginalElementsDataForDeltaCheck(POMElementsCopy);
             //});
         }
-
-        private bool flag = true;
 
         private void ElementsListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {

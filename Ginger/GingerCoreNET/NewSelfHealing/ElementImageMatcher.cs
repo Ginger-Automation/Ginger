@@ -47,8 +47,8 @@ namespace Amdocs.Ginger.CoreNET.NewSelfHealing
             byte[] expectedBytes = Convert.FromBase64String(expected.ScreenShotImage);
             byte[] actualBytes = Convert.FromBase64String(actual.ScreenShotImage);
 
-            MagickImage expectedImg = new(expectedBytes);
-            MagickImage actualImg = new(actualBytes);
+            using MagickImage expectedImg = new(expectedBytes);
+            using MagickImage actualImg = new(actualBytes);
 
             double differPixelCount = expectedImg.Compare(actualImg, ErrorMetric.Absolute);
             _logger?.LogTrace("expected element({expectedElementName}-{expectedElementId}) image and actual element({actualElementName}-{actualElementId}) image differ by {differPixelCount} pixels", expected.ElementName, expected.Guid, actual.ElementName, actual.Guid, differPixelCount);

@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.Repository;
+﻿using System;
+using Amdocs.Ginger.Repository;
 
 namespace Amdocs.Ginger.Common.SelfHealingLib
 {
@@ -28,6 +29,8 @@ namespace Amdocs.Ginger.Common.SelfHealingLib
             get => _propertyMatcherAcceptableScore;
             set
             {
+                if (value < 1 || value > 100)
+                    throw new ArgumentException("value must be between 1-100");
                 _propertyMatcherAcceptableScore = value;
                 OnPropertyChanged(nameof(PropertyMatcherAcceptableScore));
             }
@@ -50,6 +53,8 @@ namespace Amdocs.Ginger.Common.SelfHealingLib
             get => _imageMatcherAcceptableScore;
             set
             {
+                if (value < 1 || value > 100)
+                    throw new ArgumentException("value must be between 1-100");
                 _imageMatcherAcceptableScore = value;
                 OnPropertyChanged(nameof(ImageMatcherAcceptableScore));
             }

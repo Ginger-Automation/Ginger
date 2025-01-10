@@ -51,7 +51,7 @@ namespace Amdocs.Ginger.CoreNET.NewSelfHealing
             {
                 Dictionary<string, double> tempWeightageFromFile = [];
 
-                string weightageFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "NewSelfHealing", WeightageFileName);
+                string weightageFilePath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SelfHealingConfig", WeightageFileName));
 
                 JsonNode json = JsonNode.Parse(File.OpenRead(weightageFilePath))!;
                 JsonObject mobile = json["mobile"]!.AsObject();
