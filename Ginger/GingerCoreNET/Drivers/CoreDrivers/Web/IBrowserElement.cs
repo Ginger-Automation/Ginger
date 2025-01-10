@@ -93,5 +93,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task<IBrowserShadowRoot?> ShadowRootAsync();
 
         public Task<AxeResult?> TestAccessibilityAsync(AxeRunOptions? options = null);
+        public Task SetFileValueAsync(string[] value);
     }
 }

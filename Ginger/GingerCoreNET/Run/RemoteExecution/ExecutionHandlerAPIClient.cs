@@ -174,11 +174,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
                 };
 
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-
                 if (!response.IsSuccessStatusCode)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Starting remote execution failed, got back unsuccessful response code('{(int)response.StatusCode}').");
                     return false;
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.INFO, $"Execution to handler submitted successfully {response?.Headers?.Location?.Query?.TrimStart('?')}");
                 }
 
                 return true;

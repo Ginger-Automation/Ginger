@@ -53,6 +53,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="LiteDB">
       <HintPath>..\..\..\..\..\.nuget\packages\litedb\4.1.4\lib\net40\LiteDB.dll</HintPath>
     </Reference>

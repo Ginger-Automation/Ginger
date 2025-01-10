@@ -17,11 +17,13 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SourceControl;
 using Medallion.Shell;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace Amdocs.Ginger.CoreNET.SourceControl
 {
@@ -262,6 +264,11 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
         public override bool UndoUncommitedChanges(List<SourceControlFileInfo> selectedFiles)
         {
             throw new NotImplementedException("UndoUncommitedChanges not Implemented");
+        }
+
+        public override bool GetProjectWithProgress(string Path, string URI, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }
