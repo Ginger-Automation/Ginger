@@ -49,7 +49,6 @@
     <None Remove="DLLS\AlmRepositoryStd.dll" />
     <None Remove="DLLS\GingerHbaseFilter.dll" />
     <None Remove="DLLS\JiraRepositoryStd.dll" />
-    <None Remove="DLLS\LibGit2Sharp.dll" />
     <None Remove="DLLS\OctaneInteractionStd.dll" />
     <None Remove="DLLS\SikuliStandardNet.dll" />
     <None Remove="DLLS\ZephyrEntStdSDK.dll" />
@@ -114,7 +113,6 @@
     <Content Include="DLLS\JiraRepositoryStd.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="DLLS\LibGit2Sharp.dll" />
     <Content Include="DLLS\OctaneInteractionStd.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -259,7 +257,7 @@
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="2024.4.1.6" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.3.1" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.5.4" />
   
     <PackageReference Include="Google.Protobuf" Version="3.28.0" />
     
@@ -281,9 +279,12 @@
     <PackageReference Include="HBaseNet" Version="0.1.0" />
     
     <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
+    
+    <PackageReference Include="ImageDiff" Version="1.0.1" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
+    <PackageReference Include="LibGit2Sharp" Version="0.31.0" />
   
-    <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="2.0.278" />
+    <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="2.0.323" />
 	<PackageReference Include="LiteDB" Version="5.0.21" />
   
     <PackageReference Include="DocumentFormat.OpenXml" Version="3.0.1" />
@@ -542,6 +543,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Images\%40ItemPrev.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="SelfHealingConfig\SelfHealingPropertyWeightage.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\3rdpartylicenses.txt">
@@ -1201,6 +1205,9 @@
     <None Update="Reports\Ginger-Web-Client\assets\sass\_fonts.scss">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\assets\screenshots\ScreenShot_1_1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\assets\theme\theme-report.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -1235,6 +1242,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\main.2ad51ab896990d24.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\main.50dca4a1d8ae08b9.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\polyfills.ab6619d5cdfdf12c.js">

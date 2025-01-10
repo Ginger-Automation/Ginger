@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.GeneralLib;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
@@ -44,6 +45,8 @@ using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
+using GingerWPF.UserControlsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -56,6 +59,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -211,6 +215,8 @@ namespace Ginger
 
                 WorkSpace.Instance.UserProfile.PropertyChanged += AskLisaPropertyChanged;
 
+                DoOptionsHandler.LoadRunSetConfigEvent += DoOptionsHandler_LoadRunSetConfigEvent;
+                DoOptionsHandler.LoadSharedRepoEvent += DoOptionsHandler_LoadSharedRepoEvent;
             }
             catch (Exception ex)
             {
@@ -228,6 +234,69 @@ namespace Ginger
 
         }
 
+
+        /// <summary>
+        /// Handles the event to load a shared repository.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="activity">The activity to load.</param>
+        private void DoOptionsHandler_LoadSharedRepoEvent(object? sender, GingerCore.Activity activity)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    if (xResourcesListItem.Tag == null)
+                    {
+                        xResourcesListItem.Tag = ResourcesMenu.MenusPage;
+                    }
+                    xSolutionTabsListView.SelectedItem = xResourcesListItem;
+                    var menuPage = xResourcesListItem.Tag as TwoLevelMenuPage;
+                    if (menuPage == null)
+                    {
+                        throw new InvalidOperationException("Menu page not initialized");
+                    }
+                    menuPage.SelectTopMenu(0);
+                    menuPage.xSubNavigationListView.SelectedIndex = 1;
+
+                    var treeView = ((SingleItemTreeViewExplorerPage)ResourcesMenu.MenusPage.mTwoLevelMenu.MenuList[0].SubItems[1].ItemPage)?.xTreeView?.Tree;
+                    if (treeView != null)
+                    {
+                        treeView.GetChildItembyNameandSelect(activity.ActivityName);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to load shared repository", ex);
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load shared repository: ", ex.Message);
+                }
+            });
+        }
+
+        /// <summary>
+        /// Handles the event to load a run set configuration.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The run set configuration to load.</param>
+        private void DoOptionsHandler_LoadRunSetConfigEvent(object? sender, Run.RunSetConfig e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    if (xSolutionTabsListView == null || xRunListItem == null)
+                    {
+                        throw new InvalidOperationException("UI elements not initialized");
+                    }
+                    xSolutionTabsListView.SelectedItem = xRunListItem;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to load run set configuration", ex);
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load run set: " + ex.Message);
+                }
+            });
+        }
 
         private void AskLisaPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {

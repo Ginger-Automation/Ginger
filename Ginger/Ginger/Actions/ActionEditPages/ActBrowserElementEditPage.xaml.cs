@@ -189,6 +189,12 @@ namespace Ginger.Actions
             {
                 ResetPOMView();
             }
+            else if(mAct.ControlAction == ActBrowserElement.eControlAction.SetAlertBoxText)
+            {
+                xValueGrid.Visibility = System.Windows.Visibility.Visible;
+                xValueLabel.Content = "Value:";
+                
+            }
             else
             {
                 if (mAct.ControlAction == ActBrowserElement.eControlAction.InitializeBrowser)
@@ -202,6 +208,7 @@ namespace Ginger.Actions
                     }
                 }
             }
+            
         }
 
         private void ElementLocateByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

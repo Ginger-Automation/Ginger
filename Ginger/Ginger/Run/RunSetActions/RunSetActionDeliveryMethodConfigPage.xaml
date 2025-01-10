@@ -38,7 +38,7 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                             <Label Style="{StaticResource @InputFieldLabelStyle}" FontSize="13" VerticalAlignment="Center">Certificate Password:</Label>
-                            <TextBox  x:Name="CertificatePasswordUCValueExpression" HorizontalAlignment="Left" Width="235" VerticalContentAlignment="Center" Height="25" AcceptsReturn="True" Margin="2,0,0,0"/>
+                            <Actions:UCValueExpression x:Name="CertificatePasswordUCValueExpression" HorizontalAlignment="Left" Width="260" VerticalContentAlignment="Center" Height="30" LostKeyboardFocus="CertificatePasswordUCValueExpression_LostKeyboardFocus" Margin="2,0,0,0"/>
                         </StackPanel>
                     </StackPanel>
                     <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelUser" Visibility="Collapsed">SMTP User:</Label>

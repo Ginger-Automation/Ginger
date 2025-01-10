@@ -736,7 +736,7 @@ namespace GingerCore.Variables
                 return false;
             }
 
-            return Equals(obj as VariableBase);
+            return AreEqual(obj as VariableBase);
         }
     }
 }

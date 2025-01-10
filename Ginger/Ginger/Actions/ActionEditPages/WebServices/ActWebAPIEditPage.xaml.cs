@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.TextEditor;
+using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.WebAPI;
 using GingerCore.Actions.WebServices;
@@ -676,6 +677,36 @@ namespace Ginger.Actions.WebServices
                 }
             }
             Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw request preview, see log for details.");
+        }
+
+        /// <summary>
+        /// Handles the LostKeyboardFocus event for the CertificatePasswordUCValueExpression control.
+        /// Encrypts the password if needed.
+        /// </summary>
+        private void CertificatePasswordUCValueExpression_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        {
+            EncryptPasswordIfNeeded();
+        }
+
+        /// <summary>
+        /// Determines if the password is a value expression.
+        /// </summary>
+        /// <returns>True if the password is a value expression; otherwise, false.</returns>
+        private bool IsPasswordValueExpression()
+        {
+            return ValueExpression.IsThisAValueExpression(mAct.GetInputParamValue(ActWebAPIBase.Fields.CertificatePassword));
+        }
+
+        /// <summary>
+        /// Encrypts the password if it is not already encrypted and not a value expression.
+        /// </summary>
+        private void EncryptPasswordIfNeeded()
+        {
+            string password = mAct.GetInputParamValue(ActWebAPIBase.Fields.CertificatePassword);
+            if (!string.IsNullOrEmpty(password) && !IsPasswordValueExpression() && !EncryptionHandler.IsStringEncrypted(password))
+            {
+                CertificatePasswordUCValueExpression.ValueTextBox.Text = EncryptionHandler.EncryptwithKey(password);
+            }
         }
     }
 }

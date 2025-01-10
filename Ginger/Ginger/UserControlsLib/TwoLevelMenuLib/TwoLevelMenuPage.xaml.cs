@@ -33,9 +33,9 @@ namespace Ginger.GeneralWindows
     /// </summary>
     public partial class TwoLevelMenuPage : Page
     {
-        readonly TwoLevelMenu mTwoLevelMenu;
+        public readonly TwoLevelMenu mTwoLevelMenu;
         // static for reuse
-        static LoadingPage loadingPage = new LoadingPage();
+        static LoadingPage loadingPage = new();
 
         TopMenuItem SelectedMainListItem
         {

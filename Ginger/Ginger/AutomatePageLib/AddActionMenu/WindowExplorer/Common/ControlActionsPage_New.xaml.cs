@@ -226,9 +226,13 @@ namespace Ginger.WindowExplorer
                         inputPar.Value = "false";
                     }
                 }
+                if (DefaultAction is ActUIElement uiElement)
+                {
+                    uiElement.ElementData = mElementInfo.GetElementData();
+                }
 
-                (DefaultAction as ActUIElement).ElementData = mElementInfo.GetElementData();
-                DefaultAction.Description = string.Format("{0} : {1} - {2}", (DefaultAction as ActUIElement).ElementAction, mElementInfo.ElementTypeEnum.ToString(), mElementInfo.ElementName);
+                DefaultAction.Description = FormatActionDescription(DefaultAction);
+
                 SetActionDetails(DefaultAction);
                 actEditPage = new ActionEditPage(DefaultAction, General.eRIPageViewMode.Explorer);
 
@@ -241,6 +245,22 @@ namespace Ginger.WindowExplorer
 
             //BindingHandler.ObjFieldBinding(xExecutionStatusIcon, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
             InitDataPage();
+        }
+
+
+        private string FormatActionDescription(Act action)
+        {
+            if (action == null) return string.Empty;
+
+            if (action is ActUIElement uiElement)
+            {
+                return string.Format("{0} : {1} - {2}", uiElement.ElementAction, mElementInfo.ElementTypeEnum.ToString(), mElementInfo.ElementName);
+            }
+            if (action is ActBrowserElement browserElement)
+            {
+                return string.Format("{0} : {1} - {2}", browserElement.ControlAction, mElementInfo.ElementTypeEnum.ToString(), mElementInfo.ElementName);
+            }
+            return string.Empty;
         }
 
         private void Runner_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -370,7 +390,9 @@ namespace Ginger.WindowExplorer
                     return;
                 }
 
-                DefaultAction.Description = string.Format("{0} : {1} - {2}", (DefaultAction as ActUIElement).ElementAction, mElementInfo.ElementTypeEnum.ToString(), mElementInfo.ElementName);
+                DefaultAction.Description = FormatActionDescription(DefaultAction);
+
+
                 selectedAct = DefaultAction;
             }
 

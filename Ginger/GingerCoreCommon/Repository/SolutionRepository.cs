@@ -690,12 +690,13 @@ namespace Amdocs.Ginger.Repository
                         filefullPath = filefullPath.Replace(Nameex, "");
                     }
                     counter++;
+
                     Nameex = "~" + counter;
                     filefullPath = filefullPath.Replace(ext, Nameex + ext);
 
                     if (counter > 100)
                     {
-                        throw new Exception("cannot find unique file after 100 tries");
+                        counter = Random.Shared.Next(minValue: 101, maxValue: 10000);
                     }
                 }
 

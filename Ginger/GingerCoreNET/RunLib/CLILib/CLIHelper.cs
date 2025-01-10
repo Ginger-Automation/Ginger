@@ -20,9 +20,10 @@ using AccountReport.Contracts;
 using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.Repository;
+using Ginger;
 using Ginger.AnalyzerLib;
 using Ginger.Configurations;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
@@ -37,6 +38,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using static GingerCoreNET.SourceControl.SourceControlBase;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
@@ -76,6 +78,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SourceApplication;
         public string SourceApplicationUser;
 
+        ProgressNotifier progressNotifier = new();
         public bool SelfHealingCheckInConfigured;
 
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
@@ -215,18 +218,57 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         //UserProfile WorkSpace.Instance.UserProfile;
         RunSetConfig mRunSetConfig;
 
-        public bool LoadSolution()
+        /// <summary>
+        /// Adds CLI Git properties from the provided SourceControlOptions.
+        /// </summary>
+        /// <param name="runOptions">The SourceControlOptions containing the Git properties.</param>
+        internal void AddCLIGitProperties(SourceControlOptions runOptions)
+        {
+            SourceControlURL = runOptions.URL;
+            SourcecontrolUser = runOptions.User;
+            sourceControlType = runOptions.SCMType;
+            SetSourceControlBranch(runOptions.Branch);
+            sourceControlPass = runOptions.Pass;
+            sourceControlPassEncrypted = runOptions.PasswordEncrypted;
+            SourceControlProxyServer(runOptions.SourceControlProxyServer);
+            SourceControlProxyPort(runOptions.SourceControlProxyPort);
+        }
+
+        /// <summary>
+        /// Sets the workspace Git properties from the provided SourceControlOptions.
+        /// </summary>
+        /// <param name="runOptions">The SourceControlOptions containing the Git properties.</param>
+        internal void SetWorkSpaceGitProperties(SourceControlOptions runOptions)
+        {
+            if (WorkSpace.Instance.UserProfile == null)
+            {
+                WorkSpace.Instance.UserProfile = new UserProfile();
+                UserProfileOperations userProfileOperations = new UserProfileOperations(WorkSpace.Instance.UserProfile);
+                WorkSpace.Instance.UserProfile.UserProfileOperations = userProfileOperations;
+            }
+            WorkSpace.Instance.UserProfile.SourceControlURL = runOptions.URL;
+            WorkSpace.Instance.UserProfile.SourceControlUser = runOptions.User;
+            WorkSpace.Instance.UserProfile.SourceControlType = runOptions.SCMType;
+            WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlIgnoreCertificate = runOptions.ignoreCertificate;
+            WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlUseShellClient = runOptions.useScmShell;
+            WorkSpace.Instance.UserProfile.EncryptedSourceControlPass = runOptions.Pass;
+            WorkSpace.Instance.UserProfile.SourceControlPass = runOptions.Pass;
+        }
+        /// <summary>
+        /// Loads the solution.
+        /// </summary>
+        /// <returns>True if the solution is loaded successfully, otherwise false.</returns>
+        public async Task<bool> LoadSolutionAsync()
         {
             try
             {
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution...");
-                // SetDebugLevel();//disabling because it is overwriting the UserProfile setting for logging level
-                DownloadSolutionFromSourceControl();
+                await DownloadSolutionFromSourceControl();
                 return OpenSolution();
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Unexpected error occurred while Loading the Solution", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Unexpected error occurred while opening the Solution", ex);
                 return false;
             }
         }
@@ -519,17 +561,47 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        private void DownloadSolutionFromSourceControl()
+        private async Task DownloadSolutionFromSourceControl()
         {
-            if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
+            try
             {
-                Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
-                if (!SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges))
+                progressNotifier.ProgressUpdated += ProgressNotifier_ProgressUpdated;
+                if (!string.IsNullOrEmpty(SourceControlURL) && !string.IsNullOrEmpty(SourcecontrolUser) && !string.IsNullOrEmpty(sourceControlPass))
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                    Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
+                    bool solutionDownloadedSuccessfully = await Task.Run(() => SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier));
+                    if (!solutionDownloadedSuccessfully)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                    }
                 }
+                progressNotifier.ProgressUpdated -= ProgressNotifier_ProgressUpdated;
+                Reporter.ToLog(eLogLevel.INFO, "Solution downloaded/updated successfully");
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+
             }
         }
+
+        /// <summary>
+        /// Updates the progress of the download and logs the progress percentage.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">A tuple containing the number of completed steps and the total number of steps.</param>
+        private void ProgressNotifier_ProgressUpdated(object sender, (int CompletedSteps, int TotalSteps) e)
+        {
+            try
+            {
+                Reporter.ToLog(eLogLevel.INFO, $"Download progress: {e.CompletedSteps / e.TotalSteps * 100}% Complete", overwriteCurrentLine: true);
+            }
+            catch (Exception t)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, t.Message);
+            }
+        }
+
 
         internal void SetSourceControlBranch(string value)
         {
