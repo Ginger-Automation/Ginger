@@ -711,7 +711,7 @@ namespace GingerCoreNET.GeneralLib
         /// <returns>List of external fields with their values.</returns>
         public static ObservableList<ExternalItemFieldBase> GetExternalFields()
         {
-            ObservableList<ExternalItemFieldBase> originalExternalFields = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> originalExternalFields = [];
 
             var defaultALMConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm);
             var firstExternalItemField = WorkSpace.Instance.Solution.ExternalItemsFields.FirstOrDefault();
@@ -728,7 +728,7 @@ namespace GingerCoreNET.GeneralLib
                 foreach (var externalItemField in externalOnlineItemsFields)
                 {
                     ExternalItemFieldBase item = MapExternalField(externalItemField);
-                    if(item != null)
+                    if (item != null)
                     {
                         originalExternalFields.Add(item);
                     }
@@ -758,7 +758,8 @@ namespace GingerCoreNET.GeneralLib
                     {
                         if (!string.IsNullOrEmpty(externalItemField.SelectedValue))
                         {
-                            value = externalItemField.SelectedValue;                        }
+                            value = externalItemField.SelectedValue;
+                        }
                         else
                         {
                             value = GetDefaultValue(externalItemField);
@@ -795,7 +796,7 @@ namespace GingerCoreNET.GeneralLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Failed to Map External Fields",ex.InnerException);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Map External Fields", ex.InnerException);
                 return null;
             }
         }

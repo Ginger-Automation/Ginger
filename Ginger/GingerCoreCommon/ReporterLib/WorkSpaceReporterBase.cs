@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -34,7 +34,7 @@ namespace Amdocs.Ginger.Common
         public void ToConsole(eLogLevel logLevel, string message)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append("[").Append(logLevel).Append(" | ").Append(DateTime.Now.ToString("HH:mm:ss:fff_dd-MMM")).Append("] ").Append(message).Append(Environment.NewLine);
+            stringBuilder.Append('[').Append(logLevel).Append(" | ").Append(DateTime.Now.ToString("HH:mm:ss:fff_dd-MMM")).Append("] ").Append(message).Append(Environment.NewLine);
 
             switch (logLevel)
             {
@@ -64,3 +64,7 @@ namespace Amdocs.Ginger.Common
         public abstract void ToStatus(eStatusMsgType messageType, string statusText);
     }
 }
+
+//Started downloading/Updating
+
+// 

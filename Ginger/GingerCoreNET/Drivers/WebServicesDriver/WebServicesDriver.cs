@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.ActionsLib.Webservices;
 using Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter;
 using Amdocs.Ginger.CoreNET.DiameterLib;
 using Amdocs.Ginger.CoreNET.RunLib;
@@ -337,6 +338,8 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "Start Execution");
                 }
+
+                ActWAPIM.actWebAPIModelOperation ??= new ActWebAPIModelOperation();
 
                 //pull pointed API Model
                 ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationAPIModel>(((ActWebAPIModel)act).APImodelGUID);
