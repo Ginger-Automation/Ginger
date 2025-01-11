@@ -48,8 +48,13 @@ namespace Amdocs.Ginger.CoreNET.Reports
         public async Task<RunSetConfig?> LoadAsync(RunSetReport runsetReport)
         {
             string executionId = runsetReport.GUID;
-            Guid runsetId = runsetReport.RunSetGuid;
-            RunSetConfig? runset = GetRunsetFromSolutionRepository(runsetId);
+            RunSetConfig? runset = null;
+            Guid runsetId = Guid.Empty;
+            if (runsetReport.RunSetGuid != null)
+            {
+                runsetId = runsetReport.RunSetGuid;
+                runset = GetRunsetFromSolutionRepository(runsetId);
+            }
 
             if (runset == null)
             {
@@ -64,7 +69,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
 
             return runset;
         }
-
+      
         private RunSetConfig? GetRunsetFromSolutionRepository(Guid runsetId)
         {
             return WorkSpace

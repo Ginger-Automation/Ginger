@@ -91,5 +91,17 @@ namespace Ginger.Run
 
             }
         }
+
+        private void xAutoUpdateModelChkBox_CheckedUnchecked(object sender, RoutedEventArgs e)
+        {
+            if (xAutoUpdateModelChkBox.IsChecked ?? false)
+            {
+                AutoUpdateModelNoteTextBlock.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                AutoUpdateModelNoteTextBlock.Visibility = Visibility.Hidden;
+            }
+        }
     }
 }

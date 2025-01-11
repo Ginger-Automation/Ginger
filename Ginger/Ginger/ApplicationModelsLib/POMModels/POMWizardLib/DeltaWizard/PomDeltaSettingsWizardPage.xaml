@@ -76,6 +76,12 @@
                         <RadioButton x:Name="xAvoidPropertiesNoneRadioButton" Margin="5" Checked="xAvoidPropertiesNoneRadioButton_Checked">None</RadioButton>
                     </StackPanel>
                 </StackPanel>
+                <CheckBox
+                    x:Name="AcceptElementsFoundByMatchersCheckBox"
+                    DockPanel.Dock="Top"
+                    Content="Accept elements found by healing matchers"
+                    Style="{StaticResource @CheckBoxStyle}"
+                    Margin="5" />
 
                 <Label DockPanel.Dock="Top" HorizontalAlignment="Left" Style="{StaticResource $SectionHeaderLabelStyle}" Margin="0,20,0,0" >Elements Update Settings:</Label>
                 <StackPanel>
