@@ -636,7 +636,7 @@ namespace GingerCore.Actions
             }
             set
             {
-                if (!string.IsNullOrEmpty(mExInfo) && value.Contains(mExInfo) && value.IndexOf(mExInfo) == 0)//meaning act.ExInfo += was used
+                if (!string.IsNullOrEmpty(mExInfo) && value != null && value.Contains(mExInfo) && value.IndexOf(mExInfo) == 0)//meaning act.ExInfo += was used
                 {
                     //add line break
                     mExInfo = string.Format("{0}{1}{2}", value[..mExInfo.Length], Environment.NewLine, value[mExInfo.Length..]);

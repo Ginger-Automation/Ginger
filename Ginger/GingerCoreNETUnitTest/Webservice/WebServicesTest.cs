@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.ActionsLib.Webservices;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
@@ -152,7 +153,8 @@ namespace UnitTests.NonUITests
 
             ActWebAPIModel actWebAPIModel = new ActWebAPIModel
             {
-                APImodelGUID = Guid.Parse("fcac0742-4747-4939-99ab-2d23c33ab74e")
+                APImodelGUID = Guid.Parse("fcac0742-4747-4939-99ab-2d23c33ab74e"),
+                actWebAPIModelOperation = new ActWebAPIModelOperation()
             };
             actWebAPIModel.APIModelParamsValue.Add(new EnhancedActInputValue() { Param = "<<COUNTRYNAME>>", Value = "israel", ValueForDriver = "israel" });
             actWebAPIModel.Description = "Testing Action";
