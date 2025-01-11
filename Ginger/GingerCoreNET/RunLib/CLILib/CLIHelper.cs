@@ -737,7 +737,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             else
             {
                 WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
-                if (!value.ToUpper().StartsWith("HTTP://"))
+                if (!value.StartsWith("HTTP://", StringComparison.CurrentCultureIgnoreCase))
                 {
                     value = "http://" + value;
                 }

@@ -456,6 +456,7 @@ namespace GingerCore.SourceControl
                 var fetchOptions = new FetchOptions
                 {
                     CredentialsProvider = GetSourceCredentialsHandler(),
+                    Depth = 1 //Do download latest state and avoid downloading commit history
                 };
                 var co = new CloneOptions(fetchOptions)
                 {

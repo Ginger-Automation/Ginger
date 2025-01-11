@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.Common
         {
            
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append("[").Append(logLevel).Append(" | ").Append(DateTime.Now.ToString("HH:mm:ss:fff_dd-MMM")).Append("] ").Append(message);
+            stringBuilder.Append('[').Append(logLevel).Append(" | ").Append(DateTime.Now.ToString("HH:mm:ss:fff_dd-MMM")).Append("] ").Append(message).Append(Environment.NewLine);
 
             switch (logLevel)
             {
@@ -80,3 +80,7 @@ namespace Amdocs.Ginger.Common
         public abstract void ToStatus(eStatusMsgType messageType, string statusText);
     }
 }
+
+//Started downloading/Updating
+
+// 

@@ -1634,7 +1634,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         {
                             publishToQCRunSetOperation = new RunSetActionPublishToQC();
                         }
-                        if (publishToALMOperationExecConfig.ALMType.ToLower() == "default")
+                        if (publishToALMOperationExecConfig.ALMType.Equals("default", StringComparison.CurrentCultureIgnoreCase))
                         {
                             publishToQCRunSetOperation.PublishALMType = gingerExecConfig.AlmsDetails != null ? gingerExecConfig.AlmsDetails.FirstOrDefault(x => x.IsDefault != null && x.IsDefault.Value == true).ALMType : publishToALMOperationExecConfig.ALMType.ToLower();
                         }
@@ -1749,7 +1749,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 runSetConfig.AllowInterActivityFlowControls = (bool)dynamicRunsetConfigs.AllowInterActivityFlowControls;
             }
-
             return runSetConfig;
         }
 
