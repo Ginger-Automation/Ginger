@@ -32,7 +32,7 @@ namespace Amdocs.Ginger.Common
         public abstract void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null);
 
 
-        private bool prevOverwriteCurrentLine = false;
+        private static bool prevOverwriteCurrentLine = false;
 
         public void ToConsole(eLogLevel logLevel, string message, Boolean overwriteCurrentLine = false)
         {
@@ -61,8 +61,10 @@ namespace Amdocs.Ginger.Common
             
             if (overwriteCurrentLine)
             {
-                int cursorRow = prevOverwriteCurrentLine ? Console.CursorTop - 2 : Console.CursorTop;
-                Console.SetCursorPosition(0, cursorRow);                
+                int cursorRow = prevOverwriteCurrentLine ? Console.CursorTop - 3 : Console.CursorTop;
+                Console.SetCursorPosition(0, cursorRow);
+                Console.Write(new string(' ', Console.WindowWidth));
+                Console.SetCursorPosition(0, cursorRow);
                 stringBuilder.Append(Environment.NewLine);
                 Console.WriteLine(stringBuilder.ToString());
             }
@@ -81,6 +83,4 @@ namespace Amdocs.Ginger.Common
     }
 }
 
-//Started downloading/Updating
 
-// 
