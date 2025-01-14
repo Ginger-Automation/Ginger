@@ -1290,7 +1290,7 @@ namespace GingerCore
                 return false;
             }
 
-            if (ActivityName != other.ActivityName || TargetApplication != other.TargetApplication ||
+            if (!ActivityName.StartsWith(other.ActivityName, StringComparison.InvariantCultureIgnoreCase) || TargetApplication != other.TargetApplication ||
                    Type != other.Type || (other.ActivitiesGroupID != null && ActivitiesGroupID != other.ActivitiesGroupID))
             {
                 return false;

@@ -32,6 +32,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
+using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
@@ -2101,6 +2102,21 @@ namespace GingerCore.Actions
                 }
             }
 
+            if (this is ActWebAPIModel thisAction && other is ActWebAPIModel otherAction)
+            {
+                if (thisAction.APIModelParamsValue.Count != otherAction.APIModelParamsValue.Count)
+                {
+                    return false;
+                }
+                for (int i = 0; i < thisAction.APIModelParamsValue.Count; i++)
+                {
+                    if (!thisAction.APIModelParamsValue[i].AreEqual(otherAction.APIModelParamsValue[i]))
+                    {
+                        return false;
+                    }
+                }
+            }
+
             return true;
         }
 
@@ -2118,6 +2134,6 @@ namespace GingerCore.Actions
 
             return AreEqual(obj as Act);
         }
-      
+
     }
 }
