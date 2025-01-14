@@ -83,17 +83,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             /// </summary>
             internal required ProjEnvironment Environment { get; init; }
 
-            /// <summary>
-            /// Get or initialize a value indicating whether the POM should be auto-updated during the locate operation.
-            /// </summary>
-            internal required bool AutoUpdatePOM { get; init; }
-
             internal required POMExecutionUtils POMExecutionUtils { get; init; }
 
             internal IAgent? Agent { get; init; }
         }
 
-        private readonly bool _autoUpdatePOM;
         private readonly ElementInfo _elementInfo;
         private readonly ElementsProvider _elementsProvider;
         private readonly POMExecutionUtils _pomExecutionUtils;
@@ -109,7 +103,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
         /// <param name="args">The arguments for initializing <see cref="POMElementLocator{TElement}"/>.</param>
         internal POMElementLocator(Args args)
         {
-            _autoUpdatePOM = args.AutoUpdatePOM;
             _elementInfo = args.ElementInfo;
             _elementsProvider = args.ElementsProvider;
             _pomExecutionUtils = args.POMExecutionUtils;
@@ -132,7 +125,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
             bool noElementFound = elements == null || !elements.Any();
 
-            if (noElementFound && _autoUpdatePOM)
+            if (noElementFound)
             {
                 UpdatePOM();
                 wasAutoUpdated = true;
