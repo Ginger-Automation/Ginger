@@ -16,11 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
+using System;
+using System.Collections.Generic;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -179,6 +179,11 @@ namespace Amdocs.Ginger.Repository
         {
             List<string> list = [nameof(this.HttpHeaders), nameof(this.APIModelBodyKeyValueHeaders)];
             return list;
+        }
+
+        public override string GetItemType()
+        {
+            return nameof(ApplicationAPIModel);
         }
     }
 }
