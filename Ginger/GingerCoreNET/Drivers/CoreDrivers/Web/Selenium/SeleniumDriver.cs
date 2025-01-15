@@ -4255,6 +4255,10 @@ namespace GingerCore.Drivers
 
                         if (elem == null && pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent) != null)
                         {
+                            if (isAppiumSession)
+                            {
+                                currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo(this.PomCategory);
+                            }
                             elem = LocateElementByLocators(currentPOMElementInfo, currentPOM.MappedUIElements, false, pomExcutionUtil);
                             if (elem != null)
                             {

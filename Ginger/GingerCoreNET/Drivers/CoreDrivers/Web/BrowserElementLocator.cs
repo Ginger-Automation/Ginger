@@ -118,7 +118,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
             POMElementLocator<IBrowserElement> pomElementLocator = new(new POMElementLocator<IBrowserElement>.Args
             {
-                AutoUpdatePOM = false,
                 BusinessFlow = _context.BusinessFlow,
                 Environment = _context.Environment,
                 ElementInfo = element,

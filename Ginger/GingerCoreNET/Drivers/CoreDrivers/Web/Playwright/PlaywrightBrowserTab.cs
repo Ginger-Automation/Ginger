@@ -53,6 +53,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             eLocateBy.ByTagName,
             eLocateBy.ByRelXPath,
             eLocateBy.POMElement,
+            eLocateBy.ByAutomationID,
         ];
 
         private static readonly IEnumerable<eLocateBy> SupportedFrameLocators =
@@ -515,15 +516,33 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");
             }
 
-            var locator = locateBy switch
+            IPlaywrightLocator locator;
+            switch(locateBy)
             {
-                eLocateBy.ByID => _currentFrame.Locator($"css=#{value}"),
-                eLocateBy.ByCSS => _currentFrame.Locator($"css={value}"),
-                eLocateBy.ByXPath or eLocateBy.ByRelXPath => _currentFrame.Locator($"xpath={value}"),
-                eLocateBy.ByName => _currentFrame.Locator($"css=[name='{value}']"),
-                eLocateBy.ByTagName => _currentFrame.Locator($"css={value}"),
-                _ => throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported."),
-            };
+                case eLocateBy.ByID:
+                    value = value.Replace(":", "\\:");
+                    locator = _currentFrame.Locator($"css=#{value}");
+                    break;
+                case eLocateBy.ByCSS:
+                    locator = _currentFrame.Locator($"css={value}");
+                    break;
+                case eLocateBy.ByXPath:
+                case eLocateBy.ByRelXPath:
+                    locator = _currentFrame.Locator($"xpath={value}");
+                    break;
+                case eLocateBy.ByName:
+                    locator = _currentFrame.Locator($"css=[name='{value}']");
+                    break;
+                case eLocateBy.ByTagName:
+                    locator = _currentFrame.Locator($"css={value}");
+                    break;
+                case eLocateBy.ByAutomationID:
+                    value = value.Replace(":", "\\:");
+                    locator = _currentFrame.Locator($"xpath=//*[@data-automation-id=\"{value}\"]");
+                    break;
+                default:
+                    throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");
+            }
             return Task.FromResult(locator);
         }
 
