@@ -38,6 +38,7 @@ using IPlaywrightElementHandle = Microsoft.Playwright.IElementHandle;
 using IPlaywrightJSHandle = Microsoft.Playwright.IJSHandle;
 using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 using IPlaywrightPage = Microsoft.Playwright.IPage;
+using IPlaywrightFrameLocator = Microsoft.Playwright.IFrameLocator;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -327,7 +328,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         }
 
         /// <summary>
-        /// Switches the current frame to the frame specified by the given locator.
+        /// Switches the current frame to the first frame specified by the given locator.
         /// </summary>
         /// <param name="locateBy">The method of locating the frame.</param>
         /// <param name="value">The value used for locating the frame.</param>
@@ -340,7 +341,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 throw new LocatorNotSupportedException($"Frame locator '{locateBy}' is not supported.");
             }
 
-            var frameLocator = locateBy switch
+            IPlaywrightFrameLocator frameLocator = locateBy switch
             {
                 eLocateBy.ByID => _currentFrame.FrameLocator($"css=#{value}"),
                 eLocateBy.ByTitle => _currentFrame.FrameLocator($"css=iframe[title='{value}']"),
@@ -355,8 +356,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return false;
             }
 
-            IJSHandle jsHandle = await frameLocator.Owner.EvaluateHandleAsync("element => element");
-            IElementHandle? elementHandle = jsHandle.AsElement();
+            IPlaywrightJSHandle jsHandle = await frameLocator.Owner.First.EvaluateHandleAsync("element => element");
+            IPlaywrightElementHandle? elementHandle = jsHandle.AsElement();
             if (elementHandle == null)
             {
                 return false;
