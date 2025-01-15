@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using GingerCore.Actions.Common;
@@ -641,29 +642,54 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
             IBrowserElement? validationElement = null;
 
-            IEnumerable<ActUIElement.eElementAction> clicks = [clickType, ..new WebPlatform().GetPlatformUIClickTypeList()];
+            IEnumerable<ActUIElement.eElementAction> clicks;
+            if (loopThroughClicks)
+            {
+                clicks = [clickType, .. new WebPlatform().GetPlatformUIClickTypeList()];
+            }
+            else
+            {
+                clicks = [clickType];
+            }
+
+            bool wasAnyClickSuccessful = false;
             foreach (ActUIElement.eElementAction click in clicks)
             {
-                switch (click)
+                bool wasClickSuccessful = false;
+                try
                 {
-                    case ActUIElement.eElementAction.Click:
-                        await HandleClickOperationAsync();
-                        break;
-                    case ActUIElement.eElementAction.JavaScriptClick:
-                        await HandleJavaScriptClickAsync();
-                        break;
-                    case ActUIElement.eElementAction.MouseClick:
-                        await HandleMouseClickAsync();
-                        break;
-                    case ActUIElement.eElementAction.MousePressRelease:
-                        await HandleMousePressReleaseAsync();
-                        break;
-                    case ActUIElement.eElementAction.AsyncClick:
-                        await HandleAsyncClickAsync();
-                        break;
-                    default:
-                        _act.Error = $"Click type '{click}' is not supported";
-                        return;
+                    switch (click)
+                    {
+                        case ActUIElement.eElementAction.Click:
+                            await HandleClickOperationAsync();
+                            break;
+                        case ActUIElement.eElementAction.JavaScriptClick:
+                            await HandleJavaScriptClickAsync();
+                            break;
+                        case ActUIElement.eElementAction.MouseClick:
+                            await HandleMouseClickAsync();
+                            break;
+                        case ActUIElement.eElementAction.MousePressRelease:
+                            await HandleMousePressReleaseAsync();
+                            break;
+                        case ActUIElement.eElementAction.AsyncClick:
+                            await HandleAsyncClickAsync();
+                            break;
+                        default:
+                            _act.Error = $"Click type '{click}' is not supported";
+                            return;
+                    }
+                    wasClickSuccessful = true;
+                    wasAnyClickSuccessful = wasAnyClickSuccessful || wasClickSuccessful;
+                }
+                catch (Exception ex) when (ex is not EntityNotFoundException)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while performing '{click}' on element");
+                }
+
+                if (!wasClickSuccessful)
+                {
+                    continue;
                 }
 
                 validationElement = (await _elementLocator.FindMatchingElements(validationElementLocateBy, validationElementLocateValue)).FirstOrDefault();
@@ -682,11 +708,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                     }
                     break;
                 }
+            }
 
-                if(!loopThroughClicks)
-                {
-                    break;
-                }
+            if (!wasAnyClickSuccessful)
+            {
+                _act.Error = $"No click operation was performed successfully";
+                return;
             }
 
             if (validationElement == null)

@@ -9492,11 +9492,10 @@ namespace GingerCore.Drivers
             DoUIElementClick(clickType, clickElement);
             //check if validation element exists
             IWebElement elmToValidate = LocateElement(act, true, validationElementLocateby.ToString(), validationElementLocatorValue);
-
-            if (elmToValidate != null)
+            bool assertValidationType(IWebElement element, ActUIElement.eElementAction validationType)
             {
                 bool validationResult = false;
-                switch(validationType)
+                switch (validationType)
                 {
                     case ActUIElement.eElementAction.IsEnabled:
                         validationResult = elmToValidate.Enabled;
@@ -9511,6 +9510,11 @@ namespace GingerCore.Drivers
                     act.Error = $"Validation {validationType} failed";
                 }
                 return validationResult;
+            }
+
+            if (elmToValidate != null)
+            {
+                return assertValidationType(elmToValidate, validationType);
             }
             else
             {
@@ -9528,22 +9532,7 @@ namespace GingerCore.Drivers
                             elmToValidate = LocateElement(act, true, validationElementLocateby.ToString(), validationElementLocatorValue);
                             if (elmToValidate != null)
                             {
-                                bool validationResult = false;
-                                switch (validationType)
-                                {
-                                    case ActUIElement.eElementAction.IsEnabled:
-                                        validationResult = elmToValidate.Enabled;
-                                        break;
-                                    case ActUIElement.eElementAction.IsVisible:
-                                        validationResult = elmToValidate.Displayed;
-                                        break;
-                                }
-
-                                if (!validationResult)
-                                {
-                                    act.Error = $"Validation {validationType} failed";
-                                }
-                                return validationResult;
+                                return assertValidationType(elmToValidate, validationType);
                             }
                         }
                     }
