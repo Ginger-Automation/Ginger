@@ -9495,7 +9495,22 @@ namespace GingerCore.Drivers
 
             if (elmToValidate != null)
             {
-                return true;
+                bool validationResult = false;
+                switch(validationType)
+                {
+                    case ActUIElement.eElementAction.IsEnabled:
+                        validationResult = elmToValidate.Enabled;
+                        break;
+                    case ActUIElement.eElementAction.IsVisible:
+                        validationResult = elmToValidate.Displayed;
+                        break;
+                }
+
+                if (!validationResult)
+                {
+                    act.Error = $"Validation {validationType} failed";
+                }
+                return validationResult;
             }
             else
             {
@@ -9513,7 +9528,22 @@ namespace GingerCore.Drivers
                             elmToValidate = LocateElement(act, true, validationElementLocateby.ToString(), validationElementLocatorValue);
                             if (elmToValidate != null)
                             {
-                                return true;
+                                bool validationResult = false;
+                                switch (validationType)
+                                {
+                                    case ActUIElement.eElementAction.IsEnabled:
+                                        validationResult = elmToValidate.Enabled;
+                                        break;
+                                    case ActUIElement.eElementAction.IsVisible:
+                                        validationResult = elmToValidate.Displayed;
+                                        break;
+                                }
+
+                                if (!validationResult)
+                                {
+                                    act.Error = $"Validation {validationType} failed";
+                                }
+                                return validationResult;
                             }
                         }
                     }
