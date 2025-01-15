@@ -53,6 +53,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             eLocateBy.ByTagName,
             eLocateBy.ByRelXPath,
             eLocateBy.POMElement,
+            eLocateBy.ByAutomationID,
         ];
 
         private static readonly IEnumerable<eLocateBy> SupportedFrameLocators =
@@ -534,6 +535,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     break;
                 case eLocateBy.ByTagName:
                     locator = _currentFrame.Locator($"css={value}");
+                    break;
+                case eLocateBy.ByAutomationID:
+                    locator = _currentFrame.Locator($"xpath=//*[@data-automation-id=\"{value}\"]");
                     break;
                 default:
                     throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");
