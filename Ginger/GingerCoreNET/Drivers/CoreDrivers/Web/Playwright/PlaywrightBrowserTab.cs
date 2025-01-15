@@ -537,6 +537,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     locator = _currentFrame.Locator($"css={value}");
                     break;
                 case eLocateBy.ByAutomationID:
+                    value = value.Replace(":", "\\:");
                     locator = _currentFrame.Locator($"xpath=//*[@data-automation-id=\"{value}\"]");
                     break;
                 default:
