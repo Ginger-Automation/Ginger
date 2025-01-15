@@ -2048,7 +2048,7 @@ namespace GingerCore
 
         public bool AreEqual(BusinessFlow other)
         {
-            if (other == null || !this.Name.StartsWith(other.Name, StringComparison.InvariantCultureIgnoreCase)
+            if (other == null || string.IsNullOrEmpty(this.Name) || !this.Name.StartsWith(other.Name, StringComparison.InvariantCultureIgnoreCase)
                  || this.Activities.Count != other.Activities.Count
                  || this.Variables.Count != other.Variables.Count)
             {
