@@ -20,7 +20,7 @@ jobs:
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
-                os: [ubuntu-latest, windows-latest, macos-latest]
+                os: [windows-latest, macos-latest]
         env:
             BUILD_CONFIGURATION: Release
       
