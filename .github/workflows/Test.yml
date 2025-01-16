@@ -155,7 +155,7 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
         -   name: Test Report - Windows
             uses: dorny/test-reporter@v1
-            if: success() || failure() && (runner.os == 'Windows')        # run this step even if previous step failed
+            if: (success() || failure()) && (runner.os == 'Windows')        # run this step even if previous step failed
             with:
                 name: Ginger Windows UnitTests    # Name of the check run which will be created
                 path: "D:/a/TestResults/*.trx"                # Path to test results
@@ -163,7 +163,7 @@ jobs:
                 
         -   name: Test Report - Linux
             uses: dorny/test-reporter@v1
-            if: success() || failure()   && (runner.os == 'Linux')      # run this step even if previous step failed
+            if: (success() || failure())   && (runner.os == 'Linux')      # run this step even if previous step failed
             with:
                 name: Ginger Linux UnitTests    # Name of the check run which will be created
                 path: "**/*.trx"                # Path to test results
@@ -171,7 +171,7 @@ jobs:
 
         -   name: Test Report - MacOS
             uses: dorny/test-reporter@v1
-            if: success() || failure()  && (runner.os == 'macOS')       # run this step even if previous step failed
+            if: (success() || failure())  && (runner.os == 'macOS')       # run this step even if previous step failed
             with:
                 name: Ginger MacOS UnitTests    # Name of the check run which will be created
                 path: "**/*.trx"                # Path to test results
