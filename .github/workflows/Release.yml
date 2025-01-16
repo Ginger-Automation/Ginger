@@ -314,7 +314,7 @@ jobs:
                  #cert-password: ${{ secrets.PEM_PASS }}
                     
             -   name: Upload Windows Installer
-                uses: actions/upload-artifact@v3
+                uses: actions/upload-artifact@v4
                 with:
                   name: WindowsInstaller
                   path: D:/a/Installers
