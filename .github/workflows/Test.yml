@@ -133,14 +133,14 @@ jobs:
 # Run .Net Framework tests using powershell and publish the results
 # ------------------------------------------------------------------------------------------------------
         -   name: Run tests for Ginger .NetFramework *Test Dlls for Windows
-            if: success() || failure() && (runner.os == 'Windows')        # run this step even if previous step failed and if the OS is Windows
+            if: (success() || failure()) && (runner.os == 'Windows')        # run this step even if previous step failed and if the OS is Windows
             run: powershell -file "TestDotNetFrameworkGithub.ps1"
   
 # ------------------------------------------------------------------------------------------------------
 # Run Standalone CLI Test
 # ------------------------------------------------------------------------------------------------------          
         -   name: Run Standalone CLI Test for Linux
-            if: success() || failure() && (runner.os == 'Linux')       # run this step even if previous step failed
+            if: (success() || failure()) && (runner.os == 'Linux')       # run this step even if previous step failed
             shell: bash
             run: |
                 pwd 
