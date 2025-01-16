@@ -51,7 +51,7 @@ jobs:
 # Download GingerRuntime Artifact
 # ------------------------------------------------------------------------------------------------------
           -   name: Restore GingerRuntime
-              uses: actions/cache@v3.2.6
+              uses: actions/cache@v4
               with:
                   path: ./GingerRuntime-root.tar.gz
                   key: cache-GingerRuntime-${{ github.run_number }}
@@ -62,7 +62,7 @@ jobs:
 # Download GingerMacOSRuntime Artifact
 # ------------------------------------------------------------------------------------------------------
           - name: Restore GingerMacOSRuntime
-            uses: actions/cache@v3.2.6
+            uses: actions/cache@v4
             with:
               path: ./GingerMacOSRuntime-root.tar.gz
               key: cache-GingerMacOSRuntime-${{ github.run_number }}

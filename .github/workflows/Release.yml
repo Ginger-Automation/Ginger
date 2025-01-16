@@ -11,7 +11,7 @@ jobs:
         runs-on: macOS-latest
         steps:
             -   name: Restore static site content
-                uses: actions/cache@v3.2.6
+                uses: actions/cache@v4
                 with:
                     path: ./**
                     key: cache-site-macos-${{ github.run_number }}
@@ -42,7 +42,7 @@ jobs:
 
             -   name: Cache GingerMacOSRuntime
                 id: cache
-                uses: actions/cache@v3.2.6
+                uses: actions/cache@v4
                 with:
                     path: 
                         ./GingerMacOSRuntime-root.tar.gz
@@ -58,7 +58,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Restore static site content
-              uses: actions/cache@v3.2.6
+              uses: actions/cache@v4
               with:
                 path: ./**
                 key: cache-site-linux-${{ github.run_number }}
@@ -100,7 +100,7 @@ jobs:
 
             -   name: Cache GingerRuntime
                 id: cache
-                uses: actions/cache@v3.2.6
+                uses: actions/cache@v4
                 with:
                     path: 
                         ./GingerRuntime-root.tar.gz
@@ -116,7 +116,7 @@ jobs:
         runs-on: windows-latest     
         steps:
             -   name: Restore static site content
-                uses: actions/cache@v3.2.6
+                uses: actions/cache@v4
                 with:
                     path: ./**
                     key: cache-site-windows-${{ github.run_number }}
