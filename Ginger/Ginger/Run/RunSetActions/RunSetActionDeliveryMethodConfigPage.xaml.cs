@@ -46,6 +46,7 @@ namespace Ginger.Run.RunSetActions
             BindingHandler.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, email, nameof(Email.ConfigureCredential));
             BindingHandler.ObjFieldBinding(xcbIsValidationRequired, CheckBox.IsCheckedProperty, email, nameof(Email.IsValidationRequired));
             BindingHandler.ObjFieldBinding(xcbCertificatePathTextBox, TextBox.TextProperty, email, nameof(Email.CertificatePath));
+            CertificatePasswordUCValueExpression.Init(context, email, nameof(Email.CertificatePasswordUCValueExpression));
             BindingHandler.ObjFieldBinding(CertificatePasswordUCValueExpression, TextBox.TextProperty, email, nameof(Email.CertificatePasswordUCValueExpression));
         }
         private void CertificateSelection_Changed(object sender, RoutedEventArgs e)
