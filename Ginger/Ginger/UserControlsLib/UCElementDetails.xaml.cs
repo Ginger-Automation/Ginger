@@ -600,7 +600,7 @@ namespace Ginger
 
                 if (SelectedElement.Properties == null || SelectedElement.Properties.Count == 0)
                 {
-                    SelectedElement.Properties = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties();
+                    SelectedElement.Properties = mCurrentControlTreeViewItem != null ? ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties() : SelectedElement.Properties;
                 }
 
                 if (SelectedElement.Locators == null || SelectedElement.Locators.Count == 0)

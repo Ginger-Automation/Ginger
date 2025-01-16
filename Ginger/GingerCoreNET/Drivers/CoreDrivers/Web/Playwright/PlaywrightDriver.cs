@@ -677,7 +677,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return Task.Run(async () =>
             {
                 IBrowserTab currentTab = _browser.CurrentWindow.CurrentTab;
-
+                await currentTab.SwitchToParentFrameAsync();
                 if (_lastHighlightedElement != null)
                 {
                     await UnhighlightElementAsync(_lastHighlightedElement);
@@ -711,21 +711,86 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
                 string tag = await browserElement.TagNameAsync();
                 string xPath = string.Empty;
-                if (string.Equals(tag, "iframe", StringComparison.OrdinalIgnoreCase) && string.Equals(tag, "frame", StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(tag) && (string.Equals(tag.ToLower(), "iframe", StringComparison.CurrentCultureIgnoreCase) || string.Equals(tag.ToLower(), "frame", StringComparison.CurrentCultureIgnoreCase)))
                 {
                     xPath = await GenerateXPathFromBrowserElementAsync(browserElement);
                     //TODO: create HTMLElementInfo specific for IFrame
                 }
 
-                return new HTMLElementInfo()
+                HTMLElementInfo foundElemntInfo = new HTMLElementInfo()
                 {
                     ElementObject = browserElement,
                     ScreenShotImage = screenshot,
                     XPath = xPath,
                 };
+
+                if (!string.IsNullOrEmpty(tag) && tag.ToLower() is "iframe" or "frame")
+                {
+                    foundElemntInfo.Path = xPath;
+                    foundElemntInfo.XPath = xPath;
+                    return await GetElementFromIframeAsync(foundElemntInfo, currentTab);
+                }
+                return foundElemntInfo;
+
             }).Result;
         }
 
+        private async Task<ElementInfo> GetElementFromIframeAsync(ElementInfo IframeElementInfo, IBrowserTab currentTab)
+        {
+            //SwitchFrame(IframeElementInfo.Path, IframeElementInfo.XPath, currentTab);
+            await SwitchToFrameOfElementAsync(IframeElementInfo);
+            return Task.Run(async () =>
+            {
+                IBrowserTab IframecurrentTab = _browser.CurrentWindow.CurrentTab;
+                await InjectLiveSpyScriptAsync(IframecurrentTab, true);
+                IBrowserElement? browserElement = null;
+                try
+                {
+                    browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
+                }
+                catch (Exception)
+                {
+                    //when we spy the element for the first time, it throws exception because X,Y point of mouse position is undefined for some reason
+                }
+                if (browserElement == null)
+                {
+                    return null!;
+                }
+
+                string? screenshot = null;
+                try
+                {
+                    screenshot = Convert.ToBase64String(await browserElement.ScreenshotAsync());
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "error while taking element screenshot", ex);
+                }
+
+                string tag = await browserElement.TagNameAsync();
+                string xPath = string.Empty;
+                if (!string.IsNullOrEmpty(tag) && (string.Equals(tag.ToLower(), "iframe", StringComparison.CurrentCultureIgnoreCase) || string.Equals(tag.ToLower(), "frame", StringComparison.CurrentCultureIgnoreCase)))
+                {
+                    xPath = await GenerateXPathFromBrowserElementAsync(browserElement);
+                    //TODO: create HTMLElementInfo specific for IFrame
+                }
+
+                HTMLElementInfo foundElemntInfo = new HTMLElementInfo()
+                {
+                    ElementObject = browserElement,
+                    ScreenShotImage = screenshot,
+                    XPath = xPath,
+                };
+
+                if (!string.IsNullOrEmpty(tag) && tag.ToLower() is "iframe" or "frame")
+                {
+                    foundElemntInfo.Path = string.Empty;
+                    foundElemntInfo.XPath = xPath;
+                    return await GetElementFromIframeAsync(foundElemntInfo, currentTab);
+                }
+                return foundElemntInfo;
+            }).Result;
+        }
         public AppWindow GetActiveWindow()
         {
             ThrowIfClosed();

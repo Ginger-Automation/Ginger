@@ -35,10 +35,10 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using IPlaywrightElementHandle = Microsoft.Playwright.IElementHandle;
+using IPlaywrightFrameLocator = Microsoft.Playwright.IFrameLocator;
 using IPlaywrightJSHandle = Microsoft.Playwright.IJSHandle;
 using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 using IPlaywrightPage = Microsoft.Playwright.IPage;
-using IPlaywrightFrameLocator = Microsoft.Playwright.IFrameLocator;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -133,6 +133,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ThrowIfClosed();
             return _playwrightPage.EvaluateAsync<string>(script);
         }
+        /// <summary>
+        /// Executes the specified JavaScript code on the current frame and returns the result as a string.
+        /// </summary>
+        /// <param name="script">The JavaScript code to execute.</param>
+        /// <returns>A task representing the asynchronous operation. The task result contains the result of the JavaScript code execution as a string.</returns>
+
+        public Task<string> ExecuteJavascriptIframeAsync(string script)
+        {
+            ThrowIfClosed();
+            return _currentFrame.EvaluateAsync<string>(script);
+        }
 
         /// <summary>
         /// Executes the specified JavaScript code on the current page with the provided argument and returns the result as a string.
@@ -147,6 +158,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         }
 
         /// <summary>
+        /// Executes the specified JavaScript code on the current frame with the provided argument and returns the result as a string.
+        /// </summary>
+        /// <param name="script">The JavaScript code to execute.</param>
+        /// <param name="arg">The argument to pass to the JavaScript code.</param>
+        /// <returns>A task representing the asynchronous operation. The task result contains the result of the JavaScript code execution as a string.</returns>
+
+        public Task<string> ExecuteJavascriptIframeAsync(string script, object arg)
+        {
+            ThrowIfClosed();
+            return _currentFrame.EvaluateAsync<string>(script, arg);
+        }
+
+        /// <summary>
         /// Injects the specified JavaScript code into the current page.
         /// </summary>
         /// <param name="script">The JavaScript code to inject.</param>
@@ -155,6 +179,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             ThrowIfClosed();
             return _playwrightPage.AddScriptTagAsync(new PageAddScriptTagOptions()
+            {
+                Content = script,
+            });
+        }
+        /// <summary>
+        /// Injects the specified JavaScript code into the current frame.
+        /// </summary>
+        /// <param name="script">The JavaScript code to inject.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task InjectJavascriptIframeAsync(string script)
+        {
+            ThrowIfClosed();
+            return _currentFrame.AddScriptTagAsync(new FrameAddScriptTagOptions()
             {
                 Content = script,
             });
@@ -518,7 +555,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
 
             IPlaywrightLocator locator;
-            switch(locateBy)
+            switch (locateBy)
             {
                 case eLocateBy.ByID:
                     value = value.Replace(":", "\\:");
@@ -1009,6 +1046,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         public async Task StartListenDialogsAsync()
         {
             isDialogDismiss = false;
+        }
+
+        public string GetCurrentFrameName()
+        {
+            return _currentFrame.Name;
+        }
+
+        public IFrame GetMainFrame()
+        {
+            return _currentFrame;
         }
     }
 
