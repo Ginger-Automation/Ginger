@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-jammy
 
 # Copy the published application to the container
-COPY ./bin/Release/net8.0/publish ./GingerRuntime
+COPY ./bin/Release/net8.0/linux-x64 ./GingerRuntime
 
 # Switch to root user for installation
 USER root
@@ -53,7 +53,7 @@ WORKDIR /GingerRuntime
 
 RUN ./selenium-manager/linux/selenium-manager --browser chrome
 RUN ./selenium-manager/linux/selenium-manager --browser firefox
-RUN ./selenium-manager/linux/selenium-manager --browser edge
+#RUN ./selenium-manager/linux/selenium-manager --browser edge
 
 # Specify the entry point
 ENTRYPOINT ["dotnet", "GingerRuntime.dll"]
