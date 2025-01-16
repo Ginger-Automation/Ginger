@@ -48,7 +48,7 @@ namespace GingerCore
             AllowAutoSave = true;
             this.OnDirtyStatusChanged += BusinessFlow_OnDirtyStatusChanged;
         }
-
+      
         public BusinessFlow(string sName)
         {
             Name = sName;
@@ -117,6 +117,7 @@ namespace GingerCore
 
         public object Platforms { get; set; } // keep it for backword compatibility when loading old XML, or handle in RI serializer
 
+        public bool IsVirtual = false;
         public List<string> VariablesBeforeExec { get; set; }
 
         private TimeSpan mDevelopmentTime;

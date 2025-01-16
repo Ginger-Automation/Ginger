@@ -1246,6 +1246,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             {
                                 //using Virtual BF
                                 bf = new BusinessFlow() { Name = businessFlowConfig.Name, ExternalID = businessFlowConfig.ExternalID };
+                                bf.IsVirtual = true;
                                 ///Add Shared Activities 
                                 if (businessFlowConfig.SharedActivities != null && businessFlowConfig.SharedActivities.Count > 0)
                                 {
