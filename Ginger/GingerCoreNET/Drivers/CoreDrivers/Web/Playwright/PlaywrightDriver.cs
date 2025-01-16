@@ -690,9 +690,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 {
                     browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     //when we spy the element for the first time, it throws exception because X,Y point of mouse position is undefined for some reason
+                    Reporter.ToLog(eLogLevel.DEBUG, "Failed to get element from point - this is expected on first spy attempt", ex);
                 }
                 if (browserElement == null)
                 {
@@ -711,7 +712,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
                 string tag = await browserElement.TagNameAsync();
                 string xPath = string.Empty;
-                if (!string.IsNullOrEmpty(tag) && (string.Equals(tag.ToLower(), "iframe", StringComparison.CurrentCultureIgnoreCase) || string.Equals(tag.ToLower(), "frame", StringComparison.CurrentCultureIgnoreCase)))
+                if (!string.IsNullOrEmpty(tag) && (string.Equals(tag, "iframe", StringComparison.InvariantCultureIgnoreCase) || string.Equals(tag, "frame", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     xPath = await GenerateXPathFromBrowserElementAsync(browserElement);
                     //TODO: create HTMLElementInfo specific for IFrame
@@ -724,7 +725,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     XPath = xPath,
                 };
 
-                if (!string.IsNullOrEmpty(tag) && tag.ToLower() is "iframe" or "frame")
+                if (!string.IsNullOrEmpty(tag) && (string.Equals(tag, "iframe", StringComparison.InvariantCultureIgnoreCase) || string.Equals(tag, "frame", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     foundElemntInfo.Path = xPath;
                     foundElemntInfo.XPath = xPath;
@@ -737,7 +738,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         private async Task<ElementInfo> GetElementFromIframeAsync(ElementInfo IframeElementInfo, IBrowserTab currentTab)
         {
-            //SwitchFrame(IframeElementInfo.Path, IframeElementInfo.XPath, currentTab);
             await SwitchToFrameOfElementAsync(IframeElementInfo);
             return Task.Run(async () =>
             {
@@ -748,9 +748,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 {
                     browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     //when we spy the element for the first time, it throws exception because X,Y point of mouse position is undefined for some reason
+                    Reporter.ToLog(eLogLevel.DEBUG, "Failed to get element from point - this is expected on first spy attempt", ex);
                 }
                 if (browserElement == null)
                 {
@@ -769,7 +770,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
                 string tag = await browserElement.TagNameAsync();
                 string xPath = string.Empty;
-                if (!string.IsNullOrEmpty(tag) && (string.Equals(tag.ToLower(), "iframe", StringComparison.CurrentCultureIgnoreCase) || string.Equals(tag.ToLower(), "frame", StringComparison.CurrentCultureIgnoreCase)))
+                if (!string.IsNullOrEmpty(tag) && (string.Equals(tag, "iframe", StringComparison.InvariantCultureIgnoreCase) || string.Equals(tag, "frame", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     xPath = await GenerateXPathFromBrowserElementAsync(browserElement);
                     //TODO: create HTMLElementInfo specific for IFrame
@@ -782,9 +783,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     XPath = xPath,
                 };
 
-                if (!string.IsNullOrEmpty(tag) && tag.ToLower() is "iframe" or "frame")
+                if (!string.IsNullOrEmpty(tag) && (string.Equals(tag, "iframe", StringComparison.InvariantCultureIgnoreCase) || string.Equals(tag, "frame", StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    foundElemntInfo.Path = string.Empty;
+                    foundElemntInfo.Path = xPath;
                     foundElemntInfo.XPath = xPath;
                     return await GetElementFromIframeAsync(foundElemntInfo, currentTab);
                 }

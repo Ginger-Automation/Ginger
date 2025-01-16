@@ -1048,15 +1048,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             isDialogDismiss = false;
         }
 
-        public string GetCurrentFrameName()
-        {
-            return _currentFrame.Name;
-        }
-
-        public IFrame GetMainFrame()
-        {
-            return _currentFrame;
-        }
     }
 
 }
