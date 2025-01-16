@@ -16,5 +16,3 @@ reg add "HKEY_CLASSES_ROOT\ginger\shell" /ve /d "" /f
 reg add "HKEY_CLASSES_ROOT\ginger\shell\open" /ve /d "" /f
 reg add "HKEY_CLASSES_ROOT\ginger\shell\open\command" /ve /d "\"C:\Program Files (x86)\Amdocs\Ginger by amdocs\Ginger.exe\" \"%%1\"" /f
 echo Registry updated successfully.
-
-pause

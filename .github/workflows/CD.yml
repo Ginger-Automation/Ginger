@@ -38,15 +38,15 @@ jobs:
         uses: ./.github/workflows/Build.yml
         secrets: inherit
 
-    # Ginger_Unit-Test:
-    #     name: Ginger Unit-Test
-    #     needs: Builder
-    #     uses: ./.github/workflows/Test.yml
-    #     secrets: inherit
+    Ginger_Unit-Test:
+        name: Ginger Unit-Test
+        needs: Builder
+        uses: ./.github/workflows/Test.yml
+        secrets: inherit
      
     Release:
         name: Release
-        needs: Builder
+        needs: Ginger_Unit-Test
         uses: ./.github/workflows/Release.yml
         secrets: inherit
      
