@@ -19,13 +19,12 @@ limitations under the License.
 using CommandLine;
 using System;
 using System.IO;
-using System.Net;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
 
-    [Verb("do", HelpText = "Solution Operations like: analyze, clean and more for list run 'ginger help solution")]
-    public class DoOptions  // 'ginger do --operation analyze' run analyzer on solution
+    [Verb("do", HelpText = "Solution Operations like: open, analyze, info and more 'ginger help solution")]
+    public class DoOptions : SourceControlOptions  // 'ginger do --operation analyze' run analyzer on solution
     {
         public enum DoOperation
         {
@@ -40,7 +39,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         private string _solution;
 
-        [Option('s', "solution", Required = true, HelpText = "Set solution folder")]
+        [Option('s', "solution", Required = true, HelpText = "Provide solution folder path")]
         public string Solution
         {
             get => _solution;
@@ -59,6 +58,30 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+
+        [Option("encryptionKey", Required = false, HelpText = "(Optional) Encryption key of your solution.")]
+        public string EncryptionKey { get; set; }
+
+        [Option("executionId", Required = false, HelpText = "(Optional) Id of a RunSet execution.")]
+        public string ExecutionId { get; set; }
+
+        [Option("runSetId", Required = false, HelpText = "(Optional) Id of the RunSet to be opened.")]
+        public string RunSetId { get; set; }
+
+        [Option("runSetName", Required = false, HelpText = "(Optional) Name of the RunSet to be opened.")]
+        public string RunSetName { get; set; }
+
+        [Option("businessFlowId", Required = false, HelpText = "(Optional) Id of the Business Flow to be opened.")]
+        public string BusinessFlowId { get; set; }
+
+        [Option("businessFlowName", Required = false, HelpText = "(Optional) Name of the Business Flow to be opened.")]
+        public string BusinessFlowName { get; set; }
+
+        [Option("sharedActivityName", Required = false, HelpText = "(Optional) Name of the Shared Repository Activity to be opened.")]
+        public string SharedActivityName { get; set; }
+
+        [Option("sharedActivityId", Required = false, HelpText = "(Optional) Id of the Shared Repository Activity to be opened.")]
+        public string SharedActivityId { get; set; }
 
     }
 

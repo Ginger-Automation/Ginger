@@ -3114,7 +3114,12 @@ private PayLoad GetComponentState(Component c)
 		}
 		return PayLoad.OK("Done");
 	}
-	private PayLoad ClickComponent(final Component c,final String value,final int Timeout) {
+	
+	private PayLoad ClickComponent(final Component c, final String value, final int Timeout) {
+		return ClickComponent(c, 0, 0, value, Timeout);
+	}
+	
+	private PayLoad ClickComponent(final Component c, final int x, final int y,final String value,final int Timeout) {
 		 final String[] response = new String[3];
 
 		 GingerAgent.WriteLog("ClickComponent " + c.getClass() + " - " + value);
@@ -3350,7 +3355,34 @@ private PayLoad GetComponentState(Component c)
 						Component cPanel=FindPanelInsideScroll(c);						
 						boolean status = HandleTabClickForJPanel(cPanel);
 						response[0]= String.valueOf(status);
-					}							
+					}
+					else {
+						//unknown element
+						int count = 1;
+						
+						try {
+							Robot bot = new Robot();
+					        bot.mouseMove(x, y);
+						}
+						catch (Exception ex) {
+							
+						}
+						
+						long when = System.currentTimeMillis();
+						MouseEvent mouseEvent = new MouseEvent(c, MouseEvent.MOUSE_PRESSED, when, MouseEvent.BUTTON1_DOWN_MASK, x, y, count, false);
+						c.dispatchEvent(mouseEvent);
+						
+						try {
+							Thread.sleep(100);
+						}
+						catch (Exception ex) {
+							GingerAgent.WriteLog(ex.toString());
+						}
+
+						when = System.currentTimeMillis();
+						mouseEvent = new MouseEvent(c, MouseEvent.MOUSE_RELEASED, when, MouseEvent.BUTTON1_DOWN_MASK, x, y, count, false);
+						c.dispatchEvent(mouseEvent);
+					}
 					
 					response[1] = "true";
 				}

@@ -371,22 +371,37 @@ namespace GingerCore.ALM
                     currentField.Mandatory = latestField.Mandatory;
                     currentField.ExternalID = latestField.ExternalID;
                     currentField.PossibleValues = latestField.PossibleValues;
+                    currentField.PossibleValueKeys = latestField.PossibleValueKeys;
+
                     currentField.ToUpdate = false;
                     if (string.IsNullOrEmpty(currentField.SelectedValue) == false)
                     {
                         if ((latestField.PossibleValues.Count == 0 && currentField.SelectedValue != latestField.SelectedValue) || (latestField.PossibleValues.Count > 0 && latestField.PossibleValues.Contains(currentField.SelectedValue) && currentField.SelectedValue != latestField.PossibleValues[0]))
                         {
                             currentField.ToUpdate = true;
+                            int SelectedElementIndex = latestField.PossibleValues.IndexOf(currentField.SelectedValue);
+                            if (SelectedElementIndex != -1)
+                            {
+                                currentField.SelectedValue = latestField.PossibleValues[SelectedElementIndex];
+                                currentField.SelectedValueKey = latestField.PossibleValueKeys != null && latestField.PossibleValueKeys.Count > 0 ? latestField.PossibleValueKeys[SelectedElementIndex] : string.Empty;
+                            }
+                            else
+                            {
+                                currentField.SelectedValue = latestField.SelectedValue;
+                                currentField.SelectedValueKey = latestField.SelectedValueKey;
+                            }
                         }
                         else
                         {
                             currentField.SelectedValue = latestField.SelectedValue;
+                            currentField.SelectedValueKey = latestField.SelectedValueKey;
                             currentField.ToUpdate = false;
                         }
                     }
                     else
                     {
                         currentField.SelectedValue = latestField.SelectedValue;
+                        currentField.SelectedValueKey = latestField.SelectedValueKey;
                         currentField.ToUpdate = false;
                     }
                     mergedFields.Add(currentField);

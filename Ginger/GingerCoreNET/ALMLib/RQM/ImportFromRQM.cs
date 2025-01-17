@@ -912,17 +912,21 @@ namespace GingerCore.ALM.RQM
                         ItemType = jsonItemField.ItemType,
                         Mandatory = jsonItemField.Mandatory,
                         PossibleValues = jsonItemField.PossibleValues,
+                        PossibleValueKeys = jsonItemField.PossibleValueKeys,
                         ToUpdate = jsonItemField.ToUpdate,
-                        SelectedValue = jsonItemField.Selected
+                        SelectedValue = jsonItemField.Selected,
+                        SelectedValueKey = jsonItemField.SelectedKey,
                     };
 
                     if (jsonItemField.PossibleValues.Count > 0)
                     {
                         itemField.SelectedValue = jsonItemField.PossibleValues[0];
+                        itemField.SelectedValueKey = jsonItemField.PossibleValueKeys != null && jsonItemField.PossibleValueKeys.Count > 0 ? jsonItemField.PossibleValueKeys[0] : string.Empty;
                     }
                     else
                     {
                         itemField.SelectedValue = "Unassigned";
+                        itemField.SelectedValueKey = string.Empty;
                     }
                     Reporter.ToLog(eLogLevel.DEBUG, "Item : " + Newtonsoft.Json.JsonConvert.SerializeObject(itemField));
                     ItemFieldsPossibleValues.Add(itemField);
@@ -945,7 +949,9 @@ namespace GingerCore.ALM.RQM
                     ItemType = field.ItemType,
                     Mandatory = field.Mandatory,
                     PossibleValues = field.PossibleValues,
+                    PossibleValueKeys = field.PossibleValueKeys,
                     Selected = field.SelectedValue,
+                    SelectedKey = field.SelectedValueKey,
                     ToUpdate = field.ToUpdate,
                     IsCustomField = field.IsCustomField,
                 };
@@ -1214,9 +1220,8 @@ namespace GingerCore.ALM.RQM
                         XDocument doc = XDocument.Parse(categoryfieldlist.responseText);
                         XNamespace ns = "http://www.w3.org/2005/Atom";
 
-                        // Query the XML to get all titles inside entry nodes
                         var titles = doc.Descendants(ns + "entry")
-                                        .Select(entry => entry.Element(ns + "title")?.Value)
+                                        .Select(entry => entry)
                                         .Where(title => title != null);
 
                         PopulateLogOnFieldMappingwinodw(bw, $"Number of values populated :{titles.Count()}");
@@ -1229,13 +1234,25 @@ namespace GingerCore.ALM.RQM
                         {
                             foreach (var title in titles)
                             {
-                                field.PossibleValues.Add(title);
+                                field.PossibleValues.Add(title.Element(ns + "title")?.Value);
+                                string PossibleValueKey = title.Element(ns + "id")?.Value;
+                                string PossibleValueKeyID = PossibleValueKey[(PossibleValueKey.LastIndexOf(':') + 1)..];
+                                field.PossibleValueKeys.Add(PossibleValueKeyID);
                             }
 
                             // Set the first item as SelectedValue if PossibleValues is not empty
-                            if (field.PossibleValues.Count > 0)
+                            if (field.SelectedValue.Equals("Unassigned", StringComparison.CurrentCultureIgnoreCase) && field.PossibleValues.Count > 0)
                             {
                                 field.SelectedValue = field.PossibleValues[0];
+                                field.SelectedValueKey = field.PossibleValueKeys != null && field.PossibleValueKeys.Count > 0 ? field.PossibleValueKeys[0] : string.Empty;
+                            }
+                            else
+                            {
+                                int SelectedElementIndex = field.PossibleValues.IndexOf(field.SelectedValue);
+                                if (SelectedElementIndex != -1)
+                                {
+                                    field.SelectedValueKey = field.PossibleValueKeys != null && field.PossibleValueKeys.Count > 0 ? field.PossibleValueKeys[SelectedElementIndex] : string.Empty;
+                                }
                             }
                         }
                     }
@@ -1500,25 +1517,25 @@ namespace GingerCore.ALM.RQM
                                 CustomAttributeMandatory = "false";
                             }
 
-                            
+
                             itemfield.ItemType = CustomAttributeItemType;
                             itemfield.ID = CustomAttributeID;
                             itemfield.TypeIdentifier = typeIdentifier;
                             itemfield.Name = CustomAttributeName;
                             itemfield.Type = CustomAttributefieldType;
-                            if (CustomAttributeMandatory.Equals("true",StringComparison.CurrentCultureIgnoreCase))
+                            if (CustomAttributeMandatory.Equals("true", StringComparison.CurrentCultureIgnoreCase))
                             {
                                 itemfield.ToUpdate = true;
                                 itemfield.Mandatory = true;
-                                if(itemfield.Type.Equals("INTEGER",StringComparison.CurrentCultureIgnoreCase))
+                                if (itemfield.Type.Equals("INTEGER", StringComparison.CurrentCultureIgnoreCase))
                                 {
                                     itemfield.SelectedValue = "1";
                                 }
-                                else if(itemfield.Type.Equals("MEDIUMSTRING", StringComparison.CurrentCultureIgnoreCase) || itemfield.Type.Equals("SMALLSTRING", StringComparison.CurrentCultureIgnoreCase))
+                                else if (itemfield.Type.Equals("MEDIUMSTRING", StringComparison.CurrentCultureIgnoreCase) || itemfield.Type.Equals("SMALLSTRING", StringComparison.CurrentCultureIgnoreCase))
                                 {
                                     itemfield.SelectedValue = "dummy";
                                 }
-                                else if(itemfield.Type.Equals("TIMESTAMP", StringComparison.CurrentCultureIgnoreCase))
+                                else if (itemfield.Type.Equals("TIMESTAMP", StringComparison.CurrentCultureIgnoreCase))
                                 {
                                     itemfield.SelectedValue = DateTime.Now.ToString("yyyy-MM-dd");
                                 }
@@ -1534,7 +1551,7 @@ namespace GingerCore.ALM.RQM
                                 itemfield.SelectedValue = "Unassigned";
                             }
 
-                            
+
                             itemfield.IsCustomField = true;
                             itemfield.ProjectGuid = ALMCore.DefaultAlmConfig.ALMProjectGUID;
                             CustomAttributeRsult.Add(itemfield);
@@ -1550,7 +1567,7 @@ namespace GingerCore.ALM.RQM
                     #region new Get Values by filed Custom Attributes
                     foreach (ExternalItemFieldBase field in fields)
                     {
-                        if(field.IsMultiple)
+                        if (field.IsMultiple)
                         {
                             string baseUrl = $"{rqmSserverUrl}{RQMCore.ALMProjectGroupName}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{ALMCore.DefaultAlmConfig.ALMProjectGUID}/customAttribute/?fields=feed/entry/content/customAttribute/";
 
@@ -1590,7 +1607,7 @@ namespace GingerCore.ALM.RQM
                         }
                         else
                         {
-                            if(field.Type != null && (field.Type.Equals("MEDIUM_STRING",StringComparison.CurrentCultureIgnoreCase) || field.Type.Equals("SMALL_STRING", StringComparison.CurrentCultureIgnoreCase)))
+                            if (field.Type != null && (field.Type.Equals("MEDIUM_STRING", StringComparison.CurrentCultureIgnoreCase) || field.Type.Equals("SMALL_STRING", StringComparison.CurrentCultureIgnoreCase)))
                             {
                                 field.SelectedValue = string.Empty;
                             }
@@ -1598,15 +1615,15 @@ namespace GingerCore.ALM.RQM
                             {
                                 field.SelectedValue = null;
                             }
-                            
+
                         }
                     }
                     #endregion
                 }
 
             }
-            catch (Exception e) 
-            { 
+            catch (Exception e)
+            {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
             return fields;

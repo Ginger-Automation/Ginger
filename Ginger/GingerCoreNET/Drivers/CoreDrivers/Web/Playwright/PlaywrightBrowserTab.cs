@@ -16,19 +16,26 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Playwright;
+using GingerCore.Actions;
 using Microsoft.Playwright;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using IPlaywrightElementHandle = Microsoft.Playwright.IElementHandle;
+using IPlaywrightFrameLocator = Microsoft.Playwright.IFrameLocator;
 using IPlaywrightJSHandle = Microsoft.Playwright.IJSHandle;
 using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 using IPlaywrightPage = Microsoft.Playwright.IPage;
@@ -47,6 +54,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             eLocateBy.ByTagName,
             eLocateBy.ByRelXPath,
             eLocateBy.POMElement,
+            eLocateBy.ByAutomationID,
         ];
 
         private static readonly IEnumerable<eLocateBy> SupportedFrameLocators =
@@ -63,8 +71,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         private readonly LinkedList<string> _consoleMessages = [];
         private IFrame _currentFrame;
         private bool _isClosed = false;
+        List<Tuple<string, object>> networkResponseLogList;
+        List<Tuple<string, object>> networkRequestLogList;
+        ActBrowserElement _act;
+        public bool isNetworkLogMonitoringStarted = false;
+        public bool isDialogDismiss = true;
+        IDialog dialogs;
 
         public bool IsClosed => _isClosed;
+        BrowserHelper _BrowserHelper;
 
         internal PlaywrightBrowserTab(IPlaywrightPage playwrightPage, IBrowserTab.OnTabClose onTabClose)
         {
@@ -73,12 +88,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             _currentFrame = _playwrightPage.MainFrame;
             _playwrightPage.Console += OnConsoleMessage;
             _playwrightPage.Close += OnPlaywrightPageClose;
+            _playwrightPage.Dialog += OnPlaywrightDialog;
         }
 
         private void RemoveEventHandlers()
         {
             _playwrightPage.Console -= OnConsoleMessage;
             _playwrightPage.Close -= OnPlaywrightPageClose;
+            _playwrightPage.Dialog -= OnPlaywrightDialog;
         }
 
         private void OnPlaywrightPageClose(object? sender, IPlaywrightPage e)
@@ -116,6 +133,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ThrowIfClosed();
             return _playwrightPage.EvaluateAsync<string>(script);
         }
+        /// <summary>
+        /// Executes the specified JavaScript code on the current frame and returns the result as a string.
+        /// </summary>
+        /// <param name="script">The JavaScript code to execute.</param>
+        /// <returns>A task representing the asynchronous operation. The task result contains the result of the JavaScript code execution as a string.</returns>
+
+        public Task<string> ExecuteJavascriptIframeAsync(string script)
+        {
+            ThrowIfClosed();
+            return _currentFrame.EvaluateAsync<string>(script);
+        }
 
         /// <summary>
         /// Executes the specified JavaScript code on the current page with the provided argument and returns the result as a string.
@@ -130,6 +158,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         }
 
         /// <summary>
+        /// Executes the specified JavaScript code on the current frame with the provided argument and returns the result as a string.
+        /// </summary>
+        /// <param name="script">The JavaScript code to execute.</param>
+        /// <param name="arg">The argument to pass to the JavaScript code.</param>
+        /// <returns>A task representing the asynchronous operation. The task result contains the result of the JavaScript code execution as a string.</returns>
+
+        public Task<string> ExecuteJavascriptIframeAsync(string script, object arg)
+        {
+            ThrowIfClosed();
+            return _currentFrame.EvaluateAsync<string>(script, arg);
+        }
+
+        /// <summary>
         /// Injects the specified JavaScript code into the current page.
         /// </summary>
         /// <param name="script">The JavaScript code to inject.</param>
@@ -138,6 +179,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             ThrowIfClosed();
             return _playwrightPage.AddScriptTagAsync(new PageAddScriptTagOptions()
+            {
+                Content = script,
+            });
+        }
+        /// <summary>
+        /// Injects the specified JavaScript code into the current frame.
+        /// </summary>
+        /// <param name="script">The JavaScript code to inject.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task InjectJavascriptIframeAsync(string script)
+        {
+            ThrowIfClosed();
+            return _currentFrame.AddScriptTagAsync(new FrameAddScriptTagOptions()
             {
                 Content = script,
             });
@@ -311,7 +365,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         }
 
         /// <summary>
-        /// Switches the current frame to the frame specified by the given locator.
+        /// Switches the current frame to the first frame specified by the given locator.
         /// </summary>
         /// <param name="locateBy">The method of locating the frame.</param>
         /// <param name="value">The value used for locating the frame.</param>
@@ -324,7 +378,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 throw new LocatorNotSupportedException($"Frame locator '{locateBy}' is not supported.");
             }
 
-            var frameLocator = locateBy switch
+            IPlaywrightFrameLocator frameLocator = locateBy switch
             {
                 eLocateBy.ByID => _currentFrame.FrameLocator($"css=#{value}"),
                 eLocateBy.ByTitle => _currentFrame.FrameLocator($"css=iframe[title='{value}']"),
@@ -339,8 +393,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return false;
             }
 
-            IJSHandle jsHandle = await frameLocator.Owner.EvaluateHandleAsync("element => element");
-            IElementHandle? elementHandle = jsHandle.AsElement();
+            IPlaywrightJSHandle jsHandle = await frameLocator.Owner.First.EvaluateHandleAsync("element => element");
+            IPlaywrightElementHandle? elementHandle = jsHandle.AsElement();
             if (elementHandle == null)
             {
                 return false;
@@ -500,15 +554,33 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");
             }
 
-            var locator = locateBy switch
+            IPlaywrightLocator locator;
+            switch (locateBy)
             {
-                eLocateBy.ByID => _currentFrame.Locator($"css=#{value}"),
-                eLocateBy.ByCSS => _currentFrame.Locator($"css={value}"),
-                eLocateBy.ByXPath or eLocateBy.ByRelXPath => _currentFrame.Locator($"xpath={value}"),
-                eLocateBy.ByName => _currentFrame.Locator($"css=[name='{value}']"),
-                eLocateBy.ByTagName => _currentFrame.Locator($"css={value}"),
-                _ => throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported."),
-            };
+                case eLocateBy.ByID:
+                    value = value.Replace(":", "\\:");
+                    locator = _currentFrame.Locator($"css=#{value}");
+                    break;
+                case eLocateBy.ByCSS:
+                    locator = _currentFrame.Locator($"css={value}");
+                    break;
+                case eLocateBy.ByXPath:
+                case eLocateBy.ByRelXPath:
+                    locator = _currentFrame.Locator($"xpath={value}");
+                    break;
+                case eLocateBy.ByName:
+                    locator = _currentFrame.Locator($"css=[name='{value}']");
+                    break;
+                case eLocateBy.ByTagName:
+                    locator = _currentFrame.Locator($"css={value}");
+                    break;
+                case eLocateBy.ByAutomationID:
+                    value = value.Replace(":", "\\:");
+                    locator = _currentFrame.Locator($"xpath=//*[@data-automation-id=\"{value}\"]");
+                    break;
+                default:
+                    throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");
+            }
             return Task.FromResult(locator);
         }
 
@@ -605,6 +677,377 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             return SupportedFrameLocators.Contains(locateBy);
         }
+        /// <summary>
+        /// This asynchronous method initiates the process of capturing network logs for the current page. 
+        /// It sets up the necessary data structures and event handlers to monitor network requests and responses.
+        /// </summary>
+        /// <param name="act"></param>
+        /// <returns></returns>
+        public async Task StartCaptureNetworkLog(ActBrowserElement act)
+        {
+            _act = act;
+            _BrowserHelper = new BrowserHelper(act);
+            try
+            {
+                networkRequestLogList = [];
+                networkResponseLogList = [];
+                _playwrightPage.Request += OnNetworkRequestSent;
+                _playwrightPage.Response += OnNetworkResponseReceived;
+                isNetworkLogMonitoringStarted = true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+
+        }
+        /// <summary>
+        /// This asynchronous method retrieves the captured network logs (requests and responses) for the current browser element and stores them in the act object.
+        /// It only performs the action if network log monitoring has been started.
+        /// </summary>
+        /// <param name="act"></param>
+        /// <returns></returns>
+        public async Task GetCaptureNetworkLog(ActBrowserElement act)
+        {
+            _act = act;
+            _BrowserHelper = new BrowserHelper(act);
+            try
+            {
+                await Task.Run(() =>
+                {
+                    if (isNetworkLogMonitoringStarted)
+                    {
+                        act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList(), Formatting.Indented));
+                        act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList(), Formatting.Indented));
+                        foreach (var val in networkRequestLogList.ToList())
+                        {
+                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
+                        }
+
+                        foreach (var val in networkResponseLogList.ToList())
+                        {
+                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
+                        }
+                    }
+                    else
+                    {
+                        act.ExInfo = $"Action is skipped,{nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
+                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+        }
+        /// <summary>
+        /// This asynchronous method stops the network log capture by unsubscribing from the network request and response events. 
+        /// It then processes and stores the captured logs, saves them to files, and attaches the files as artifacts to the act object.
+        /// </summary>
+        /// <param name="act"></param>
+
+        public async Task StopCaptureNetworkLog(ActBrowserElement act)
+        {
+            _act = act;
+            _BrowserHelper = new BrowserHelper(act);
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    try
+                    {
+
+                        if (networkRequestLogList.Count != networkResponseLogList.Count)
+                        {
+                            int timeout = 60;
+                            Stopwatch st = Stopwatch.StartNew();
+                            if (act.Timeout is not null && act.Timeout != 0)
+                            {
+                                timeout = act.Timeout.Value;
+                            }
+                            st.Start();
+                            while (timeout > st.Elapsed.TotalSeconds)
+                            {
+                                if (networkRequestLogList.Count == networkResponseLogList.Count)
+                                {
+                                    break;
+                                }
+                                System.Threading.Thread.Sleep(1000);
+                            }
+                            st.Stop();
+                        }
+
+                        isNetworkLogMonitoringStarted = false;
+                        act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
+                        act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
+                        foreach (var val in networkRequestLogList)
+                        {
+                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
+                        }
+                        foreach (var val in networkResponseLogList)
+                        {
+                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
+                        }
+                        string requestPath = _BrowserHelper.CreateNetworkLogFile("NetworklogRequest", networkRequestLogList);
+                        act.ExInfo = $"RequestFile : {requestPath}\n";
+                        string responsePath = _BrowserHelper.CreateNetworkLogFile("NetworklogResponse", networkResponseLogList);
+                        act.ExInfo = $"{act.ExInfo} ResponseFile : {responsePath}\n";
+
+                        act.AddOrUpdateReturnParamActual("RequestFile", requestPath);
+                        act.AddOrUpdateReturnParamActual("ResponseFile", responsePath);
+
+                        Act.AddArtifactToAction(Path.GetFileName(requestPath), act, requestPath);
+
+                        Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);
+                    }
+
+
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+            finally
+            {
+                DetachEvents();
+            }
+
+        }
+
+        private void DetachEvents()
+        {
+            try
+            {
+                _playwrightPage.Request -= OnNetworkRequestSent;
+                _playwrightPage.Response -= OnNetworkResponseReceived;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+
+        }
+
+
+        /// <summary>
+        /// This method handles the network request event, capturing the details of outgoing network requests. 
+        /// It adds the request URL and its serialized data to the network log if the request matches the specified criteria.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="request"></param>
+        private async void OnNetworkRequestSent(object? sender, IRequest request)
+        {
+            try
+            {
+                if (_BrowserHelper.ShouldMonitorAllUrls() || _BrowserHelper.ShouldMonitorUrl(request.Url))
+                {
+                    if (_act.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
+                    {
+                        if (request.ResourceType.Equals("XHR", StringComparison.CurrentCultureIgnoreCase) || request.ResourceType.Equals("FETCH", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            networkRequestLogList.Add(new Tuple<string, object>($"RequestUrl:{request.Url}", JsonConvert.SerializeObject(request, Formatting.Indented,
+                                                                                                                                new JsonSerializerSettings
+                                                                                                                                {
+                                                                                                                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                                                                                                                })));
+                        }
+                    }
+                    else
+                    {
+                        networkRequestLogList.Add(new Tuple<string, object>($"RequestUrl:{request.Url}", JsonConvert.SerializeObject(request, Formatting.Indented,
+                                                                                                                                new JsonSerializerSettings
+                                                                                                                                {
+                                                                                                                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                                                                                                                })));
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+        }
+        /// <summary>
+        /// This method handles the network response event, capturing details about the response once it's received. 
+        /// It checks if the response should be logged based on the configured criteria and adds relevant information to the network response log.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="response"></param>
+        private async void OnNetworkResponseReceived(object? sender, IResponse response)
+        {
+            try
+            {
+                await response.FinishedAsync();
+                if (response != null)
+                {
+                    if (_BrowserHelper.ShouldMonitorAllUrls() || _BrowserHelper.ShouldMonitorUrl(response.Url))
+                    {
+                        if (_act.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
+                        {
+                            if (response.Request.ResourceType.Equals("XHR", StringComparison.CurrentCultureIgnoreCase) || response.Request.ResourceType.Equals("FETCH", StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                networkResponseLogList.Add(new Tuple<string, object>($"ResponseUrl:{response.Url}", JsonConvert.SerializeObject(response, Formatting.Indented,
+                                                                                                                                    new JsonSerializerSettings
+                                                                                                                                    {
+                                                                                                                                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                                                                                                                    })
+                                ));
+                            }
+                        }
+                        else
+                        {
+                            networkResponseLogList.Add(new Tuple<string, object>($"ResponseUrl:{response.Url}", JsonConvert.SerializeObject(response, Formatting.Indented,
+                                                                                                                                    new JsonSerializerSettings
+                                                                                                                                    {
+                                                                                                                                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                                                                                                                    })
+                            ));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+        }
+
+
+
+
+
+        private async void OnPlaywrightDialog(object? sender, IDialog e)
+        {
+            try
+            {
+                if (isDialogDismiss)
+                {
+                    await e.DismissAsync();
+                }
+                else
+                {
+                    dialogs = e;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+        }
+        /// <summary>
+        /// This asynchronous method accepts (clicks the "OK" or equivalent) on a message box or dialog.
+        /// </summary>
+        /// <returns></returns>
+        public async Task AcceptMessageBox()
+        {
+            try
+            {
+                if (dialogs != null)
+                {
+                    await dialogs.AcceptAsync();
+                    isDialogDismiss = true;
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "No dialog to accept.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+
+        }
+        /// <summary>
+        /// This asynchronous method dismisses (closes or cancels) a message box or dialog.
+        /// </summary>
+        /// <returns></returns>
+        public async Task DismissMessageBox()
+        {
+            try
+            {
+                if (dialogs != null)
+                {
+                    await dialogs.DismissAsync();
+                    isDialogDismiss = true;
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "No dialog to dismiss.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+
+        }
+        /// <summary>
+        /// This method retrieves the text content of the current message box or dialog.
+        /// </summary>
+        /// <returns></returns>
+        public string GetMessageBoxText()
+        {
+            try
+            {
+                if (dialogs != null)
+                {
+                    return dialogs.Message;
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "No dialog to get message.");
+                    return string.Empty;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                return "Error While Get Message Box Text";
+            }
+
+        }
+        /// <summary>
+        /// This asynchronous method sets the text (usually for a prompt dialog) in the message box.
+        /// </summary>
+        /// <param name="MessageBoxText"></param>
+        /// <returns></returns>
+        public async Task SetMessageBoxText(string MessageBoxText)
+        {
+            try
+            {
+                if (dialogs != null)
+                {
+                    await dialogs.AcceptAsync(promptText: MessageBoxText);
+                    isDialogDismiss = true;
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "No dialog to accept.");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error While Accept Message", ex);
+            }
+
+        }
+
+        public async Task StartListenDialogsAsync()
+        {
+            isDialogDismiss = false;
+        }
+
     }
 
 }

@@ -385,7 +385,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             WeakEventManager<DataGrid, SelectionChangedEventArgs>.AddHandler(source: xMainElementsGrid.grdMain, eventName: nameof(DataGrid.SelectionChanged), handler: Grid_SelectionChanged);
 
-            xMainElementsGrid.AddToolbarTool(eImageType.Category, toolTip:"Set missing Categories for selected Elements", new RoutedEventHandler(SetMissingCategoriesForSelectedElements));
+            xMainElementsGrid.AddToolbarTool(eImageType.Category, toolTip: "Set missing Categories for selected Elements", new RoutedEventHandler(SetMissingCategoriesForSelectedElements));
         }
 
         /// <summary>
@@ -623,7 +623,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xElementDetails.xLocatorsGrid.AddToolbarTool(eImageType.Run, "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
             xElementDetails.xLocatorsGrid.btnAdd.AddHandler(System.Windows.Controls.Button.ClickEvent, new RoutedEventHandler(AddLocatorButtonClicked));
             xElementDetails.xLocatorsGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteLocatorClicked));
-            WeakEventManager<DataGrid, DataGridPreparingCellForEditEventArgs>.AddHandler(source: xElementDetails.xLocatorsGrid.grdMain, eventName: nameof(DataGrid.PreparingCellForEdit), handler: LocatorsGrid_PreparingCellForEdit);           
+            WeakEventManager<DataGrid, DataGridPreparingCellForEditEventArgs>.AddHandler(source: xElementDetails.xLocatorsGrid.grdMain, eventName: nameof(DataGrid.PreparingCellForEdit), handler: LocatorsGrid_PreparingCellForEdit);
 
             xElementDetails.xLocatorsGrid.PasteItemEvent += PasteLocatorEvent;
         }
@@ -646,7 +646,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             ePlatformType mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
             List<ePomElementCategory> categoriesList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetPlatformPOMElementCategories();
 
-            List<string> categories = new List<string>();
+            List<string> categories = [];
             foreach (ePomElementCategory category in categoriesList)
             {
                 categories.Add(category.ToString());
@@ -1066,14 +1066,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
         }
 
         private void SetMissingCategoriesForSelectedElements(object sender, RoutedEventArgs e)
-        {            
+        {
             if (xMainElementsGrid.Grid.SelectedItems.Count == 0)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select elements to set missing categories.");
                 return;
             }
 
-            //get the Category to set               
+            bool isCategoryUpdated = false;
             string selectedCategory = "";
             if (InputBoxWindow.OpenDialog("Set Missing Categories", "Select Category to set:", ref selectedCategory, GetPossibleCategoriesAsString()))
             {
@@ -1084,9 +1084,22 @@ namespace Ginger.ApplicationModelsLib.POMModels
                         Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "setting all missing categories for selected elements...");
                         foreach (ElementInfo element in xMainElementsGrid.Grid.SelectedItems)
                         {
-                            SetMissingCategoriesForElement(element, (ePomElementCategory)Enum.Parse(typeof(ePomElementCategory), selectedCategory));
+                            if (element.Properties.All(y => y.Category == null) && element.Locators.All(y => y.Category == null))
+                            {
+                                SetMissingCategoriesForElement(element, (ePomElementCategory)Enum.Parse(typeof(ePomElementCategory), selectedCategory));
+                                isCategoryUpdated = true;
+                            }
+
                         }
-                        Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "All missing categories were set successfully.");
+                        if (isCategoryUpdated)
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Missing categories updated successfully.");
+                        }
+                        else
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No missing categoriess found.");
+                        }
+
                     }
                     catch (Exception ex)
                     {
@@ -1121,11 +1134,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void xCopyLocatorButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!ValidateDriverAvalability())
-            {
-                return;
-            }
-
             if (mSelectedLocator != null)
             {
                 GingerCore.General.SetClipboardText(mSelectedLocator.LocateValue);

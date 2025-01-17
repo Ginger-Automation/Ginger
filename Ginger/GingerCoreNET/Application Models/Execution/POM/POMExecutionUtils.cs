@@ -356,6 +356,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 pomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList = GingerCore.Platforms.PlatformsInfo.PlatformInfoBase.GetPlatformImpl(agent.Platform).GetLearningLocators();
                 pomDeltaUtils.KeepOriginalLocatorsOrderAndActivation = true;
                 pomDeltaUtils.PropertiesChangesToAvoid = DeltaControlProperty.ePropertiesChangesToAvoid.All;
+                pomDeltaUtils.AcceptElementFoundByMatcher = true;
 
                 mAct.ExInfo += DateTime.Now.ToString() + " Self healing operation attempting to auto update application model";
                 this.GetCurrentPOM().StartDirtyTracking();

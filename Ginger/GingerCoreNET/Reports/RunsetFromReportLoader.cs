@@ -48,8 +48,13 @@ namespace Amdocs.Ginger.CoreNET.Reports
         public async Task<RunSetConfig?> LoadAsync(RunSetReport runsetReport)
         {
             string executionId = runsetReport.GUID;
-            Guid runsetId = runsetReport.RunSetGuid;
-            RunSetConfig? runset = GetRunsetFromSolutionRepository(runsetId);
+            RunSetConfig? runset = null;
+            Guid runsetId = Guid.Empty;
+            if (runsetReport.RunSetGuid != null)
+            {
+                runsetId = runsetReport.RunSetGuid;
+                runset = GetRunsetFromSolutionRepository(runsetId);
+            }
 
             if (runset == null)
             {
@@ -139,9 +144,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
 
             runset.Name = GetUniqueRunsetName(runset.Name);
 
-            RepositoryFolderBase bfFolder = GetRootRepositoryFolder<BusinessFlow>();
-            RepositoryFolderBase bfCacheFolder = GetOrCreateRepositoryFolder(ISolution.CacheDirectoryName, bfFolder);
-            RepositoryFolderBase bfCacheRunsetFolder = GetOrCreateRepositoryFolder(runset.Name, bfCacheFolder);
+            RepositoryFolderBase bfFolder = GetRootRepositoryFolder<BusinessFlow>();           
 
             IEnumerable<BusinessFlowRun> bfRuns = runset
                 .GingerRunners
@@ -150,17 +153,22 @@ namespace Amdocs.Ginger.CoreNET.Reports
             foreach (BusinessFlowRun bfRun in bfRuns)
             {
                 BusinessFlow bf = GetBusinessFlowById(bfRun.BusinessFlowGuid);
-                bf.AllowAutoSave = false;
-                MoveRepositoryItemToFolder(bf, bfCacheRunsetFolder.FolderFullPath);
-                bf.DynamicPostSaveHandler = () =>
+                if (bf.IsVirtual)
                 {
-                    RepositoryFolderBase bfRunsetFolder = GetOrCreateRepositoryFolder(runset.Name, bfFolder);
-                    bf.AllowAutoSave = true;
-                    MoveRepositoryItemToFolder(bf, bfRunsetFolder.FolderFullPath);
-                };
-                bf.DirtyStatus = eDirtyStatus.Modified;
+                    RepositoryFolderBase bfCacheFolder = GetOrCreateRepositoryFolder(ISolution.CacheDirectoryName, bfFolder);
+                    RepositoryFolderBase bfCacheRunsetFolder = GetOrCreateRepositoryFolder(runset.Name, bfCacheFolder);
+                    bf.AllowAutoSave = false;
+                    MoveRepositoryItemToFolder(bf, bfCacheRunsetFolder.FolderFullPath);
+                    bf.DynamicPostSaveHandler = () =>
+                    {
+                        RepositoryFolderBase bfRunsetFolder = GetOrCreateRepositoryFolder(runset.Name, bfFolder);
+                        bf.AllowAutoSave = true;
+                        MoveRepositoryItemToFolder(bf, bfRunsetFolder.FolderFullPath);
+                    };
+                    bf.DirtyStatus = eDirtyStatus.Modified;
+                }
+               
             }
-
             RepositoryFolderBase runsetFolder = GetRootRepositoryFolder<RunSetConfig>();
             RepositoryFolderBase runsetCacheFolder = GetOrCreateRepositoryFolder(ISolution.CacheDirectoryName, runsetFolder);
             runsetCacheFolder.AddRepositoryItem(runset, doNotSave: false);

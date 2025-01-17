@@ -48,7 +48,7 @@ namespace GingerCore
             AllowAutoSave = true;
             this.OnDirtyStatusChanged += BusinessFlow_OnDirtyStatusChanged;
         }
-
+      
         public BusinessFlow(string sName)
         {
             Name = sName;
@@ -117,6 +117,7 @@ namespace GingerCore
 
         public object Platforms { get; set; } // keep it for backword compatibility when loading old XML, or handle in RI serializer
 
+        public bool IsVirtual = false;
         public List<string> VariablesBeforeExec { get; set; }
 
         private TimeSpan mDevelopmentTime;
@@ -2048,21 +2049,11 @@ namespace GingerCore
 
         public bool AreEqual(BusinessFlow other)
         {
-            if (other == null || this.Name != other.Name
+            if (other == null || string.IsNullOrEmpty(this.Name) || !this.Name.StartsWith(other.Name, StringComparison.InvariantCultureIgnoreCase)
                  || this.Activities.Count != other.Activities.Count
-                 || this.Variables.Count != other.Variables.Count
-                 || this.TargetApplications.Count != other.TargetApplications.Count)
+                 || this.Variables.Count != other.Variables.Count)
             {
                 return false;
-            }
-
-            for (int i = 0; i < this.TargetApplications.Count; i++)
-            {
-                if (!other.TargetApplications.Any(f => f.Name.Equals(this.TargetApplications[i].Name)
-                        && f.Guid.Equals(this.TargetApplications[i].Guid)))
-                {
-                    return false;
-                }
             }
 
             for (int i = 0; i < this.Variables.Count; i++)
@@ -2072,6 +2063,8 @@ namespace GingerCore
                     return false;
                 }
             }
+
+            LoadLinkedActivities();
 
             for (int i = 0; i < this.Activities.Count; i++)
             {

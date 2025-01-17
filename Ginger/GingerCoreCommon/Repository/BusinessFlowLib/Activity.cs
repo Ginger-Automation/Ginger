@@ -1246,7 +1246,7 @@ namespace GingerCore
 
         public override void PrepareItemToBeCopied()
         {
-            this.IsSharedRepositoryInstance = TargetFrameworkHelper.Helper.IsSharedRepositoryItem(this);
+            this.IsSharedRepositoryInstance = TargetFrameworkHelper.Helper?.IsSharedRepositoryItem(this) ?? false;
         }
 
         public override string GetItemType()
@@ -1290,8 +1290,8 @@ namespace GingerCore
                 return false;
             }
 
-            if (this.ActivityName != other.ActivityName || this.TargetApplication != other.TargetApplication ||
-                   this.Type != other.Type || this.ActivitiesGroupID != other.ActivitiesGroupID)
+            if (string.IsNullOrEmpty(this.ActivityName) || !ActivityName.StartsWith(other.ActivityName, StringComparison.InvariantCultureIgnoreCase) || TargetApplication != other.TargetApplication ||
+                   Type != other.Type || (other.ActivitiesGroupID != null && ActivitiesGroupID != other.ActivitiesGroupID))
             {
                 return false;
             }

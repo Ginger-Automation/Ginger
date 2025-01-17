@@ -1,0 +1,135 @@
+﻿<Page x:Class="Ginger.SolutionWindows.SolutionSelfHealingConfigPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.SolutionWindows"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="SolutionSelfHealingConfigPage"
+      Background="{StaticResource $BackgroundColor_White}">
+
+    <Grid 
+        Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="30" />
+            <RowDefinition
+                Height="16" />
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="30" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition
+                Width="32" />
+            <ColumnDefinition
+                Width="Auto" />
+            <ColumnDefinition
+                Width="14" />
+            <ColumnDefinition
+                Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Label
+            Style="{StaticResource $LabelStyle}"
+            Content="Element Matchers"
+            FontSize="14"
+            FontWeight="SemiBold"
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="3" />
+        <CheckBox
+            x:Name="ByPropertyCheckBox"
+            Style="{StaticResource @CheckBoxStyle}"
+            Content="Use Property Matcher"
+            Grid.Row="1"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            Checked="ByPropertyCheckBox_IsCheckedChanged"
+            Unchecked="ByPropertyCheckBox_IsCheckedChanged" />
+        <StackPanel
+            x:Name="ByPropertyScoreStackPanel"
+            Orientation="Horizontal"
+            VerticalAlignment="Center"
+            Grid.Row="1"
+            Grid.Column="3">
+            <Label
+                Style="{StaticResource $LabelStyle}"
+                Content="Acceptable Score" />
+            <TextBox
+                x:Name="ByPropertyAcceptableScoreTextBox"
+                Style="{StaticResource $TextBoxStyle}"
+                MinWidth="40"
+                Height="24"
+                VerticalAlignment="Top"
+                Margin="4 0 0 0"
+                PreviewTextInput="ByPropertyAcceptableScoreTextBox_PreviewTextInput" />
+            <Label
+                Style="{StaticResource $LabelStyle}"
+                Content="%"
+                Margin="1 0 0 0" />
+            <Label
+                Style="{StaticResource $LabelStyle}"
+                Content="(between 1-100)"
+                Foreground="#a5a5a5"
+                Margin="4 0 0 0" />
+        </StackPanel>
+        <Label
+            Grid.Row="2"
+            Grid.Column="1"
+            Grid.ColumnSpan="3"
+            Style="{StaticResource $LabelStyle}"
+            Content="Match elements based on their properties like id, name, content etc."
+            Foreground="#a5a5a5" />
+        <Line
+            Grid.Row="3" />
+        <CheckBox
+            x:Name="ByImageCheckBox"
+            Style="{StaticResource @CheckBoxStyle}"
+            Content="Use Image Matcher"
+            Grid.Row="4"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            Checked="ByImageCheckBox_IsCheckedChanged"
+            Unchecked="ByImageCheckBox_IsCheckedChanged" />
+        <StackPanel
+            x:Name="ByImageScoreStackPanel"
+            Orientation="Horizontal"
+            VerticalAlignment="Center"
+            Grid.Row="4"
+            Grid.Column="3">
+            <Label
+                Style="{StaticResource $LabelStyle}"
+                Content="Acceptable Score" />
+            <TextBox
+                x:Name="ByImageAcceptableScoreTextBox"
+                Style="{StaticResource $TextBoxStyle}"
+                MinWidth="40"
+                Height="24"
+                VerticalAlignment="Top"
+                Margin="4 0 0 0"
+                PreviewTextInput="ByImageAcceptableScoreTextBox_PreviewTextInput" />
+            <Label
+                Style="{StaticResource $LabelStyle}"
+                Content="%"
+                Margin="1 0 0 0" />
+            <Label
+                Style="{StaticResource $LabelStyle}"
+                Content="(between 1-100)"
+                Foreground="#a5a5a5"
+                Margin="4 0 0 0" />
+        </StackPanel>
+        <Label
+            Grid.Column="1"
+            Grid.Row="5"
+            Grid.ColumnSpan="3"
+            Style="{StaticResource $LabelStyle}"
+            Content="Match elements based on pixel-by-pixel match of their images using ImageMagick."
+            Foreground="#a5a5a5" />
+    </Grid>
+</Page>

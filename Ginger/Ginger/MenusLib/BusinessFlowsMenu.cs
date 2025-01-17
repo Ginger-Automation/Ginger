@@ -80,8 +80,21 @@ namespace Ginger.MenusLib
 
             App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEvent;
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
-
+            Amdocs.Ginger.CoreNET.RunLib.CLILib.DoOptionsHandler.AutomateBusinessFlowEvent += OpenCLIBusinessFlow;
             return twoLevelMenu;
+        }
+
+        private static void OpenCLIBusinessFlow(object? sender, BusinessFlow bf)
+        {
+            if (bf != null)
+            {
+                mNewAutomatePage = new NewAutomatePage(bf);
+                App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, bf);
+            }
+            else
+            {
+                return;
+            }
         }
 
         private static async void App_AutomateBusinessFlowEvent(AutomateEventArgs args)

@@ -32,6 +32,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
+using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
@@ -636,7 +637,7 @@ namespace GingerCore.Actions
             }
             set
             {
-                if (!string.IsNullOrEmpty(mExInfo) && value.Contains(mExInfo) && value.IndexOf(mExInfo) == 0)//meaning act.ExInfo += was used
+                if (!string.IsNullOrEmpty(mExInfo) && value != null && value.Contains(mExInfo) && value.IndexOf(mExInfo) == 0)//meaning act.ExInfo += was used
                 {
                     //add line break
                     mExInfo = string.Format("{0}{1}{2}", value[..mExInfo.Length], Environment.NewLine, value[mExInfo.Length..]);
@@ -2066,7 +2067,7 @@ namespace GingerCore.Actions
 
         public override void PrepareItemToBeCopied()
         {
-            this.IsSharedRepositoryInstance = TargetFrameworkHelper.Helper.IsSharedRepositoryItem(this);
+            this.IsSharedRepositoryInstance = TargetFrameworkHelper.Helper?.IsSharedRepositoryItem(this) ?? false;
         }
 
         public override string GetItemType()
@@ -2101,6 +2102,21 @@ namespace GingerCore.Actions
                 }
             }
 
+            if (this is ActWebAPIModel thisAction && other is ActWebAPIModel otherAction)
+            {
+                if (thisAction.APIModelParamsValue.Count != otherAction.APIModelParamsValue.Count)
+                {
+                    return false;
+                }
+                for (int i = 0; i < thisAction.APIModelParamsValue.Count; i++)
+                {
+                    if (!thisAction.APIModelParamsValue[i].AreEqual(otherAction.APIModelParamsValue[i]))
+                    {
+                        return false;
+                    }
+                }
+            }
+
             return true;
         }
 
@@ -2116,7 +2132,7 @@ namespace GingerCore.Actions
                 return false;
             }
 
-            return Equals(obj as Act);
+            return AreEqual(obj as Act);
         }
 
     }

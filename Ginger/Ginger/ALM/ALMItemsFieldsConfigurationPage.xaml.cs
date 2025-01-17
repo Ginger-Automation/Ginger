@@ -24,6 +24,7 @@ using Ginger.UserControls;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
@@ -41,6 +42,7 @@ namespace Ginger.ALM
         ImageMakerControl loaderElement;
         BackgroundWorker fieldsWorker = new BackgroundWorker();
         bool isReferFields = true;
+        bool isExceptionToGetFields = false;
         public static string LoadFieldsState = "aa";
         eALMConfigType mAlmConfigType = eALMConfigType.MainMenu;
 
@@ -80,7 +82,14 @@ namespace Ginger.ALM
         {
             if (Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
-                RunWorker(true);
+                if (ALMIntegration.Instance.TestALMProjectConn(eALMConnectType.Silence))
+                {
+                    RunWorker(true);
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Error in Connection to ALM, Please check ALM Connection Settings");
+                }
             }
         }
 
@@ -142,7 +151,15 @@ namespace Ginger.ALM
         {
             Boolean refreshFlag = (Boolean)e.Argument;
 
-            ALMIntegration.Instance.RefreshALMItemFields(mItemsFields, true, fieldsWorker);
+            try
+            {
+                ALMIntegration.Instance.RefreshALMItemFields(mItemsFields, true, fieldsWorker);
+            }
+            catch (Exception ex)
+            {
+                isExceptionToGetFields = true;
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
 
             fieldsWorker.ReportProgress(GingerCore.ALM.RQM.ImportFromRQM.totalValues);
             e.Result = GingerCore.ALM.RQM.ImportFromRQM.totalValues;
@@ -164,7 +181,16 @@ namespace Ginger.ALM
             LoadFieldsStatusLbl.Visibility = Visibility.Collapsed;
             grdQCFields.Visibility = Visibility.Visible;
             grdQCFields.DataSourceList = mItemsFields;
-            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "ALM Item Fields population is complete");
+            if (isExceptionToGetFields)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "ALM item fields population failed,Please refer to the error log for details");
+            }
+            else
+            {
+                isExceptionToGetFields = false;
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "ALM item fields population completed");
+            }
+
         }
         #endregion
 

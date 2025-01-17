@@ -26,6 +26,8 @@ namespace GingerCoreNET.Application_Models
     {
         public ElementInfo ElementInfo = null;
 
+        public ElementInfo PredictedElementInfo { get; set; } = null;
+
         public string ElementName { get { return ElementInfo.ElementName; } }
 
         public string Description { get { return ElementInfo.Description; } }

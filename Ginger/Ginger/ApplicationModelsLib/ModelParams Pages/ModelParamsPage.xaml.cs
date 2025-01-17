@@ -307,6 +307,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         private void UploadToGlobalParam(object sender, RoutedEventArgs e)
         {
             AppModelParameter CurrentAMDP = (AppModelParameter)ModelParametersGrid.CurrentItem;
+            if (CurrentAMDP == null)
+            {
+                return;
+            }
 
             GlobalAppModelParameter globalAppModelParameter = GlobalAppModelParameter.DuplicateAppModelParamAsGlobal(CurrentAMDP);
 

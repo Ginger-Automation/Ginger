@@ -9,9 +9,9 @@
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
-      Height="600" Width="800"
+      Height="650" Width="800"
 	Title="Download Solution">
-
+   
     <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Name="ExpenderDetailsRow" Height="50"/>
@@ -21,7 +21,7 @@
             <RowDefinition Height="30"/>
             <RowDefinition/>
             <RowDefinition Name="DownloadButtonRow" Height="40"/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250*"/>
@@ -45,7 +45,7 @@
                         <RowDefinition  Height="35"/>
                         <RowDefinition  Height="35"/>
                         <RowDefinition  Height="35"/>
-                        
+
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
@@ -70,7 +70,7 @@
                     <Label x:Name="xSelectBranchLabel" Content="Select Branch:" Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" Grid.Row="4" Margin="10,5,0,0"/>
                     <ComboBox x:Name="xBranchesCombo" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,5,0,7" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="4"></ComboBox>
 
-                    
+
                 </Grid>
             </Expander.Content>
         </Expander>
@@ -103,7 +103,7 @@
                     </DockPanel>
 
                     <CheckBox x:Name="ConfigureProxyCheckBox" Grid.Row="1" Content="Configure Proxy" ToolTip="Configure Network Proxy For The Repository Access" Checked="ConfigureProxyCheckBoxChecked" Unchecked="ConfigureProxyCheckBoxUnchecked" HorizontalAlignment="Left" Margin="5,10,0,0"/>
-                   
+
                     <Label x:Name="labelProxyAddress" Content="Proxy Address:" Margin="20,5,0,0" Grid.Column="0" Grid.Row="2" Style="{StaticResource @InputFieldLabelStyle}" />
                     <TextBox x:Name="ProxyAddressTextBox" Margin="0,5,0,7" Grid.Column="1" Grid.Row="2" Width="200" HorizontalAlignment="Left" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" IsEnabled="false" />
 
@@ -112,8 +112,8 @@
                 </Grid>
             </Expander.Content>
         </Expander>
-
-
+        
+        
         <UserControls:ucButton x:Name="xConnectButton" Grid.Row="2" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Left" ButtonText="Connect And Search Repositories" ButtonImageType="Search" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TestConnectionAndSearchRepositories_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Visibility="Visible" />
 
         <Label x:Name="SourceControlLocalFolderLable"  Content="Local Solutions Folder Path:" Grid.Row="3" Grid.ColumnSpan="2" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch"/>
@@ -121,7 +121,9 @@
         <Button x:Name="BrowseButton" Click="BrowseButton_Click"  Grid.Row="4" Grid.Column="1" Content="Browse"  HorizontalAlignment="Left" Style="{StaticResource @InputButtonStyle}" Height="Auto"/>
         <Ginger:ucGrid x:Name="SolutionsGrid" Title="Source Control Solutions" Grid.Row="5" Grid.ColumnSpan="2" ShowEdit="Collapsed" ShowUpDown="Collapsed" Margin="0,10,0,0" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowTagsFilter="Collapsed"/>
 
-        <Button x:Name="DownloadButton" Click="DownloadButton_Click"  Grid.Row="6" Grid.Column="1" Content="Download Solution"  HorizontalAlignment="Right" Style="{StaticResource @InputButtonStyle}" Visibility="Collapsed"/>
-    </Grid>
+        <Button x:Name="DownloadButton" Click="DownloadButton_Click"  Grid.Row="6" Grid.Column="1"  Content="Download Solution"  HorizontalAlignment="Right" Style="{StaticResource @InputButtonStyle}" Visibility="Collapsed"/>
+
+        
+    </Grid>    
 
 </Page>

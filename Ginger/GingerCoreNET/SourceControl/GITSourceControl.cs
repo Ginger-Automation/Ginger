@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Telemetry;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SourceControl;
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
@@ -26,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GingerCore.SourceControl
@@ -449,17 +451,103 @@ namespace GingerCore.SourceControl
             }
 
             try
+
             {
-                var co = new CloneOptions
+                var fetchOptions = new FetchOptions
+                {
+                    CredentialsProvider = GetSourceCredentialsHandler(),
+                    Depth = 1 //Do download latest state and avoid downloading commit history
+                };
+                var co = new CloneOptions(fetchOptions)
                 {
                     BranchName = string.IsNullOrEmpty(SourceControlBranch) ? "master" : SourceControlBranch,
-                    CredentialsProvider = GetSourceCredentialsHandler()
                 };
                 RepositoryRootFolder = LibGit2Sharp.Repository.Clone(URI, Path, co);
             }
             catch (Exception ex)
             {
                 error = ex.Message + Environment.NewLine + ex.InnerException;
+                return false;
+            }
+            return true;
+        }
+
+
+        /// <summary>
+        /// Clones a Git repository to the specified path.
+        /// </summary>
+        /// <param name="path">The local path where the repository will be cloned.</param>
+        /// <param name="uri">The URI of the remote repository.</param>
+        /// <param name="error">Output parameter to capture any error messages.</param>
+        /// <param name="progressNotifier">Optional progress notifier for reporting progress.</param>
+        /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
+        /// <returns>True if the operation is successful, otherwise false.</returns>
+        public override bool GetProjectWithProgress(string path, string uri, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
+        {
+
+            try
+            {
+                if (!System.IO.Directory.Exists(path))
+                {
+                    System.IO.Directory.CreateDirectory(path);
+                }
+                var fetchOptions = new FetchOptions
+                {
+                    CredentialsProvider = GetSourceCredentialsHandler(),
+                };
+                if (progressNotifier != null)
+                {
+                    fetchOptions.OnProgress = progress =>
+                    {
+                        progressNotifier.NotifyProgressDetailText($"{progress}");
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            return false;
+                        }
+                        return true;
+                    };
+                    fetchOptions.OnTransferProgress = progress =>
+                    {
+                        if (progress.TotalObjects == 0)
+                        {
+                            progressNotifier.NotifyProgressDetailText("Initializing...");
+                            return true;
+                        }
+                        double percentage = (double)progress.ReceivedObjects / progress.TotalObjects * 100;
+                        progressNotifier.NotifyProgressDetailText($"{percentage:F2}%              {progress.ReceivedObjects}/{progress.TotalObjects} files downloaded.");
+                        progressNotifier.NotifyProgressUpdated(progress.ReceivedObjects, progress.TotalObjects);
+
+                        // Check for cancellation
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            return false;
+                        }
+                        return true;
+                    };
+
+                }
+
+                var co = new CloneOptions(fetchOptions)
+                {
+                    BranchName = string.IsNullOrEmpty(SourceControlBranch) ? "master" : SourceControlBranch,
+                };
+                if (progressNotifier != null)
+                {
+                    co.OnCheckoutProgress = (_, completedSteps, totalSteps) =>
+                    {
+                        progressNotifier.NotifyProgressDetailText($"{completedSteps}/{totalSteps}");
+                        progressNotifier.NotifyProgressUpdated(completedSteps, totalSteps);
+                    };
+                }
+
+                RepositoryRootFolder = LibGit2Sharp.Repository.Clone(uri, path, co);
+            }
+            catch (Exception ex)
+            {
+                if (!cancellationToken.IsCancellationRequested)
+                {
+                    error = ex.Message + Environment.NewLine + ex.InnerException;
+                }
                 return false;
             }
 

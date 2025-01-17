@@ -4028,6 +4028,96 @@
         <Setter Property="BorderThickness" Value="1" />
     </Style>
 
+
+    <Style
+        x:Key="SideNavTabControlStyle"
+        TargetType="TabControl">
+        <Setter
+            Property="TabStripPlacement"
+            Value="Left" />
+        <Setter
+            Property="BorderThickness"
+            Value="1 0 0 0" />
+        <Setter
+            Property="BorderBrush"
+            Value="LightGray" />
+    </Style>
+    <Style
+        x:Key="SideNavTabItemStyle"
+        TargetType="TabItem">
+        <Style.Resources>
+            <SolidColorBrush
+                x:Key="TabHeaderColor"
+                Color="#ececec" />
+        </Style.Resources>
+        <Setter
+            Property="Template">
+            <Setter.Value>
+                <ControlTemplate
+                    TargetType="TabItem">
+                    <Border
+                        x:Name="UCSideNavHeaderBorder"
+                        BorderBrush="Transparent"
+                        BorderThickness="1"
+                        CornerRadius="6"
+                        Margin="2">
+                        <StackPanel
+                            x:Name="UCSideNavHeaderStackPanel"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+                            <Rectangle
+                                x:Name="UCSideNavHeaderPolygon"
+                                Visibility="Hidden"
+                                RadiusX="1"
+                                RadiusY="1"
+                                Width="2"
+                                Height="18"
+                                VerticalAlignment="Center"
+                                Fill="#F05C62" />
+                            <Border
+                                Padding="10 8">
+                                <ContentPresenter
+                                    Content="{TemplateBinding Header}"
+                                    Width="160" 
+                                    Height="16"/>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger
+                            Property="IsMouseOver"
+                            Value="True">
+                            <Setter
+                                TargetName="UCSideNavHeaderStackPanel"
+                                Property="Background"
+                                Value="{DynamicResource TabHeaderColor}" />
+                            <Setter
+                                TargetName="UCSideNavHeaderBorder"
+                                Property="BorderBrush"
+                                Value="{DynamicResource TabHeaderColor}" />
+                        </Trigger>
+                        <Trigger
+                            Property="IsSelected"
+                            Value="True">
+                            <Setter
+                                TargetName="UCSideNavHeaderStackPanel"
+                                Property="Background"
+                                Value="{DynamicResource TabHeaderColor}" />
+                            <Setter
+                                TargetName="UCSideNavHeaderBorder"
+                                Property="BorderBrush"
+                                Value="{DynamicResource TabHeaderColor}" />
+                            <Setter
+                                TargetName="UCSideNavHeaderPolygon"
+                                Property="Visibility"
+                                Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!--<Style TargetType="Button" x:Key="@PanelButtonStyle" >
         <Setter Property="Background" Value="DeepSkyBlue" />
         <Setter Property="Foreground" Value="DeepSkyBlue" />
