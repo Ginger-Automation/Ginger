@@ -98,6 +98,10 @@ namespace Ginger.ConfigurationsLib
             accessiblityRulesMenu.Add(eImageType.Application, "", GetAccessibilityRulePage, ConsoleKey.T, "", "AID");
             twoLevelMenu.Add(accessiblityRulesMenu);
 
+            TopMenuItem selfHealingConfigMenu = new TopMenuItem(eImageType.SelfHealing, name: "Self Healing", ConsoleKey.U, automationID: "selfHealingMenuAutoId", "Solution Self Healing Configuration");
+            selfHealingConfigMenu.Add(eImageType.SelfHealing, "", CreateSolutionSelfHealingConfigPage, ConsoleKey.U, "", AutomationID: "selfHealingSubMenuAutoId");
+            twoLevelMenu.Add(selfHealingConfigMenu);
+
             return twoLevelMenu;
         }
 
@@ -174,6 +178,11 @@ namespace Ginger.ConfigurationsLib
         private static Page GetAccessibilityRulePage()
         {
             return (new AccessibilityRulePage());
+        }
+
+        private static SolutionSelfHealingConfigPage CreateSolutionSelfHealingConfigPage()
+        {
+            return new SolutionSelfHealingConfigPage(WorkSpace.Instance.Solution);
         }
     }
 }
