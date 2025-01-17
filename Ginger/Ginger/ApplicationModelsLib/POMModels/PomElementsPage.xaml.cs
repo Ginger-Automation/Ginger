@@ -1134,11 +1134,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void xCopyLocatorButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!ValidateDriverAvalability())
-            {
-                return;
-            }
-
             if (mSelectedLocator != null)
             {
                 GingerCore.General.SetClipboardText(mSelectedLocator.LocateValue);

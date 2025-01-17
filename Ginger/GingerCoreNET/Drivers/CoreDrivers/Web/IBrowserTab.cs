@@ -55,8 +55,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task<string> ExecuteJavascriptAsync(string script);
 
         public Task<string> ExecuteJavascriptAsync(string script, object arg);
-
         public Task InjectJavascriptAsync(string script);
+
+        public Task<string> ExecuteJavascriptIframeAsync(string script);
+
+        public Task<string> ExecuteJavascriptIframeAsync(string script, object arg);
+
+        public Task InjectJavascriptIframeAsync(string script);
 
         public Task WaitTillLoadedAsync();
 
@@ -92,7 +97,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task<AxeResult?> TestAccessibilityAsync(AxeRunOptions? options = null);
 
         public Task CloseAsync();
-        
+
         public Task StartListenDialogsAsync();
+
+
     }
 }

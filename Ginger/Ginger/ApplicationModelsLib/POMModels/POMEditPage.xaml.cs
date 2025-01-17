@@ -125,15 +125,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xTAlabel.Content = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}:";
 
             mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
+
+            mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage, editMode: mEditMode);
+            xUIElementsFrame.ClearAndSetContent(mPomAllElementsPage);
+            mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
             ObservableList<Agent> optionalAgentsList = SupportedAgents();
             foreach (Agent agent in optionalAgentsList)
             {
-                if (agent.AgentOperations == null)
-                {
-                    AgentOperations agentOperations = new AgentOperations(agent);
-                    agent.AgentOperations = agentOperations;
-                }
+                agent.AgentOperations ??= new AgentOperations(agent);
             }
             xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);
 
@@ -148,13 +149,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
             xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
 
-            mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage, editMode: mEditMode);
-            xUIElementsFrame.ClearAndSetContent(mPomAllElementsPage);
-            mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
-
             UIElementTabTextBlockUpdate();
-
-
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEditPageExpander, Expander.IsExpandedProperty, mPOM, nameof(mPOM.IsCollapseDetailsExapander));
 
@@ -269,7 +264,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
 
                 optionalAgentsList = GingerCore.General.ConvertListToObservableList(list);
-
             }
             else
             {
