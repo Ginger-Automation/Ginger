@@ -51,6 +51,7 @@ Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\netcorecheck_x64.exe";
 Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\windowsdesktop-runtime-8.0.0-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
 Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\aspnetcore-runtime-8.0.0-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
 Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\AccessDatabaseEngine_X64.exe"; DestDir: "{tmp}"; Flags: dontcopy deleteafterinstall noencryption
+Source: "D:\a\Ginger\Ginger\Ginger\SetGingerExe.bat"; DestDir: "{app}"; Flags: ignoreversion
 ;NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 
@@ -60,6 +61,7 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall shellexec skipifsilent;
+Filename: "{app}\SetGingerExe.bat"; Flags: runhidden;
 [Code]
 
 //################################################### General Parameters #######################################

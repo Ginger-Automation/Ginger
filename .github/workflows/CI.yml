@@ -1,24 +1,67 @@
-name: CI
+name: CI Process
 
 on:
-    workflow_dispatch:
-    workflow_call:
-    
+  workflow_call:
+  workflow_dispatch:
+      
+  pull_request:
+    branches: 
+      - master
+      - Features/Linux-Migration
+      - Releases/*
+      - Releases/*/*
+
+  push:
+    branches:
+      - '**'
 
 jobs:
-#    Codacy:
-#        name: Code_Quality
-#        runs-on: ubuntu-latest
-#        steps:
-#            - uses: actions/checkout@v3
-    
-    Build:
-        name: Build Stage
- #       needs: Codacy   
-        uses: ./.github/workflows/GingerBuild.yml
-        
-    Test:
-        name: Test Stage
-        needs: Build
-        uses: ./.github/workflows/GingerTests.yml
+    Builder:
+        name: Ginger Builder
+        uses: ./.github/workflows/Build.yml
         secrets: inherit
+
+    Ginger_Unit-Test:
+        name: Ginger Unit-Test
+        needs: Builder
+        uses: ./.github/workflows/Test.yml
+        secrets: inherit
+    # Windows_Builder:
+    #     name: Windows Builder
+    #     uses: ./.github/workflows/Build-Windows.yml
+    #     secrets: inherit
+        
+
+    # Linux_Builder:
+    #     name: Linux Builder
+    #     uses: ./.github/workflows/Build-Linux.yml
+    #     secrets: inherit
+        
+
+    # MacOS_Builder:
+    #     name: MacOS Builder
+    #     uses: ./.github/workflows/Build-MacOS.yml
+    #     secrets: inherit
+        
+
+    # Windows_Unit-Test:
+    #     name: Windows Unit-Test
+    #     needs: Builder
+    #     uses: ./.github/workflows/Test-Windows.yml
+    #     secrets: inherit
+        
+
+    # Linux_Unit-Test:
+    #     # name: Linux Unit-Test
+    #     needs: Builder
+    #     uses: ./.github/workflows/Test-Linux.yml
+    #     secrets: inherit
+        
+
+    # MacOS_Unit-Test:
+    #     name: MacOS Unit-Test
+    #     needs: Builder
+    #     uses: ./.github/workflows/Test-MacOS.yml
+    #     secrets: inherit
+        
+        
