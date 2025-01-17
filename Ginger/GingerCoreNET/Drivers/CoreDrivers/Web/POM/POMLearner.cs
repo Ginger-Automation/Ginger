@@ -218,7 +218,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             try
             {
                 string tagName = htmlNode.Name ?? "";
-                if (tagName.StartsWith("input", StringComparison.OrdinalIgnoreCase) || tagName.StartsWith("button", StringComparison.OrdinalIgnoreCase))
+                if (tagName.StartsWith("input", StringComparison.InvariantCultureIgnoreCase) || tagName.StartsWith("button", StringComparison.InvariantCultureIgnoreCase) || tagName.StartsWith("label", StringComparison.InvariantCultureIgnoreCase))
                 {
                     return true;
                 }
