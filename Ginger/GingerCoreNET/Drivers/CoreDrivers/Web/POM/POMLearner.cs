@@ -83,19 +83,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
         private async Task LearnDocumentElementsAsync(HtmlDocument htmlDocument, string parentPath, Guid parentElementId, IList<ElementInfo> learnedElements, CancellationToken cancellationToken)
         {
-            await LearnHtmlNodeChildElements(htmlDocument.DocumentNode, parentPath, parentElementId, shouldLearnNode: htmlNode =>
-            {
-                eElementType type = GetElementType(htmlNode);
-                if (_pomSetting != null && !_pomSetting.filteredElementType.Contains(type))
-                {
-                    return false;
-                }
-
-                return true;
-            }, learnedElements, cancellationToken);
+            await LearnHtmlNodeChildElements(htmlDocument.DocumentNode, parentPath, parentElementId, learnedElements, cancellationToken);
         }
 
-        private async Task LearnHtmlNodeChildElements(HtmlNode htmlNode, string parentPath, Guid parentElementId, Predicate<HtmlNode> shouldLearnNode, IList<ElementInfo> learnedElements, CancellationToken cancellationToken, IList<ElementInfo>? childElements = null)
+        private async Task LearnHtmlNodeChildElements(HtmlNode htmlNode, string parentPath, Guid parentElementId, IList<ElementInfo> learnedElements, CancellationToken cancellationToken, IList<ElementInfo>? childElements = null)
         {
             foreach (HtmlNode childNode in htmlNode.ChildNodes)
             {
@@ -109,7 +100,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
                 if (IsNodeLearnable(childNode))
                 {
-                    bool shouldLearnThisNode = shouldLearnNode(childNode);
+                    bool shouldLearnThisNode = _pomSetting?.filteredElementType.Contains(childNodeElementType) ?? false;
                     browserElement = await _browserElementProvider.GetElementAsync(eLocateBy.ByXPath, childNode.XPath);
                     if (browserElement != null && await IsBrowserElementVisibleAsync(browserElement))
                     {
@@ -127,13 +118,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 }
 
                 IList<ElementInfo> grandChildElements = [];
-                if (childNodeElementType == eElementType.Form)
+                if (!string.Equals(childNode.Name, "head", StringComparison.OrdinalIgnoreCase))
                 {
-                    await LearnHtmlNodeChildElements(childNode, parentPath, parentElementId, ShouldLearnFormChildNode, learnedElements, cancellationToken, grandChildElements);
-                }
-                else if (!string.Equals(childNode.Name, "head", StringComparison.OrdinalIgnoreCase))
-                {
-                    await LearnHtmlNodeChildElements(childNode, parentPath, parentElementId, shouldLearnNode, learnedElements, cancellationToken, grandChildElements);
+                    await LearnHtmlNodeChildElements(childNode, parentPath, parentElementId, learnedElements, cancellationToken, grandChildElements);
                 }
 
                 if (childElement != null)
@@ -211,21 +198,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             }
 
             return true;
-        }
-
-        private static bool ShouldLearnFormChildNode(HtmlNode htmlNode)
-        {
-            try
-            {
-                string tagName = htmlNode.Name ?? "";
-                if (tagName.StartsWith("input", StringComparison.InvariantCultureIgnoreCase) || tagName.StartsWith("button", StringComparison.InvariantCultureIgnoreCase) || tagName.StartsWith("label", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return true;
-                }
-            }
-            catch (Exception) { }
-
-            return false;
         }
 
         private async Task<HTMLElementInfo> CreateHTMLElementInfoAsync(HtmlNode htmlNode, string parentPath, Guid parentElementId, IBrowserElement browserElement, bool captureScreenshot = true)
