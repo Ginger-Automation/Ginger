@@ -308,7 +308,31 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                         if (deltaInfo.DeltaStatus == eDeltaStatus.Changed)
                         {
                             elementInfo.Properties = deltaInfo.ElementInfo.Properties;
-                            elementInfo.Locators = deltaInfo.ElementInfo.Locators;
+                            IEnumerable<ePomElementCategory> existingLocatorCategories = [];
+                            if (elementInfo.Locators != null)
+                            {
+                                existingLocatorCategories = elementInfo.Locators
+                                .Where(l => l.Category.HasValue)
+                                .Select(l => l.Category.Value)
+                                .Distinct()
+                                .ToArray();
+                            }
+                            IEnumerable<ePomElementCategory> newLocatorCategories = [];
+                            if (deltaInfo.ElementInfo.Locators != null)
+                            {
+                                newLocatorCategories = deltaInfo.ElementInfo.Locators
+                                .Where(l => l.Category.HasValue)
+                                .Select(l => l.Category.Value)
+                                .Distinct()
+                                .ToArray();
+                            }
+                            IEnumerable<ePomElementCategory> missingCategoriesInNewLocators = existingLocatorCategories
+                                .Where(c => !newLocatorCategories.Contains(c))
+                                .ToArray();
+                            IEnumerable<ElementLocator> existingLocatorsWithCategoryMissingInNew = elementInfo.Locators
+                                .Where(l => l.Category.HasValue && missingCategoriesInNewLocators.Contains(l.Category.Value))
+                                .ToArray();
+                            elementInfo.Locators = [.. deltaInfo.ElementInfo.Locators, .. existingLocatorsWithCategoryMissingInNew];
                             elementInfo.LastUpdatedTime = DateTime.Now.ToString();
                             elementInfo.SelfHealingInfo = SelfHealingInfoEnum.ElementModified;
                         }
