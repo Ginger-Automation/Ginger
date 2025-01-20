@@ -26,7 +26,6 @@ using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using NPOI.OpenXmlFormats.Dml;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -391,6 +390,7 @@ namespace GingerCoreNET.Application_Models
 
         public void SetMatchingElementDeltaDetails(ElementInfo existingElement, ElementInfo latestElement, string matchDetails = "")
         {
+            ePomElementCategory? expectedCategory = latestElement.Properties.FirstOrDefault().Category.Value;
             DeltaElementInfo matchedDeltaElement = new DeltaElementInfo();
             //copy possible customized fields from original
             latestElement.Guid = existingElement.Guid;
@@ -529,7 +529,7 @@ namespace GingerCoreNET.Application_Models
                 DeltaElementLocator deltaLocator = new DeltaElementLocator();
                 notLearedLocator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
                 deltaLocator.ElementLocator = notLearedLocator;
-                if (notLearedLocator.IsAutoLearned == true)//deleted
+                if (notLearedLocator.IsAutoLearned == true && !notLearedLocator.Category.Equals(expectedCategory))//deleted
                 {
                     deltaLocator.DeltaStatus = eDeltaStatus.Deleted;
                     deltaLocator.DeltaExtraDetails = "Locator not exist on latest";
@@ -635,7 +635,7 @@ namespace GingerCoreNET.Application_Models
                     ElementProperty = deletedProperty
                 };
                 if (PropertiesChangesToAvoid == DeltaControlProperty.ePropertiesChangesToAvoid.None
-                            || (PropertiesChangesToAvoid == DeltaControlProperty.ePropertiesChangesToAvoid.OnlySizeAndLocationProperties && mVisualPropertiesList.Contains(deletedProperty.Name) == false))
+                            || (PropertiesChangesToAvoid == DeltaControlProperty.ePropertiesChangesToAvoid.OnlySizeAndLocationProperties && mVisualPropertiesList.Contains(deletedProperty.Name) == false) || !deletedProperty.Category.Equals(expectedCategory))
                 {
                     deltaProp.DeltaStatus = eDeltaStatus.Deleted;
                     deltaProp.DeltaExtraDetails = "Property not exist on latest";
@@ -920,10 +920,23 @@ namespace GingerCoreNET.Application_Models
                     var deltaElementToUpdateProp = DeltaViewElements.FirstOrDefault(x => x.IsSelected == true && x.DeltaStatus.Equals(eDeltaStatus.Added) && x.ElementInfo.Guid.ToString().Equals(elementToUpdate.MappedElementInfo));
                     if (deltaElementToUpdateProp != null)
                     {
+                        ePomElementCategory mergeCategory = deltaElementToUpdateProp.ElementInfo.Properties.FirstOrDefault().Category.Value;
                         if (elementToUpdate.MappingElementStatus == DeltaElementInfo.eMappingStatus.ReplaceExistingElement)
                         {
+                            if (mergeCategory != null)
+                            {
+                                IEnumerable<ControlProperty> existingPropertiesWithCategoryMissingInNew = elementToUpdate.ElementInfo.Properties.Where(x => !x.Category.Equals(mergeCategory)).ToList();
+                                deltaElementToUpdateProp.ElementInfo.Properties = [.. deltaElementToUpdateProp.ElementInfo.Properties, .. existingPropertiesWithCategoryMissingInNew];
+                                IEnumerable<ElementLocator> existingLocatorsWithCategoryMissingInNew = elementToUpdate.ElementInfo.Locators.Where(x => !x.Category.Equals(mergeCategory)).ToList();
+                                deltaElementToUpdateProp.ElementInfo.Locators = [.. deltaElementToUpdateProp.ElementInfo.Locators, .. existingLocatorsWithCategoryMissingInNew];
+                                IEnumerable<ElementLocator> existingFriendlyLocatorsWithCategoryMissingInNew = elementToUpdate.ElementInfo.FriendlyLocators.Where(x => !x.Category.Equals(mergeCategory)).ToList();
+                                deltaElementToUpdateProp.ElementInfo.FriendlyLocators = [.. deltaElementToUpdateProp.ElementInfo.FriendlyLocators, .. existingFriendlyLocatorsWithCategoryMissingInNew];
+                            }
+
+
                             elementToUpdate.ElementInfo.Properties = deltaElementToUpdateProp.ElementInfo.Properties;
                             elementToUpdate.ElementInfo.Locators = deltaElementToUpdateProp.ElementInfo.Locators;
+                            elementToUpdate.ElementInfo.FriendlyLocators = deltaElementToUpdateProp.ElementInfo.FriendlyLocators;
                             elementToUpdate.ElementInfo.ElementType = deltaElementToUpdateProp.ElementInfo.ElementType;
                             elementToUpdate.DeltaStatus = eDeltaStatus.Changed;
                         }

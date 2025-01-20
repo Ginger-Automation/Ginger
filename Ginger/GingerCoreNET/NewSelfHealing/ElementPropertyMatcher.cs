@@ -1,10 +1,9 @@
 ﻿using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.NewSelfHealing
@@ -20,6 +19,7 @@ namespace Amdocs.Ginger.CoreNET.NewSelfHealing
 
         internal virtual double Match(ElementInfo expected, ElementInfo actual)
         {
+            ePomElementCategory? expectedCategory = expected.Properties.FirstOrDefault().Category.Value;
             if (expected == null)
             {
                 throw new ArgumentNullException(paramName: nameof(expected));
@@ -31,8 +31,8 @@ namespace Amdocs.Ginger.CoreNET.NewSelfHealing
 
             _logger?.LogTrace("matching expected element({expectedElementName}-{expectedElementId}) with actual element({actualElementName}-{actualElementId})", expected.ElementName, expected.Guid, actual.ElementName, actual.Guid);
 
-            List<ControlProperty> expectedProperties = new((expected.Properties ?? []).Where(p => p != null));
-            List<ControlProperty> actualProperties = new((actual.Properties ?? []).Where(p => p != null));
+            List<ControlProperty> expectedProperties = new((expected.Properties ?? []).Where(p => p != null && p.Category.Equals(expectedCategory)));
+            List<ControlProperty> actualProperties = new((actual.Properties ?? []).Where(p => p != null && p.Category.Equals(expectedCategory)));
 
             double actualScore = 0;
             double totalScore = 0;

@@ -307,7 +307,36 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                     {
                         if (deltaInfo.DeltaStatus == eDeltaStatus.Changed)
                         {
-                            elementInfo.Properties = deltaInfo.ElementInfo.Properties;
+
+                            //Merge Both Category Properties
+                            IEnumerable<ePomElementCategory> existingPropertiesCategories = [];
+                            if (elementInfo.Properties != null)
+                            {
+                                existingPropertiesCategories = elementInfo.Properties
+                                .Where(l => l.Category.HasValue)
+                                .Select(l => l.Category.Value)
+                                .Distinct()
+                                .ToArray();
+                            }
+                            IEnumerable<ePomElementCategory> newPropertiesCategories = [];
+                            if (deltaInfo.ElementInfo.Properties != null)
+                            {
+                                newPropertiesCategories = deltaInfo.ElementInfo.Properties
+                                .Where(l => l.Category.HasValue)
+                                .Select(l => l.Category.Value)
+                                .Distinct()
+                                .ToArray();
+                            }
+
+                            IEnumerable<ePomElementCategory> missingCategoriesInNewProperties = existingPropertiesCategories
+                                .Where(c => !newPropertiesCategories.Contains(c))
+                                .ToArray();
+                            IEnumerable<ControlProperty> existingPropertiesWithCategoryMissingInNew = elementInfo.Properties
+                                .Where(l => l.Category.HasValue && missingCategoriesInNewProperties.Contains(l.Category.Value))
+                                .ToArray();
+                            elementInfo.Properties = [.. deltaInfo.ElementInfo.Properties, .. existingPropertiesWithCategoryMissingInNew];
+
+                            //Merge Both Category Locators
                             IEnumerable<ePomElementCategory> existingLocatorCategories = [];
                             if (elementInfo.Locators != null)
                             {
