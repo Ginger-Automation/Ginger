@@ -37,6 +37,7 @@ using Ginger.Help;
 using Ginger.MenusLib;
 using Ginger.SolutionGeneral;
 using Ginger.SolutionWindows;
+using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.SourceControl;
 using Ginger.User;
 using GingerCore;
@@ -260,10 +261,22 @@ namespace Ginger
                     menuPage.xSubNavigationListView.SelectedIndex = 1;
 
                     var treeView = ((SingleItemTreeViewExplorerPage)ResourcesMenu.MenusPage.mTwoLevelMenu.MenuList[0].SubItems[1].ItemPage)?.xTreeView?.Tree;
-                    if (treeView != null)
-                    {
-                        treeView.GetChildItembyNameandSelect(activity.ActivityName);
+
+                  
+                 
+                    if (treeView != null )
+                      {
+
+                        ITreeViewItem s= new SharedActivityTreeItem(activity);
+
+                        treeView.SelectItemByNameAndOpenFolder(activity);
+                      //  treeView.GetChildItembyNameandSelect(activity.ActivityName,expandChildren: true);
+
+                        //GingerCore.General.DoEvents();
                     }
+
+
+               
                 }
                 catch (Exception ex)
                 {

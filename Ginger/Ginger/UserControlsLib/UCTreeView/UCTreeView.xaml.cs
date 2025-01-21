@@ -16,12 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using ABI.Windows.UI.Text;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.DragDropLib;
 using GingerWPF.TreeViewItemsLib;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -1112,7 +1115,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             TVI.Focus();
         }
 
-        public void GetChildItembyNameandSelect(string nodeName, ITreeViewItem Parent = null)
+        public void GetChildItembyNameandSelect(string nodeName, ITreeViewItem Parent = null, bool expandChildren = false)
         {
             Task.Run(() =>
             {
@@ -1130,7 +1133,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                         GingerCore.General.DoEvents();
                     }
 
-                    TreeViewItem TVIChild = ExpandNodeByNameTVIRecursive(TVI, nodeName, true, false);
+                    TreeViewItem TVIChild = ExpandNodeByNameTVIRecursive(TVI, nodeName, true, expandChildren);
                     if (TVIChild != null)
                     {
                         TVIChild.Focus();
@@ -1436,6 +1439,75 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             return validationRes;
         }
 
+        public void SelectItemByNameAndOpenFolder(GingerCore.Activity activity)
+        {
+            string[] path = activity.ContainingFolder.Split('/');
+                
+            Task.Run(() =>
+            {
+                if (mSetTreeNodeItemChildsEvent != null)
+                {
+                    mSetTreeNodeItemChildsEvent.WaitOne();
+                }
+                Dispatcher.Invoke(async () =>
+                {
+                    path = activity.ContainingFolder.Split(System.IO.Path.DirectorySeparatorChar);
+                    TreeViewItem rootItem = (TreeViewItem)Tree.Items[0];
+                    for (int i = 4; i < path.Length; i++)
+                    {
+                        foreach (TreeViewItem item in rootItem.Items)
+                        {
+                            var itemName = ((System.Windows.Controls.ContentControl)((System.Windows.Controls.Panel)item.Header).Children[1]).Content;
+                             if (itemName.Equals(path[i]))
+                            {
+                                //item.IsExpanded = true;
+                                GingerCore.General.DoEvents();
+                                rootItem = item;
+                                break;
+                            }
+                        }
+                    }
+                    
+
+                    //rootItem.ExpandSubtree();
+                    await LoadChildItems(rootItem);
+
+                    foreach (var child in rootItem.Items)
+                    {
+                        var itemName = ((System.Windows.Controls.ContentControl)((System.Windows.Controls.Panel)child.Header).Children[1]).Content;
+                        if (activity.ActivityName.Equals(itemName))
+                        {
+                          //  child.Focus();
+                            GingerCore.General.DoEvents();
+                            break;
+                        }
+                    }
+
+                });
+            });
+        }
+
+        private TreeViewItem FindAndExpandItemByName(TreeViewItem parentNode, string itemName)
+        {
+            foreach (TreeViewItem item in parentNode.Items)
+            {                
+                if (item.Header.ToString() == itemName)
+                {
+                    return item;
+                }
+
+                if (item.HasItems)
+                {
+                    item.IsExpanded = true;
+                    TreeViewItem foundItem = FindAndExpandItemByName(item, itemName);
+                    if (foundItem != null)
+                    {
+                        return foundItem;
+                    }
+                }
+            }
+            return null;
+        }
 
     }
 }
