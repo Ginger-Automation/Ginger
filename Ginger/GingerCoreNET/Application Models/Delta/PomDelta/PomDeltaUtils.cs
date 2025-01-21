@@ -416,11 +416,11 @@ namespace GingerCoreNET.Application_Models
 
                 if (latestLocator.LocateBy == eLocateBy.ByRelXPath)
                 {
-                    matchingExistingLocator = existingElement.Locators.FirstOrDefault(x => x.LocateBy == latestLocator.LocateBy && x.LocateValue == latestLocator.LocateValue && x.Category.Equals(expectedCategory));
+                    matchingExistingLocator = existingElement.Locators.FirstOrDefault(x => x.LocateBy == latestLocator.LocateBy && x.LocateValue == latestLocator.LocateValue && x.Category != null && expectedCategory.HasValue && x.Category.Equals(expectedCategory));
                 }
                 else
                 {
-                    matchingExistingLocator = existingElement.Locators.FirstOrDefault(x => x.LocateBy == latestLocator.LocateBy && x.Category.Equals(expectedCategory));
+                    matchingExistingLocator = existingElement.Locators.FirstOrDefault(x => x.LocateBy == latestLocator.LocateBy && x.Category != null && expectedCategory.HasValue && x.Category.Equals(expectedCategory));
                 }
 
                 if (matchingExistingLocator != null)
@@ -476,11 +476,11 @@ namespace GingerCoreNET.Application_Models
 
                 if (latestFLocator.LocateBy == eLocateBy.ByRelXPath)
                 {
-                    matchingExistingFLocator = existingElement.FriendlyLocators.FirstOrDefault(x => x.LocateBy == latestFLocator.LocateBy && x.LocateValue == latestFLocator.LocateValue && x.Category.Equals(expectedCategory));
+                    matchingExistingFLocator = existingElement.FriendlyLocators.FirstOrDefault(x => x.LocateBy == latestFLocator.LocateBy && x.LocateValue == latestFLocator.LocateValue && x.Category != null && expectedCategory.HasValue && x.Category.Equals(expectedCategory));
                 }
                 else
                 {
-                    matchingExistingFLocator = existingElement.FriendlyLocators.FirstOrDefault(x => x.LocateBy == latestFLocator.LocateBy && x.Category.Equals(expectedCategory));
+                    matchingExistingFLocator = existingElement.FriendlyLocators.FirstOrDefault(x => x.LocateBy == latestFLocator.LocateBy && x.Category != null && expectedCategory.HasValue && x.Category.Equals(expectedCategory));
                 }
 
                 if (matchingExistingFLocator != null)
@@ -531,7 +531,7 @@ namespace GingerCoreNET.Application_Models
                 DeltaElementLocator deltaLocator = new DeltaElementLocator();
                 notLearnedLocator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
                 deltaLocator.ElementLocator = notLearnedLocator;
-                if (notLearnedLocator.IsAutoLearned == true && notLearnedLocator.Category.Equals(expectedCategory))//deleted
+                if (notLearnedLocator.IsAutoLearned == true && notLearnedLocator.Category != null && expectedCategory.HasValue && notLearnedLocator.Category.Equals(expectedCategory))//deleted
                 {
                     deltaLocator.DeltaStatus = eDeltaStatus.Deleted;
                     deltaLocator.DeltaExtraDetails = "Locator not exist on latest";
@@ -637,7 +637,7 @@ namespace GingerCoreNET.Application_Models
                     ElementProperty = deletedProperty
                 };
                 if (PropertiesChangesToAvoid == DeltaControlProperty.ePropertiesChangesToAvoid.None
-                            || (PropertiesChangesToAvoid == DeltaControlProperty.ePropertiesChangesToAvoid.OnlySizeAndLocationProperties && mVisualPropertiesList.Contains(deletedProperty.Name) == false) && deletedProperty.Category.Equals(expectedCategory))
+                            || (PropertiesChangesToAvoid == DeltaControlProperty.ePropertiesChangesToAvoid.OnlySizeAndLocationProperties && mVisualPropertiesList.Contains(deletedProperty.Name) == false) && deletedProperty.Category != null && expectedCategory.HasValue && deletedProperty.Category.Equals(expectedCategory))
                 {
                     deltaProp.DeltaStatus = eDeltaStatus.Deleted;
                     deltaProp.DeltaExtraDetails = "Property not exist on latest";

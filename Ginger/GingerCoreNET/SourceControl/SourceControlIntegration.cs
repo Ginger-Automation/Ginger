@@ -390,11 +390,11 @@ namespace Ginger.SourceControl
 
             List<string> conflictsPaths = [];
             string err = string.Empty;
-            bool isError = mSourceControl.AddFile("*", ref err);
-            if (!isError)
+            bool isSuccess = mSourceControl.AddFile("*", ref err);
+            if (!isSuccess)
             {
                 Reporter.ToLog(eLogLevel.ERROR, err);
-                return isError;
+                return false;
             }
             return mSourceControl.CommitAndCheckinChanges(paths, "check-in self healing changes.", ref error, ref conflictsPaths, false);
 
