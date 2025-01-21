@@ -17,6 +17,13 @@ namespace Amdocs.Ginger.CoreNET.NewSelfHealing
             _logger = logger;
         }
 
+        /// <summary>
+        /// Matches two elements based on their properties, optionally filtering by category.
+        /// </summary>
+        /// <param name="expected">The expected element to match against.</param>
+        /// <param name="actual">The actual element to compare.</param>
+        /// <param name="expectedCategory">Optional category to filter properties by during matching.</param>
+        /// <returns>A score between 0 and 1 indicating the match quality.</returns>
         internal virtual double Match(ElementInfo expected, ElementInfo actual, ePomElementCategory? expectedCategory)
         {
 
