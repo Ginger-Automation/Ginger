@@ -1364,6 +1364,14 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         }
 
 
+        /// <summary>
+        /// Expands and selects a TreeViewItem based on the target item name.
+        /// </summary>
+        /// <param name="StartNode">The starting TreeViewItem node.</param>
+        /// <param name="targetItem">The name of the target item to expand and select.</param>
+        /// <param name="Refresh">Indicates whether to refresh the TreeViewItem children.</param>
+        /// <param name="ExpandChildren">Indicates whether to expand the children of the TreeViewItem.</param>
+        /// <returns>The expanded and selected TreeViewItem, or null if not found.</returns>
         private async Task<TreeViewItem?> ExpandAndSelectTreeViewItem(TreeViewItem StartNode, string targetItem, bool Refresh, bool ExpandChildren)
         {
             try
@@ -1515,6 +1523,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             return validationRes;
         }
 
+        /// <summary>
+        /// Selects an item by its name and opens its folder in the tree view.
+        /// </summary>
+        /// <param name="activity">The activity whose name is used to select the item.</param>
         public void SelectItemByNameAndOpenFolder(GingerCore.Activity activity)
         {
             Task.Run(() =>
@@ -1541,28 +1553,6 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
                 }
             });
-        }
-
-        private TreeViewItem FindAndExpandItemByName(TreeViewItem parentNode, string itemName)
-        {
-            foreach (TreeViewItem item in parentNode.Items)
-            {
-                if (item.Header.ToString() == itemName)
-                {
-                    return item;
-                }
-
-                if (item.HasItems)
-                {
-                    item.IsExpanded = true;
-                    TreeViewItem foundItem = FindAndExpandItemByName(item, itemName);
-                    if (foundItem != null)
-                    {
-                        return foundItem;
-                    }
-                }
-            }
-            return null;
         }
 
     }
