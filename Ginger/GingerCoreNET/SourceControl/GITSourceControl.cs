@@ -387,10 +387,10 @@ namespace GingerCore.SourceControl
                 {
                     foreach (var item in repo.RetrieveStatus())
                     {
-                        //if (WorkSpace.Instance.SolutionRepository.IsSolutionPathToAvoid(System.IO.Path.Combine(RepositoryRootFolder, item.FilePath)))
-                        //{
-                        //    continue;
-                        //}
+                        if (WorkSpace.Instance.SolutionRepository.IsSolutionPathToAvoid(System.IO.Path.Combine(RepositoryRootFolder, item.FilePath)))
+                        {
+                            continue;
+                        }
 
                         //if (System.IO.Path.GetExtension(item.FilePath) == ".ldb" || System.IO.Path.GetExtension(item.FilePath) == ".ignore" || System.IO.Path.GetExtension(item.FilePath) == ".db")
                         //{
