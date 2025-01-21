@@ -16,15 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using ABI.Windows.UI.Text;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.SolutionWindows.TreeViewItems;
+using GingerCore;
 using GingerWPF.DragDropLib;
 using GingerWPF.TreeViewItemsLib;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -443,7 +441,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         private bool TryRemoveDummyNode(TreeViewItem node)
         {
-            if (node.Items.Count > 0)
+            if (node?.Items.Count > 0)
             {
                 string? header = ((TreeViewItem)node.Items[0]).Header.ToString();
                 if (header != null && header.IndexOf("DUMMY") >= 0)
@@ -1351,6 +1349,63 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             return null;
         }
 
+
+        private async Task<TreeViewItem> ExpandNodeByNameTVIRecursive2(TreeViewItem StartNode, string targetItem, bool Refresh, bool ExpandChildren)
+        {
+            foreach (TreeViewItem TVI in StartNode.Items)
+            {
+                StackPanel head = null;
+                string itemName = null;
+                if (TVI.Header.ToString() != "DUMMY") //added for stability bc sometimes i was getting issues
+                {
+                    head = (StackPanel)TVI.Header;
+                    foreach (var child in head.Children)
+                    {
+                        if (child is Label label)
+                        {
+                            itemName = label.Content?.ToString();
+                            break;
+                        }
+                    }
+                }
+
+                // If searched Node is found by name, refresh and expand
+                if (itemName != null && itemName.Equals(targetItem))
+                {
+                    if (Refresh)
+                    {
+                        TVI.IsSelected = true;
+                        RefreshTreeViewItemChildrens(TVI);
+                    }
+                    if (ExpandChildren)
+                    {
+                        TVI.IsSelected = true;
+                    }
+                    else
+                    {
+                        TVI.IsExpanded = true;
+                    }
+                    return TVI;
+                }
+
+                if (TVI != null)
+                {
+                    await LoadChildItems(TVI);
+                    TVI.IsExpanded = true;
+                    if (TVI.Items.Count > 0)
+                    {
+                        TreeViewItem foundTreeViewItem = await ExpandNodeByNameTVIRecursive2(TVI, targetItem, Refresh, ExpandChildren);
+                        if (foundTreeViewItem != null)
+                        {
+                            return foundTreeViewItem;
+                        }
+                    }
+                    TVI.IsExpanded = false;
+                }
+            }
+            return null;
+        }
+
         // DragDrop handlers
 
         void IDragDrop.StartDrag(DragInfo Info)
@@ -1441,56 +1496,37 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         public void SelectItemByNameAndOpenFolder(GingerCore.Activity activity)
         {
-            string[] path = activity.ContainingFolder.Split('/');
-                
             Task.Run(() =>
             {
-                if (mSetTreeNodeItemChildsEvent != null)
+                try
                 {
-                    mSetTreeNodeItemChildsEvent.WaitOne();
+                    mSetTreeNodeItemChildsEvent?.WaitOne();
+
+                    Dispatcher.Invoke(async () =>
+                    {
+                        try
+                        {
+                            _ = await ExpandNodeByNameTVIRecursive2((TreeViewItem)Tree.Items[0], activity.ActivityName, false, true);
+                        }
+                        catch (Exception ex)
+                        {
+                            //throw;
+                        }
+
+                    });
                 }
-                Dispatcher.Invoke(async () =>
+                catch (Exception)
                 {
-                    path = activity.ContainingFolder.Split(System.IO.Path.DirectorySeparatorChar);
-                    TreeViewItem rootItem = (TreeViewItem)Tree.Items[0];
-                    for (int i = 4; i < path.Length; i++)
-                    {
-                        foreach (TreeViewItem item in rootItem.Items)
-                        {
-                            var itemName = ((System.Windows.Controls.ContentControl)((System.Windows.Controls.Panel)item.Header).Children[1]).Content;
-                             if (itemName.Equals(path[i]))
-                            {
-                                //item.IsExpanded = true;
-                                GingerCore.General.DoEvents();
-                                rootItem = item;
-                                break;
-                            }
-                        }
-                    }
-                    
 
-                    //rootItem.ExpandSubtree();
-                    await LoadChildItems(rootItem);
-
-                    foreach (var child in rootItem.Items)
-                    {
-                        var itemName = ((System.Windows.Controls.ContentControl)((System.Windows.Controls.Panel)child.Header).Children[1]).Content;
-                        if (activity.ActivityName.Equals(itemName))
-                        {
-                          //  child.Focus();
-                            GingerCore.General.DoEvents();
-                            break;
-                        }
-                    }
-
-                });
+                    //throw;
+                }
             });
         }
 
         private TreeViewItem FindAndExpandItemByName(TreeViewItem parentNode, string itemName)
         {
             foreach (TreeViewItem item in parentNode.Items)
-            {                
+            {
                 if (item.Header.ToString() == itemName)
                 {
                     return item;
