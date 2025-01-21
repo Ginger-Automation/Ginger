@@ -22,9 +22,9 @@ namespace Amdocs.Ginger.CoreNET.NewSelfHealing
         /// </summary>
         /// <param name="expected">The expected element to match against.</param>
         /// <param name="actual">The actual element to compare.</param>
-        /// <param name="expectedCategory">Optional category to filter properties by during matching.</param>
+        /// <param name="expectedCategory">(Optional) Only properties with specified categories will be considered for matching, if null then all properties will be considered.</param>
         /// <returns>A score between 0 and 1 indicating the match quality.</returns>
-        internal virtual double Match(ElementInfo expected, ElementInfo actual, ePomElementCategory? expectedCategory)
+        internal virtual double Match(ElementInfo expected, ElementInfo actual, ePomElementCategory? expectedCategory = null)
         {
 
             if (expected == null)
@@ -38,8 +38,14 @@ namespace Amdocs.Ginger.CoreNET.NewSelfHealing
 
             _logger?.LogTrace("matching expected element({expectedElementName}-{expectedElementId}) with actual element({actualElementName}-{actualElementId})", expected.ElementName, expected.Guid, actual.ElementName, actual.Guid);
 
-            List<ControlProperty> expectedProperties = expectedCategory != null ? new((expected.Properties ?? []).Where(p => p != null && p.Category != null && p.Category.Equals(expectedCategory))) : new((expected.Properties ?? []).Where(p => p != null));
-            List<ControlProperty> actualProperties = expectedCategory != null ? new((actual.Properties ?? []).Where(p => p != null && p.Category != null && p.Category.Equals(expectedCategory))) : new((actual.Properties ?? []).Where(p => p != null));
+            List<ControlProperty> expectedProperties = new((expected.Properties ?? [])
+                .Where(p =>
+                    p != null &&
+                    (expectedCategory == null || p.Category == expectedCategory)));
+            List<ControlProperty> actualProperties = new((actual.Properties ?? [])
+                .Where(p =>
+                    p != null &&
+                    (expectedCategory == null || p.Category == expectedCategory)));
 
             double actualScore = 0;
             double totalScore = 0;

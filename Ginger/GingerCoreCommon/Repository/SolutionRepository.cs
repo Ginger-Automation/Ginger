@@ -52,7 +52,7 @@ namespace Amdocs.Ginger.Repository
              @"Backups\",
              @"ExecutionResults\",
              @"HTMLReports\",
-
+             @"ExecutionResults\GingerExecutionResults.db",
              $@"BusinessFlows\{ISolution.CacheDirectoryName}\",
              $@"RunSetConfigs\{ISolution.CacheDirectoryName}\",
 
