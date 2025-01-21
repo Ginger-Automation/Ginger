@@ -180,6 +180,19 @@ namespace GingerCore.Actions
             }
         }
 
+        public ActInputValue ActionInput
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ActionInput));
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ActionInput), value.ToString());
+                OnPropertyChanged(nameof(ActionInput));
+            }
+        }
+
         public ActInputValue PressDuration
         {
             get
@@ -366,6 +379,10 @@ namespace GingerCore.Actions
             SimulateBiometrics,
             [EnumValueDescription("Stop Simulate Photo\\Video")]
             StopSimulatePhotoOrVideo,
+            [EnumValueDescription("Get Available Contexts")]
+            GetAvailableContexts,
+            [EnumValueDescription("Set Context")]
+            SetContext,
         }
 
         public enum ePressKey

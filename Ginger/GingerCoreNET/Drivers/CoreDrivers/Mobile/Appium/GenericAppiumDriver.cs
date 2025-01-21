@@ -1220,6 +1220,18 @@ namespace Amdocs.Ginger.CoreNET
                         CameraAndBarcodeSimulationRequest(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
                         break;
 
+                    case ActMobileDevice.eMobileDeviceAction.GetAvailableContexts:
+                        int i = 0;
+                        foreach (var c in Driver.Contexts)
+                        {
+                            act.AddOrUpdateReturnParamActual("Context " + i+1, c.ToString());
+                        }
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.SetContext:
+                        Driver.Context = act.ActionInput.ValueForDriver;
+                        break;
+
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
                 }
