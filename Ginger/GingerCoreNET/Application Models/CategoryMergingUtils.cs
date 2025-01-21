@@ -23,8 +23,19 @@ using System.Linq;
 
 namespace Amdocs.Ginger.CoreNET.Application_Models
 {
+    /// <summary>
+    /// Utility class for merging collections while preserving items from categories not present in the new data.
+    /// </summary>
     public static class CategoryMergingUtils
     {
+        /// <summary>
+        /// Merges two collections by preserving items from the existing collection whose categories are not present in the latest collection.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the collections.</typeparam>
+        /// <param name="existing">The existing collection to merge from.</param>
+        /// <param name="latest">The latest collection to merge with.</param>
+        /// <param name="categorySelector">A function to extract the category from each item.</param>
+        /// <returns>A new collection containing all items from the latest collection and preserved items from the existing collection.</returns>
         public static ObservableList<T> MergeByCategory<T>(
         ObservableList<T> existing,
         ObservableList<T> latest,
