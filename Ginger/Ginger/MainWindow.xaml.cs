@@ -262,21 +262,19 @@ namespace Ginger
 
                     var treeView = ((SingleItemTreeViewExplorerPage)ResourcesMenu.MenusPage.mTwoLevelMenu.MenuList[0].SubItems[1].ItemPage)?.xTreeView?.Tree;
 
-                  
-                 
-                    if (treeView != null )
-                      {
 
-                        ITreeViewItem s= new SharedActivityTreeItem(activity);
+
+                    if (treeView != null)
+                    {
+
+                        ITreeViewItem s = new SharedActivityTreeItem(activity);
 
                         treeView.SelectItemByNameAndOpenFolder(activity);
-                      //  treeView.GetChildItembyNameandSelect(activity.ActivityName,expandChildren: true);
 
-                        //GingerCore.General.DoEvents();
                     }
 
 
-               
+
                 }
                 catch (Exception ex)
                 {
@@ -693,35 +691,24 @@ namespace Ginger
             {
                 if (selectedTopListItem == xBusinessFlowsListItem)
                 {
-                    if (xBusinessFlowsListItem.Tag == null)
-                    {
-                        xBusinessFlowsListItem.Tag = BusinessFlowsMenu.MenusPage;
-                    }
+                    xBusinessFlowsListItem.Tag ??= BusinessFlowsMenu.MenusPage;
                     SelectedSolutionTab = eSolutionTabType.BusinessFlows;
+                    SelectBusinessFlowsMenu();
                 }
                 else if (selectedTopListItem == xRunListItem)
                 {
-                    if (xRunListItem.Tag == null)
-                    {
-                        xRunListItem.Tag = RunMenu.MenusPage;
-                    }
+                    xRunListItem.Tag ??= RunMenu.MenusPage;
                     SelectedSolutionTab = eSolutionTabType.Run;
                     RunMenu.MenusPage.SelectFirstTopMenu();
                 }
                 else if (selectedTopListItem == xConfigurationsListItem)
                 {
-                    if (xConfigurationsListItem.Tag == null)
-                    {
-                        xConfigurationsListItem.Tag = ConfigurationsMenu.MenusPage;
-                    }
+                    xConfigurationsListItem.Tag ??= ConfigurationsMenu.MenusPage;
                     SelectedSolutionTab = eSolutionTabType.Configurations;
                 }
                 else
                 {
-                    if (xResourcesListItem.Tag == null)
-                    {
-                        xResourcesListItem.Tag = ResourcesMenu.MenusPage;
-                    }
+                    xResourcesListItem.Tag ??= ResourcesMenu.MenusPage;
                     SelectedSolutionTab = eSolutionTabType.Resources;
                 }
 
