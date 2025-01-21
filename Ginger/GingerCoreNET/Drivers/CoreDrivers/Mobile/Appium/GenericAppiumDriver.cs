@@ -323,14 +323,14 @@ namespace Amdocs.Ginger.CoreNET
                     return false;
                 }
 
-                mSeleniumDriver = new SeleniumDriver(Driver)
+                mSeleniumDriver = new SeleniumDriver(Driver)//used for running regular Selenium actions
                 {
                     isAppiumSession = true,
-                    StopProcess = this.StopProcess,
                     BusinessFlow = this.BusinessFlow,
                     PomCategory = this.PomCategory
-                }; //used for running regular Selenium actions
-
+                }; 
+                mSeleniumDriver.StopProcess = this.StopProcess;
+                
                 if (AppType == eAppType.Web && mDefaultURL != null)
                 {
                     try
