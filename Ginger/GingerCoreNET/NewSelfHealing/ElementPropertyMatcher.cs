@@ -17,9 +17,9 @@ namespace Amdocs.Ginger.CoreNET.NewSelfHealing
             _logger = logger;
         }
 
-        internal virtual double Match(ElementInfo expected, ElementInfo actual)
+        internal virtual double Match(ElementInfo expected, ElementInfo actual, ePomElementCategory? expectedCategory)
         {
-            ePomElementCategory? expectedCategory = expected.Properties.FirstOrDefault().Category.Value;
+
             if (expected == null)
             {
                 throw new ArgumentNullException(paramName: nameof(expected));
@@ -31,8 +31,8 @@ namespace Amdocs.Ginger.CoreNET.NewSelfHealing
 
             _logger?.LogTrace("matching expected element({expectedElementName}-{expectedElementId}) with actual element({actualElementName}-{actualElementId})", expected.ElementName, expected.Guid, actual.ElementName, actual.Guid);
 
-            List<ControlProperty> expectedProperties = new((expected.Properties ?? []).Where(p => p != null && p.Category.Equals(expectedCategory)));
-            List<ControlProperty> actualProperties = new((actual.Properties ?? []).Where(p => p != null && p.Category.Equals(expectedCategory)));
+            List<ControlProperty> expectedProperties = expectedCategory != null ? new((expected.Properties ?? []).Where(p => p != null && p.Category != null && p.Category.Equals(expectedCategory))) : new((expected.Properties ?? []).Where(p => p != null));
+            List<ControlProperty> actualProperties = expectedCategory != null ? new((actual.Properties ?? []).Where(p => p != null && p.Category != null && p.Category.Equals(expectedCategory))) : new((actual.Properties ?? []).Where(p => p != null));
 
             double actualScore = 0;
             double totalScore = 0;

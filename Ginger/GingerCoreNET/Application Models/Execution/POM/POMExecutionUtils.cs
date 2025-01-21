@@ -295,7 +295,11 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 return currentElementDelta.ElementInfo;
             }
         }
-
+        /// <summary>
+        /// Updates element details during self-healing, preserving locators with categories
+        /// that are not present in the new data to maintain backward compatibility.
+        /// </summary>
+        /// <param name="deltaElementInfos">List of delta information for elements</param>
         private void UpdateElementSelfHealingDetails(List<DeltaElementInfo> deltaElementInfos)
         {
             foreach (var elementInfo in GetCurrentPOM().MappedUIElements)
@@ -309,59 +313,19 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                         {
 
                             //Merge Both Category Properties
-                            IEnumerable<ePomElementCategory> existingPropertiesCategories = [];
-                            if (elementInfo.Properties != null)
-                            {
-                                existingPropertiesCategories = elementInfo.Properties
-                                .Where(l => l.Category.HasValue)
-                                .Select(l => l.Category.Value)
-                                .Distinct()
-                                .ToArray();
-                            }
-                            IEnumerable<ePomElementCategory> newPropertiesCategories = [];
-                            if (deltaInfo.ElementInfo.Properties != null)
-                            {
-                                newPropertiesCategories = deltaInfo.ElementInfo.Properties
-                                .Where(l => l.Category.HasValue)
-                                .Select(l => l.Category.Value)
-                                .Distinct()
-                                .ToArray();
-                            }
 
-                            IEnumerable<ePomElementCategory> missingCategoriesInNewProperties = existingPropertiesCategories
-                                .Where(c => !newPropertiesCategories.Contains(c))
-                                .ToArray();
-                            IEnumerable<ControlProperty> existingPropertiesWithCategoryMissingInNew = elementInfo.Properties
-                                .Where(l => l.Category.HasValue && missingCategoriesInNewProperties.Contains(l.Category.Value))
-                                .ToArray();
-                            elementInfo.Properties = [.. deltaInfo.ElementInfo.Properties, .. existingPropertiesWithCategoryMissingInNew];
+                            elementInfo.Properties = CategoryMergingUtils.MergeByCategory(
+                                                        elementInfo.Properties,
+                                                        deltaInfo.ElementInfo.Properties,
+                                                        p => p.Category);
 
                             //Merge Both Category Locators
-                            IEnumerable<ePomElementCategory> existingLocatorCategories = [];
-                            if (elementInfo.Locators != null)
-                            {
-                                existingLocatorCategories = elementInfo.Locators
-                                .Where(l => l.Category.HasValue)
-                                .Select(l => l.Category.Value)
-                                .Distinct()
-                                .ToArray();
-                            }
-                            IEnumerable<ePomElementCategory> newLocatorCategories = [];
-                            if (deltaInfo.ElementInfo.Locators != null)
-                            {
-                                newLocatorCategories = deltaInfo.ElementInfo.Locators
-                                .Where(l => l.Category.HasValue)
-                                .Select(l => l.Category.Value)
-                                .Distinct()
-                                .ToArray();
-                            }
-                            IEnumerable<ePomElementCategory> missingCategoriesInNewLocators = existingLocatorCategories
-                                .Where(c => !newLocatorCategories.Contains(c))
-                                .ToArray();
-                            IEnumerable<ElementLocator> existingLocatorsWithCategoryMissingInNew = elementInfo.Locators
-                                .Where(l => l.Category.HasValue && missingCategoriesInNewLocators.Contains(l.Category.Value))
-                                .ToArray();
-                            elementInfo.Locators = [.. deltaInfo.ElementInfo.Locators, .. existingLocatorsWithCategoryMissingInNew];
+
+                            elementInfo.Locators = CategoryMergingUtils.MergeByCategory(
+                                                    elementInfo.Locators,
+                                                    deltaInfo.ElementInfo.Locators,
+                                                    l => l.Category);
+
                             elementInfo.LastUpdatedTime = DateTime.Now.ToString();
                             elementInfo.SelfHealingInfo = SelfHealingInfoEnum.ElementModified;
                         }

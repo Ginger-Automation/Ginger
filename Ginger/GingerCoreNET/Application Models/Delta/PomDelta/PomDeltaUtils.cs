@@ -298,7 +298,9 @@ namespace GingerCoreNET.Application_Models
             {
                 try
                 {
-                    double matchScore = elementPropertyMatcher.Match(expected: newElement, actual: oldElement);
+                    ePomElementCategory? expectedCategory = newElement.Properties?.FirstOrDefault()?.Category;
+
+                    double matchScore = elementPropertyMatcher.Match(expected: newElement, actual: oldElement, expectedCategory: expectedCategory);
                     if (matchScore >= acceptableMatchScore && matchScore > maxMatchScore)
                     {
                         maxMatchScore = matchScore;
@@ -524,12 +526,12 @@ namespace GingerCoreNET.Application_Models
 
             //not Learned Locators
             List<ElementLocator> notLearnedLocators = existingElement.Locators.Where(x => latestElement.Locators.FirstOrDefault(y => y.Guid == x.Guid) == null).ToList();
-            foreach (ElementLocator notLearedLocator in notLearnedLocators)
+            foreach (ElementLocator notLearnedLocator in notLearnedLocators)
             {
                 DeltaElementLocator deltaLocator = new DeltaElementLocator();
-                notLearedLocator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
-                deltaLocator.ElementLocator = notLearedLocator;
-                if (notLearedLocator.IsAutoLearned == true && !notLearedLocator.Category.Equals(expectedCategory))//deleted
+                notLearnedLocator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
+                deltaLocator.ElementLocator = notLearnedLocator;
+                if (notLearnedLocator.IsAutoLearned == true)//deleted
                 {
                     deltaLocator.DeltaStatus = eDeltaStatus.Deleted;
                     deltaLocator.DeltaExtraDetails = "Locator not exist on latest";
@@ -540,7 +542,7 @@ namespace GingerCoreNET.Application_Models
                     deltaLocator.DeltaExtraDetails = "Customized locator not exist on latest";
                     if (KeepOriginalLocatorsOrderAndActivation == true)
                     {
-                        latestElement.Locators.Add(notLearedLocator);
+                        latestElement.Locators.Add(notLearnedLocator);
                     }
                 }
                 matchedDeltaElement.Locators.Add(deltaLocator);
@@ -635,7 +637,7 @@ namespace GingerCoreNET.Application_Models
                     ElementProperty = deletedProperty
                 };
                 if (PropertiesChangesToAvoid == DeltaControlProperty.ePropertiesChangesToAvoid.None
-                            || (PropertiesChangesToAvoid == DeltaControlProperty.ePropertiesChangesToAvoid.OnlySizeAndLocationProperties && mVisualPropertiesList.Contains(deletedProperty.Name) == false) || !deletedProperty.Category.Equals(expectedCategory))
+                            || (PropertiesChangesToAvoid == DeltaControlProperty.ePropertiesChangesToAvoid.OnlySizeAndLocationProperties && mVisualPropertiesList.Contains(deletedProperty.Name) == false))
                 {
                     deltaProp.DeltaStatus = eDeltaStatus.Deleted;
                     deltaProp.DeltaExtraDetails = "Property not exist on latest";
@@ -911,6 +913,18 @@ namespace GingerCoreNET.Application_Models
             }
         }
 
+        private static ObservableList<T> MergeByCategory<T>(
+            ObservableList<T> existing,
+            ObservableList<T> latest,
+           ePomElementCategory mergeCategory,
+            Func<T, ePomElementCategory?> categorySelector)
+        {
+            var itemsWithMissingCategory = existing
+                .Where(x => !categorySelector(x).Equals(mergeCategory))
+                .ToList();
+            return [.. latest, .. itemsWithMissingCategory];
+        }
+
         private void MapDeletedElementWithNewAddedElement(List<DeltaElementInfo> elementsToUpdate)
         {
             foreach (DeltaElementInfo elementToUpdate in elementsToUpdate)
@@ -925,12 +939,23 @@ namespace GingerCoreNET.Application_Models
                         {
                             if (mergeCategory != null)
                             {
-                                IEnumerable<ControlProperty> existingPropertiesWithCategoryMissingInNew = elementToUpdate.ElementInfo.Properties.Where(x => !x.Category.Equals(mergeCategory)).ToList();
-                                deltaElementToUpdateProp.ElementInfo.Properties = [.. deltaElementToUpdateProp.ElementInfo.Properties, .. existingPropertiesWithCategoryMissingInNew];
-                                IEnumerable<ElementLocator> existingLocatorsWithCategoryMissingInNew = elementToUpdate.ElementInfo.Locators.Where(x => !x.Category.Equals(mergeCategory)).ToList();
-                                deltaElementToUpdateProp.ElementInfo.Locators = [.. deltaElementToUpdateProp.ElementInfo.Locators, .. existingLocatorsWithCategoryMissingInNew];
-                                IEnumerable<ElementLocator> existingFriendlyLocatorsWithCategoryMissingInNew = elementToUpdate.ElementInfo.FriendlyLocators.Where(x => !x.Category.Equals(mergeCategory)).ToList();
-                                deltaElementToUpdateProp.ElementInfo.FriendlyLocators = [.. deltaElementToUpdateProp.ElementInfo.FriendlyLocators, .. existingFriendlyLocatorsWithCategoryMissingInNew];
+                                deltaElementToUpdateProp.ElementInfo.Properties = MergeByCategory(
+                                    elementToUpdate.ElementInfo.Properties,
+                                    deltaElementToUpdateProp.ElementInfo.Properties,
+                                    mergeCategory,
+                                    p => p.Category);
+
+                                deltaElementToUpdateProp.ElementInfo.Locators = MergeByCategory(
+                                elementToUpdate.ElementInfo.Locators,
+                                deltaElementToUpdateProp.ElementInfo.Locators,
+                                mergeCategory,
+                                l => l.Category);
+
+                                deltaElementToUpdateProp.ElementInfo.FriendlyLocators = MergeByCategory(
+                                elementToUpdate.ElementInfo.FriendlyLocators,
+                                deltaElementToUpdateProp.ElementInfo.FriendlyLocators,
+                                mergeCategory,
+                                l => l.Category);
                             }
 
 
