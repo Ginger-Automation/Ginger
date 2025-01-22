@@ -287,6 +287,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         private async Task<bool> OpenRunSetByExecutionId()
         {
             bool autoLoadLastRunSetFlag = WorkSpace.Instance.UserProfile.AutoLoadLastRunSet;
+            DateTime? executionStartTime = null; // Initialize the variable
+
             try
             {
                 string endPoint = GingerRemoteExecutionUtils.GetReportDataServiceUrl();
@@ -299,7 +301,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     if (response?.Data?.Runsets?.Nodes.Count > 0)
                     {
                         var node = response.Data.Runsets.Nodes.First();
-
+                        executionStartTime = node.StartTime;
                         var cliRunset = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<RunSetConfig>(node.EntityId.Value);
                         if (cliRunset != null)
                         {
@@ -311,7 +313,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     }
                 }
 
-                return await LoadVirtualRunset();
+                return await LoadVirtualRunset(executionStartTime);
             }
             catch (Exception ex)
             {
@@ -328,7 +330,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         /// Loads a virtual runset based on the provided execution ID.
         /// </summary>
         /// <returns>True if the virtual runset is loaded successfully, otherwise false.</returns>
-        private async Task<bool> LoadVirtualRunset()
+        private async Task<bool> LoadVirtualRunset(DateTime? executionStartTime)
         {
             if (!Guid.TryParse(mOpts.ExecutionId, out Guid executionId))
             {
@@ -341,6 +343,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 GUID = mOpts.ExecutionId,
                 RunSetGuid = executionId,
             };
+            if (executionStartTime != null)
+            {
+                runsetReport.StartTimeStamp = (DateTime)executionStartTime;
+            }
             RunsetFromReportLoader _runsetFromReportLoader = new RunsetFromReportLoader();
             RunSetConfig? runset = await _runsetFromReportLoader.LoadAsync(runsetReport);
             if (runset != null)
