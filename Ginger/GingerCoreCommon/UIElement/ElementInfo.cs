@@ -549,6 +549,8 @@ namespace Amdocs.Ginger.Common.UIElement
         ByCSS,
         [EnumValueDescription("By XPath")]
         ByXPath,
+        [EnumValueDescription("By Attribute")]
+        ByAttribute,
         [EnumValueDescription("By Relative XPath")]
         ByRelXPath,
         [EnumValueDescription("By X,Y")]

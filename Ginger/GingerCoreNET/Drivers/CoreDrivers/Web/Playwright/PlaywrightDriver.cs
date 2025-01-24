@@ -282,6 +282,48 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                             browserOptions.Timeout = driverDefaultTimeout;
                         }
                         break;
+                    case ActWebSmartSync actWebSmartSync:
+                        ActWebSmartSyncHandler actWebSmartSyncHandler = new(
+                            actWebSmartSync,
+                            _browser.CurrentWindow.CurrentTab,
+                            new BrowserElementLocator(
+                                _browser.CurrentWindow.CurrentTab,
+                                new()
+                                {
+                                    BusinessFlow = BusinessFlow,
+                                    Environment = Environment,
+                                    POMExecutionUtils = new POMExecutionUtils(actWebSmartSync, actWebSmartSync.ElementLocateValue),
+                                    Agent = BusinessFlow.CurrentActivity.CurrentAgent,
+                                }));
+                        float? driverDefaultTimeout1 = browserOptions.Timeout;
+                        float waitUntilTime;
+                        if (act.Timeout > 0)
+                        {
+                            // waitUntilTime= TimeSpan.FromSeconds(act.Timeout.GetValueOrDefault());
+                            waitUntilTime = act.Timeout.GetValueOrDefault();
+                        }
+                        else if(browserOptions.Timeout>0)
+                        {
+                            waitUntilTime = browserOptions.Timeout.Value;
+                        }
+                        else
+                        {
+                            waitUntilTime = 5;
+                        }
+                        browserOptions.Timeout = (float)waitUntilTime;
+                        try
+                        {                          
+                            actWebSmartSyncHandler.HandleAsync(act, waitUntilTime*1000).Wait();
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Error = ex.Message;
+                        }
+                        finally
+                        {
+                            browserOptions.Timeout = driverDefaultTimeout1;
+                        }
+                        break;
                     default:
                         act.Error = $"This Action is not supported for Playwright driver";
                         break;
@@ -293,7 +335,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             message = string.Empty;
 
-            if (act is ActWithoutDriver or ActScreenShot or ActGotoURL or ActAccessibilityTesting or ActSmartSync)
+            if (act is ActWithoutDriver or ActScreenShot or ActGotoURL or ActAccessibilityTesting or ActSmartSync or ActWebSmartSync)
             {
                 return true;
             }

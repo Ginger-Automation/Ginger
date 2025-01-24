@@ -36,7 +36,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task GoToURLAsync(string url);
 
-        public Task<string> TitleAsync();
+          public Task<string> TitleAsync();
 
         public Task NavigateBackAsync();
 
@@ -100,6 +100,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task StartListenDialogsAsync();
 
+        public Task<bool> WaitForUrlMatchAsync(string urlPattern, float timeout);
+
+        public Task<bool> WaitForAlertAsync(float timeout);
+
+        public Task<bool> WaitForElementsEnabledAsync(eLocateBy locateBy, string selector, float timeout);
+
+        public Task<bool> WaitForElementsCheckedAsync(eLocateBy locateBy, string locateValue, float timeout);
+        public Task<bool> WaitForElementsPresenceAsync(eLocateBy locateBy, string locateValue, float timeout);
+        public Task<bool> WaitForElementsInvisibleAsync(eLocateBy locateBy, string locateValue, float timeout);
+        public Task<bool> WaitForElementsVisibleAsync(eLocateBy locateBy, string locateValue, float timeout);
 
     }
 }
