@@ -387,10 +387,10 @@ namespace GingerCore.SourceControl
                 {
                     foreach (var item in repo.RetrieveStatus())
                     {
-                        //if (WorkSpace.Instance.SolutionRepository.IsSolutionPathToAvoid(System.IO.Path.Combine(RepositoryRootFolder, item.FilePath)))
-                        //{
-                        //    continue;
-                        //}
+                        if (WorkSpace.Instance.SolutionRepository.IsSolutionPathToAvoid(System.IO.Path.Combine(RepositoryRootFolder, item.FilePath)))
+                        {
+                            continue;
+                        }
 
                         //if (System.IO.Path.GetExtension(item.FilePath) == ".ldb" || System.IO.Path.GetExtension(item.FilePath) == ".ignore" || System.IO.Path.GetExtension(item.FilePath) == ".db")
                         //{
@@ -456,6 +456,7 @@ namespace GingerCore.SourceControl
                 var fetchOptions = new FetchOptions
                 {
                     CredentialsProvider = GetSourceCredentialsHandler(),
+                    Depth = 1 //Do download latest state and avoid downloading commit history
                 };
                 var co = new CloneOptions(fetchOptions)
                 {

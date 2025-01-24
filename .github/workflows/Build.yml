@@ -1,0 +1,194 @@
+name: Ginger Build
+
+on:
+  workflow_call:
+      
+  # pull_request:
+  #   branches: 
+  #     - master
+  #     - Features/Linux-Migration
+  #     - Releases/*
+  #     - Releases/*/*
+
+  # push:
+  #   branches:
+  #     - '**'
+
+jobs:
+    Build:
+        name: ${{ matrix.os }}
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os: [ubuntu-latest, windows-latest, macos-latest]
+        env:
+            BUILD_CONFIGURATION: Release
+      
+        steps:
+# ------------------------------------------------------------------------------------------------------
+# Createin version Tag & Number variables - only for CD Job
+# ------------------------------------------------------------------------------------------------------      
+        -   name: Create Version Environment Variable - Windows
+            if: ${{github.workflow == 'CD' && runner.os == 'Windows'}} 
+            id: set_version_windows
+            run: |
+                if ($env:GITHUB_EVENT_INPUTS_REVISION -ne 0) {
+                    Write-Output "Alpha Version"
+                    Write-Output "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.${{ github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $env:GITHUB_ENV
+                } elseif ($env:GITHUB_EVENT_INPUTS_BUILD -ne 0 -and $env:GITHUB_EVENT_INPUTS_REVISION -eq 0) {
+                    Write-Output "Beta Version"
+                    Write-Output "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.${{ github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $env:GITHUB_ENV
+                } elseif ($env:GITHUB_EVENT_INPUTS_BUILD -eq 0 -and $env:GITHUB_EVENT_INPUTS_REVISION -eq 0) {
+                    Write-Output "Official Version"
+                    Write-Output "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.${{ github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $env:GITHUB_ENV
+                }
+
+        -   name: Create Version Environment Variable - Linux and macOS
+            if: ${{github.workflow == 'CD' && (runner.os == 'Linux' || runner.os == 'macOS')}} 
+            id: set_version_unix
+            run: |
+                if [[ ${{github.event.inputs.revision}} != 0 ]]; then 
+                    echo "Alpha Version"
+                    echo "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.${{ github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
+                elif [[ ${{github.event.inputs.build}} != 0 && ${{github.event.inputs.revision}} == 0 ]]; then
+                    echo "Beta Version"
+                    echo "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.${{ github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
+                elif [[ ${{github.event.inputs.build}} == 0  &&  ${{github.event.inputs.revision}} == 0 ]]; then
+                    echo "Official Version"
+                    echo "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.${{ github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
+                fi
+
+        -   name: Print Version Environment Variable
+            if: ${{github.workflow == 'CD'}} 
+            run: |
+                echo "GingerNumber Version: ${{ env.gingernumber}}"
+                
+          
+# ------------------------------------------------------------------------------------------------------
+# Copy Ginger repo
+# ------------------------------------------------------------------------------------------------------
+        -   uses: actions/checkout@v3
+                
+# ------------------------------------------------------------------------------------------------------
+# Update Ginger Version 
+# ------------------------------------------------------------------------------------------------------
+        -   name: 'Update Assembly - Windows'
+            if: ${{github.workflow == 'CD' && runner.os == 'Windows'}}
+            run: |
+                $save=((Get-Content .\Ginger\GingerCoreCommon/GingerCoreCommon.csproj) -replace '<AssemblyVersion>*.*.*.*</AssemblyVersion>','<AssemblyVersion>${{ env.gingernumber}}</AssemblyVersion>')  -replace '<FileVersion>*.*.*.*</FileVersion>','<FileVersion>${{ env.gingernumber}}</FileVersion>'
+                echo $save > .\Ginger\GingerCoreCommon/GingerCoreCommon.csproj
+                $save=(Get-Content .\Ginger\GingerInstallerScript.iss) -replace '#define MyAppVersion "*.*.*.*"','#define MyAppVersion "${{ env.gingernumber}}"'
+                echo $save > .\Ginger\GingerInstallerScript.iss
+                $save=(Get-Content .\Ginger\GingerCore\Drivers\JavaDriverLib\GingerJavaAgent\agent\com\amdocs\ginger\GingerAgent.java) -replace 'public static final String GINGER_JAVA_AGENT_VERSION="*.*.*.*";','public static final String GINGER_JAVA_AGENT_VERSION="${{ env.gingernumber}}";'
+                echo $save > .\Ginger\GingerCore\Drivers\JavaDriverLib\GingerJavaAgent\agent\com\amdocs\ginger\GingerAgent.java
+                $save=(Get-Content .\Ginger\GingerInstallerScriptGithub.iss) -replace '#define MyAppVersion "*.*.*.*"','#define MyAppVersion "${{ env.gingernumber}}"'
+                echo $save > .\Ginger\GingerInstallerScriptGithub.iss
+
+        -   name: 'Update Assembly - Linux'
+            if: ${{github.workflow == 'CD' && runner.os == 'Linux'}}
+            run: |
+                sed -i 's/<AssemblyVersion>.*<\/AssemblyVersion>/<AssemblyVersion>${{ env.gingernumber}}<\/AssemblyVersion>/' ./Ginger/GingerCoreCommon/GingerCoreCommon.csproj
+                sed -i 's/<FileVersion>.*<\/FileVersion>/<FileVersion>${{ env.gingernumber}}<\/FileVersion>/' ./Ginger/GingerCoreCommon/GingerCoreCommon.csproj
+                sed -i 's/#define MyAppVersion ".*"/#define MyAppVersion "${{ env.gingernumber}}"/' ./Ginger/GingerInstallerScript.iss
+                sed -i 's/public static final String GINGER_JAVA_AGENT_VERSION=".*";/public static final String GINGER_JAVA_AGENT_VERSION="${{ env.gingernumber}}";/' ./Ginger/GingerCore/Drivers/JavaDriverLib/GingerJavaAgent/agent/com/amdocs/ginger/GingerAgent.java
+                sed -i 's/#define MyAppVersion ".*"/#define MyAppVersion "${{ env.gingernumber}}"/' ./Ginger/GingerInstallerScriptGithub.iss
+
+        -   name: 'Update Assembly - macOS'
+            if: ${{github.workflow == 'CD' && runner.os == 'macOS'}}
+            run: |
+                sed -i '' 's/<AssemblyVersion>.*<\/AssemblyVersion>/<AssemblyVersion>${{ env.gingernumber}}<\/AssemblyVersion>/' ./Ginger/GingerCoreCommon/GingerCoreCommon.csproj
+                sed -i '' 's/<FileVersion>.*<\/FileVersion>/<FileVersion>${{ env.gingernumber}}<\/FileVersion>/' ./Ginger/GingerCoreCommon/GingerCoreCommon.csproj
+                sed -i '' 's/#define MyAppVersion ".*"/#define MyAppVersion "${{ env.gingernumber}}"/' ./Ginger/GingerInstallerScript.iss
+                sed -i '' 's/public static final String GINGER_JAVA_AGENT_VERSION=".*";/public static final String GINGER_JAVA_AGENT_VERSION="${{ env.gingernumber}}";/' ./Ginger/GingerCore/Drivers/JavaDriverLib/GingerJavaAgent/agent/com/amdocs/ginger/GingerAgent.java
+                sed -i '' 's/#define MyAppVersion ".*"/#define MyAppVersion "${{ env.gingernumber}}"/' ./Ginger/GingerInstallerScriptGithub.iss
+
+        -   name: 'Print OS type'
+            run: |
+                echo "Running on ${{ runner.os }}"
+                
+# ------------------------------------------------------------------------------------------------------
+# Install .Net core SDK 8.0.100
+# ------------------------------------------------------------------------------------------------------
+        -   name: 'Install .NET 8'
+            uses: actions/setup-dotnet@v3
+            with:
+                dotnet-version: 8.0.100
+# ------------------------------------------------------------------------------------------------------
+# Install Mono - for Ubuntu as pre-requisite for building Ginger
+# ------------------------------------------------------------------------------------------------------
+        -   name: 'Install Mono'
+            if: runner.os == 'Linux'
+            run: |
+                sudo apt-get update
+                sudo apt-get install -y mono-complete
+   
+# ------------------------------------------------------------------------------------------------------
+# Install Nuget tool v1.0.5
+# ------------------------------------------------------------------------------------------------------
+        -   name: 'Setup Nuget'
+            uses: Nuget/setup-nuget@v1.0.5
+
+# ------------------------------------------------------------------------------------------------------
+# Restore Ginger solution NuGet packages
+# ------------------------------------------------------------------------------------------------------
+        -   name: 'Restore nuget packages'
+            run: nuget restore ./Ginger/Ginger.sln
+        
+# ------------------------------------------------------------------------------------------------------
+# Build && Publish Ginger Solution
+# ------------------------------------------------------------------------------------------------------
+        -   name: 'Add msbuild to PATH'
+            if: runner.os == 'Windows'
+            uses: microsoft/setup-msbuild@v1.0.2
+
+        -   name: 'Build Ginger Windows Solution'
+            if: runner.os == 'Windows'
+            run: msbuild ./Ginger/Ginger.sln /p:DebugSymbols=true /p:DebugType=full /p:Configuration=$env:BUILD_CONFIGURATION
+
+        -   name: 'Publish GingerRuntime - Linux'
+            if: runner.os == 'Linux'
+            run: dotnet publish ./Ginger/GingerRuntime/GingerRuntime.csproj --runtime linux-x64 --self-contained  true -c Release
+     
+        -   name: 'Publish GingerRuntime - macOS'
+            if: runner.os == 'macOS'
+            run: dotnet publish ./Ginger/GingerRuntime/GingerRuntime.csproj --runtime osx-x64 --self-contained true -c Release
+# ------------------------------------------------------------------------------------------------------
+# Upload Artifacts 
+# ------------------------------------------------------------------------------------------------------   
+        -   name: Cache static site content - Windows
+            id: cache_windows
+            if: runner.os == 'Windows'
+            uses: actions/cache@v4
+            with:
+                path: 
+                    ./**
+                key: 
+                    cache-site-windows-${{github.run_number}}
+                enableCrossOsArchive:
+                    true
+
+        -   name: Cache static site content - Linux
+            id: cache_linux
+            if: runner.os == 'Linux'
+            uses: actions/cache@v4
+            with:
+                path: 
+                    ./**
+                key: 
+                    cache-site-linux-${{ github.run_number }}
+                enableCrossOsArchive:
+                    true
+            
+            
+        -   name: Cache static site content - macOS
+            id: cache_macos
+            if: runner.os == 'macOS'
+            uses: actions/cache@v4
+            with:
+                path: 
+                    ./**
+                key: 
+                    cache-site-macos-${{ github.run_number }}
+                enableCrossOsArchive:
+                    true
+            

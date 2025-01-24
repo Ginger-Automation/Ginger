@@ -35,6 +35,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using IPlaywrightElementHandle = Microsoft.Playwright.IElementHandle;
+using IPlaywrightFrameLocator = Microsoft.Playwright.IFrameLocator;
 using IPlaywrightJSHandle = Microsoft.Playwright.IJSHandle;
 using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 using IPlaywrightPage = Microsoft.Playwright.IPage;
@@ -53,6 +54,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             eLocateBy.ByTagName,
             eLocateBy.ByRelXPath,
             eLocateBy.POMElement,
+            eLocateBy.ByAutomationID,
         ];
 
         private static readonly IEnumerable<eLocateBy> SupportedFrameLocators =
@@ -131,6 +133,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ThrowIfClosed();
             return _playwrightPage.EvaluateAsync<string>(script);
         }
+        /// <summary>
+        /// Executes the specified JavaScript code on the current frame and returns the result as a string.
+        /// </summary>
+        /// <param name="script">The JavaScript code to execute.</param>
+        /// <returns>A task representing the asynchronous operation. The task result contains the result of the JavaScript code execution as a string.</returns>
+
+        public Task<string> ExecuteJavascriptIframeAsync(string script)
+        {
+            ThrowIfClosed();
+            return _currentFrame.EvaluateAsync<string>(script);
+        }
 
         /// <summary>
         /// Executes the specified JavaScript code on the current page with the provided argument and returns the result as a string.
@@ -145,6 +158,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         }
 
         /// <summary>
+        /// Executes the specified JavaScript code on the current frame with the provided argument and returns the result as a string.
+        /// </summary>
+        /// <param name="script">The JavaScript code to execute.</param>
+        /// <param name="arg">The argument to pass to the JavaScript code.</param>
+        /// <returns>A task representing the asynchronous operation. The task result contains the result of the JavaScript code execution as a string.</returns>
+
+        public Task<string> ExecuteJavascriptIframeAsync(string script, object arg)
+        {
+            ThrowIfClosed();
+            return _currentFrame.EvaluateAsync<string>(script, arg);
+        }
+
+        /// <summary>
         /// Injects the specified JavaScript code into the current page.
         /// </summary>
         /// <param name="script">The JavaScript code to inject.</param>
@@ -153,6 +179,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             ThrowIfClosed();
             return _playwrightPage.AddScriptTagAsync(new PageAddScriptTagOptions()
+            {
+                Content = script,
+            });
+        }
+        /// <summary>
+        /// Injects the specified JavaScript code into the current frame.
+        /// </summary>
+        /// <param name="script">The JavaScript code to inject.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task InjectJavascriptIframeAsync(string script)
+        {
+            ThrowIfClosed();
+            return _currentFrame.AddScriptTagAsync(new FrameAddScriptTagOptions()
             {
                 Content = script,
             });
@@ -326,7 +365,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         }
 
         /// <summary>
-        /// Switches the current frame to the frame specified by the given locator.
+        /// Switches the current frame to the first frame specified by the given locator.
         /// </summary>
         /// <param name="locateBy">The method of locating the frame.</param>
         /// <param name="value">The value used for locating the frame.</param>
@@ -339,7 +378,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 throw new LocatorNotSupportedException($"Frame locator '{locateBy}' is not supported.");
             }
 
-            var frameLocator = locateBy switch
+            IPlaywrightFrameLocator frameLocator = locateBy switch
             {
                 eLocateBy.ByID => _currentFrame.FrameLocator($"css=#{value}"),
                 eLocateBy.ByTitle => _currentFrame.FrameLocator($"css=iframe[title='{value}']"),
@@ -354,8 +393,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return false;
             }
 
-            IJSHandle jsHandle = await frameLocator.Owner.EvaluateHandleAsync("element => element");
-            IElementHandle? elementHandle = jsHandle.AsElement();
+            IPlaywrightJSHandle jsHandle = await frameLocator.Owner.First.EvaluateHandleAsync("element => element");
+            IPlaywrightElementHandle? elementHandle = jsHandle.AsElement();
             if (elementHandle == null)
             {
                 return false;
@@ -515,15 +554,33 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");
             }
 
-            var locator = locateBy switch
+            IPlaywrightLocator locator;
+            switch (locateBy)
             {
-                eLocateBy.ByID => _currentFrame.Locator($"css=#{value}"),
-                eLocateBy.ByCSS => _currentFrame.Locator($"css={value}"),
-                eLocateBy.ByXPath or eLocateBy.ByRelXPath => _currentFrame.Locator($"xpath={value}"),
-                eLocateBy.ByName => _currentFrame.Locator($"css=[name='{value}']"),
-                eLocateBy.ByTagName => _currentFrame.Locator($"css={value}"),
-                _ => throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported."),
-            };
+                case eLocateBy.ByID:
+                    value = value.Replace(":", "\\:");
+                    locator = _currentFrame.Locator($"css=#{value}");
+                    break;
+                case eLocateBy.ByCSS:
+                    locator = _currentFrame.Locator($"css={value}");
+                    break;
+                case eLocateBy.ByXPath:
+                case eLocateBy.ByRelXPath:
+                    locator = _currentFrame.Locator($"xpath={value}");
+                    break;
+                case eLocateBy.ByName:
+                    locator = _currentFrame.Locator($"css=[name='{value}']");
+                    break;
+                case eLocateBy.ByTagName:
+                    locator = _currentFrame.Locator($"css={value}");
+                    break;
+                case eLocateBy.ByAutomationID:
+                    value = value.Replace(":", "\\:");
+                    locator = _currentFrame.Locator($"xpath=//*[@data-automation-id=\"{value}\"]");
+                    break;
+                default:
+                    throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");
+            }
             return Task.FromResult(locator);
         }
 
@@ -990,6 +1047,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             isDialogDismiss = false;
         }
+
     }
 
 }

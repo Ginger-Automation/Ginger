@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -16,21 +16,21 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET.Run;
-using Amdocs.Ginger.Repository;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.WorkSpaceLib;
+using Amdocs.Ginger.CoreNET.Run;
+using Amdocs.Ginger.Repository;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace GingerCore.Actions.WebServices
 {
@@ -370,7 +370,7 @@ namespace GingerCore.Actions.WebServices
                     string FileContent = string.Empty;
                     string TemplateFileName = GetInputParamCalculatedValue(Fields.TemplateFileNameFileBrowser).ToString();
 
-                    string TemplateFileNameFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(TemplateFileName);
+                    string TemplateFileNameFullPath = GingerCoreCommonWorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(TemplateFileName);
 
                     FileStream ReqStream = File.OpenRead(TemplateFileNameFullPath);
 

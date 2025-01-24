@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -19,10 +19,8 @@ limitations under the License.
 
 namespace Amdocs.Ginger.CoreNET.Run
 {
-    interface IActPluginPostRun
+    public interface IActPluginPostRun
     {
-
-
         void ParseOutput();
     }
 }
