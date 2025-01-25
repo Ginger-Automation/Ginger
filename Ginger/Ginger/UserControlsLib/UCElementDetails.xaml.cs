@@ -600,7 +600,16 @@ namespace Ginger
 
                 if (SelectedElement.Properties == null || SelectedElement.Properties.Count == 0)
                 {
-                    SelectedElement.Properties = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties();
+                    if (mCurrentControlTreeViewItem != null)
+                    {
+                        SelectedElement.Properties = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties();
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Retaining existing properties for element '{SelectedElement.ElementName}' as tree view item is null");
+                        // Keep existing properties
+                    }
+
                 }
 
                 if (SelectedElement.Locators == null || SelectedElement.Locators.Count == 0)

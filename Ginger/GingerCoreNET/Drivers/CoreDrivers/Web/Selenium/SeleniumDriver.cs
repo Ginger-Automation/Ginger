@@ -4255,6 +4255,10 @@ namespace GingerCore.Drivers
 
                         if (elem == null && pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent) != null)
                         {
+                            if (isAppiumSession)
+                            {
+                                currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo(this.PomCategory);
+                            }
                             elem = LocateElementByLocators(currentPOMElementInfo, currentPOM.MappedUIElements, false, pomExcutionUtil);
                             if (elem != null)
                             {
@@ -9488,10 +9492,29 @@ namespace GingerCore.Drivers
             DoUIElementClick(clickType, clickElement);
             //check if validation element exists
             IWebElement elmToValidate = LocateElement(act, true, validationElementLocateby.ToString(), validationElementLocatorValue);
+            bool assertValidationType(IWebElement element, ActUIElement.eElementAction validationType)
+            {
+                bool validationResult = false;
+                switch (validationType)
+                {
+                    case ActUIElement.eElementAction.IsEnabled:
+                        validationResult = elmToValidate.Enabled;
+                        break;
+                    case ActUIElement.eElementAction.IsVisible:
+                        validationResult = elmToValidate.Displayed;
+                        break;
+                }
+
+                if (!validationResult)
+                {
+                    act.Error = $"Validation {validationType} failed";
+                }
+                return validationResult;
+            }
 
             if (elmToValidate != null)
             {
-                return true;
+                return assertValidationType(elmToValidate, validationType);
             }
             else
             {
@@ -9509,7 +9532,7 @@ namespace GingerCore.Drivers
                             elmToValidate = LocateElement(act, true, validationElementLocateby.ToString(), validationElementLocatorValue);
                             if (elmToValidate != null)
                             {
-                                return true;
+                                return assertValidationType(elmToValidate, validationType);
                             }
                         }
                     }

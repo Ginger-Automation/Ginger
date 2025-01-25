@@ -290,40 +290,46 @@ namespace Ginger.Drivers.DriversWindows
 
         private void SetTitle(Dictionary<string, object> mDeviceGeneralInfo)
         {
-            object value, platformVersion;
-            if (mDeviceGeneralInfo.Count > 0)
+            try
             {
-                if (mDeviceGeneralInfo.TryGetValue("manufacturer", out value) || mDeviceGeneralInfo.TryGetValue("model", out value))
+                object value, platformVersion;
+                if (mDeviceGeneralInfo.Count > 0)
                 {
-                    if ((string)value != "iPhone")
+                    if (mDeviceGeneralInfo.TryGetValue("manufacturer", out value) || mDeviceGeneralInfo.TryGetValue("model", out value))
                     {
-                        this.Title = " Android";
+                        if ((string)value != "iPhone")
+                        {
+                            this.Title = " Android";
+                        }
+                        else
+                        {
+                            this.Title = " iOS";
+                        }
                     }
-                    else
+
+                    if (mDeviceGeneralInfo.TryGetValue("platformVersion", out platformVersion))
                     {
-                        this.Title = " iOS";
+                        this.Title += " [" + (string)platformVersion + "] ";
+                    }
+
+                    if (mDeviceGeneralInfo.TryGetValue("manufacturer", out value))
+                    {
+                        this.Title += (string)value;
+                    }
+
+                    if (mDeviceGeneralInfo.TryGetValue("model", out value))
+                    {
+                        this.Title += " " + (string)value;
+                    }
+                    if (!string.IsNullOrEmpty(mDriver.GetDeviceUDID()))
+                    {
+                        this.Title += " [" + mDriver.GetDeviceUDID() + "]";
                     }
                 }
-
-                if (mDeviceGeneralInfo.TryGetValue("platformVersion", out platformVersion))
-                {
-                    this.Title += " [" + (string)platformVersion + "] ";
-                }
-
-                if (mDeviceGeneralInfo.TryGetValue("manufacturer", out value))
-                {
-                    this.Title += (string)value;
-                }
-
-                if (mDeviceGeneralInfo.TryGetValue("model", out value))
-                {
-                    this.Title += " " + (string)value;
-                }
-                if (!string.IsNullOrEmpty(mDriver.GetDeviceUDID()))
-                {
-                    this.Title += " [" + mDriver.GetDeviceUDID() + "]";
-                }
-
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Failed to Set full Title, created title:" + this.Title, ex);
             }
         }
 
@@ -1259,19 +1265,27 @@ namespace Ginger.Drivers.DriversWindows
             xRefreshButton.IsEnabled = toAllow;
             xCordBtn.IsEnabled = toAllow;
             xSwipeBtn.IsEnabled = toAllow;
-
             xClearHighlightBtn.IsEnabled = toAllow;
             xPortraiteBtn.IsEnabled = toAllow;
             xLandscapeBtn.IsEnabled = toAllow;
             xZoomInBtn.IsEnabled = toAllow;
             xZoomOutBtn.IsEnabled = toAllow;
-            xMetricsBtn.IsEnabled = toAllow;
             xConfigurationsBtn.IsEnabled = toAllow;
 
+            xMetricsBtn.IsEnabled = toAllow;
             xDeviceSettingsBtn.IsEnabled = toAllow;
             xBackButton.IsEnabled = toAllow;
             xHomeBtn.IsEnabled = toAllow;
             xMenuBtn.IsEnabled = toAllow;
+
+            if (mDriver.GetAppType() == eAppType.Web)// not supported for Web
+            {
+                xMetricsBtn.Visibility = Visibility.Collapsed;
+                xDeviceSettingsBtn.Visibility = Visibility.Collapsed;
+                xBackButton.Visibility = Visibility.Collapsed;
+                xHomeBtn.Visibility = Visibility.Collapsed;
+                xMenuBtn.Visibility = Visibility.Collapsed;
+            }
 
             if (!toAllow)
             {

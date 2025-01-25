@@ -15,6 +15,11 @@
             <UserControlsLib1:UCComboBox x:Name="xOperationNameComboBox" VerticalAlignment="Top" Width="250" Margin="10,0,0,0"/>
         </StackPanel>
 
+        <StackPanel x:Name="xInputPnl"  HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="5,10,0,0" Visibility="Collapsed">
+            <Label  x:Name="xInputLabelVE" Style="{StaticResource $LabelStyle}" Content="Input:"/>
+            <Actions:UCValueExpression x:Name="xInputVE" VerticalAlignment="Top" Width="320"/>
+        </StackPanel>
+
         <StackPanel x:Name="xKeyPressPnl" HorizontalAlignment="Left" Orientation="Horizontal"  DockPanel.Dock="Top" Margin="5,10,0,0" Visibility="Collapsed">
             <Label Style="{StaticResource $LabelStyle}" Content="Key to press:"/>
             <UserControlsLib1:UCComboBox x:Name="xKeyPressComboBox" VerticalAlignment="Top" Width="250"/>

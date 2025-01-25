@@ -460,7 +460,13 @@ namespace GingerCore
                             Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"POM Model with same name: '{resultValue}' already exists.");
                             return true;
                         }
-
+                        break;
+                    case "ApplicationAPIModel":
+                        if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Any(x => string.Equals(x.Name, resultValue)))
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"API Model with same name: '{resultValue}' already exists.");
+                            return true;
+                        }
                         break;
                     case "Environment":
                         if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Any(x => string.Equals(x.Name, resultValue)))

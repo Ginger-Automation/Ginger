@@ -594,14 +594,25 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, $"Download progress: {e.CompletedSteps / e.TotalSteps * 100}% Complete", overwriteCurrentLine: true);
+                if (e.CompletedSteps > 0 && e.TotalSteps > 0 && e.CompletedSteps <= e.TotalSteps)
+                {
+                    double progress = ((double)e.CompletedSteps / e.TotalSteps) * 100;
+                    if (progress == 0)
+                    {
+                        return;
+                    }
+                    Reporter.ToLog(eLogLevel.INFO, $"Download progress: {progress}% Complete", overwriteCurrentLine: true);
+                }
+                else
+                {
+                    return;
+                }
             }
             catch (Exception t)
             {
-                Reporter.ToLog(eLogLevel.ERROR, t.Message);
+                 Reporter.ToLog(eLogLevel.ERROR, t.Message);
             }
         }
-
 
         internal void SetSourceControlBranch(string value)
         {
@@ -737,7 +748,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             else
             {
                 WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
-                if (!value.ToUpper().StartsWith("HTTP://"))
+                if (!value.StartsWith("HTTP://", StringComparison.CurrentCultureIgnoreCase))
                 {
                     value = "http://" + value;
                 }

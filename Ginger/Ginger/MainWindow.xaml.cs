@@ -37,6 +37,7 @@ using Ginger.Help;
 using Ginger.MenusLib;
 using Ginger.SolutionGeneral;
 using Ginger.SolutionWindows;
+using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.SourceControl;
 using Ginger.User;
 using GingerCore;
@@ -260,10 +261,20 @@ namespace Ginger
                     menuPage.xSubNavigationListView.SelectedIndex = 1;
 
                     var treeView = ((SingleItemTreeViewExplorerPage)ResourcesMenu.MenusPage.mTwoLevelMenu.MenuList[0].SubItems[1].ItemPage)?.xTreeView?.Tree;
+
+
+
                     if (treeView != null)
                     {
-                        treeView.GetChildItembyNameandSelect(activity.ActivityName);
+
+                        ITreeViewItem s = new SharedActivityTreeItem(activity);
+
+                        treeView.SelectItemByNameAndOpenFolder(activity);
+
                     }
+
+
+
                 }
                 catch (Exception ex)
                 {
@@ -683,32 +694,25 @@ namespace Ginger
                     if (xBusinessFlowsListItem.Tag == null)
                     {
                         xBusinessFlowsListItem.Tag = BusinessFlowsMenu.MenusPage;
+                        SelectBusinessFlowsMenu();
                     }
+
                     SelectedSolutionTab = eSolutionTabType.BusinessFlows;
                 }
                 else if (selectedTopListItem == xRunListItem)
                 {
-                    if (xRunListItem.Tag == null)
-                    {
-                        xRunListItem.Tag = RunMenu.MenusPage;
-                    }
+                    xRunListItem.Tag ??= RunMenu.MenusPage;
                     SelectedSolutionTab = eSolutionTabType.Run;
                     RunMenu.MenusPage.SelectFirstTopMenu();
                 }
                 else if (selectedTopListItem == xConfigurationsListItem)
                 {
-                    if (xConfigurationsListItem.Tag == null)
-                    {
-                        xConfigurationsListItem.Tag = ConfigurationsMenu.MenusPage;
-                    }
+                    xConfigurationsListItem.Tag ??= ConfigurationsMenu.MenusPage;
                     SelectedSolutionTab = eSolutionTabType.Configurations;
                 }
                 else
                 {
-                    if (xResourcesListItem.Tag == null)
-                    {
-                        xResourcesListItem.Tag = ResourcesMenu.MenusPage;
-                    }
+                    xResourcesListItem.Tag ??= ResourcesMenu.MenusPage;
                     SelectedSolutionTab = eSolutionTabType.Resources;
                 }
 

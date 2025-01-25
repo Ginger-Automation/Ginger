@@ -683,6 +683,7 @@ namespace Amdocs.Ginger.Repository
         /// <returns></returns>
         public override RepositoryFolderBase AddSubFolder(string folderName)
         {
+           folderName= Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(folderName);
             string FullPath = Path.Combine(FolderFullPath, folderName);
 
             //add to folders cache
