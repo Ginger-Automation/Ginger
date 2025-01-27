@@ -46,7 +46,7 @@ jobs:
       -   name: Print Version Environment Variable
           if: ${{github.workflow == 'CD'}} 
           run: |
-              echo "GingerNumber Version: ${{ env.gingernumber}}"
+              echo "GingerTag Version: ${{ env.gingertag}}"
         
 
       - name: Restore static site content
@@ -57,29 +57,38 @@ jobs:
           enableCrossOsArchive:
               true
 
+      - name: Print File Content
+        run: | 
+          ls  
+          echo "==============================================="
+          cd Ginger/GingerRuntime
+          ls           
+
 # ------------------------------------------------------------------------------------------------------
 # Log in to the Container registry - GHCR
 # ------------------------------------------------------------------------------------------------------
       - name: Log in to the Container registry - GHCR
         run: | 
+          cd Ginger/GingerRuntime
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} 
 # ------------------------------------------------------------------------------------------------------
 # Create GingerRuntime-jammy docker image
 # ------------------------------------------------------------------------------------------------------
       - name: Building GingerRuntime docker image
         run: |
+          cd Ginger/GingerRuntime
           docker build -t gingerruntime-jammy .
         
       - name: Change image tag to be pushed for GHCR
         run: |
-          docker tag gingerruntime ghcr.io/${{ github.actor }}/gingerruntime-jammy:"${{ env.gingertag}}"
+          docker tag gingerruntime-jammy ghcr.io/ginger-automation/gingerruntime-jammy:${{ env.gingertag }}
   
 # ------------------------------------------------------------------------------------------------------
 # Push GingerRuntime-jammy docker image to GitHub Container Registry
 # ------------------------------------------------------------------------------------------------------
-      # - name: Pushing GingerRuntime Image
-      #   run: | 
-      #     docker push ghcr.io/${{ github.actor }}/gingerruntime:"${{ env.gingertag}}"
+      - name: Pushing GingerRuntime Image
+        run: | 
+          docker push ghcr.io/ginger-automation/gingerruntime-jammy:${{ env.gingertag}}
 
 
   Publish_Latest:
@@ -117,7 +126,7 @@ jobs:
       -   name: Print Version Environment Variable
           if: ${{github.workflow == 'CD'}} 
           run: |
-              echo "GingerNumber Version: ${{ env.gingernumber}}"
+              echo "GingerNumber Version: ${{ env.gingertag}}"
 
 # ------------------------------------------------------------------------------------------------------
 # Log in to the Container registry - GHCR
@@ -128,17 +137,17 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Pull GingerRuntime-jammy docker image from Github Container Registry
 # ------------------------------------------------------------------------------------------------------
-      - name: Building GingerRuntime docker image
+      - name: Pull GingerRuntime docker image
         run: |
-          docker pull gingerruntime-jammy:"${{ env.gingertag}}"
+          docker pull ghcr.io/ginger-automation/gingerruntime-jammy:${{ env.gingertag}}
         
       - name: Change image tag(latest) to be pushed for GHCR
         run: |
-          docker tag gingerruntime:"${{ env.gingertag}}" ghcr.io/${{ github.actor }}/gingerruntime:latest
+          docker tag ghcr.io/ginger-automation/gingerruntime-jammy:${{ env.gingertag}} ghcr.io/ginger-automation/gingerruntime-jammy:latest
 
 # ------------------------------------------------------------------------------------------------------
 # Push GingerRuntime-jammy docker image to GitHub Container Registry
 # ------------------------------------------------------------------------------------------------------          
-      # - name: Pushing GingerRuntime Image
-      #   run: | 
-      #     docker push ghcr.io/${{ github.actor }}/gingerruntime:latest
+      - name: Pushing GingerRuntime Image
+        run: | 
+          docker push ghcr.io/ginger-automation/gingerruntime-jammy:latest
