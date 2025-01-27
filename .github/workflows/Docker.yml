@@ -81,14 +81,14 @@ jobs:
         
       - name: Change image tag to be pushed for GHCR
         run: |
-          docker tag gingerruntime-jammy ghcr.io/${{ github.actor }}/gingerruntime-jammy:${{ env.gingertag }}
+          docker tag gingerruntime-jammy ghcr.io/ginger-automation/gingerruntime-jammy:${{ env.gingertag }}
   
 # ------------------------------------------------------------------------------------------------------
 # Push GingerRuntime-jammy docker image to GitHub Container Registry
 # ------------------------------------------------------------------------------------------------------
       - name: Pushing GingerRuntime Image
         run: | 
-          docker push ghcr.io/${{ github.actor }}/gingerruntime-jammy:${{ env.gingertag}}
+          docker push ghcr.io/ginger-automation/gingerruntime-jammy:${{ env.gingertag}}
 
 
   Publish_Latest:
