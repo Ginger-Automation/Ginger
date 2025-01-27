@@ -737,7 +737,7 @@ namespace GingerCore.Actions.WebAPI
             // If the Content-Type is not set using Client Headers then it will be taken through ActWebAPIRest.Fields.ContentType
             if (ContentType == null)
             {
-                ContentType = eContentType.GetDescription();                
+                ContentType = GetRequestContentTypeText(eContentType);                
             }
 
             if ((RequestMethod.ToString() == ApplicationAPIUtils.eRequestType.GET.ToString()))
@@ -821,6 +821,36 @@ namespace GingerCore.Actions.WebAPI
                         break;
                 }
             }
+        }
+
+        private static string GetRequestContentTypeText(ApplicationAPIUtils.eRequestContentType eContentType)
+        {
+            switch (eContentType)
+            {
+                case ApplicationAPIUtils.eRequestContentType.JSon:
+                    return "application/json";
+
+                case ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded:
+                    return "application/x-www-form-urlencoded";
+
+                case ApplicationAPIUtils.eRequestContentType.FormData:
+                    return "multipart/form-data"; //update to correct value
+
+                case ApplicationAPIUtils.eRequestContentType.TextPlain:
+                    return "text/plain; charset=utf-8";
+
+                case ApplicationAPIUtils.eRequestContentType.XML:
+                    return "application/xml";
+
+                case ApplicationAPIUtils.eRequestContentType.JSonWithoutCharset:
+                    return "application/json";
+
+                case ApplicationAPIUtils.eRequestContentType.PDF:
+                    return "application/pdf";
+                
+                default:
+                    return string.Empty;
+            }            
         }
 
         private string GetRequestBodyString()

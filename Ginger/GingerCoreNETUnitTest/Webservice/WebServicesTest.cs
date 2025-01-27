@@ -476,7 +476,7 @@ namespace UnitTests.NonUITests
 
             string rawRequestContent = webAPI.RequestFileContent;
             StringAssert.Contains(rawRequestContent, "POST https://petstore.swagger.io/v2/pet HTTP/1.1");
-            StringAssert.Contains(rawRequestContent, "Accept: application/xml");
+            StringAssert.Contains(rawRequestContent, "Accept: application/json");
             StringAssert.Contains(rawRequestContent, "Content-Type: application/xml; charset=utf-8");
             StringAssert.Contains(rawRequestContent, "Content-Length: 229");
             StringAssert.Contains(rawRequestContent, "Host: petstore.swagger.io");
@@ -542,7 +542,7 @@ namespace UnitTests.NonUITests
             string untilBoundary = rawRequestContent[..143];
             string afterBoundary = rawRequestContent[180..];
             StringAssert.Contains(rawRequestContent, "POST https://petstore.swagger.io/v2/pet/9223372000668906000 HTTP/1.1");
-            StringAssert.Contains(rawRequestContent, "Accept: multipart/form-data");
+            StringAssert.Contains(rawRequestContent, "Accept: application/json");
             StringAssert.Contains(rawRequestContent, "Content-Type: multipart/form-data; boundary=");
             StringAssert.Contains(rawRequestContent, "Content-Length: 313");
             StringAssert.Contains(rawRequestContent, "Host: petstore.swagger.io");
@@ -597,7 +597,7 @@ namespace UnitTests.NonUITests
             string rawRequestContent = webAPI.RequestFileContent;
             StringAssert.Contains(rawRequestContent, "GET http://usstlattstl01:8002/api/v1/executions?executionIds=33b2dea1-c24a-494c-97d4-0bd47e59620c HTTP/1.0");
             StringAssert.Contains(rawRequestContent, "IncludeRequestDetails: true");
-            StringAssert.Contains(rawRequestContent, "Accept: multipart/form-data");
+            StringAssert.Contains(rawRequestContent, "Accept: application/json");
             StringAssert.Contains(rawRequestContent, "Host: usstlattstl01:8002");
         }
 

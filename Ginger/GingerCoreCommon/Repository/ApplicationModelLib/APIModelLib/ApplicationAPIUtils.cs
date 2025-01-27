@@ -102,11 +102,11 @@ namespace Amdocs.Ginger.Repository
 
         public enum eRequestContentType
         {
-            [EnumValueDescription("application/json;charset=utf-8")]
+            [EnumValueDescription("application/json; charset=utf-8")]
             JSon,
             [EnumValueDescription("text/plain;charset=utf-8")]
             TextPlain,
-            [EnumValueDescription("xml")]
+            [EnumValueDescription("application/xml")]
             XML,
             [EnumValueDescription("application/x-www-form-urlencoded")]
             XwwwFormUrlEncoded,
@@ -124,7 +124,7 @@ namespace Amdocs.Ginger.Repository
             JSon,
             [EnumValueDescription("text/plain")]
             TextPlain,
-            [EnumValueDescription("xml")]
+            [EnumValueDescription("application/xml")]
             XML,
             [EnumValueDescription("application/x-www-form-urlencoded")]
             XwwwFormUrlEncoded,
