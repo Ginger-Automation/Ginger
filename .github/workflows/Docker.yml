@@ -46,7 +46,7 @@ jobs:
       -   name: Print Version Environment Variable
           if: ${{github.workflow == 'CD'}} 
           run: |
-              echo "GingerNumber Version: ${{ env.gingernumber}}"
+              echo "GingerTag Version: ${{ env.gingertag}}"
         
 
       - name: Restore static site content
@@ -56,6 +56,10 @@ jobs:
           key: cache-site-linux-${{ github.run_number }}
           enableCrossOsArchive:
               true
+
+      - name: Print File Content
+        run: | 
+          ls             
 
 # ------------------------------------------------------------------------------------------------------
 # Log in to the Container registry - GHCR
