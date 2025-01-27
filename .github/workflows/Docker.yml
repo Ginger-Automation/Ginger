@@ -47,14 +47,15 @@ jobs:
           if: ${{github.workflow == 'CD'}} 
           run: |
               echo "GingerNumber Version: ${{ env.gingernumber}}"
-          
+        
+
       - name: Restore static site content
-        uses: actions/cache@3
+        uses: actions/cache@v4
         with:
           path: ./**
           key: cache-site-linux-${{ github.run_number }}
           enableCrossOsArchive:
-            true  
+              true
 
 # ------------------------------------------------------------------------------------------------------
 # Log in to the Container registry - GHCR

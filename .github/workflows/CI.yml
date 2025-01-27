@@ -11,10 +11,6 @@ on:
       - Releases/*
       - Releases/*/*
 
-  push:
-    branches:
-      - '**'
-
 jobs:
     Builder:
         name: Ginger Builder
