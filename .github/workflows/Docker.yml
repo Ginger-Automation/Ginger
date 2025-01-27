@@ -59,19 +59,24 @@ jobs:
 
       - name: Print File Content
         run: | 
-          ls             
+          ls  
+          echo "==============================================="
+          cd Ginger/GingerRuntime
+          ls           
 
 # ------------------------------------------------------------------------------------------------------
 # Log in to the Container registry - GHCR
 # ------------------------------------------------------------------------------------------------------
       - name: Log in to the Container registry - GHCR
         run: | 
+          cd Ginger/GingerRuntime
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} 
 # ------------------------------------------------------------------------------------------------------
 # Create GingerRuntime-jammy docker image
 # ------------------------------------------------------------------------------------------------------
       - name: Building GingerRuntime docker image
         run: |
+          cd Ginger/GingerRuntime
           docker build -t gingerruntime-jammy .
         
       - name: Change image tag to be pushed for GHCR
