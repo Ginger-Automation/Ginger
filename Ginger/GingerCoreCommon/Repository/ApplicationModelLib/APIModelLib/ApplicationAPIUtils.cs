@@ -16,6 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using System.ComponentModel;
+using System.Reflection;
+using System;
 using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.Repository
@@ -97,7 +100,7 @@ namespace Amdocs.Ginger.Repository
             HTTPV11,
         }
 
-        public enum eContentType
+        public enum eRequestContentType
         {
             [EnumValueDescription("application/json;charset=utf-8")]
             JSon,
@@ -113,6 +116,24 @@ namespace Amdocs.Ginger.Repository
             PDF,
             [EnumValueDescription("application/json")]
             JSonWithoutCharset
+        }
+
+        public enum eResponseContentType
+        {
+            [EnumValueDescription("application/json")]
+            JSon,
+            [EnumValueDescription("text/plain")]
+            TextPlain,
+            [EnumValueDescription("xml")]
+            XML,
+            [EnumValueDescription("application/x-www-form-urlencoded")]
+            XwwwFormUrlEncoded,
+            [EnumValueDescription("multipart/form-data")]
+            FormData,
+            [EnumValueDescription("application/pdf")]
+            PDF,
+            [EnumValueDescription("*/*")]
+            Any
         }
 
         public enum eCookieMode

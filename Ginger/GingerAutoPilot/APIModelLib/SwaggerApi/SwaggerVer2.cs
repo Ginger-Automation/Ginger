@@ -76,8 +76,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                         GenerateFormParameters(AAM, Operation, true);
                                         break;
                                     case "application/json":
-                                        AAM.ContentType = ApplicationAPIUtils.eContentType.JSon;
-                                        AAM.ResponseContentType = ApplicationAPIUtils.eContentType.JSon;
+                                        AAM.ContentType = ApplicationAPIUtils.eRequestContentType.JSon;
+                                        AAM.ResponseContentType = ApplicationAPIUtils.eResponseContentType.JSon;
                                         if (Operation.RequestBody != null)
                                         {
                                             AAM.AppModelParameters.Append(GenerateJsonBody(AAM, Operation.RequestBody.Content.ElementAt(0).Value.Schema));
@@ -89,8 +89,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
                                         break;
                                     case "application/xml":
-                                        AAM.ContentType = ApplicationAPIUtils.eContentType.XML;
-                                        AAM.ResponseContentType = ApplicationAPIUtils.eContentType.XML;
+                                        AAM.ContentType = ApplicationAPIUtils.eRequestContentType.XML;
+                                        AAM.ResponseContentType = ApplicationAPIUtils.eResponseContentType.XML;
                                         if (Operation.RequestBody != null)
                                         {
                                             AAM.AppModelParameters.Append(GenerateXMLBody(AAM, Operation.RequestBody.Content.ElementAt(0).Value.Schema));
@@ -135,8 +135,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                     GenerateFormParameters(AAM, Operation, true);
                                     break;
                                 case "application/json":
-                                    AAM.ContentType = ApplicationAPIUtils.eContentType.JSon;
-                                    AAM.ResponseContentType = ApplicationAPIUtils.eContentType.JSon;
+                                    AAM.ContentType = ApplicationAPIUtils.eRequestContentType.JSon;
+                                    AAM.ResponseContentType = ApplicationAPIUtils.eResponseContentType.JSon;
                                     if (Operation.RequestBody != null)
                                     {
                                         AAM.AppModelParameters.Append(GenerateJsonBody(AAM, Operation.RequestBody.Content.ElementAt(0).Value.Schema));
@@ -149,8 +149,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
                                     break;
                                 case "application/xml":
-                                    AAM.ContentType = ApplicationAPIUtils.eContentType.XML;
-                                    AAM.ResponseContentType = ApplicationAPIUtils.eContentType.XML;
+                                    AAM.ContentType = ApplicationAPIUtils.eRequestContentType.XML;
+                                    AAM.ResponseContentType = ApplicationAPIUtils.eResponseContentType.XML;
                                     if (Operation.RequestBody != null)
                                     {
                                         AAM.AppModelParameters.Append(GenerateXMLBody(AAM, Operation.RequestBody.Content.ElementAt(0).Value.Schema));

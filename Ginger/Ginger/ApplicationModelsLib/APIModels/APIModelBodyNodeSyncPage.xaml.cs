@@ -36,7 +36,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
     public partial class APIModelBodyNodeSyncPage : Page
     {
         GenericWindow _pageGenericWin = null;
-        ApplicationAPIUtils.eContentType requestBodyType;
+        ApplicationAPIUtils.eRequestContentType requestBodyType;
         XmlDocument XMLDoc = null;
         JsonExtended JsonDoc = null;
         List<AppModelParameter> mParamsPendingDelete = [];
@@ -52,18 +52,18 @@ namespace Ginger.ApplicationModelsLib.APIModels
 
             if (APIConfigurationsDocumentParserBase.IsValidXML(mApplicationAPIModel.RequestBody))
             {
-                requestBodyType = ApplicationAPIUtils.eContentType.XML;
+                requestBodyType = ApplicationAPIUtils.eRequestContentType.XML;
                 XMLDoc = new XmlDocument();
                 XMLDoc.LoadXml(mApplicationAPIModel.RequestBody);
             }
             else if (APIConfigurationsDocumentParserBase.IsValidJson(mApplicationAPIModel.RequestBody))
             {
-                requestBodyType = ApplicationAPIUtils.eContentType.JSon;
+                requestBodyType = ApplicationAPIUtils.eRequestContentType.JSon;
                 JsonDoc = new JsonExtended(applicationAPIModel.RequestBody);
             }
             else
             {
-                requestBodyType = ApplicationAPIUtils.eContentType.TextPlain;
+                requestBodyType = ApplicationAPIUtils.eRequestContentType.TextPlain;
             }
         }
 
@@ -76,7 +76,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
             mNodesToDeleteList = mNodesToDeleteList.GroupBy(x => x.ParentOuterXml).Select(group => group.First()).ToList();
 
             //For Json only - remove spaces and new lines from string
-            if (requestBodyType == ApplicationAPIUtils.eContentType.JSon)//For Json - remove spaces
+            if (requestBodyType == ApplicationAPIUtils.eRequestContentType.JSon)//For Json - remove spaces
             {
                 foreach (NodeToDelete nodeToDelete in mNodesToDeleteList)
                 {
@@ -96,11 +96,11 @@ namespace Ginger.ApplicationModelsLib.APIModels
                 }
 
                 //4.Find the actual node string inside the request body and save its text range
-                if (requestBodyType == ApplicationAPIUtils.eContentType.XML)
+                if (requestBodyType == ApplicationAPIUtils.eRequestContentType.XML)
                 {
                     FindXMLElementAndSaveItsTextRange(NodeToInspect);
                 }
-                else if (requestBodyType == ApplicationAPIUtils.eContentType.JSon)
+                else if (requestBodyType == ApplicationAPIUtils.eRequestContentType.JSon)
                 {
                     FindJSONElementAndSaveItsTextRange(NodeToInspect);
                 }
@@ -120,7 +120,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
                     switch (requestBodyType)
                     {
                         //Try first searching node using Path, if not succeed try search param using placeholder
-                        case ApplicationAPIUtils.eContentType.XML:
+                        case ApplicationAPIUtils.eRequestContentType.XML:
                             XmlNode xmlNodeByXpath = XMLDocExtended.GetNodeByXpath(XMLDoc, paramToDelete.Path);
                             if (xmlNodeByXpath != null && xmlNodeByXpath.InnerText == paramToDelete.PlaceHolder)
                             {
@@ -136,7 +136,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
                                 }
                             }
                             break;
-                        case ApplicationAPIUtils.eContentType.JSon:
+                        case ApplicationAPIUtils.eRequestContentType.JSon:
                             JToken jNode = JsonDoc.SelectToken(paramToDelete.Path);
                             if (jNode != null && jNode.Value<String>() == paramToDelete.PlaceHolder)
                             {
@@ -333,7 +333,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            if (requestBodyType is ApplicationAPIUtils.eContentType.XML or ApplicationAPIUtils.eContentType.JSon)
+            if (requestBodyType is ApplicationAPIUtils.eRequestContentType.XML or ApplicationAPIUtils.eRequestContentType.JSon)
             {
                 PrepareNodesPendingForDelete();
 

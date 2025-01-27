@@ -88,10 +88,13 @@ namespace Ginger.Actions.WebServices
                     HttpVersioncombobox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV11.ToString()), typeof(ApplicationAPIUtils.eHttpVersion), false, null);
 
                     //Request content type
-                    ContentTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eContentType.JSon.ToString()), typeof(ApplicationAPIUtils.eContentType), false, ContentTypeChange);
+                    ContentTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eRequestContentType.JSon.ToString()), typeof(ApplicationAPIUtils.eRequestContentType), false, ContentTypeChange);
 
                     //Response Content Type
-                    ResponseTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eContentType.JSon.ToString()), typeof(ApplicationAPIUtils.eContentType), false, ResponseTypeComboBox_SelectionChanged);
+                    ResponseTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eResponseContentType.JSon.ToString()), typeof(ApplicationAPIUtils.eResponseContentType), false, ResponseTypeComboBox_SelectionChanged);
+                    //ResponseTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eContentType.JSon.ToString()),
+                    //    GetFilteredContentTypes(), 
+                    //    false, ResponseTypeComboBox_SelectionChanged);
 
                     //Request Template file:
                     TemplateFileNameFileBrowser.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.TemplateFileNameFileBrowser), true, true, UCValueExpression.eBrowserType.File, "txt; *.xml; *.json;", new RoutedEventHandler(BrowseTemplateFileButton_Click));
@@ -111,6 +114,13 @@ namespace Ginger.Actions.WebServices
                     break;
             }
         }
+        //public static IEnumerable<ApplicationAPIUtils.eContentType> GetFilteredContentTypes()
+        //{
+        //    return Enum.GetValues(typeof(ApplicationAPIUtils.eContentType))
+        //               .Cast<ApplicationAPIUtils.eContentType>()
+        //               .Where(ct => ct != ApplicationAPIUtils.eContentType.Any); // Exclude Any
+        //}
+
 
         public void BindUiControls()
         {
@@ -188,7 +198,7 @@ namespace Ginger.Actions.WebServices
         private void CheckRequestBodySelection()
         {
 
-            if ((mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded.ToString()))
+            if ((mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded.ToString()))
             {
                 FreeTextStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                 TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
@@ -196,7 +206,7 @@ namespace Ginger.Actions.WebServices
                 FormDataGridPanel.Visibility = System.Windows.Visibility.Visible;
                 DynamicElementGridPanel.Visibility = System.Windows.Visibility.Collapsed;
             }
-            if (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eContentType.FormData.ToString())
+            if (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eRequestContentType.FormData.ToString())
             {
                 FreeTextStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                 TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
@@ -279,7 +289,7 @@ namespace Ginger.Actions.WebServices
                 BodyInputGridPannel.Visibility = System.Windows.Visibility.Collapsed;
                 FreeTextStackPanel.Visibility = Visibility.Collapsed;
             }
-            else if ((mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded.ToString()) || (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eContentType.FormData.ToString()))
+            else if ((mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded.ToString()) || (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eRequestContentType.FormData.ToString()))
             {
                 if (!String.IsNullOrEmpty((mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser))))
                 {
@@ -506,12 +516,12 @@ namespace Ginger.Actions.WebServices
                     mAct.RequestKeyValues.ClearAll();
                 }
 
-                if (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded.ToString())
+                if (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded.ToString())
                 {
                     //switch combobox   & browse button off 
                     FormDataGrid.ChangeGridView("UrlEncoded");
                 }
-                else if (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eContentType.FormData.ToString())
+                else if (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eRequestContentType.FormData.ToString())
                 {
                     //switch combobox  & browse button on
                     FormDataGrid.ChangeGridView("FormData");
@@ -571,12 +581,12 @@ namespace Ginger.Actions.WebServices
 
             FormDataGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddRow));
 
-            if (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded.ToString())
+            if (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded.ToString())
             {
                 //switch combobox   & browse button off 
                 FormDataGrid.ChangeGridView("UrlEncoded");
             }
-            else if (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eContentType.FormData.ToString())
+            else if (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eRequestContentType.FormData.ToString())
             {
                 //switch combobox  & browse button on
                 FormDataGrid.ChangeGridView("FormData");
@@ -620,7 +630,7 @@ namespace Ginger.Actions.WebServices
         }
         private void ResponseTypeComboBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            if (mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType) == ApplicationAPIUtils.eContentType.JSon.ToString())
+            if (mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType) == ApplicationAPIUtils.eResponseContentType.JSon.ToString())
             {
                 JSON.Visibility = Visibility.Visible;
             }

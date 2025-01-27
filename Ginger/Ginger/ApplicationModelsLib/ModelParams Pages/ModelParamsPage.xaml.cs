@@ -357,7 +357,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         private void DeleteParams(bool ClearAllParams)
         {
             Amdocs.Ginger.Common.eUserMsgSelection messageResult = Amdocs.Ginger.Common.eUserMsgSelection.No;
-            if (mApplicationModel is ApplicationAPIModel && (((ApplicationAPIModel)mApplicationModel).ContentType == ApplicationAPIUtils.eContentType.XML || ((ApplicationAPIModel)mApplicationModel).ContentType == ApplicationAPIUtils.eContentType.JSon))
+            if (mApplicationModel is ApplicationAPIModel && (((ApplicationAPIModel)mApplicationModel).ContentType == ApplicationAPIUtils.eRequestContentType.XML || ((ApplicationAPIModel)mApplicationModel).ContentType == ApplicationAPIUtils.eRequestContentType.JSon))
             {
                 messageResult = Reporter.ToUser(eUserMsgKey.DeleteNodesFromRequest);
             }

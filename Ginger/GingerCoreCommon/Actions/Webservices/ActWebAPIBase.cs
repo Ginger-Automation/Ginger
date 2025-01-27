@@ -221,7 +221,7 @@ namespace GingerCore.Actions.WebServices
                 string ResponseContentType = mAct.GetInputParamCalculatedValue(ActWebAPIRest.Fields.ResponseContentType);
                 bool jsonParsinFailed = false;
 
-                if (ResponseContentType == ApplicationAPIUtils.eContentType.JSon.ToString())
+                if (ResponseContentType == ApplicationAPIUtils.eResponseContentType.JSon.ToString())
                 {
                     if (!ParseJsonNodesToReturnParams(mAct, ResponseMessage))
                     {
@@ -234,7 +234,7 @@ namespace GingerCore.Actions.WebServices
                 }
 
                 if (XMLResponseCanBeParsed && (
-                   (mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType) == ApplicationAPIUtils.eContentType.XML.ToString()) || jsonParsinFailed))
+                   (mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType) == ApplicationAPIUtils.eResponseContentType.XML.ToString()) || jsonParsinFailed))
                 {
                     return ParseXMLNodesToReturnParams(mAct, ResponseMessage);
                 }

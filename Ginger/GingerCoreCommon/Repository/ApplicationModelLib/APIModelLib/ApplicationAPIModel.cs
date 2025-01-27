@@ -140,13 +140,13 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public ApplicationAPIUtils.eRequestType RequestType { get { return mRequestType; } set { if (mRequestType != value) { mRequestType = value; OnPropertyChanged(nameof(RequestType)); } } }
 
-        ApplicationAPIUtils.eContentType mResponseContentType = ApplicationAPIUtils.eContentType.JSon;
+        ApplicationAPIUtils.eResponseContentType mResponseContentType = ApplicationAPIUtils.eResponseContentType.JSon;
         [IsSerializedForLocalRepository]
-        public ApplicationAPIUtils.eContentType ResponseContentType { get { return mResponseContentType; } set { if (mResponseContentType != value) { mResponseContentType = value; OnPropertyChanged(nameof(ResponseContentType)); } } }
+        public ApplicationAPIUtils.eResponseContentType ResponseContentType { get { return mResponseContentType; } set { if (mResponseContentType != value) { mResponseContentType = value; OnPropertyChanged(nameof(ResponseContentType)); } } }
 
-        ApplicationAPIUtils.eContentType mContentType = ApplicationAPIUtils.eContentType.JSon;
+        ApplicationAPIUtils.eRequestContentType mContentType = ApplicationAPIUtils.eRequestContentType.JSon;
         [IsSerializedForLocalRepository]
-        public ApplicationAPIUtils.eContentType ContentType { get { return mContentType; } set { if (mContentType != value) { mContentType = value; OnPropertyChanged(nameof(ContentType)); } } }
+        public ApplicationAPIUtils.eRequestContentType ContentType { get { return mContentType; } set { if (mContentType != value) { mContentType = value; OnPropertyChanged(nameof(ContentType)); } } }
 
         ApplicationAPIUtils.eCookieMode mCookieMode = ApplicationAPIUtils.eCookieMode.Session;
         [IsSerializedForLocalRepository]
