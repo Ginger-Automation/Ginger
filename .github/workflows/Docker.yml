@@ -126,7 +126,7 @@ jobs:
       -   name: Print Version Environment Variable
           if: ${{github.workflow == 'CD'}} 
           run: |
-              echo "GingerNumber Version: ${{ env.gingernumber}}"
+              echo "GingerNumber Version: ${{ env.gingertag}}"
 
 # ------------------------------------------------------------------------------------------------------
 # Log in to the Container registry - GHCR
@@ -139,15 +139,15 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
       - name: Building GingerRuntime docker image
         run: |
-          docker pull gingerruntime-jammy:"${{ env.gingertag}}"
+          docker pull ghcr.io/ginger-automation/gingerruntime-jammy:${{ env.gingertag}}
         
       - name: Change image tag(latest) to be pushed for GHCR
         run: |
-          docker tag gingerruntime:"${{ env.gingertag}}" ghcr.io/${{ github.actor }}/gingerruntime:latest
+          docker tag ghcr.io/ginger-automation/gingerruntime-jammy:${{ env.gingertag}} ghcr.io/ginger-automation/gingerruntime-jammy:latest
 
 # ------------------------------------------------------------------------------------------------------
 # Push GingerRuntime-jammy docker image to GitHub Container Registry
 # ------------------------------------------------------------------------------------------------------          
-      # - name: Pushing GingerRuntime Image
-      #   run: | 
-      #     docker push ghcr.io/${{ github.actor }}/gingerruntime:latest
+      - name: Pushing GingerRuntime Image
+        run: | 
+          docker push ghcr.io/ginger-automation/gingerruntime-jammy:latest
