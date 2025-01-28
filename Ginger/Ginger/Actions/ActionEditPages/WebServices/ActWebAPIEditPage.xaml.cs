@@ -79,22 +79,19 @@ namespace Ginger.Actions.WebServices
                     PanelSoap.Visibility = Visibility.Collapsed;
                     UseWSSecurityHeader.Visibility = Visibility.Collapsed;
                     //Cookie Mode
-                    CookieMode.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.Session.ToString()), typeof(ApplicationAPIUtils.eCookieMode), false, null);
+                    CookieMode.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.CookieMode, nameof(ApplicationAPIUtils.eCookieMode.Session)), typeof(ApplicationAPIUtils.eCookieMode), false, null);
 
                     //Request Type
-                    RequestTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.GET.ToString()), typeof(ApplicationAPIUtils.eRequestType), false, null);
+                    RequestTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.RequestType, nameof(ApplicationAPIUtils.eRequestType.GET)), typeof(ApplicationAPIUtils.eRequestType), false, null);
 
                     //HttpVersion content type
-                    HttpVersioncombobox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV11.ToString()), typeof(ApplicationAPIUtils.eHttpVersion), false, null);
+                    HttpVersioncombobox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ReqHttpVersion, nameof(ApplicationAPIUtils.eHttpVersion.HTTPV11)), typeof(ApplicationAPIUtils.eHttpVersion), false, null);
 
                     //Request content type
-                    ContentTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eRequestContentType.JSon.ToString()), typeof(ApplicationAPIUtils.eRequestContentType), false, ContentTypeChange);
+                    ContentTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ContentType, nameof(ApplicationAPIUtils.eRequestContentType.JSon)), typeof(ApplicationAPIUtils.eRequestContentType), false, ContentTypeChange);
 
                     //Response Content Type
-                    ResponseTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eResponseContentType.JSon.ToString()), typeof(ApplicationAPIUtils.eResponseContentType), false, ResponseTypeComboBox_SelectionChanged);
-                    //ResponseTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eContentType.JSon.ToString()),
-                    //    GetFilteredContentTypes(), 
-                    //    false, ResponseTypeComboBox_SelectionChanged);
+                    ResponseTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ResponseContentType, nameof(ApplicationAPIUtils.eResponseContentType.JSon)), typeof(ApplicationAPIUtils.eResponseContentType), false, ResponseTypeComboBox_SelectionChanged);
 
                     //Request Template file:
                     TemplateFileNameFileBrowser.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.TemplateFileNameFileBrowser), true, true, UCValueExpression.eBrowserType.File, "txt; *.xml; *.json;", new RoutedEventHandler(BrowseTemplateFileButton_Click));
@@ -125,13 +122,13 @@ namespace Ginger.Actions.WebServices
             URLPasswordUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.URLPass), true, false, UCValueExpression.eBrowserType.Folder);
 
             //Network Credential selection radio button:
-            NetworkCredentialsRadioButton.Init(typeof(ApplicationAPIUtils.eNetworkCredentials), NetworkCeredentials, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, ApplicationAPIUtils.eNetworkCredentials.Default.ToString()), NetworkCreds_SelectionChanged);
+            NetworkCredentialsRadioButton.Init(typeof(ApplicationAPIUtils.eNetworkCredentials), NetworkCeredentials, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, nameof(ApplicationAPIUtils.eNetworkCredentials.Default)), NetworkCreds_SelectionChanged);
 
             //Request Body Selection radio button:
-            RequestBodyTypeRadioButton.Init(typeof(ApplicationAPIUtils.eRequestBodyType), BodySelection, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString()), RequestBodyType_Selection);
+            RequestBodyTypeRadioButton.Init(typeof(ApplicationAPIUtils.eRequestBodyType), BodySelection, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, nameof(ApplicationAPIUtils.eRequestBodyType.FreeText)), RequestBodyType_Selection);
 
             //CertficiateRadioButtons :
-            CertificateTypeRadioButton.Init(typeof(ApplicationAPIUtils.eCretificateType), CertificateSelection, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString()), CertificateSelection_Changed);
+            CertificateTypeRadioButton.Init(typeof(ApplicationAPIUtils.eCretificateType), CertificateSelection, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.CertificateTypeRadioButton, nameof(ApplicationAPIUtils.eCretificateType.AllSSL)), CertificateSelection_Changed);
 
             //Response validation checkbox: 
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotFailActionOnBadRespose, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, "False"));
@@ -155,10 +152,10 @@ namespace Ginger.Actions.WebServices
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotCertificateImportFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.ImportCetificateFile, "False"));
 
             //Security:
-            SecurityTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString()), typeof(ApplicationAPIUtils.eSercurityType), false, null);
+            SecurityTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.SecurityType, nameof(ApplicationAPIUtils.eSercurityType.None)), typeof(ApplicationAPIUtils.eSercurityType), false, null);
 
             //Authorization:
-            AuthTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString()), typeof(ApplicationAPIUtils.eAuthType), false, AuthorizationBox);
+            AuthTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.AuthorizationType, nameof(ApplicationAPIUtils.eAuthType.NoAuthentication)), typeof(ApplicationAPIUtils.eAuthType), false, AuthorizationBox);
 
             //Authorization
             AuthUserUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.AuthUsername), true, false, UCValueExpression.eBrowserType.Folder);

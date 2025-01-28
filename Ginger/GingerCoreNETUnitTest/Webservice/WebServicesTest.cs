@@ -573,7 +573,7 @@ namespace UnitTests.NonUITests
             restAct.HttpHeaders.Add(aiv);
 
             //Build REST Request:
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "http://usstlattstl01:8002/api/v1/executions?executionIds=33b2dea1-c24a-494c-97d4-0bd47e59620c");
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "http://dummyhost:8002/api/v1/executions?executionIds=33b2dea1-c24a-494c-97d4-0bd47e59620c");
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
             restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.GET.ToString());
             restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eRequestContentType.FormData.ToString());
@@ -595,10 +595,10 @@ namespace UnitTests.NonUITests
             webAPI.CreateRawRequestContent();
 
             string rawRequestContent = webAPI.RequestFileContent;
-            StringAssert.Contains(rawRequestContent, "GET http://usstlattstl01:8002/api/v1/executions?executionIds=33b2dea1-c24a-494c-97d4-0bd47e59620c HTTP/1.0");
+            StringAssert.Contains(rawRequestContent, "GET http://dummyhost:8002/api/v1/executions?executionIds=33b2dea1-c24a-494c-97d4-0bd47e59620c HTTP/1.0");
             StringAssert.Contains(rawRequestContent, "IncludeRequestDetails: true");
             StringAssert.Contains(rawRequestContent, "Accept: application/json");
-            StringAssert.Contains(rawRequestContent, "Host: usstlattstl01:8002");
+            StringAssert.Contains(rawRequestContent, "Host: dummyhost:8002");
         }
 
         [TestMethod]
