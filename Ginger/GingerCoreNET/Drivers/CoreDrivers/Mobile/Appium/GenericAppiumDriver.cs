@@ -3873,7 +3873,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred: {ex.Message}");
+               throw new($"An error occurred: {ex.Message}");
             }
         }
         public void StartRecordingScreen()
@@ -3914,7 +3914,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to hide the keyboard: {ex.Message}");
+                throw new($"Failed to hide the keyboard: {ex.Message}");
 
             }
         }
