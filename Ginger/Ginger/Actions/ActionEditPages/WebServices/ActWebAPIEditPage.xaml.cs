@@ -91,7 +91,7 @@ namespace Ginger.Actions.WebServices
                     ContentTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ContentType, nameof(ApplicationAPIUtils.eRequestContentType.JSon)), typeof(ApplicationAPIUtils.eRequestContentType), false, ContentTypeChange);
 
                     //Response Content Type
-                    ResponseTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ResponseContentType, nameof(ApplicationAPIUtils.eResponseContentType.JSon)), typeof(ApplicationAPIUtils.eResponseContentType), false, ResponseTypeComboBox_SelectionChanged);
+                    ResponseTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ResponseContentType, nameof(ApplicationAPIUtils.eResponseContentType.Any)), typeof(ApplicationAPIUtils.eResponseContentType), false, ResponseTypeComboBox_SelectionChanged);
 
                     //Request Template file:
                     TemplateFileNameFileBrowser.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.TemplateFileNameFileBrowser), true, true, UCValueExpression.eBrowserType.File, "txt; *.xml; *.json;", new RoutedEventHandler(BrowseTemplateFileButton_Click));

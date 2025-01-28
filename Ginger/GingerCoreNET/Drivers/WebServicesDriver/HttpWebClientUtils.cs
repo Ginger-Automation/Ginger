@@ -50,8 +50,8 @@ namespace GingerCore.Actions.WebAPI
         static Dictionary<string, Cookie> SessionCokiesDic = [];
         HttpResponseMessage Response = null;
         string BodyString = null;
-        string ContentType;
-        string Accept;
+        string ContentTypeHeader;
+        string AcceptHeader;
         public string ResponseMessage = null;
         public string RequestFileContent = null;
         public string ResponseFileContent = null;
@@ -79,7 +79,7 @@ namespace GingerCore.Actions.WebAPI
             SetSecurityType();
             AddHeadersToClient();
 
-            return act.GetType() == typeof(ActWebAPISoap) ? RequestConstracotSOAP((ActWebAPISoap)act) : RequestConstructorREST(Handler);
+            return act.GetType() == typeof(ActWebAPISoap) ? RequestConstructorSOAP((ActWebAPISoap)act) : RequestConstructorREST(Handler);
         }
 
         private void SetAutoDecompression(HttpClientHandler handler)
@@ -113,11 +113,11 @@ namespace GingerCore.Actions.WebAPI
                         {
                             if (param == "Content-Type")
                             {
-                                ContentType = value;
+                                ContentTypeHeader = value;
                             }
                             else if (param == "Accept")
                             {
-                                Accept = value;
+                                AcceptHeader = value;
                             }
                             else if (param.ToUpper() == "DATE")
                             {
@@ -734,12 +734,11 @@ namespace GingerCore.Actions.WebAPI
             ApplicationAPIUtils.eRequestContentType requestContentType = (ApplicationAPIUtils.eRequestContentType)mAct.GetInputParamCalculatedValue<ApplicationAPIUtils.eRequestContentType>(ActWebAPIRest.Fields.ContentType);
 
             // If the Content-Type is not set using Client Headers then it will be taken through ActWebAPIRest.Fields.ContentType
-            if (ContentType == null)
+            if (ContentTypeHeader == null)
             {
-                ContentType = GetRequestContentTypeText(requestContentType);                
+                ContentTypeHeader = GetRequestContentTypeText(requestContentType);
             }
-
-            if ((RequestMethod.ToString() == ApplicationAPIUtils.eRequestType.GET.ToString()))
+            if (RequestMethod.ToString() == nameof(ApplicationAPIUtils.eRequestType.GET))
             {
                 if (requestContentType == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded)
                 {
@@ -756,7 +755,7 @@ namespace GingerCore.Actions.WebAPI
                 }
                 else
                 {
-                    Client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", ContentType);
+                    Client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", ContentTypeHeader);
                 }
             }
             else
@@ -806,17 +805,17 @@ namespace GingerCore.Actions.WebAPI
                             var lastIndexOfUtf8 = _byteOrderMarkUtf8.Length - 1;
                             BodyString = BodyString.Remove(0, lastIndexOfUtf8);
                         }
-                        RequestMessage.Content = new StringContent(BodyString, Encoding.UTF8, ContentType);
+                        RequestMessage.Content = new StringContent(BodyString, Encoding.UTF8, ContentTypeHeader);
                         break;
 
                     case ApplicationAPIUtils.eRequestContentType.JSonWithoutCharset:
                         BodyString = GetRequestBodyString();
-                        RequestMessage.Content = new StringContent(BodyString, new MediaTypeHeaderValue(ContentType));
+                        RequestMessage.Content = new StringContent(BodyString, new MediaTypeHeaderValue(ContentTypeHeader));
                         break;
 
                     case ApplicationAPIUtils.eRequestContentType.JSon:
                         BodyString = GetRequestBodyString();
-                        RequestMessage.Content = new StringContent(BodyString, Encoding.UTF8, ContentType);
+                        RequestMessage.Content = new StringContent(BodyString, Encoding.UTF8, ContentTypeHeader);
                         break;
 
                     default:
@@ -837,22 +836,22 @@ namespace GingerCore.Actions.WebAPI
 
                 case ApplicationAPIUtils.eRequestContentType.FormData:
                     return "multipart/form-data"; //update to correct value
-
+             
                 case ApplicationAPIUtils.eRequestContentType.TextPlain:
                     return "text/plain; charset=utf-8";
-
+            
                 case ApplicationAPIUtils.eRequestContentType.XML:
                     return "application/xml";
-
+    
                 case ApplicationAPIUtils.eRequestContentType.JSonWithoutCharset:
                     return "application/json";
-
+   
                 case ApplicationAPIUtils.eRequestContentType.PDF:
                     return "application/pdf";
-                
+   
                 default:
                     throw new InvalidOperationException($"Unsupported RequestBodyType: {eContentType}");
-            }            
+            }
         }
 
         private string GetRequestBodyString()
@@ -907,23 +906,23 @@ namespace GingerCore.Actions.WebAPI
 
         private void SetResponseContentType()
         {
-            if (Accept == null)
+            if (AcceptHeader == null)
             {
                 ApplicationAPIUtils.eResponseContentType responseContentType = (ApplicationAPIUtils.eResponseContentType)mAct.GetInputParamCalculatedValue<ApplicationAPIUtils.eResponseContentType>(ActWebAPIRest.Fields.ResponseContentType);
                 Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(GetResponseContentTypeText(responseContentType)));
             }
             else
             {
-                if (Accept.Contains(','))
+                if (AcceptHeader.Contains(','))
                 {
-                    foreach (var acceptHeader in Accept.Split(','))
+                    foreach (var acceptHeader in AcceptHeader.Split(','))
                     {
                         Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(acceptHeader.Trim()));
                     }
                 }
                 else
                 {
-                    Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(Accept.Trim()));
+                    Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(AcceptHeader.Trim()));
                 }
             }
         }
@@ -983,7 +982,7 @@ namespace GingerCore.Actions.WebAPI
             return KeyValues;
         }
 
-        private bool RequestConstracotSOAP(ActWebAPISoap act)
+        private bool RequestConstructorSOAP(ActWebAPISoap act)
         {
             //Set default parameters for SOAP Actions
             RequestMessage = new HttpRequestMessage(HttpMethod.Post, Client.BaseAddress);
@@ -996,11 +995,11 @@ namespace GingerCore.Actions.WebAPI
 
             if (ContetnTypeHeader != null)
             {
-                ContentType = ContetnTypeHeader.ValueForDriver;
+                ContentTypeHeader = ContetnTypeHeader.ValueForDriver;
             }
             else
             {
-                ContentType = "text/xml";
+                ContentTypeHeader = "text/xml";
             }
 
             string RequestBodyType = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton);
@@ -1040,7 +1039,7 @@ namespace GingerCore.Actions.WebAPI
 
             Reporter.ToLog(eLogLevel.DEBUG, "RequestBody: " + BodyString);
 
-            RequestMessage.Content = new StringContent(BodyString, Encoding.UTF8, ContentType);
+            RequestMessage.Content = new StringContent(BodyString, Encoding.UTF8, ContentTypeHeader);
 
             return true;
         }
