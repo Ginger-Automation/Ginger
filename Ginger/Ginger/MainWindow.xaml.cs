@@ -691,9 +691,13 @@ namespace Ginger
             {
                 if (selectedTopListItem == xBusinessFlowsListItem)
                 {
-                    xBusinessFlowsListItem.Tag ??= BusinessFlowsMenu.MenusPage;
+                    if (xBusinessFlowsListItem.Tag == null)
+                    {
+                        xBusinessFlowsListItem.Tag = BusinessFlowsMenu.MenusPage;
+                        SelectBusinessFlowsMenu();
+                    }
+
                     SelectedSolutionTab = eSolutionTabType.BusinessFlows;
-                    SelectBusinessFlowsMenu();
                 }
                 else if (selectedTopListItem == xRunListItem)
                 {
