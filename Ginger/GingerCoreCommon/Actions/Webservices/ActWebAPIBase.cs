@@ -221,7 +221,7 @@ namespace GingerCore.Actions.WebServices
                 string ResponseContentType = mAct.GetInputParamCalculatedValue(ActWebAPIRest.Fields.ResponseContentType);
                 bool jsonParsinFailed = false;
 
-                if (ResponseContentType == ApplicationAPIUtils.eResponseContentType.JSon.ToString())
+                if (ResponseContentType == ApplicationAPIUtils.eResponseContentType.JSon.ToString() || ResponseContentType == ApplicationAPIUtils.eResponseContentType.JSonWithoutCharset.ToString())
                 {
                     if (!ParseJsonNodesToReturnParams(mAct, ResponseMessage))
                     {

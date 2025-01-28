@@ -120,7 +120,7 @@ namespace Amdocs.Ginger.Repository
 
         public enum eResponseContentType
         {
-            [EnumValueDescription("application/json")]
+            [EnumValueDescription("application/json; charset=utf-8")]
             JSon,
             [EnumValueDescription("text/plain")]
             TextPlain,
@@ -133,7 +133,9 @@ namespace Amdocs.Ginger.Repository
             [EnumValueDescription("application/pdf")]
             PDF,
             [EnumValueDescription("*/*")]
-            Any
+            Any,
+            [EnumValueDescription("application/json")]
+            JSonWithoutCharset
         }
 
         public enum eCookieMode

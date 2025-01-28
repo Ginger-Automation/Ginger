@@ -620,7 +620,7 @@ namespace Ginger.Actions.WebServices
         }
         private void ResponseTypeComboBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            if (mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType) == ApplicationAPIUtils.eResponseContentType.JSon.ToString())
+            if (mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType) == ApplicationAPIUtils.eResponseContentType.JSon.ToString() || mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType) == ApplicationAPIUtils.eResponseContentType.JSonWithoutCharset.ToString())
             {
                 JSON.Visibility = Visibility.Visible;
             }

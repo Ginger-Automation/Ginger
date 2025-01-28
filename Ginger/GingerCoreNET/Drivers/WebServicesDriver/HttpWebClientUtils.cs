@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
 using Amdocs.Ginger.CoreNET.Platform;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.WebServices;
@@ -51,7 +50,8 @@ namespace GingerCore.Actions.WebAPI
         static Dictionary<string, Cookie> SessionCokiesDic = [];
         HttpResponseMessage Response = null;
         string BodyString = null;
-        string ContentType;        
+        string ContentType;
+        string Accept;
         public string ResponseMessage = null;
         public string RequestFileContent = null;
         public string ResponseFileContent = null;
@@ -114,6 +114,10 @@ namespace GingerCore.Actions.WebAPI
                             if (param == "Content-Type")
                             {
                                 ContentType = value;
+                            }
+                            else if (param == "Accept")
+                            {
+                                Accept = value;
                             }
                             else if (param.ToUpper() == "DATE")
                             {
@@ -620,10 +624,6 @@ namespace GingerCore.Actions.WebAPI
                 mAct.AddOrUpdateReturnParamActual("Respond", "Respond returned as null");
             }
 
-
-
-
-
             string prettyResponse = XMLDocExtended.PrettyXml(ResponseMessage);
 
             mAct.AddOrUpdateReturnParamActual("Response:", prettyResponse);
@@ -907,8 +907,55 @@ namespace GingerCore.Actions.WebAPI
 
         private void SetResponseContentType()
         {
-            ApplicationAPIUtils.eResponseContentType responseContentType = (ApplicationAPIUtils.eResponseContentType)mAct.GetInputParamCalculatedValue<ApplicationAPIUtils.eResponseContentType>(ActWebAPIRest.Fields.ResponseContentType);
-            Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(responseContentType.GetEnumValueDescription()));
+            if (Accept == null)
+            {
+                ApplicationAPIUtils.eResponseContentType responseContentType = (ApplicationAPIUtils.eResponseContentType)mAct.GetInputParamCalculatedValue<ApplicationAPIUtils.eResponseContentType>(ActWebAPIRest.Fields.ResponseContentType);
+                Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(GetResponseContentTypeText(responseContentType)));
+            }
+            else
+            {
+                if (Accept.Contains(','))
+                {
+                    foreach (var acceptHeader in Accept.Split(','))
+                    {
+                        Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(acceptHeader.Trim()));
+                    }
+                }
+                else
+                {
+                    Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(Accept.Trim()));
+                }
+            }
+        }
+        private static string GetResponseContentTypeText(ApplicationAPIUtils.eResponseContentType eContentType)
+        {
+            switch (eContentType)
+            {
+                case ApplicationAPIUtils.eResponseContentType.JSon:
+                case ApplicationAPIUtils.eResponseContentType.JSonWithoutCharset:
+                    return "application/json";
+
+                case ApplicationAPIUtils.eResponseContentType.XwwwFormUrlEncoded:
+                    return "application/x-www-form-urlencoded";
+
+                case ApplicationAPIUtils.eResponseContentType.FormData:
+                    return "multipart/form-data"; //update to correct value
+
+                case ApplicationAPIUtils.eResponseContentType.TextPlain:
+                    return "text/plain; charset=utf-8";
+
+                case ApplicationAPIUtils.eResponseContentType.XML:
+                    return "application/xml";
+
+                case ApplicationAPIUtils.eResponseContentType.PDF:
+                    return "application/pdf";
+
+                case ApplicationAPIUtils.eResponseContentType.Any:
+                    return "*/*";
+
+                default:
+                    throw new InvalidOperationException($"Unsupported ResponseContentType: {eContentType}");
+            }
         }
 
         private void SetHTTPVersion()
