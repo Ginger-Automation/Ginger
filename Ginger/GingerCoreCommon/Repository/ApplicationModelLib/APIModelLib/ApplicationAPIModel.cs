@@ -148,8 +148,8 @@ namespace Amdocs.Ginger.Repository
         public ApplicationAPIUtils.eResponseContentType ResponseContentType { get { return mResponseContentType; } set { if (mResponseContentType != value) { mResponseContentType = value; OnPropertyChanged(nameof(ResponseContentType)); } } }
 
         /// <summary>
-+        /// Gets or sets the content type to be used in the request.
-+        /// </summary>
+        /// Gets or sets the content type to be used in the request.
+        /// </summary>
         ApplicationAPIUtils.eRequestContentType mRequestContentType = ApplicationAPIUtils.eRequestContentType.JSon;
         [IsSerializedForLocalRepository]
         public ApplicationAPIUtils.eRequestContentType RequestContentType { get { return mRequestContentType; } set { if (mRequestContentType != value) { mRequestContentType = value; OnPropertyChanged(nameof(RequestContentType)); } } }
