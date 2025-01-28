@@ -114,7 +114,30 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(MobilePressKey));
             }
         }
-
+        public ActInputValue MobileType    
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(MobileType));
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(MobileType), value.ToString());
+                OnPropertyChanged(nameof(MobileType));
+            }
+        }
+        public ActInputValue URLName
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(URLName));
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(URLName), value.ToString());
+                OnPropertyChanged(nameof(URLName));
+            }
+        }
         public ActInputValue X1
         {
             get
@@ -180,6 +203,19 @@ namespace GingerCore.Actions
             }
         }
 
+        public ActInputValue PathRecording
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(PathRecording), "~\\FolderName\\fileName");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(PathRecording), value.ToString());
+                OnPropertyChanged(nameof(PathRecording));
+            }
+        }
+
         public ActInputValue ActionInput
         {
             get
@@ -192,7 +228,7 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(ActionInput));
             }
         }
-
+      
         public ActInputValue PressDuration
         {
             get
@@ -383,6 +419,29 @@ namespace GingerCore.Actions
             GetAvailableContexts,
             [EnumValueDescription("Set Context")]
             SetContext,
+            [EnumValueDescription("Open Deep Link")]
+            OpenDeeplink,
+            [EnumValueDescription("Check Keyboard Visible")]
+            IsKeyboardVisible,
+            [EnumValueDescription("Check if Device Lock")]
+            IsLocked,
+            [EnumValueDescription("Check App Installation")]
+            IsAppInstalled,
+            [EnumValueDescription("Remove App")]
+            RemoveApp,
+            [EnumValueDescription("App State")]
+            QueryAppState,
+            [EnumValueDescription("Simulate Device Rotation")]
+            RotateSimulation,
+            [EnumValueDescription("Run Script")]
+            RunScript,
+            [EnumValueDescription("Start Recording Screen")]
+            StartRecordingScreen,
+            [EnumValueDescription("Stop Recording Screen")]
+            StopRecordingScreen,
+            [EnumValueDescription("Hide Keyboard")]
+            HideKeyboard,
+
         }
 
         public enum ePressKey

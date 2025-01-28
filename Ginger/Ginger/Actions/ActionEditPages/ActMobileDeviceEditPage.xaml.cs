@@ -40,6 +40,8 @@ namespace Ginger.Actions
         Context mContext;
         bool isValueExpression;
 
+       
+
         public ActMobileDeviceEditPage(ActMobileDevice Act)
         {
             InitializeComponent();
@@ -50,7 +52,7 @@ namespace Ginger.Actions
             BindControls();
             SetControlsView();
         }
-
+        
         private void BindControls()
         {
             xOperationNameComboBox.Init(mAct, nameof(mAct.MobileDeviceAction), typeof(ActMobileDevice.eMobileDeviceAction), ActionNameComboBox_SelectionChanged);
@@ -66,9 +68,16 @@ namespace Ginger.Actions
             xX2TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.X2, nameof(ActInputValue.Value));
             xY2TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.Y2, nameof(ActInputValue.Value));
 
-            xPhotoSumilationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActMobileDevice.SimulatedPhotoPath)), true, true, UCValueExpression.eBrowserType.File, "*", ValueTextBox_ClickBrowse);
+            xPhotoSumilationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActMobileDevice.SimulatedPhotoPath)), true, true, UCValueExpression.eBrowserType.File, "*");
 
-            xAppPackageVE.Init(Context.GetAsContext(mAct.Context), mAct.ActionAppPackage, nameof(ActInputValue.Value));
+            xAppPackageDeepLinkVE.Init(Context.GetAsContext(mAct.Context), mAct.ActionAppPackage, nameof(ActInputValue.Value));
+
+            xURLNameTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.URLName, nameof(ActInputValue.Value)); 
+
+            xMobileTypeTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.ActionAppPackage, nameof(ActInputValue.Value));
+
+
+            xPhotoSumilationVE.Init(Context.GetAsContext(mAct.Context), mAct.PathRecording, nameof(ActInputValue.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");
 
             xPressDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.PressDuration, nameof(ActInputValue.Value));
             xDragDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.DragDuration, nameof(ActInputValue.Value));
@@ -128,12 +137,12 @@ namespace Ginger.Actions
             UpdateBaseLineImage();
         }
 
-        private void ValueTextBox_ClickBrowse(object sender, RoutedEventArgs e)
+        
+        private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             string filePath = UpdateBaseLineImage();
             ImportPhotoToSolutionFolder(filePath);
         }
-
         private string UpdateBaseLineImage(bool firstTime = false)
         {
             string FileName = General.GetFullFilePath(xPhotoSumilationTxtBox.ValueTextBox.Text);
@@ -210,6 +219,9 @@ namespace Ginger.Actions
             xDragPnl.Visibility = Visibility.Collapsed;
             xSwipePnl.Visibility = Visibility.Collapsed;
             xInputPnl.Visibility = Visibility.Collapsed;
+            xDeepLinkPnl.Visibility = Visibility.Collapsed;
+            xRunScriptPnl.Visibility = Visibility.Collapsed;
+            xRecordingScreenPnl.Visibility = Visibility.Collapsed;
 
             switch (mAct.MobileDeviceAction)
             {
@@ -259,15 +271,30 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.SimulateBiometrics:
                     xAuthSimulationPnl.Visibility = Visibility.Visible;
                     break;
-
+                case ActMobileDevice.eMobileDeviceAction.OpenDeeplink:
+                    xDeepLinkPnl.Visibility = Visibility.Visible;
+                   
+                    break;
                 case ActMobileDevice.eMobileDeviceAction.CloseApp:
                 case ActMobileDevice.eMobileDeviceAction.OpenApp:
+                case ActMobileDevice.eMobileDeviceAction.IsAppInstalled:
+                case ActMobileDevice.eMobileDeviceAction.RemoveApp:
+                case ActMobileDevice.eMobileDeviceAction.QueryAppState:
                     xAppPnl.Visibility = Visibility.Visible;
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.SetContext:
                     xInputLabelVE.Content = "Context to Set:";
                     xInputPnl.Visibility = Visibility.Visible;
+                    break;
+
+                case ActMobileDevice.eMobileDeviceAction.RunScript:
+                    xRunScriptPnl.Visibility = Visibility.Visible;
+                    xDeepLinkPnl.Visibility = Visibility.Visible;
+                    break;
+
+                case ActMobileDevice.eMobileDeviceAction.StopRecordingScreen:
+                    xRecordingScreenPnl.Visibility = Visibility.Visible; 
                     break;
             }
         }
