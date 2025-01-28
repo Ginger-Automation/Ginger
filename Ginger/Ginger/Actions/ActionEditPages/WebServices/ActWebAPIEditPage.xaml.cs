@@ -114,13 +114,6 @@ namespace Ginger.Actions.WebServices
                     break;
             }
         }
-        //public static IEnumerable<ApplicationAPIUtils.eContentType> GetFilteredContentTypes()
-        //{
-        //    return Enum.GetValues(typeof(ApplicationAPIUtils.eContentType))
-        //               .Cast<ApplicationAPIUtils.eContentType>()
-        //               .Where(ct => ct != ApplicationAPIUtils.eContentType.Any); // Exclude Any
-        //}
-
 
         public void BindUiControls()
         {

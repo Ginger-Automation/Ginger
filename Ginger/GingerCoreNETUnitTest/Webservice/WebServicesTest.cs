@@ -371,7 +371,7 @@ namespace UnitTests.NonUITests
             }
 
             HttpWebClientUtils webAPI = new HttpWebClientUtils();
-            webAPI.RequestContstructor(restAct, null, false);
+            webAPI.RequestConstructor(restAct, null, false);
             webAPI.CreateRawRequestContent();
 
             string rawRequestContent = webAPI.RequestFileContent;
@@ -425,7 +425,7 @@ namespace UnitTests.NonUITests
             }
 
             HttpWebClientUtils webAPI = new HttpWebClientUtils();
-            webAPI.RequestContstructor(soapAct, null, false);
+            webAPI.RequestConstructor(soapAct, null, false);
             webAPI.CreateRawRequestContent();
 
             string rawRequestContent = webAPI.RequestFileContent;
@@ -471,7 +471,7 @@ namespace UnitTests.NonUITests
             }
 
             HttpWebClientUtils webAPI = new HttpWebClientUtils();
-            webAPI.RequestContstructor(restAct, null, false);
+            webAPI.RequestConstructor(restAct, null, false);
             webAPI.CreateRawRequestContent();
 
             string rawRequestContent = webAPI.RequestFileContent;
@@ -534,7 +534,7 @@ namespace UnitTests.NonUITests
             }
 
             HttpWebClientUtils webAPI = new HttpWebClientUtils();
-            webAPI.RequestContstructor(restAct, null, false);
+            webAPI.RequestConstructor(restAct, null, false);
             webAPI.CreateRawRequestContent();
 
             string rawRequestContent = webAPI.RequestFileContent;
@@ -591,7 +591,7 @@ namespace UnitTests.NonUITests
             }
 
             HttpWebClientUtils webAPI = new HttpWebClientUtils();
-            webAPI.RequestContstructor(restAct, null, false);
+            webAPI.RequestConstructor(restAct, null, false);
             webAPI.CreateRawRequestContent();
 
             string rawRequestContent = webAPI.RequestFileContent;
@@ -634,7 +634,7 @@ namespace UnitTests.NonUITests
             }
 
             HttpWebClientUtils webAPI = new HttpWebClientUtils();
-            webAPI.RequestContstructor(restAct, null, false);
+            webAPI.RequestConstructor(restAct, null, false);
             webAPI.CreateRawRequestContent();
 
             string rawRequestContent = webAPI.RequestFileContent;

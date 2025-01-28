@@ -76,7 +76,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                         GenerateFormParameters(AAM, Operation, true);
                                         break;
                                     case "application/json":
-                                        AAM.ContentType = ApplicationAPIUtils.eRequestContentType.JSon;
+                                        AAM.RequestContentType = ApplicationAPIUtils.eRequestContentType.JSon;
                                         AAM.ResponseContentType = ApplicationAPIUtils.eResponseContentType.JSon;
                                         if (Operation.RequestBody != null)
                                         {
@@ -89,7 +89,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
                                         break;
                                     case "application/xml":
-                                        AAM.ContentType = ApplicationAPIUtils.eRequestContentType.XML;
+                                        AAM.RequestContentType = ApplicationAPIUtils.eRequestContentType.XML;
                                         AAM.ResponseContentType = ApplicationAPIUtils.eResponseContentType.XML;
                                         if (Operation.RequestBody != null)
                                         {
@@ -135,7 +135,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                     GenerateFormParameters(AAM, Operation, true);
                                     break;
                                 case "application/json":
-                                    AAM.ContentType = ApplicationAPIUtils.eRequestContentType.JSon;
+                                    AAM.RequestContentType = ApplicationAPIUtils.eRequestContentType.JSon;
                                     AAM.ResponseContentType = ApplicationAPIUtils.eResponseContentType.JSon;
                                     if (Operation.RequestBody != null)
                                     {
@@ -149,7 +149,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
                                     break;
                                 case "application/xml":
-                                    AAM.ContentType = ApplicationAPIUtils.eRequestContentType.XML;
+                                    AAM.RequestContentType = ApplicationAPIUtils.eRequestContentType.XML;
                                     AAM.ResponseContentType = ApplicationAPIUtils.eResponseContentType.XML;
                                     if (Operation.RequestBody != null)
                                     {

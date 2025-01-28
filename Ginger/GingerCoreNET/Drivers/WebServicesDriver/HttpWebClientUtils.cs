@@ -51,13 +51,12 @@ namespace GingerCore.Actions.WebAPI
         static Dictionary<string, Cookie> SessionCokiesDic = [];
         HttpResponseMessage Response = null;
         string BodyString = null;
-        string ContentType;
-        ApplicationAPIUtils.eRequestContentType eContentType;
+        string ContentType;        
         public string ResponseMessage = null;
         public string RequestFileContent = null;
         public string ResponseFileContent = null;
 
-        public bool RequestContstructor(ActWebAPIBase act, string ProxySettings, bool useProxyServerSettings)
+        public bool RequestConstructor(ActWebAPIBase act, string ProxySettings, bool useProxyServerSettings)
          {
             mAct = act;
             Handler = new HttpClientHandler();
@@ -80,7 +79,7 @@ namespace GingerCore.Actions.WebAPI
             SetSecurityType();
             AddHeadersToClient();
 
-            return act.GetType() == typeof(ActWebAPISoap) ? RequestConstracotSOAP((ActWebAPISoap)act) : RequestConstractorREST(Handler);
+            return act.GetType() == typeof(ActWebAPISoap) ? RequestConstracotSOAP((ActWebAPISoap)act) : RequestConstructorREST(Handler);
         }
 
         private void SetAutoDecompression(HttpClientHandler handler)
@@ -492,7 +491,7 @@ namespace GingerCore.Actions.WebAPI
                     context.Runner.PrepActionValueExpression(act, context.BusinessFlow);
                 }
                 //Create Request content
-                RequestContstructor(act, null, false);
+                RequestConstructor(act, null, false);
                 CreateRawRequestContent();
                 return RequestFileContent;
             }
@@ -640,7 +639,7 @@ namespace GingerCore.Actions.WebAPI
             return true;
         }
 
-        public void CreatRawResponseContent()
+        public void CreateRawResponseContent()
         {
 
 
@@ -677,7 +676,7 @@ namespace GingerCore.Actions.WebAPI
         {
             if (saveResponse)
             {
-                CreatRawResponseContent();
+                CreateRawResponseContent();
 
                 string FileFullPath = Webserviceplatforminfo.SaveToFile("Response", ResponseFileContent, savePath, mAct);
                 mAct.AddOrUpdateReturnParamActual("Saved Response File Name", Path.GetFileName(FileFullPath));
@@ -714,7 +713,7 @@ namespace GingerCore.Actions.WebAPI
             }
         }
 
-        private bool RequestConstractorREST(HttpClientHandler handler)
+        private bool RequestConstructorREST(HttpClientHandler handler)
         {
             //Request Method:
             HttpMethod RequestMethod = new HttpMethod(mAct.GetInputParamCalculatedValue(ActWebAPIRest.Fields.RequestType).ToUpper());
@@ -732,17 +731,17 @@ namespace GingerCore.Actions.WebAPI
 
         private void SetRequestContent(HttpMethod RequestMethod)
         {
-            eContentType = (ApplicationAPIUtils.eRequestContentType)mAct.GetInputParamCalculatedValue<ApplicationAPIUtils.eRequestContentType>(ActWebAPIRest.Fields.ContentType);
+            ApplicationAPIUtils.eRequestContentType requestContentType = (ApplicationAPIUtils.eRequestContentType)mAct.GetInputParamCalculatedValue<ApplicationAPIUtils.eRequestContentType>(ActWebAPIRest.Fields.ContentType);
 
             // If the Content-Type is not set using Client Headers then it will be taken through ActWebAPIRest.Fields.ContentType
             if (ContentType == null)
             {
-                ContentType = GetRequestContentTypeText(eContentType);                
+                ContentType = GetRequestContentTypeText(requestContentType);                
             }
 
             if ((RequestMethod.ToString() == ApplicationAPIUtils.eRequestType.GET.ToString()))
             {
-                if (eContentType == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded)
+                if (requestContentType == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded)
                 {
                     string GetRequest = "?";
                     if (mAct.RequestKeyValues.Any())
@@ -762,7 +761,7 @@ namespace GingerCore.Actions.WebAPI
             }
             else
             {
-                switch (eContentType)
+                switch (requestContentType)
                 {
                     case ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded:
                         if (mAct.RequestKeyValues.Any())
@@ -815,10 +814,13 @@ namespace GingerCore.Actions.WebAPI
                         RequestMessage.Content = new StringContent(BodyString, new MediaTypeHeaderValue(ContentType));
                         break;
 
-                    default:
+                    case ApplicationAPIUtils.eRequestContentType.JSon:
                         BodyString = GetRequestBodyString();
                         RequestMessage.Content = new StringContent(BodyString, Encoding.UTF8, ContentType);
                         break;
+
+                    default:
+                        throw new InvalidOperationException($"Unsupported Content-Type: {requestContentType}");
                 }
             }
         }
@@ -849,7 +851,7 @@ namespace GingerCore.Actions.WebAPI
                     return "application/pdf";
                 
                 default:
-                    return string.Empty;
+                    throw new InvalidOperationException($"Unsupported RequestBodyType: {eContentType}");
             }            
         }
 
@@ -867,7 +869,7 @@ namespace GingerCore.Actions.WebAPI
                 return SetDynamicValues(GetStringBodyFromFile());
             }
 
-            return string.Empty;
+            throw new InvalidOperationException($"Unsupported RequestBodyType: {RequestBodyType}");
         }
 
         private void SetCookies(HttpClientHandler handler)
@@ -906,7 +908,7 @@ namespace GingerCore.Actions.WebAPI
         private void SetResponseContentType()
         {
             ApplicationAPIUtils.eResponseContentType responseContentType = (ApplicationAPIUtils.eResponseContentType)mAct.GetInputParamCalculatedValue<ApplicationAPIUtils.eResponseContentType>(ActWebAPIRest.Fields.ResponseContentType);
-            Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(responseContentType.GetDescription()));
+            Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(responseContentType.GetEnumValueDescription()));
         }
 
         private void SetHTTPVersion()
