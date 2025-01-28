@@ -92,15 +92,15 @@
             <Label Style="{StaticResource $LabelStyle}" Content="Application package:"/>
             <Actions:UCValueExpression x:Name="xAppPackageDeepLinkVE" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250"/>
         </StackPanel>
-        <StackPanel x:Name="xRunScriptPnl" HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed">
-            <Label Style="{StaticResource $LabelStyle}" Content="Mobile Type:" Margin="0 0 0 0"/>
-            <Activities:UCValueExpression x:Name="xMobileTypeTxtBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250"/>
-        </StackPanel>
         <StackPanel x:Name="xRecordingScreenPnl" HorizontalAlignment="Left" Orientation="Horizontal"  DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed">
             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal"  DockPanel.Dock="Top">
                 <Label Style="{StaticResource $LabelStyle}" Content="Save File Recording to Folder :"/>
                 <Actions:UCValueExpression x:Name="xPhotoSumilationVE" HorizontalAlignment="Left" VerticalAlignment="Center" Width="600" />
             </StackPanel>
+        </StackPanel>
+        <StackPanel x:Name="xRunScriptPnl" HorizontalAlignment="Left" Orientation="Horizontal"  DockPanel.Dock="Top" Margin="5,10,0,0" Visibility="Collapsed">
+            <Label Style="{StaticResource $LabelStyle}" Content="Script:"/>
+            <Actions:UCValueExpression x:Name="xAppPackageVE2" VerticalAlignment="Top" Width="400"/>
         </StackPanel>
 
     </DockPanel>

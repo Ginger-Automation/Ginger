@@ -1244,7 +1244,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.IsLocked:
-                        act.AddOrUpdateReturnParamActual("Is Locked", IsLocked().ToString());
+                        act.AddOrUpdateReturnParamActual("Is App Locked", IsLocked().ToString());
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.IsAppInstalled:
@@ -1264,7 +1264,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.RunScript: // need to fix
-                        RunScript(act.MobileType.ValueForDriver, act.URLName.ValueForDriver, GetAppPackage(act), GetTypeMobileId());
+                        RunScript(act.Script.ValueForDriver);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.StartRecordingScreen:
@@ -3865,9 +3865,16 @@ namespace Amdocs.Ginger.CoreNET
         {
             SwitchToLandscape();
         }
-        public void RunScript(string mobileType, string url, string id, string typeId)
+        public void RunScript(string script)
         {
-            Driver.ExecuteScript($"mobile: {mobileType}", new Dictionary<string, object> { { "url", url }, { typeId, id } });
+            try
+            {
+                Driver.ExecuteScript(script);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
         }
         public void StartRecordingScreen()
         {

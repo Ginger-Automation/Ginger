@@ -114,16 +114,16 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(MobilePressKey));
             }
         }
-        public ActInputValue MobileType    
+        public ActInputValue Script    
         {
             get
             {
-                return GetOrCreateInputParam(nameof(MobileType));
+                return GetOrCreateInputParam(nameof(Script));
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(MobileType), value.ToString());
-                OnPropertyChanged(nameof(MobileType));
+                AddOrUpdateInputParamValue(nameof(Script), value.ToString());
+                OnPropertyChanged(nameof(Script));
             }
         }
         public ActInputValue URLName
@@ -421,11 +421,11 @@ namespace GingerCore.Actions
             SetContext,
             [EnumValueDescription("Open Deep Link")]
             OpenDeeplink,
-            [EnumValueDescription("Check Keyboard Visible")]
+            [EnumValueDescription("Check Keyboard is Visible")]
             IsKeyboardVisible,
-            [EnumValueDescription("Check if Device Lock")]
+            [EnumValueDescription("Check if Device Locked")] 
             IsLocked,
-            [EnumValueDescription("Check App Installation")]
+            [EnumValueDescription("Check if App Installed")]
             IsAppInstalled,
             [EnumValueDescription("Remove App")]
             RemoveApp,

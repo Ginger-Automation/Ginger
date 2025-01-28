@@ -74,8 +74,7 @@ namespace Ginger.Actions
 
             xURLNameTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.URLName, nameof(ActInputValue.Value)); 
 
-            xMobileTypeTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.ActionAppPackage, nameof(ActInputValue.Value));
-
+            xAppPackageVE2.Init(Context.GetAsContext(mAct.Context), mAct.Script, nameof(ActInputValue.Value));
 
             xPhotoSumilationVE.Init(Context.GetAsContext(mAct.Context), mAct.PathRecording, nameof(ActInputValue.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");
 
@@ -290,7 +289,6 @@ namespace Ginger.Actions
 
                 case ActMobileDevice.eMobileDeviceAction.RunScript:
                     xRunScriptPnl.Visibility = Visibility.Visible;
-                    xDeepLinkPnl.Visibility = Visibility.Visible;
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.StopRecordingScreen:
