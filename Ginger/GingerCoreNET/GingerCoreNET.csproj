@@ -336,10 +336,12 @@
     <PackageReference Include="System.Data.OleDb" Version="8.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.7" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.1" />
     <PackageReference Include="System.IO.Packaging" Version="9.0.1" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Reflection.DispatchProxy" Version="4.7.1" />
     <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.1" />
   </ItemGroup>
 
   <ItemGroup>
