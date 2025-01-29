@@ -518,6 +518,7 @@
     <PackageReference Include="Microsoft.NETCore.Platforms">
       <Version>7.0.4</Version>
     </PackageReference>
+    <PackageReference Include="MimeKit" Version="4.10.0" />
     <PackageReference Include="MongoDB.Driver">
       <Version>2.19.1</Version>
     </PackageReference>
@@ -555,6 +556,7 @@
     <PackageReference Include="System.Drawing.Common">
       <Version>8.0.7</Version>
     </PackageReference>
+    <PackageReference Include="System.Formats.Asn1" Version="9.0.1" />
     <PackageReference Include="System.Globalization">
       <Version>4.3.0</Version>
     </PackageReference>
@@ -578,7 +580,9 @@
     <PackageReference Include="System.Security.Cryptography.Algorithms">
       <Version>4.3.1</Version>
     </PackageReference>
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.1" />
     <PackageReference Include="System.Text.Json" Version="9.0.1" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageReference Include="System.Threading.Tasks.Dataflow">
       <Version>8.0.0</Version>
     </PackageReference>
