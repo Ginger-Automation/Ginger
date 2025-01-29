@@ -102,6 +102,23 @@
             <Label Style="{StaticResource $LabelStyle}" Content="Script:"/>
             <Actions:UCValueExpression x:Name="xAppPackageVE2" VerticalAlignment="Top" Width="400"/>
         </StackPanel>
-
+        <StackPanel x:Name="xPushToDevicePnl" HorizontalAlignment="Left" Orientation="Horizontal"  DockPanel.Dock="Top" Margin="5,10,0,0" Visibility="Collapsed">
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal"  DockPanel.Dock="Top">
+                <Label Style="{StaticResource $LabelStyle}" Content="Choose File:"/>
+                <Actions:UCValueExpression x:Name="xPhotoSumilationEV" HorizontalAlignment="Left" VerticalAlignment="Center" Width="600" />
+            </StackPanel>
+        </StackPanel>
+        <StackPanel x:Name="xPullFromDevicePnl" HorizontalAlignment="Left" Orientation="Horizontal"  DockPanel.Dock="Top" Margin="5,10,0,0" Visibility="Collapsed">
+            <Label Style="{StaticResource $LabelStyle}" Content="Enter File Name From Device:" Margin="0,5,0,0"/>
+            <Actions:UCValueExpression x:Name="xAppPackageVE3" VerticalAlignment="Top" Margin="5,8,30,8" Width="200"/>
+            <Label Style="{StaticResource $LabelStyle}" Content="Choose Folder:" Margin="0,5,0,0"/>
+            <Actions:UCValueExpression x:Name="xPhotoSumilationVE2" Width="600" />
+        </StackPanel>
+        <StackPanel x:Name="xSetClipboardTextPnl" HorizontalAlignment="Left" Orientation="Horizontal"  DockPanel.Dock="Top" Margin="5,10,0,0" Visibility="Collapsed">
+            <Label Style="{StaticResource $LabelStyle}" Content="Set value to Clipboard Text:" Margin="0,5,0,0"/>
+            <Actions:UCValueExpression x:Name="xAppPackageVE4" VerticalAlignment="Top" Margin="5,7,30,8" Width="200"/>
+            
+        </StackPanel>
     </DockPanel>
 </Page>
+

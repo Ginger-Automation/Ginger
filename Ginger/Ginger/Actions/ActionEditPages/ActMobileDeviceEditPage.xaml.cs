@@ -72,9 +72,15 @@ namespace Ginger.Actions
 
             xAppPackageDeepLinkVE.Init(Context.GetAsContext(mAct.Context), mAct.ActionAppPackage, nameof(ActInputValue.Value));
 
-            xURLNameTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.URLName, nameof(ActInputValue.Value)); 
+            xURLNameTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.URLName, nameof(ActInputValue.Value));
 
-            xAppPackageVE2.Init(Context.GetAsContext(mAct.Context), mAct.Script, nameof(ActInputValue.Value));
+            xPhotoSumilationVE2.Init(Context.GetAsContext(mAct.Context), mAct.LocalFile, nameof(ActInputValue.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");
+
+            xPhotoSumilationEV.Init(Context.GetAsContext(mAct.Context), mAct.LocalFile, nameof(ActMobileDevice.Value), true, true, UCValueExpression.eBrowserType.File, "*");
+
+            xAppPackageVE3.Init(Context.GetAsContext(mAct.Context), mAct.ActionInput, nameof(ActInputValue.Value));
+            xAppPackageVE2.Init(Context.GetAsContext(mAct.Context), mAct.ActionInput, nameof(ActInputValue.Value));
+            xAppPackageVE4.Init(Context.GetAsContext(mAct.Context), mAct.ActionInput, nameof(ActInputValue.Value)); 
 
             xPhotoSumilationVE.Init(Context.GetAsContext(mAct.Context), mAct.PathRecording, nameof(ActInputValue.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");
 
@@ -221,6 +227,9 @@ namespace Ginger.Actions
             xDeepLinkPnl.Visibility = Visibility.Collapsed;
             xRunScriptPnl.Visibility = Visibility.Collapsed;
             xRecordingScreenPnl.Visibility = Visibility.Collapsed;
+            xPushToDevicePnl.Visibility = Visibility.Collapsed;
+            xPullFromDevicePnl.Visibility = Visibility.Collapsed;
+            xSetClipboardTextPnl.Visibility = Visibility.Collapsed;
 
             switch (mAct.MobileDeviceAction)
             {
@@ -272,7 +281,7 @@ namespace Ginger.Actions
                     break;
                 case ActMobileDevice.eMobileDeviceAction.OpenDeeplink:
                     xDeepLinkPnl.Visibility = Visibility.Visible;
-                   
+
                     break;
                 case ActMobileDevice.eMobileDeviceAction.CloseApp:
                 case ActMobileDevice.eMobileDeviceAction.OpenApp:
@@ -292,7 +301,18 @@ namespace Ginger.Actions
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.StopRecordingScreen:
-                    xRecordingScreenPnl.Visibility = Visibility.Visible; 
+                    xRecordingScreenPnl.Visibility = Visibility.Visible;
+                    break;
+
+                case ActMobileDevice.eMobileDeviceAction.PushFileToDevice:
+                    xPushToDevicePnl.Visibility = Visibility.Visible;
+                    break;
+
+                case ActMobileDevice.eMobileDeviceAction.PullFileFromDevice:
+                    xPullFromDevicePnl.Visibility = Visibility.Visible;
+                    break;
+                case ActMobileDevice.eMobileDeviceAction.SetClipboardText:
+                    xSetClipboardTextPnl.Visibility = Visibility.Visible;
                     break;
             }
         }

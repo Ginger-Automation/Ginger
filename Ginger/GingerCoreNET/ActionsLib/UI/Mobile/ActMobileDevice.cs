@@ -114,28 +114,40 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(MobilePressKey));
             }
         }
-        public ActInputValue Script    
-        {
-            get
-            {
-                return GetOrCreateInputParam(nameof(Script));
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(Script), value.ToString());
-                OnPropertyChanged(nameof(Script));
-            }
-        }
+        //public ActInputValue Script    
+        //{
+        //    get
+        //    {
+        //        return GetOrCreateInputParam(nameof(Script));
+        //    }
+        //    set
+        //    {
+        //        AddOrUpdateInputParamValue(nameof(Script), value.ToString());
+        //        OnPropertyChanged(nameof(Script));
+        //    }
+        //}
         public ActInputValue URLName
         {
             get
             {
-                return GetOrCreateInputParam(nameof(URLName));
+                return GetOrCreateInputParam(nameof(URLName), "your-deep-link-url");
             }
             set
             {
                 AddOrUpdateInputParamValue(nameof(URLName), value.ToString());
                 OnPropertyChanged(nameof(URLName));
+            }
+        }
+        public ActInputValue LocalFile
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(LocalFile), "/local/path/to/file.txt");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(LocalFile), value.ToString());
+                OnPropertyChanged(nameof(LocalFile));
             }
         }
         public ActInputValue X1
@@ -441,7 +453,14 @@ namespace GingerCore.Actions
             StopRecordingScreen,
             [EnumValueDescription("Hide Keyboard")]
             HideKeyboard,
-
+            [EnumValueDescription("Push File To Device")]
+            PushFileToDevice,
+            [EnumValueDescription("Pull File From Device")]
+            PullFileFromDevice,
+            [EnumValueDescription("Set To Clipboard Text")]
+            SetClipboardText,
+            [EnumValueDescription("Get Specific Performance Data")]
+            GetSpecificPerformanceData
         }
 
         public enum ePressKey

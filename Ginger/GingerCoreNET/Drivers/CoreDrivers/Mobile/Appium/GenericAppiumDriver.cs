@@ -1263,8 +1263,8 @@ namespace Amdocs.Ginger.CoreNET
                         RotateSimulation();
                         break;
 
-                    case ActMobileDevice.eMobileDeviceAction.RunScript: // need to fix
-                        RunScript(act.Script.ValueForDriver);
+                    case ActMobileDevice.eMobileDeviceAction.RunScript:
+                        RunScript(act.ActionInput.ValueForDriver);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.StartRecordingScreen:
@@ -1278,6 +1278,18 @@ namespace Amdocs.Ginger.CoreNET
 
                     case ActMobileDevice.eMobileDeviceAction.HideKeyboard:
                         HideKeyboard();
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.PushFileToDevice:
+                        PushFileToDevice(act.LocalFile.ValueForDriver);
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.PullFileFromDevice:
+                        PullFileFromDevice(act.LocalFile.ValueForDriver, act.ActionInput.ValueForDriver);
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.SetClipboardText:
+                        SetClipboardText(act.ActionInput.ValueForDriver);
                         break;
 
                     default:
@@ -3873,7 +3885,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception ex)
             {
-               throw new($"An error occurred: {ex.Message}");
+                throw new($"An error occurred: {ex.Message}");
             }
         }
         public void StartRecordingScreen()
@@ -3890,7 +3902,7 @@ namespace Amdocs.Ginger.CoreNET
 
             }
         }
-       
+
         public void StopRecordingScreen(string path)
         {
             string videoBase64 = ((AndroidDriver)Driver).StopRecordingScreen();
@@ -3917,6 +3929,62 @@ namespace Amdocs.Ginger.CoreNET
                 throw new($"Failed to hide the keyboard: {ex.Message}");
 
             }
+        }
+        public void PushFileToDevice(string localFilePath)
+        {
+
+            byte[] fileContent = System.IO.File.ReadAllBytes(localFilePath);
+            string fileName = Path.GetFileName(localFilePath);
+            if (Driver is IOSDriver)
+            {
+                ((IOSDriver)Driver).PushFile($"Documents/{fileName}", fileContent);
+            }
+            else
+            {
+                ((AndroidDriver)Driver).PushFile($"/sdcard/Download/{fileName}", fileContent);
+            }
+
+        }
+
+        public void PullFileFromDevice(string localFilePath, string fileName)
+        {
+
+            byte[] fileContent;
+
+            if (Driver is IOSDriver)
+            {
+                fileContent = ((IOSDriver)Driver).PullFile($"Documents/{fileName}");
+            }
+            else if (Driver is AndroidDriver)
+            {
+                fileContent = ((AndroidDriver)Driver).PullFile($"/sdcard/Download/{fileName}");
+            }
+            else
+            {
+                throw new InvalidOperationException("Driver must be either an IOSDriver or AndroidDriver");
+            }
+
+            // Save the file content to the local file path
+            System.IO.File.WriteAllBytes($"{localFilePath}{fileName}", fileContent);
+        }
+        public void SetClipboardText(string text)
+        {
+            //((IOSDriver)Driver).SetClipboardText(text);
+            ((AndroidDriver)Driver).SetClipboardText(text, "");
+
+        }
+        public IList<object> GetSpecificPerformanceData(string packageName, string specificData) //"memoryinfo"
+        {
+            IList<object> perfData = ((AndroidDriver)Driver).GetPerformanceData(packageName, specificData, 10);
+            //IList<string> perfDataStrings = perfData.Select(item => item.ToString()).ToList();
+            return perfData;
+        }
+        public List<LogEntry> GetDeviceLogs(string logType) //working only on android device  "logcat" for IOS "syslog"
+        {
+            //ILogs logs = Driver.Manage().Logs;
+
+            //return logs.GetLog(logType).ToList();
+            return Driver.Manage().Logs.GetLog(logType).ToList();
         }
     }
 }
