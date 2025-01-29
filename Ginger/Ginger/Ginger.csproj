@@ -718,6 +718,7 @@
     <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.7" />
     <PackageReference Include="log4net" Version="2.0.15" />
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.5.0" />
+    <PackageReference Include="Microsoft.NETCore.App" Version="2.1.30" />
     <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
     <PackageReference Include="Microsoft.VisualStudio.Services.MemberEntitlementManagement.WebApi" Version="16.205.1" />
     <PackageReference Include="Mono.Posix" Version="7.1.0-final.1.21458.1" />
@@ -731,6 +732,8 @@
     <PackageReference Include="System.Data.OleDb" Version="8.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.7" />
+    <PackageReference Include="System.IO.Packaging" Version="9.0.1" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.0.1" />
     <PackageReference Include="System.Management" Version="8.0.0" />
     <PackageReference Include="System.Web.Services.Description" Version="8.0.0" />
     <PackageReference Include="System.Windows.Forms.DataVisualization" Version="1.0.0-prerelease.20110.1" />

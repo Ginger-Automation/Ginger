@@ -41,9 +41,11 @@
 
   <ItemGroup>
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.5.4" />
+    <PackageReference Include="Microsoft.NETCore.App" Version="2.1.30" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.100" />
     <PackageReference Include="runtime.osx.10.10-x64.CoreCompat.System.Drawing" Version="5.8.64" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+    <PackageReference Include="System.IO.Packaging" Version="9.0.1" />
     <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
     <PackageReference Include="System.Security.Permissions" Version="8.0.0" />
   </ItemGroup>

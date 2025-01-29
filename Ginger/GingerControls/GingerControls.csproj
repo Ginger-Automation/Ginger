@@ -15,6 +15,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+    <PackageReference Include="System.IO.Packaging" Version="9.0.1" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
