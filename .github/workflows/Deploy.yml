@@ -54,7 +54,7 @@ jobs:
               uses: actions/cache@v4
               with:
                   path: ./GingerRuntime_Linux-root.tar.gz
-                  key: cache-GingerRuntime-${{ github.run_number }}
+                  key: cache-GingerRuntime_Linux-${{ github.run_number }}
                   enableCrossOsArchive:
                       true
 
