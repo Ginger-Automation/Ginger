@@ -1059,9 +1059,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 await _playwrightPage.WaitForURLAsync(urlPattern, new PageWaitForURLOptions { Timeout = timeout });
                 return true;
             }
+            catch (TimeoutException)
+            {
+                return false;
+            }
             catch (Exception ex)
             {
-                throw new Exception("URL did not match the pattern", ex);
+                throw new Exception("An error occurred while waiting for the URL to match the pattern", ex);
             }
         }
 
@@ -1173,7 +1177,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 eLocateBy.ByID => $"#{locateValue}",
                 eLocateBy.ByClassName => $".{locateValue}",
                 eLocateBy.ByTagName => locateValue,
-                eLocateBy.ByAttribute => $"[{locateValue}]",
                 eLocateBy.ByName => $"[name='{locateValue}']",
                 eLocateBy.ByXPath => locateValue, // XPath is used as-is
                 eLocateBy.ByCSSSelector => locateValue, // CSS Selector is used as-is
@@ -1182,33 +1185,35 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 _ => throw new ArgumentException("Invalid locator type")
             };
         }
-
+        TaskCompletionSource<bool> alertDetected = new TaskCompletionSource<bool>();
         /// <summary>
         /// Waits for an alert to appear within the specified timeout.
         /// </summary>
         public async Task<bool> WaitForAlertAsync(float timeout)
         {
-            var alertDetected = new TaskCompletionSource<bool>();
-
-            _playwrightPage.Dialog += (_, dialog) =>
-            {
-                if (dialog.Type == DialogType.Alert)
-                {
-                    alertDetected.TrySetResult(true);
-                }
-            };
-
+            _playwrightPage.Dialog += _playwrightPage_Dialog;
             var delayTask = Task.Delay((int)timeout);
             var completedTask = await Task.WhenAny(alertDetected.Task, delayTask);
 
             if (completedTask == delayTask)
             {
+                _playwrightPage.Dialog -= _playwrightPage_Dialog;
                 throw new TimeoutException("Alert did not appear within the specified timeout.");
             }
-
+            _playwrightPage.Dialog -= _playwrightPage_Dialog;
             return await alertDetected.Task;
         }
 
+        /// <summary>
+        /// Handles the Playwright dialog event and sets the alertDetected TaskCompletionSource to true if the dialog is of type Alert.
+        /// </summary>
+        private void _playwrightPage_Dialog(object? sender, IDialog e)
+        {
+            if (e.Type == DialogType.Alert)
+            {
+                alertDetected.TrySetResult(true);
+            }
+        }
     }
 
 }

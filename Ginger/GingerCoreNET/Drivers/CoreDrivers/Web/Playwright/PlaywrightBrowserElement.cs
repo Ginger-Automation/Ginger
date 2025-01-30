@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Playwright;
 using Microsoft.Playwright;
@@ -1068,8 +1069,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 await Assertions.Expect(playwrightLocator).ToBeVisibleAsync(options);
                 return true;
             }
-            catch (TimeoutException) { return false; }
-            catch (AssertionException) { return false; }
+            catch (Exception ex) 
+            { 
+                Reporter.ToLog(eLogLevel.DEBUG, $"Error in Element To Be Visible: {ex.Message}");
+                return false; 
+            }
         }
 
         /// <summary>
@@ -1096,8 +1100,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 await Assertions.Expect(playwrightLocator).ToBeCheckedAsync(options);
                 return true;
             }
-            catch (TimeoutException) { return false; }
-            catch (AssertionException) { return false; }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Error in Element To Be Checked: {ex.Message}");
+                return false;
+            }
         }
 
         /// <summary>
@@ -1125,8 +1132,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 await Assertions.Expect(playwrightLocator).ToBeEnabledAsync(new LocatorAssertionsToBeEnabledOptions { Timeout = timeOut });
                 return true;
             }
-            catch (TimeoutException) { return false; }
-            catch (AssertionException) { return false; }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Error in Element To Be Clickable: {ex.Message}");
+                return false;
+            }
         }
 
         /// <summary>
@@ -1155,8 +1165,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 await Assertions.Expect(playwrightLocator).ToContainTextAsync(textToMatch, options);
                 return true;
             }
-            catch (TimeoutException) { return false; }
-            catch (AssertionException) { return false; }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Error in Text Matches: {ex.Message}");
+                return false;
+            }
         }
 
         /// <summary>
@@ -1187,8 +1200,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 await Assertions.Expect(playwrightLocator).ToHaveAttributeAsync(attributeName, attributeValue, options);
                 return true;
             }
-            catch (TimeoutException) { return false; }
-            catch (AssertionException) { return false; }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Error in Attribute Matches: {ex.Message}");
+                return false;
+            }
         }
 
         /// <summary>
@@ -1215,8 +1231,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 await Assertions.Expect(playwrightLocator).Not.ToBeVisibleAsync(options);
                 return true;
             }
-            catch (TimeoutException) { return false; }
-            catch (AssertionException) { return false; }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error in To Be Not Visible: {ex.Message}");
+                return false;
+            }
         }
 
     }
