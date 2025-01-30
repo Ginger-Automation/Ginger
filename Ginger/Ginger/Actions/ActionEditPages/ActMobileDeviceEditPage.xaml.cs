@@ -55,6 +55,8 @@ namespace Ginger.Actions
         {
             xOperationNameComboBox.Init(mAct, nameof(mAct.MobileDeviceAction), typeof(ActMobileDevice.eMobileDeviceAction), ActionNameComboBox_SelectionChanged);
 
+            xInputVE.Init(Context.GetAsContext(mAct.Context), mAct.ActionInput, nameof(ActInputValue.Value));
+
             xAuthResultComboBox.Init(mAct, nameof(mAct.AuthResultSimulation), typeof(ActMobileDevice.eAuthResultSimulation), AuthResultComboBox_SelectionChanged);
 
             xKeyPressComboBox.Init(mAct, nameof(mAct.MobilePressKey), typeof(ActMobileDevice.ePressKey));
@@ -207,6 +209,7 @@ namespace Ginger.Actions
             xPressPnl.Visibility = Visibility.Collapsed;
             xDragPnl.Visibility = Visibility.Collapsed;
             xSwipePnl.Visibility = Visibility.Collapsed;
+            xInputPnl.Visibility = Visibility.Collapsed;
 
             switch (mAct.MobileDeviceAction)
             {
@@ -260,6 +263,11 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.CloseApp:
                 case ActMobileDevice.eMobileDeviceAction.OpenApp:
                     xAppPnl.Visibility = Visibility.Visible;
+                    break;
+
+                case ActMobileDevice.eMobileDeviceAction.SetContext:
+                    xInputLabelVE.Content = "Context to Set:";
+                    xInputPnl.Visibility = Visibility.Visible;
                     break;
             }
         }

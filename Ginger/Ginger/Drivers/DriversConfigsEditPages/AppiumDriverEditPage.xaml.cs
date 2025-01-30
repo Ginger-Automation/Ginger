@@ -224,10 +224,10 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
             else if (mDeviceSource.Value == nameof(eDeviceSource.Kobiton) && !IsKobitonCapabilityExist())
             {
-                DriverConfigParam kobitonUserName = new DriverConfigParam() { Parameter = "username", Description = "Kobiton account User Name" };
-                DriverConfigParam kobitonAccessKey = new DriverConfigParam() { Parameter = "accessKey", Description = "Kobiton account Access Key" };
-                DriverConfigParam KobitonSessionName = new DriverConfigParam() { Parameter = "sessionName", Value = "Mobile testing via Ginger by Amdocs", Description = "Testing session name" };
-                DriverConfigParam kobitonDeviceGroup = new DriverConfigParam() { Parameter = "deviceGroup", Value = "KOBITON", Description = "The device group within the Kobiton test session metadata" };
+                DriverConfigParam kobitonUserName = new DriverConfigParam() { Parameter = "kobiton:username", Description = "Kobiton account User Name" };
+                DriverConfigParam kobitonAccessKey = new DriverConfigParam() { Parameter = "kobiton:accessKey", Description = "Kobiton account Access Key" };
+                DriverConfigParam KobitonSessionName = new DriverConfigParam() { Parameter = "kobiton:sessionName", Value = "Mobile testing via Ginger by Amdocs", Description = "Testing session name which will appear on kobiton" };
+                DriverConfigParam kobitonDeviceGroup = new DriverConfigParam() { Parameter = "kobiton:deviceGroup", Value = "KOBITON", Description = "The device group within the Kobiton test session metadata" };
 
                 DeleteUFTMServerCapabilities();
                 DeleteUFTMSupportSimulationsCapabilities();
@@ -534,6 +534,12 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void DeleteKobitonServerCapabilities()
         {
+            DeleteCapabilityIfExist("kobiton:username");
+            DeleteCapabilityIfExist("kobiton:accessKey");
+            DeleteCapabilityIfExist("kobiton:sessionName");
+            DeleteCapabilityIfExist("kobiton:deviceGroup");
+
+            //for backward support
             DeleteCapabilityIfExist("username");
             DeleteCapabilityIfExist("accessKey");
             DeleteCapabilityIfExist("sessionName");
