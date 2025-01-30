@@ -81,7 +81,13 @@ jobs:
                   tag_name: v${{ env.gingertag}}
                   release_name: Ginger v${{ env.gingertag}}
                   draft: true
-
+                  
+                  
+          - name: Print File Content
+            run: | 
+              ls  
+              echo "==============================================="
+ 
 # ------------------------------------------------------------------------------------------------------
 # Upload GingerRuntime_Linux.tar.gz to Github Releases 
 # ------------------------------------------------------------------------------------------------------
