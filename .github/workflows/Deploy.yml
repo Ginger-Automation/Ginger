@@ -42,10 +42,10 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 #  Download Windows Installer Artifact
 # ------------------------------------------------------------------------------------------------------      
-          - name: Download Windows Installer Artifact
-            uses: actions/download-artifact@v4
-            with:
-                name: WindowsInstaller  
+          # - name: Download Windows Installer Artifact
+          #   uses: actions/download-artifact@v4
+          #   with:
+          #       name: WindowsInstaller  
 
 # ------------------------------------------------------------------------------------------------------
 # Download GingerRuntime_Linux Artifact
@@ -61,13 +61,13 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Download GingerRuntime_MacOS Artifact
 # ------------------------------------------------------------------------------------------------------
-          - name: Restore GingerRuntime_MacOS
-            uses: actions/cache@v4
-            with:
-              path: ./GingerRuntime_MacOS-root.tar.gz
-              key: cache-GingerRuntime_MacOS-${{ github.run_number }}
-              enableCrossOsArchive:
-                true
+          # - name: Restore GingerRuntime_MacOS
+          #   uses: actions/cache@v4
+          #   with:
+          #     path: ./GingerRuntime_MacOS-root.tar.gz
+          #     key: cache-GingerRuntime_MacOS-${{ github.run_number }}
+          #     enableCrossOsArchive:
+          #       true
         
 # ------------------------------------------------------------------------------------------------------
 # Create new Release for ginger
@@ -91,78 +91,78 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Upload GingerRuntime_Linux.tar.gz to Github Releases 
 # ------------------------------------------------------------------------------------------------------
-          # - name: Upload Assest to Github Releases - GingerRuntime_Linux.tar.gz
-          #   uses: actions/upload-release-asset@v1
-          #   env:
-          #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          #   with:
-          #     upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          #     asset_path: ./GingerRuntime_Linux-root.tar.gz
-          #     asset_name: GingerRuntime_Linux.${{ env.gingertag}}.tar.gz
-          #     asset_content_type: application/gzip
-
-# ------------------------------------------------------------------------------------------------------
-# Upload GingerRuntime_MacOS.tar.gz to Github Releases 
-# ------------------------------------------------------------------------------------------------------
-          - name: Upload Assest to Github Releases - GingerRuntime_MacOS.tar.gz
+          - name: Upload Assest to Github Releases - GingerRuntime_Linux.tar.gz
             uses: actions/upload-release-asset@v1
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             with:
               upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-              asset_path: ./GingerRuntime_MacOS-root.tar.gz
-              asset_name: GingerRuntime_MacOS.${{ env.gingertag}}.tar.gz
+              asset_path: ./GingerRuntime_Linux-root.tar.gz
+              asset_name: GingerRuntime_Linux.${{ env.gingertag}}.tar.gz
               asset_content_type: application/gzip
 
-# ------------------------------------------------------------------------------------------------------
-# Upload Ginger.exe to Github Releases 
-# ------------------------------------------------------------------------------------------------------
-          - name: Upload Assest to Github Releases - Ginger.exe
-            uses: actions/upload-release-asset@v1
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            with:
-              upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-              asset_path: ./Ginger.exe
-              asset_name: Ginger.${{ env.gingertag}}.exe
-              asset_content_type: application/exe 
+# # ------------------------------------------------------------------------------------------------------
+# # Upload GingerRuntime_MacOS.tar.gz to Github Releases 
+# # ------------------------------------------------------------------------------------------------------
+#           - name: Upload Assest to Github Releases - GingerRuntime_MacOS.tar.gz
+#             uses: actions/upload-release-asset@v1
+#             env:
+#               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#             with:
+#               upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+#               asset_path: ./GingerRuntime_MacOS-root.tar.gz
+#               asset_name: GingerRuntime_MacOS.${{ env.gingertag}}.tar.gz
+#               asset_content_type: application/gzip
+
+# # ------------------------------------------------------------------------------------------------------
+# # Upload Ginger.exe to Github Releases 
+# # ------------------------------------------------------------------------------------------------------
+#           - name: Upload Assest to Github Releases - Ginger.exe
+#             uses: actions/upload-release-asset@v1
+#             env:
+#               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#             with:
+#               upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+#               asset_path: ./Ginger.exe
+#               asset_name: Ginger.${{ env.gingertag}}.exe
+#               asset_content_type: application/exe 
 
 # ------------------------------------------------------------------------------------------------------
 # Upload Ginger Documents to Github Releases 
-# ------------------------------------------------------------------------------------------------------
-          - name: Upload Assest to Github Releases - Ginger.Release.Notes.pdf
-            if: ( !(contains(env.gingertag , 'Beta' )) && !(contains(env.gingertag , 'Alpha' )) )
-            uses: actions/upload-release-asset@v1
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            with:
-              upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-              asset_path: ./Documents/Ginger.Release.Notes.pdf
-              asset_name: Ginger.Release.Notes.pdf
-              asset_content_type: application/doc
+# # ------------------------------------------------------------------------------------------------------
+#           - name: Upload Assest to Github Releases - Ginger.Release.Notes.pdf
+#             if: ( !(contains(env.gingertag , 'Beta' )) && !(contains(env.gingertag , 'Alpha' )) )
+#             uses: actions/upload-release-asset@v1
+#             env:
+#               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#             with:
+#               upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+#               asset_path: ./Documents/Ginger.Release.Notes.pdf
+#               asset_name: Ginger.Release.Notes.pdf
+#               asset_content_type: application/doc
 
 
-          - name: Upload Assest to Github Releases -  Ginger.System.Requirements.pdf
-            if: ( !(contains(env.gingertag , 'Beta' )) && !(contains(env.gingertag , 'Alpha' )) )
-            uses: actions/upload-release-asset@v1
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            with:
-              upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-              asset_path: ./Documents/Ginger.System.Requirements.pdf
-              asset_name: Ginger.System.Requirements.pdf
-              asset_content_type: application/doc 
+#           - name: Upload Assest to Github Releases -  Ginger.System.Requirements.pdf
+#             if: ( !(contains(env.gingertag , 'Beta' )) && !(contains(env.gingertag , 'Alpha' )) )
+#             uses: actions/upload-release-asset@v1
+#             env:
+#               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#             with:
+#               upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+#               asset_path: ./Documents/Ginger.System.Requirements.pdf
+#               asset_name: Ginger.System.Requirements.pdf
+#               asset_content_type: application/doc 
 
 
-          - name: Upload Assest to Github Releases - GingerRuntime.System.Requirements.pdf
-            if: ( !(contains(env.gingertag , 'Beta' )) && !(contains(env.gingertag , 'Alpha' )) )
-            uses: actions/upload-release-asset@v1
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            with:
-              upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-              asset_path: ./Documents/GingerRuntime.System.Requirements.pdf
-              asset_name: GingerRuntime.System.Requirements.pdf
-              asset_content_type: application/doc 
+#           - name: Upload Assest to Github Releases - GingerRuntime.System.Requirements.pdf
+#             if: ( !(contains(env.gingertag , 'Beta' )) && !(contains(env.gingertag , 'Alpha' )) )
+#             uses: actions/upload-release-asset@v1
+#             env:
+#               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#             with:
+#               upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+#               asset_path: ./Documents/GingerRuntime.System.Requirements.pdf
+#               asset_name: GingerRuntime.System.Requirements.pdf
+#               asset_content_type: application/doc 
 
               
