@@ -98,6 +98,11 @@ jobs:
                   gzip: true
                   output: GingerRuntime_Linux-root.tar.gz
 
+            -   name: Print File Content
+                run: | 
+                    ls  
+                    echo "==============================================="
+                    
             -   name: Cache GingerRuntime_Linux
                 id: cache
                 uses: actions/cache@v4
