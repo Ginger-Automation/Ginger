@@ -33,6 +33,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Threading;
 using System.Threading.Tasks;
 using IPlaywrightElementHandle = Microsoft.Playwright.IElementHandle;
 using IPlaywrightFrameLocator = Microsoft.Playwright.IFrameLocator;
@@ -242,7 +243,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// <returns>A task representing the asynchronous operation.</returns>
         public Task MoveMouseAsync(Point point)
         {
-            ThrowIfClosed();
+            ThrowIfClosed();         
             return _playwrightPage.Mouse.MoveAsync(point.X, point.Y);
         }
 
@@ -312,10 +313,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// Waits until the page is fully loaded.
         /// </summary>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public Task WaitTillLoadedAsync()
+        public async Task<bool> WaitTillLoadedAsync(float timeOut = 0)
         {
-            ThrowIfClosed();
-            return _playwrightPage.WaitForLoadStateAsync(LoadState.Load);
+            try
+            {
+                ThrowIfClosed();
+                var options = timeOut > 0 ? new PageWaitForLoadStateOptions { Timeout = timeOut } : null;
+                await _playwrightPage.WaitForLoadStateAsync(LoadState.Load, options);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         /// <summary>

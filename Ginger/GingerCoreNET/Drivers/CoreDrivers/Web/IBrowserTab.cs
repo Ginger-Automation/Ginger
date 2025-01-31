@@ -63,7 +63,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task InjectJavascriptIframeAsync(string script);
 
-        public Task WaitTillLoadedAsync();
+        public Task<bool> WaitTillLoadedAsync(float timeOut = 0);
 
         public Task<string> ConsoleLogsAsync();
 

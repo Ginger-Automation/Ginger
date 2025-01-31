@@ -27,6 +27,9 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 {
+    /// <summary>
+    /// Handles various web synchronization operations for the ActWebSmartSync action.
+    /// </summary>
     internal class ActWebSmartSyncHandler
     {
         private ActWebSmartSync _actWebSmartSync;
@@ -121,7 +124,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG,$"Error in operation {_actWebSmartSync.SyncOperations}: {ex.Message} {ex.InnerException?.Message}");
+                Reporter.ToLog(eLogLevel.DEBUG, $"Error in operation {_actWebSmartSync.SyncOperations}: {ex.Message} {ex.InnerException?.Message}");
                 act.Error = ex.Message + ex.InnerException?.Message;
             }
         }
@@ -187,17 +190,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         /// </summary>
         private async Task HandlePageHasBeenLoadedAsync(Act act, float waitUntilTimeout)
         {
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            while (stopwatch.Elapsed.TotalSeconds < waitUntilTimeout)
+            if (await _browserTab.WaitTillLoadedAsync(waitUntilTimeout))
             {
-                var state = await _browserTab.ExecuteJavascriptAsync("document.readyState");
-                if (state.Equals("complete", StringComparison.OrdinalIgnoreCase))
-                {
-                    return;
-                }
-                await Task.Delay(100);
+                return;
             }
             act.Error = "Page has not been loaded within the given time.";
+
         }
 
         /// <summary>
@@ -236,13 +234,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         /// </summary>
         private async Task HandleAttributeMatchesAsync(Act act, float waitUntilTimeout)
         {
-            IBrowserElement attributeElement = await GetFirstMatchingElementAsync();
+
             string attributeName = _actWebSmartSync.GetInputParamCalculatedValue(nameof(ActWebSmartSync.AttributeName));
             string attributeValue = _actWebSmartSync.GetInputParamCalculatedValue(nameof(ActWebSmartSync.AttributeValue));
-            if (string.IsNullOrEmpty(attributeName) || string.IsNullOrEmpty(attributeValue))
+            if (string.IsNullOrEmpty(attributeName))
             {
-                throw new InvalidDataException("For AttributeMatches operation, the input value is missing or invalid.");
+                throw new InvalidDataException("For AttributeMatches operation, the Attribute Name value is missing or invalid.");
             }
+            if (string.IsNullOrEmpty(attributeValue))
+            {
+                throw new InvalidDataException("For AttributeMatches operation, the Attribute Value value is missing or invalid.");
+            }
+            IBrowserElement attributeElement = await GetFirstMatchingElementAsync();
             if (await attributeElement.AttributeMatchesAsync(attributeName, attributeValue, waitUntilTimeout))
             {
                 return;
