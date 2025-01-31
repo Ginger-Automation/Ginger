@@ -299,7 +299,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         float waitUntilTime;
                         if (act.Timeout > 0)
                         {
-                            // waitUntilTime= TimeSpan.FromSeconds(act.Timeout.GetValueOrDefault());
                             waitUntilTime = act.Timeout.GetValueOrDefault();
                         }
                         else if(browserOptions.Timeout>0)
@@ -310,7 +309,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         {
                             waitUntilTime = 5;
                         }
-                        browserOptions.Timeout = (float)waitUntilTime;
+                        browserOptions.Timeout = waitUntilTime;
                         try
                         {                          
                             actWebSmartSyncHandler.HandleAsync(act, waitUntilTime*1000).Wait();

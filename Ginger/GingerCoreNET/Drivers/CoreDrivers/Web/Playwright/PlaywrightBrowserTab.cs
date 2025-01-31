@@ -1065,7 +1065,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while waiting for the URL to match the pattern", ex);
+                throw new OperationCanceledException("An error occurred while waiting for the URL to match the pattern", ex);
             }
         }
 
@@ -1134,11 +1134,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     await Task.Delay(100);
                 }
 
-                throw new Exception("Elements did not become checked within the specified time");
+                throw new OperationCanceledException("Elements did not become checked within the specified time");
             }
             catch (Exception ex)
             {
-                throw new Exception("Elements did not become checked within the specified time", ex);
+                throw new OperationCanceledException("Elements did not become checked within the specified time", ex);
             }
         }
 
@@ -1163,7 +1163,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
             catch (Exception ex)
             {
-                throw new Exception($"Elements did not reach the desired state(s) within the specified time", ex);
+                throw new OperationCanceledException($"Elements did not reach the desired state(s) within the specified time", ex);
             }
         }
 
@@ -1198,7 +1198,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             if (completedTask == delayTask)
             {
                 _playwrightPage.Dialog -= _playwrightPage_Dialog;
-                throw new TimeoutException("Alert did not appear within the specified timeout.");
+                throw new TimeoutException($"Alert did not appear within the specified {timeout}.");
             }
             _playwrightPage.Dialog -= _playwrightPage_Dialog;
             return await alertDetected.Task;
