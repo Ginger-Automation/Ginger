@@ -51,6 +51,7 @@ namespace Ginger.Reports
 
         private string mPreviewDummyReportDataPath = string.Empty;
         private string mPreviewDummyReportPath = string.Empty;
+        private string mDefaultReportTemplateName = string.Empty;
 
         public HTMLReportConfiguration newHTMLReportConfiguration
         {
@@ -277,6 +278,7 @@ namespace Ginger.Reports
         {
             SetIsDefualtImage();
             NewTemplateNameTextBox.Text = _HTMLReportConfiguration.Name.ToString();
+            mDefaultReportTemplateName = _HTMLReportConfiguration.Name.ToString();
             xShowIDUC.Init(_HTMLReportConfiguration);
             TemplateDescriptionTextBox.BindControl(_HTMLReportConfiguration, nameof(HTMLReportConfiguration.Description));
             htmlShowFirstIterationOnRadioBtn.IsChecked = _HTMLReportConfiguration.ShowAllIterationsElements;
@@ -354,6 +356,7 @@ namespace Ginger.Reports
             SetIsDefualtImage();
             NewTemplateNameTextBox.Text = _HTMLReportConfiguration.Name.ToString();
             TemplateDescriptionTextBox.Text = _HTMLReportConfiguration.Description.ToString();
+            mDefaultReportTemplateName = _HTMLReportConfiguration.Name.ToString();
             //htmlDefaultOnRadioBtn.IsChecked = _HTMLReportConfiguration.IsDefault;
             //htmlDefaultOffRadioBtn.IsChecked = !_HTMLReportConfiguration.IsDefault;
             htmlShowFirstIterationOnRadioBtn.IsChecked = _HTMLReportConfiguration.ShowAllIterationsElements;
@@ -1031,5 +1034,14 @@ namespace Ginger.Reports
                 SetIsDefualtImage();
             }
         }
+
+        private void NewTemplateNameTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(NewTemplateNameTextBox.Text))
+            {
+                NewTemplateNameTextBox.Text = mDefaultReportTemplateName;
+            }
+        }
+
     }
 }

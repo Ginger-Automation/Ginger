@@ -290,7 +290,10 @@ namespace Ginger.Reports
                     dr["ActualValue"] = elementsAfter[1];
                     dr["ExpectedValue"] = elementsAfter[2];
                     dr["Status"] = elementsAfter[3];
-                    dr["Description"] = elementsAfter[4];
+                    if (elementsAfter.Length > 4)
+                    {
+                        dr["Description"] = elementsAfter[4];
+                    }
                     dt.Rows.Add(dr);
                 }
                 return dt;
