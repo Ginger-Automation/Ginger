@@ -148,7 +148,7 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
 
                 }
 
-                if (xEnvironmentComboBox.ItemsSource.IsNullOrEmpty())
+                if (xEnvironmentComboBox.ItemsSource?.Count==0)
                 {
                     mWizard.mWizardWindow.NextButton(false);
                 }
