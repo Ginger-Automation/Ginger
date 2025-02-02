@@ -1053,6 +1053,8 @@ namespace Ginger.Actions
                             case "Store To":
                                 node.IsSelected = columnPreferences.Contains("StoreTo", StringComparison.OrdinalIgnoreCase);
                                 break;
+                            case "All":
+                                break;
                             default:
                                 Reporter.ToLog(eLogLevel.ERROR, "Invalid format in column preferences");
                                 break;
@@ -1065,7 +1067,6 @@ namespace Ginger.Actions
                     }
                 }
 
-                // Creating the CheckBox for "Description"
                 CheckBox descriptionCheckBox = new CheckBox
                 {
                     Content = "Description",
@@ -1181,6 +1182,8 @@ namespace Ginger.Actions
                         });
                         columnCount = node.IsSelected ? columnCount + 1 : columnCount;
                         columnPreferences += node.IsSelected ? "StoreTo" : "";
+                        break;
+                    case "All":
                         break;
                     default:
                         Reporter.ToLog(eLogLevel.ERROR, "Invalid format in column preferences");

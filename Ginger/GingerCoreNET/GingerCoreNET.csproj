@@ -313,8 +313,9 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.7.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Graph" Version="4.51.0" />
+    <PackageReference Include="Microsoft.Playwright" Version="1.49.0" />
+    <PackageReference Include="Microsoft.Playwright.NUnit" Version="1.49.0" />
     <PackageReference Include="Microsoft.NETCore.App" Version="2.1.30" />
-    <PackageReference Include="Microsoft.Playwright" Version="1.45.0" />
     <PackageReference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.ServiceBus" Version="6.0.1304" />
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.205.1" />
     <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="16.205.1" />

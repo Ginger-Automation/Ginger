@@ -1031,5 +1031,6 @@ namespace Ginger.Reports
                 SetIsDefualtImage();
             }
         }
+       
     }
 }
