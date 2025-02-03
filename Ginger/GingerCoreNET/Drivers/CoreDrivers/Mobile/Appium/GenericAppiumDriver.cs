@@ -37,6 +37,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.ActionsLib.UI.Mobile;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
@@ -1230,6 +1231,10 @@ namespace Amdocs.Ginger.CoreNET
 
                     case ActMobileDevice.eMobileDeviceAction.SetContext:
                         Driver.Context = act.ActionInput.ValueForDriver;
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.PerformMultiTouch:
+                        ObservableList<MobileTouchOperation> operations = act.MobileTouchOperations;
                         break;
 
                     default:

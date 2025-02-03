@@ -18,8 +18,10 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.ActionsLib.UI.Mobile;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
+using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
@@ -27,6 +29,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using static Amdocs.Ginger.CoreNET.ActionsLib.UI.Mobile.MobileTouchOperation;
 
 namespace Ginger.Actions
 {
@@ -73,7 +76,7 @@ namespace Ginger.Actions
             xPressDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.PressDuration, nameof(ActInputValue.Value));
             xDragDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.DragDuration, nameof(ActInputValue.Value));
             xSwipeScaleTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.SwipeScale, nameof(ActInputValue.Value));
-            xSwipeDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.SwipeDuration, nameof(ActInputValue.Value));
+            xSwipeDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.SwipeDuration, nameof(ActInputValue.Value));          
 
             UpdateBaseLineImage(true);
 
@@ -210,6 +213,7 @@ namespace Ginger.Actions
             xDragPnl.Visibility = Visibility.Collapsed;
             xSwipePnl.Visibility = Visibility.Collapsed;
             xInputPnl.Visibility = Visibility.Collapsed;
+            xMultiTouchGrid.Visibility = Visibility.Collapsed;
 
             switch (mAct.MobileDeviceAction)
             {
@@ -269,9 +273,41 @@ namespace Ginger.Actions
                     xInputLabelVE.Content = "Context to Set:";
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
+
+                case ActMobileDevice.eMobileDeviceAction.PerformMultiTouch:
+                    SetMultiTouchGridView();
+                    xMultiTouchGrid.DataSourceList = mAct.MobileTouchOperations;
+                    xMultiTouchGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddTouchOperation));
+                    xMultiTouchGrid.Visibility = Visibility.Visible;
+                    break;
             }
         }
 
+        private void SetMultiTouchGridView()
+        {
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(MobileTouchOperation.OperationType), Header = "Operation Type", WidthWeight = 25,StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList=GingerCore.General.GetEnumValuesForCombo(typeof(eFingerOperationType)) },
+                new GridColView() { Field = nameof(MobileTouchOperation.MoveXcoordinate), Header = "Move X Coordinate", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text },
+                new GridColView() { Field = nameof(MobileTouchOperation.MoveYcoordinate), Header = "Move Y Coordinate", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text },
+                new GridColView() { Field = nameof(MobileTouchOperation.MoveDuration), Header = "Move Duration", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text },
+            ]
+            };
+            xMultiTouchGrid.btnRefresh.Visibility = Visibility.Collapsed;
+            xMultiTouchGrid.btnEdit.Visibility = Visibility.Collapsed;
+            xMultiTouchGrid.SetAllColumnsDefaultView(view);
+            xMultiTouchGrid.InitViewItems();
+        }
 
+        private void AddTouchOperation(object sender, RoutedEventArgs e)
+        {
+            MobileTouchOperation tuchOperation = new MobileTouchOperation
+            {
+                OperationType = MobileTouchOperation.eFingerOperationType.Move
+            };
+            mAct.MobileTouchOperations.Add(tuchOperation);
+        }
     }
 }
