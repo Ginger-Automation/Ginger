@@ -59,7 +59,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                     {
                         schemaObj = response.Schema.Reference;
                     }
-                    if (basicModal.ContentType == ApplicationAPIUtils.eContentType.XML)
+                    if (basicModal.RequestContentType == ApplicationAPIUtils.eRequestContentType.XML)
                     {
 
                         ApplicationAPIModel JsonResponseModel = new ApplicationAPIModel();
@@ -76,8 +76,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                             basicModal.ReturnValues.Add(arv);
                         }
                     }
-                    else if (basicModal.ContentType == ApplicationAPIUtils.eContentType.JSon ||
-                            basicModal.ContentType == ApplicationAPIUtils.eContentType.FormData)
+                    else if (basicModal.RequestContentType == ApplicationAPIUtils.eRequestContentType.JSon ||
+                            basicModal.RequestContentType == ApplicationAPIUtils.eRequestContentType.FormData)
                     {
                         ApplicationAPIModel jsonResponseModel = new ApplicationAPIModel();
                         var generatedJsonBody = GenerateJsonBody(jsonResponseModel, schemaObj);
@@ -211,7 +211,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             ApplicationAPIModel aam = XTp.ParseDocument(temppath, new ObservableList<ApplicationAPIModel>()).ElementAt(0);
             aAM.RequestBody = aam.RequestBody;
             aAM.RequestBodyType = ApplicationAPIUtils.eRequestBodyType.FreeText;
-            aam.ContentType = ApplicationAPIUtils.eContentType.XML;
+            aam.RequestContentType = ApplicationAPIUtils.eRequestContentType.XML;
             return aam.AppModelParameters;
 
         }
@@ -228,11 +228,11 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         {
             if (isMultiPartFormdata)
             {
-                aAM.ContentType = ApplicationAPIUtils.eContentType.FormData;
+                aAM.RequestContentType = ApplicationAPIUtils.eRequestContentType.FormData;
             }
             else
             {
-                aAM.ContentType = ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded;
+                aAM.RequestContentType = ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded;
             }
             foreach (SwaggerParameter SP in operation.ActualParameters)
             {
