@@ -147,8 +147,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             CookieMode.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.CookieMode), typeof(ApplicationAPIUtils.eCookieMode));
             RequestTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.RequestType), typeof(ApplicationAPIUtils.eRequestType));
             HttpVersioncombobox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.ReqHttpVersion), typeof(ApplicationAPIUtils.eHttpVersion));
-            ContentTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.ContentType), typeof(ApplicationAPIUtils.eContentType), ContentTypeChange);
-            ResponseTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.ResponseContentType), typeof(ApplicationAPIUtils.eContentType));
+            ContentTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.RequestContentType), typeof(ApplicationAPIUtils.eRequestContentType), ContentTypeChange);
+            ResponseTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.ResponseContentType), typeof(ApplicationAPIUtils.eResponseContentType));
             //Check maybe the binding of TemplateFileNameFileBrowser need to be different between soap and rest
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TemplateFileNameFileBrowser, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.TemplateFileNameFileBrowser));
 
@@ -321,21 +321,21 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void ContentTypeChange(object sender, RoutedEventArgs e)
         {
-            switch (mApplicationAPIModel.ContentType)
+            switch (mApplicationAPIModel.RequestContentType)
             {
-                case ApplicationAPIUtils.eContentType.JSon:
+                case ApplicationAPIUtils.eRequestContentType.JSon:
                     RequestBodyTypePanel.Visibility = Visibility.Visible;
                     CheckRequestBodySelection();
                     break;
-                case ApplicationAPIUtils.eContentType.TextPlain:
+                case ApplicationAPIUtils.eRequestContentType.TextPlain:
                     RequestBodyTypePanel.Visibility = System.Windows.Visibility.Visible;
                     CheckRequestBodySelection();
                     break;
-                case ApplicationAPIUtils.eContentType.XML:
+                case ApplicationAPIUtils.eRequestContentType.XML:
                     RequestBodyTypePanel.Visibility = System.Windows.Visibility.Visible;
                     CheckRequestBodySelection();
                     break;
-                case ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded:
+                case ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded:
                     BodyInputGridPannel.Visibility = System.Windows.Visibility.Collapsed;
                     FreeStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                     TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
@@ -343,7 +343,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     FormDataGridPanel.Visibility = System.Windows.Visibility.Visible;
                     RefreshRequestKeyValuesGrid();
                     break;
-                case ApplicationAPIUtils.eContentType.FormData:
+                case ApplicationAPIUtils.eRequestContentType.FormData:
                     BodyInputGridPannel.Visibility = System.Windows.Visibility.Collapsed;
                     FreeStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                     TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
@@ -361,12 +361,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 mApplicationAPIModel.APIModelBodyKeyValueHeaders.Clear();
             }
 
-            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.ContentType == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded)
+            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.RequestContentType == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded)
             {
                 //switch combobox   & browse button off 
                 FormDataGrid.ChangeGridView("UrlEncoded");
             }
-            else if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.ContentType == ApplicationAPIUtils.eContentType.FormData)
+            else if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.RequestContentType == ApplicationAPIUtils.eRequestContentType.FormData)
             {
                 //switch combobox  & browse button on
                 FormDataGrid.ChangeGridView("FormData");
@@ -439,14 +439,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void CheckRequestBodySelection()
         {
-            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.ContentType == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded)
+            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.RequestContentType == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded)
             {
                 FreeStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                 TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                 RequestBodyTypePanel.Visibility = System.Windows.Visibility.Collapsed;
                 FormDataGridPanel.Visibility = System.Windows.Visibility.Visible;
             }
-            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.ContentType == ApplicationAPIUtils.eContentType.FormData)
+            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.RequestContentType == ApplicationAPIUtils.eRequestContentType.FormData)
             {
                 FreeStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                 TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
@@ -571,7 +571,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         break;
 
                     default:
-                        if (mApplicationAPIModel.ContentType is ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded or ApplicationAPIUtils.eContentType.FormData)
+                        if (mApplicationAPIModel.RequestContentType is ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded or ApplicationAPIUtils.eRequestContentType.FormData)
                         {
                             if (!String.IsNullOrEmpty(mApplicationAPIModel.TemplateFileNameFileBrowser))
                             {
@@ -736,12 +736,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             FormDataGrid.btnAdd.RemoveHandler(Button.ClickEvent, new RoutedEventHandler(AddFormDataGridRow));
             FormDataGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddFormDataGridRow));
 
-            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.ContentType == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded)
+            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.RequestContentType == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded)
             {
                 //switch combobox   & browse button off 
                 FormDataGrid.ChangeGridView("UrlEncoded");
             }
-            else if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.ContentType == ApplicationAPIUtils.eContentType.FormData)
+            else if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.RequestContentType == ApplicationAPIUtils.eRequestContentType.FormData)
             {
                 //switch combobox  & browse button on
                 FormDataGrid.ChangeGridView("FormData");

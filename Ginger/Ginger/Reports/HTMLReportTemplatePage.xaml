@@ -55,7 +55,7 @@
                                             </DockPanel>
 
                                             <StackPanel Margin="5,0,0,0" Orientation="Horizontal" >
-                                                <TextBox x:Name="NewTemplateNameTextBox"  Width="484px" Style="{StaticResource @TextBoxStyle}" TextChanged="NewTemplateName_TextChanged" ></TextBox>
+                                                <TextBox x:Name="NewTemplateNameTextBox"  Width="484px" Style="{StaticResource @TextBoxStyle}" TextChanged="NewTemplateName_TextChanged" LostFocus="NewTemplateNameTextBox_LostFocus"></TextBox>
                                             </StackPanel>
                                         </StackPanel>
                                         <StackPanel x:Name="TemplateDescription" Margin="10,10,0,0" HorizontalAlignment="Left">

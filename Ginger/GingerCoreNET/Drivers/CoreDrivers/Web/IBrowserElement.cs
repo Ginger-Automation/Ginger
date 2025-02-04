@@ -94,5 +94,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task<AxeResult?> TestAccessibilityAsync(AxeRunOptions? options = null);
         public Task SetFileValueAsync(string[] value);
+
+        public Task<bool> ToBeVisibleAsync(float timeOut);
+
+        public Task<bool> AttributeMatchesAsync(string attributeName, string attributeValue, float timeOut);
+
+        public Task<bool> TextMatchesAsync(string textToMatch, float timeOut);
+
+        public Task<bool> ElementToBeClickableAsync(float timeOut);
+
+        public Task<bool> ElementIsSelectedAsync(float timeOut);
+
+        public Task<bool> ToBeNotVisibleAsync(float timeOut);
+
     }
 }
