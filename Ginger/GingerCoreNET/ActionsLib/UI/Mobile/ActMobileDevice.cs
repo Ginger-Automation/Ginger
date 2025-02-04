@@ -75,6 +75,32 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(AuthResultSimulation));
             }
         }
+        public eRotateDeviceState RotateDeviceState
+        {
+            get
+            {
+                return GetOrCreateInputParam<eRotateDeviceState>(nameof(RotateDeviceState), eRotateDeviceState.Portrait);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(RotateDeviceState), value.ToString());
+                OnPropertyChanged(nameof(RotateDeviceState));
+            }
+        }
+
+        public ePerformanceTypes PerformanceTypes
+        {
+            get
+            {
+                return GetOrCreateInputParam<ePerformanceTypes>(nameof(PerformanceTypes), ePerformanceTypes.Batteryinfo);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(PerformanceTypes), value.ToString());
+                OnPropertyChanged(nameof(PerformanceTypes));
+            }
+        }
+
 
         public eAuthResultDetailsFailureSimulation AuthResultDetailsFailureSimulation
         {
@@ -114,35 +140,13 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(MobilePressKey));
             }
         }
-        //public ActInputValue Script    
-        //{
-        //    get
-        //    {
-        //        return GetOrCreateInputParam(nameof(Script));
-        //    }
-        //    set
-        //    {
-        //        AddOrUpdateInputParamValue(nameof(Script), value.ToString());
-        //        OnPropertyChanged(nameof(Script));
-        //    }
-        //}
-        public ActInputValue URLName
-        {
-            get
-            {
-                return GetOrCreateInputParam(nameof(URLName), "your-deep-link-url");
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(URLName), value.ToString());
-                OnPropertyChanged(nameof(URLName));
-            }
-        }
+     
+      
         public ActInputValue LocalFile
         {
             get
             {
-                return GetOrCreateInputParam(nameof(LocalFile), "/local/path/to/file.txt");
+                return GetOrCreateInputParam(nameof(LocalFile), "");
             }
             set
             {
@@ -212,19 +216,6 @@ namespace GingerCore.Actions
             {
                 AddOrUpdateInputParamValue(nameof(ActionAppPackage), value.ToString());
                 OnPropertyChanged(nameof(ActionAppPackage));
-            }
-        }
-
-        public ActInputValue PathRecording
-        {
-            get
-            {
-                return GetOrCreateInputParam(nameof(PathRecording), "~\\FolderName\\fileName");
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(PathRecording), value.ToString());
-                OnPropertyChanged(nameof(PathRecording));
             }
         }
 
@@ -333,7 +324,29 @@ namespace GingerCore.Actions
             [EnumValueDescription("Cancel")]
             Cancel
         }
+        public enum ePerformanceTypes
+        {
+            [EnumValueDescription("cpuinfo")]
+            Cpuinfo,
+            [EnumValueDescription("memoryinfo")]
+            Memoryinfo, 
+            [EnumValueDescription("batteryinfo")]
+            Batteryinfo,
+            [EnumValueDescription("networkinfo")]
+            Networkinfo,
+            [EnumValueDescription("diskinfo")]
+            Diskinfo,
+        }
 
+
+
+        public enum eRotateDeviceState
+        {
+            [EnumValueDescription("Landscape")]
+            Landscape,
+            [EnumValueDescription("Portrait")]
+            Portrait
+        }
         public enum eAuthResultDetailsFailureSimulation
         {
             [EnumValueDescription("Not Recognized")]
@@ -433,15 +446,15 @@ namespace GingerCore.Actions
             SetContext,
             [EnumValueDescription("Open Deep Link")]
             OpenDeeplink,
-            [EnumValueDescription("Check Keyboard is Visible")]
+            [EnumValueDescription("Is Keyboard Visible")]
             IsKeyboardVisible,
-            [EnumValueDescription("Check if Device Locked")] 
+            [EnumValueDescription("Is Device Locked")] 
             IsLocked,
-            [EnumValueDescription("Check if App Installed")]
+            [EnumValueDescription("Is App Installed")]
             IsAppInstalled,
             [EnumValueDescription("Remove App")]
             RemoveApp,
-            [EnumValueDescription("App State")]
+            [EnumValueDescription("Get App State")]
             QueryAppState,
             [EnumValueDescription("Simulate Device Rotation")]
             RotateSimulation,
@@ -453,14 +466,20 @@ namespace GingerCore.Actions
             StopRecordingScreen,
             [EnumValueDescription("Hide Keyboard")]
             HideKeyboard,
-            [EnumValueDescription("Push File To Device")]
+            [EnumValueDescription("Push File to Device")]
             PushFileToDevice,
             [EnumValueDescription("Pull File From Device")]
             PullFileFromDevice,
-            [EnumValueDescription("Set To Clipboard Text")]
+            [EnumValueDescription("Set Clipboard Text")]
             SetClipboardText,
             [EnumValueDescription("Get Specific Performance Data")]
-            GetSpecificPerformanceData
+            GetSpecificPerformanceData,
+            [EnumValueDescription("Get Device Logs")]
+            GetDeviceLogs,
+            [EnumValueDescription("Get performance Types")]
+            GetperformanceTypes,
+            [EnumValueDescription("Get Clipboard Text")]
+            GetClipboardText,
         }
 
         public enum ePressKey

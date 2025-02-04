@@ -11066,6 +11066,7 @@ namespace GingerCore.Drivers
 
                     Act.AddArtifactToAction(Path.GetFileName(requestPath), act, requestPath);
 
+
                     Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);
                 }
                 else

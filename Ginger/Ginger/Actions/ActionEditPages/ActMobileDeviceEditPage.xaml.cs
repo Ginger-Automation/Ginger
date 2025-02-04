@@ -18,15 +18,21 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
+using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
+using Amdocs.Ginger.UserControls;
+using Ginger.Drivers.DriversWindows;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Drivers;
 using GingerCore.GeneralLib;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+
 
 namespace Ginger.Actions
 {
@@ -39,24 +45,25 @@ namespace Ginger.Actions
         ActMobileDevice mAct;
         Context mContext;
         bool isValueExpression;
-
        
 
         public ActMobileDeviceEditPage(ActMobileDevice Act)
         {
             InitializeComponent();
-
+          
             mAct = Act;
             mContext = Context.GetAsContext(Act.Context);
-
+     
             BindControls();
             SetControlsView();
         }
-        
+      
         private void BindControls()
         {
             xOperationNameComboBox.Init(mAct, nameof(mAct.MobileDeviceAction), typeof(ActMobileDevice.eMobileDeviceAction), ActionNameComboBox_SelectionChanged);
 
+            
+              
             xInputVE.Init(Context.GetAsContext(mAct.Context), mAct.ActionInput, nameof(ActInputValue.Value));
 
             xAuthResultComboBox.Init(mAct, nameof(mAct.AuthResultSimulation), typeof(ActMobileDevice.eAuthResultSimulation), AuthResultComboBox_SelectionChanged);
@@ -70,19 +77,24 @@ namespace Ginger.Actions
 
             xPhotoSumilationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActMobileDevice.SimulatedPhotoPath)), true, true, UCValueExpression.eBrowserType.File, "*");
 
-            xAppPackageDeepLinkVE.Init(Context.GetAsContext(mAct.Context), mAct.ActionAppPackage, nameof(ActInputValue.Value));
 
-            xURLNameTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.URLName, nameof(ActInputValue.Value));
+            xDeviceRotateComboBox.Init(mAct, nameof(mAct.RotateDeviceState), typeof(ActMobileDevice.eRotateDeviceState), ActionNameComboBox_SelectionChanged);
 
-            xPhotoSumilationVE2.Init(Context.GetAsContext(mAct.Context), mAct.LocalFile, nameof(ActInputValue.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");
+            xDataTypeComboBox.Init(mAct, nameof(mAct.PerformanceTypes), typeof(ActMobileDevice.ePerformanceTypes), ActionNameComboBox_SelectionChanged);
 
-            xPhotoSumilationEV.Init(Context.GetAsContext(mAct.Context), mAct.LocalFile, nameof(ActMobileDevice.Value), true, true, UCValueExpression.eBrowserType.File, "*");
+            xPulltoFolderTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.LocalFile, nameof(ActInputValue.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");
 
-            xAppPackageVE3.Init(Context.GetAsContext(mAct.Context), mAct.ActionInput, nameof(ActInputValue.Value));
-            xAppPackageVE2.Init(Context.GetAsContext(mAct.Context), mAct.ActionInput, nameof(ActInputValue.Value));
-            xAppPackageVE4.Init(Context.GetAsContext(mAct.Context), mAct.ActionInput, nameof(ActInputValue.Value)); 
+            xPushtoDeviceFolderTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.LocalFile, nameof(ActMobileDevice.Value), true, true, UCValueExpression.eBrowserType.File, "*");
 
-            xPhotoSumilationVE.Init(Context.GetAsContext(mAct.Context), mAct.PathRecording, nameof(ActInputValue.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");
+            xURLPathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.ActionInput, nameof(ActInputValue.Value));
+
+            xFileNameTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.ActionInput, nameof(ActInputValue.Value));
+            xPushFileNameTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.ActionInput, nameof(ActInputValue.Value));
+
+            xAppPackageVE.Init(Context.GetAsContext(mAct.Context), mAct.ActionAppPackage, nameof(ActInputValue.Value));
+           
+            
+
 
             xPressDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.PressDuration, nameof(ActInputValue.Value));
             xDragDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.DragDuration, nameof(ActInputValue.Value));
@@ -141,8 +153,9 @@ namespace Ginger.Actions
         {
             UpdateBaseLineImage();
         }
-
         
+
+
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             string filePath = UpdateBaseLineImage();
@@ -225,11 +238,15 @@ namespace Ginger.Actions
             xSwipePnl.Visibility = Visibility.Collapsed;
             xInputPnl.Visibility = Visibility.Collapsed;
             xDeepLinkPnl.Visibility = Visibility.Collapsed;
-            xRunScriptPnl.Visibility = Visibility.Collapsed;
-            xRecordingScreenPnl.Visibility = Visibility.Collapsed;
             xPushToDevicePnl.Visibility = Visibility.Collapsed;
             xPullFromDevicePnl.Visibility = Visibility.Collapsed;
-            xSetClipboardTextPnl.Visibility = Visibility.Collapsed;
+            xSpecificPerformanceDataPnl.Visibility = Visibility.Collapsed;
+            xDeviceRotationPnl.Visibility = Visibility.Collapsed;
+          
+            
+
+
+
 
             switch (mAct.MobileDeviceAction)
             {
@@ -280,6 +297,7 @@ namespace Ginger.Actions
                     xAuthSimulationPnl.Visibility = Visibility.Visible;
                     break;
                 case ActMobileDevice.eMobileDeviceAction.OpenDeeplink:
+                    xAppPnl.Visibility = Visibility.Visible; 
                     xDeepLinkPnl.Visibility = Visibility.Visible;
 
                     break;
@@ -290,18 +308,28 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.QueryAppState:
                     xAppPnl.Visibility = Visibility.Visible;
                     break;
-
+                    
                 case ActMobileDevice.eMobileDeviceAction.SetContext:
                     xInputLabelVE.Content = "Context to Set:";
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.RunScript:
-                    xRunScriptPnl.Visibility = Visibility.Visible;
+                    xInputLabelVE.Content = "Script:";
+                    xInputPnl.Visibility = Visibility.Visible;
+                    break;
+
+                case ActMobileDevice.eMobileDeviceAction.StartRecordingScreen:
+                    xInputLabelVE.Content = "Note: Max duration recording: 30 min.";
+                    xInputVE.Visibility = Visibility.Collapsed;
+                    xInputPnl.Visibility = Visibility.Visible;
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.StopRecordingScreen:
-                    xRecordingScreenPnl.Visibility = Visibility.Visible;
+                    xFileNamebl.Visibility = Visibility.Collapsed;
+                    xFileNameTxtBox.Visibility = Visibility.Collapsed;
+                    xFilePathbl.Content = "Save to Folder\\File:";
+                    xPullFromDevicePnl.Visibility = Visibility.Visible;
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.PushFileToDevice:
@@ -309,10 +337,30 @@ namespace Ginger.Actions
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.PullFileFromDevice:
+                    xFileNamebl.Visibility = Visibility.Visible;
+                    xFileNameTxtBox.Visibility = Visibility.Visible;
                     xPullFromDevicePnl.Visibility = Visibility.Visible;
                     break;
+
                 case ActMobileDevice.eMobileDeviceAction.SetClipboardText:
-                    xSetClipboardTextPnl.Visibility = Visibility.Visible;
+                    xInputLabelVE.Content = "Text:";
+                    xInputPnl.Visibility = Visibility.Visible;
+                    break;
+
+                case ActMobileDevice.eMobileDeviceAction.GetSpecificPerformanceData:
+                    xAppPnl.Visibility = Visibility.Visible;
+                    xSpecificPerformanceDataPnl.Visibility = Visibility.Visible;
+                    break;
+
+                case ActMobileDevice.eMobileDeviceAction.RotateSimulation:
+                    xDeviceRotationPnl.Visibility = Visibility.Visible;
+                    break;
+
+                case ActMobileDevice.eMobileDeviceAction.GetDeviceLogs:
+                    xFileNamebl.Visibility = Visibility.Collapsed;
+                    xFileNameTxtBox.Visibility = Visibility.Collapsed;
+                    xFilePathbl.Content = "Save to Folder\\File:";
+                    xPullFromDevicePnl.Visibility = Visibility.Visible;
                     break;
             }
         }
