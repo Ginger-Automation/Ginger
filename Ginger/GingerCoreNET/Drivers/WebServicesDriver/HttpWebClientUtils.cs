@@ -941,7 +941,7 @@ namespace GingerCore.Actions.WebAPI
                     return "multipart/form-data"; //update to correct value
 
                 case ApplicationAPIUtils.eResponseContentType.TextPlain:
-                    return "text/plain; charset=utf-8";
+                    return "text/plain;";
 
                 case ApplicationAPIUtils.eResponseContentType.XML:
                     return "application/xml";
