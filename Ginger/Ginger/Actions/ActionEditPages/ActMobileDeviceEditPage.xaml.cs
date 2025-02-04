@@ -325,6 +325,7 @@ namespace Ginger.Actions
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
 
+                case ActMobileDevice.eMobileDeviceAction.GetDeviceLogs:
                 case ActMobileDevice.eMobileDeviceAction.StopRecordingScreen:
                     xFileNamebl.Visibility = Visibility.Collapsed;
                     xFileNameTxtBox.Visibility = Visibility.Collapsed;
@@ -355,13 +356,7 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.RotateSimulation:
                     xDeviceRotationPnl.Visibility = Visibility.Visible;
                     break;
-
-                case ActMobileDevice.eMobileDeviceAction.GetDeviceLogs:
-                    xFileNamebl.Visibility = Visibility.Collapsed;
-                    xFileNameTxtBox.Visibility = Visibility.Collapsed;
-                    xFilePathbl.Content = "Save to Folder\\File:";
-                    xPullFromDevicePnl.Visibility = Visibility.Visible;
-                    break;
+               
             }
         }
 
