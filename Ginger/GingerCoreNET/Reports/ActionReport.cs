@@ -294,6 +294,11 @@ namespace Ginger.Reports
                     {
                         dr["Description"] = elementsAfter[4];
                     }
+                    else
+                    {
+                        dr["Description"] = string.Empty;
+                    }
+
                     dt.Rows.Add(dr);
                 }
                 return dt;
