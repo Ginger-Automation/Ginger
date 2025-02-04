@@ -1,4 +1,4 @@
-name: Ginger Build
+name: Build Solution
 
 on:
   workflow_call:
