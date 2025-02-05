@@ -426,7 +426,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                 SetPropertyValue(aPIModel, nameof(ActWebAPIRest.Fields.ReqHttpVersion), nameof(ApplicationAPIModel.ReqHttpVersion), actionToConvert);
                 SetPropertyValue(aPIModel, nameof(ActWebAPIRest.Fields.ResponseContentType), nameof(ApplicationAPIModel.ResponseContentType), actionToConvert);
                 SetPropertyValue(aPIModel, nameof(ActWebAPIRest.Fields.CookieMode), nameof(ApplicationAPIModel.CookieMode), actionToConvert);
-                SetPropertyValue(aPIModel, nameof(ActWebAPIRest.Fields.ContentType), nameof(ApplicationAPIModel.ContentType), actionToConvert);
+                SetPropertyValue(aPIModel, nameof(ActWebAPIRest.Fields.ContentType), nameof(ApplicationAPIModel.RequestContentType), actionToConvert);
                 SetPropertyValue(aPIModel, nameof(ActWebAPISoap.Fields.SOAPAction), nameof(ApplicationAPIModel.SOAPAction), actionToConvert);
                 SetPropertyValue(aPIModel, nameof(ActWebAPIBase.Fields.EndPointURL), nameof(ApplicationAPIModel.EndpointURL), actionToConvert);
                 SetPropertyValue(aPIModel, nameof(ActWebAPIBase.Fields.URLUser), nameof(ApplicationAPIModel.URLUser), actionToConvert);

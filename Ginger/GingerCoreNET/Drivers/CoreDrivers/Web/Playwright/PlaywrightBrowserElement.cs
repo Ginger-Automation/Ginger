@@ -16,9 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Playwright;
 using Microsoft.Playwright;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -1041,5 +1043,201 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             return playwrightElementHandle.SetInputFilesAsync(value);
         }
+
+
+        /// <summary>
+        /// Waits for the element to be visible within the specified timeout.
+        /// </summary>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the element is visible, otherwise false.</returns>
+        public Task<bool> ToBeVisibleAsync(float timeOut) => ToBeVisibleAsync(_playwrightLocator, timeOut);
+
+        /// <summary>
+        /// Waits for the element to be visible within the specified timeout.
+        /// </summary>
+        /// <param name="playwrightLocator">The locator of the element.</param>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the element is visible, otherwise false.</returns>
+        public async Task<bool> ToBeVisibleAsync(IPlaywrightLocator playwrightLocator, float timeOut)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            try
+            {
+                var options = new LocatorAssertionsToBeVisibleOptions { Timeout = timeOut };
+                await playwrightLocator.WaitForAsync(new LocatorWaitForOptions { Timeout = timeOut });
+                await Assertions.Expect(playwrightLocator).ToBeVisibleAsync(options);
+                return true;
+            }
+            catch (Exception ex) 
+            { 
+                Reporter.ToLog(eLogLevel.DEBUG, $"Error in Element To Be Visible: {ex.Message}");
+                return false; 
+            }
+        }
+
+        /// <summary>
+        /// Waits for the element to be selected within the specified timeout.
+        /// </summary>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the element is selected, otherwise false.</returns>
+        public Task<bool> ElementIsSelectedAsync(float timeOut) => ElementIsSelectedAsync(_playwrightLocator, timeOut);
+
+        /// <summary>
+        /// Waits for the element to be selected within the specified timeout.
+        /// </summary>
+        /// <param name="playwrightLocator">The locator of the element.</param>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the element is selected, otherwise false.</returns>
+        public async Task<bool> ElementIsSelectedAsync(IPlaywrightLocator playwrightLocator, float timeOut)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            try
+            {
+                var options = new LocatorAssertionsToBeCheckedOptions { Timeout = timeOut };
+                await playwrightLocator.WaitForAsync(new LocatorWaitForOptions { Timeout = timeOut });
+                await Assertions.Expect(playwrightLocator).ToBeCheckedAsync(options);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Error in Element To Be Checked: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Waits for the element to be clickable within the specified timeout.
+        /// </summary>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the element is clickable, otherwise false.</returns>
+        public Task<bool> ElementToBeClickableAsync(float timeOut) => ElementToBeClickableAsync(_playwrightLocator, timeOut);
+
+        /// <summary>
+        /// Waits for the element to be clickable within the specified timeout.
+        /// </summary>
+        /// <param name="playwrightLocator">The locator of the element.</param>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the element is clickable, otherwise false.</returns>
+        public async Task<bool> ElementToBeClickableAsync(IPlaywrightLocator playwrightLocator, float timeOut)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            try
+            {
+                var options = new LocatorAssertionsToBeVisibleOptions { Timeout = timeOut };
+                await playwrightLocator.WaitForAsync(new LocatorWaitForOptions { Timeout = timeOut });
+                await Assertions.Expect(playwrightLocator).ToBeVisibleAsync(options);
+                await Assertions.Expect(playwrightLocator).ToBeEnabledAsync(new LocatorAssertionsToBeEnabledOptions { Timeout = timeOut });
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Error in Element To Be Clickable: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Waits for the element's text to match the specified text within the specified timeout.
+        /// </summary>
+        /// <param name="textToMatch">The text to match.</param>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the text matches, otherwise false.</returns>
+        public Task<bool> TextMatchesAsync(string textToMatch, float timeOut) => TextMatchesAsync(_playwrightLocator, textToMatch, timeOut);
+
+        /// <summary>
+        /// Waits for the element's text to match the specified text within the specified timeout.
+        /// </summary>
+        /// <param name="playwrightLocator">The locator of the element.</param>
+        /// <param name="textToMatch">The text to match.</param>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the text matches, otherwise false.</returns>
+        public async Task<bool> TextMatchesAsync(IPlaywrightLocator playwrightLocator, string textToMatch, float timeOut)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            try
+            {
+                var options = new LocatorAssertionsToContainTextOptions { Timeout = timeOut };
+                await playwrightLocator.WaitForAsync(new LocatorWaitForOptions { Timeout = timeOut });
+                await Assertions.Expect(playwrightLocator).ToContainTextAsync(textToMatch, options);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Error in Text Matches: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Waits for the element's attribute to match the specified value within the specified timeout.
+        /// </summary>
+        /// <param name="attributeName">The name of the attribute.</param>
+        /// <param name="attributeValue">The value of the attribute.</param>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the attribute matches, otherwise false.</returns>
+        public Task<bool> AttributeMatchesAsync(string attributeName, string attributeValue, float timeOut) => AttributeMatchesAsync(_playwrightLocator, attributeName, attributeValue, timeOut);
+
+        /// <summary>
+        /// Waits for the element's attribute to match the specified value within the specified timeout.
+        /// </summary>
+        /// <param name="playwrightLocator">The locator of the element.</param>
+        /// <param name="attributeName">The name of the attribute.</param>
+        /// <param name="attributeValue">The value of the attribute.</param>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the attribute matches, otherwise false.</returns>
+        public async Task<bool> AttributeMatchesAsync(IPlaywrightLocator playwrightLocator, string attributeName, string attributeValue, float timeOut)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            try
+            {
+                var options = new LocatorAssertionsToHaveAttributeOptions { Timeout = timeOut };
+                await playwrightLocator.WaitForAsync(new LocatorWaitForOptions { Timeout = timeOut });
+                await Assertions.Expect(playwrightLocator).ToHaveAttributeAsync(attributeName, attributeValue, options);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Error in Attribute Matches: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Waits for the element to be not visible within the specified timeout.
+        /// </summary>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the element is not visible, otherwise false.</returns>
+        public Task<bool> ToBeNotVisibleAsync(float timeOut) => ToBeNotVisibleAsync(_playwrightLocator, timeOut);
+
+        /// <summary>
+        /// Waits for the element to be not visible within the specified timeout.
+        /// </summary>
+        /// <param name="playwrightLocator">The locator of the element.</param>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the element is not visible, otherwise false.</returns>
+        public async Task<bool> ToBeNotVisibleAsync(IPlaywrightLocator playwrightLocator, float timeOut)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            try
+            {
+                var options = new LocatorAssertionsToBeVisibleOptions { Timeout = timeOut };
+                await playwrightLocator.WaitForAsync(new LocatorWaitForOptions { Timeout = timeOut, State = WaitForSelectorState.Hidden });
+                await Assertions.Expect(playwrightLocator).Not.ToBeVisibleAsync(options);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error in To Be Not Visible: {ex.Message}");
+                return false;
+            }
+        }
+
     }
+
 }
