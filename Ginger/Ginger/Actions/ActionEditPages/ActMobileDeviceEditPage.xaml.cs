@@ -76,7 +76,11 @@ namespace Ginger.Actions
             xPressDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.PressDuration, nameof(ActInputValue.Value));
             xDragDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.DragDuration, nameof(ActInputValue.Value));
             xSwipeScaleTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.SwipeScale, nameof(ActInputValue.Value));
-            xSwipeDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.SwipeDuration, nameof(ActInputValue.Value));          
+            xSwipeDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.SwipeDuration, nameof(ActInputValue.Value));
+
+            SetMultiTouchGridView();
+            xMultiTouchGrid.DataSourceList = mAct.MobileTouchOperations;
+            xMultiTouchGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddTouchOperation));
 
             UpdateBaseLineImage(true);
 
@@ -275,9 +279,6 @@ namespace Ginger.Actions
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.PerformMultiTouch:
-                    SetMultiTouchGridView();
-                    xMultiTouchGrid.DataSourceList = mAct.MobileTouchOperations;
-                    xMultiTouchGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddTouchOperation));
                     xMultiTouchGrid.Visibility = Visibility.Visible;
                     break;
             }
@@ -290,9 +291,9 @@ namespace Ginger.Actions
                 GridColsView =
             [
                 new GridColView() { Field = nameof(MobileTouchOperation.OperationType), Header = "Operation Type", WidthWeight = 25,StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList=GingerCore.General.GetEnumValuesForCombo(typeof(eFingerOperationType)) },
-                new GridColView() { Field = nameof(MobileTouchOperation.MoveXcoordinate), Header = "Move X Coordinate", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text },
-                new GridColView() { Field = nameof(MobileTouchOperation.MoveYcoordinate), Header = "Move Y Coordinate", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text },
-                new GridColView() { Field = nameof(MobileTouchOperation.MoveDuration), Header = "Move Duration", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text },
+                new GridColView() { Field = nameof(MobileTouchOperation.MoveXcoordinate), Header = "X Coordinate (Move Only)", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text },
+                new GridColView() { Field = nameof(MobileTouchOperation.MoveYcoordinate), Header = "Y Coordinate (Move Only)", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text },
+                new GridColView() { Field = nameof(MobileTouchOperation.OperationDuration), Header = "Duration Milliseconds (Move & Pause)", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text },
             ]
             };
             xMultiTouchGrid.btnRefresh.Visibility = Visibility.Collapsed;
@@ -305,7 +306,10 @@ namespace Ginger.Actions
         {
             MobileTouchOperation tuchOperation = new MobileTouchOperation
             {
-                OperationType = MobileTouchOperation.eFingerOperationType.Move
+                OperationType = MobileTouchOperation.eFingerOperationType.FingerMove,
+                MoveXcoordinate = 0,
+                MoveYcoordinate = 0,
+                OperationDuration = 200
             };
             mAct.MobileTouchOperations.Add(tuchOperation);
         }

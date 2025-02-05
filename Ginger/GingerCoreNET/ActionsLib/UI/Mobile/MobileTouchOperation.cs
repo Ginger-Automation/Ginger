@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.Repository;
+﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 
 namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Mobile
 {
@@ -8,10 +9,17 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Mobile
 
         public enum eFingerOperationType
         {
-            Down, Up, Move, Pause, Cancel
+            [EnumValueDescription("Finger Move")]
+            FingerMove,
+            [EnumValueDescription("Finger Down")]
+            FingerDown,
+            [EnumValueDescription("Finger Up")]
+            FingerUp,            
+            Pause, 
+            Cancel
         }
 
-        private eFingerOperationType mOperationType;
+        private eFingerOperationType mOperationType = eFingerOperationType.FingerMove;
         [IsSerializedForLocalRepository]
         public eFingerOperationType OperationType
         {
@@ -24,6 +32,18 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Mobile
                 if (value != mOperationType)
                 {
                     mOperationType = value;
+                    if (mOperationType != eFingerOperationType.FingerMove)
+                    {
+                        MoveXcoordinate = null;
+                        OnPropertyChanged(nameof(MoveXcoordinate));
+                        MoveYcoordinate = null;
+                        OnPropertyChanged(nameof(MoveYcoordinate));
+                        if (mOperationType != eFingerOperationType.Pause)
+                        {
+                            OperationDuration = null;
+                            OnPropertyChanged(nameof(OperationDuration));
+                        }
+                    }
                     OnPropertyChanged(nameof(OperationType));
                 }
             }
@@ -42,10 +62,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Mobile
                 if (value != mMoveXcoordinatee)
                 {
                     mMoveXcoordinatee = value;
-                    //if (mOperationType != eFingerOperationType.Move)
-                    //{
-                    //    mMoveXcoordinatee = null;
-                    //}
+                    if (mOperationType != eFingerOperationType.FingerMove)
+                    {
+                        mMoveXcoordinatee = null;
+                    }
                     OnPropertyChanged(nameof(MoveXcoordinate));
                 }
             }
@@ -64,33 +84,33 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Mobile
                 if (value != mMoveYcoordinate)
                 {
                     mMoveYcoordinate = value;
-                    //if (mOperationType != eFingerOperationType.Move)
-                    //{
-                    //    mMoveYcoordinate = null;
-                    //}
+                    if (mOperationType != eFingerOperationType.FingerMove)
+                    {
+                        mMoveYcoordinate = null;
+                    }
                     OnPropertyChanged(nameof(MoveYcoordinate));
                 }
             }
         }
 
-        private int? mMoveDuration;
+        private int? mOperationDuration;
         [IsSerializedForLocalRepository]
-        public int? MoveDuration
+        public int? OperationDuration
         {
             get
             {
-                return mMoveDuration;
+                return mOperationDuration;
             }
             set
             {
-                if (value != mMoveDuration)
+                if (value != mOperationDuration)
                 {
-                    mMoveDuration = value;
-                    if (mOperationType != eFingerOperationType.Move)
+                    mOperationDuration = value;
+                    if (mOperationType != eFingerOperationType.FingerMove && mOperationType != eFingerOperationType.Pause)
                     {
-                        mMoveDuration = null;
+                        mOperationDuration = null;
                     }
-                    OnPropertyChanged(nameof(MoveDuration));
+                    OnPropertyChanged(nameof(OperationDuration));
                 }
             }
         }

@@ -1233,8 +1233,8 @@ namespace Amdocs.Ginger.CoreNET
                         Driver.Context = act.ActionInput.ValueForDriver;
                         break;
 
-                    case ActMobileDevice.eMobileDeviceAction.PerformMultiTouch:
-                        ObservableList<MobileTouchOperation> operations = act.MobileTouchOperations;
+                    case ActMobileDevice.eMobileDeviceAction.PerformMultiTouch:         
+                        PerformMultiTouch(act.MobileTouchOperations);
                         break;
 
                     default:
@@ -1538,7 +1538,51 @@ namespace Amdocs.Ginger.CoreNET
             actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageStartX, pageStartY, TimeSpan.Zero));
             actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
             actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageEndX, pageEndY, swipeDuration));
-            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));          
+            Driver.PerformActions(actionBuilder.ToActionSequenceList());
+        }
+
+        public void PerformMultiTouch(ObservableList<MobileTouchOperation> operations)
+        {
+            AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
+            ActionBuilder actionBuilder = new ActionBuilder();
+            foreach (MobileTouchOperation operation in operations) 
+            {
+                int xCoordinate = 0;
+                int yCoordinate = 0;
+                TimeSpan duration = TimeSpan.Zero;
+                if (operation.OperationDuration != null)
+                {
+                    duration = TimeSpan.FromMilliseconds(int.Parse(operation.OperationDuration.ToString()));
+                }        
+                if (operation.MoveXcoordinate != null)
+                {
+                    xCoordinate = int.Parse(operation.MoveXcoordinate.ToString());
+                }
+                if (operation.MoveYcoordinate != null)
+                {
+                    yCoordinate = int.Parse(operation.MoveYcoordinate.ToString());
+                }
+                switch (operation.OperationType)
+                {
+                    //all operations 
+                    case MobileTouchOperation.eFingerOperationType.FingerMove:
+                        actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, xCoordinate, yCoordinate, duration));
+                        break;
+                    case MobileTouchOperation.eFingerOperationType.FingerDown:
+                        actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+                        break;
+                    case MobileTouchOperation.eFingerOperationType.FingerUp:
+                        actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+                        break;
+                    case MobileTouchOperation.eFingerOperationType.Pause:
+                        actionBuilder.AddAction(finger.CreatePause(duration));
+                        break;
+                    case MobileTouchOperation.eFingerOperationType.Cancel:
+                        actionBuilder.AddAction(finger.CreatePointerCancel());
+                        break;
+                }    
+            }
             Driver.PerformActions(actionBuilder.ToActionSequenceList());
         }
 
