@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using GingerCore;
 using GingerWPF.DragDropLib;
 using GingerWPF.TreeViewItemsLib;
 using System;
@@ -154,12 +153,16 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             TreeItemDoubleClicked = true;
-            if (ItemDoubleClick != null)
+            if (ItemDoubleClick != null && e.Source is TreeViewItem treeViewItem)
             {
+                if (treeViewItem.Tag is ITreeViewItem ItreeViewItem && ItreeViewItem.IsExpandable())
+                {
+                    return;
+                }
                 Mouse.OverrideCursor = Cursors.Wait;
                 try
                 {
-                    if (e.Source is TreeViewItem && (e.Source as TreeViewItem).IsSelected)
+                    if (treeViewItem.IsSelected)
                     {
                         ItemDoubleClick(Tree.SelectedItem, e);
                     }
