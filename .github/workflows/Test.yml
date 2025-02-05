@@ -2,18 +2,6 @@ name: Execute Unit Tests
 
 on:
   workflow_call:
-      
-  # pull_request:
-  #   branches: 
-  #     - master
-  #     - Features/Linux-Migration
-  #     - Releases/*
-  #     - Releases/*/*
-
-  # push:
-  #   branches:
-  #     - '**'
-
 jobs:
     Test:
         name: ${{ matrix.os }}
