@@ -31,23 +31,23 @@ jobs:
                     path: './Ginger/GingerRuntime/bin/Release/net8.0/osx-x64'
                     format: tar
                     gzip: true
-                    output: ./Runtime/GingerMacOSRuntime.tar.gz
+                    output: ./Runtime/GingerRuntime_MacOS.tar.gz
 
             -   uses: sibiraj-s/action-archiver@v1
                 with:
                     path: './Runtime'
                     format: tar
                     gzip: true
-                    output: GingerMacOSRuntime-root.tar.gz
+                    output: GingerRuntime_MacOS-root.tar.gz
 
-            -   name: Cache GingerMacOSRuntime
+            -   name: Cache GingerRuntime_MacOS
                 id: cache
                 uses: actions/cache@v4
                 with:
                     path: 
-                        ./GingerMacOSRuntime-root.tar.gz
+                        ./GingerRuntime_MacOS-root.tar.gz
                     key: 
-                        cache-GingerMacOSRuntime-${{ github.run_number }}
+                        cache-GingerRuntime_MacOS-${{ github.run_number }}
                     enableCrossOsArchive:
                         true
 
@@ -79,9 +79,9 @@ jobs:
                   path: './Ginger/GingerRuntime/bin/Release/net8.0/linux-x64'
                   format: tar
                   gzip: true
-                  output: ./Runtime/GingerRuntime.tar.gz
+                  output: ./Runtime/GingerRuntime_Linux.tar.gz
 
-            - name: Create Directory for GingerRuntime
+            - name: Create Directory for GingerRuntime_Linux
               run: | 
                   mv ./Documents/ReadMe.txt ./Runtime/ReadMe.txt
                   mv ./Documents/gingerInstall.sh ./Runtime/gingerInstall.sh
@@ -96,16 +96,16 @@ jobs:
                   path: './Runtime'
                   format: tar
                   gzip: true
-                  output: GingerRuntime-root.tar.gz
+                  output: GingerRuntime_Linux-root.tar.gz
 
-            -   name: Cache GingerRuntime
+            -   name: Cache GingerRuntime_Linux
                 id: cache
                 uses: actions/cache@v4
                 with:
                     path: 
-                        ./GingerRuntime-root.tar.gz
+                        ./GingerRuntime_Linux-root.tar.gz
                     key: 
-                        cache-GingerRuntime-${{ github.run_number }}
+                        cache-GingerRuntime_Linux-${{ github.run_number }}
                     enableCrossOsArchive:
                         true
                   
