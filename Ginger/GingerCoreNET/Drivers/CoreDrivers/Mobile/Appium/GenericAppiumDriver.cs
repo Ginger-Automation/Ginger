@@ -33,6 +33,17 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
@@ -48,7 +59,6 @@ using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Microsoft.Graph;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
@@ -60,17 +70,6 @@ using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 using RestSharp;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using AppiumInteractions = OpenQA.Selenium.Appium.Interactions;
 using File = System.IO.File;
 using Image = System.Drawing.Image;
@@ -1319,8 +1318,8 @@ namespace Amdocs.Ginger.CoreNET
 
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceLogs:
                         string deviceLogsPath = GetDeviceLogs(act.LocalFile.ValueForDriver);
-                        act.AddOrUpdateReturnParamActual("GetDeviceLogPath", deviceLogsPath); 
-                        Act.AddArtifactToAction(Path.GetFileName(GetDeviceLogs(act.LocalFile.ValueForDriver).ToString()), act, deviceLogsPath);
+                        act.AddOrUpdateReturnParamActual("DeviceLogFilePath", deviceLogsPath); 
+                        Act.AddArtifactToAction(Path.GetFileName(deviceLogsPath), act, deviceLogsPath);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetSpecificPerformanceData:
