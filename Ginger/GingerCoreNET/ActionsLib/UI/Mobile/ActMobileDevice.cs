@@ -476,8 +476,6 @@ namespace GingerCore.Actions
             GetSpecificPerformanceData,
             [EnumValueDescription("Get Device Logs")]
             GetDeviceLogs,
-            [EnumValueDescription("Get performance Types")]
-            GetperformanceTypes,
             [EnumValueDescription("Get Clipboard Text")]
             GetClipboardText,
         }

@@ -1271,16 +1271,18 @@ namespace Amdocs.Ginger.CoreNET
                         {
                             case ActMobileDevice.eRotateDeviceState.Landscape:
                                 {
-                                    RotateSimulation((act.RotateDeviceState).ToString());
+                                    SwitchToLandscape();
+                                   
                                     break;
                                 }
                             case ActMobileDevice.eRotateDeviceState.Portrait:
                                 {
-                                    RotateSimulation((act.RotateDeviceState).ToString());
+                                    SwitchToPortrait();
+                                   
                                     break;
                                 }
                         }
-                        SimulateState();
+                        NotifyDeviceRotation();
                         break;
 
                         case ActMobileDevice.eMobileDeviceAction.RunScript:
@@ -1355,11 +1357,6 @@ namespace Amdocs.Ginger.CoreNET
                         }
                          break;
 
-                    case ActMobileDevice.eMobileDeviceAction.GetperformanceTypes:
-
-                        GetperformanceTypes();
-
-                        break;
                     case ActMobileDevice.eMobileDeviceAction.GetClipboardText:
                         act.AddOrUpdateReturnParamActual("Get Clipboard Text",GetClipboardText());
                         break;
@@ -2737,7 +2734,7 @@ namespace Amdocs.Ginger.CoreNET
 
             OnDriverMessage(eDriverMessageType.UnHighlightElement);
         }
-        public void SimulateState()
+        public void NotifyDeviceRotation()
         {
             OnDriverMessage(eDriverMessageType.RotateEvent);
         }
@@ -3926,6 +3923,14 @@ namespace Amdocs.Ginger.CoreNET
         {
             return Driver is AndroidDriver ? "package" : "bundleId"; 
         }
+        public string GetTragetFile(string fileType, string path,string FileName)
+        {
+            
+            string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+            string fileName = Path.GetFileName(path); 
+            string targetFile = string.IsNullOrEmpty(fileName) ? Path.Combine(path, $"{FileName}_{timestamp}.{fileType}") : $"{path}.{fileType}";
+            return targetFile;
+        }
         public object OpenDeeplink(string url, string id, string typeId)
         {
             var args = new Dictionary<string, string>
@@ -3994,11 +3999,9 @@ namespace Amdocs.Ginger.CoreNET
 
         public string StopRecordingScreen(string path)
         {
-            string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
-            string fileName = Path.GetFileName(path);
-            string targetFile = string.IsNullOrEmpty(fileName)? Path.Combine(path, $"Mobile_Recording_{timestamp}.mp4"): $"{path}.mp4";
 
-            string videoBase64 = ((AndroidDriver)Driver).StopRecordingScreen();
+            string targetFile = GetTragetFile("mp4", path, "Mobile_Recording");
+            string videoBase64 = ((AndroidDriver)Driver).StopRecordingScreen(); 
             byte[] videoBytes = Convert.FromBase64String(videoBase64);
             File.WriteAllBytes(targetFile, videoBytes); //"format mp4"
             return targetFile;
@@ -4071,51 +4074,36 @@ namespace Amdocs.Ginger.CoreNET
         {
 
             IList<object> perfData = ((AndroidDriver)Driver).GetPerformanceData(packageName, specificData, 5);
-            IList<Dictionary<string, object>> perfDataDictList = new List<Dictionary<string, object>>();
+            var dict = new Dictionary<string, object>();
 
+            var keys = (IList<object>)perfData[0]; // keys data
+            var values = (IList<object>)perfData[1]; // values data
 
-            foreach (var row in perfData)
+            for (int i = 0; i < keys.Count; i++)
             {
-                var rowData = (IList<object>)row;
-                var dict = new Dictionary<string, object>();
-
-                for (int i = 0; i < rowData.Count; i++)
-                {
-                    dict[$"Column{i + 1}"] = rowData[i];
-                }
-
-                perfDataDictList.Add(dict);
-
+                string key = keys[i].ToString();
+                object value = values[i];
+                dict[key] = value;
             }
-            foreach (var dict in perfDataDictList) 
+            
+            foreach (var entry in dict)
             {
-                if (dict != null)
+                if(entry.Key!=null)
                 {
-                    foreach (var entry in dict)
-                    {
-                        if((entry.Key!=null) && (entry.Value != null))
-                        {                           
-                                act.AddOrUpdateReturnParamActual(entry.Key.ToString(), entry.Value.ToString());                                                       
-                        }                      
-                    }
-                }
-            }
+                    string valueStr = entry.Value?.ToString() ?? string.Empty; // Convert null value to empty string
+                    act.AddOrUpdateReturnParamActual(entry.Key.ToString(), valueStr);                                                       
+                }                      
+            } 
         }
         public string GetDeviceLogs(string path) 
         {
 
-            string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
-            string fileName = Path.GetFileName(path);
-
-            string targetFile = string.IsNullOrEmpty(fileName)
-           ? Path.Combine(path, $"DeviceLogs_{timestamp}.txt")
-           : Path.ChangeExtension(path, ".txt");
-
-               // Get device logs
-               var logEntries = Driver.Manage().Logs.GetLog("logcat").ToList();
+            string targetFile = GetTragetFile("txt", path, "DeviceLogs");
+            // Get device logs
+            var logEntries = Driver.Manage().Logs.GetLog("logcat").ToList();
 
             // Create and write to the file
-            using (StreamWriter writer = new StreamWriter(targetFile))
+            using (StreamWriter writer = new StreamWriter(targetFile, append: true))
             {
                 foreach (var logEntry in logEntries)
                 {
@@ -4125,14 +4113,6 @@ namespace Amdocs.Ginger.CoreNET
              
             return targetFile;
 
-        }
-        public IList<string> GetperformanceTypes() //continue
-        {
-            //Dictionary<string, object> performanceData = new Dictionary<string, object>();
-            IList<string> dataTypes = ((AndroidDriver)Driver).GetPerformanceDataTypes();
-
-
-            return dataTypes;
         }
         public void TypeUsingIOSkeyboard(string text)
         {
