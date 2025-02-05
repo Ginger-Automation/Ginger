@@ -195,7 +195,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             {
                 await _browser.NewWindowAsync(setAsCurrent: true);
             }
-            await _browser.CurrentWindow.CurrentTab.GoToURLAsync(url);
+            try
+            {
+                await _browser.CurrentWindow.CurrentTab.GoToURLAsync(url);
+            }
+            catch (Exception ex)
+            {
+                //this error message is faced when a HTTPS website has certificate issues and browser shows 'Your connection is not private' message
+                if (!ex.Message.Contains("net::ERR_CERT_COMMON_NAME_INVALID"))
+                {
+                    throw;
+                }
+            }
         }
 
         private string GetTargetUrl()
