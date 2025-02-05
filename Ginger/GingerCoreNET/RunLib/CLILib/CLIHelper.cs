@@ -80,7 +80,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         ProgressNotifier progressNotifier = new();
         public bool SelfHealingCheckInConfigured;
-
+        public static event EventHandler<string> GitProgresStatus;
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
         public bool ShowAutoRunWindow
         {
@@ -565,7 +565,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             try
             {
-                progressNotifier.ProgressUpdated += ProgressNotifier_ProgressUpdated;
+                progressNotifier.StatusUpdateHandler += ProgressNotifier_ProgressUpdated;                
                 if (!string.IsNullOrEmpty(SourceControlURL) && !string.IsNullOrEmpty(SourcecontrolUser) && !string.IsNullOrEmpty(sourceControlPass))
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
@@ -575,7 +575,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
                     }
                 }
-                progressNotifier.ProgressUpdated -= ProgressNotifier_ProgressUpdated;
                 Reporter.ToLog(eLogLevel.INFO, "Solution downloaded/updated successfully");
             }
             catch (Exception ex)
@@ -583,25 +582,32 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 Reporter.ToLog(eLogLevel.ERROR, ex.Message);
 
             }
+            finally
+            {
+                progressNotifier.StatusUpdateHandler -= ProgressNotifier_ProgressUpdated;
+            }
         }
 
+    
         /// <summary>
         /// Updates the progress of the download and logs the progress percentage.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">A tuple containing the number of completed steps and the total number of steps.</param>
-        private void ProgressNotifier_ProgressUpdated(object sender, (int CompletedSteps, int TotalSteps) e)
+        private void ProgressNotifier_ProgressUpdated(object sender, (string ProgressType, int CompletedSteps, int TotalSteps) e)
         {
             try
             {
                 if (e.CompletedSteps > 0 && e.TotalSteps > 0 && e.CompletedSteps <= e.TotalSteps)
                 {
-                    double progress = ((double)e.CompletedSteps / e.TotalSteps) * 100;
+                    double progress = Math.Round(((double)e.CompletedSteps / e.TotalSteps) * 100, 2);
                     if (progress == 0)
                     {
                         return;
                     }
-                    Reporter.ToLog(eLogLevel.INFO, $"Download progress: {progress}% Complete", overwriteCurrentLine: true);
+                    string gitProgress = $"{e.ProgressType}{progress:F2}% complete";
+                    Reporter.ToLog(eLogLevel.INFO, gitProgress, overwriteCurrentLine: true);
+                    GitProgresStatus?.Invoke(this, gitProgress);
                 }
                 else
                 {
@@ -610,10 +616,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
             catch (Exception t)
             {
-                 Reporter.ToLog(eLogLevel.ERROR, t.Message);
+                Reporter.ToLog(eLogLevel.ERROR, t.Message);
             }
         }
-
+        //Download solution status: 100% complete
+        //Checkout Progress: 100% complete
         internal void SetSourceControlBranch(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlBranch: '{value}'");

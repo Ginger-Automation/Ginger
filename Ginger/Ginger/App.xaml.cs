@@ -415,9 +415,10 @@ namespace Ginger
                 
                 if (doOptions != null && !string.IsNullOrWhiteSpace(doOptions.Solution))
                 {
-                    MainWindow.ShowStatus(eStatusMsgType.PROCESS, "Loading Ginger Solution...");
-                    new DoOptionsHandler().RunAsync(doOptions);
-
+                    CLIHelper.GitProgresStatus += CLIHelper_GitProgresStatus;
+                    MainWindow.ShowStatus(eStatusMsgType.PROCESS, "Loading Ginger Solution via deeplink...");
+                    Reporter.ToLog(eLogLevel.INFO, "Loading Ginger Solution via deeplink...");
+                    new DoOptionsHandler().RunAsync(doOptions);                 
 
                 }
             }
@@ -430,8 +431,13 @@ namespace Ginger
             }
         }
 
-
-
+        private void CLIHelper_GitProgresStatus(object? sender, string e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                MainWindow.xProcessMsgTxtBlock.Text = e;
+            });
+        }
 
         [DllImport("kernel32.dll")]
         static extern IntPtr GetConsoleWindow();
