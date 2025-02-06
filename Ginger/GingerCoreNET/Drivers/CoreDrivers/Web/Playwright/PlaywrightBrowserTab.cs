@@ -56,6 +56,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             eLocateBy.ByRelXPath,
             eLocateBy.POMElement,
             eLocateBy.ByAutomationID,
+            eLocateBy.ByClassName,
+            eLocateBy.ByCSSSelector,
+            eLocateBy.ByLinkText
         ];
 
         private static readonly IEnumerable<eLocateBy> SupportedFrameLocators =
@@ -243,7 +246,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// <returns>A task representing the asynchronous operation.</returns>
         public Task MoveMouseAsync(Point point)
         {
-            ThrowIfClosed();         
+            ThrowIfClosed();
             return _playwrightPage.Mouse.MoveAsync(point.X, point.Y);
         }
 
@@ -587,6 +590,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 case eLocateBy.ByAutomationID:
                     value = value.Replace(":", "\\:");
                     locator = _currentFrame.Locator($"xpath=//*[@data-automation-id=\"{value}\"]");
+                    break;
+                case eLocateBy.ByClassName:
+                    locator = _currentFrame.Locator($"css=.{value}");
+                    break;
+                case eLocateBy.ByCSSSelector:
+                    locator = _currentFrame.Locator($"css={value}");
+                    break;
+                case eLocateBy.ByLinkText:
+                    locator = _currentFrame.Locator($"text={value}");
                     break;
                 default:
                     throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");
