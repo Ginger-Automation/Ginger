@@ -1254,11 +1254,11 @@ namespace GingerCore.SourceControl
             {
                 CredentialsProvider = GetSourceCredentialsHandler(),
                 Depth = 1,
-                CertificateCheck = (certificate, valid, host) => true,
+                CertificateCheck = (_, valid, host) => true,
             };
         }
 
-        public override bool UnLock(string path, ref string error)
+        public override bool UnLock(string _, ref string error)
         {
             throw new NotImplementedException();
         }

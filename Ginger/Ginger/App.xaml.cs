@@ -428,7 +428,10 @@ namespace Ginger
         {
             try
             {
-                CLIHelper.GitProgresStatus += CLIHelper_GitProgresStatus;
+                if (!string.IsNullOrEmpty(doOptions.URL ))
+                {
+                    CLIHelper.GitProgresStatus += CLIHelper_GitProgresStatus;
+                }
                 MainWindow.ShowStatus(eStatusMsgType.PROCESS, "Loading Ginger Solution via deeplink...");
                 Reporter.ToLog(eLogLevel.INFO, "Loading Ginger Solution via deeplink...");
 
@@ -447,6 +450,10 @@ namespace Ginger
             }
             finally
             {
+                if (!string.IsNullOrEmpty(doOptions.URL))
+                {
+                    CLIHelper.GitProgresStatus -= CLIHelper_GitProgresStatus;
+                }
                 this.Dispatcher.Invoke(() =>
                 {
                     MainWindow.xProcessMsgIcon.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Empty;

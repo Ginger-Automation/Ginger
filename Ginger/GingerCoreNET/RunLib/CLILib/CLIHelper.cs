@@ -619,8 +619,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 Reporter.ToLog(eLogLevel.ERROR, t.Message);
             }
         }
-        //Download solution status: 100% complete
-        //Checkout Progress: 100% complete
         internal void SetSourceControlBranch(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlBranch: '{value}'");
