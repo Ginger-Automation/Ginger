@@ -389,17 +389,17 @@ namespace Ginger
         /// </summary>
         private async void ProcessGingerUIStartup(DoOptions doOptions)
         {
-            if (WorkSpace.Instance.UserProfile?.AppLogLevel == eAppReporterLoggingLevel.Debug)
+            if (WorkSpace.Instance?.UserProfile?.AppLogLevel == eAppReporterLoggingLevel.Debug)
             {
                 GingerLog.StartCustomTraceListeners();
             }
 
             HideConsoleWindow();
-            bool checkAutoLoadSolution = WorkSpace.Instance.UserProfile?.AutoLoadLastSolution ?? false;
+            bool checkAutoLoadSolution = WorkSpace.Instance?.UserProfile?.AutoLoadLastSolution ?? false;
 
             try
             {
-                if (doOptions != null)
+                if (doOptions != null&& WorkSpace.Instance?.UserProfile!=null)
                 {
                     WorkSpace.Instance.UserProfile.AutoLoadLastSolution = false;
                 }
@@ -413,7 +413,7 @@ namespace Ginger
             }
             finally
             {
-                if (doOptions != null && WorkSpace.Instance.UserProfile != null)
+                if (doOptions != null && WorkSpace.Instance?.UserProfile != null)
                 {
                     WorkSpace.Instance.UserProfile.AutoLoadLastSolution = checkAutoLoadSolution;
                 }
@@ -468,14 +468,13 @@ namespace Ginger
         /// <param name="doOptions">The options for loading the solution.</param>
         private async Task LoadSolutionWithoutSavingCredentialsAsync(DoOptions doOptions)
         {
-            if (WorkSpace.Instance.UserProfile == null)
+            if (WorkSpace.Instance?.UserProfile == null)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "User Profile is null");
-                return;
+                Reporter.ToLog(eLogLevel.ERROR, "User Profile is not found.");                
             }
 
-            var gitUserName = WorkSpace.Instance.UserProfile.SourceControlUser;
-            var gitUserPassword = WorkSpace.Instance.UserProfile.SourceControlPass;
+            var gitUserName = WorkSpace.Instance?.UserProfile?.SourceControlUser;
+            var gitUserPassword = WorkSpace.Instance?.UserProfile?.SourceControlPass;
 
             try
             {
@@ -487,8 +486,11 @@ namespace Ginger
             }
             finally
             {
-                WorkSpace.Instance.UserProfile.SourceControlUser = gitUserName;
-                WorkSpace.Instance.UserProfile.SourceControlPass = gitUserPassword;
+                if (WorkSpace.Instance?.UserProfile != null)
+                {
+                    WorkSpace.Instance.UserProfile.SourceControlUser = gitUserName;
+                    WorkSpace.Instance.UserProfile.SourceControlPass = gitUserPassword;
+                }
             }
         }
         private void CLIHelper_GitProgresStatus(object? sender, string e)
