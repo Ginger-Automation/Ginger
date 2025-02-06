@@ -117,7 +117,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
             throw new NotImplementedException();
         }
 
-        public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths)
+        public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths, ProgressNotifier progressNotifier = null)
         {
             Console.WriteLine("Reverting and Get Latest");
             RunSVNCommand(new object[] { "revert", "-R", ".", "--username", SourceControlUser, "--password", SourceControlPass }, path);

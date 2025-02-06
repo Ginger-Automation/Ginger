@@ -115,7 +115,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
             throw new NotImplementedException();
         }
 
-        public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths)
+        public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths, ProgressNotifier progressNotifier = null)
         {
             RunGITCommand(new object[] { "reset", "--hard", "HEAD" }, path);
             RunGITCommand(new object[] { "fetch" }, path);
