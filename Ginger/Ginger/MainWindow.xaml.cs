@@ -219,6 +219,7 @@ namespace Ginger
 
                 DoOptionsHandler.LoadRunSetConfigEvent += DoOptionsHandler_LoadRunSetConfigEvent;
                 DoOptionsHandler.LoadSharedRepoEvent += DoOptionsHandler_LoadSharedRepoEvent;
+                DoOptionsHandler.LoadSourceControlDownloadPage += DoOptionsHandler_LoadSourceControlDownloadPage;
             }
             catch (Exception ex)
             {
@@ -234,6 +235,11 @@ namespace Ginger
                 }
             }
 
+        }
+
+        private void DoOptionsHandler_LoadSourceControlDownloadPage(object? sender, EventArgs e)
+        {
+            xDownloadSolutionMenuItem_Click(null, null);
         }
 
 
@@ -929,6 +935,7 @@ namespace Ginger
 
         private void xDownloadSolutionMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            
             SourceControlProjectsPage p = new SourceControl.SourceControlProjectsPage();
             p.ShowAsWindow();
         }
