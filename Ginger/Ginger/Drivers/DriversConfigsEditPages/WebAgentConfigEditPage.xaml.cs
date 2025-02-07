@@ -218,6 +218,11 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             xSeleniumUserArgumentsVE.Init(null, seleniumUserArguments, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xSeleniumUserArgumentsVE, TextBox.ToolTipProperty, seleniumUserArguments, nameof(DriverConfigParam.Description));
 
+            //Remote Web Driver Url
+            DriverConfigParam RemoteWebDriverUrl = mAgent.GetOrCreateParam(nameof(SeleniumDriver.RemoteWebDriverUrl));
+            xRemoteWebDriverUrlVE.Init(null, RemoteWebDriverUrl, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xRemoteWebDriverUrlVE, TextBox.ToolTipProperty, RemoteWebDriverUrl, nameof(DriverConfigParam.Description));
+
             //Debug Address
             DriverConfigParam debugAddress = mAgent.GetOrCreateParam(nameof(SeleniumDriver.DebugAddress));
             xDebugAddressVE.Init(null, debugAddress, nameof(DriverConfigParam.Value));
