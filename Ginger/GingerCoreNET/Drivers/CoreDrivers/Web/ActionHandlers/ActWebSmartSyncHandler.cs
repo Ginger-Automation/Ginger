@@ -457,43 +457,44 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         {
             string locator = await GetElementLocator();
             string cssValue = null;
-            eLocateBy eLocateBy = eLocateBy.Unknown; // Default value
+            eLocateBy locateBy = eLocateBy.Unknown; // Default value
             if (locator != null)
             {
-                string locateBy = locator?.Split('@')[1].Split('=')[0];
 
-                switch (locateBy)
+                switch (locator?.Split('@')[1].Split('=')[0])
                 {
                     case "css":
-                        eLocateBy = eLocateBy.ByCSSSelector;
+                        locateBy = eLocateBy.ByCSSSelector;
                         break;
                     case "xpath":
-                        eLocateBy = eLocateBy.ByXPath;
+                        locateBy = eLocateBy.ByXPath;
                         break;
                     case "id":
-                        eLocateBy = eLocateBy.ByID;
+                        locateBy = eLocateBy.ByID;
                         break;
                     case "name":
-                        eLocateBy = eLocateBy.ByName;
+                        locateBy = eLocateBy.ByName;
                         break;
                     case "class":
-                        eLocateBy = eLocateBy.ByClassName;
+                        locateBy = eLocateBy.ByClassName;
                         break;
                     case "linkText":
-                        eLocateBy = eLocateBy.ByLinkText;
+                        locateBy = eLocateBy.ByLinkText;
                         break;
                     case "tagName":
-                        eLocateBy = eLocateBy.ByTagName;
+                        locateBy = eLocateBy.ByTagName;
                         break;
                     case "relXPath":
-                        eLocateBy = eLocateBy.ByRelXPath;
+                        locateBy = eLocateBy.ByRelXPath;
+                        break;
+                    default:
                         break;
                 }
 
                 cssValue = locator?.Split('=')[1].Split(' ')[0];
                 cssValue = cssValue?.Trim();
             }
-            return (eLocateBy, cssValue);
+            return (locateBy, cssValue);
         }
     }
 }
