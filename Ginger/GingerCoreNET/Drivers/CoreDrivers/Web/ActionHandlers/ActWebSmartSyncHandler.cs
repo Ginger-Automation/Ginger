@@ -488,7 +488,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                         locateBy = eLocateBy.ByRelXPath;
                         break;
                     default:
-                        break;
+                        throw new InvalidDataException("Locators not found.");
+                        
                 }
 
                 cssValue = locator?.Split('=')[1].Split(' ')[0];
