@@ -67,8 +67,8 @@ namespace Ginger.SourceControl
 
             IsImportSolution = IsCalledFromImportPage;
             Init();
-            progressNotifier.ProgressText += HandleProgressUpdated;
-            progressNotifier.ProgressUpdated += HandleProgressBarUpdated;
+            progressNotifier.LabelHandler += HandleProgressUpdated;
+            progressNotifier.StatusUpdateHandler += HandleProgressBarUpdated;
         }
 
         private void Init()
@@ -631,7 +631,7 @@ namespace Ginger.SourceControl
         /// </summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="progress">A tuple containing the completed steps and total steps.</param>
-        private void HandleProgressBarUpdated(object sender, (int CompletedSteps, int TotalSteps) progress)
+        private void HandleProgressBarUpdated(object sender, (string ProgressType,int CompletedSteps, int TotalSteps) progress)
         {
             try
             {

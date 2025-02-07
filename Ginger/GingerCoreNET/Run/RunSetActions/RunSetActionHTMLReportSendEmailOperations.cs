@@ -29,6 +29,7 @@ using Ginger.Reports.GingerExecutionReport;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -1846,12 +1847,8 @@ namespace Ginger.Run.RunSetActions
             }
             try
             {
-                System.Drawing.Image img = System.Drawing.Image.FromFile(path);
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                    arr = ms.ToArray();
-                }
+                arr = ConvertImageToByteArray(path);
+
             }
             catch (Exception ex)
             {
@@ -1859,6 +1856,21 @@ namespace Ginger.Run.RunSetActions
             }
             return arr;
         }
+
+        byte[] ConvertImageToByteArray(string path)
+        {
+            using (SKBitmap bitmap = SKBitmap.Decode(path)) // Load image
+            {
+                using (SKImage image = SKImage.FromBitmap(bitmap))
+                {
+                    using (SKData data = image.Encode(SKEncodedImageFormat.Png, 100)) // Encode as PNG
+                    {
+                        return data.ToArray(); // Convert to byte array
+                    }
+                }
+            }
+        }
+
         //TODO: Move the Zipit function to Email.Addattach function
         void AddAttachmentToEmail(Email e, string FileName, bool ZipIt, EmailAttachment.eAttachmentType AttachmentType)
         {
