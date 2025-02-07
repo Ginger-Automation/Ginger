@@ -107,7 +107,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task<bool> ElementIsSelectedAsync(float timeOut);
 
         public Task<bool> ToBeNotVisibleAsync(float timeOut);
-        public Task<IPlaywrightLocator> GetElementLocator();
+        public Task<string> GetElementLocator();
 
     }
 }

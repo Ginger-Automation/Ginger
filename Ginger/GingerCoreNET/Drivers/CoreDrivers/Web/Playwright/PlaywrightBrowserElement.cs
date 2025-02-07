@@ -1241,19 +1241,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// Gets the Playwright locator of the element.
         /// </summary>
         /// <returns>The Playwright locator if available, otherwise null.</returns>
-        public async Task<IPlaywrightLocator?> GetElementLocator() => await GetElementLocator2();
+        public async Task<string?> GetElementLocator() => await GetElementLocator2();
 
         /// <summary>
         /// Gets the Playwright locator of the element.
         /// </summary>
         /// <returns>The Playwright locator if available, otherwise null.</returns>
-        public async Task<IPlaywrightLocator?> GetElementLocator2()
+        public async Task<string?> GetElementLocator2()
         {
             if (_playwrightLocator == null)
             {
                 return null;
             }
-            return _playwrightLocator;
+            return _playwrightLocator.ToString();
         }
     }
 

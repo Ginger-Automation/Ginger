@@ -25,7 +25,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 {
@@ -267,12 +266,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
                 if (eLocateBy == eLocateBy.POMElement)
                 {
-                    var cssValue = await GetCssSelectorValueAsync();
-                    if (cssValue != null)
-                    {
-                        eLocateBy = eLocateBy.ByCSSSelector;
-                        eLocateValue = cssValue;
-                    }
+                    var locators = await GetPOMElementLocator();
+                    eLocateBy = locators.Item1;
+                    eLocateValue = locators.Item2;
                 }
 
                 var elementsEnabled = await _browserTab.WaitForElementsEnabledAsync(eLocateBy, eLocateValue, waitUntilTimeout);
@@ -318,12 +314,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
                 if (eLocateBy == eLocateBy.POMElement)
                 {
-                    var cssValue = await GetCssSelectorValueAsync();
-                    if (cssValue != null)
-                    {
-                        eLocateBy = eLocateBy.ByCSSSelector;
-                        eLocateValue = cssValue;
-                    }
+                    var locators = await GetPOMElementLocator();
+                    eLocateBy = locators.Item1;
+                    eLocateValue = locators.Item2;
                 }
 
                 var elementsInvisible = await _browserTab.WaitForElementsInvisibleAsync(eLocateBy, eLocateValue, waitUntilTimeout);
@@ -363,12 +356,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
                 if (eLocateBy == eLocateBy.POMElement)
                 {
-                    var cssValue = await GetCssSelectorValueAsync();
-                    if (cssValue != null)
-                    {
-                        eLocateBy = eLocateBy.ByCSSSelector;
-                        eLocateValue = cssValue;
-                    }
+                    var locators = await GetPOMElementLocator();
+                    eLocateBy = locators.Item1;
+                    eLocateValue = locators.Item2;
+
                 }
 
                 var elementsPresent = await _browserTab.WaitForElementsPresenceAsync(eLocateBy, eLocateValue, waitUntilTimeout);
@@ -395,12 +386,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
                 if (eLocateBy == eLocateBy.POMElement)
                 {
-                    var cssValue = await GetCssSelectorValueAsync();
-                    if (cssValue != null)
-                    {
-                        eLocateBy = eLocateBy.ByCSSSelector;
-                        eLocateValue = cssValue;
-                    }
+                    var locators = await GetPOMElementLocator();
+                    eLocateBy = locators.Item1;
+                    eLocateValue = locators.Item2;
                 }
 
                 var elementsLocated = await _browserTab.WaitForElementsCheckedAsync(eLocateBy, eLocateValue, waitUntilTimeout);
@@ -446,12 +434,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
                 if (eLocateBy == eLocateBy.POMElement)
                 {
-                    var cssValue = await GetCssSelectorValueAsync();
-                    if (cssValue != null)
-                    {
-                        eLocateBy = eLocateBy.ByCSSSelector;
-                        eLocateValue = cssValue;
-                    }
+                    var locators = await GetPOMElementLocator();
+                    eLocateBy = locators.Item1;
+                    eLocateValue = locators.Item2;
                 }
 
                 var elementsVisible = await _browserTab.WaitForElementsVisibleAsync(eLocateBy, eLocateValue, waitUntilTimeout);
@@ -483,7 +468,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         /// <summary>
         /// Retrieves the element locator for the first matching element.
         /// </summary>
-        async Task<IPlaywrightLocator> GetElementLocator()
+        async Task<string> GetElementLocator()
         {
             var element = await GetFirstMatchingElementAsync();
             return await element.GetElementLocator();
@@ -491,17 +476,50 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         /// <summary>
         /// Retrieves the CSS selector value for the first matching element.
         /// </summary>
-        private async Task<string> GetCssSelectorValueAsync()
+        private async Task<(eLocateBy, string)> GetPOMElementLocator()
         {
-            IPlaywrightLocator locator = await GetElementLocator();
+            string locator = await GetElementLocator();
             string cssValue = null;
+            eLocateBy eLocateBy = eLocateBy.Unknown; // Default value
             if (locator != null)
             {
-                string locatorValue = locator.ToString();
+                string locatorValue = locator;
+                string locateBy = locatorValue.Split('@')[1].Split('=')[0];
+
+                switch (locateBy)
+                {
+                    case "css":
+                        eLocateBy = eLocateBy.ByCSSSelector;
+                        break;
+                    case "xpath":
+                        eLocateBy = eLocateBy.ByXPath;
+                        break;
+                    case "id":
+                        eLocateBy = eLocateBy.ByID;
+                        break;
+                    case "name":
+                        eLocateBy = eLocateBy.ByName;
+                        break;
+                    case "class":
+                        eLocateBy = eLocateBy.ByClassName;
+                        break;
+                    case "linkText":
+                        eLocateBy = eLocateBy.ByLinkText;
+                        break;
+                    case "tagName":
+                        eLocateBy = eLocateBy.ByTagName;
+                        break;
+                    case "relXPath":
+                        eLocateBy = eLocateBy.ByRelXPath;
+                        break;
+                    default:
+                        break;
+                }
+
                 cssValue = locatorValue.Split('=')[1].Split(' ')[0];
                 cssValue = cssValue.Trim();
             }
-            return cssValue;
+            return (eLocateBy, cssValue);
         }
     }
 }
