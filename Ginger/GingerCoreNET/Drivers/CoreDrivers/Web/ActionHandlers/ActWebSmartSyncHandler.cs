@@ -261,16 +261,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         {
             try
             {
-                var eLocateBy = _actWebSmartSync.ElementLocateBy;
-                var eLocateValue = _actWebSmartSync.ElementLocateValue;
-
-                if (eLocateBy == eLocateBy.POMElement)
-                {
-                    var locators = await GetPOMElementLocator();
-                    eLocateBy = locators.Item1;
-                    eLocateValue = locators.Item2;
-                }
-
+                await GetLocateByandValue();
                 var elementsEnabled = await _browserTab.WaitForElementsEnabledAsync(eLocateBy, eLocateValue, waitUntilTimeout);
                 if (!elementsEnabled)
                 {
@@ -282,6 +273,26 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                 act.Error = $"An error occurred: {ex.Message}";
             }
         }
+
+   
+
+        eLocateBy eLocateBy;
+        string eLocateValue;
+        /// <summary>
+        /// Retrieves the locate by and value for the element.
+        /// </summary>
+        private async Task GetLocateByandValue()
+        {
+            eLocateBy = _actWebSmartSync.ElementLocateBy;
+            eLocateValue = _actWebSmartSync.ElementLocateValue;
+            if (eLocateBy == eLocateBy.POMElement)
+            {
+                var locators = await GetPOMElementLocator();
+                eLocateBy = locators.Item1;
+                eLocateValue = locators.Item2;
+            }
+        }
+
 
 
         /// <summary>
@@ -309,16 +320,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         {
             try
             {
-                var eLocateBy = _actWebSmartSync.ElementLocateBy;
-                var eLocateValue = _actWebSmartSync.ElementLocateValue;
-
-                if (eLocateBy == eLocateBy.POMElement)
-                {
-                    var locators = await GetPOMElementLocator();
-                    eLocateBy = locators.Item1;
-                    eLocateValue = locators.Item2;
-                }
-
+                await GetLocateByandValue();
                 var elementsInvisible = await _browserTab.WaitForElementsInvisibleAsync(eLocateBy, eLocateValue, waitUntilTimeout);
                 if (!elementsInvisible)
                 {
@@ -351,16 +353,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         {
             try
             {
-                var eLocateBy = _actWebSmartSync.ElementLocateBy;
-                var eLocateValue = _actWebSmartSync.ElementLocateValue;
-
-                if (eLocateBy == eLocateBy.POMElement)
-                {
-                    var locators = await GetPOMElementLocator();
-                    eLocateBy = locators.Item1;
-                    eLocateValue = locators.Item2;
-
-                }
+                await GetLocateByandValue();
 
                 var elementsPresent = await _browserTab.WaitForElementsPresenceAsync(eLocateBy, eLocateValue, waitUntilTimeout);
                 if (!elementsPresent)
@@ -381,15 +374,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         {
             try
             {
-                var eLocateBy = _actWebSmartSync.ElementLocateBy;
-                var eLocateValue = _actWebSmartSync.ElementLocateValue;
-
-                if (eLocateBy == eLocateBy.POMElement)
-                {
-                    var locators = await GetPOMElementLocator();
-                    eLocateBy = locators.Item1;
-                    eLocateValue = locators.Item2;
-                }
+                await GetLocateByandValue();
 
                 var elementsLocated = await _browserTab.WaitForElementsCheckedAsync(eLocateBy, eLocateValue, waitUntilTimeout);
                 if (!elementsLocated)
@@ -429,15 +414,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         {
             try
             {
-                var eLocateBy = _actWebSmartSync.ElementLocateBy;
-                var eLocateValue = _actWebSmartSync.ElementLocateValue;
-
-                if (eLocateBy == eLocateBy.POMElement)
-                {
-                    var locators = await GetPOMElementLocator();
-                    eLocateBy = locators.Item1;
-                    eLocateValue = locators.Item2;
-                }
+               await GetLocateByandValue();
 
                 var elementsVisible = await _browserTab.WaitForElementsVisibleAsync(eLocateBy, eLocateValue, waitUntilTimeout);
                 if (!elementsVisible)
@@ -483,8 +460,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             eLocateBy eLocateBy = eLocateBy.Unknown; // Default value
             if (locator != null)
             {
-                string locatorValue = locator;
-                string locateBy = locatorValue.Split('@')[1].Split('=')[0];
+                string locateBy = locator?.Split('@')[1].Split('=')[0];
 
                 switch (locateBy)
                 {
@@ -512,12 +488,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                     case "relXPath":
                         eLocateBy = eLocateBy.ByRelXPath;
                         break;
-                    default:
-                        break;
                 }
 
-                cssValue = locatorValue.Split('=')[1].Split(' ')[0];
-                cssValue = cssValue.Trim();
+                cssValue = locator?.Split('=')[1].Split(' ')[0];
+                cssValue = cssValue?.Trim();
             }
             return (eLocateBy, cssValue);
         }
