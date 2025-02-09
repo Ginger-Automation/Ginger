@@ -142,18 +142,32 @@ namespace GingerCore.Actions
         }
      
       
-        public ActInputValue LocalFile
+        public ActInputValue FilePathInput
         {
             get
             {
-                return GetOrCreateInputParam(nameof(LocalFile), "");
+                return GetOrCreateInputParam(nameof(FilePathInput));
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(LocalFile), value.ToString());
-                OnPropertyChanged(nameof(LocalFile));
+                AddOrUpdateInputParamValue(nameof(FilePathInput), value.ToString());
+                OnPropertyChanged(nameof(FilePathInput));
             }
         }
+
+        public ActInputValue FolderPathInput
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FolderPathInput));
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FolderPathInput), value.ToString());
+                OnPropertyChanged(nameof(FolderPathInput));
+            }
+        }
+
         public ActInputValue X1
         {
             get
