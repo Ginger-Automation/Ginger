@@ -33,17 +33,6 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
@@ -70,6 +59,17 @@ using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 using RestSharp;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml;
 using AppiumInteractions = OpenQA.Selenium.Appium.Interactions;
 
 namespace Amdocs.Ginger.CoreNET
@@ -3898,16 +3898,17 @@ namespace Amdocs.Ginger.CoreNET
         {
             throw new NotImplementedException();
         }
+
         public string GetAppPackageNameByOs()
         {
             return Driver is AndroidDriver ? "package" : "bundleId"; 
         }
-        public string GetTragetFile(string fileType, string path,string FileName)
-        {
-            
+
+        public string SetFilePath(string FileType, string FilePath, string FileName)
+        {            
             string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
-            string fileName = Path.GetFileName(path); 
-            string targetFile = string.IsNullOrEmpty(fileName) ? Path.Combine(path, $"{FileName}_{timestamp}.{fileType}") : $"{path}.{fileType}";
+            string fileName = Path.GetFileName(FilePath); 
+            string targetFile = string.IsNullOrEmpty(fileName) ? Path.Combine(FilePath, $"{FileName}_{timestamp}.{FileType}") : $"{FilePath}.{FileType}";
             return targetFile;
         }
 
@@ -3997,7 +3998,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public string StopRecordingScreen(string path)
         {
-            string targetFile = GetTragetFile("mp4", path, "Mobile_Recording");
+            string targetFile = SetFilePath("mp4", path, "Mobile_Recording");
             string videoBase64 = string.Empty;
             if (Driver is AndroidDriver)
             {
@@ -4097,7 +4098,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public string GetDeviceLogs(string path) 
         {
-            string targetFile = GetTragetFile("txt", path, "DeviceLogs");
+            string targetFile = SetFilePath("txt", path, "DeviceLogs");
             // Get device logs
             var logEntries = Driver.Manage().Logs.GetLog("logcat").ToList();
             // Create and write to the file

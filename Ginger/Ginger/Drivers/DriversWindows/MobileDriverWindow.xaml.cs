@@ -275,22 +275,16 @@ namespace Ginger.Drivers.DriversWindows
                     }
                     break;
 
-                case DriverBase.eDriverMessageType.RotateEvent:
-                    
-
+                case DriverBase.eDriverMessageType.RotateEvent:                    
                     UpdateRotateIcon(); 
-
                     break;
 
                 case DriverBase.eDriverMessageType.RecordingEvent:
                     IsRecording = sender != null && (bool)sender;
-
                     UpdateRecordingImage(IsRecording);
-
                     break;
 
                 case DriverBase.eDriverMessageType.HighlightElement:
-
                     if (sender is Amdocs.Ginger.Common.UIElement.ElementInfo)
                     {
                         HighlightElementEvent(sender as Amdocs.Ginger.Common.UIElement.ElementInfo);
@@ -1316,7 +1310,7 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
 
-        public void SetOrientationButton()
+        private void SetOrientationButton()
         {
             try
             {
