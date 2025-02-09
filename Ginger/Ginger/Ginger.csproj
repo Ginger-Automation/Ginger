@@ -757,7 +757,6 @@
     <ProjectReference Include="..\GingerPlugIns\GingerPlugIns.csproj" />
     <ProjectReference Include="..\GingerUtils\GingerUtils.csproj" />
     <ProjectReference Include="..\GingerWin64OsSupport\GingerWin64OsSupport.csproj" />
-    <ProjectReference Include="..\GingerWPFDriverWindow\GingerWPFDriverWindow.csproj" />
   </ItemGroup>
 
   <ItemGroup>    
