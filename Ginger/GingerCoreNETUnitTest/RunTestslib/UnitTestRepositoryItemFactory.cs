@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.WebServicesDriver;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
@@ -135,7 +136,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             throw new NotImplementedException();
         }
 
-        public bool GetLatest(string path, SourceControlBase SourceControl)
+        public bool GetLatest(string path, SourceControlBase SourceControl, ProgressNotifier progressNotifier = null)
         {
             throw new NotImplementedException();
         }

@@ -387,51 +387,119 @@ namespace Ginger
         /// Processes the startup for the Ginger UI. Initializes logging, checks the user profile settings, 
         /// hides the console window, and loads the last solution if applicable.
         /// </summary>
-        /// <param name="doOptions">DoOptions object containing user-specific startup options.</param>
-        private void ProcessGingerUIStartup(DoOptions doOptions)
+        private async void ProcessGingerUIStartup(DoOptions doOptions)
         {
-            if (WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug)
+            if (WorkSpace.Instance?.UserProfile?.AppLogLevel == eAppReporterLoggingLevel.Debug)
             {
                 GingerLog.StartCustomTraceListeners();
             }
 
             HideConsoleWindow();
-            bool CheckAutoLoadSolution = false;
+            bool checkAutoLoadSolution = WorkSpace.Instance?.UserProfile?.AutoLoadLastSolution ?? false;
 
             try
             {
-                if (WorkSpace.Instance.UserProfile != null)
-                {
-                    CheckAutoLoadSolution = WorkSpace.Instance.UserProfile.AutoLoadLastSolution;
-                }
-
-                if (doOptions != null)
+                if (doOptions != null&& WorkSpace.Instance?.UserProfile!=null)
                 {
                     WorkSpace.Instance.UserProfile.AutoLoadLastSolution = false;
                 }
 
                 StartGingerUI();
 
-                
                 if (doOptions != null && !string.IsNullOrWhiteSpace(doOptions.Solution))
                 {
-                    MainWindow.ShowStatus(eStatusMsgType.PROCESS, "Loading Ginger Solution...");
-                    new DoOptionsHandler().RunAsync(doOptions);
-
-
+                    await LoadGingerSolutionAsync(doOptions);
                 }
             }
             finally
             {
-                if (doOptions != null)
+                if (doOptions != null && WorkSpace.Instance?.UserProfile != null)
                 {
-                    WorkSpace.Instance.UserProfile.AutoLoadLastSolution = CheckAutoLoadSolution;
+                    WorkSpace.Instance.UserProfile.AutoLoadLastSolution = checkAutoLoadSolution;
                 }
             }
         }
 
+        /// <summary>
+        /// Loads the Ginger solution asynchronously based on the provided DoOptions.
+        /// </summary>
+        /// <param name="doOptions">The options for loading the solution.</param>
+        private async Task LoadGingerSolutionAsync(DoOptions doOptions)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(doOptions.URL ))
+                {
+                    CLIHelper.GitProgresStatus += CLIHelper_GitProgresStatus;
+                }
+                MainWindow.ShowStatus(eStatusMsgType.PROCESS, "Loading Ginger Solution via deeplink...");
+                Reporter.ToLog(eLogLevel.INFO, "Loading Ginger Solution via deeplink...");
 
+                if (doOptions.SaveCredentials)
+                {
+                    await new DoOptionsHandler().RunAsync(doOptions);
+                }
+                else
+                {
+                    await LoadSolutionWithoutSavingCredentialsAsync(doOptions);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while processing command-line arguments", ex);
+            }
+            finally
+            {
+                if (!string.IsNullOrEmpty(doOptions.URL))
+                {
+                    CLIHelper.GitProgresStatus -= CLIHelper_GitProgresStatus;
+                }
+                this.Dispatcher.Invoke(() =>
+                {
+                    MainWindow.xProcessMsgIcon.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Empty;
+                    MainWindow.xProcessMsgTxtBlock.Text = string.Empty;
+                });
+            }
+        }
 
+        /// <summary>
+        /// Loads the solution without saving credentials asynchronously.
+        /// </summary>
+        /// <param name="doOptions">The options for loading the solution.</param>
+        private async Task LoadSolutionWithoutSavingCredentialsAsync(DoOptions doOptions)
+        {
+            if (WorkSpace.Instance?.UserProfile == null)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "User Profile is not found.");                
+            }
+
+            var gitUserName = WorkSpace.Instance?.UserProfile?.SourceControlUser;
+            var gitUserPassword = WorkSpace.Instance?.UserProfile?.SourceControlPass;
+
+            try
+            {
+                await new DoOptionsHandler().RunAsync(doOptions);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while processing command-line arguments", ex);
+            }
+            finally
+            {
+                if (WorkSpace.Instance?.UserProfile != null)
+                {
+                    WorkSpace.Instance.UserProfile.SourceControlUser = gitUserName;
+                    WorkSpace.Instance.UserProfile.SourceControlPass = gitUserPassword;
+                }
+            }
+        }
+        private void CLIHelper_GitProgresStatus(object? sender, string e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                MainWindow.xProcessMsgTxtBlock.Text = e;
+            });
+        }
 
         [DllImport("kernel32.dll")]
         static extern IntPtr GetConsoleWindow();

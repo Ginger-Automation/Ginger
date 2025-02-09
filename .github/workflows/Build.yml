@@ -1,19 +1,7 @@
-name: Ginger Build
+name: Build Solution
 
 on:
   workflow_call:
-      
-  # pull_request:
-  #   branches: 
-  #     - master
-  #     - Features/Linux-Migration
-  #     - Releases/*
-  #     - Releases/*/*
-
-  # push:
-  #   branches:
-  #     - '**'
-
 jobs:
     Build:
         name: ${{ matrix.os }}
