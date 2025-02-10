@@ -109,7 +109,7 @@ namespace Amdocs.Ginger.CoreNET
                             }
                             else if (variableRule.Active && variableRule.OperationType == InputVariableRule.eInputVariableOperation.SetVisibility && CalculateOperatorStatus(sourceVariable, variableRule))
                             {
-                                if (variableRule.OperationValue == eVisibilityOptions.Hide.ToString())
+                                if (variableRule.OperationValue == nameof(eVisibilityOptions.Hide))
                                 {
                                     variables.Remove(targetVariable);
                                     if (removedbfInputVariables.FirstOrDefault(x => x.Guid != targetVariable.Guid) == null)
@@ -117,7 +117,7 @@ namespace Amdocs.Ginger.CoreNET
                                         removedbfInputVariables.Add(targetVariable);
                                     }
                                 }
-                                else if (variableRule.OperationValue == eVisibilityOptions.Show.ToString())
+                                else if (variableRule.OperationValue == nameof(eVisibilityOptions.Show))
                                 {
                                     VariableBase variable = removedbfInputVariables.FirstOrDefault(x => x.Guid == variableRule.TargetVariableGuid);
                                     if (variable != null)
@@ -249,10 +249,8 @@ namespace Amdocs.Ginger.CoreNET
                         status = false;
                         break;
                 }
-                if (status == null)
-                {
-                    status = CodeProcessor.EvalCondition(Expression);
-                }
+
+                status ??= CodeProcessor.EvalCondition(Expression);
             }
 
             return Convert.ToBoolean(status);
