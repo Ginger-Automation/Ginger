@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using System;
 using System.Collections.Generic;
@@ -258,12 +259,41 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         /// </summary>
         private async Task HandleEnabilityOfAllElementsLocatedByAsync(Act act, float waitUntilTimeout)
         {
-            if (await _browserTab.WaitForElementsEnabledAsync(_actWebSmartSync.ElementLocateBy, _actWebSmartSync.ElementLocateValue, waitUntilTimeout))
+            try
             {
-                return;
+                await GetLocateByandValue();
+                var elementsEnabled = await _browserTab.WaitForElementsEnabledAsync(eLocateBy, eLocateValue, waitUntilTimeout);
+                if (!elementsEnabled)
+                {
+                    act.Error = "Not all elements are enabled within the given time.";
+                }
             }
-            act.Error = "Not all elements are enabled within the given time.";
+            catch (Exception ex)
+            {
+                act.Error = $"An error occurred: {ex.Message}";
+            }
         }
+
+   
+
+        eLocateBy eLocateBy;
+        string eLocateValue;
+        /// <summary>
+        /// Retrieves the locate by and value for the element.
+        /// </summary>
+        private async Task GetLocateByandValue()
+        {
+            eLocateBy = _actWebSmartSync.ElementLocateBy;
+            eLocateValue = _actWebSmartSync.ElementLocateValue;
+            if (eLocateBy == eLocateBy.POMElement)
+            {
+                var locators = await GetPOMElementLocator();
+                eLocateBy = locators.Item1;
+                eLocateValue = locators.Item2;
+            }
+        }
+
+
 
         /// <summary>
         /// Handles the operation to check if the frame is available and switches to it within the given timeout.
@@ -288,11 +318,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         /// </summary>
         private async Task HandleInvisibilityOfAllElementsLocatedByAsync(Act act, float waitUntilTimeout)
         {
-            if (await _browserTab.WaitForElementsInvisibleAsync(_actWebSmartSync.ElementLocateBy, _actWebSmartSync.ElementLocateValue, waitUntilTimeout))
+            try
             {
-                return;
+                await GetLocateByandValue();
+                var elementsInvisible = await _browserTab.WaitForElementsInvisibleAsync(eLocateBy, eLocateValue, waitUntilTimeout);
+                if (!elementsInvisible)
+                {
+                    act.Error = "Not all elements are invisible within the given time.";
+                }
             }
-            act.Error = "Not all elements are invisible within the given time.";
+            catch (Exception ex)
+            {
+                act.Error = $"An error occurred: {ex.Message}";
+            }
         }
 
         /// <summary>
@@ -313,11 +351,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         /// </summary>
         private async Task HandlePresenceOfAllElementsLocatedByAsync(Act act, float waitUntilTimeout)
         {
-            if (await _browserTab.WaitForElementsPresenceAsync(_actWebSmartSync.ElementLocateBy, _actWebSmartSync.ElementLocateValue, waitUntilTimeout))
+            try
             {
-                return;
+                await GetLocateByandValue();
+
+                var elementsPresent = await _browserTab.WaitForElementsPresenceAsync(eLocateBy, eLocateValue, waitUntilTimeout);
+                if (!elementsPresent)
+                {
+                    act.Error = "Elements are not present within the given time.";
+                }
             }
-            act.Error = "Elements are not present within the given time.";
+            catch (Exception ex)
+            {
+                act.Error = $"An error occurred: {ex.Message}";
+            }
         }
 
         /// <summary>
@@ -325,12 +372,23 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         /// </summary>
         private async Task HandleSelectedOfAllElementsLocatedByAsync(Act act, float waitUntilTimeout)
         {
-            if (await _browserTab.WaitForElementsCheckedAsync(_actWebSmartSync.ElementLocateBy, _actWebSmartSync.ElementLocateValue, waitUntilTimeout))
+            try
             {
-                return;
+                await GetLocateByandValue();
+
+                var elementsLocated = await _browserTab.WaitForElementsCheckedAsync(eLocateBy, eLocateValue, waitUntilTimeout);
+                if (!elementsLocated)
+                {
+                    act.Error = "Not all elements are selected within the given time.";
+                }
             }
-            act.Error = "Not all elements are selected within the given time.";
+            catch (Exception ex)
+            {
+                act.Error = $"An error occurred: {ex.Message}";
+            }
         }
+
+
 
         /// <summary>
         /// Handles the operation to check if the URL matches within the given timeout.
@@ -354,11 +412,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         /// </summary>
         private async Task HandleVisibilityOfAllElementsLocatedByAsync(Act act, float waitUntilTimeout)
         {
-            if (await _browserTab.WaitForElementsVisibleAsync(_actWebSmartSync.ElementLocateBy, _actWebSmartSync.ElementLocateValue, waitUntilTimeout))
+            try
             {
-                return;
+               await GetLocateByandValue();
+
+                var elementsVisible = await _browserTab.WaitForElementsVisibleAsync(eLocateBy, eLocateValue, waitUntilTimeout);
+                if (!elementsVisible)
+                {
+                    act.Error = "Not all elements are visible within the given time.";
+                }
             }
-            act.Error = "Not all elements are visible within the given time.";
+            catch (Exception ex)
+            {
+                act.Error = $"An error occurred: {ex.Message}";
+            }
         }
 
         /// <summary>
@@ -375,5 +442,60 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             return firstElement;
         }
 
+        /// <summary>
+        /// Retrieves the element locator for the first matching element.
+        /// </summary>
+        async Task<string> GetElementLocator()
+        {
+            var element = await GetFirstMatchingElementAsync();
+            return await element.GetElementLocator();
+        }
+        /// <summary>
+        /// Retrieves the CSS selector value for the first matching element.
+        /// </summary>
+        private async Task<(eLocateBy, string)> GetPOMElementLocator()
+        {
+            string locator = await GetElementLocator();
+            string cssValue = null;
+            eLocateBy locateBy = eLocateBy.Unknown; // Default value
+            if (locator != null)
+            {
+
+                switch (locator?.Split('@')[1].Split('=')[0])
+                {
+                    case "css":
+                        locateBy = eLocateBy.ByCSSSelector;
+                        break;
+                    case "xpath":
+                        locateBy = eLocateBy.ByXPath;
+                        break;
+                    case "id":
+                        locateBy = eLocateBy.ByID;
+                        break;
+                    case "name":
+                        locateBy = eLocateBy.ByName;
+                        break;
+                    case "class":
+                        locateBy = eLocateBy.ByClassName;
+                        break;
+                    case "linkText":
+                        locateBy = eLocateBy.ByLinkText;
+                        break;
+                    case "tagName":
+                        locateBy = eLocateBy.ByTagName;
+                        break;
+                    case "relXPath":
+                        locateBy = eLocateBy.ByRelXPath;
+                        break;
+                    default:
+                        throw new InvalidDataException("Locators not found.");
+                        
+                }
+
+                cssValue = locator?.Split('=')[1].Split(' ')[0];
+                cssValue = cssValue?.Trim();
+            }
+            return (locateBy, cssValue);
+        }
     }
 }

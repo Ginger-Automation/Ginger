@@ -20,6 +20,7 @@ using Deque.AxeCore.Commons;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
+using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
@@ -106,6 +107,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task<bool> ElementIsSelectedAsync(float timeOut);
 
         public Task<bool> ToBeNotVisibleAsync(float timeOut);
+        public Task<string> GetElementLocator();
 
     }
 }
