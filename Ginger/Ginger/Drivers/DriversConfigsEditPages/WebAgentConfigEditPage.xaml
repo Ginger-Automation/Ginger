@@ -209,6 +209,10 @@
                                             <CheckBox x:Name="xHideConsoleWindowCB" Content="Hide Console Window" VerticalAlignment="Center" Margin="{StaticResource ChildGap}" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" Width="{StaticResource LabelWidth}"/>
                                             <CheckBox x:Name="xFrameWindowScreenShotCB" Content="Capture active frame/window on failure" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="{StaticResource ChildGap}" Style="{StaticResource $CeckBoxStyle}"/>
                                         </StackPanel>
+                                        <StackPanel x:Name="xRemoteWebDriverUrlPanel" Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                            <Label x:Name="xRemoteWebDriverUrlLabel" Content="Remote Web Driver Url:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                            <Actions:UCValueExpression x:Name="xRemoteWebDriverUrlVE"    Width="{StaticResource VEControlWidth}"/>
+                                        </StackPanel>
                                         <StackPanel x:Name="xSeleniumUserArgumentsPanel" Orientation="Horizontal" Margin="{StaticResource ChildGap}">
                                             <Label x:Name="xSeleniumUserArgumentsLabel" Content="Selenium User Arguments:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
                                             <Actions:UCValueExpression x:Name="xSeleniumUserArgumentsVE"    Width="{StaticResource VEControlWidth}"/>

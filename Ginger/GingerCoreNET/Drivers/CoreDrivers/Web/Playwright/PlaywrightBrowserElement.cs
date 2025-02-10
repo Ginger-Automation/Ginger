@@ -1069,10 +1069,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 await Assertions.Expect(playwrightLocator).ToBeVisibleAsync(options);
                 return true;
             }
-            catch (Exception ex) 
-            { 
+            catch (Exception ex)
+            {
                 Reporter.ToLog(eLogLevel.DEBUG, $"Error in Element To Be Visible: {ex.Message}");
-                return false; 
+                return false;
             }
         }
 
@@ -1237,7 +1237,24 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return false;
             }
         }
+        /// <summary>
+        /// Gets the Playwright locator of the element.
+        /// </summary>
+        /// <returns>The Playwright locator if available, otherwise null.</returns>
+        public async Task<string?> GetElementLocator() => await GetElementLocatorAsync();
 
+        /// <summary>
+        /// Gets the Playwright locator of the element.
+        /// </summary>
+        /// <returns>The Playwright locator if available, otherwise null.</returns>
+        public async Task<string?> GetElementLocatorAsync()
+        {
+            if (_playwrightLocator == null)
+            {
+                return null;
+            }
+            return _playwrightLocator.ToString();
+        }
     }
 
 }
