@@ -38,6 +38,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public static event EventHandler<BusinessFlow> AutomateBusinessFlowEvent;
         public static event EventHandler<RunSetConfig> LoadRunSetConfigEvent;
         public static event EventHandler<Activity> LoadSharedRepoEvent;
+        public static event EventHandler LoadSourceControlDownloadPage;
         DoOptions mOpts;
         CLIHelper mCLIHelper = new();
         public async Task RunAsync(DoOptions opts)
@@ -116,10 +117,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 if (!await mCLIHelper.LoadSolutionAsync())
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                    LoadSourceControlDownloadPage?.Invoke(null, EventArgs.Empty);
                     return;
                 }
-
-
+                          
 
                 if (!string.IsNullOrWhiteSpace(mOpts.ExecutionId))
                 {

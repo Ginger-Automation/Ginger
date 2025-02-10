@@ -687,8 +687,8 @@ namespace Ginger.SourceControl
                             Reporter.ToLog(eLogLevel.ERROR, "Failed to revert local Solution changes, error: " + ex.Message);
                         }
                     }
-                    return TargetFrameworkHelper.Helper.GetLatest(sol.LocalFolder, mSourceControl);
-                }
+                    return TargetFrameworkHelper.Helper.GetLatest(sol.LocalFolder, mSourceControl, progressNotifier);
+                                    }
                 else
                 {
                     return SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI, progressNotifier);

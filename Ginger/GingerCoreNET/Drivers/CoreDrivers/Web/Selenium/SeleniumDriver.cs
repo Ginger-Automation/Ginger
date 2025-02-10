@@ -394,6 +394,12 @@ namespace GingerCore.Drivers
             }
         }
 
+
+        [UserConfigured]
+        [UserConfiguredDescription("Remote Web Driver Url")]
+        public string RemoteWebDriverUrl { get; set; }
+
+
         protected IWebDriver Driver;
         protected eBrowserType mBrowserType;
         protected NgWebDriver ngDriver;
@@ -786,7 +792,14 @@ namespace GingerCore.Drivers
                             driverService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
                             AddCustomDriverPath(driverService);
                             driverService.HideCommandPromptWindow = HideConsoleWindow;
-                            Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            if (!string.IsNullOrEmpty(RemoteWebDriverUrl))
+                            {
+                                Driver = new RemoteWebDriver(new Uri(RemoteWebDriverUrl), ieOptions);
+                            }
+                            else
+                            {
+                                Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
                         }
                         else
                         {
@@ -820,7 +833,14 @@ namespace GingerCore.Drivers
                             driverService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
                             AddCustomDriverPath(driverService);
                             driverService.HideCommandPromptWindow = HideConsoleWindow;
-                            Driver = new EdgeDriver((EdgeDriverService)driverService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            if (!string.IsNullOrEmpty(RemoteWebDriverUrl))
+                            {
+                                Driver = new RemoteWebDriver(new Uri(RemoteWebDriverUrl), EDOpts);
+                            }
+                            else
+                            {
+                                Driver = new EdgeDriver((EdgeDriverService)driverService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
                             this.mDriverProcessId = driverService.ProcessId;
                         }
 
@@ -1096,7 +1116,15 @@ namespace GingerCore.Drivers
 
             try
             {
-                Driver = new ChromeDriver((ChromeDriverService)driverService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                if (!string.IsNullOrEmpty(RemoteWebDriverUrl))
+                {
+                    Driver = new RemoteWebDriver(new Uri(RemoteWebDriverUrl), options);
+                }
+                else
+                {
+                    Driver = new ChromeDriver((ChromeDriverService)driverService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                }
+
                 this.mDriverProcessId = driverService.ProcessId;
             }
             catch (Exception ex)

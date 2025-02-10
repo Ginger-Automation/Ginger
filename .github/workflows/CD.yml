@@ -34,12 +34,12 @@ on:
           - 'No'  # Do not add SSL certificate
 jobs:            
     Builder:
-        name: Ginger Builder
+        name: Build Solution
         uses: ./.github/workflows/Build.yml
         secrets: inherit
 
     Ginger_Unit-Test:
-        name: Ginger Unit-Test
+        name: Execute Unit Tests
         needs: Builder
         uses: ./.github/workflows/Test.yml
         secrets: inherit
