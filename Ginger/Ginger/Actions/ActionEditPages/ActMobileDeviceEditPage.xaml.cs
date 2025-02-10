@@ -325,10 +325,18 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.PushFileToDevice:
                     xFilePathLbl.Content = "Local File to Push:";
                     xFolderPathLbl.Content = "Device Target Folder:";
+                    xFilePathLbl.Visibility = Visibility.Visible;
+                    xFilePathTextBox.Visibility = Visibility.Visible;
+                    xFolderPathLbl.Visibility = Visibility.Visible;
+                    xFolderPathTxtBox.Visibility = Visibility.Visible;
                     xFileTransferPnl.Visibility = Visibility.Visible;
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.PullFileFromDevice:
+                    xFilePathLbl.Visibility = Visibility.Visible;
+                    xFilePathTextBox.Visibility = Visibility.Visible;
+                    xFolderPathLbl.Visibility = Visibility.Visible;
+                    xFolderPathTxtBox.Visibility = Visibility.Visible;
                     xFileTransferPnl.Visibility = Visibility.Visible;
                     break;
 

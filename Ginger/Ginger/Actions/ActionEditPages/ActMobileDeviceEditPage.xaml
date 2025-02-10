@@ -6,9 +6,7 @@
       xmlns:UserControlsLib1="clr-namespace:Ginger.UserControlsLib" 
       xmlns:Activities="clr-namespace:Ginger.Activities"
       xmlns:Actions="clr-namespace:Ginger.Actions"
-      xmlns:Ginger="clr-namespace:Ginger"
-      xmlns:UserControlsLib1="clr-namespace:Ginger.UserControlsLib" xmlns:Activities="clr-namespace:Ginger.Activities"  xmlns:UserControls="clr-namespace:Ginger.UserControls"
-        xmlns:Actions="clr-namespace:Ginger.Actions"
+      xmlns:Ginger="clr-namespace:Ginger"            
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
 	Title="ActMobileDeviceEditPage">
@@ -22,6 +20,7 @@
         <StackPanel x:Name="xAppPnl" HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="6,10,0,0" Visibility="Collapsed">
             <Label Style="{StaticResource $LabelStyle}" Content="Application package:"/>
             <Actions:UCValueExpression x:Name="xAppPackageVE" HorizontalAlignment="Left" VerticalAlignment="Center" Width="330" Margin="-1,5,0,0"/>
+            <TextBlock Style="{StaticResource $TextBlockStyle}" FontSize="10" TextWrapping="Wrap" Width="330" Text="Set as 'default' for pointing the initial app package, 'current' for pointing the current running app or specifiy the wanted application package to point on."/>
         </StackPanel>
 
         <StackPanel x:Name="xInputPnl"  HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="7,10,0,0" Visibility="Collapsed">
