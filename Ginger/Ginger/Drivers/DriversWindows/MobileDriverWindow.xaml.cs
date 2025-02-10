@@ -39,6 +39,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+
 namespace Ginger.Drivers.DriversWindows
 {
     /// <summary>
@@ -62,12 +63,13 @@ namespace Ginger.Drivers.DriversWindows
         bool mWindowIsOpen = true;
         bool IsRecording = false;
 
-        ObservableList<DeviceInfo> mDeviceDetails = [];
+       
+        ObservableList <DeviceInfo> mDeviceDetails = [];
 
         public MobileDriverWindow(DriverBase driver, Agent agent)
         {
             InitializeComponent();
-
+            
             mDriver = (IMobileDriverWindow)driver;
             mAgent = agent;
 
@@ -78,7 +80,7 @@ namespace Ginger.Drivers.DriversWindows
             SetDeviceDetailsGridView();
             SetDeviceMetricsGridView();
         }
-
+       
         private async void RefreshDetailsTable(object sender, RoutedEventArgs e)
         {
             await this.Dispatcher.InvokeAsync(async () =>
@@ -201,7 +203,13 @@ namespace Ginger.Drivers.DriversWindows
             xHighlighterBorder.Height = 0;
             xHighlighterBorder.Visibility = Visibility.Collapsed;
         }
-
+        public void UpdateRotateIcon()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                SetOrientationButton();
+            });
+        }
         public void UpdateRecordingImage(bool ShowRecordIcon)
         {
             Dispatcher.Invoke(() =>
@@ -267,15 +275,16 @@ namespace Ginger.Drivers.DriversWindows
                     }
                     break;
 
+                case DriverBase.eDriverMessageType.RotateEvent:                    
+                    UpdateRotateIcon(); 
+                    break;
+
                 case DriverBase.eDriverMessageType.RecordingEvent:
                     IsRecording = sender != null && (bool)sender;
-
                     UpdateRecordingImage(IsRecording);
-
                     break;
 
                 case DriverBase.eDriverMessageType.HighlightElement:
-
                     if (sender is Amdocs.Ginger.Common.UIElement.ElementInfo)
                     {
                         HighlightElementEvent(sender as Amdocs.Ginger.Common.UIElement.ElementInfo);
@@ -1323,6 +1332,7 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
 
+       
         private void DoContinualDeviceScreenshotRefresh()
         {
             Task.Run(() =>

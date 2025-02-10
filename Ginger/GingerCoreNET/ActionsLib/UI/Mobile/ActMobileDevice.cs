@@ -75,6 +75,32 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(AuthResultSimulation));
             }
         }
+        public eRotateDeviceState RotateDeviceState
+        {
+            get
+            {
+                return GetOrCreateInputParam<eRotateDeviceState>(nameof(RotateDeviceState), eRotateDeviceState.Portrait);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(RotateDeviceState), value.ToString());
+                OnPropertyChanged(nameof(RotateDeviceState));
+            }
+        }
+
+        public ePerformanceTypes PerformanceTypes
+        {
+            get
+            {
+                return GetOrCreateInputParam<ePerformanceTypes>(nameof(PerformanceTypes), ePerformanceTypes.Batteryinfo);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(PerformanceTypes), value.ToString());
+                OnPropertyChanged(nameof(PerformanceTypes));
+            }
+        }
+
 
         public eAuthResultDetailsFailureSimulation AuthResultDetailsFailureSimulation
         {
@@ -112,6 +138,33 @@ namespace GingerCore.Actions
             {
                 AddOrUpdateInputParamValue(nameof(MobilePressKey), value.ToString());
                 OnPropertyChanged(nameof(MobilePressKey));
+            }
+        }
+     
+      
+        public ActInputValue FilePathInput
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilePathInput));
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilePathInput), value.ToString());
+                OnPropertyChanged(nameof(FilePathInput));
+            }
+        }
+
+        public ActInputValue FolderPathInput
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FolderPathInput));
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FolderPathInput), value.ToString());
+                OnPropertyChanged(nameof(FolderPathInput));
             }
         }
 
@@ -192,7 +245,7 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(ActionInput));
             }
         }
-
+      
         public ActInputValue PressDuration
         {
             get
@@ -285,7 +338,29 @@ namespace GingerCore.Actions
             [EnumValueDescription("Cancel")]
             Cancel
         }
+        public enum ePerformanceTypes
+        {
+            [EnumValueDescription("cpuinfo")]
+            Cpuinfo,
+            [EnumValueDescription("memoryinfo")]
+            Memoryinfo, 
+            [EnumValueDescription("batteryinfo")]
+            Batteryinfo,
+            [EnumValueDescription("networkinfo")]
+            Networkinfo,
+            [EnumValueDescription("diskinfo")]
+            Diskinfo,
+        }
 
+
+
+        public enum eRotateDeviceState
+        {
+            [EnumValueDescription("Landscape")]
+            Landscape,
+            [EnumValueDescription("Portrait")]
+            Portrait
+        }
         public enum eAuthResultDetailsFailureSimulation
         {
             [EnumValueDescription("Not Recognized")]
@@ -383,6 +458,40 @@ namespace GingerCore.Actions
             GetAvailableContexts,
             [EnumValueDescription("Set Context")]
             SetContext,
+            [EnumValueDescription("Open Deep Link")]
+            OpenDeeplink,
+            [EnumValueDescription("Is Keyboard Visible")]
+            IsKeyboardVisible,
+            [EnumValueDescription("Is Device Locked")] 
+            IsLocked,
+            [EnumValueDescription("Is App Installed")]
+            IsAppInstalled,
+            [EnumValueDescription("Remove App")]
+            RemoveApp,
+            [EnumValueDescription("Get App State")]
+            QueryAppState,
+            [EnumValueDescription("Simulate Device Rotation")]
+            RotateSimulation,
+            [EnumValueDescription("Run Script")]
+            RunScript,
+            [EnumValueDescription("Start Recording Screen")]
+            StartRecordingScreen,
+            [EnumValueDescription("Stop Recording Screen")]
+            StopRecordingScreen,
+            [EnumValueDescription("Hide Keyboard")]
+            HideKeyboard,
+            [EnumValueDescription("Push File to Device")]
+            PushFileToDevice,
+            [EnumValueDescription("Pull File From Device")]
+            PullFileFromDevice,
+            [EnumValueDescription("Set Clipboard Text")]
+            SetClipboardText,
+            [EnumValueDescription("Get Specific Performance Data")]
+            GetSpecificPerformanceData,
+            [EnumValueDescription("Get Device Logs")]
+            GetDeviceLogs,
+            [EnumValueDescription("Get Clipboard Text")]
+            GetClipboardText,
         }
 
         public enum ePressKey
