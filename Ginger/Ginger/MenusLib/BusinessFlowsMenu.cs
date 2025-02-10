@@ -134,18 +134,18 @@ namespace Ginger.MenusLib
             {
                 ITreeViewItem iv = (ITreeViewItem)i.Tag;
 
-                if (iv.NodeObject() is not null and BusinessFlow)
+                if (iv.NodeObject() is BusinessFlow businessFlow)
                 {
-                    App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, (BusinessFlow)iv.NodeObject());
+                    App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, businessFlow);
                 }
             }
         }
 
         private static BusinessFlow GetBusinessFlowToAutomate()
         {
-            if (mBusFlowsPage.SelectedItemObject is not null and BusinessFlow)
+            if (mBusFlowsPage.SelectedItemObject is BusinessFlow businessFlow)
             {
-                return (BusinessFlow)mBusFlowsPage.SelectedItemObject;
+                return businessFlow;
             }
             else if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Count > 0)
             {
