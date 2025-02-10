@@ -42,7 +42,10 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             mAct = act;
             var context = Context.GetAsContext(mAct.Context);
             ExecutedFrom = context.ExecutedFrom;
-            PomElementGUID = elementLocateValue.ToString().Split('_');
+            if (!string.IsNullOrEmpty(elementLocateValue))
+            {
+                PomElementGUID = elementLocateValue.ToString().Split('_');
+            }
 
         }
 
@@ -295,7 +298,11 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 return currentElementDelta.ElementInfo;
             }
         }
-
+        /// <summary>
+        /// Updates element details during self-healing, preserving locators with categories
+        /// that are not present in the new data to maintain backward compatibility.
+        /// </summary>
+        /// <param name="deltaElementInfos">List of delta information for elements</param>
         private void UpdateElementSelfHealingDetails(List<DeltaElementInfo> deltaElementInfos)
         {
             foreach (var elementInfo in GetCurrentPOM().MappedUIElements)
@@ -307,8 +314,21 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                     {
                         if (deltaInfo.DeltaStatus == eDeltaStatus.Changed)
                         {
-                            elementInfo.Properties = deltaInfo.ElementInfo.Properties;
-                            elementInfo.Locators = deltaInfo.ElementInfo.Locators;
+
+                            //Merge Both Category Properties
+
+                            elementInfo.Properties = CategoryMergingUtils.MergeByCategory(
+                                                        elementInfo.Properties,
+                                                        deltaInfo.ElementInfo.Properties,
+                                                        p => p.Category);
+
+                            //Merge Both Category Locators
+
+                            elementInfo.Locators = CategoryMergingUtils.MergeByCategory(
+                                                    elementInfo.Locators,
+                                                    deltaInfo.ElementInfo.Locators,
+                                                    l => l.Category);
+
                             elementInfo.LastUpdatedTime = DateTime.Now.ToString();
                             elementInfo.SelfHealingInfo = SelfHealingInfoEnum.ElementModified;
                         }
@@ -356,6 +376,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 pomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList = GingerCore.Platforms.PlatformsInfo.PlatformInfoBase.GetPlatformImpl(agent.Platform).GetLearningLocators();
                 pomDeltaUtils.KeepOriginalLocatorsOrderAndActivation = true;
                 pomDeltaUtils.PropertiesChangesToAvoid = DeltaControlProperty.ePropertiesChangesToAvoid.All;
+                pomDeltaUtils.AcceptElementFoundByMatcher = true;
 
                 mAct.ExInfo += DateTime.Now.ToString() + " Self healing operation attempting to auto update application model";
                 this.GetCurrentPOM().StartDirtyTracking();

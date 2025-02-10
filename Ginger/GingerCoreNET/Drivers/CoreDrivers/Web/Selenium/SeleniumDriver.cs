@@ -394,12 +394,18 @@ namespace GingerCore.Drivers
             }
         }
 
+
+        [UserConfigured]
+        [UserConfiguredDescription("Remote Web Driver Url")]
+        public string RemoteWebDriverUrl { get; set; }
+
+
         protected IWebDriver Driver;
         protected eBrowserType mBrowserType;
         protected NgWebDriver ngDriver;
         private String DefaultWindowHandler = null;
 
-        private Proxy mProxy = new Proxy();
+        private Proxy mProxy = new();
 
         // FOr BMP - Browser Mob Proxy
         Server BMPServer;
@@ -717,7 +723,6 @@ namespace GingerCore.Drivers
 
                     #endregion
 
-
                     #region EDGE
                     case eBrowserType.Edge:
                         if (OpenIEModeInEdge)
@@ -787,7 +792,14 @@ namespace GingerCore.Drivers
                             driverService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
                             AddCustomDriverPath(driverService);
                             driverService.HideCommandPromptWindow = HideConsoleWindow;
-                            Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            if (!string.IsNullOrEmpty(RemoteWebDriverUrl))
+                            {
+                                Driver = new RemoteWebDriver(new Uri(RemoteWebDriverUrl), ieOptions);
+                            }
+                            else
+                            {
+                                Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
                         }
                         else
                         {
@@ -821,7 +833,14 @@ namespace GingerCore.Drivers
                             driverService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
                             AddCustomDriverPath(driverService);
                             driverService.HideCommandPromptWindow = HideConsoleWindow;
-                            Driver = new EdgeDriver((EdgeDriverService)driverService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            if (!string.IsNullOrEmpty(RemoteWebDriverUrl))
+                            {
+                                Driver = new RemoteWebDriver(new Uri(RemoteWebDriverUrl), EDOpts);
+                            }
+                            else
+                            {
+                                Driver = new EdgeDriver((EdgeDriverService)driverService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
                             this.mDriverProcessId = driverService.ProcessId;
                         }
 
@@ -1097,13 +1116,21 @@ namespace GingerCore.Drivers
 
             try
             {
-                Driver = new ChromeDriver((ChromeDriverService)driverService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                if (!string.IsNullOrEmpty(RemoteWebDriverUrl))
+                {
+                    Driver = new RemoteWebDriver(new Uri(RemoteWebDriverUrl), options);
+                }
+                else
+                {
+                    Driver = new ChromeDriver((ChromeDriverService)driverService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                }
+
                 this.mDriverProcessId = driverService.ProcessId;
             }
             catch (Exception ex)
             {
 
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && ex.Message.ToLower().Contains("no such file or directory"))
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && ex.Message.Contains("no such file or directory", StringComparison.CurrentCultureIgnoreCase))
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Error while launching chromedriver", ex);
                     Reporter.ToLog(eLogLevel.INFO, "Chrome binary isn't found at default location, checking for Chromium...");
@@ -1148,7 +1175,7 @@ namespace GingerCore.Drivers
                 }
             }
         }
-        private bool GetIsRunningInDocker()
+        private static bool GetIsRunningInDocker()
         {
             var env = System.Environment.GetEnvironmentVariable("GINGER_EXE_ENV");
             return env == "docker";
@@ -1161,21 +1188,17 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.INFO, $"Failed to Download latest {mBrowserType} driver. Attempting to Update {mBrowserType} driver to latest using System Proxy Settings....");
                 DriverOptions driverOptions = null;
 
-                if (mBrowserType == eBrowserType.Chrome)
+                driverOptions = mBrowserType switch
                 {
-                    driverOptions = new ChromeOptions();
-                }
-                else if (mBrowserType == eBrowserType.Edge)
+                    eBrowserType.Chrome => new ChromeOptions(),
+                    eBrowserType.Edge => new EdgeOptions(),
+                    eBrowserType.FireFox => new FirefoxOptions(),
+                    _ => null
+                };
+
+                if (driverOptions == null)
                 {
-                    driverOptions = new EdgeOptions();
-                }
-                else if (mBrowserType == eBrowserType.FireFox)
-                {
-                    driverOptions = new FirefoxOptions();
-                }
-                else
-                {
-                    //Other browsers not supported, return without update
+                    // Other browsers not supported, return without update
                     return "";
                 }
 
@@ -1261,7 +1284,7 @@ namespace GingerCore.Drivers
             }
             else
             {
-                string error = string.Format("The '{0}' OS is not supported by Ginger Selenium", RuntimeInformation.OSDescription);
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("The '{0}' OS is not supported by Ginger Selenium", RuntimeInformation.OSDescription));
                 return null;
             }
         }
@@ -1282,7 +1305,7 @@ namespace GingerCore.Drivers
         /// </summary>
         /// <param name="fileName">driver name</param>
         /// <returns></returns>
-        private string DriverServiceFileName(string fileName)
+        private static string DriverServiceFileName(string fileName)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -1309,12 +1332,9 @@ namespace GingerCore.Drivers
             if (mProxy == null)
             {
                 return;
-
-
             }
 
             var proxy = new Proxy();
-
 
             options.Proxy = proxy;
 
@@ -1345,17 +1365,14 @@ namespace GingerCore.Drivers
 
                 case ProxyKind.AutoDetect:
                     options.Proxy.Kind = ProxyKind.AutoDetect;
-
                     break;
 
                 case ProxyKind.System:
                     options.Proxy.Kind = ProxyKind.System;
-
                     break;
 
                 default:
                     options.Proxy.Kind = ProxyKind.System;
-
                     break;
             }
         }
@@ -1585,7 +1602,7 @@ namespace GingerCore.Drivers
                 return;
             }
 
-            if (sURL.ToLower().StartsWith("www"))
+            if (sURL.StartsWith("www", StringComparison.CurrentCultureIgnoreCase))
             {
                 sURL = "http://" + sURL;
             }
@@ -1697,181 +1714,145 @@ namespace GingerCore.Drivers
 
         private void DoRunAction(Act act)
         {
-            Type ActType = act.GetType();
-            //find Act handler, code is more readable than if/else...
+            // Get the type of the act  
+            Type actType = act.GetType();
 
-            if (ActType == typeof(ActUIElement))
+            // Use switch expression based on the type of act  
+            switch (act)
             {
-                HandleActUIElement((ActUIElement)act);
-                return;
-            }
+                case ActUIElement uiElement:
+                    HandleActUIElement(uiElement);
+                    break;
 
-            if (ActType == typeof(ActGotoURL))
-            {
-                GotoURL((ActGotoURL)act, act.GetInputParamCalculatedValue("Value"));
-                return;
-            }
-            if (ActType == typeof(ActGenElement))
-            {
-                GenElementHandler((ActGenElement)act);
-                return;
-            }
-            if (ActType == typeof(ActSmartSync))
-            {
-                SmartSyncHandler((ActSmartSync)act);
-                return;
-            }
-            if (ActType == typeof(ActWebSmartSync))
-            {
-                WebSmartSyncHandler((ActWebSmartSync)act);
-                return;
-            }
-            if (ActType == typeof(ActTextBox))
-            {
-                ActTextBoxHandler((ActTextBox)act);
-                return;
-            }
-            if (ActType == typeof(ActPWL))
-            {
-                PWLElementHandler((ActPWL)act);
-                return;
-            }
-            if (ActType == typeof(ActHandleBrowserAlert))
-            {
-                HandleBrowserAlert((ActHandleBrowserAlert)act);
-                return;
-            }
-            if (ActType == typeof(ActVisualTesting))
-            {
-                HandleActVisualTesting((ActVisualTesting)act);
-                return;
-            }
+                case ActGotoURL gotoUrl:
+                    GotoURL(gotoUrl, act.GetInputParamCalculatedValue("Value"));
+                    break;
 
-            //TODO: please create small function for each Act
+                case ActGenElement genElement:
+                    GenElementHandler(genElement);
+                    break;
 
-            if (ActType == typeof(ActPassword))
-            {
-                ActPasswordHandler((ActPassword)act);
-                return;
+                case ActSmartSync smartSync:
+                    SmartSyncHandler(smartSync);
+                    break;
+
+                case ActWebSmartSync webSmartSync:
+                    WebSmartSyncHandler(webSmartSync);
+                    break;
+
+                case ActTextBox textBox:
+                    ActTextBoxHandler(textBox);
+                    break;
+
+                case ActPWL pwl:
+                    PWLElementHandler(pwl);
+                    break;
+
+                case ActHandleBrowserAlert handleBrowserAlert:
+                    HandleBrowserAlert(handleBrowserAlert);
+                    break;
+
+                case ActVisualTesting visualTesting:
+                    HandleActVisualTesting(visualTesting);
+                    break;
+
+                case ActPassword password:
+                    ActPasswordHandler(password);
+                    break;
+
+                case ActLink link:
+                    ActLinkHandler(link);
+                    break;
+
+                case ActButton button:
+                    ActButtonHandler(button);
+                    break;
+
+                case ActCheckbox checkbox:
+                    ActCheckboxHandler(checkbox);
+                    break;
+
+                case ActDropDownList dropdown:
+                    ActDropDownListHandler(dropdown);
+                    break;
+
+                case ActRadioButton radioButton:
+                    ActRadioButtonHandler(radioButton);
+                    break;
+
+                case ActMultiselectList multiselectList:
+                    string csv = act.GetInputParamValue("Value");
+                    string[] parts = csv.Split('|'); // Make sure values are separated by '|'  
+                    List<string> optionList = [.. parts];
+
+                    switch (multiselectList.ActMultiselectListAction)
+                    {
+                        case ActMultiselectList.eActMultiselectListAction.SetSelectedValueByIndex:
+                            SelectMultiselectListOptionsByIndex(multiselectList, optionList.ConvertAll(int.Parse));
+                            break;
+
+                        case ActMultiselectList.eActMultiselectListAction.SetSelectedValueByText:
+                            SelectMultiselectListOptionsByText(multiselectList, optionList);
+                            break;
+
+                        case ActMultiselectList.eActMultiselectListAction.SetSelectedValueByValue:
+                            SelectMultiselectListOptionsByValue(multiselectList, optionList);
+                            break;
+
+                        case ActMultiselectList.eActMultiselectListAction.ClearAllSelectedValues:
+                            DeSelectMultiselectListOptions(multiselectList);
+                            break;
+                    }
+                    break;
+
+                case ActHello hello:
+                    // TODO: return hello from...  
+                    break;
+
+                case ActScreenShot screenShot:
+                    ScreenshotHandler(screenShot);
+                    break;
+
+                case ActSubmit submit:
+                    ActsubmitHandler(submit);
+                    break;
+
+                case ActLabel label:
+                    ActLabelHandler(label);
+                    break;
+
+                case ActWebSitePerformanceTiming websitePerformanceTiming:
+                    ActWebSitePerformanceTimingHandler(websitePerformanceTiming);
+                    break;
+
+                case ActSwitchWindow switchWindow:
+                    ActSwitchWindowHandler(switchWindow);
+                    break;
+
+                case ActBrowserElement browserElement:
+                    ActBrowserElementHandler(browserElement);
+                    break;
+
+                case ActAgentManipulation agentManipulation:
+                    ActAgentManipulationHandler(agentManipulation);
+                    break;
+
+                case ActAccessibilityTesting accessibilityTesting:
+                    ActAccessibility(accessibilityTesting);
+                    break;
+
+                default:
+                    act.Error = "Run Action Failed due to unrecognized action type - " + actType.ToString();
+                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                    break;
             }
-
-            if (ActType == typeof(ActLink))
-            {
-                ActLinkHandler((ActLink)act);
-                return;
-            }
-
-            if (ActType == typeof(ActButton))
-            {
-                ActButtonHandler((ActButton)act);
-                return;
-            }
-
-            if (ActType == typeof(ActCheckbox))
-            {
-                ActCheckboxHandler((ActCheckbox)act);
-                return;
-            }
-
-            if (ActType == typeof(ActDropDownList))
-            {
-                ActDropDownListHandler((ActDropDownList)act);
-                return;
-            }
-
-            if (ActType == typeof(ActRadioButton))
-            {
-                ActRadioButtonHandler((ActRadioButton)act);
-                return;
-            }
-
-            if (ActType == typeof(ActMultiselectList))
-            {
-                ActMultiselectList el = (ActMultiselectList)act;
-                string csv = act.GetInputParamValue("Value"); string[] parts = csv.Split('|'); //TODO: make sure the values passed are separated by '|'
-                List<string> optionList = new List<string>(parts);
-                switch (el.ActMultiselectListAction)
-                {
-                    case ActMultiselectList.eActMultiselectListAction.SetSelectedValueByIndex:
-                        SelectMultiselectListOptionsByIndex(el, optionList.ConvertAll(s => Int32.Parse(s))); // list<string> has to get converted to list<int>
-                        break;
-                    case ActMultiselectList.eActMultiselectListAction.SetSelectedValueByText:
-                        SelectMultiselectListOptionsByText(el, optionList);
-                        break;
-                    case ActMultiselectList.eActMultiselectListAction.SetSelectedValueByValue:
-                        SelectMultiselectListOptionsByValue(el, optionList);
-                        break;
-                    case ActMultiselectList.eActMultiselectListAction.ClearAllSelectedValues:
-                        DeSelectMultiselectListOptions(el);
-                        break;
-                }
-
-                return;
-            }
-
-
-            if (ActType == typeof(ActHello))
-            {
-                //TODO: return hellow from...
-                return;
-            }
-
-            if (ActType == typeof(ActScreenShot))
-            {
-                ScreenshotHandler((ActScreenShot)act);
-                return;
-            }
-
-            if (ActType == typeof(ActSubmit))
-            {
-                ActsubmitHandler((ActSubmit)act);
-                return;
-            }
-
-            if (ActType == typeof(ActLabel))
-            {
-                ActLabelHandler((ActLabel)act);
-                return;
-            }
-
-            if (ActType == typeof(ActWebSitePerformanceTiming))
-            {
-                ActWebSitePerformanceTiming ABPT = (ActWebSitePerformanceTiming)act;
-                ActWebSitePerformanceTimingHandler(ABPT);
-                return;
-            }
-
-            if (ActType == typeof(ActSwitchWindow))
-            {
-                ActSwitchWindowHandler((ActSwitchWindow)act);
-                return;
-            }
-
-            if (ActType == typeof(ActBrowserElement))
-            {
-                ActBrowserElementHandler((ActBrowserElement)act);
-                return;
-            }
-
-            if (ActType == typeof(ActAgentManipulation))
-            {
-                ActAgentManipulationHandler((ActAgentManipulation)act);
-                return;
-            }
-            if (act is ActAccessibilityTesting actAccessibilityTesting)
-            {
-                ActAccessibility(actAccessibilityTesting);
-                return;
-            }
-            act.Error = "Run Action Failed due to unrecognized action type - " + ActType.ToString();
-            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
         }
 
         private void ActAccessibility(ActAccessibilityTesting act)
         {
             string gotoUrl = string.Empty;
             IWebElement e = null;
-            if ((act.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString()))
+            if (act.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == nameof(ActAccessibilityTesting.eTarget.Element))
             {
                 if (!string.IsNullOrEmpty(act.LocateValueCalculated) && act.LocateBy != eLocateBy.NA)
                 {
@@ -4255,6 +4236,10 @@ namespace GingerCore.Drivers
 
                         if (elem == null && pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent) != null)
                         {
+                            if (isAppiumSession)
+                            {
+                                currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo(this.PomCategory);
+                            }
                             elem = LocateElementByLocators(currentPOMElementInfo, currentPOM.MappedUIElements, false, pomExcutionUtil);
                             if (elem != null)
                             {
@@ -5575,7 +5560,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        Regex AttRegex = new Regex("@[a-zA-Z]*", RegexOptions.Compiled);
+        Regex AttRegex = new("@[a-zA-Z]*", RegexOptions.Compiled);
         private void CreateXpathFromUserTemplate(string xPathTemplate, HTMLElementInfo hTMLElement)
         {
             try
@@ -5944,11 +5929,11 @@ namespace GingerCore.Drivers
 
         private void SwitchFrameFromCurrent(ElementInfo ElementInfo)
         {
-            string[] spliter = new string[] { "/" };
+            string[] spliter = ["/"];
             string[] elementsTypesPath = ElementInfo.XPath.Split(spliter, StringSplitOptions.RemoveEmptyEntries);
             string elementType = elementsTypesPath[^1];
 
-            int index = elementType.IndexOf("[");
+            int index = elementType.IndexOf('[');
             if (index != -1)
             {
                 elementType = elementType[..index];
@@ -5983,7 +5968,7 @@ namespace GingerCore.Drivers
 
         private void SwitchAllFramePathes(ElementInfo ElementInfo)
         {
-            string[] spliter = new string[] { "," };
+            string[] spliter = [","];
             string[] iframesPathes = ElementInfo.Path.Split(spliter, StringSplitOptions.RemoveEmptyEntries);
             foreach (string iframePath in iframesPathes)
             {
@@ -6016,12 +6001,12 @@ namespace GingerCore.Drivers
 
         private string GeneratePath(string xpath)
         {
-            string[] spliter = new string[] { "/" };
+            string[] spliter = [","];
             string[] elementsTypesPath = xpath.Split(spliter, StringSplitOptions.RemoveEmptyEntries);
             string elementType = elementsTypesPath[^1];
 
             string path = string.Empty;
-            int index = elementType.IndexOf("[");
+            int index = elementType.IndexOf('[');
             if (index != -1)
             {
                 elementType = elementType[..index];
@@ -6044,15 +6029,15 @@ namespace GingerCore.Drivers
             string elementType = string.Empty;
             if (!string.IsNullOrEmpty(xpath))
             {
-                string[] xpathSpliter = new string[] { "/" };
+                string[] xpathSpliter = [","];
                 string[] elementsTypesPath = xpath.Split(xpathSpliter, StringSplitOptions.RemoveEmptyEntries);
-                if (!elementsTypesPath.Any())
+                if (elementsTypesPath.Length == 0)
                 {
                     return;
                 }
                 elementType = elementsTypesPath[^1];
 
-                int index = elementType.IndexOf("[");
+                int index = elementType.IndexOf('[');
                 if (index != -1)
                 {
                     elementType = elementType[..index];
@@ -6067,7 +6052,7 @@ namespace GingerCore.Drivers
 
             if (path != null)
             {
-                string[] spliter = new string[] { "," };
+                string[] spliter = [","];
                 string[] iframesPathes = path.Split(spliter, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string iframePath in iframesPathes)
                 {
@@ -6186,11 +6171,11 @@ namespace GingerCore.Drivers
 
         private string GenetratePath(string path, string xpath, string tagName)
         {
-            string[] spliter = new string[] { "/" };
+            string[] spliter = ["/"];
             string[] elementsTypesPath = xpath.Split(spliter, StringSplitOptions.RemoveEmptyEntries);
             string elementType = elementsTypesPath[^1];
 
-            int index = elementType.IndexOf("[");
+            int index = elementType.IndexOf('[');
             if (index != -1)
             {
                 elementType = elementType[..index];
@@ -6215,11 +6200,11 @@ namespace GingerCore.Drivers
 
         private string GenerateXpath(string path, string xpath, string tagName, int id, int totalSameTags)
         {
-            string[] spliter = new string[] { "/" };
+            string[] spliter = ["/"];
             string[] elementsTypesPath = xpath.Split(spliter, StringSplitOptions.RemoveEmptyEntries);
             string elementType = elementsTypesPath[^1];
 
-            int index = elementType.IndexOf("[");
+            int index = elementType.IndexOf('[');
             if (index != -1)
             {
                 elementType = elementType[..index];
@@ -6243,7 +6228,7 @@ namespace GingerCore.Drivers
             string id = EL.GetAttribute("id");
             string value = EL.GetAttribute("value");
 
-            if (tagName.ToUpper() == "TABLE")
+            if (tagName.Equals("TABLE", StringComparison.CurrentCultureIgnoreCase))
             {
                 return "Table";
             }
@@ -6419,9 +6404,9 @@ namespace GingerCore.Drivers
                     {
                         ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
                     }
-                    if (ElementInfo is HTMLElementInfo && string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).RelXpath))
+                    if (ElementInfo is HTMLElementInfo htmlElementInfo && string.IsNullOrEmpty(htmlElementInfo.RelXpath))
                     {
-                        ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
+                        htmlElementInfo.RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
                     }
                     if (!string.IsNullOrEmpty(ElementInfo.XPath))
                     {
@@ -6500,7 +6485,7 @@ namespace GingerCore.Drivers
                     IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
                     foreach (string attribuet in attributesList)
                     {
-                        javascriptDriver.ExecuteScript(attribuet, new object[] { LastHighLightedElement });
+                        javascriptDriver.ExecuteScript(attribuet, [LastHighLightedElement]);
                     }
                 }
             }
@@ -7158,7 +7143,7 @@ namespace GingerCore.Drivers
             byte[] byteImage;
             using (MemoryStream ms = new MemoryStream())
             {
-                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                image.Save(ms, format: System.Drawing.Imaging.ImageFormat.Png);
                 byteImage = ms.ToArray();
             }
             return Convert.ToBase64String(byteImage);
@@ -7477,42 +7462,6 @@ namespace GingerCore.Drivers
             }
         }
 
-        /*        void CheckifPageLoaded()
-                {
-                    //TODO: slow function, try to check alternatives or let the user config wait for
-                    try
-                    {
-                        bool DomElementIncreasing = true;
-                        int CurrentDomElementSize = 0;
-                        int SameSizzeCounter = 0;
-                        while (DomElementIncreasing)
-                        {
-                            Thread.Sleep(300);
-
-                            int instanceSize = Driver.FindElements(By.CssSelector("*")).Count;
-
-                            if (instanceSize > CurrentDomElementSize)
-                            {
-                                CurrentDomElementSize = instanceSize;
-                                SameSizzeCounter = 0;
-                                continue;
-                            }
-                            else
-                            {
-                                SameSizzeCounter++;
-                                if (SameSizzeCounter == 5)
-                                {
-                                    DomElementIncreasing = false;
-                                }
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        // Do nothing...
-                    }
-                }
-        */
         void CheckifPageLoaded()
         {
             WebDriverWait webDriverWait = new WebDriverWait(Driver, TimeSpan.FromSeconds(ImplicitWait));
@@ -7524,10 +7473,9 @@ namespace GingerCore.Drivers
                 return
                 ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete") && IsJqueryCompleted;
             });
-
         }
 
-        String GetInjectJSSCript(string script)
+        string GetInjectJSSCript(string script)
         {
             string ScriptMin = JavaScriptHandler.MinifyJavaScript(script);
             // Get the Inject code
@@ -8050,16 +7998,13 @@ namespace GingerCore.Drivers
                 case ActHandleBrowserAlert.eHandleBrowseAlert.AcceptAlertBox:
                     try
                     {
-
                         Driver.SwitchTo().Alert().Accept();
-
                     }
                     catch (Exception e)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Error when Accepting Alert Box - " + e.Message);
                         return;
                     }
-
                     break;
 
                 case ActHandleBrowserAlert.eHandleBrowseAlert.DismissAlertBox:
@@ -8094,7 +8039,6 @@ namespace GingerCore.Drivers
                 case ActHandleBrowserAlert.eHandleBrowseAlert.SendKeysAlertBox:
                     try
                     {
-
                         Driver.SwitchTo().Alert().SendKeys(act.GetInputParamCalculatedValue("Value"));
                     }
                     catch (Exception e)
@@ -8116,17 +8060,17 @@ namespace GingerCore.Drivers
             St.Reset();
 
             int waitTime = this.ImplicitWait;
-            if (act is ActSwitchWindow)
+            if (act is ActSwitchWindow actSwitchWindow)
             {
-                if (((ActSwitchWindow)act).WaitTime >= 0)
+                if (actSwitchWindow.WaitTime >= 0)
                 {
-                    waitTime = ((ActSwitchWindow)act).WaitTime;
+                    waitTime = actSwitchWindow.WaitTime;
                 }
             }
-            else if (act is ActUIElement)
+            else if (act is ActUIElement actUiElement)
             {
                 // adding to support actuielement switch window action synctime
-                var syncTime = Convert.ToInt32(((ActUIElement)act).GetInputParamCalculatedValue(ActUIElement.Fields.SyncTime));
+                var syncTime = Convert.ToInt32(actUiElement.GetInputParamCalculatedValue(ActUIElement.Fields.SyncTime));
                 if (syncTime >= 0)
                 {
                     waitTime = syncTime;
@@ -8336,7 +8280,7 @@ namespace GingerCore.Drivers
                 }
                 else if (!string.IsNullOrEmpty(act.GetInputParamCalculatedValue("Value")))
                 {
-                    if (act.GetInputParamCalculatedValue("Value").Trim().ToUpper() != "DEFAULT")
+                    if (!act.GetInputParamCalculatedValue("Value").Trim().Equals("DEFAULT", StringComparison.CurrentCultureIgnoreCase))
                     {
                         Driver.SwitchTo().Frame(act.GetInputParamCalculatedValue("Value"));
                         return;
@@ -8405,7 +8349,6 @@ namespace GingerCore.Drivers
                         {
                             Reporter.ToLog(eLogLevel.ERROR, ex.Message);
                         }
-
                         break;
 
                     case ActBrowserElement.eControlAction.OpenURLNewTab:
@@ -8454,7 +8397,6 @@ namespace GingerCore.Drivers
                             act.Error += ex.Message;
                             Reporter.ToLog(eLogLevel.DEBUG, $"OpenNewTab {ex.Message} ", ex.InnerException);
                         }
-
                         break;
 
                     case ActBrowserElement.eControlAction.GotoURL:
@@ -8493,7 +8435,7 @@ namespace GingerCore.Drivers
                             return;
                         }
 
-                        if ((act.GetInputParamValue(ActBrowserElement.Fields.GotoURLType) == ActBrowserElement.eGotoURLType.NewTab.ToString()))
+                        if (act.GetInputParamValue(ActBrowserElement.Fields.GotoURLType) == nameof(ActBrowserElement.eGotoURLType.NewTab))
                         {
                             try
                             {
@@ -8507,7 +8449,7 @@ namespace GingerCore.Drivers
                             }
 
                         }
-                        else if ((act.GetInputParamValue(ActBrowserElement.Fields.GotoURLType) == ActBrowserElement.eGotoURLType.NewWindow.ToString()))
+                        else if (act.GetInputParamValue(ActBrowserElement.Fields.GotoURLType) == nameof(ActBrowserElement.eGotoURLType.NewWindow))
                         {
                             try
                             {
@@ -8590,7 +8532,7 @@ namespace GingerCore.Drivers
                         try
                         {
                             object a = null;
-                            if (!script.ToUpper().StartsWith("RETURN"))
+                            if (!script.StartsWith("RETURN", StringComparison.CurrentCultureIgnoreCase))
                             {
                                 script = "return " + script;
                             }
@@ -8641,11 +8583,8 @@ namespace GingerCore.Drivers
                                         }
                                     }
                                 }
-
                             }
-
                         }
-
                         break;
                     case ActBrowserElement.eControlAction.GetConsoleLog:
                         string logs = Newtonsoft.Json.JsonConvert.SerializeObject(Driver.Manage().Logs.GetLog(OpenQA.Selenium.LogType.Browser));
@@ -8750,7 +8689,6 @@ namespace GingerCore.Drivers
                 act.Error += ex.Message;
                 Reporter.ToLog(eLogLevel.DEBUG, $"ActBrowserElementHandler {ex.Message} ", ex.InnerException);
             }
-
         }
 
         private void OpenNewWindow()
@@ -9451,16 +9389,14 @@ namespace GingerCore.Drivers
         {
             IWebElement clickElement = LocateElement(act);
 
-            ActUIElement.eElementAction clickType;
-            if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ClickType).ToString(), out clickType) == false)
+            if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ClickType).ToString(), out var clickType) == false)
             {
                 act.Error = "Unknown Click Type";
                 return false;
             }
 
             // Validation Element locate by:
-            eLocateBy validationElementLocateby;
-            if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString(), out validationElementLocateby) == false)
+            if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString(), out var validationElementLocateby) == false)
             {
                 act.Error = "Unknown Validation Element Locate By";
                 return false;
@@ -9470,8 +9406,7 @@ namespace GingerCore.Drivers
             string validationElementLocatorValue = act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocatorValue.ToString());
 
             //Validation Type:
-            ActUIElement.eElementAction validationType;
-            if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString(), out validationType) == false)
+            if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString(), out var validationType) == false)
             {
                 act.Error = "Unknown Validation Type";
                 return false;
@@ -9488,10 +9423,29 @@ namespace GingerCore.Drivers
             DoUIElementClick(clickType, clickElement);
             //check if validation element exists
             IWebElement elmToValidate = LocateElement(act, true, validationElementLocateby.ToString(), validationElementLocatorValue);
+            bool assertValidationType(IWebElement element, ActUIElement.eElementAction validationType)
+            {
+                bool validationResult = false;
+                switch (validationType)
+                {
+                    case ActUIElement.eElementAction.IsEnabled:
+                        validationResult = elmToValidate.Enabled;
+                        break;
+                    case ActUIElement.eElementAction.IsVisible:
+                        validationResult = elmToValidate.Displayed;
+                        break;
+                }
+
+                if (!validationResult)
+                {
+                    act.Error = $"Validation {validationType} failed";
+                }
+                return validationResult;
+            }
 
             if (elmToValidate != null)
             {
-                return true;
+                return assertValidationType(elmToValidate, validationType);
             }
             else
             {
@@ -9509,7 +9463,7 @@ namespace GingerCore.Drivers
                             elmToValidate = LocateElement(act, true, validationElementLocateby.ToString(), validationElementLocatorValue);
                             if (elmToValidate != null)
                             {
-                                return true;
+                                return assertValidationType(elmToValidate, validationType);
                             }
                         }
                     }
@@ -10082,14 +10036,11 @@ namespace GingerCore.Drivers
             if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
             {
                 parentElementHtmlNode = ((HTMLElementInfo)ElementInfo).HTMLElementObject.ParentNode;
-                parentEI = allReadElem.Find(el => el is HTMLElementInfo && ((HTMLElementInfo)el).HTMLElementObject != null && ((HTMLElementInfo)el).HTMLElementObject.Equals(parentElementHtmlNode));
+                parentEI = allReadElem.Find(el => el is HTMLElementInfo parentElementInfo && parentElementInfo.HTMLElementObject != null && parentElementInfo.HTMLElementObject.Equals(parentElementHtmlNode));
             }
             else
             {
-                if (ElementInfo.ElementObject == null)
-                {
-                    ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
-                }
+                ElementInfo.ElementObject ??= Driver.FindElement(By.XPath(ElementInfo.XPath));
 
                 parentElementIWebElement = ((IWebElement)ElementInfo.ElementObject).FindElement(By.XPath(".."));
                 parentEI = allReadElem.Find(el => el.ElementObject != null && el.ElementObject.Equals(parentElementIWebElement));
@@ -10130,9 +10081,9 @@ namespace GingerCore.Drivers
             {
                 return ((IWebElement)EI.ElementObject).TagName;
             }
-            else if (EI is HTMLElementInfo && ((HTMLElementInfo)EI).HTMLElementObject != null)
+            else if (EI is HTMLElementInfo info && info.HTMLElementObject != null)
             {
-                return (((HTMLElementInfo)EI).HTMLElementObject).Name;
+                return info.HTMLElementObject.Name;
             }
             return string.Empty;
         }
@@ -10175,10 +10126,7 @@ namespace GingerCore.Drivers
         {
             string elementProperty = null;
 
-            if (ElementInfo.ElementObject == null)
-            {
-                ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
-            }
+            ElementInfo.ElementObject ??= Driver.FindElement(By.XPath(ElementInfo.XPath));
 
             if (ElementInfo.ElementObject != null)
             {
@@ -10238,7 +10186,6 @@ namespace GingerCore.Drivers
                         bool allTestsPassed = true;
                         foreach (XpathPropertyCondition XPC in conditions)
                         {
-
                             string value = el.GetAttribute(XPC.PropertyName);
                             switch (XPC.Op)
                             {
@@ -10284,8 +10231,7 @@ namespace GingerCore.Drivers
         List<ElementInfo> IXPath.FindAll(ElementInfo ElementInfo, List<XpathPropertyCondition> conditions)
         {
             CurrentFrame = string.Empty;
-            List<ElementInfo> list = [];
-            list = FindAll(ElementInfo, conditions);
+            List<ElementInfo> list = FindAll(ElementInfo, conditions);
             Driver.SwitchTo().DefaultContent();
             CurrentFrame = string.Empty;
             return list;
@@ -10322,8 +10268,8 @@ namespace GingerCore.Drivers
                                     {
                                         allTestsPassed = false;
                                     }
-
                                     break;
+
                                 case XpathPropertyCondition.XpathConditionOperator.Less:
                                     elementInfoValue = Convert.ToInt32(ElementInfo.Value);
                                     elementvalue = Convert.ToInt32(value);
@@ -10331,8 +10277,8 @@ namespace GingerCore.Drivers
                                     {
                                         allTestsPassed = false;
                                     }
-
                                     break;
+
                                 case XpathPropertyCondition.XpathConditionOperator.More:
                                     elementInfoValue = Convert.ToInt32(ElementInfo.Value);
                                     elementvalue = Convert.ToInt32(value);
@@ -10340,7 +10286,6 @@ namespace GingerCore.Drivers
                                     {
                                         returnElementInfo = GetElementInfoWithIWebElementWithXpath(el, "");
                                     }
-
                                     break;
                             }
                         }
@@ -10561,7 +10506,6 @@ namespace GingerCore.Drivers
                     EI.ElementStatus = ElementInfo.eElementStatus.Pending;
                 }
 
-
                 foreach (ElementInfo EI in mOriginalList)
                 {
                     try
@@ -10689,15 +10633,10 @@ namespace GingerCore.Drivers
         }
 
         public bool CanStartAnotherInstance(out string errorMessage)
-
         {
-
             switch (mBrowserType)
             {
-
-
                 //TODO: filter on internetexplorer
-
                 default:
                     errorMessage = string.Empty;
                     return true;
@@ -10779,15 +10718,15 @@ namespace GingerCore.Drivers
         {
             if (PageLoadStrategy != null)
             {
-                if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Normal).ToLower())
+                if (PageLoadStrategy.Equals(nameof(OpenQA.Selenium.PageLoadStrategy.Normal), StringComparison.InvariantCultureIgnoreCase))
                 {
                     options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Normal;
                 }
-                else if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Eager).ToLower())
+                else if (PageLoadStrategy.Equals(nameof(OpenQA.Selenium.PageLoadStrategy.Eager), StringComparison.InvariantCultureIgnoreCase))
                 {
                     options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Eager;
                 }
-                else if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.None).ToLower())
+                else if (PageLoadStrategy.Equals(nameof(OpenQA.Selenium.PageLoadStrategy.None), StringComparison.InvariantCultureIgnoreCase))
                 {
                     options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.None;
                 }
@@ -10796,7 +10735,6 @@ namespace GingerCore.Drivers
                     options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Default;
                 }
             }
-
         }
 
         private void SetBrowserVersion(DriverOptions options)
@@ -10908,7 +10846,7 @@ namespace GingerCore.Drivers
         }
         private string[] getBlockedUrlsArray(string sUrlsToBeBlocked)
         {
-            string[] arrBlockedUrls = new string[] { };
+            string[] arrBlockedUrls = [];
             if (!string.IsNullOrEmpty(sUrlsToBeBlocked))
             {
                 arrBlockedUrls = sUrlsToBeBlocked.Trim(',').Split(",");
@@ -10925,7 +10863,7 @@ namespace GingerCore.Drivers
                 }
                 else if (mAct.ControlAction == ActBrowserElement.eControlAction.UnblockeUrls)
                 {
-                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V127.Network.SetBlockedURLsCommandSettings() { Urls = new string[] { } });
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V127.Network.SetBlockedURLsCommandSettings() { Urls = [] });
                 }
                 Thread.Sleep(300);
             }
@@ -10934,32 +10872,30 @@ namespace GingerCore.Drivers
         {
             try
             {
-                    if (isNetworkLogMonitoringStarted)
+                if (isNetworkLogMonitoringStarted)
+                {
+                    act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
+                    act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
+                    foreach (var val in networkRequestLogList.ToList())
                     {
-                        act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
-                        act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
-                        foreach (var val in networkRequestLogList.ToList())
-                        {
-                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
-                        }
+                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
+                    }
 
-                        foreach (var val in networkResponseLogList.ToList())
-                        {
-                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
-                        }
-                    }
-                    else
+                    foreach (var val in networkResponseLogList.ToList())
                     {
-                        act.ExInfo = $"Action is skipped,{nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
                     }
+                }
+                else
+                {
+                    act.ExInfo = $"Action is skipped,{nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
+                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
-            
-
         }
 
         public async Task StartMonitoringNetworkLog(IWebDriver webDriver)
@@ -11022,11 +10958,11 @@ namespace GingerCore.Drivers
                     act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList(), Formatting.Indented));
                     foreach (var val in networkRequestLogList.ToList())
                     {
-                        act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
+                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
                     }
                     foreach (var val in networkResponseLogList.ToList())
                     {
-                        act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString() } {val.Item1}", Convert.ToString(val.Item2));
+                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
                     }
 
                     await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V127.Network.DisableCommandSettings());
@@ -11034,7 +10970,7 @@ namespace GingerCore.Drivers
                     devTools.CloseDevToolsSession();
 
                     string requestPath = _BrowserHelper.CreateNetworkLogFile("NetworklogRequest", networkRequestLogList);
-                    act.ExInfo = $"RequestFile : { requestPath }\n";
+                    act.ExInfo = $"RequestFile : {requestPath}\n";
                     string responsePath = _BrowserHelper.CreateNetworkLogFile("NetworklogResponse", networkResponseLogList);
                     act.ExInfo = $"{act.ExInfo} ResponseFile : {responsePath}\n";
 
@@ -11072,7 +11008,7 @@ namespace GingerCore.Drivers
                     {
                         calculatedFilePath = new Uri(calculatedFilePath).LocalPath;
                     }
-                    using (Stream fileStream = System.IO.File.Create(calculatedFilePath))
+                    using (FileStream fileStream = System.IO.File.Create(calculatedFilePath))
                     {
                         fileStream.Close();
                     }
@@ -11097,13 +11033,12 @@ namespace GingerCore.Drivers
                 {
                     networkRequestLogList.Add(new Tuple<string, object>($"RequestUrl: {e.RequestUrl}", JsonConvert.SerializeObject(e, Formatting.Indented)));
                 }
-
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
-}
+        }
 
 
         private void OnNetworkResponseReceived(object sender, NetworkResponseReceivedEventArgs e)
@@ -11114,7 +11049,7 @@ namespace GingerCore.Drivers
 
                 if (_BrowserHelper.ShouldMonitorAllUrls() || _BrowserHelper.ShouldMonitorUrl(e.ResponseUrl))
                 {
-                    if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
+                    if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == nameof(ActBrowserElement.eRequestTypes.FetchOrXHR))
                     {
                         if (e.ResponseResourceType.Equals("XHR", StringComparison.CurrentCultureIgnoreCase) || e.ResponseResourceType.Equals("FETCH", StringComparison.CurrentCultureIgnoreCase))
                         {
@@ -11123,7 +11058,7 @@ namespace GingerCore.Drivers
                     }
                     else
                     {
-                        networkResponseLogList.Add(new Tuple<string, object>($"ResponseUrl:{e.ResponseUrl}",  JsonConvert.SerializeObject(e, Formatting.Indented)));
+                        networkResponseLogList.Add(new Tuple<string, object>($"ResponseUrl:{e.ResponseUrl}", JsonConvert.SerializeObject(e, Formatting.Indented)));
                     }
                 }
             }

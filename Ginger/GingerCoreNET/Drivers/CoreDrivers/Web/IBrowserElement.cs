@@ -20,6 +20,7 @@ using Deque.AxeCore.Commons;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
+using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
@@ -93,5 +94,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task<IBrowserShadowRoot?> ShadowRootAsync();
 
         public Task<AxeResult?> TestAccessibilityAsync(AxeRunOptions? options = null);
+        public Task SetFileValueAsync(string[] value);
+
+        public Task<bool> ToBeVisibleAsync(float timeOut);
+
+        public Task<bool> AttributeMatchesAsync(string attributeName, string attributeValue, float timeOut);
+
+        public Task<bool> TextMatchesAsync(string textToMatch, float timeOut);
+
+        public Task<bool> ElementToBeClickableAsync(float timeOut);
+
+        public Task<bool> ElementIsSelectedAsync(float timeOut);
+
+        public Task<bool> ToBeNotVisibleAsync(float timeOut);
+        public Task<string> GetElementLocator();
+
     }
 }

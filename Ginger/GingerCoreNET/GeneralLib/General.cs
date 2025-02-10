@@ -151,7 +151,7 @@ namespace GingerCoreNET.GeneralLib
 
         #endregion ENUM
 
-        static Regex rxvarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
+        static Regex rxvarPattern = new(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
         static string GetDatetimeFormat() => DateTime.Now.ToString("ddMMyyyy_HHmmssfff");
         public static T ParseEnum<T>(string value)
         {
@@ -711,7 +711,7 @@ namespace GingerCoreNET.GeneralLib
         /// <returns>List of external fields with their values.</returns>
         public static ObservableList<ExternalItemFieldBase> GetExternalFields()
         {
-            ObservableList<ExternalItemFieldBase> originalExternalFields = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> originalExternalFields = [];
 
             var defaultALMConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm);
             var firstExternalItemField = WorkSpace.Instance.Solution.ExternalItemsFields.FirstOrDefault();
@@ -728,7 +728,7 @@ namespace GingerCoreNET.GeneralLib
                 foreach (var externalItemField in externalOnlineItemsFields)
                 {
                     ExternalItemFieldBase item = MapExternalField(externalItemField);
-                    if(item != null)
+                    if (item != null)
                     {
                         originalExternalFields.Add(item);
                     }
@@ -758,7 +758,8 @@ namespace GingerCoreNET.GeneralLib
                     {
                         if (!string.IsNullOrEmpty(externalItemField.SelectedValue))
                         {
-                            value = externalItemField.SelectedValue;                        }
+                            value = externalItemField.SelectedValue;
+                        }
                         else
                         {
                             value = GetDefaultValue(externalItemField);
@@ -795,7 +796,7 @@ namespace GingerCoreNET.GeneralLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Failed to Map External Fields",ex.InnerException);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Map External Fields", ex.InnerException);
                 return null;
             }
         }
@@ -830,6 +831,34 @@ namespace GingerCoreNET.GeneralLib
                 }
             }
             return ValueKey;
+        }
+
+        /// <summary>
+        /// Decrypts the given password. If the password is a value expression, it evaluates the expression before decryption.
+        /// </summary>
+        /// <param name="password">The password to decrypt.</param>
+        /// <param name="isPasswordValueExpression">Indicates if the password is a value expression.</param>
+        /// <param name="act">The Act instance containing the value expression.</param>
+        /// <returns>The decrypted password.</returns>
+        public static string DecryptPassword(string password, bool isPasswordValueExpression, Act act)
+        {
+            if (password == null)
+            {
+                return null;
+            }
+
+            string decryptedPassword = string.Empty;
+            string evaluatedValue = password;
+
+            if (isPasswordValueExpression)
+            {
+                act.ValueExpression.Value = password;
+                evaluatedValue = act.ValueExpression.ValueCalculated;
+            }
+
+            decryptedPassword = EncryptionHandler.IsStringEncrypted(evaluatedValue) ? EncryptionHandler.DecryptwithKey(evaluatedValue) : evaluatedValue;
+
+            return decryptedPassword;
         }
     }
 

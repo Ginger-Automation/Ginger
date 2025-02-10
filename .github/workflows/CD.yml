@@ -1,37 +1,3 @@
-# This GitHub Actions workflow is named "CD" and is triggered manually via the `workflow_dispatch` event.
-# It accepts the following inputs:
-# - major: Year (number, required, default: '24')
-# - minor: Release (number, required, default: '4')
-# - build: Beta (number, required, default: '0')
-# - revision: Alpha (number, required, default: '0')
-# - SSLCert: Add Certificate (choice, required, default: 'No', options: ['Yes', 'No'])
-#
-# The workflow consists of the following jobs:
-# 1. Create-version-Number:
-#    - Runs on `ubuntu-latest`.
-#    - Generates version numbers and tags based on the input values.
-#    - Outputs `version_number` and `version_tag`.
-#    - Caches the generated version text file.
-#
-# 2. CI:
-#    - Depends on the `Create-version-Number` job.
-#    - Uses the `.github/workflows/CI.yml` workflow.
-#    - Inherits secrets.
-#
-# 3. Release:
-#    - Depends on the `CI` job.
-#    - Uses the `.github/workflows/Release.yml` workflow.
-#    - Inherits secrets.
-#
-# 4. Deploy:
-#    - Depends on the `Release` job.
-#    - Uses the `.github/workflows/Deploy.yml` workflow.
-#
-# 5. Docker:
-#    - Depends on the `CI` job.
-#    - Uses the `.github/workflows/Docker.yml` workflow.
-#    - Inherits secrets.
-
 name: CD
 
 on:
@@ -66,75 +32,31 @@ on:
           options:
           - 'Yes' # Add SSL certificate
           - 'No'  # Do not add SSL certificate
-jobs:
-    Create-version-Number:
-        runs-on: ubuntu-latest
-        
-        outputs:
-          version_number: ${{ steps.version.outputs.number }}
-          version_tag: ${{ steps.version.outputs.tag }}
+jobs:            
+    Builder:
+        name: Build Solution
+        uses: ./.github/workflows/Build.yml
+        secrets: inherit
 
-        steps:           
-          - name: create version environment variable - alpha
-            if: ${{ github.event.inputs.revision != 0 }}
-            run: |
-                echo "gingertag=20${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}-Alpha.${{github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
-                echo "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.${{ github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
-          
-          - name: create version environment variable - BETA
-            if: ${{ (github.event.inputs.build != 0) && (github.event.inputs.revision == 0 )}} 
-            run: |
-              echo "gingertag=20${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}-Beta.${{ github.event.inputs.build}}" >> $GITHUB_ENV
-              echo "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.${{ github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
-
-          - name: create version environment variable - Release
-            if: ${{ (github.event.inputs.build == 0 ) && ( github.event.inputs.revision == 0) }} 
-            run: |
-              echo "gingertag=20${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}-Official" >> $GITHUB_ENV
-              echo "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.${{ github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
-
-          - name: create environment variable 
-            id: version
-            run: |
-              echo "number=${{ env.gingernumber}}" >> $GITHUB_OUTPUT
-              echo "tag=${{ env.gingertag}}" >> $GITHUB_OUTPUT
-
-          - name: create version variable text file
-            run: |
-              echo "NUMBER=${{env.gingernumber}}" > version.txt
-              echo "TAG=${{ env.gingertag}}" >> version.txt
-              cat version.txt
-          
-          - name: Cache Version text file
-            id: cache
-            uses: actions/cache@v3.2.6
-            with:
-              path: 
-                ./version.txt
-              key: 
-                cache-version-${{ github.run_number }}
-              enableCrossOsArchive:
-                true
-               
-    CI:
-        name: CI
-        needs: Create-version-Number
-        uses: ./.github/workflows/CI-2.yml
+    Ginger_Unit-Test:
+        name: Execute Unit Tests
+        needs: Builder
+        uses: ./.github/workflows/Test.yml
         secrets: inherit
      
     Release:
         name: Release
-        needs: CI
-        uses: ./.github/workflows/Release-2.yml
+        needs: Ginger_Unit-Test
+        uses: ./.github/workflows/Release.yml
         secrets: inherit
      
     Deploy:
         name: Deploy
         needs: Release
-        uses: ./.github/workflows/Deploy-2.yml
+        uses: ./.github/workflows/Deploy.yml
 
     Docker:
         name: Docker
-        needs: CI
+        needs: Ginger_Unit-Test
         uses: ./.github/workflows/Docker.yml
         secrets: inherit

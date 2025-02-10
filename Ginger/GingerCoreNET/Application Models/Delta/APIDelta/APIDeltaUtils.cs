@@ -105,7 +105,7 @@ namespace GingerCoreNET.Application_Models
                 existingAPIs = existingAPIs.Where(m => m.ResponseContentType == learnedModel.ResponseContentType).ToList();
 
                 // Filter matching APIs based on Content Type
-                existingAPIs = existingAPIs.Where(m => m.ContentType == learnedModel.ContentType).ToList();
+                existingAPIs = existingAPIs.Where(m => m.RequestContentType == learnedModel.RequestContentType).ToList();
             }
 
             // Filter matching APIs based on URL Domain

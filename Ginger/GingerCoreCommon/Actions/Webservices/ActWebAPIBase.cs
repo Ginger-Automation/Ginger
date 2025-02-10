@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -16,21 +16,21 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET.Run;
-using Amdocs.Ginger.Repository;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.WorkSpaceLib;
+using Amdocs.Ginger.CoreNET.Run;
+using Amdocs.Ginger.Repository;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace GingerCore.Actions.WebServices
 {
@@ -221,7 +221,7 @@ namespace GingerCore.Actions.WebServices
                 string ResponseContentType = mAct.GetInputParamCalculatedValue(ActWebAPIRest.Fields.ResponseContentType);
                 bool jsonParsinFailed = false;
 
-                if (ResponseContentType == ApplicationAPIUtils.eContentType.JSon.ToString())
+                if (ResponseContentType == ApplicationAPIUtils.eResponseContentType.JSon.ToString() || ResponseContentType == ApplicationAPIUtils.eResponseContentType.JSonWithoutCharset.ToString())
                 {
                     if (!ParseJsonNodesToReturnParams(mAct, ResponseMessage))
                     {
@@ -234,7 +234,7 @@ namespace GingerCore.Actions.WebServices
                 }
 
                 if (XMLResponseCanBeParsed && (
-                   (mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType) == ApplicationAPIUtils.eContentType.XML.ToString()) || jsonParsinFailed))
+                   (mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType) == ApplicationAPIUtils.eResponseContentType.XML.ToString()) || jsonParsinFailed))
                 {
                     return ParseXMLNodesToReturnParams(mAct, ResponseMessage);
                 }
@@ -370,7 +370,7 @@ namespace GingerCore.Actions.WebServices
                     string FileContent = string.Empty;
                     string TemplateFileName = GetInputParamCalculatedValue(Fields.TemplateFileNameFileBrowser).ToString();
 
-                    string TemplateFileNameFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(TemplateFileName);
+                    string TemplateFileNameFullPath = GingerCoreCommonWorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(TemplateFileName);
 
                     FileStream ReqStream = File.OpenRead(TemplateFileNameFullPath);
 

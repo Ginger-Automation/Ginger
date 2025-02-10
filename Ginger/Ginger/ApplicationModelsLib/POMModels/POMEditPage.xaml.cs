@@ -125,15 +125,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xTAlabel.Content = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}:";
 
             mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
+
+            mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage, editMode: mEditMode);
+            xUIElementsFrame.ClearAndSetContent(mPomAllElementsPage);
+            mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
             ObservableList<Agent> optionalAgentsList = SupportedAgents();
             foreach (Agent agent in optionalAgentsList)
             {
-                if (agent.AgentOperations == null)
-                {
-                    AgentOperations agentOperations = new AgentOperations(agent);
-                    agent.AgentOperations = agentOperations;
-                }
+                agent.AgentOperations ??= new AgentOperations(agent);
             }
             xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);
 
@@ -148,13 +149,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
             xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
 
-            mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage, editMode: mEditMode);
-            xUIElementsFrame.ClearAndSetContent(mPomAllElementsPage);
-            mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
-
             UIElementTabTextBlockUpdate();
-
-
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEditPageExpander, Expander.IsExpandedProperty, mPOM, nameof(mPOM.IsCollapseDetailsExapander));
 
@@ -220,9 +215,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mPOM.Key.ItemName + " Target Application was not found, please select new Target Application");
                 }
             }
+            xTargetApplicationComboBox.ItemsSource = null;
             SupportedTargetApplication();
-            xTargetApplicationComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
-            xTargetApplicationComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
             CollectionChangedEventManager.AddHandler(source: WorkSpace.Instance.Solution.ApplicationPlatforms, handler: ApplicationPlatforms_CollectionChanged);
 
         }
@@ -231,7 +225,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
         /// </summary>
         private void SupportedTargetApplication()
         {
-            xTargetApplicationComboBox.ItemsSource = null;
             var targetPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
 
             if (targetPlatform != ePlatformType.NA)
@@ -242,6 +235,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
             }
+            xTargetApplicationComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
+            xTargetApplicationComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
         }
 
         /// <summary>
@@ -269,7 +264,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
 
                 optionalAgentsList = GingerCore.General.ConvertListToObservableList(list);
-
             }
             else
             {

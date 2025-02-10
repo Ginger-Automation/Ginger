@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright;
 using Amdocs.Ginger.Repository;
@@ -536,9 +537,9 @@ namespace Ginger
 
         }
 
-        public bool GetLatest(string path, SourceControlBase SourceControl)
+        public bool GetLatest(string path, SourceControlBase SourceControl, ProgressNotifier progressNotifier = null)
         {
-            return SourceControlUI.GetLatest(path, SourceControl);
+            return SourceControlUI.GetLatest(path, SourceControl, progressNotifier);
         }
 
         public bool Revert(string path, SourceControlBase SourceControl)

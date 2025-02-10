@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-jammy
 
 # Copy the published application to the container
-COPY ./bin/Release/net8.0/publish ./GingerRuntime
+COPY ./bin/Release/net8.0/linux-x64 ./GingerRuntime
 
 # Switch to root user for installation
 USER root

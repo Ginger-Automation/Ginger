@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SourceControl;
 using SharpSvn;
 using System;
@@ -28,6 +29,7 @@ using System.Net;
 using System.Net.Security;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 
@@ -288,7 +290,7 @@ namespace GingerCore.SourceControl
 
         // Get all files in path recursive 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths)
+        public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths, ProgressNotifier progressNotifier = null)
         {
             if (client == null)
             {
@@ -341,7 +343,6 @@ namespace GingerCore.SourceControl
             }
             return true;
         }
-
         public override bool GetProject(string Path, string URI, ref string error)
         {
             if (client == null)
@@ -1212,6 +1213,11 @@ namespace GingerCore.SourceControl
         public override bool UndoUncommitedChanges(List<SourceControlFileInfo> selectedFiles)
         {
             throw new NotImplementedException("UndoUncommitedChanges not Implemented");
+        }
+
+        public override bool GetProjectWithProgress(string Path, string URI, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

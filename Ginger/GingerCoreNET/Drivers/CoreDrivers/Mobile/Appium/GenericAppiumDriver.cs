@@ -323,14 +323,14 @@ namespace Amdocs.Ginger.CoreNET
                     return false;
                 }
 
-                mSeleniumDriver = new SeleniumDriver(Driver)
+                mSeleniumDriver = new SeleniumDriver(Driver)//used for running regular Selenium actions
                 {
                     isAppiumSession = true,
-                    StopProcess = this.StopProcess,
                     BusinessFlow = this.BusinessFlow,
                     PomCategory = this.PomCategory
-                }; //used for running regular Selenium actions
-
+                }; 
+                mSeleniumDriver.StopProcess = this.StopProcess;
+                
                 if (AppType == eAppType.Web && mDefaultURL != null)
                 {
                     try
@@ -1218,6 +1218,18 @@ namespace Amdocs.Ginger.CoreNET
 
                     case ActMobileDevice.eMobileDeviceAction.StopSimulatePhotoOrVideo:
                         CameraAndBarcodeSimulationRequest(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.GetAvailableContexts:
+                        int i = 0;
+                        foreach (var c in Driver.Contexts)
+                        {
+                            act.AddOrUpdateReturnParamActual("Context " + i+1, c.ToString());
+                        }
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.SetContext:
+                        Driver.Context = act.ActionInput.ValueForDriver;
                         break;
 
                     default:

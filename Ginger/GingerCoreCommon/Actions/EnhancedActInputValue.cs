@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -47,5 +47,40 @@ namespace Amdocs.Ginger.Repository
         }
 
         public string ExtraDetails { get; set; }
+
+        /// <summary>
+        /// Compares this instance with another EnhancedActInputValue instance for equality.
+        /// </summary>
+        /// <param name="other">The other EnhancedActInputValue instance to compare with.</param>
+        /// <returns>True if both instances are equal; otherwise, false.</returns>
+        public bool AreEqual(EnhancedActInputValue other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return this.Param == other.Param &&
+                string.Equals(this.Description, other.Description) &&
+                this.ParamGuid == other.ParamGuid &&
+                ((this.Value == null && string.IsNullOrEmpty(other.Value))
+                || this.Value == other.Value);
+
+        }
+
+        /// <summary>
+        /// Compares this instance with another object for equality.
+        /// </summary>
+        /// <param name="obj">The object to compare with.</param>
+        /// <returns>True if the object is an EnhancedActInputValue instance and both instances are equal; otherwise, false.</returns>
+        public new bool AreEqual(object obj)
+        {
+            if (obj == null || obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+
+            return Equals(obj as EnhancedActInputValue);
+        }
     }
 }

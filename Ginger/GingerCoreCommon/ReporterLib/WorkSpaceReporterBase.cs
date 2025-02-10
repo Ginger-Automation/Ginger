@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -31,10 +31,14 @@ namespace Amdocs.Ginger.Common
     {
         public abstract void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null);
 
-        public void ToConsole(eLogLevel logLevel, string message)
+
+        private static bool prevOverwriteCurrentLine = false;
+
+        public void ToConsole(eLogLevel logLevel, string message, Boolean overwriteCurrentLine = false)
         {
+           
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append("[").Append(logLevel).Append(" | ").Append(DateTime.Now.ToString("HH:mm:ss:fff_dd-MMM")).Append("] ").Append(message).Append(Environment.NewLine);
+            stringBuilder.Append('[').Append(logLevel).Append(" | ").Append(DateTime.Now.ToString("HH:mm:ss:fff_dd-MMM")).Append("] ").Append(message).Append(Environment.NewLine);
 
             switch (logLevel)
             {
@@ -53,10 +57,24 @@ namespace Amdocs.Ginger.Common
                 case eLogLevel.WARN:
                     Console.ForegroundColor = ConsoleColor.DarkYellow;
                     break;
-
             }
-            Console.WriteLine(stringBuilder.ToString());
-            Console.ResetColor();
+            
+            if (overwriteCurrentLine)
+            {
+                int cursorRow = prevOverwriteCurrentLine ? Console.CursorTop - 3 : Console.CursorTop;
+                Console.SetCursorPosition(0, cursorRow);
+                Console.Write(new string(' ', Console.WindowWidth));
+                Console.SetCursorPosition(0, cursorRow);
+                stringBuilder.Append(Environment.NewLine);
+                Console.WriteLine(stringBuilder.ToString());
+            }
+            else
+            {
+                stringBuilder.Append(Environment.NewLine);
+                Console.WriteLine(stringBuilder.ToString());
+                Console.ResetColor();
+            }
+            prevOverwriteCurrentLine = overwriteCurrentLine;
         }
 
         public abstract eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResualt);
@@ -64,3 +82,5 @@ namespace Amdocs.Ginger.Common
         public abstract void ToStatus(eStatusMsgType messageType, string statusText);
     }
 }
+
+
