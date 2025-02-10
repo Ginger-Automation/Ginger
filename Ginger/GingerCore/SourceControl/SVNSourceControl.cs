@@ -290,7 +290,7 @@ namespace GingerCore.SourceControl
 
         // Get all files in path recursive 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths)
+        public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths, ProgressNotifier progressNotifier = null)
         {
             if (client == null)
             {

@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.IO;
@@ -218,6 +219,7 @@ namespace Ginger
 
                 DoOptionsHandler.LoadRunSetConfigEvent += DoOptionsHandler_LoadRunSetConfigEvent;
                 DoOptionsHandler.LoadSharedRepoEvent += DoOptionsHandler_LoadSharedRepoEvent;
+                DoOptionsHandler.LoadSourceControlDownloadPage += DoOptionsHandler_LoadSourceControlDownloadPage;
             }
             catch (Exception ex)
             {
@@ -233,6 +235,11 @@ namespace Ginger
                 }
             }
 
+        }
+
+        private void DoOptionsHandler_LoadSourceControlDownloadPage(object? sender, EventArgs e)
+        {
+            xDownloadSolutionMenuItem_Click(null, null);
         }
 
 
@@ -928,6 +935,7 @@ namespace Ginger
 
         private void xDownloadSolutionMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            
             SourceControlProjectsPage p = new SourceControl.SourceControlProjectsPage();
             p.ShowAsWindow();
         }
@@ -941,25 +949,100 @@ namespace Ginger
 
             App.CheckIn(WorkSpace.Instance.Solution.Folder);
         }
-
+        ProgressNotifier progressNotifier = null;
+        /// <summary>
+        /// Handles the event to get the latest changes from the source control.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void btnSourceControlGetLatest_Click(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) { return; }
-
-            Reporter.ToStatus(eStatusMsgKey.GetLatestFromSourceControl);
-            if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.Folder))
+            try
             {
-                Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
-            }
-            else
-            {
-                SourceControlUI.GetLatest(WorkSpace.Instance.Solution.Folder, WorkSpace.Instance.Solution.SourceControl);
-            }
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
-            Reporter.HideStatusMessage();
+                if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                {
+                    return;
+                }
 
+                InitializeProgressNotifier();
+
+                Reporter.ToStatus(eStatusMsgKey.GetLatestFromSourceControl);
+
+                if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.Folder))
+                {
+                    Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided. Please check the solution folder path.");
+                }
+                else
+                {
+                    SourceControlUI.GetLatest(WorkSpace.Instance.Solution.Folder, WorkSpace.Instance.Solution.SourceControl, progressNotifier);
+                }
+
+                App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
+               
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get the latest from source control. Please check the logs for more details.", ex);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+                CleanupProgressNotifier();
+            }
         }
 
+        /// <summary>
+        /// Initializes the progress notifier for source control operations.
+        /// </summary>
+        private void InitializeProgressNotifier()
+        {
+            progressNotifier = new ProgressNotifier();
+            progressNotifier.StatusUpdateHandler += ProgressNotifier_ProgressUpdated;
+        }
+
+        /// <summary>
+        /// Cleans up the progress notifier after source control operations.
+        /// </summary>
+        private void CleanupProgressNotifier()
+        {
+            if (progressNotifier != null)
+            {
+                progressNotifier.StatusUpdateHandler -= ProgressNotifier_ProgressUpdated;
+            }
+        }
+
+        /// <summary>
+        /// Updates the progress notifier with the current progress of the operation.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">A tuple containing the completed steps and total steps.</param>
+        private void ProgressNotifier_ProgressUpdated(object? sender, (string ProgressType, int CompletedSteps, int TotalSteps) e)
+        {
+            try
+            {
+                if (e.CompletedSteps > 0 && e.TotalSteps > 0 && e.CompletedSteps <= e.TotalSteps)
+                {
+                    double progress = Math.Round(((double)e.CompletedSteps / e.TotalSteps) * 100, 2);
+                    if (Math.Abs(progress) < 0.01) 
+                    {
+                        return;
+                    }
+                    string gitProgress = $"{e.ProgressType}{progress}% complete ";
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        xProcessMsgTxtBlock.Text = gitProgress;
+                    }));
+                }
+                else
+                {
+                    return;
+                }
+            }
+            catch (Exception t)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, t.Message);
+            }
+        }
         private void btnGlobalSolutionImport_Click(object sender, RoutedEventArgs e)
         {
             GingerWPF.WizardLib.WizardWindow.ShowWizard(new Ginger.GlobalSolutionLib.ImportItemWizardLib.ImportItemWizard());

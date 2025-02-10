@@ -7,6 +7,8 @@
       xmlns:Activities="clr-namespace:Ginger.Activities"
       xmlns:Actions="clr-namespace:Ginger.Actions"
       xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:UserControlsLib1="clr-namespace:Ginger.UserControlsLib" xmlns:Activities="clr-namespace:Ginger.Activities"  xmlns:UserControls="clr-namespace:Ginger.UserControls"
+        xmlns:Actions="clr-namespace:Ginger.Actions"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
 	Title="ActMobileDeviceEditPage">
@@ -17,9 +19,14 @@
             <UserControlsLib1:UCComboBox x:Name="xOperationNameComboBox" VerticalAlignment="Top" Width="250" Margin="10,0,0,0"/>
         </StackPanel>
 
-        <StackPanel x:Name="xInputPnl"  HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="5,10,0,0" Visibility="Collapsed">
+        <StackPanel x:Name="xAppPnl" HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="6,10,0,0" Visibility="Collapsed">
+            <Label Style="{StaticResource $LabelStyle}" Content="Application package:"/>
+            <Actions:UCValueExpression x:Name="xAppPackageVE" HorizontalAlignment="Left" VerticalAlignment="Center" Width="330" Margin="-1,5,0,0"/>
+        </StackPanel>
+
+        <StackPanel x:Name="xInputPnl"  HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="7,10,0,0" Visibility="Collapsed">
             <Label  x:Name="xInputLabelVE" Style="{StaticResource $LabelStyle}" Content="Input:"/>
-            <Actions:UCValueExpression x:Name="xInputVE" VerticalAlignment="Top" Width="320"/>
+            <Actions:UCValueExpression x:Name="xInputVE" VerticalAlignment="Top" Width="330"/>
         </StackPanel>
 
         <StackPanel x:Name="xKeyPressPnl" HorizontalAlignment="Left" Orientation="Horizontal"  DockPanel.Dock="Top" Margin="5,10,0,0" Visibility="Collapsed">
@@ -63,11 +70,6 @@
             <UserControlsLib1:UcLabel Content="Note: Andoid device will simulate FingerPrint, iOS devices will simulate FaceID" FontSize="9"></UserControlsLib1:UcLabel>
         </StackPanel>
 
-        <StackPanel x:Name="xAppPnl" HorizontalAlignment="Left" Orientation="Horizontal"  DockPanel.Dock="Top" Margin="5,10,0,0" Visibility="Collapsed">
-            <Label Style="{StaticResource $LabelStyle}" Content="Application package:"/>
-            <Actions:UCValueExpression x:Name="xAppPackageVE" VerticalAlignment="Top" Width="205"/>
-        </StackPanel>
-
         <StackPanel x:Name="xPressPnl" HorizontalAlignment="Left" Orientation="Horizontal"  DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed">
             <Label Style="{StaticResource $LabelStyle}" Content="Press duration (milliseconds):" Margin="0 0 0 0"/>
             <Activities:UCValueExpression x:Name="xPressDurationTxtBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="163" />
@@ -89,7 +91,24 @@
             </StackPanel>
         </StackPanel>
 
+        <StackPanel x:Name="xFileTransferPnl" HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="5,10,0,0" Visibility="Collapsed">
+            <Label x:Name="xFilePathLbl" Style="{StaticResource $LabelStyle}" Content="Device File Path:" Margin="-4,0,0,0"/>
+            <Actions:UCValueExpression x:Name="xFilePathTextBox" HorizontalAlignment="Left" Margin="0,0,0,0" Width="330"/>
+            <Label x:Name="xFolderPathLbl" Style="{StaticResource $LabelStyle}" Content="Local Target Folder:" Margin="-3,0,0,0"/>
+            <Actions:UCValueExpression x:Name="xFolderPathTxtBox" Width="340" />
+        </StackPanel>
+        
+        <StackPanel x:Name="xSpecificPerformanceDataPnl" HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="0,2,0,0" Visibility="Collapsed">
+            <Label Style="{StaticResource $LabelStyle}" Content="Data Type:" Margin="0,0,0,0"/>
+            <UserControlsLib1:UCComboBox x:Name="xDataTypeComboBox" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="4,-6,0,0" Width="250"/>
+        </StackPanel>
+        <StackPanel x:Name="xDeviceRotationPnl" HorizontalAlignment="Left" Orientation="Horizontal"  DockPanel.Dock="Top" Margin="5,10,0,0" Visibility="Collapsed">
+            <Label Style="{StaticResource $LabelStyle}" Content="Choose State: "/>
+            <UserControlsLib1:UCComboBox x:Name="xDeviceRotateComboBox" VerticalAlignment="Top" Margin="0,-2,0,0" Width="241"/>
+        </StackPanel>
+        
         <Ginger:ucGrid x:Name="xMultiTouchGrid" Title="Touch Operations to Perform" ShowTitle="Collapsed" Visibility="Collapsed" Margin="0,10,0,0"/>
         
     </DockPanel>
 </Page>
+

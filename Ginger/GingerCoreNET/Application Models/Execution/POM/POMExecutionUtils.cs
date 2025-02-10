@@ -42,7 +42,10 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             mAct = act;
             var context = Context.GetAsContext(mAct.Context);
             ExecutedFrom = context.ExecutedFrom;
-            PomElementGUID = elementLocateValue.ToString().Split('_');
+            if (!string.IsNullOrEmpty(elementLocateValue))
+            {
+                PomElementGUID = elementLocateValue.ToString().Split('_');
+            }
 
         }
 

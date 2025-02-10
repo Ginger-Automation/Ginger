@@ -53,7 +53,7 @@
                                 <ControlTemplate TargetType="TreeViewItem">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="22"/>
+                                            <ColumnDefinition Width="18"/>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
@@ -62,7 +62,8 @@
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
                                         <ToggleButton x:Name="Expander" IsChecked="{Binding Path=IsExpanded,
-                                      RelativeSource={RelativeSource TemplatedParent}}" Style="{StaticResource TreeViewToggleButton}" Grid.Row="0" Grid.Column="0" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch"/>
+                                            RelativeSource={RelativeSource TemplatedParent}}" Style="{StaticResource TreeViewToggleButton}" Grid.Row="0" Grid.Column="0" 
+                                            VerticalAlignment="Stretch"  HorizontalAlignment="Stretch"/>
                                         <ContentPresenter ContentSource="Header" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
                                         <ItemsPresenter x:Name="ItemsHost" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
                                     </Grid>

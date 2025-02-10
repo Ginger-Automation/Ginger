@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.UIElement;
 using static GingerCoreNET.SourceControl.SourceControlFileInfo;
 
 namespace GingerCoreNET.SourceControl
@@ -124,7 +125,7 @@ namespace GingerCoreNET.SourceControl
         // get list of files changed in path recursively - modified, add, deleted
         public abstract ObservableList<SourceControlFileInfo> GetPathFilesStatus(string Path, ref string error, bool includLockedFiles = false);
 
-        public abstract bool GetLatest(string path, ref string error, ref List<string> conflictsPaths);
+        public abstract bool GetLatest(string path, ref string error, ref List<string> conflictsPaths, ProgressNotifier progressNotifier = null);
 
         public abstract bool GetProject(string Path, string URI, ref string error);
 

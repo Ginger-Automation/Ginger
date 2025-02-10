@@ -57,7 +57,7 @@ namespace GingerWPF.UserControlsLib
         {
             InitializeComponent();
 
-            GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
+            GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(['s']));
 
             xTreeView.TreeTitle = itemTypeName;
             xTreeView.TreeIcon = itemTypeIcon;
@@ -88,12 +88,12 @@ namespace GingerWPF.UserControlsLib
             TreeViewItem TVI = (TreeViewItem)sender;
             object tvItem = TVI.Tag;
 
-            if (tvItem is ITreeViewItem)
+            if (tvItem is ITreeViewItem ITVItem)
             {
-                DetailsFrame.ClearAndSetContent(((ITreeViewItem)tvItem).EditPage());
-                if (tvItem is NewTreeViewItemBase)
+                DetailsFrame.ClearAndSetContent(ITVItem.EditPage());
+                if (tvItem is NewTreeViewItemBase newTreeViewItemBase)
                 {
-                    ((NewTreeViewItemBase)tvItem).PrepareItemForEdit();
+                    newTreeViewItemBase.PrepareItemForEdit();
                 }
             }
             else

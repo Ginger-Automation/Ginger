@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Drawing;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.ALM;
@@ -80,7 +81,7 @@ namespace Amdocs.Ginger.Common
 
 
 
-        bool GetLatest(string path, SourceControlBase SourceControl);
+        bool GetLatest(string path, SourceControlBase SourceControl, ProgressNotifier progressNotifier = null);
 
         bool Revert(string path, SourceControlBase SourceControl);
 
