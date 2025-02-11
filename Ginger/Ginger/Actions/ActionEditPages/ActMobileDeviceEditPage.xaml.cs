@@ -18,8 +18,10 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.ActionsLib.UI.Mobile;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
+using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
@@ -27,6 +29,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using static Amdocs.Ginger.CoreNET.ActionsLib.UI.Mobile.MobileTouchOperation;
 
 
 namespace Ginger.Actions
@@ -86,6 +89,10 @@ namespace Ginger.Actions
             xDragDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.DragDuration, nameof(ActInputValue.Value));
             xSwipeScaleTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.SwipeScale, nameof(ActInputValue.Value));
             xSwipeDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.SwipeDuration, nameof(ActInputValue.Value));
+
+            SetMultiTouchGridView();
+            xMultiTouchGrid.DataSourceList = mAct.MobileTouchOperations;
+            xMultiTouchGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddTouchOperation));
 
             UpdateBaseLineImage(true);
 
@@ -226,6 +233,8 @@ namespace Ginger.Actions
             xSpecificPerformanceDataPnl.Visibility = Visibility.Collapsed;
             xDeviceRotationPnl.Visibility = Visibility.Collapsed;
           
+            xMultiTouchGrid.Visibility = Visibility.Collapsed;
+
             switch (mAct.MobileDeviceAction)
             {
                 case ActMobileDevice.eMobileDeviceAction.PressKey:
@@ -316,10 +325,18 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.PushFileToDevice:
                     xFilePathLbl.Content = "Local File to Push:";
                     xFolderPathLbl.Content = "Device Target Folder:";
+                    xFilePathLbl.Visibility = Visibility.Visible;
+                    xFilePathTextBox.Visibility = Visibility.Visible;
+                    xFolderPathLbl.Visibility = Visibility.Visible;
+                    xFolderPathTxtBox.Visibility = Visibility.Visible;
                     xFileTransferPnl.Visibility = Visibility.Visible;
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.PullFileFromDevice:
+                    xFilePathLbl.Visibility = Visibility.Visible;
+                    xFilePathTextBox.Visibility = Visibility.Visible;
+                    xFolderPathLbl.Visibility = Visibility.Visible;
+                    xFolderPathTxtBox.Visibility = Visibility.Visible;
                     xFileTransferPnl.Visibility = Visibility.Visible;
                     break;
 
@@ -337,9 +354,41 @@ namespace Ginger.Actions
                     xDeviceRotationPnl.Visibility = Visibility.Visible;
                     break;
                
+
+                case ActMobileDevice.eMobileDeviceAction.PerformMultiTouch:
+                    xMultiTouchGrid.Visibility = Visibility.Visible;
+                    break;
             }
         }
 
+        private void SetMultiTouchGridView()
+        {
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(MobileTouchOperation.OperationType), Header = "Operation Type", WidthWeight = 25,StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList=GingerCore.General.GetEnumValuesForCombo(typeof(eFingerOperationType)) },
+                new GridColView() { Field = nameof(MobileTouchOperation.MoveXcoordinate), Header = "X Coordinate (Move Only)", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text },
+                new GridColView() { Field = nameof(MobileTouchOperation.MoveYcoordinate), Header = "Y Coordinate (Move Only)", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text },
+                new GridColView() { Field = nameof(MobileTouchOperation.OperationDuration), Header = "Duration Milliseconds (Move & Pause)", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text },
+            ]
+            };
+            xMultiTouchGrid.btnRefresh.Visibility = Visibility.Collapsed;
+            xMultiTouchGrid.btnEdit.Visibility = Visibility.Collapsed;
+            xMultiTouchGrid.SetAllColumnsDefaultView(view);
+            xMultiTouchGrid.InitViewItems();
+        }
 
+        private void AddTouchOperation(object sender, RoutedEventArgs e)
+        {
+            MobileTouchOperation tuchOperation = new MobileTouchOperation
+            {
+                OperationType = MobileTouchOperation.eFingerOperationType.FingerMove,
+                MoveXcoordinate = 0,
+                MoveYcoordinate = 0,
+                OperationDuration = 200
+            };
+            mAct.MobileTouchOperations.Add(tuchOperation);
+        }
     }
 }

@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.ActionsLib.UI.Mobile;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -312,6 +313,21 @@ namespace GingerCore.Actions
             }
         }
 
+        ObservableList<MobileTouchOperation> mMobileTouchOperations = [];
+        [IsSerializedForLocalRepository]
+        public ObservableList<MobileTouchOperation> MobileTouchOperations
+        {
+            get
+            {
+                return mMobileTouchOperations;
+            }
+            set
+            {
+                mMobileTouchOperations = value;
+                OnPropertyChanged(nameof(MobileTouchOperations));
+            }
+        }
+
         public override string ActionEditPage { get { return "ActMobileDeviceEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return false; } }
@@ -492,6 +508,8 @@ namespace GingerCore.Actions
             GetDeviceLogs,
             [EnumValueDescription("Get Clipboard Text")]
             GetClipboardText,
+            [EnumValueDescription("Perform Multi Touch")]
+            PerformMultiTouch,
         }
 
         public enum ePressKey

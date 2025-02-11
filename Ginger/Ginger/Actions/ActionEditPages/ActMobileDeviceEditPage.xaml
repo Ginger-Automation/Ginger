@@ -3,8 +3,10 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:UserControlsLib1="clr-namespace:Ginger.UserControlsLib" xmlns:Activities="clr-namespace:Ginger.Activities"  xmlns:UserControls="clr-namespace:Ginger.UserControls"
-        xmlns:Actions="clr-namespace:Ginger.Actions"
+      xmlns:UserControlsLib1="clr-namespace:Ginger.UserControlsLib" 
+      xmlns:Activities="clr-namespace:Ginger.Activities"
+      xmlns:Actions="clr-namespace:Ginger.Actions"
+      xmlns:Ginger="clr-namespace:Ginger"            
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
 	Title="ActMobileDeviceEditPage">
@@ -18,6 +20,7 @@
         <StackPanel x:Name="xAppPnl" HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="6,10,0,0" Visibility="Collapsed">
             <Label Style="{StaticResource $LabelStyle}" Content="Application package:"/>
             <Actions:UCValueExpression x:Name="xAppPackageVE" HorizontalAlignment="Left" VerticalAlignment="Center" Width="330" Margin="-1,5,0,0"/>
+            <TextBlock Style="{StaticResource $TextBlockStyle}" FontSize="10" TextWrapping="Wrap" Width="330" Text="Set as 'default' for pointing the initial app package, 'current' for pointing the current running app or specifiy the wanted application package to point on."/>
         </StackPanel>
 
         <StackPanel x:Name="xInputPnl"  HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="7,10,0,0" Visibility="Collapsed">
@@ -102,6 +105,9 @@
             <Label Style="{StaticResource $LabelStyle}" Content="Choose State: "/>
             <UserControlsLib1:UCComboBox x:Name="xDeviceRotateComboBox" VerticalAlignment="Top" Margin="0,-2,0,0" Width="241"/>
         </StackPanel>
+        
+        <Ginger:ucGrid x:Name="xMultiTouchGrid" Title="Touch Operations to Perform" ShowTitle="Collapsed" Visibility="Collapsed" Margin="0,10,0,0"/>
+        
     </DockPanel>
 </Page>
 
