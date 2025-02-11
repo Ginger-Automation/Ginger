@@ -116,6 +116,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 foreach (ElementTypeData etd in mPlatformElementTypeOperations)
                 {
                     etd.ElementOperationsList.Add(ActUIElement.eElementAction.GetXY);
+                    etd.ElementOperationsList.Add(ActUIElement.eElementAction.ClickXY);
                     etd.ElementOperationsList.Remove(ActUIElement.eElementAction.MouseClick);
                     etd.ElementOperationsList.Remove(ActUIElement.eElementAction.MousePressRelease);
                     etd.ElementOperationsList.Remove(ActUIElement.eElementAction.MouseRightClick);
