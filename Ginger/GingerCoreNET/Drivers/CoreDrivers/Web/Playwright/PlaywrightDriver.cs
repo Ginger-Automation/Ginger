@@ -334,7 +334,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             message = string.Empty;
 
-            if (act is ActWithoutDriver or ActScreenShot or ActGotoURL or ActAccessibilityTesting or ActSmartSync or ActWebSmartSync)
+            if (act is ActWithoutDriver or ActScreenShot or ActGotoURL or ActAccessibilityTesting or ActSmartSync or ActWebSmartSync or ActBrowserElement)
             {
                 return true;
             }
