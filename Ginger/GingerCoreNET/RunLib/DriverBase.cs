@@ -199,7 +199,8 @@ namespace GingerCore.Drivers
             ActionPerformed,
             RecordingEvent,
             HighlightElement,
-            UnHighlightElement
+            UnHighlightElement,
+            RotateEvent,
         }
 
         public void OnDriverMessage(eDriverMessageType DriverMessageType, object CustomSenderObj = null)
