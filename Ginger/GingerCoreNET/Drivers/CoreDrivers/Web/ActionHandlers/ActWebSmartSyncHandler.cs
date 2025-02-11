@@ -151,9 +151,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             Stopwatch stopwatch = Stopwatch.StartNew();
             while (stopwatch.Elapsed.TotalSeconds < waitUntilTimeout)
             {
-                var elements = await _browserTab.GetElementsAsync(_actWebSmartSync.ElementLocateBy, _actWebSmartSync.ElementLocateValue);
-                if (elements.Any())
-                {
+                IEnumerable<IBrowserElement> elements = await _elementLocator.FindMatchingElements(_actWebSmartSync.ElementLocateBy, _actWebSmartSync.ElementLocateValue);
+                IBrowserElement? firstElement = elements.FirstOrDefault();
+
+                if (firstElement != null)
+                {   
                     return;
                 }
                 await Task.Delay(100);
