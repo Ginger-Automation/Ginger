@@ -1242,9 +1242,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// </summary>
         public async Task MaximizeWindowAsync()
         {
-            await MaximizeWindowAsyncInternal();
+            await MaximizeWindowInternalAsync();
         }
-        private async Task MaximizeWindowAsyncInternal()
+        /// <summary>
+        /// Internal implementation of window maximization.
+        /// </summary>
+        private async Task MaximizeWindowInternalAsync()
         {
             try
             {
@@ -1252,8 +1255,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 var screenHeight = await _playwrightPage.EvaluateAsync<int>("window.screen.height");
                 await _playwrightPage.SetViewportSizeAsync(screenWidth, screenHeight);
             }
-            catch
+            catch (Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 throw;
             }
         }
@@ -1271,30 +1275,38 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             try
             {
-                var listURL = getBlockedUrlsArray(urls);
+                var listURL = GetBlockedUrlsArray(urls);
                 foreach (var rawURL in listURL)
                 {
-                    var url = rawURL;
-                    url = url?.Insert(0, "https://");
+                    var url = rawURL?.Trim();
                     if (!string.IsNullOrEmpty(url))
                     {
+                        if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                        {
+                            url = "https://" + url;
+                        }
                         await _playwrightPage.RouteAsync(url, async route => await route.AbortAsync());
                     }
                 }
-               await _playwrightPage.ReloadAsync();
+                await _playwrightPage.ReloadAsync();
                 return true;
             }
-            catch          
+            catch (Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 throw;
             }
         }
-        private string[] getBlockedUrlsArray(string sUrlsToBeBlocked)
+
+        /// <summary>
+        /// Splits comma-separated URLs into an array.
+        /// </summary>
+        private string[] GetBlockedUrlsArray(string urlsToBlock)
         {
             string[] arrBlockedUrls = Array.Empty<string>();
-            if (!string.IsNullOrEmpty(sUrlsToBeBlocked))
+            if (!string.IsNullOrEmpty(urlsToBlock))
             {
-                arrBlockedUrls = sUrlsToBeBlocked.Trim(',').Split(",");
+                arrBlockedUrls = urlsToBlock.Trim(',').Split(',', StringSplitOptions.RemoveEmptyEntries);
             }
             return arrBlockedUrls;
         }
@@ -1305,10 +1317,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// <returns>True if the URLs were successfully unblocked, otherwise false.</returns>
         public async Task<bool> UnblockURLAsync()
         {
-            return await UnblockURLAsyncInternal();
+            return await UnblockURLInternalAsync();
         }
 
-        private async Task<bool> UnblockURLAsyncInternal()
+        /// <summary>
+        /// Internal implementation of URL unblocking.
+        /// </summary>
+        private async Task<bool> UnblockURLInternalAsync()
         {
             try
             {
@@ -1319,19 +1334,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                return false;
+                throw;
             }
         }
-    
+
         /// </summary>
         /// <param name="locateBy">The method to locate the element.</param>
         /// <param name="value">The value used to locate the element.</param>
         /// <returns>True if the context was successfully switched, otherwise false.</returns>
-        public async Task<bool> SwitchToShadowDomAsync(eLocateBy locateBy, string value)
+        public async Task<bool> SwitchToShadowDomAsync()
         {
             return await Task.FromResult(true);
         }
-     
+
 
         /// <summary>
         /// Switches the context back to the default DOM.
@@ -1339,14 +1354,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// <returns>True if the context was successfully switched, otherwise false.</returns>
         public async Task<bool> SwitchToDefaultDomAsync()
         {
-            return await SwitchToDefaultDomAsyncInternal();
+            return await Task.FromResult(true);
         }
-        private async Task<bool> SwitchToDefaultDomAsyncInternal()
-        {
-            ThrowIfClosed();
-            _currentFrame = _playwrightPage.MainFrame;
-            return true;
-        }
-        }
+
+    }
 
 }

@@ -185,7 +185,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                         await HandleSetBlockedUrls();
                         break;
                     case ActBrowserElement.eControlAction.UnblockeUrls:
-                        await HandleUnblockeUrls();
+                        await HandleUnblockUrls();
                         break;
                     default:
                         string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActBrowserElement.eControlAction), _act.ControlAction);
@@ -203,18 +203,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         /// Unblocks previously blocked URLs in the current browser tab.
         /// </summary>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task HandleUnblockeUrls()
+        private async Task HandleUnblockUrls()
         {
             try
             {
                 if (!await _browser.CurrentWindow.CurrentTab.UnblockURLAsync())
                 {
-                    _act.AddOrUpdateReturnParamActual("Actual", "Failed to unblock the URLs");
+                    _act.Error = "Failed to unblock the URLs";
                 }
             }
             catch (Exception ex)
             {
-                _act.Error = "Error: Failed to unblock the URLs";
+                _act.Error = $"Error unblocking URLs: {ex.Message}";
                 Reporter.ToLog(eLogLevel.ERROR, "Error: Failed to unblock the URLs", ex);
             }
         }
@@ -233,21 +233,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                     _act.Error = "Error: Provided URL is empty. Please provide valid URL.";
                     return;
                 }
-                if (sURL != null)
+                if (!await _browser.CurrentWindow.CurrentTab.SetBlockedURLAsync(sURL))
                 {
-                    if (!await _browser.CurrentWindow.CurrentTab.SetBlockedURLAsync(sURL))
-                    {
-                        _act.AddOrUpdateReturnParamActual("Actual", "Failed to block the URLs");
-                    }
-                }
-                else
-                {
-                    _act.Error = "Error: Invalid URL. Give valid URL(Complete URL)";
+                    _act.Error = "Failed to block the URLs";
                 }
             }
             catch (Exception ex)
             {
-                _act.Error = "Error: Failed to block the URLs";
+                _act.Error = $"Error blocking URLs: {ex.Message}";
                 Reporter.ToLog(eLogLevel.ERROR, "Error: Failed to block the URLs", ex);
             }
         }
@@ -260,12 +253,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         {
             try
             {
-                await _browser.CurrentWindow.CurrentTab.SwitchToDefaultDomAsync();
+                if (!await _browser.CurrentWindow.CurrentTab.SwitchToDefaultDomAsync())
+                {
+                    _act.Error = "Failed to switch to default DOM";
+                }
             }
             catch (Exception ex)
             {
-                _act.Error = "Error: Failed to block the URLs";
-                Reporter.ToLog(eLogLevel.ERROR, "Error: Failed to block the URLs", ex);
+                _act.Error = $"Error switching to default DOM: {ex.Message}";
+                Reporter.ToLog(eLogLevel.ERROR, "Error: Failed to switch to default DOM", ex);
             }
         }
 
@@ -283,16 +279,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                     _act.Error = "Error: Locate value is empty.";
                     return;
                 }
-                if (!await _browser.CurrentWindow.CurrentTab.SwitchToShadowDomAsync(_act.LocateBy, locateValue))
+                if (!await _browser.CurrentWindow.CurrentTab.SwitchToShadowDomAsync())
                 {
-                    _act.Error = "Error occoured while switching on shawdow dom.";
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occoured while switching on shawdow dom.");
+                    _act.Error = "Failed to switch to shadow DOM";
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to switch to shadow DOM");
                 }
             }
             catch (Exception ex)
             {
-                _act.Error = "Error occoured while switching on shawdow dom.";
-                Reporter.ToLog(eLogLevel.ERROR, "Error occoured while switching on shawdow dom.", ex);
+                _act.Error = $"Error switching to shadow DOM: {ex.Message}";
+                Reporter.ToLog(eLogLevel.ERROR, "Error switching to shadow DOM", ex);
             }
         }
 
@@ -322,6 +318,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             string script = _act.GetInputParamCalculatedValue("Value");
             if (string.IsNullOrEmpty(script))
             {
+                _act.Error = "Error: Script value is empty";
                 return;
             }
             try
