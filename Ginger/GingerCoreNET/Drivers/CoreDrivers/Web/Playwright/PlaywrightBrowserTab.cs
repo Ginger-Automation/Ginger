@@ -1236,6 +1236,127 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 alertDetected.TrySetResult(true);
             }
         }
+
+        /// <summary>
+        /// Maximizes the browser window to the screen's width and height.
+        /// </summary>
+        public async Task MaximizeWindowAsync()
+        {
+            await MaximizeWindowInternalAsync();
+        }
+        /// <summary>
+        /// Internal implementation of window maximization.
+        /// </summary>
+        private async Task MaximizeWindowInternalAsync()
+        {
+            try
+            {
+                var screenWidth = await _playwrightPage.EvaluateAsync<int>("window.screen.width");
+                var screenHeight = await _playwrightPage.EvaluateAsync<int>("window.screen.height");
+                await _playwrightPage.SetViewportSizeAsync(screenWidth, screenHeight);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Sets the URLs to be blocked during the browser session.
+        /// </summary>
+        /// <param name="urls">Comma-separated list of URLs to be blocked.</param>
+        /// <returns>True if the URLs were successfully blocked, otherwise false.</returns>
+        public async Task<bool> SetBlockedURLAsync(string urls)
+        {
+            return await SetBlockedURLAsyncInternal(urls);
+        }
+        private async Task<bool> SetBlockedURLAsyncInternal(string urls)
+        {
+            try
+            {
+                var listURL = GetBlockedUrlsArray(urls);
+                foreach (var rawURL in listURL)
+                {
+                    var url = rawURL?.Trim();
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                        {
+                            url = "https://" + url;
+                        }
+                        await _playwrightPage.RouteAsync(url, async route => await route.AbortAsync());
+                    }
+                }
+                await _playwrightPage.ReloadAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Splits comma-separated URLs into an array.
+        /// </summary>
+        private string[] GetBlockedUrlsArray(string urlsToBlock)
+        {
+            string[] arrBlockedUrls = Array.Empty<string>();
+            if (!string.IsNullOrEmpty(urlsToBlock))
+            {
+                arrBlockedUrls = urlsToBlock.Trim(',').Split(',', StringSplitOptions.RemoveEmptyEntries);
+            }
+            return arrBlockedUrls;
+        }
+
+        /// <summary>
+        /// Unblocks all previously blocked URLs during the browser session.
+        /// </summary>
+        /// <returns>True if the URLs were successfully unblocked, otherwise false.</returns>
+        public async Task<bool> UnblockURLAsync()
+        {
+            return await UnblockURLInternalAsync();
+        }
+
+        /// <summary>
+        /// Internal implementation of URL unblocking.
+        /// </summary>
+        private async Task<bool> UnblockURLInternalAsync()
+        {
+            try
+            {
+                await _playwrightPage.UnrouteAllAsync();
+                await _playwrightPage.ReloadAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                throw;
+            }
+        }
+
+        /// </summary>
+        /// <param name="locateBy">The method to locate the element.</param>
+        /// <param name="value">The value used to locate the element.</param>
+        /// <returns>True if the context was successfully switched, otherwise false.</returns>
+        public async Task<bool> SwitchToShadowDomAsync()
+        {
+            return await Task.FromResult(true);
+        }
+
+
+        /// <summary>
+        /// Switches the context back to the default DOM.
+        /// </summary>
+        /// <returns>True if the context was successfully switched, otherwise false.</returns>
+        public async Task<bool> SwitchToDefaultDomAsync()
+        {
+            return await Task.FromResult(true);
+        }
+
     }
 
 }
