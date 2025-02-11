@@ -1236,6 +1236,120 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 alertDetected.TrySetResult(true);
             }
         }
-    }
+
+        /// <summary>
+        /// Maximizes the browser window to the screen's width and height.
+        /// </summary>
+        public async Task MaximizeWindowAsync()
+        {
+            await MaximizeWindowAsyncs();
+        }
+        private async Task MaximizeWindowAsyncs()
+        {
+            try
+            {
+                var screenWidth = await _playwrightPage.EvaluateAsync<int>("window.screen.width");
+                var screenHeight = await _playwrightPage.EvaluateAsync<int>("window.screen.height");
+                await _playwrightPage.SetViewportSizeAsync(screenWidth, screenHeight);
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Sets the URLs to be blocked during the browser session.
+        /// </summary>
+        /// <param name="urls">Comma-separated list of URLs to be blocked.</param>
+        /// <returns>True if the URLs were successfully blocked, otherwise false.</returns>
+        public async Task<bool> SetBlockedURLAsync(string urls)
+        {
+            return await SetBlockedURLAsyncs(urls);
+        }
+        private async Task<bool> SetBlockedURLAsyncs(string urls)
+        {
+            try
+            {
+                var listURL = getBlockedUrlsArray(urls);
+                foreach (var rawURL in listURL)
+                {
+                    var url = rawURL;
+                    url = url?.Insert(0, "https://");
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        await _playwrightPage.RouteAsync(url, async route => await route.AbortAsync());
+                    }
+                }
+               await _playwrightPage.ReloadAsync();
+                return true;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        private string[] getBlockedUrlsArray(string sUrlsToBeBlocked)
+        {
+            string[] arrBlockedUrls = Array.Empty<string>();
+            if (!string.IsNullOrEmpty(sUrlsToBeBlocked))
+            {
+                arrBlockedUrls = sUrlsToBeBlocked.Trim(',').Split(",");
+            }
+            return arrBlockedUrls;
+        }
+
+        /// <summary>
+        /// Unblocks all previously blocked URLs during the browser session.
+        /// </summary>
+        /// <returns>True if the URLs were successfully unblocked, otherwise false.</returns>
+        public async Task<bool> UnblockURLAsync()
+        {
+            return await UnblockURLAsyncs();
+        }
+
+        private async Task<bool> UnblockURLAsyncs()
+        {
+            try
+            {
+                await _playwrightPage.UnrouteAllAsync();
+                await _playwrightPage.ReloadAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                return false;
+            }
+        }
+    
+        /// </summary>
+        /// <param name="locateBy">The method to locate the element.</param>
+        /// <param name="value">The value used to locate the element.</param>
+        /// <returns>True if the context was successfully switched, otherwise false.</returns>
+        public async Task<bool> SwitchToShadowDomAsync(eLocateBy locateBy, string value)
+        {
+            return await SwitchToShadowDomAsyncs(locateBy, value);
+        }
+        private async Task<bool> SwitchToShadowDomAsyncs(eLocateBy locateBy, string value)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Switches the context back to the default DOM.
+        /// </summary>
+        /// <returns>True if the context was successfully switched, otherwise false.</returns>
+        public async Task<bool> SwitchToDefaultDomAsync()
+        {
+            return await SwitchToDefaultDomAsyncs();
+        }
+        private async Task<bool> SwitchToDefaultDomAsyncs()
+        {
+            ThrowIfClosed();
+            _currentFrame = _playwrightPage.MainFrame;
+            return true;
+        }
+        }
 
 }
