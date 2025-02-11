@@ -1819,6 +1819,27 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 				return plrc;
 	
 			}
+			if (controlAction.equals("ClickXY"))
+			{	
+				GingerAgent.WriteLog("ControlAction: ClickXY Coordinates: " + XCoordinate + "-" + YCoordinate);
+				int x = 0;
+				try {
+					x = Integer.parseInt(XCoordinate);
+				} catch (Exception ex) {
+					GingerAgent.WriteLog("Unable to parse XCoordinate '" + XCoordinate + "'");
+				}
+				int y = 0;
+				try {
+					y = Integer.parseInt(YCoordinate);
+				} catch (Exception ex) {
+					GingerAgent.WriteLog("Unable to parse YCoordinate '" + YCoordinate + "'");
+				}
+				PayLoad plrc = ClickComponent(c, x, y, Value, mCommandTimeout);
+								
+				GingerAgent.WriteLog("After ClickXY and Wait");
+				return plrc;
+	
+			}
 			if (controlAction.equals("WinClick"))
 			{					
 				if (XCoordinate != null && !XCoordinate.isEmpty() && YCoordinate != null && !YCoordinate.isEmpty())		
@@ -3127,12 +3148,7 @@ private PayLoad GetComponentState(Component c)
 		 response[1]="false";// to ensure the click passed and used to come out in case no response from application
 		 response[2]=""; // to keep error message
 		//TODO: check control is enabled
-		 if (!(c instanceof JButton) && !(c instanceof JRadioButton) && !(c instanceof JMenu) 
-				 && !(c instanceof JMenuItem) && !(c instanceof JTree) && !((c instanceof JCheckBox)) 
-				 && !(c instanceof JPanel) && !(c instanceof JScrollPane)
-				 && !(c.getClass().toString().contains("uif.widgets.DropDownButtonNative")))
-				return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Unknown Element for click action - Class=" + c.getClass().getName());
-		 
+
 		 if (c instanceof JTree)
 		 {
 			GingerAgent.WriteLog("c instance of JTree");
@@ -3382,6 +3398,8 @@ private PayLoad GetComponentState(Component c)
 						when = System.currentTimeMillis();
 						mouseEvent = new MouseEvent(c, MouseEvent.MOUSE_RELEASED, when, MouseEvent.BUTTON1_DOWN_MASK, x, y, count, false);
 						c.dispatchEvent(mouseEvent);
+						
+						response[0] = "true";
 					}
 					
 					response[1] = "true";

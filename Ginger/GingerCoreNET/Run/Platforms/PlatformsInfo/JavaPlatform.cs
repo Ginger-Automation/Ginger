@@ -476,6 +476,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.Unknown:
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MousePressRelease);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
