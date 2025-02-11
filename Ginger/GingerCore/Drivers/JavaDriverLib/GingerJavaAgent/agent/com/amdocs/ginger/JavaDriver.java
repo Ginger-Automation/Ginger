@@ -1822,18 +1822,32 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			if (controlAction.equals("ClickXY"))
 			{	
 				GingerAgent.WriteLog("ControlAction: ClickXY Coordinates: " + XCoordinate + "-" + YCoordinate);
+				// Validate coordinates are provided
+				if (XCoordinate == null || YCoordinate == null || XCoordinate.isEmpty() || YCoordinate.isEmpty()) {
+					return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(), "XCoordinate and YCoordinate must be provided");
+				}
+				
 				int x = 0;
 				try {
 					x = Integer.parseInt(XCoordinate);
 				} catch (Exception ex) {
-					GingerAgent.WriteLog("Unable to parse XCoordinate '" + XCoordinate + "'");
+					return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(), "Invalid XCoordinate format: " + XCoordinate);
 				}
 				int y = 0;
 				try {
 					y = Integer.parseInt(YCoordinate);
 				} catch (Exception ex) {
-					GingerAgent.WriteLog("Unable to parse YCoordinate '" + YCoordinate + "'");
+					return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(), "Invalid YCoordinate format: " + YCoordinate);
 				}
+				
+				// Validate coordinates are within component bounds
+				try {
+					if (x < 0 || x > c.getWidth() || y < 0 || y > c.getHeight()) {
+						return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(), String.format("Coordinates (%d,%d) outside component bounds (0,0,%d,%d)", x, y, c.getWidth(), c.getHeight()));
+					}
+				}
+				catch(Exception ex) {}
+				
 				PayLoad plrc = ClickComponent(c, x, y, Value, mCommandTimeout);
 								
 				GingerAgent.WriteLog("After ClickXY and Wait");
@@ -3373,7 +3387,7 @@ private PayLoad GetComponentState(Component c)
 						response[0]= String.valueOf(status);
 					}
 					else {
-						//unknown element
+						//Handle click for unknown elements by simulating mouse events
 						int count = 1;
 						
 						try {
