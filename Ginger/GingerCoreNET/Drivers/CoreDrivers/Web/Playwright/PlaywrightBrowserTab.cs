@@ -1242,9 +1242,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// </summary>
         public async Task MaximizeWindowAsync()
         {
-            await MaximizeWindowAsyncs();
+            await MaximizeWindowAsyncInternal();
         }
-        private async Task MaximizeWindowAsyncs()
+        private async Task MaximizeWindowAsyncInternal()
         {
             try
             {
@@ -1252,7 +1252,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 var screenHeight = await _playwrightPage.EvaluateAsync<int>("window.screen.height");
                 await _playwrightPage.SetViewportSizeAsync(screenWidth, screenHeight);
             }
-            catch(Exception ex)
+            catch
             {
                 throw;
             }
@@ -1265,9 +1265,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// <returns>True if the URLs were successfully blocked, otherwise false.</returns>
         public async Task<bool> SetBlockedURLAsync(string urls)
         {
-            return await SetBlockedURLAsyncs(urls);
+            return await SetBlockedURLAsyncInternal(urls);
         }
-        private async Task<bool> SetBlockedURLAsyncs(string urls)
+        private async Task<bool> SetBlockedURLAsyncInternal(string urls)
         {
             try
             {
@@ -1284,7 +1284,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                await _playwrightPage.ReloadAsync();
                 return true;
             }
-            catch
+            catch          
             {
                 throw;
             }
@@ -1305,10 +1305,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// <returns>True if the URLs were successfully unblocked, otherwise false.</returns>
         public async Task<bool> UnblockURLAsync()
         {
-            return await UnblockURLAsyncs();
+            return await UnblockURLAsyncInternal();
         }
 
-        private async Task<bool> UnblockURLAsyncs()
+        private async Task<bool> UnblockURLAsyncInternal()
         {
             try
             {
@@ -1329,12 +1329,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// <returns>True if the context was successfully switched, otherwise false.</returns>
         public async Task<bool> SwitchToShadowDomAsync(eLocateBy locateBy, string value)
         {
-            return await SwitchToShadowDomAsyncs(locateBy, value);
+            return await Task.FromResult(true);
         }
-        private async Task<bool> SwitchToShadowDomAsyncs(eLocateBy locateBy, string value)
-        {
-            return true;
-        }
+     
 
         /// <summary>
         /// Switches the context back to the default DOM.
@@ -1342,9 +1339,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// <returns>True if the context was successfully switched, otherwise false.</returns>
         public async Task<bool> SwitchToDefaultDomAsync()
         {
-            return await SwitchToDefaultDomAsyncs();
+            return await SwitchToDefaultDomAsyncInternal();
         }
-        private async Task<bool> SwitchToDefaultDomAsyncs()
+        private async Task<bool> SwitchToDefaultDomAsyncInternal()
         {
             ThrowIfClosed();
             _currentFrame = _playwrightPage.MainFrame;
