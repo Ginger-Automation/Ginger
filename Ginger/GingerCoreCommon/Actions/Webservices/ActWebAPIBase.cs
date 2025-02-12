@@ -90,11 +90,7 @@ namespace GingerCore.Actions.WebServices
             public static string NetworkCredentialsRadioButton = "NetworkCredentialsRadioButton";
             public static string ImportRequestFile = "ImportRequestFile";
             public static string ImportCetificateFile = "ImportCetificateFile";
-
             public static string UseLegacyJSONParsing = "UseLegacyJSONParsing";
-            public static string MockAPIURL = "MockAPIURL";
-
-
         }
 
         public bool UseRealAPI = true;

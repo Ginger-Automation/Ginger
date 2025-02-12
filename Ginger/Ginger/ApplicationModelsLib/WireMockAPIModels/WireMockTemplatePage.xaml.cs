@@ -120,7 +120,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
                             Margin = new Thickness(10)
                         };
 
-                        updateButton.Click += async (s, args) =>
+                        updateButton.Click += async (_, args) =>
                         {
                             try
                             {

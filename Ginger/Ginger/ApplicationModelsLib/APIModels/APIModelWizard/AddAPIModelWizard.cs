@@ -121,7 +121,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
             if (toCreateWireMock)
             {
-                CreateWireMockMappingsAsync(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected == true).ToList()));
+                CreateWireMockMappingsAsync(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected).ToList()));
             }
 
             ImportAPIModels(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected == true).ToList()));

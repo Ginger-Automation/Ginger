@@ -15,7 +15,6 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
         private const string MappingEndpoint = "/mappings";
         private const string StartRecordingEndpoint = "/recordings/start";
         private const string StopRecordingEndpoint = "/recordings/stop";
-        private bool isServerUp;
 
         public WireMockAPI()
         {
@@ -86,14 +85,6 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
         {
             try
             {
-                //checking if server is up
-                isServerUp = await TestWireMockConnectionAsync(_baseUrl);
-                if (!isServerUp)
-                {
-                    Reporter.ToUser(eUserMsgKey.WireMockConnectionFail, "WireMock Server is down");
-                    return null;
-                }
-
                 using (HttpClient client = new HttpClient())
                 {
                     HttpResponseMessage response = await client.PostAsync($"{_baseUrl}{StopRecordingEndpoint}", null);

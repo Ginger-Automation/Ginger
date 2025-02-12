@@ -8,6 +8,7 @@ using Ginger.UserControlsLib.TextEditor;
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -127,7 +128,7 @@ namespace Ginger.GeneralWindows
         }
 
 
-        private async void SetGridData()
+        private async Task SetGridData()
         {
             loaderElement.Name = "xProcessingImage";
             loaderElement.Height = 30;

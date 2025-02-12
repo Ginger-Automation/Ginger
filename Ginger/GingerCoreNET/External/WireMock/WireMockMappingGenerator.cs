@@ -12,45 +12,48 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
 {
     public class WireMockMappingGenerator
     {
-        private static readonly WireMockAPI WireMockAPI = new();
-        public static WireMockConfiguration mockConfiguration;
-        public static string baseurl = string.Empty;
-        public async static Task CreateWireMockMapping(ApplicationAPIModel model)
+        private readonly WireMockAPI _wireMockAPI;
+        private WireMockConfiguration _mockConfiguration;
+        private string _baseUrl;
+
+        public WireMockMappingGenerator()
         {
-            mockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
+            _wireMockAPI = new WireMockAPI();
+        }
+
+        public async Task CreateWireMockMapping(ApplicationAPIModel model)
+        {
+            _mockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
             string trimmedUrl = RemovingURLPathQuery(model.URLDomain) + TrimApiEndpointUrl(model.EndpointURL);
-            baseurl = mockConfiguration.WireMockUrl;
+            _baseUrl = _mockConfiguration.WireMockUrl;
 
-            ApplicationAPIUtils.eRequestContentType ReqitemType = model.RequestContentType;
-            if (ReqitemType.Equals(ApplicationAPIUtils.eRequestContentType.JSon))
+            ApplicationAPIUtils.eRequestContentType reqItemType = model.RequestContentType;
+            if (reqItemType.Equals(ApplicationAPIUtils.eRequestContentType.JSon))
             {
-                ReqitemType = ApplicationAPIUtils.eRequestContentType.JSonWithoutCharset;
+                reqItemType = ApplicationAPIUtils.eRequestContentType.JSonWithoutCharset;
             }
-            string ReqcontentType = GetEnumValueDescription(ReqitemType);
+            string reqContentType = GetEnumValueDescription(reqItemType);
 
-            var ResitemType = model.ResponseContentType;
-            string RescontentType = GetEnumValueDescription(ResitemType);
-
+            var resItemType = model.ResponseContentType;
+            string resContentType = GetEnumValueDescription(resItemType);
 
             var stubTemplate = new
             {
                 name = model.Name,
                 request = new
                 {
-
                     method = model.RequestType.ToString(),
                     urlPattern = $"{trimmedUrl}",
                     bodyPatterns = new[]
-            {
-                new { matches = ".*" }
-            },
+                    {
+                            new { matches = ".*" }
+                        },
                     headers = new
                     {
                         Content_Type = new
                         {
-                            matches = $"{ReqcontentType}.*"
+                            matches = $"{reqContentType}.*"
                         },
-
                     },
                 },
                 response = new
@@ -59,17 +62,18 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
                     body = "This is a generic mock response", // as per the request template
                     headers = new
                     {
-                        Content_Type = RescontentType,
+                        Content_Type = resContentType,
                     }
                 }
             };
 
-            if (ReqitemType == ApplicationAPIUtils.eRequestContentType.JSon)
-            {
-                string mappingJson = JsonConvert.SerializeObject(stubTemplate).Replace("Content_Type", "Content-Type");
-                await WireMockAPI.CreateStubAsync(mappingJson, ReqcontentType);
-            }
-            else if (ReqitemType == ApplicationAPIUtils.eRequestContentType.XML)
+            string mappingJson = SerializeStubTemplate(stubTemplate, reqItemType);
+            await _wireMockAPI.CreateStubAsync(mappingJson, reqContentType);
+        }
+
+        private static string SerializeStubTemplate(object stubTemplate, ApplicationAPIUtils.eRequestContentType reqItemType)
+        {
+            if (reqItemType == ApplicationAPIUtils.eRequestContentType.XML)
             {
                 var xmlSerializer = new System.Xml.Serialization.XmlSerializer(stubTemplate.GetType());
                 using (var stringWriter = new StringWriter())
@@ -77,23 +81,14 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
                     using (var xmlWriter = System.Xml.XmlWriter.Create(stringWriter))
                     {
                         xmlSerializer.Serialize(xmlWriter, stubTemplate);
-                        ReqcontentType = "application/xml";
-                        string mappingJson = stringWriter.ToString().Replace("Content_Type", "Content-Type");
-                        await WireMockAPI.CreateStubAsync(mappingJson, ReqcontentType);
+                        return stringWriter.ToString().Replace("Content_Type", "Content-Type");
                     }
                 }
             }
-            else if (ReqitemType == ApplicationAPIUtils.eRequestContentType.TextPlain)
+            else
             {
-                string mappingJson = JsonConvert.SerializeObject(stubTemplate).Replace("Content_Type", "Content-Type");
-                await WireMockAPI.CreateStubAsync(mappingJson, ReqcontentType);
+                return JsonConvert.SerializeObject(stubTemplate).Replace("Content_Type", "Content-Type");
             }
-            else if (ReqitemType == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded)
-            {
-                string mappingJson = JsonConvert.SerializeObject(stubTemplate).Replace("Content_Type", "Content-Type");
-                await WireMockAPI.CreateStubAsync(mappingJson, ReqcontentType);
-            }
-
         }
 
         public static string TrimApiEndpointUrl(string url)
@@ -104,7 +99,7 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
             }
             try
             {
-                // Remove content within curly braces {}
+                //Remove content within curly braces
                 url = Regex.Replace(url, @"\{.*?\}", string.Empty);
 
                 // Remove everything after '?' to exclude query parameters
@@ -148,18 +143,27 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
                 return url;
             }
         }
+
+        public static string RemovingURLPathQuery(string url)
+        {
+            try
+            {
+                Uri uri = new Uri(url);
+                return uri.PathAndQuery;
+            }
+            catch (UriFormatException ex)
+            {
+                // Handle the exception if the URL is not in a valid format
+                Reporter.ToLog(eLogLevel.ERROR, "Invalid URL format", ex);
+                return string.Empty;
+            }
+        }
+
         public static string GetEnumValueDescription(Enum value)
         {
             var fieldInfo = value.GetType().GetField(value.ToString());
             var attributes = (EnumValueDescriptionAttribute[])fieldInfo.GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false);
             return attributes.Length > 0 ? attributes[0].ValueDescription : value.ToString();
-        }
-
-        public static string RemovingURLPathQuery(string url)
-        {
-            Uri uri = new Uri(url);
-
-            return uri.PathAndQuery;
         }
     }
 

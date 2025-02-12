@@ -58,7 +58,7 @@ namespace GingerCore.Actions.WebAPI
         public string ResponseFileContent = null;
 
         public bool RequestConstructor(ActWebAPIBase act, string ProxySettings, bool useProxyServerSettings)
-         {
+        {
             mAct = act;
             Handler = new HttpClientHandler();
 
@@ -349,15 +349,13 @@ namespace GingerCore.Actions.WebAPI
         private bool SetEndPointURL()
         {
             string url = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.EndPointURL);
-            //petstore.com/api/v3/pet
+
             if (!mAct.UseRealAPI && !string.IsNullOrEmpty(url))
             {
                 mockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
                 string mockUrl = mockConfiguration.WireMockUrl;
                 if (mockUrl != null)
                 {
-                    // http://petstore.com/api/v3/pet -> http://wiremock:port/api/v3/pet
-                    //string mockurlendpoint = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.MockAPIURL);
                     Uri uri = new Uri(url);
                     string path = uri.PathAndQuery;
                     string newUrl = mockUrl.Replace("/__admin", string.Empty);
@@ -852,19 +850,19 @@ namespace GingerCore.Actions.WebAPI
 
                 case ApplicationAPIUtils.eRequestContentType.FormData:
                     return "multipart/form-data"; //update to correct value
-             
+
                 case ApplicationAPIUtils.eRequestContentType.TextPlain:
                     return "text/plain; charset=utf-8";
-            
+
                 case ApplicationAPIUtils.eRequestContentType.XML:
                     return "application/xml";
-    
+
                 case ApplicationAPIUtils.eRequestContentType.JSonWithoutCharset:
                     return "application/json";
-   
+
                 case ApplicationAPIUtils.eRequestContentType.PDF:
                     return "application/pdf";
-   
+
                 default:
                     throw new InvalidOperationException($"Unsupported RequestBodyType: {eContentType}");
             }
