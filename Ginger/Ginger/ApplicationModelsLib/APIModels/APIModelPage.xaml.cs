@@ -198,7 +198,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             xOutputTemplateTab.Text = string.Format("Output Values Template ({0})", mApplicationAPIModel.ReturnValues.Count);
         }
 
-        private async void UpdateWireMockTemplateTabHeader()
+        private async Task UpdateWireMockTemplateTabHeader()
         {
             int count = await WireMockTemplateTabCount();
             xWireMockTemplateTab.Text = string.Format("WireMock Mapping ({0})", count);

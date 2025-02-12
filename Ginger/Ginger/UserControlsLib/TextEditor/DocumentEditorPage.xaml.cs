@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Ginger.UserControlsLib.TextEditor
@@ -302,7 +303,7 @@ namespace Ginger.UserControlsLib.TextEditor
 
 
 
-        public async void Save()
+        public async Task Save()
         {
 
             if (EditorFrame.Content is UCTextEditor)

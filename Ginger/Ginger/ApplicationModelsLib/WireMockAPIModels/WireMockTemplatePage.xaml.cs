@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -172,7 +173,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
             return (DataTemplate)xWMMappingTemplatePage.Resources["xMappingOperationTab"];
         }
 
-        private async void SetGridData()
+        private async Task SetGridData()
         {
 
             var mappings = await wmController.DeserializeWireMockResponseAsync();
