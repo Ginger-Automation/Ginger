@@ -35,6 +35,7 @@ namespace GingerWPF.TreeViewItemsLib
 {
     public abstract class TreeViewItemGenericBase
     {
+        public WireMockMappingGenerator mockMappingGenerator;
         public virtual string NodePath()
         {
             return string.Empty;
@@ -212,10 +213,11 @@ namespace GingerWPF.TreeViewItemsLib
         {
             try
             {
+                mockMappingGenerator = new();
                 object item = ((ITreeViewItem)this).NodeObject();
                 if (item is RepositoryItemBase repositoryItem)
                 {
-                    await WireMockMappingGenerator.CreateWireMockMapping((ApplicationAPIModel)item);
+                    await mockMappingGenerator.CreateWireMockMapping((ApplicationAPIModel)item);
                     Reporter.ToUser(eUserMsgKey.ShowInfoMessage, "WireMock mapping created successfully.");
 
                 }
