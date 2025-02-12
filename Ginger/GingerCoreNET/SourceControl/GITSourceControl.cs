@@ -452,11 +452,12 @@ namespace GingerCore.SourceControl
 
             try
 
-            {                
-                var co = new CloneOptions(GetFetchOptions())
+            {
+                var co = new CloneOptions()
                 {
                     BranchName = string.IsNullOrEmpty(SourceControlBranch) ? "master" : SourceControlBranch,
                 };
+                GetFetchOptions(co.FetchOptions);
                 RepositoryRootFolder = LibGit2Sharp.Repository.Clone(URI, Path, co);
             }
             catch (Exception ex)
@@ -466,7 +467,7 @@ namespace GingerCore.SourceControl
             }
             return true;
         }
-   
+
         private void AddSolution(ObservableList<SolutionInfo> SourceControlSolutions, string LocalFolder, string SourceControlLocation)
         {
             SolutionInfo sol = new SolutionInfo
@@ -1233,29 +1234,25 @@ namespace GingerCore.SourceControl
         /// <returns>A PullOptions object configured with merge and fetch options.</returns>
         private PullOptions GetPullOptions()
         {
-            return new PullOptions
+            var pullOption= new PullOptions
             {
                 MergeOptions = new MergeOptions
                 {
                     FailOnConflict = true,
                 },
-
-                FetchOptions = GetFetchOptions()
             };
+            GetFetchOptions(pullOption.FetchOptions);
+            return pullOption;
         }
 
         /// <summary>
         /// Gets the options for fetching changes from the remote repository.
         /// </summary>
         /// <returns>A FetchOptions object configured with credentials, depth, and certificate check.</returns>
-        private FetchOptions GetFetchOptions()
+        private void GetFetchOptions(FetchOptions fetchOptions)
         {
-            return new FetchOptions
-            {
-                CredentialsProvider = GetSourceCredentialsHandler(),
-                Depth = 1,
-                CertificateCheck = (_, valid, host) => true,
-            };
+            fetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
+            fetchOptions.CertificateCheck = (_, valid, host) => true;           
         }
 
         public override bool UnLock(string _, ref string error)
@@ -1364,9 +1361,7 @@ namespace GingerCore.SourceControl
             try
             {
                 EnsureDirectoryExists(path);
-                var fetchOptions = GetFetchOptionsWithProgress(progressNotifier, cancellationToken);
-
-                var cloneOptions = new CloneOptions(fetchOptions)
+                var cloneOptions = new CloneOptions()
                 {
                     BranchName = string.IsNullOrEmpty(SourceControlBranch) ? "master" : SourceControlBranch,
                     OnCheckoutProgress = (path, completedSteps, totalSteps) =>
@@ -1376,6 +1371,7 @@ namespace GingerCore.SourceControl
                     }
                 };
 
+                GetFetchOptionsWithProgress(cloneOptions.FetchOptions, progressNotifier, cancellationToken);
                 RepositoryRootFolder = LibGit2Sharp.Repository.Clone(uri, path, cloneOptions);
             }
             catch (Exception ex)
@@ -1408,9 +1404,9 @@ namespace GingerCore.SourceControl
         /// <param name="progressNotifier">Optional progress notifier for reporting progress.</param>
         /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
         /// <returns>Fetch options configured with progress notifications and cancellation support.</returns>
-        private FetchOptions GetFetchOptionsWithProgress(ProgressNotifier progressNotifier, CancellationToken cancellationToken)
+        private void GetFetchOptionsWithProgress(FetchOptions fetchOptions, ProgressNotifier progressNotifier, CancellationToken cancellationToken)
         {
-            var fetchOptions = GetFetchOptions();
+            GetFetchOptions(fetchOptions);
             if (progressNotifier != null)
             {
                 fetchOptions.OnProgress = progress =>
@@ -1432,7 +1428,6 @@ namespace GingerCore.SourceControl
                     return !cancellationToken.IsCancellationRequested;
                 };
             }
-            return fetchOptions;
         }
 
         /// <summary>
@@ -1450,10 +1445,14 @@ namespace GingerCore.SourceControl
             {
                 using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
                 {
-                    var pullOptions = new PullOptions
+                    var pullOptions = new PullOptions()
                     {
-                        FetchOptions = GetFetchOptionsWithProgress(progressNotifier, cancellationToken)
+                        FetchOptions = new FetchOptions()
+                       
                     };
+
+
+                    GetFetchOptionsWithProgress(pullOptions.FetchOptions, progressNotifier, cancellationToken);
 
                     var signature = new Signature(
                         IsRepositoryPublic() ? "dummy" : SourceControlUser,
