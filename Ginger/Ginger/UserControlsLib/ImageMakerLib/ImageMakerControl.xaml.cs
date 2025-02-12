@@ -208,6 +208,15 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.GingerAnalytics:
                     SetAsStaticImage("GingerAnalytics.png");
                     break;
+                case eImageType.WireMockLogo:
+                    SetAsStaticImage("WireMockLogo.png");
+                    break;
+                case eImageType.WireMock_Logo:
+                    SetAsStaticImage("WireMock_Logo.png");
+                    break;
+                case eImageType.WireMockLogo16x16:
+                    SetAsStaticImage("WireMockLogo16x16.png");
+                    break;
                 case eImageType.SendArrow:
                     SetAsStaticImage("sendArrow.png");
                     break;

@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -79,6 +80,23 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             //    AddAPIModelWizard.FinishEnabled = true;
             //    AddAPIModelWizard.NextEnabled = false;
             //}
+        }
+
+        private void xWireMockMappingToggle_Checked(object sender, RoutedEventArgs e)
+        {
+            WireMockConfiguration mockConfiguration;
+            mockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
+            if (string.IsNullOrEmpty(mockConfiguration.WireMockUrl))
+            {
+
+                Reporter.ToUser(eUserMsgKey.WireMockConnectionFail);
+
+            }
+            else
+            {
+                AddAPIModelWizard.toCreateWireMock = true;
+            }
+
         }
     }
 }
