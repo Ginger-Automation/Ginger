@@ -36,7 +36,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 {
     public class AddAPIModelWizard : WizardBase
     {
-        public WireMockMappingGenerator mockMappingGenerator;
         public enum eAPIType
         {
             [EnumValueDescription("WSDL")]
@@ -147,10 +146,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private async Task CreateWireMockMappingsAsync(ObservableList<ApplicationAPIModel> SelectedAAMList)
         {
-            mockMappingGenerator = new();
             foreach (ApplicationAPIModel appmodel in SelectedAAMList)
             {
-                await mockMappingGenerator.CreateWireMockMapping(appmodel);
+                WireMockMappingGenerator.CreateWireMockMapping(appmodel);
             }
         }
 

@@ -5,6 +5,7 @@ using Ginger.UserControls;
 using Ginger.UserControlsLib.TextEditor;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -32,6 +33,12 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
             InitializeComponent();
             SetGridView();
             SetGridData();
+            RefreshDataOnLoad();
+        }
+
+        private async void RefreshDataOnLoad()
+        {
+            await SetGridData();
         }
 
         private void SetGridView()
@@ -61,7 +68,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
             xGridMappingOutput.InitViewItems();
             xGridMappingOutput.AddToolbarTool("@ArrowDown_16x16.png", "Download Mapping", xImportMapping_Click, 0);
             xGridMappingOutput.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.ID, "Copy selected item ID", CopySelectedItemID);
-            xGridMappingOutput.AddButton("", AddNewMappingAsync);
+            xGridMappingOutput.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Add, "Add New Mapping", AddNewMappingAsync);
 
         }
 
@@ -79,91 +86,88 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
 
         private async void AddNewMappingAsync(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.DataContext is Mapping mapping)
+            try
             {
-                try
+                List<Mapping> mapList = await GetMatchingMapping();
+                string mappingJson = await wmController.mockAPI.GetStubAsync(mapList.FirstOrDefault()?.Id);
+                if (!string.IsNullOrEmpty(mappingJson))
                 {
-                    string mappingJson = await wmController.mockAPI.GetStubAsync(mapping.Id);
-                    if (!string.IsNullOrEmpty(mappingJson))
+
+                    var jsonObject = JsonNode.Parse(mappingJson);
+                    // Remove "id" and "uuid" if they exist
+                    jsonObject!.AsObject().Remove("id");
+                    jsonObject.AsObject().Remove("uuid");
+
+                    // Convert back to JSON string
+                    string formattedJson = jsonObject.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
+
+                    // Create a new window to display and edit the JSON
+                    Window jsonWindow = new Window
                     {
+                        Title = "Edit WireMock Mapping",
+                        Width = 600,
+                        Height = 400
+                    };
 
-                        var jsonObject = JsonNode.Parse(mappingJson);
-                        // Remove "id" and "uuid" if they exist
-                        jsonObject!.AsObject().Remove("id");
-                        jsonObject.AsObject().Remove("uuid");
-
-                        // Convert back to JSON string
-                        string formattedJson = jsonObject.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
-
-                        // Create a new window to display and edit the JSON
-                        Window jsonWindow = new Window
-                        {
-                            Title = "Edit WireMock Mapping",
-                            Width = 600,
-                            Height = 400
-                        };
-
-                        TextBox jsonTextBox = new TextBox
-                        {
-                            Text = formattedJson,
-                            IsReadOnly = false,
-                            TextWrapping = TextWrapping.Wrap,
-                            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                            HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-                            AcceptsReturn = true
-                        };
-
-                        Button updateButton = new Button
-                        {
-                            Content = "Update",
-                            Width = 100,
-                            Height = 30,
-                            Margin = new Thickness(10)
-                        };
-
-                        updateButton.Click += async (_, args) =>
-                        {
-                            try
-                            {
-                                string updatedJson = jsonTextBox.Text;
-                                string result = await wmController.mockAPI.CreateStubAsync(updatedJson);
-                                if (!string.IsNullOrEmpty(result))
-                                {
-                                    // Update the mapping in the grid
-                                    int index = xGridMappingOutput.DataSourceList.IndexOf(mapping);
-                                    xGridMappingOutput.DataSourceList[index] = JsonConvert.DeserializeObject<Mapping>(updatedJson);
-                                    jsonWindow.Close();
-                                    Reporter.ToUser(eUserMsgKey.WireMockMappingUpdateSuccess);
-                                }
-                                else
-                                {
-                                    Reporter.ToUser(eUserMsgKey.WireMockMappingUpdateFail);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, "Failed to update WireMock mapping", ex);
-                                Reporter.ToUser(eUserMsgKey.WireMockAPIError);
-                            }
-                        };
-
-                        StackPanel panel = new StackPanel();
-                        panel.Children.Add(jsonTextBox);
-                        panel.Children.Add(updateButton);
-
-                        jsonWindow.Content = panel;
-                        jsonWindow.ShowDialog();
-                    }
-                    else
+                    TextBox jsonTextBox = new TextBox
                     {
-                        Reporter.ToUser(eUserMsgKey.WireMockAPIError);
-                    }
+                        Text = formattedJson,
+                        IsReadOnly = false,
+                        TextWrapping = TextWrapping.Wrap,
+                        VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                        HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                        AcceptsReturn = true
+                    };
+
+                    Button updateButton = new Button
+                    {
+                        Content = "Add",
+                        Width = 100,
+                        Height = 30,
+                        Margin = new Thickness(10)
+                    };
+
+                    updateButton.Click += async (_, args) =>
+                    {
+                        try
+                        {
+                            string updatedJson = jsonTextBox.Text;
+                            string result = await wmController.mockAPI.CreateStubAsync(updatedJson);
+                            if (!string.IsNullOrEmpty(result))
+                            {
+                                // Update the mapping in the grid
+                                xGridMappingOutput.DataSourceList.Add(JsonConvert.DeserializeObject<Mapping>(result));
+                                jsonWindow.Close();
+                                Reporter.ToUser(eUserMsgKey.WireMockMappingUpdateSuccess);
+                            }
+                            else
+                            {
+                                Reporter.ToUser(eUserMsgKey.WireMockMappingUpdateFail);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to update WireMock mapping", ex);
+                            Reporter.ToUser(eUserMsgKey.WireMockAPIError);
+                        }
+                    };
+
+                    StackPanel panel = new StackPanel();
+                    panel.Children.Add(jsonTextBox);
+                    panel.Children.Add(updateButton);
+
+                    jsonWindow.Content = panel;
+                    jsonWindow.ShowDialog();
                 }
-                catch (Exception ex)
+                else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to edit WireMock mapping", ex);
                     Reporter.ToUser(eUserMsgKey.WireMockAPIError);
                 }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to edit WireMock mapping", ex);
+                Reporter.ToUser(eUserMsgKey.WireMockAPIError);
             }
 
         }
@@ -175,20 +179,22 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
 
         private async Task SetGridData()
         {
+            var matchingMappings = await GetMatchingMapping();
+            xGridMappingOutput.DataSourceList = new ObservableList<Mapping>(matchingMappings);
+        }
 
+        public async Task<List<Mapping>> GetMatchingMapping()
+        {
             var mappings = await wmController.DeserializeWireMockResponseAsync();
             if (mappings.Count == 0)
             {
                 Reporter.ToUser(eUserMsgKey.WireMockMappingEmpty);
-                return;
+                return new List<Mapping>();
             }
 
             string ApiName = mApplicationAPIModel.Name;
 
-            // Filter the mappings based on the trimmed endpoint URL
-            var filteredMappings = mappings.Where(mapping => mapping.Name == ApiName).ToList();
-
-            xGridMappingOutput.DataSourceList = new ObservableList<Mapping>(filteredMappings);
+            return mappings.Where(mapping => mapping.Name == ApiName).ToList();
         }
 
         private async void xImportMapping_Click(object sender, RoutedEventArgs e)

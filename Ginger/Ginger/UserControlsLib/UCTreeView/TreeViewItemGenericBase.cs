@@ -35,7 +35,6 @@ namespace GingerWPF.TreeViewItemsLib
 {
     public abstract class TreeViewItemGenericBase
     {
-        public WireMockMappingGenerator mockMappingGenerator;
         public virtual string NodePath()
         {
             return string.Empty;
@@ -108,8 +107,8 @@ namespace GingerWPF.TreeViewItemsLib
             }
             if (allowWireMockMapping)
             {
-                TreeViewUtils.AddMenuItem(CM, "Create WireMock Mapping", CreateWireMockMappingHandler, null, "@WireMockLogo16x16.png");
-                mTreeView.AddToolbarTool("@WireMockLogo16x16.png", "Create WireMock Mapping", CreateWireMockMappingHandler);
+                TreeViewUtils.AddMenuItem(CM, "Create WireMock Mapping", CreateWireMockMappingHandler, null, "WireMockLogo16x16.png");
+                mTreeView.AddToolbarTool("WireMockLogo16x16.png", "Create WireMock Mapping", CreateWireMockMappingHandler);
             }
         }
 
@@ -209,15 +208,14 @@ namespace GingerWPF.TreeViewItemsLib
             ViewFolderFiles(ContainingFolderFullPath);
         }
 
-        private async void CreateWireMockMappingHandler(object sender, RoutedEventArgs e)
+        private void CreateWireMockMappingHandler(object sender, RoutedEventArgs e)
         {
             try
             {
-                mockMappingGenerator = new();
                 object item = ((ITreeViewItem)this).NodeObject();
                 if (item is RepositoryItemBase repositoryItem)
                 {
-                    await mockMappingGenerator.CreateWireMockMapping((ApplicationAPIModel)item);
+                    WireMockMappingGenerator.CreateWireMockMapping((ApplicationAPIModel)item);
                     Reporter.ToUser(eUserMsgKey.ShowInfoMessage, "WireMock mapping created successfully.");
 
                 }
@@ -292,8 +290,8 @@ namespace GingerWPF.TreeViewItemsLib
             }
             if (allowWireMockMapping)
             {
-                TreeViewUtils.AddMenuItem(CM, "Create WireMock Mapping", CreateWireMockMappingHandler, null, "@WireMock_Logo.png");
-                mTreeView.AddToolbarTool("@WireMock_Logo.png", "Create WireMock Mapping", CreateWireMockMappingHandler);
+                TreeViewUtils.AddMenuItem(CM, "Create WireMock Mapping", CreateWireMockMappingHandler, null, "WireMockLogo16x16.png");
+                mTreeView.AddToolbarTool("WireMockLogo16x16.png", "Create WireMock Mapping", CreateWireMockMappingHandler);
             }
         }
 
