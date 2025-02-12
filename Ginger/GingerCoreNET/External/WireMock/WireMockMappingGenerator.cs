@@ -21,10 +21,10 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
             string trimmedUrl = RemovingURLPathQuery(model.URLDomain) + TrimApiEndpointUrl(model.EndpointURL);
             baseurl = mockConfiguration.WireMockUrl;
 
-            var ReqitemType = model.ContentType;
-            if (ReqitemType == ApplicationAPIUtils.eContentType.JSon)
+            ApplicationAPIUtils.eRequestContentType ReqitemType = model.RequestContentType;
+            if (ReqitemType.Equals(ApplicationAPIUtils.eRequestContentType.JSon))
             {
-                ReqitemType = ApplicationAPIUtils.eContentType.JSonWithoutCharset;
+                ReqitemType = ApplicationAPIUtils.eRequestContentType.JSonWithoutCharset;
             }
             string ReqcontentType = GetEnumValueDescription(ReqitemType);
 
@@ -64,13 +64,12 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
                 }
             };
 
-            if (ReqitemType == ApplicationAPIUtils.eContentType.JSon)
+            if (ReqitemType == ApplicationAPIUtils.eRequestContentType.JSon)
             {
-                ReqcontentType = "application/json";
                 string mappingJson = JsonConvert.SerializeObject(stubTemplate).Replace("Content_Type", "Content-Type");
                 await WireMockAPI.CreateStubAsync(mappingJson, ReqcontentType);
             }
-            else if (ReqitemType == ApplicationAPIUtils.eContentType.XML)
+            else if (ReqitemType == ApplicationAPIUtils.eRequestContentType.XML)
             {
                 var xmlSerializer = new System.Xml.Serialization.XmlSerializer(stubTemplate.GetType());
                 using (var stringWriter = new StringWriter())
@@ -84,12 +83,12 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
                     }
                 }
             }
-            else if (ReqitemType == ApplicationAPIUtils.eContentType.TextPlain)
+            else if (ReqitemType == ApplicationAPIUtils.eRequestContentType.TextPlain)
             {
                 string mappingJson = JsonConvert.SerializeObject(stubTemplate).Replace("Content_Type", "Content-Type");
                 await WireMockAPI.CreateStubAsync(mappingJson, ReqcontentType);
             }
-            else if (ReqitemType == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded)
+            else if (ReqitemType == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded)
             {
                 string mappingJson = JsonConvert.SerializeObject(stubTemplate).Replace("Content_Type", "Content-Type");
                 await WireMockAPI.CreateStubAsync(mappingJson, ReqcontentType);
@@ -151,10 +150,6 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
         }
         public static string GetEnumValueDescription(Enum value)
         {
-            if (value == )
-            {
-
-            }
             var fieldInfo = value.GetType().GetField(value.ToString());
             var attributes = (EnumValueDescriptionAttribute[])fieldInfo.GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false);
             return attributes.Length > 0 ? attributes[0].ValueDescription : value.ToString();
