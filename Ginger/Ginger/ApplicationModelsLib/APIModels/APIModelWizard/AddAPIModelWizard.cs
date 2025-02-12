@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.CoreNET.Application_Models;
+using Amdocs.Ginger.CoreNET.External.WireMock;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.APIModels.APIModelWizard;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
@@ -55,6 +56,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         public eAPIType APIType { get; set; }
 
         public RepositoryFolder<ApplicationAPIModel> APIModelFolder;
+
+        public bool toCreateWireMock;
 
         public string URL { get; set; }
 
@@ -116,6 +119,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 }
             }
 
+            if (toCreateWireMock)
+            {
+                CreateWireMockMappingsAsync(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected == true).ToList()));
+            }
+
             ImportAPIModels(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected == true).ToList()));
         }
         private GlobalAppModelParameter AddGlobalParam(string customurl, string placehold)
@@ -133,6 +141,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             newModelGlobalParam.OptionalValuesList.Add(new OptionalValue() { Value = customurl, IsDefault = true });
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newModelGlobalParam);
             return newModelGlobalParam;
+        }
+
+        private void CreateWireMockMappingsAsync(ObservableList<ApplicationAPIModel> SelectedAAMList)
+        {
+
+            foreach (ApplicationAPIModel appmodel in SelectedAAMList)
+            {
+                WireMockMappingGenerator.CreateWireMockMapping(appmodel);
+            }
         }
 
         private void ImportAPIModels(ObservableList<ApplicationAPIModel> SelectedAAMList)

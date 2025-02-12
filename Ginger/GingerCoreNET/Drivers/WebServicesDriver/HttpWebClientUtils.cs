@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.CoreNET.Platform;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.WebServices;
@@ -42,7 +43,7 @@ namespace GingerCore.Actions.WebAPI
     {
         HttpClient Client = null;
         HttpClientHandler Handler = null;
-
+        public WireMockConfiguration mockConfiguration;
         //Task _Task = null; //thread for sending events
         HttpRequestMessage RequestMessage = null;
         ActWebAPIBase mAct;
@@ -348,7 +349,22 @@ namespace GingerCore.Actions.WebAPI
         private bool SetEndPointURL()
         {
             string url = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.EndPointURL);
-            if (!string.IsNullOrEmpty(url))
+            //petstore.com/api/v3/pet
+            if (!mAct.UseRealAPI && !string.IsNullOrEmpty(url))
+            {
+                mockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
+                string mockUrl = mockConfiguration.WireMockUrl;
+                if (mockUrl != null)
+                {
+                    // http://petstore.com/api/v3/pet -> http://wiremock:port/api/v3/pet
+                    //string mockurlendpoint = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.MockAPIURL);
+                    Uri uri = new Uri(url);
+                    string path = uri.PathAndQuery;
+                    string newUrl = mockUrl.Replace("/__admin", string.Empty);
+                    Client.BaseAddress = new Uri(newUrl + path);
+                }
+            }
+            else if (!string.IsNullOrEmpty(url) && mAct.UseRealAPI)
             {
                 Client.BaseAddress = new Uri(url);
             }

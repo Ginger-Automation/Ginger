@@ -38,6 +38,10 @@ namespace Amdocs.Ginger.Repository
         // [IsSerializedForLocalRepository]
         public bool IsSelected { get { return mIsSelected; } set { if (mIsSelected != value) { mIsSelected = value; OnPropertyChanged(nameof(IsSelected)); } } }
 
+        private bool mUseRealAPI;
+        [IsSerializedForLocalRepository]
+        public bool UseRealAPI { get { return mUseRealAPI; } set { if (mUseRealAPI != value) { mUseRealAPI = value; OnPropertyChanged(nameof(UseRealAPI)); } } }
+
         //[IsSerializedForLocalRepository]
         public Guid ApplicationGuid { get; set; }//Do not use, for backward support
 

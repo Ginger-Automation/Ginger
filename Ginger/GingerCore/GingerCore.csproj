@@ -493,7 +493,7 @@
       <Version>1.0.1</Version>
     </PackageReference>
     <PackageReference Include="Google.Protobuf">
-      <Version>3.28.0</Version>
+      <Version>3.29.3</Version>
     </PackageReference>
     <PackageReference Include="HtmlAgilityPack">
       <Version>1.11.58</Version>

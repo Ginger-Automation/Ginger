@@ -18,8 +18,10 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.External.WireMock;
 using Amdocs.Ginger.Repository;
 using Ginger;
+using Ginger.ApplicationModelsLib.WireMockAPIModels;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore.GeneralLib;
@@ -29,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -38,10 +41,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 {
     public partial class APIModelPage : GingerUIPage
     {
+        WireMockMappingController wmController;
+
         ApplicationAPIModel mApplicationAPIModel;
         ModelParamsPage modelParamsPage;
         private bool saveWasDone = false;
         General.eRIPageViewMode mPageViewMode;
+        public WireMockAPI MockAPI;
         public APIModelPage(ApplicationAPIModel applicationAPIModelBase, General.eRIPageViewMode viewMode = General.eRIPageViewMode.Standalone)
         {
             mApplicationAPIModel = applicationAPIModelBase;
@@ -61,11 +67,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             OutputTemplatePage outputTemplatePage = new OutputTemplatePage(mApplicationAPIModel, viewMode);
             xOutputTemplateFrame.ClearAndSetContent(outputTemplatePage);
 
+            WireMockTemplatePage wiremockTemplatePage = new WireMockTemplatePage(mApplicationAPIModel, viewMode);
+            xWireMockTemplateFrame.ClearAndSetContent(wiremockTemplatePage);
+
             mApplicationAPIModel.AppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
             mApplicationAPIModel.GlobalAppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
             UpdateModelParametersTabHeader();
             mApplicationAPIModel.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
             UpdateOutputTemplateTabHeader();
+            UpdateWireMockTemplateTabHeader();
 
             mPageViewMode = viewMode;
 
@@ -188,6 +198,23 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             xOutputTemplateTab.Text = string.Format("Output Values Template ({0})", mApplicationAPIModel.ReturnValues.Count);
         }
 
+        private async void UpdateWireMockTemplateTabHeader()
+        {
+            int count = await WireMockTemplateTabCount();
+            xWireMockTemplateTab.Text = string.Format("WireMock Mapping ({0})", count);
+        }
+
+        public async Task<int> WireMockTemplateTabCount()
+        {
+            wmController = new();
+            var mappings = await wmController.DeserializeWireMockResponseAsync();
+
+            string ApiName = mApplicationAPIModel.Name;
+
+            // Filter the mappings based on the Name
+            int filteredMappings = mappings.Where(mapping => mapping.Name == ApiName).Count();
+            return filteredMappings;
+        }
         private void FillTargetAppsComboBox()
         {
             //get key object 
@@ -987,5 +1014,30 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             _pageGenericWin.Close();
         }
+
+        public void xRealAPIRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mApplicationAPIModel.UseRealAPI = true;
+        }
+
+        public async void xMockAPIRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mApplicationAPIModel.UseRealAPI = false;
+        }
+
+        public void CheckRealAPIRadioButton()
+        {
+            xMockAPIRadioButton.IsChecked = false;
+            xRealAPIRadioButton.IsChecked = true;
+            xRealAPIRadioButton_Checked(xRealAPIRadioButton, null);
+        }
+
+        public void CheckMockAPIRadioButton()
+        {
+            xRealAPIRadioButton.IsChecked = false;
+            xMockAPIRadioButton.IsChecked = true;
+            xMockAPIRadioButton_Checked(xMockAPIRadioButton, null);
+        }
+
     }
 }

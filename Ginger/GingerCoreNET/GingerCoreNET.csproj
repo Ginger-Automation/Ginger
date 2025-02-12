@@ -261,9 +261,9 @@
   
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.5.4" />
   
-    <PackageReference Include="Google.Protobuf" Version="3.28.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.29.3" />
     
-    <PackageReference Include="GraphQL" Version="7.8.0" />
+    <PackageReference Include="GraphQL" Version="8.3.1" />
   
     <PackageReference Include="GraphQL.Client" Version="6.1.0" />
   
@@ -303,12 +303,12 @@
   
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.25.0" />
   
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.0">
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.7.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.7.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.12.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.7.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.7.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
@@ -327,8 +327,8 @@
     <PackageReference Include="Npgsql" Version="8.0.3" />
     <PackageReference Include="NPOI" Version="2.6.1" />
     <PackageReference Include="NUglify" Version="1.9.7" />
-    <PackageReference Include="protobuf-net" Version="3.2.26" />
-    <PackageReference Include="protobuf-net.Core" Version="3.2.26" />
+    <PackageReference Include="protobuf-net" Version="3.2.46" />
+    <PackageReference Include="protobuf-net.Core" Version="3.2.46" />
     <PackageReference Include="Protractor" Version="1.0.0" />
     <PackageReference Include="RestSharp" Version="112.0.0" />
     <PackageReference Include="Selenium.Support" Version="4.23.0" />

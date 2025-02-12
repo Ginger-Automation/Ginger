@@ -138,6 +138,7 @@ namespace Ginger.SolutionWindows
                 mSolution.SolutionOperations.SetReportsConfigurations();
                 GingerCoreNET.GeneralLib.General.CreateDefaultAccessiblityconfiguration();
                 GingerCoreNET.GeneralLib.General.CreateGingerOpsConfiguration();
+                GingerCoreNET.GeneralLib.General.CreateWireMockConfiguration();
                 //Save again to keep all defualt configurations setup
                 mSolution.SolutionOperations.SaveSolution(false);
                 //show success message to user

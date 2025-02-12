@@ -17,10 +17,10 @@ limitations under the License.
 #endregion
 
 
-using System;
-using System.Collections.Generic;
 using Amdocs.Ginger.Repository;
 using GingerCore;
+using System;
+using System.Collections.Generic;
 
 namespace Amdocs.Ginger.Common
 {
@@ -174,6 +174,16 @@ namespace Amdocs.Ginger.Common
         GingerOpsSyncFailed,
         GingerOpsSyncSuccess,
         GingerOpsDeleteDisable,
+        WireMockConnectionSuccess,
+        WireMockMappingDownload,
+        WireMockMappingDownloadFailed,
+        WireMockConnectionFail,
+        WireMockAPIError,
+        WireMockMappingEmpty,
+        WireMockMappingDeleteFail,
+        WireMockMappingDeleteSuccess,
+        WireMockMappingUpdateFail,
+        WireMockMappingUpdateSuccess,
         RequiredFieldsEmpty,
         EnvParamNameEmpty,
         NoPublishRepositoryInfo,
@@ -803,6 +813,16 @@ namespace Amdocs.Ginger.Common
                 { eUserMsgKey.GingerOpsSyncFailed, new UserMsg(eUserMsgType.INFO, "GingerOps Sync Info", " GingerOps Sync Failed.", eUserMsgOption.OK, eUserMsgSelection.None) },
                 { eUserMsgKey.GingerOpsSyncSuccess, new UserMsg(eUserMsgType.INFO, "GingerOps Sync Info", " GingerOps Sync Successful.", eUserMsgOption.OK, eUserMsgSelection.None) },
                 { eUserMsgKey.GingerOpsDeleteDisable, new UserMsg(eUserMsgType.INFO, "GingerOps Application Info", " GingerOps imported Application can not be deleted.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockConnectionFail, new UserMsg(eUserMsgType.INFO, "WireMock Connection Fail", " WireMock Connection Failed.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockConnectionSuccess, new UserMsg(eUserMsgType.INFO, "WireMock Connection Success", " WireMock Connection Successful.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockMappingDownload, new UserMsg(eUserMsgType.INFO, "WireMock Mapping Download", " WireMock Mapping downloaded Successful.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockMappingDownloadFailed, new UserMsg(eUserMsgType.INFO, "WireMock Mapping Download", " WireMock Mapping download failed.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockMappingEmpty, new UserMsg(eUserMsgType.INFO, "No WireMock Mapping Found", " No WireMock Mapping Available to Show.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockAPIError, new UserMsg(eUserMsgType.INFO, "WireMock API Issue", " WireMock API got issue, please check server.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockMappingUpdateFail, new UserMsg(eUserMsgType.INFO, "WireMock Mapping", "WireMock mapping failed to Update, please check server", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockMappingUpdateSuccess, new UserMsg(eUserMsgType.INFO, "WireMock Mapping", "WireMock mapping successfully Updated.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockMappingDeleteSuccess, new UserMsg(eUserMsgType.INFO, "WireMock Mapping", "WireMock mapping successfully Deleted.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockMappingDeleteFail, new UserMsg(eUserMsgType.INFO, "WireMock Mapping", "WireMock mapping failed to delete, please check server.", eUserMsgOption.OK, eUserMsgSelection.None) },
                 { eUserMsgKey.FileAlreadyExistWarn, new UserMsg(eUserMsgType.WARN, "File Already Exists", "File already exists, do you want to override?", eUserMsgOption.OKCancel, eUserMsgSelection.Cancel) },
                 { eUserMsgKey.SuccessfulConversionDone, new UserMsg(eUserMsgType.INFO, "Obsolete actions converted successfully", "The obsolete actions have been converted successfully" + Environment.NewLine + "Do you want to convert more actions?", eUserMsgOption.YesNo, eUserMsgSelection.No) },
                 {

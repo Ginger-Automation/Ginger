@@ -16,11 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Xml;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
@@ -31,6 +26,11 @@ using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml;
 
 namespace GingerCore.Actions.WebServices
 {
@@ -92,8 +92,12 @@ namespace GingerCore.Actions.WebServices
             public static string ImportCetificateFile = "ImportCetificateFile";
 
             public static string UseLegacyJSONParsing = "UseLegacyJSONParsing";
+            public static string MockAPIURL = "MockAPIURL";
+
 
         }
+
+        public bool UseRealAPI = true;
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> DynamicElements = [];

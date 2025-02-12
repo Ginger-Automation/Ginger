@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.External.WireMock;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.PlugInsWindows;
@@ -39,10 +40,20 @@ namespace Ginger.UserControlsLib.TextEditor
     public partial class DocumentEditorPage : Page
     {
         static List<TextEditorBase> TextEditors = null;
+        public WireMockAPI mockAPI;
+        private bool isFromWireMock;
+        private string wireMockmappingId;
 
-        public DocumentEditorPage(string FileName, bool enableEdit = true, bool RemoveToolBar = false, string UCTextEditorTitle = null)
+        public DocumentEditorPage(string FileName, bool enableEdit = true, bool RemoveToolBar = false, string UCTextEditorTitle = null, bool isFromWireMock = false, string wireMockmappingId = null)
         {
             InitializeComponent();
+
+            if (isFromWireMock)
+            {
+                this.isFromWireMock = true;
+                this.wireMockmappingId = wireMockmappingId;
+                mockAPI = new WireMockAPI();
+            }
 
             TextEditorBase TE = GetTextEditorByExtension(FileName);
 
@@ -291,8 +302,9 @@ namespace Ginger.UserControlsLib.TextEditor
 
 
 
-        public void Save()
+        public async void Save()
         {
+
             if (EditorFrame.Content is UCTextEditor)
             {
                 ((UCTextEditor)EditorFrame.Content).Save();
@@ -301,6 +313,10 @@ namespace Ginger.UserControlsLib.TextEditor
             if (EditorFrame.Content is ITextEditorPage)
             {
                 ((ITextEditorPage)EditorFrame.Content).Save();
+            }
+            else if (isFromWireMock)
+            {
+                await mockAPI.UpdateStubAsync(wireMockmappingId, ((UCTextEditor)EditorFrame.Content).Text);
             }
             else
             {
