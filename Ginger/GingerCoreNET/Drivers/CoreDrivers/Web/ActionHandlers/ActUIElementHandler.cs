@@ -180,6 +180,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                     case ActUIElement.eElementAction.MouseClick:
                         await HandleMouseClickAsync();
                         break;
+                    case ActUIElement.eElementAction.GetSelectedValue:
+                        await GetSelectedValueAsync();
+                        break;
                     default:
                         string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActUIElement.eElementAction), _act.ElementAction);
                         _act.Error = $"Operation '{operationName}' is not supported";
@@ -190,6 +193,22 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             {
                 _act.Error = ex.Message;
             }
+        }
+
+        private async Task GetSelectedValueAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+        
+            string value = await element.GetSelectedValueAsync();
+            if (!string.IsNullOrEmpty(value))
+            {
+                _act.AddOrUpdateReturnParamActual("Actual", value);
+            }
+            else
+            {
+                throw new EntityNotFoundException("Selected value not found.");
+            }
+      
         }
 
         /// <summary>

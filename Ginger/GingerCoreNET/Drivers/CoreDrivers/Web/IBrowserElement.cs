@@ -60,6 +60,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task SetAttributeValueAsync(string name, string value);
 
         public Task<string> TextContentAsync();
+        public Task<string> GetSelectedValueAsync();
 
         public Task<string> InnerTextAsync();
 

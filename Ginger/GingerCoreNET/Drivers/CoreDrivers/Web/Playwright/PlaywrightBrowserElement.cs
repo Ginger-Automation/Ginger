@@ -458,6 +458,43 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return new Point((int)x, (int)y);
         }
 
+        public Task<string> GetSelectedValueAsync()
+        {
+            if (_playwrightLocator != null)
+            {
+                return GetSelectedValueAsync(_playwrightLocator);
+            }
+            else
+            {
+                return GetSelectedValueAsync(_playwrightElementHandle!);
+            }
+        }
+        private async Task<string> GetSelectedValueAsync(IPlaywrightLocator playwrightLocator)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            var selectedValue = await playwrightLocator.EvaluateAsync<string>("select => select.options[select.selectedIndex].value");
+
+            if (string.IsNullOrEmpty(selectedValue))
+            {
+                return string.Empty;
+            }
+
+            return selectedValue;
+        }
+        private async Task<string> GetSelectedValueAsync(IPlaywrightElementHandle playwrightElementHandle)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightElementHandle, nameof(playwrightElementHandle));
+            var selectedValue = await playwrightElementHandle.EvaluateAsync<string>("select => select.options[select.selectedIndex].value");
+
+            if (string.IsNullOrEmpty(selectedValue))
+            {
+                return string.Empty;
+            }
+
+            return selectedValue;
+        }
+
         public Task<string> TextContentAsync()
         {
             if (_playwrightLocator != null)
