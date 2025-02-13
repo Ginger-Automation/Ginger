@@ -1234,15 +1234,23 @@ namespace GingerCore.SourceControl
         /// <returns>A PullOptions object configured with merge and fetch options.</returns>
         private PullOptions GetPullOptions()
         {
-            var pullOption= new PullOptions
+            try
             {
-                MergeOptions = new MergeOptions
+                var pullOption = new PullOptions
                 {
-                    FailOnConflict = true,
-                },
-            };
-            GetFetchOptions(pullOption.FetchOptions);
-            return pullOption;
+                    MergeOptions = new MergeOptions
+                    {
+                        FailOnConflict = true,
+                    },
+                };
+                GetFetchOptions(pullOption?.FetchOptions);
+                return pullOption;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting pull options.", ex);
+                return null;
+            }
         }
 
         /// <summary>
@@ -1251,8 +1259,12 @@ namespace GingerCore.SourceControl
         /// <returns>A FetchOptions object configured with credentials, depth, and certificate check.</returns>
         private void GetFetchOptions(FetchOptions fetchOptions)
         {
+            if (fetchOptions == null) throw new ArgumentNullException(nameof(fetchOptions));
             fetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
-            fetchOptions.CertificateCheck = (_, _, _) => true;           
+            fetchOptions.CertificateCheck = (certificate, valid, host) =>
+                 {
+                     return valid;
+                 };
         }
 
         public override bool UnLock(string _, ref string error)
@@ -1406,27 +1418,34 @@ namespace GingerCore.SourceControl
         /// <returns>Fetch options configured with progress notifications and cancellation support.</returns>
         private void GetFetchOptionsWithProgress(FetchOptions fetchOptions, ProgressNotifier progressNotifier, CancellationToken cancellationToken)
         {
-            GetFetchOptions(fetchOptions);
-            if (progressNotifier != null)
+            try
             {
-                fetchOptions.OnProgress = progress =>
+                GetFetchOptions(fetchOptions);
+                if (progressNotifier != null)
                 {
-                    progressNotifier.NotifyProgressDetailText($"{progress}");
-                    return !cancellationToken.IsCancellationRequested;
-                };
-
-                fetchOptions.OnTransferProgress = progress =>
-                {
-                    if (progress.TotalObjects == 0)
+                    fetchOptions.OnProgress = progress =>
                     {
-                        progressNotifier.NotifyProgressDetailText("Initializing...");
-                        return true;
-                    }
-                    double percentage = (double)progress.ReceivedObjects / progress.TotalObjects * 100;
-                    progressNotifier.NotifyProgressDetailText($"{percentage:F2}% {progress.ReceivedObjects}/{progress.TotalObjects} files downloaded.");
-                    progressNotifier.NotifyProgressUpdated("Download solution status: ", progress.ReceivedObjects, progress.TotalObjects);
-                    return !cancellationToken.IsCancellationRequested;
-                };
+                        progressNotifier.NotifyProgressDetailText($"{progress}");
+                        return !cancellationToken.IsCancellationRequested;
+                    };
+
+                    fetchOptions.OnTransferProgress = progress =>
+                    {
+                        if (progress.TotalObjects == 0)
+                        {
+                            progressNotifier.NotifyProgressDetailText("Initializing...");
+                            return true;
+                        }
+                        double percentage = (double)progress.ReceivedObjects / progress.TotalObjects * 100;
+                        progressNotifier.NotifyProgressDetailText($"{percentage:F2}% {progress.ReceivedObjects}/{progress.TotalObjects} files downloaded.");
+                        progressNotifier.NotifyProgressUpdated("Download solution status: ", progress.ReceivedObjects, progress.TotalObjects);
+                        return !cancellationToken.IsCancellationRequested;
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting fetch options with progress.", ex);
             }
         }
 
@@ -1438,32 +1457,40 @@ namespace GingerCore.SourceControl
         /// <returns>The result of the merge operation.</returns>
         private MergeResult Pull(ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
         {
-            MergeResult mergeResult = null;
-            ReportFeatureUsage(operation: "Pull");
-
-            Task.Run(() =>
+            try
             {
-                using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                MergeResult mergeResult = null;
+                ReportFeatureUsage(operation: "Pull");
+
+                Task.Run(() =>
                 {
-                    var pullOptions = new PullOptions()
+                    using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
                     {
-                        FetchOptions = new FetchOptions()
-                       
-                    };
+                        var pullOptions = new PullOptions()
+                        {
+                            FetchOptions = new FetchOptions()
+
+                        };
 
 
-                    GetFetchOptionsWithProgress(pullOptions.FetchOptions, progressNotifier, cancellationToken);
+                        GetFetchOptionsWithProgress(pullOptions.FetchOptions, progressNotifier, cancellationToken);
 
-                    var signature = new Signature(
-                        IsRepositoryPublic() ? "dummy" : SourceControlUser,
-                        IsRepositoryPublic() ? "dummy" : SourceControlUser,
-                        DateTimeOffset.Now
-                    );
+                        var signature = new Signature(
+                            IsRepositoryPublic() ? "dummy" : SourceControlUser,
+                            IsRepositoryPublic() ? "dummy" : SourceControlUser,
+                            DateTimeOffset.Now
+                        );
 
-                    mergeResult = Commands.Pull(repo, signature, pullOptions);
-                }
-            }).Wait();
-            return mergeResult;
+                        mergeResult = Commands.Pull(repo, signature, pullOptions);
+                    }
+                }).Wait();
+                return mergeResult;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while pulling the latest changes.", ex);
+                return null;
+            }
         }
 
         private Commit Commit(string Comments)
