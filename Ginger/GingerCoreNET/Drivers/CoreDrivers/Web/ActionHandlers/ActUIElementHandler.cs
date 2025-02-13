@@ -180,6 +180,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                     case ActUIElement.eElementAction.MouseClick:
                         await HandleMouseClickAsync();
                         break;
+                    case ActUIElement.eElementAction.GetSelectedValue:
+                        await GetSelectedValueAsync();
+                        break;
+                    case ActUIElement.eElementAction.GetTextLength:
+                        await GetTextLengthAsync();
+                        break;
+                    case ActUIElement.eElementAction.GetValidValues:
+                        await GetValidValuesAsync();
+                        break;
                     default:
                         string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActUIElement.eElementAction), _act.ElementAction);
                         _act.Error = $"Operation '{operationName}' is not supported";
@@ -189,6 +198,60 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             catch (Exception ex)
             {
                 _act.Error = ex.Message;
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the valid values of the first matching browser element asynchronously.
+        /// </summary>
+        private async Task GetValidValuesAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+
+            string text = await element.GetValidValuesAsync();
+            if (!string.IsNullOrEmpty(text))
+            {
+                _act.AddOrUpdateReturnParamActual("Actual", text);
+            }
+            else
+            {
+                throw new EntityNotFoundException("Valid text not found.");
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the text length of the first matching browser element asynchronously.
+        /// </summary>
+        private async Task GetTextLengthAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+
+            int textLenth = await element.GetTextLengthAsync();
+            if (textLenth > 0)
+            {
+                _act.AddOrUpdateReturnParamActual("Actual", textLenth.ToString());
+            }
+            else
+            {
+                throw new EntityNotFoundException("Text not found.");
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the selected value of the first matching browser element asynchronously.
+        /// </summary>
+        private async Task GetSelectedValueAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+
+            string value = await element.GetSelectedValueAsync();
+            if (!string.IsNullOrEmpty(value))
+            {
+                _act.AddOrUpdateReturnParamActual("Actual", value);
+            }
+            else
+            {
+                throw new EntityNotFoundException("Selected value not found.");
             }
         }
 
