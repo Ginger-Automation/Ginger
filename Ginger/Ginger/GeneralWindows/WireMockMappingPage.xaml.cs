@@ -107,6 +107,12 @@ namespace Ginger.GeneralWindows
         {
             try
             {
+                if (xGridMapping.DataSourceList.Count == 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.WireMockMappingDeleteEmpty);
+                    return;
+                }
+
                 HttpResponseMessage result = await wmController.mockAPI.DeleteAllMappingsAsync();
                 if (result.IsSuccessStatusCode)
                 {

@@ -94,6 +94,12 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
         {
             try
             {
+                if (xGridMappingOutput.DataSourceList.Count == 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.WireMockMappingDeleteEmpty);
+                    return;
+                }
+
                 HttpResponseMessage result = await wmController.mockAPI.DeleteAllMappingsAsync();
                 if (result.IsSuccessStatusCode)
                 {
