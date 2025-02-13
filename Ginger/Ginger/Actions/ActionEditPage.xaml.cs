@@ -1470,9 +1470,11 @@ namespace Ginger.Actions
             if (!string.IsNullOrEmpty(ARV.Actual))
             {
                 string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(ARV.Actual);
-                RepositoryItemPage RIP = new RepositoryItemPage(tempFilePath, false);
-                RIP.Title = "Actual Value";
-               RIP.ShowAsWindow(eWindowShowStyle.Free);
+
+                DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
+                docPage.ShowAsWindow("Actual Value");
+
+                GingerCoreNET.GeneralLib.General.DeleteTempTextFile(tempFilePath);
             }
         }
 

@@ -38,13 +38,6 @@ namespace Ginger.Repository
             }
         }
 
-        public RepositoryItemPage(string FileName, bool enableEdit)
-        {
-            InitializeComponent();
-            XMLTextEditor e = new XMLTextEditor();
-            xmlViewer.Init(FileName, e, enableEdit);
-        }
-
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free, bool showSaveButton = false)
         {
             if (showSaveButton)
