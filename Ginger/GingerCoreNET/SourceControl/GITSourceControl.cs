@@ -1261,10 +1261,7 @@ namespace GingerCore.SourceControl
         {
             if (fetchOptions == null) throw new ArgumentNullException(nameof(fetchOptions));
             fetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
-            fetchOptions.CertificateCheck = (certificate, valid, host) =>
-                 {
-                     return valid;
-                 };
+            fetchOptions.CertificateCheck = (_, _, _) => true;
         }
 
         public override bool UnLock(string _, ref string error)
