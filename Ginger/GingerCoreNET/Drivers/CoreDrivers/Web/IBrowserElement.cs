@@ -62,6 +62,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task<string> TextContentAsync();
         public Task<string> GetSelectedValueAsync();
 
+        public Task<int> GetTextLengthAsync();
+        public Task<string> GetValidValuesAsync();
         public Task<string> InnerTextAsync();
 
         public Task<string> InputValueAsync();
