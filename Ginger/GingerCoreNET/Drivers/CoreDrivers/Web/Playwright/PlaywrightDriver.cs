@@ -1922,7 +1922,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ActUIElement.eElementAction.GetCustomAttribute,
             ActUIElement.eElementAction.GetFont,
             ActUIElement.eElementAction.MousePressRelease,
-            ActUIElement.eElementAction.MouseClick,
+            ActUIElement.eElementAction.GetValidValues,
+            ActUIElement.eElementAction.GetTextLength,
+            ActUIElement.eElementAction.GetSelectedValue,
         ];
 
 
