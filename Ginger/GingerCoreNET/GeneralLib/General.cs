@@ -528,6 +528,21 @@ namespace GingerCoreNET.GeneralLib
             }
         }
 
+        public static void DeleteTempTextFile(string tempFilePath)
+        {
+            if (System.IO.File.Exists(tempFilePath))
+            {
+                try
+                {
+                    System.IO.File.Delete(tempFilePath);
+                }
+                catch (Exception)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Unable to delete Temp file:" + tempFilePath);
+                }
+            }
+        }
+
         public static byte[] ImageToByteArray(Image img, System.Drawing.Imaging.ImageFormat format)
         {
             using (var ms = new MemoryStream())
