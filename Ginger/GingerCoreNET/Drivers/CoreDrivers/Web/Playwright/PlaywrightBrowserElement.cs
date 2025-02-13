@@ -458,6 +458,162 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return new Point((int)x, (int)y);
         }
 
+
+        /// <summary>
+        /// Gets the valid values of the select element.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the valid values as a string.</returns>
+        public Task<string> GetValidValuesAsync()
+        {
+            if (_playwrightLocator != null)
+            {
+                return GetValidValuesAsync(_playwrightLocator);
+            }
+            else
+            {
+                return GetValidValuesAsync(_playwrightElementHandle!);
+            }
+        }
+
+        /// <summary>
+        /// Gets the valid values of the select element using the specified Playwright locator.
+        /// </summary>
+        /// <param name="playwrightLocator">The Playwright locator.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the valid values as a string.</returns>
+        private async Task<string> GetValidValuesAsync(IPlaywrightLocator playwrightLocator)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            var options = await playwrightLocator.EvaluateAsync<string[]>("select => Array.from(select.options).map(option => option.text)");
+            string optionValues = string.Empty;
+            foreach (var option in options)
+            {
+                if (!string.IsNullOrEmpty(option))
+                {
+                    optionValues += option + "|";
+                }
+            }
+
+            return optionValues;
+        }
+
+        /// <summary>
+        /// Gets the valid values of the select element using the specified Playwright element handle.
+        /// </summary>
+        /// <param name="playwrightElementHandle">The Playwright element handle.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the valid values as a string.</returns>
+        private async Task<string> GetValidValuesAsync(IPlaywrightElementHandle playwrightElementHandle)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightElementHandle, nameof(playwrightElementHandle));
+            var options = await playwrightElementHandle.EvaluateAsync<string[]>("select => Array.from(select.options).map(option => option.text)");
+            string optionValues = string.Empty;
+            foreach (var option in options)
+            {
+                if (!string.IsNullOrEmpty(option))
+                {
+                    optionValues += option + "|";
+                }
+            }
+
+            return optionValues;
+        }
+
+        /// <summary>
+        /// Gets the text length of the element.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the text length.</returns>
+        public Task<int> GetTextLengthAsync()
+        {
+            if (_playwrightLocator != null)
+            {
+                return GetTextLengthAsync(_playwrightLocator);
+            }
+            else
+            {
+                return GetTextLengthAsync(_playwrightElementHandle!);
+            }
+        }
+
+        /// <summary>
+        /// Gets the text length of the element using the specified Playwright locator.
+        /// </summary>
+        /// <param name="playwrightLocator">The Playwright locator.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the text length.</returns>
+        private async Task<int> GetTextLengthAsync(IPlaywrightLocator playwrightLocator)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            var textContent = await playwrightLocator.EvaluateAsync<string>("element => element.textContent");
+
+            return textContent?.Length ?? 0;
+        }
+
+        /// <summary>
+        /// Gets the text length of the element using the specified Playwright element handle.
+        /// </summary>
+        /// <param name="playwrightElementHandle">The Playwright element handle.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the text length.</returns>
+        private async Task<int> GetTextLengthAsync(IPlaywrightElementHandle playwrightElementHandle)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightElementHandle, nameof(playwrightElementHandle));
+            var textContent = await playwrightElementHandle.EvaluateAsync<string>("element => element.textContent");
+
+            return textContent?.Length ?? 0;
+        }
+
+        /// <summary>
+        /// Gets the selected value of the select element.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the selected value as a string.</returns>
+        public Task<string> GetSelectedValueAsync()
+        {
+            if (_playwrightLocator != null)
+            {
+                return GetSelectedValueAsync(_playwrightLocator);
+            }
+            else
+            {
+                return GetSelectedValueAsync(_playwrightElementHandle!);
+            }
+        }
+
+        /// <summary>
+        /// Gets the selected value of the select element using the specified Playwright locator.
+        /// </summary>
+        /// <param name="playwrightLocator">The Playwright locator.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the selected value as a string.</returns>
+        private async Task<string> GetSelectedValueAsync(IPlaywrightLocator playwrightLocator)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            var selectedValue = await playwrightLocator.EvaluateAsync<string>("select => select.options[select.selectedIndex].value");
+
+            if (string.IsNullOrEmpty(selectedValue))
+            {
+                return string.Empty;
+            }
+
+            return selectedValue;
+        }
+
+        /// <summary>
+        /// Gets the selected value of the select element using the specified Playwright element handle.
+        /// </summary>
+        /// <param name="playwrightElementHandle">The Playwright element handle.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the selected value as a string.</returns>
+        private async Task<string> GetSelectedValueAsync(IPlaywrightElementHandle playwrightElementHandle)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightElementHandle, nameof(playwrightElementHandle));
+            var selectedValue = await playwrightElementHandle.EvaluateAsync<string>("select => select.options[select.selectedIndex].value");
+
+            if (string.IsNullOrEmpty(selectedValue))
+            {
+                return string.Empty;
+            }
+
+            return selectedValue;
+        }
+
         public Task<string> TextContentAsync()
         {
             if (_playwrightLocator != null)
