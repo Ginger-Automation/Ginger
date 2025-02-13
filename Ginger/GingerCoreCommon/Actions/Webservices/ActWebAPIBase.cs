@@ -93,7 +93,8 @@ namespace GingerCore.Actions.WebServices
             public static string UseLegacyJSONParsing = "UseLegacyJSONParsing";
         }
 
-        public bool UseRealAPI = true;
+        [IsSerializedForLocalRepository]
+        public bool UseRealAPI { get; set; } = true;
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> DynamicElements = [];
@@ -139,8 +140,6 @@ namespace GingerCore.Actions.WebServices
                 }
             }
         }
-
-        private string ReqBody = String.Empty;
 
         public bool mUseTemplateFile = true;
 

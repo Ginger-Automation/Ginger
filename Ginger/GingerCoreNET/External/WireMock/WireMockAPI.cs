@@ -33,8 +33,9 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
                     return response.IsSuccessStatusCode;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, "Error testing WireMock connection", ex);
                 return false;
             }
         }
@@ -167,15 +168,14 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
         }
 
         // Deleting a stub API
-        public async Task<string> DeleteStubAsync(string stubId)
+        public async Task<HttpResponseMessage> DeleteStubAsync(string stubId)
         {
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
                     HttpResponseMessage response = await client.DeleteAsync($"{_baseUrl}{MappingEndpoint}/{stubId}");
-                    response.EnsureSuccessStatusCode();
-                    return await response.Content.ReadAsStringAsync();
+                    return response.EnsureSuccessStatusCode();
                 }
             }
             catch (Exception ex)
@@ -187,15 +187,15 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
         }
 
         // Delete all Mapping
-        public async Task<string> DeleteAllMappingsAsync()
+        public async Task<HttpResponseMessage> DeleteAllMappingsAsync()
         {
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
                     HttpResponseMessage response = await client.DeleteAsync($"{_baseUrl}{MappingEndpoint}");
-                    response.EnsureSuccessStatusCode();
-                    return await response.Content.ReadAsStringAsync();
+                    return response.EnsureSuccessStatusCode();
+
                 }
             }
             catch (Exception ex)

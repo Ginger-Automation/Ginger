@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -66,6 +67,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
 
             xGridMappingOutput.SetAllColumnsDefaultView(view);
             xGridMappingOutput.InitViewItems();
+            xGridMappingOutput.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Delete, "Delete All selected mapping", DeleteAllButton_Click);
             xGridMappingOutput.AddToolbarTool("@ArrowDown_16x16.png", "Download Mapping", xImportMapping_Click, 0);
             xGridMappingOutput.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.ID, "Copy selected item ID", CopySelectedItemID);
             xGridMappingOutput.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Add, "Add New Mapping", AddNewMappingAsync);
@@ -83,7 +85,35 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
+        /// <summary>
+        /// Deletes All the mappings
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void DeleteAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                HttpResponseMessage result = await wmController.mockAPI.DeleteAllMappingsAsync();
+                if (result.IsSuccessStatusCode)
+                {
+                    // Remove the mapping from the grid
+                    xGridMappingOutput.DataSourceList.ClearAll();
+                    Reporter.ToUser(eUserMsgKey.WireMockMappingDeleteSuccess);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to delete WireMock mapping, response received from API :{result}");
+                    Reporter.ToUser(eUserMsgKey.WireMockAPIError);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to delete WireMock mapping", ex);
+                Reporter.ToUser(eUserMsgKey.WireMockAPIError);
+            }
 
+        }
         private async void AddNewMappingAsync(object sender, RoutedEventArgs e)
         {
             try
@@ -344,12 +374,15 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
             {
                 try
                 {
-                    string result = await wmController.mockAPI.DeleteStubAsync(mapping.Id);
-                    if (!string.IsNullOrEmpty(result))
+                    HttpResponseMessage result = await wmController.mockAPI.DeleteStubAsync(mapping.Id);
+                    if (result.IsSuccessStatusCode)
                     {
                         // Remove the mapping from the grid
                         xGridMappingOutput.DataSourceList.Remove(mapping);
                         Reporter.ToUser(eUserMsgKey.WireMockMappingDeleteSuccess);
+
+                        // Refresh the grid data to ensure the mappings are updated
+                        await wmController.DeserializeWireMockResponseAsync();
                     }
                     else
                     {

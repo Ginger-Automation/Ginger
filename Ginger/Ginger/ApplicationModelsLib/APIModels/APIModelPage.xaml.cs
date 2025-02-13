@@ -47,7 +47,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         ModelParamsPage modelParamsPage;
         private bool saveWasDone = false;
         General.eRIPageViewMode mPageViewMode;
-        public WireMockAPI MockAPI;
         public APIModelPage(ApplicationAPIModel applicationAPIModelBase, General.eRIPageViewMode viewMode = General.eRIPageViewMode.Standalone)
         {
             mApplicationAPIModel = applicationAPIModelBase;
@@ -1020,7 +1019,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             mApplicationAPIModel.UseRealAPI = true;
         }
 
-        public async void xMockAPIRadioButton_Checked(object sender, RoutedEventArgs e)
+        public void xMockAPIRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             mApplicationAPIModel.UseRealAPI = false;
         }

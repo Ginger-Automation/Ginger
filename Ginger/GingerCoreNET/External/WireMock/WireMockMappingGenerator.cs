@@ -62,30 +62,31 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
                 }
             };
 
-            if (ReqitemType == ApplicationAPIUtils.eRequestContentType.JSon)
-            {
-                string mappingJson = JsonConvert.SerializeObject(stubTemplate).Replace("Content_Type", "Content-Type");
-                await WireMockAPI.CreateStubAsync(mappingJson, ReqcontentType);
-            }
-            else if (ReqitemType == ApplicationAPIUtils.eRequestContentType.XML)
-            {
+            //if (ReqitemType == ApplicationAPIUtils.eRequestContentType.JSon)
+            //{
+            //    string mappingJson = JsonConvert.SerializeObject(stubTemplate).Replace("Content_Type", "Content-Type");
+            //    await WireMockAPI.CreateStubAsync(mappingJson, ReqcontentType);
+            //}
+            //else if (ReqitemType == ApplicationAPIUtils.eRequestContentType.XML)
+            //{
 
-                string mappingJson = JsonConvert.SerializeObject(stubTemplate).Replace("Content_Type", "Content-Type");
-                await WireMockAPI.CreateStubAsync(mappingJson, ReqcontentType);
+            //    string mappingJson = JsonConvert.SerializeObject(stubTemplate).Replace("Content_Type", "Content-Type");
+            //    await WireMockAPI.CreateStubAsync(mappingJson, ReqcontentType);
 
 
-            }
-            else if (ReqitemType == ApplicationAPIUtils.eRequestContentType.TextPlain)
-            {
-                string mappingJson = JsonConvert.SerializeObject(stubTemplate).Replace("Content_Type", "Content-Type");
-                await WireMockAPI.CreateStubAsync(mappingJson, ReqcontentType);
-            }
-            else if (ReqitemType == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded)
-            {
-                string mappingJson = JsonConvert.SerializeObject(stubTemplate).Replace("Content_Type", "Content-Type");
-                await WireMockAPI.CreateStubAsync(mappingJson, ReqcontentType);
-            }
-
+            //}
+            //else if (ReqitemType == ApplicationAPIUtils.eRequestContentType.TextPlain)
+            //{
+            //    string mappingJson = JsonConvert.SerializeObject(stubTemplate).Replace("Content_Type", "Content-Type");
+            //    await WireMockAPI.CreateStubAsync(mappingJson, ReqcontentType);
+            //}
+            //else if (ReqitemType == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded)
+            //{
+            //    string mappingJson = JsonConvert.SerializeObject(stubTemplate).Replace("Content_Type", "Content-Type");
+            //    await WireMockAPI.CreateStubAsync(mappingJson, ReqcontentType);
+            //}
+            string mappingJson = JsonConvert.SerializeObject(stubTemplate).Replace("Content_Type", "Content-Type");
+            await WireMockAPI.CreateStubAsync(mappingJson, ReqcontentType);
         }
 
         public static string TrimApiEndpointUrl(string url)

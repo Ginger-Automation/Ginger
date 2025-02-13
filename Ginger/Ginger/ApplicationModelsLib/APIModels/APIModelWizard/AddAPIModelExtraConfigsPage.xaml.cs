@@ -94,7 +94,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             }
             else
             {
-                AddAPIModelWizard.toCreateWireMock = true;
+                AddAPIModelWizard.ToCreateWireMock = true;
             }
 
         }

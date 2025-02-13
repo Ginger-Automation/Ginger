@@ -41,7 +41,7 @@ namespace Ginger.UserControlsLib.TextEditor
     public partial class DocumentEditorPage : Page
     {
         static List<TextEditorBase> TextEditors = null;
-        public WireMockAPI mockAPI;
+        private WireMockAPI mockAPI;
         private bool isFromWireMock;
         private string wireMockmappingId;
 

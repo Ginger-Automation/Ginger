@@ -8,6 +8,7 @@ using Ginger.UserControlsLib.TextEditor;
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -58,6 +59,7 @@ namespace Ginger.GeneralWindows
 
             xGridMapping.SetAllColumnsDefaultView(view);
             xGridMapping.InitViewItems();
+            xGridMapping.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Delete, "Delete All selected mapping", DeleteAllButton_Click);
             xGridMapping.AddToolbarTool("@ArrowDown_16x16.png", "Download Mapping", xDownloadMapping_Click, 0);
             xGridMapping.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.ID, "Copy selected item ID", CopySelectedItemID);
 
@@ -96,35 +98,34 @@ namespace Ginger.GeneralWindows
             genWin.Close();
         }
 
-        private void EditButton_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Deletes All the mappings
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void DeleteAllButton_Click(object sender, RoutedEventArgs e)
         {
-            // Implement edit logic here
-        }
-
-        private async void DeleteButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button && button.DataContext is Mapping mapping)
+            try
             {
-                try
+                HttpResponseMessage result = await wmController.mockAPI.DeleteAllMappingsAsync();
+                if (result.IsSuccessStatusCode)
                 {
-                    string result = await wmController.mockAPI.DeleteStubAsync(mapping.Id);
-                    if (!string.IsNullOrEmpty(result))
-                    {
-                        // Remove the mapping from the grid
-                        xGridMapping.DataSourceList.Remove(mapping);
-                        Reporter.ToUser(eUserMsgKey.WireMockConnectionFail);
-                    }
-                    else
-                    {
-                        Reporter.ToUser(eUserMsgKey.WireMockAPIError);
-                    }
+                    // Remove the mapping from the grid
+                    xGridMapping.DataSourceList.ClearAll();
+                    Reporter.ToUser(eUserMsgKey.WireMockMappingDeleteSuccess);
                 }
-                catch (Exception ex)
+                else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to delete WireMock mapping", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to delete WireMock mapping, response received from API :{result}");
                     Reporter.ToUser(eUserMsgKey.WireMockAPIError);
                 }
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to delete WireMock mapping", ex);
+                Reporter.ToUser(eUserMsgKey.WireMockAPIError);
+            }
+
         }
 
 
@@ -298,14 +299,19 @@ namespace Ginger.GeneralWindows
             }
         }
 
+        /// <summary>
+        /// Delete all mappings
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void xDeleteMappingBtn_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.DataContext is Mapping mapping)
             {
                 try
                 {
-                    string result = await wmController.mockAPI.DeleteStubAsync(mapping.Id);
-                    if (!string.IsNullOrEmpty(result))
+                    HttpResponseMessage result = await wmController.mockAPI.DeleteStubAsync(mapping.Id);
+                    if (result.IsSuccessStatusCode)
                     {
                         // Remove the mapping from the grid
                         xGridMapping.DataSourceList.Remove(mapping);

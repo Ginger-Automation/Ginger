@@ -58,7 +58,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         public RepositoryFolder<ApplicationAPIModel> APIModelFolder;
 
-        public bool toCreateWireMock;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether WireMock mappings should be created during the finish process.
+        /// </summary>
+        public bool ToCreateWireMock { get; set; }
 
         public string URL { get; set; }
 
@@ -120,7 +124,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 }
             }
 
-            if (toCreateWireMock)
+            if (ToCreateWireMock)
             {
                 CreateWireMockMappingsAsync(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected).ToList()));
             }
