@@ -41,7 +41,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 {
     public partial class APIModelPage : GingerUIPage
     {
-        WireMockMappingController wmController;
+        private WireMockMappingController wmController = new();
 
         ApplicationAPIModel mApplicationAPIModel;
         ModelParamsPage modelParamsPage;
@@ -74,7 +74,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             UpdateModelParametersTabHeader();
             mApplicationAPIModel.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
             UpdateOutputTemplateTabHeader();
-            UpdateWireMockTemplateTabHeader();
+            _ = UpdateWireMockTemplateTabHeader();
 
             mPageViewMode = viewMode;
 
@@ -199,20 +199,36 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private async Task UpdateWireMockTemplateTabHeader()
         {
-            int count = await WireMockTemplateTabCount();
-            xWireMockTemplateTab.Text = string.Format("WireMock Mapping ({0})", count);
+            try
+            {
+                int count = await WireMockTemplateTabCount();
+                xWireMockTemplateTab.Text = string.Format("WireMock Mapping ({0})", count);
+            }
+            catch (Exception ex)
+            {
+
+                Reporter.ToLog(eLogLevel.ERROR, "error in getting wiremock mapping count", ex);
+            }
         }
 
         public async Task<int> WireMockTemplateTabCount()
         {
-            wmController = new();
-            var mappings = await wmController.DeserializeWireMockResponseAsync();
+            try
+            {
+                var mappings = await wmController.DeserializeWireMockResponseAsync();
 
-            string ApiName = mApplicationAPIModel.Name;
+                string ApiName = mApplicationAPIModel.Name;
 
-            // Filter the mappings based on the Name
-            int filteredMappings = mappings.Where(mapping => mapping.Name == ApiName).Count();
-            return filteredMappings;
+                // Filter the mappings based on the Name
+                int filteredMappings = mappings.Where(mapping => mapping.Name == ApiName).Count();
+                return filteredMappings;
+            }
+            catch (Exception ex)
+            {
+
+                Reporter.ToLog(eLogLevel.ERROR, "error in getting wiremock mappings count", ex);
+                return 0;
+            }
         }
         private void FillTargetAppsComboBox()
         {
