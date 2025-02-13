@@ -389,10 +389,6 @@ namespace Ginger.WindowExplorer
                     Reporter.ToUser(eUserMsgKey.AskToSelectAction);
                     return;
                 }
-
-                DefaultAction.Description = FormatActionDescription(DefaultAction);
-
-
                 selectedAct = DefaultAction;
             }
 
