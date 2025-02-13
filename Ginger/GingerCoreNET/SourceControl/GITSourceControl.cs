@@ -1252,7 +1252,7 @@ namespace GingerCore.SourceControl
         private void GetFetchOptions(FetchOptions fetchOptions)
         {
             fetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
-            fetchOptions.CertificateCheck = (_, valid, host) => true;           
+            fetchOptions.CertificateCheck = (_, _, _) => true;           
         }
 
         public override bool UnLock(string _, ref string error)
