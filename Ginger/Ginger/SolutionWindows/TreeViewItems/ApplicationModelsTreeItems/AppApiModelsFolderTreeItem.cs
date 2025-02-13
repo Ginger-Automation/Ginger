@@ -165,10 +165,9 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         private void UseMockedAPIURL(object sender, RoutedEventArgs e)
         {
-            foreach (var apiModel in mAPIModelFolder.GetFolderItems())
+            foreach (ApplicationAPIModel apiModel in mAPIModelFolder.GetFolderItems())
             {
                 APIModelPage apiModelPage = new APIModelPage(apiModel);
-
 
                 if (apiModelPage.xMockAPIRadioButton.IsChecked != true)
                 {
@@ -180,7 +179,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         private void UseRealAPIURL(object sender, RoutedEventArgs e)
         {
-            foreach (var apiModel in mAPIModelFolder.GetFolderItems())
+            foreach (ApplicationAPIModel apiModel in mAPIModelFolder.GetFolderItems())
             {
                 APIModelPage apiModelPage = new APIModelPage(apiModel);
                 if (apiModelPage.xRealAPIRadioButton.IsChecked != true)
