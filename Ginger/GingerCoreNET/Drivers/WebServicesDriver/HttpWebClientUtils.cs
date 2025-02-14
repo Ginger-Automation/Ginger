@@ -43,7 +43,7 @@ namespace GingerCore.Actions.WebAPI
     {
         HttpClient Client = null;
         HttpClientHandler Handler = null;
-        public WireMockConfiguration mockConfiguration;
+        private WireMockConfiguration mockConfiguration;
         //Task _Task = null; //thread for sending events
         HttpRequestMessage RequestMessage = null;
         ActWebAPIBase mAct;
@@ -350,7 +350,7 @@ namespace GingerCore.Actions.WebAPI
         {
             string url = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.EndPointURL);
 
-            if (!mAct.UseRealAPI && !string.IsNullOrEmpty(url))
+            if (!mAct.UseLiveAPI && !string.IsNullOrEmpty(url))
             {
                 mockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
                 string mockUrl = mockConfiguration.WireMockUrl;
@@ -362,7 +362,7 @@ namespace GingerCore.Actions.WebAPI
                     Client.BaseAddress = new Uri(newUrl + path);
                 }
             }
-            else if (!string.IsNullOrEmpty(url) && mAct.UseRealAPI)
+            else if (!string.IsNullOrEmpty(url) && mAct.UseLiveAPI)
             {
                 Client.BaseAddress = new Uri(url);
             }

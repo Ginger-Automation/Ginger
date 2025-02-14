@@ -51,9 +51,16 @@ namespace Ginger.UserControlsLib.TextEditor
 
             if (isFromWireMock)
             {
-                this.isFromWireMock = true;
-                this.wireMockmappingId = wireMockmappingId;
-                mockAPI = new WireMockAPI();
+                try
+                {
+                    this.isFromWireMock = true;
+                    this.wireMockmappingId = wireMockmappingId;
+                    mockAPI = new WireMockAPI();
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "error in getting wiremock api", ex);
+                }
             }
 
             TextEditorBase TE = GetTextEditorByExtension(FileName);

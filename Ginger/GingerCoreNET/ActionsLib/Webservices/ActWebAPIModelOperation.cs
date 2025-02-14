@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices
             actWebAPIBase.AddOrUpdateInputParamValue(nameof(ActWebAPIBase.UseLegacyJSONParsing), "False");
             actWebAPIBase.Description = actWebAPIModel.Description;
             actWebAPIBase.Timeout = actWebAPIModel.Timeout;
-            actWebAPIBase.UseRealAPI = AAMBDuplicate.UseRealAPI;
+            actWebAPIBase.UseLiveAPI = AAMBDuplicate.UseLiveAPI;
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.RequestType, AAMBDuplicate.RequestType.ToString());
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ReqHttpVersion, AAMBDuplicate.ReqHttpVersion.ToString());
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ResponseContentType, AAMBDuplicate.ResponseContentType.ToString());

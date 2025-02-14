@@ -14,7 +14,7 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
         private static readonly WireMockAPI WireMockAPI = new();
         private static WireMockConfiguration mockConfiguration;
         private static string baseurl;
-        public async static Task CreateWireMockMapping(ApplicationAPIModel model)
+        public static async Task CreateWireMockMapping(ApplicationAPIModel model)
         {
             mockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
             string trimmedUrl = RemovingURLPathQuery(model.URLDomain) + TrimApiEndpointUrl(model.EndpointURL);

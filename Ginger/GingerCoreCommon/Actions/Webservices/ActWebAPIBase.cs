@@ -94,7 +94,7 @@ namespace GingerCore.Actions.WebServices
         }
 
         [IsSerializedForLocalRepository]
-        public bool UseRealAPI { get; set; } = true;
+        public bool UseLiveAPI { get; set; } = true;
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> DynamicElements = [];

@@ -10,7 +10,7 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
 {
     public class WireMockAPI
     {
-        public WireMockConfiguration mockConfiguration;
+        private WireMockConfiguration mockConfiguration;
         private readonly string _baseUrl;
         private const string MappingEndpoint = "/mappings";
         private const string StartRecordingEndpoint = "/recordings/start";

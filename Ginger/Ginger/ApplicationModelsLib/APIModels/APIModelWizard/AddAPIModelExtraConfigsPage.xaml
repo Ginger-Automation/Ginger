@@ -27,7 +27,7 @@
 
             <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
                 <Label Content="Do You want to Create WireMock Mapping ? " HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <CheckBox x:Name="xWireMockMappingToggle" IsEnabled="True" Width="50" Checked="xWireMockMappingToggle_Checked" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <CheckBox x:Name="xWireMockMappingToggle" IsEnabled="False" Width="50" Checked="xWireMockMappingToggle_Checked" HorizontalAlignment="Left" VerticalAlignment="Center"/>
             </StackPanel>
         </Grid>
     </Page>

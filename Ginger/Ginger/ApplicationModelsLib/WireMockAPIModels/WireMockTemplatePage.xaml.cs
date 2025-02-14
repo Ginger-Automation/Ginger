@@ -100,7 +100,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
                     return;
                 }
 
-                HttpResponseMessage result = await wmController.mockAPI.DeleteAllMappingsAsync();
+                using HttpResponseMessage result = await wmController.mockAPI.DeleteAllMappingsAsync();
                 if (result.IsSuccessStatusCode)
                 {
                     // Remove the mapping from the grid
@@ -380,7 +380,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
             {
                 try
                 {
-                    HttpResponseMessage result = await wmController.mockAPI.DeleteStubAsync(mapping.Id);
+                    using HttpResponseMessage result = await wmController.mockAPI.DeleteStubAsync(mapping.Id);
                     if (result.IsSuccessStatusCode)
                     {
                         // Remove the mapping from the grid

@@ -1032,12 +1032,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         public void xRealAPIRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            mApplicationAPIModel.UseRealAPI = true;
+            mApplicationAPIModel.UseLiveAPI = true;
         }
 
         public void xMockAPIRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            mApplicationAPIModel.UseRealAPI = false;
+            mApplicationAPIModel.UseLiveAPI = false;
         }
 
         public void CheckRealAPIRadioButton()

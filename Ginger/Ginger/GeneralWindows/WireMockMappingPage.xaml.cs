@@ -25,7 +25,7 @@ namespace Ginger.GeneralWindows
         Solution mSolution;
         private GenericWindow genWin = null;
         private ImageMakerControl loaderElement = new ImageMakerControl();
-        public WireMockMappingController wmController;
+        private WireMockMappingController wmController;
         public WireMockMappingPage()
         {
             wmController = new WireMockMappingController();
@@ -113,7 +113,7 @@ namespace Ginger.GeneralWindows
                     return;
                 }
 
-                HttpResponseMessage result = await wmController.mockAPI.DeleteAllMappingsAsync();
+                using HttpResponseMessage result = await wmController.mockAPI.DeleteAllMappingsAsync();
                 if (result.IsSuccessStatusCode)
                 {
                     // Remove the mapping from the grid
@@ -131,7 +131,6 @@ namespace Ginger.GeneralWindows
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to delete WireMock mapping", ex);
                 Reporter.ToUser(eUserMsgKey.WireMockAPIError);
             }
-
         }
 
 
@@ -316,19 +315,17 @@ namespace Ginger.GeneralWindows
             {
                 try
                 {
-                    HttpResponseMessage result = await wmController.mockAPI.DeleteStubAsync(mapping.Id);
+                    using HttpResponseMessage result = await wmController.mockAPI.DeleteStubAsync(mapping.Id);
                     if (result.IsSuccessStatusCode)
                     {
                         // Remove the mapping from the grid
                         xGridMapping.DataSourceList.Remove(mapping);
                         Reporter.ToUser(eUserMsgKey.WireMockMappingDeleteSuccess);
-
-                        // Refresh the grid data to ensure the mappings are updated
-                        await wmController.DeserializeWireMockResponseAsync();
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKey.WireMockMappingDeleteFail);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to delete WireMock mapping, response received from API :{result}");
+                        Reporter.ToUser(eUserMsgKey.WireMockAPIError);
                     }
                 }
                 catch (Exception ex)

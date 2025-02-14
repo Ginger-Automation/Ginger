@@ -127,9 +127,9 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             TreeViewUtils.AddSubMenuItem(addMenu, "Convert Web services Actions", WebServiceActionsConversionHandler, null, eImageType.Convert);
 
             // for wiremock related changes
-            MenuItem addWireMock = TreeViewUtils.CreateSubMenu(mContextMenu, "Use Mock/Production URL", eImageType.MapALM);
-            TreeViewUtils.AddSubMenuItem(addWireMock, "Use Mocked API URL", UseMockedAPIURL, null, eImageType.WireMockLogo);
-            TreeViewUtils.AddSubMenuItem(addWireMock, "Use Real API URL", UseRealAPIURL, null, eImageType.APIModel);
+            MenuItem addWireMock = TreeViewUtils.CreateSubMenu(mContextMenu, "API Mode", eImageType.MapALM);
+            TreeViewUtils.AddSubMenuItem(addWireMock, "Use Live API", UseMockedAPIURL, null, eImageType.WireMockLogo);
+            TreeViewUtils.AddSubMenuItem(addWireMock, "Use Mock API", UseRealAPIURL, null, eImageType.APIModel);
 
             if (mAPIModelFolder.IsRootFolder)
             {

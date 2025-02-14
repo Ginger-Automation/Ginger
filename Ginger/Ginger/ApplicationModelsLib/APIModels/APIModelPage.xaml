@@ -61,8 +61,8 @@
                                     <UserControlsLib:UCComboBox x:Name="xAPITypeComboBox" Width="120"></UserControlsLib:UCComboBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" >
-                                    <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,10,0">Use :</Label>
-                                    <RadioButton x:Name="xRealAPIRadioButton" Content="Real API" Margin="0,0,10,0" VerticalAlignment="Center" IsChecked="True" Checked="xRealAPIRadioButton_Checked" Style="{StaticResource @InputRadioButtonStyle}"/>
+                                    <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,10,0">API Mode :</Label>
+                                    <RadioButton x:Name="xRealAPIRadioButton" Content="Live API" Margin="0,0,10,0" VerticalAlignment="Center" IsChecked="True" Checked="xRealAPIRadioButton_Checked" Style="{StaticResource @InputRadioButtonStyle}"/>
                                     <RadioButton x:Name="xMockAPIRadioButton" Content="Mock API" VerticalAlignment="Center" IsChecked="False" Checked="xMockAPIRadioButton_Checked" Style="{StaticResource @InputRadioButtonStyle}"/>
                                 </StackPanel>
                                 <StackPanel  VerticalAlignment="Top" Margin="0,0,0,0">

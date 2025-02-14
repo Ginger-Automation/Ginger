@@ -59,7 +59,7 @@
             </DataTemplate>
         </Grid.Resources>
         <DockPanel>
-            <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto"  >
+            <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" >
                 <Ginger:ucGrid x:Name="xGridMappingOutput" ShowAdd="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" IsReadOnly="True" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUndo="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" ShowTagsFilter="Collapsed" ShowTitle="Collapsed">
                 </Ginger:ucGrid>
             </ScrollViewer>

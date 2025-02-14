@@ -19,11 +19,13 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
+using Amdocs.Ginger.CoreNET.External.WireMock;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -38,6 +40,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         {
             InitializeComponent();
             xTargetApplicationComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
+            CheckWireMockConfiguration();
         }
 
         private void FillTargetAppsComboBox()
@@ -88,15 +91,26 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             mockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
             if (string.IsNullOrEmpty(mockConfiguration.WireMockUrl))
             {
-
                 Reporter.ToUser(eUserMsgKey.WireMockConnectionFail);
-
             }
             else
             {
                 AddAPIModelWizard.ToCreateWireMock = true;
             }
+        }
 
+        private async Task CheckWireMockConfiguration()
+        {
+            WireMockConfiguration mockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
+            if (!string.IsNullOrEmpty(mockConfiguration.WireMockUrl))
+            {
+                WireMockAPI mockAPI = new();
+                bool isServerUp = await mockAPI.TestWireMockConnectionAsync(mockConfiguration.WireMockUrl);
+                if (isServerUp)
+                {
+                    xWireMockMappingToggle.IsEnabled = true;
+                }
+            }
         }
     }
 }
