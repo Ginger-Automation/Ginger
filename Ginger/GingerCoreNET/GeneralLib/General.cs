@@ -529,6 +529,26 @@ namespace GingerCoreNET.GeneralLib
             }
         }
 
+        public static void DeleteTempTextFile(string tempFilePath)
+        {
+            if (System.IO.File.Exists(tempFilePath))
+            {
+                try
+                {
+                    System.IO.File.Delete(tempFilePath);
+                }
+                catch (Exception)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Unable to delete Temp file:" + tempFilePath);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Create the temp json file format from a string
+        /// </summary>
+        /// <param name="jsonContent"></param>
+        /// <returns></returns>
         public static string CreateTempJsonFile(string jsonContent)
         {
             byte[] bytes = null;
