@@ -125,13 +125,19 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             TreeViewUtils.AddSubMenuItem(addMenu, "SOAP API Model", AddSoapAPIModel, null, eImageType.APIModel);
             TreeViewUtils.AddSubMenuItem(addMenu, "REST API Model", AddRESTAPIModel, null, eImageType.APIModel);
             TreeViewUtils.AddSubMenuItem(addMenu, "Convert Web services Actions", WebServiceActionsConversionHandler, null, eImageType.Convert);
+
+            // for wiremock related changes
+            MenuItem addWireMock = TreeViewUtils.CreateSubMenu(mContextMenu, "API Mode", eImageType.MapALM);
+            TreeViewUtils.AddSubMenuItem(addWireMock, "Use Mock API", UseMockedAPIURL, null, eImageType.WireMockLogo);
+            TreeViewUtils.AddSubMenuItem(addWireMock, "Use Live API", UseRealAPIURL, null, eImageType.APIModel);
+
             if (mAPIModelFolder.IsRootFolder)
             {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true);
             }
             else
             {
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew: false, allowRefresh: false);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew: false, allowRefresh: false, allowWireMockMapping: true);
             }
 
             AddSourceControlOptions(mContextMenu);
@@ -155,6 +161,33 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         private void AddRESTAPIModel(object sender, RoutedEventArgs e)
         {
             AddSingleAPIModel(ApplicationAPIUtils.eWebApiType.REST);
+        }
+
+        private void UseMockedAPIURL(object sender, RoutedEventArgs e)
+        {
+            foreach (ApplicationAPIModel apiModel in mAPIModelFolder.GetFolderItems())
+            {
+                APIModelPage apiModelPage = new APIModelPage(apiModel);
+
+                if (apiModelPage.xMockAPIRadioButton.IsChecked != true)
+                {
+                    apiModelPage.CheckMockAPIRadioButton();
+                }
+                apiModelPage.xMockAPIRadioButton_Checked(this, e);
+            }
+        }
+
+        private void UseRealAPIURL(object sender, RoutedEventArgs e)
+        {
+            foreach (ApplicationAPIModel apiModel in mAPIModelFolder.GetFolderItems())
+            {
+                APIModelPage apiModelPage = new APIModelPage(apiModel);
+                if (apiModelPage.xRealAPIRadioButton.IsChecked != true)
+                {
+                    apiModelPage.CheckRealAPIRadioButton();
+                }
+                apiModelPage.xRealAPIRadioButton_Checked(this, e);
+            }
         }
 
         private void AddSingleAPIModel(ApplicationAPIUtils.eWebApiType type)
