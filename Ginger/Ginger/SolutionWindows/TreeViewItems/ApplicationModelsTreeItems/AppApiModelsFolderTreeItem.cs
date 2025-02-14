@@ -128,8 +128,8 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
             // for wiremock related changes
             MenuItem addWireMock = TreeViewUtils.CreateSubMenu(mContextMenu, "API Mode", eImageType.MapALM);
-            TreeViewUtils.AddSubMenuItem(addWireMock, "Use Live API", UseMockedAPIURL, null, eImageType.WireMockLogo);
-            TreeViewUtils.AddSubMenuItem(addWireMock, "Use Mock API", UseRealAPIURL, null, eImageType.APIModel);
+            TreeViewUtils.AddSubMenuItem(addWireMock, "Use Mock API", UseMockedAPIURL, null, eImageType.WireMockLogo);
+            TreeViewUtils.AddSubMenuItem(addWireMock, "Use Live API", UseRealAPIURL, null, eImageType.APIModel);
 
             if (mAPIModelFolder.IsRootFolder)
             {
