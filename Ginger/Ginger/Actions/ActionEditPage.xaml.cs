@@ -969,6 +969,7 @@ namespace Ginger.Actions
                 viewCols.Add(new GridColView() { Field = ".....", Header = "  ...", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["SimulatedlValueExpressionButton"] });
                 viewCols.Add(new GridColView() { Field = "<<", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["AddActualToSimulButton"] });
                 viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Actual, Header = "Actual Value", WidthWeight = 180, BindingMode = BindingMode.OneWay });
+                viewCols.Add(new GridColView() { Field = ".......", Header = "...", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["ShowActualValueButton"] });                
                 viewCols.Add(new GridColView() { Field = ">>", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["AddActualToExpectButton"] });
                 viewCols.Add(new GridColView() { Field = nameof(ActReturnValue.Operator), Header = "Operator", WidthWeight = 130, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = OperatorList });
                 // viewCols.Add(new GridColView() { Field = ">>", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["AddActualToExpectButton"] });
@@ -1461,6 +1462,20 @@ namespace Ginger.Actions
         {
             ActReturnValue ARV = (ActReturnValue)xOutputValuesGrid.CurrentItem;
             ARV.Expected = ARV.Actual;
+        }
+
+        private void GridShowActualValueButton_Click(object sender, RoutedEventArgs e)
+        {
+            ActReturnValue ARV = (ActReturnValue)xOutputValuesGrid.CurrentItem;
+            if (!string.IsNullOrEmpty(ARV.Actual))
+            {
+                string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(ARV.Actual);
+
+                DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
+                docPage.ShowAsWindow("Actual Value");
+
+                GingerCoreNET.GeneralLib.General.DeleteTempTextFile(tempFilePath);
+            }
         }
 
         private void GridAddActualToSimulButton_Click(object sender, RoutedEventArgs e)
