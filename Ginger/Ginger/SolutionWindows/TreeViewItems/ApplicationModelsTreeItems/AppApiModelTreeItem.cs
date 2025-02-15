@@ -95,7 +95,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             mTreeView = TV;
             mContextMenu = new ContextMenu();
 
-            AddItemNodeBasicManipulationsOptions(mContextMenu, allowEdit: mShowEditInMenu);
+            AddItemNodeBasicManipulationsOptions(mContextMenu, allowEdit: mShowEditInMenu, allowWireMockMapping: true);
 
             AddSourceControlOptions(mContextMenu);
         }

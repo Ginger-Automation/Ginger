@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.CoreNET.Application_Models;
+using Amdocs.Ginger.CoreNET.External.WireMock;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.APIModels.APIModelWizard;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
@@ -29,6 +30,7 @@ using GingerCoreNET.Application_Models;
 using GingerWPF.WizardLib;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 {
@@ -55,6 +57,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         public eAPIType APIType { get; set; }
 
         public RepositoryFolder<ApplicationAPIModel> APIModelFolder;
+
+
+        /// <summary>
+        /// Gets or sets a value indicating whether WireMock mappings should be created during the finish process.
+        /// </summary>
+        public bool ToCreateWireMock { get; set; }
 
         public string URL { get; set; }
 
@@ -116,6 +124,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 }
             }
 
+            if (ToCreateWireMock)
+            {
+                CreateWireMockMappingsAsync(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected).ToList()));
+            }
+
             ImportAPIModels(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected == true).ToList()));
         }
         private GlobalAppModelParameter AddGlobalParam(string customurl, string placehold)
@@ -133,6 +146,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             newModelGlobalParam.OptionalValuesList.Add(new OptionalValue() { Value = customurl, IsDefault = true });
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newModelGlobalParam);
             return newModelGlobalParam;
+        }
+
+        private async Task CreateWireMockMappingsAsync(ObservableList<ApplicationAPIModel> SelectedAAMList)
+        {
+            foreach (ApplicationAPIModel appmodel in SelectedAAMList)
+            {
+                WireMockMappingGenerator.CreateWireMockMapping(appmodel);
+            }
         }
 
         private void ImportAPIModels(ObservableList<ApplicationAPIModel> SelectedAAMList)

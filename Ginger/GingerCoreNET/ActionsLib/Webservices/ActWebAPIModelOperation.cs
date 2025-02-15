@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -29,9 +30,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices
 {
     public class ActWebAPIModelOperation : IActWebAPIModelOperation
     {
+        public WireMockConfiguration mockConfiguration;
         public void FillAPIBaseFields(ApplicationAPIModel AAMB, ActWebAPIBase actWebAPIBase, ActWebAPIModel actWebAPIModel)
         {
             ApplicationAPIModel AAMBDuplicate = SetAPIModelData(AAMB, actWebAPIModel);
+            mockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
 
             //Initializing Act Properties
             actWebAPIBase.AddNewReturnParams = actWebAPIModel.AddNewReturnParams;
@@ -40,6 +43,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices
             actWebAPIBase.AddOrUpdateInputParamValue(nameof(ActWebAPIBase.UseLegacyJSONParsing), "False");
             actWebAPIBase.Description = actWebAPIModel.Description;
             actWebAPIBase.Timeout = actWebAPIModel.Timeout;
+            actWebAPIBase.UseLiveAPI = AAMBDuplicate.UseLiveAPI;
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.RequestType, AAMBDuplicate.RequestType.ToString());
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ReqHttpVersion, AAMBDuplicate.ReqHttpVersion.ToString());
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ResponseContentType, AAMBDuplicate.ResponseContentType.ToString());

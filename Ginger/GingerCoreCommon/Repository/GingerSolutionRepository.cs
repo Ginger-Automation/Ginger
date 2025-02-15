@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using System.IO;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.Run;
 using Amdocs.Ginger.Repository;
 using Ginger.Configurations;
@@ -28,6 +28,7 @@ using GingerCore.Activities;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Variables;
+using System.IO;
 
 namespace Amdocs.Ginger.CoreNET.Repository
 {
@@ -69,7 +70,7 @@ namespace Amdocs.Ginger.CoreNET.Repository
 
             SR.AddItemInfo<AccessibilityConfiguration>("*.Ginger.Configuration.xml", SolutionRepository.cSolutionRootFolderSign + "Configurations", true, "AccessibilityConfiguration", PropertyNameForFileName: nameof(AccessibilityConfiguration.Name));
             SR.AddItemInfo<GingerOpsConfiguration>("*.Ginger.Configuration.xml", SolutionRepository.cSolutionRootFolderSign + "Configurations", true, $"{GingerDicser.GetTermResValue(eTermResKey.GingerOps)}Configuration", PropertyNameForFileName: nameof(GingerOpsConfiguration.Name));
-
+            SR.AddItemInfo<WireMockConfiguration>("*.Ginger.Configuration.xml", SolutionRepository.cSolutionRootFolderSign + "Configurations", true, "WireMock Configuration", PropertyNameForFileName: nameof(WireMockConfiguration.Name));
 
             return SR;
         }

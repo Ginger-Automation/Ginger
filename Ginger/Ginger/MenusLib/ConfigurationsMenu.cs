@@ -87,11 +87,12 @@ namespace Ginger.ConfigurationsLib
             twoLevelMenu.Add(tagsMenu);
 
             TopMenuItem externalConfigMenu = new TopMenuItem(eImageType.Building, WorkSpace.Instance.Solution.ExternalIntegrationsTabName, ConsoleKey.X, "External Configurations AID", "List of External Configurations to be used");
-            externalConfigMenu.Add(eImageType.VRT, "VRT Configuration", GetVRTExteranalConfigsPage, ConsoleKey.X, "Visual Regression Testing External Configurations", "VRT Configuration AID");
-            externalConfigMenu.Add(eImageType.Applitools, "Applitools Configuration", GetApplitoolsExteranalConfigsPage, ConsoleKey.X, "Applitools External Configurations", "Applitools Configuration AID");
-            externalConfigMenu.Add(eImageType.Sealights, "Sealights Configuration", GetSealightsExteranalConfigsPage, ConsoleKey.X, "Sealights External Configurations", "Sealights Configuration AID");
-            externalConfigMenu.Add(eImageType.Exchange, "Ask Lisa Configuration", GetAskLisaConfigsPage, ConsoleKey.X, "Ask Lisa Configurations", "Ask Lisa Configuration AID");
-            externalConfigMenu.Add(eImageType.GingerAnalytics, "GingerOps Configuration", GetGingerOpsPage, ConsoleKey.X, "GingerOps Configuration", "GingerOps Configuration AID");
+            externalConfigMenu.Add(eImageType.VRT, "VRT", GetVRTExteranalConfigsPage, ConsoleKey.X, "Visual Regression Testing External Configurations", "VRT Configuration AID");
+            externalConfigMenu.Add(eImageType.Applitools, "Applitools", GetApplitoolsExteranalConfigsPage, ConsoleKey.X, "Applitools External Configurations", "Applitools Configuration AID");
+            externalConfigMenu.Add(eImageType.Sealights, "Sealights", GetSealightsExteranalConfigsPage, ConsoleKey.X, "Sealights External Configurations", "Sealights Configuration AID");
+            externalConfigMenu.Add(eImageType.Exchange, "Ask Lisa", GetAskLisaConfigsPage, ConsoleKey.X, "Ask Lisa Configurations", "Ask Lisa Configuration AID");
+            externalConfigMenu.Add(eImageType.GingerAnalytics, "GingerOps", GetGingerOpsPage, ConsoleKey.X, "GingerOps Configuration", "GingerOps Configuration AID");
+            externalConfigMenu.Add(eImageType.WireMockLogo, "WireMock", GetWireMockPage, ConsoleKey.X, "WireMock Configuration", "WireMock Configuration AID");
             twoLevelMenu.Add(externalConfigMenu);
 
             TopMenuItem accessiblityRulesMenu = new TopMenuItem(eImageType.Accessibility, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", ConsoleKey.T, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", "Name & rules of the Accessibility which been present current json");
@@ -169,6 +170,12 @@ namespace Ginger.ConfigurationsLib
         {
             return new GingerOpsConfigurationPage();
         }
+
+        private static Page GetWireMockPage()
+        {
+            return new WireMockConfigurationPage();
+        }
+
         //Remove when we add other pages
         private static Page OthersPage()
         {
