@@ -1925,6 +1925,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ActUIElement.eElementAction.GetValidValues,
             ActUIElement.eElementAction.GetTextLength,
             ActUIElement.eElementAction.GetSelectedValue,
+            ActUIElement.eElementAction.DragDrop,
+            ActUIElement.eElementAction.MultiSetValue,
+            ActUIElement.eElementAction.DrawObject,
         ];
 
 
