@@ -36,47 +36,62 @@ namespace Amdocs.Ginger.Common
 
         public void ToConsole(eLogLevel logLevel, string message, Boolean overwriteCurrentLine = false)
         {
-           
+            // Check if the console is hidden
+            if (!Console.IsOutputRedirected && Console.WindowHeight == 0)
+            {
+                return;
+            }
+
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append('[').Append(logLevel).Append(" | ").Append(DateTime.Now.ToString("HH:mm:ss:fff_dd-MMM")).Append("] ").Append(message).Append(Environment.NewLine);
 
-            switch (logLevel)
+            try
             {
-                case eLogLevel.ERROR:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    break;
-                case eLogLevel.FATAL:
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    break;
-                case eLogLevel.DEBUG:
-                    Console.ForegroundColor = ConsoleColor.White;
-                    break;
-                case eLogLevel.INFO:
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    break;
-                case eLogLevel.WARN:
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    break;
-            }
-            
-            if (overwriteCurrentLine)
-            {
-                int cursorRow = prevOverwriteCurrentLine ? Console.CursorTop - 3 : Console.CursorTop;
-                Console.SetCursorPosition(0, cursorRow);
-                Console.Write(new string(' ', Console.WindowWidth));
-                Console.SetCursorPosition(0, cursorRow);
-                stringBuilder.Append(Environment.NewLine);
-                Console.WriteLine(stringBuilder.ToString());
-            }
-            else
-            {
-                stringBuilder.Append(Environment.NewLine);
-                Console.WriteLine(stringBuilder.ToString());
-                Console.ResetColor();
-            }
-            prevOverwriteCurrentLine = overwriteCurrentLine;
-        }
+                switch (logLevel)
+                {
+                    case eLogLevel.ERROR:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        break;
+                    case eLogLevel.FATAL:
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        break;
+                    case eLogLevel.DEBUG:
+                        Console.ForegroundColor = ConsoleColor.White;
+                        break;
+                    case eLogLevel.INFO:
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        break;
+                    case eLogLevel.WARN:
+                        Console.ForegroundColor = ConsoleColor.DarkYellow;
+                        break;
+                }
 
+                if (overwriteCurrentLine)
+                {
+                    int cursorRow = prevOverwriteCurrentLine ? Console.CursorTop - 3 : Console.CursorTop;
+                    Console.SetCursorPosition(0, cursorRow);
+                    Console.Write(new string(' ', Console.WindowWidth));
+                    Console.SetCursorPosition(0, cursorRow);
+                    stringBuilder.Append(Environment.NewLine);
+                    Console.WriteLine(stringBuilder.ToString());
+                }
+                else
+                {
+                    stringBuilder.Append(Environment.NewLine);
+                    Console.WriteLine(stringBuilder.ToString());
+                    Console.ResetColor();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ResetColor();
+                Console.WriteLine($"[ERROR | {DateTime.Now.ToString("HH:mm:ss:fff_dd-MMM")}] An error occurred: {ex.Message}");
+            }
+            finally
+            {
+                prevOverwriteCurrentLine = overwriteCurrentLine;
+            }
+        }
         public abstract eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResualt);
 
         public abstract void ToStatus(eStatusMsgType messageType, string statusText);
