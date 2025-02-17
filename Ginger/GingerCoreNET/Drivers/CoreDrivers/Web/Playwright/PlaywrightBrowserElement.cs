@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Playwright;
 using Microsoft.Playwright;
@@ -645,7 +646,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             var targetLocator = GetElementLocator(targetElement);
             if (targetLocator == null)
             {
-                throw new Exception("Target element locator is null");
+                throw new InvalidActionConfigurationException("Target element locator is null");
             }
 
             await playwrightLocator.DragToAsync(targetLocator);
@@ -696,7 +697,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             var sourceBoundingBox = await playwrightLocator.BoundingBoxAsync();
             if (sourceBoundingBox == null)
-                throw new Exception("source bounding box not found");
+            {
+                throw new InvalidActionConfigurationException("source bounding box not found");
+            }
             float sourceX = sourceBoundingBox.X + sourceBoundingBox.Width / 2;
             float sourceY = sourceBoundingBox.Y + sourceBoundingBox.Height / 2;
             await playwrightLocator.Page.Mouse.MoveAsync(sourceX,sourceY);
@@ -731,7 +734,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             var boundingBox = await playwrightLocator.BoundingBoxAsync();
             if (boundingBox == null)
             {
-                throw new Exception("Bounding box not found");
+                throw new InvalidActionConfigurationException("Bounding box not found");
             }
 
             var page = playwrightLocator.Page;

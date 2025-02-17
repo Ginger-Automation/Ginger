@@ -227,17 +227,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                     {
                         await element.ClearAsync();
                         await element.SetTextAsync(_act.GetInputParamCalculatedValue("Value"));
-                        Thread.Sleep(2000);
+                        await Task.Delay(2000);
                     }
                 }
                 else
                 {
-                    throw new EntityNotFoundException($"Elements not found - " + _act.ElementLocateBy + " " + _act.ElementLocateValueForDriver);
+                    throw new InvalidActionConfigurationException($"Elements not found - " + _act.ElementLocateBy + " " + _act.ElementLocateValueForDriver);
                 }
             }
             catch
             {
-                throw new EntityNotFoundException($"Elements not found - " + _act.ElementLocateBy + " " + _act.ElementLocateValueForDriver);
+                throw new InvalidActionConfigurationException($"Elements not found - " + _act.ElementLocateBy + " " + _act.ElementLocateValueForDriver);
             }
         }
 
@@ -270,7 +270,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                 IBrowserElement? targetElement = elements?.FirstOrDefault();
                 if (targetElement == null || sourceElement == null)
                 {
-                    throw new EntityNotFoundException($"Source or Target element not found - " + _act.TargetLocateBy + " " + _act.TargetLocateValue);
+                    throw new InvalidActionConfigurationException($"Source or Target element not found - " + _act.TargetLocateBy + " " + _act.TargetLocateValue);
                 }
 
                 if (!Enum.TryParse(_act.GetInputParamValue(ActUIElement.Fields.DragDropType)?.ToString(), out ActUIElement.eElementDragDropType dragDropType))
@@ -312,7 +312,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
             else
             {
-                throw new EntityNotFoundException("Valid text not found.");
+                throw new InvalidActionConfigurationException("Valid text not found.");
             }
         }
 
@@ -330,7 +330,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
             else
             {
-                throw new EntityNotFoundException("Text not found.");
+                throw new InvalidActionConfigurationException("Text not found.");
             }
         }
 
@@ -348,7 +348,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
             else
             {
-                throw new EntityNotFoundException("Selected value not found.");
+                throw new InvalidActionConfigurationException("Selected value not found.");
             }
         }
 
@@ -363,7 +363,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             IBrowserElement? firstElement = elements.FirstOrDefault();
             if (firstElement == null)
             {
-                throw new EntityNotFoundException($"No element found by locator '{_act.ElementLocateBy}' and value '{_act.ElementLocateValueForDriver}'");
+                throw new InvalidActionConfigurationException($"No element found by locator '{_act.ElementLocateBy}' and value '{_act.ElementLocateValueForDriver}'");
             }
 
             return firstElement;
