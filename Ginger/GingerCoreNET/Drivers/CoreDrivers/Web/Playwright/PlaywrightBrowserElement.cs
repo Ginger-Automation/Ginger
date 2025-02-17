@@ -81,7 +81,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             });
         }
 
-        public Task ClickAsync(Point point)
+        public Task ClickAsync(System.Drawing.Point point)
         {
             if (_playwrightLocator != null)
             {
@@ -614,6 +614,166 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return selectedValue;
         }
 
+        /// <summary>
+        /// Drags and drops the current element to the target element.
+        /// </summary>
+        /// <param name="targetElement">The target element to drop to.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task DragDropAsync(IBrowserElement targetElement)
+        {
+            if (_playwrightLocator != null)
+            {
+                return DragDropAsync(_playwrightLocator, targetElement);
+            }
+            else
+            {
+                throw new InvalidOperationException("Element locator is null.");
+            }
+        }
+
+        /// <summary>
+        /// Drags and drops the current element to the target element using the specified Playwright locator.
+        /// </summary>
+        /// <param name="playwrightLocator">The Playwright locator of the current element.</param>
+        /// <param name="targetElement">The target element to drop to.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task DragDropAsync(IPlaywrightLocator playwrightLocator, IBrowserElement targetElement)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+            ArgumentNullException.ThrowIfNull(targetElement, nameof(targetElement));
+
+            var targetLocator = GetElementLocator(targetElement);
+            if (targetLocator == null)
+            {
+                throw new Exception("Target element locator is null");
+            }
+
+            await playwrightLocator.DragToAsync(targetLocator);
+        }
+
+        /// <summary>
+        /// Gets the Playwright locator of the specified element.
+        /// </summary>
+        /// <param name="element">The element to get the locator for.</param>
+        /// <returns>The Playwright locator if available, otherwise null.</returns>
+        private IPlaywrightLocator? GetElementLocator(IBrowserElement element)
+        {
+            if (element is PlaywrightBrowserElement playwrightElement)
+            {
+                return playwrightElement._playwrightLocator;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Drags and drops the current element to the specified coordinates.
+        /// </summary>
+        /// <param name="targetX">The target X coordinate.</param>
+        /// <param name="targetY">The target Y coordinate.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task DragDropXYCordinateAsync(int targetX, int targetY)
+        {
+            if (_playwrightLocator != null)
+            {
+                return DragDropXYCordinateAsync(_playwrightLocator, targetX, targetY);
+            }
+            else
+            {
+                throw new InvalidOperationException("Element locator is null.");
+            }
+        }
+
+        /// <summary>
+        /// Drags and drops the current element to the specified coordinates using the specified Playwright locator.
+        /// </summary>
+        /// <param name="playwrightLocator">The Playwright locator of the current element.</param>
+        /// <param name="targetX">The target X coordinate.</param>
+        /// <param name="targetY">The target Y coordinate.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task DragDropXYCordinateAsync(IPlaywrightLocator playwrightLocator, int targetX, int targetY)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            var sourceBoundingBox = await playwrightLocator.BoundingBoxAsync();
+            if (sourceBoundingBox == null)
+                throw new Exception("source bounding box not found");
+
+            await playwrightLocator.Page.Mouse.MoveAsync(sourceBoundingBox.X + sourceBoundingBox.Width / 2, sourceBoundingBox.Y + sourceBoundingBox.Height / 2);
+            await playwrightLocator.Page.Mouse.DownAsync();
+            await playwrightLocator.Page.Mouse.MoveAsync(targetX, targetY);
+            await playwrightLocator.Page.Mouse.UpAsync();
+        }
+
+        /// <summary>
+        /// Draws an object on the element using random mouse movements.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task DrawObjectAsync()
+        {
+            if (_playwrightLocator != null)
+            {
+                return DrawObjectAsync(_playwrightLocator);
+            }
+            else
+            {
+                throw new InvalidOperationException("Element locator is null.");
+            }
+        }
+
+        /// <summary>
+        /// Draws an object on the element using random mouse movements with the specified Playwright locator.
+        /// </summary>
+        /// <param name="playwrightLocator">The Playwright locator of the element.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task DrawObjectAsync(IPlaywrightLocator playwrightLocator)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+            var boundingBox = await playwrightLocator.BoundingBoxAsync();
+            if (boundingBox == null)
+            {
+                throw new Exception("Bounding box not found");
+            }
+
+            var page = playwrightLocator.Page;
+            Random rnd = new Random();
+
+            var width = boundingBox.Width;
+            var height = boundingBox.Height;
+            int steps = 1;
+
+            int mouseX = 0, mouseY = 0;
+
+            mouseX = (int)((boundingBox.X + boundingBox.Width) / 2) + rnd.Next((int)boundingBox.Width / 98, (int)boundingBox.Width / 90);
+            mouseY = (int)((boundingBox.Y + boundingBox.Height) / 2) + rnd.Next((int)boundingBox.Height / 4, (int)boundingBox.Height / 3);
+
+            int startX = mouseX, startY = mouseY;
+            await page.Mouse.MoveAsync(mouseX, mouseY, new MouseMoveOptions { Steps = steps });
+            await page.Mouse.DownAsync();
+
+            mouseX = mouseX + rnd.Next((int)boundingBox.Width / 95, (int)boundingBox.Width / 75);
+            mouseY = mouseY - rnd.Next((int)boundingBox.Height / 6, (int)boundingBox.Height / 3);
+            await page.Mouse.MoveAsync(mouseX, mouseY, new MouseMoveOptions { Steps = steps });
+
+            mouseX = mouseX - rnd.Next((int)boundingBox.Width / 30, (int)boundingBox.Width / 15);
+            mouseY = mouseY + rnd.Next((int)boundingBox.Height / 12, (int)boundingBox.Height / 8);
+            await page.Mouse.MoveAsync(mouseX, mouseY, new MouseMoveOptions { Steps = steps });
+
+            mouseX = mouseX + rnd.Next((int)boundingBox.Width / 95, (int)boundingBox.Width / 80);
+            mouseY = mouseY + rnd.Next((int)boundingBox.Height / 12, (int)boundingBox.Height / 8);
+            await page.Mouse.MoveAsync(mouseX, mouseY, new MouseMoveOptions { Steps = steps });
+
+            mouseX = mouseX + rnd.Next((int)boundingBox.Width / 30, (int)boundingBox.Width / 10);
+            mouseY = mouseY - rnd.Next((int)boundingBox.Height / 12, (int)boundingBox.Height / 8);
+            await page.Mouse.MoveAsync(mouseX, mouseY, new MouseMoveOptions { Steps = steps });
+
+            mouseX = mouseX - rnd.Next((int)boundingBox.Width / 95, (int)boundingBox.Width / 65);
+            mouseY = mouseY + rnd.Next((int)boundingBox.Height / 6, (int)boundingBox.Height / 3);
+            await page.Mouse.MoveAsync(mouseX, mouseY, new MouseMoveOptions { Steps = steps });
+
+            await page.Mouse.MoveAsync(startX, startY, new MouseMoveOptions { Steps = steps });
+
+            await page.Mouse.UpAsync();
+        }
         public Task<string> TextContentAsync()
         {
             if (_playwrightLocator != null)
@@ -650,28 +810,28 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return content;
         }
 
-        public Task<string> ExecuteJavascriptAsync(string script)
+        public Task<string> ExecuteJavascriptAsync(string script, object? args = null)
         {
             if (_playwrightLocator != null)
             {
-                return ExecuteJavascriptAsync(_playwrightLocator, script);
+                return ExecuteJavascriptAsync(_playwrightLocator, script, args);
             }
             else
             {
-                return ExecuteJavascriptAsync(_playwrightElementHandle!, script);
+                return ExecuteJavascriptAsync(_playwrightElementHandle!, script, args);
             }
         }
 
-        public Task<string> ExecuteJavascriptAsync(IPlaywrightLocator playwrightLocator, string script)
+        public Task<string> ExecuteJavascriptAsync(IPlaywrightLocator playwrightLocator, string script, object? args)
         {
             ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
-            return playwrightLocator.EvaluateAsync<string>(script);
+            return playwrightLocator.EvaluateAsync<string>(script, args);
         }
 
-        public Task<string> ExecuteJavascriptAsync(IPlaywrightElementHandle playwrightElementHandle, string script)
+        public Task<string> ExecuteJavascriptAsync(IPlaywrightElementHandle playwrightElementHandle, string script, object? args)
         {
             ArgumentNullException.ThrowIfNull(playwrightElementHandle, nameof(playwrightElementHandle));
-            return playwrightElementHandle.EvaluateAsync<string>(script);
+            return playwrightElementHandle.EvaluateAsync<string>(script, args);
         }
 
         public Task<string> InnerTextAsync()

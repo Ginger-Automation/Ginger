@@ -29,7 +29,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
     {
         public enum eJavaScriptFile
         {
-            GingerLiveSpy, InjectJavaScript, draganddrop, jquery_min, PayLoad, GingerHTMLHelper, GingerLibXPath, wgxpath_install, GingerHTMLRecorder,
+            GingerLiveSpy, InjectJavaScript, draganddrop, draganddrop_playwright, jquery_min, PayLoad, GingerHTMLHelper, GingerLibXPath, wgxpath_install, GingerHTMLRecorder,
             ArrayBuffer, BrowserWaitForIdle, html2canvas, HTMLSpy
         }
 

@@ -211,6 +211,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\JavaScripts\ArrayBuffer.js" />
     <EmbeddedResource Include="Resources\JavaScripts\BrowserWaitForIdle.js" />
+    <EmbeddedResource Include="Resources\JavaScripts\draganddrop_playwright.js" />
     <EmbeddedResource Include="Resources\JavaScripts\draganddrop.js" />
     <EmbeddedResource Include="Resources\JavaScripts\GingerHTMLHelper.js" />
     <EmbeddedResource Include="Resources\JavaScripts\GingerHTMLRecorder.js" />

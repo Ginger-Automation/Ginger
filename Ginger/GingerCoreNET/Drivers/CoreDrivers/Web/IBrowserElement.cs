@@ -62,6 +62,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task<string> TextContentAsync();
         public Task<string> GetSelectedValueAsync();
 
+        public Task DrawObjectAsync();
+        public Task DragDropAsync(IBrowserElement targetElement);
+        public Task DragDropXYCordinateAsync(int x,int y);
         public Task<int> GetTextLengthAsync();
         public Task<string> GetValidValuesAsync();
         public Task<string> InnerTextAsync();
@@ -70,7 +73,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task RightClickAsync();
 
-        public Task<string> ExecuteJavascriptAsync(string script);
+        public Task<string> ExecuteJavascriptAsync(string script, object? args = null);
 
         public Task ScrollToViewAsync();
 
