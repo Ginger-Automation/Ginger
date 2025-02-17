@@ -697,13 +697,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             var sourceBoundingBox = await playwrightLocator.BoundingBoxAsync();
             if (sourceBoundingBox == null)
                 throw new Exception("source bounding box not found");
-
-            await playwrightLocator.Page.Mouse.MoveAsync(sourceBoundingBox.X + sourceBoundingBox.Width / 2, sourceBoundingBox.Y + sourceBoundingBox.Height / 2);
+            float sourceX = sourceBoundingBox.X + sourceBoundingBox.Width / 2;
+            float sourceY = sourceBoundingBox.Y + sourceBoundingBox.Height / 2;
+            await playwrightLocator.Page.Mouse.MoveAsync(sourceX,sourceY);
             await playwrightLocator.Page.Mouse.DownAsync();
             await playwrightLocator.Page.Mouse.MoveAsync(targetX, targetY);
             await playwrightLocator.Page.Mouse.UpAsync();
         }
-
         /// <summary>
         /// Draws an object on the element using random mouse movements.
         /// </summary>
