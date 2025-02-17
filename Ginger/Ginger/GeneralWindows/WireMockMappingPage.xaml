@@ -61,7 +61,7 @@
         </Grid.Resources>
         <DockPanel>
             <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto"  >
-                <Ginger:ucGrid x:Name="xGridMapping" Title="Available API Mappings" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Visible" ShowUpDown="Collapsed" IsReadOnly="True" ShowTagsFilter="Collapsed">
+                <Ginger:ucGrid x:Name="xGridMapping" Title="Available API Mappings" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUndo="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Visible" ShowUpDown="Collapsed" IsReadOnly="True" ShowTagsFilter="Collapsed">
 
                 </Ginger:ucGrid>
             </ScrollViewer>

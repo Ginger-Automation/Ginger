@@ -1,6 +1,8 @@
-﻿using Amdocs.Ginger.Common;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.External.WireMock;
 using Amdocs.Ginger.Repository;
+using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.TextEditor;
 using Newtonsoft.Json;
@@ -27,6 +29,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
 
         public WireMockMappingController wmController;
         public ApplicationAPIModel mApplicationAPIModel;
+        Solution mSolution;
         public WireMockTemplatePage(ApplicationAPIModel applicationAPIModel, Ginger.General.eRIPageViewMode pageViewMode = Ginger.General.eRIPageViewMode.Standalone)
         {
             wmController = new WireMockMappingController();
@@ -49,7 +52,6 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
 
             //Set the Tool Bar look
             xGridMappingOutput.ShowUpDown = Visibility.Collapsed;
-            xGridMappingOutput.ShowUndo = Visibility.Visible;
 
             //Set the Data Grid columns
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
@@ -68,9 +70,12 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
             xGridMappingOutput.SetAllColumnsDefaultView(view);
             xGridMappingOutput.InitViewItems();
             xGridMappingOutput.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Delete, "Delete All selected mapping", DeleteAllButton_Click);
-            xGridMappingOutput.AddToolbarTool("@ArrowDown_16x16.png", "Download Mapping", xImportMapping_Click, 0);
+            xGridMappingOutput.AddToolbarTool("@ArrowDown_16x16.png", "Download Mapping", xDownloadMapping_Click, 0);
             xGridMappingOutput.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.ID, "Copy selected item ID", CopySelectedItemID);
             xGridMappingOutput.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Add, "Add New Mapping", AddNewMappingAsync);
+
+            xGridMappingOutput.SetRefreshBtnHandler(new RoutedEventHandler(RefreshMappings));
+
 
         }
 
@@ -85,6 +90,13 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
+
+        private async void RefreshMappings(object sender, RoutedEventArgs e)
+        {
+            await SetGridData();
+        }
+
+
         /// <summary>
         /// Deletes All the mappings
         /// </summary>
@@ -233,10 +245,15 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
             return mappings.Where(mapping => mapping.Name == ApiName).ToList();
         }
 
-        private async void xImportMapping_Click(object sender, RoutedEventArgs e)
+        private async void xDownloadMapping_Click(object sender, RoutedEventArgs e)
         {
             try
             {
+                if (xGridMappingOutput.DataSourceList.Count == 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.WireMockMappingDownloadEmpty);
+                    return;
+                }
 
                 string mappingJson = await wmController.DownloadWireMockMappingsAsync();
 
@@ -245,8 +262,21 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
                     Reporter.ToUser(eUserMsgKey.WireMockMappingDownloadFailed);
                     return;
                 }
-                // Save the JSON to a file
-                string filePath = "WireMockAPI_mappings.json";
+
+                //default folder
+                mSolution = WorkSpace.Instance.Solution;
+                string SolFolder = mSolution.Folder;
+                if (SolFolder.EndsWith(@"\"))
+                {
+                    SolFolder = SolFolder[..^1];
+                }
+                string mConfigFileFolderPath = SolFolder + @"\Documents\WireMockMappings\";
+                if (!System.IO.Directory.Exists(mConfigFileFolderPath))
+                {
+                    System.IO.Directory.CreateDirectory(mConfigFileFolderPath);
+                }
+
+                string filePath = Path.Combine(mConfigFileFolderPath, "WireMockMappings.json");
                 File.WriteAllText(filePath, mappingJson);
                 Reporter.ToUser(eUserMsgKey.WireMockMappingDownload);
             }
