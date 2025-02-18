@@ -36,12 +36,7 @@ namespace Amdocs.Ginger.Common
 
         public void ToConsole(eLogLevel logLevel, string message, Boolean overwriteCurrentLine = false)
         {
-            // Check if the console is hidden
-            if (!Console.IsOutputRedirected && Console.WindowHeight == 0)
-            {
-                return;
-            }
-
+            
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append('[').Append(logLevel).Append(" | ").Append(DateTime.Now.ToString("HH:mm:ss:fff_dd-MMM")).Append("] ").Append(message).Append(Environment.NewLine);
 
@@ -68,6 +63,10 @@ namespace Amdocs.Ginger.Common
 
                 if (overwriteCurrentLine)
                 {
+                    if (!Console.IsOutputRedirected && Console.WindowHeight == 0)
+                    {
+                        return;
+                    }
                     int cursorRow = prevOverwriteCurrentLine ? Console.CursorTop - 3 : Console.CursorTop;
                     Console.SetCursorPosition(0, cursorRow);
                     Console.Write(new string(' ', Console.WindowWidth));
