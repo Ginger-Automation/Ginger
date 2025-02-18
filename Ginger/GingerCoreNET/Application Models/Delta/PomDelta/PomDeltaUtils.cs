@@ -84,9 +84,12 @@ namespace GingerCoreNET.Application_Models
                 ((AgentOperations)Agent.AgentOperations).Driver.StopProcess = false;
                 POMElementsCopy.Clear();
                 DeltaViewElements.Clear();
-                var elementList = PlatformInfoBase.GetPlatformImpl(ePlatformType.Web).GetUIElementFilterList();
-                PomLearnUtils.AutoMapBasicElementTypesList = elementList["Basic"];
-                PomLearnUtils.AutoMapAdvanceElementTypesList = elementList["Advanced"];
+                if (PomLearnUtils.AutoMapBasicElementTypesList.Count == 0)
+                {
+                    var elementList = PlatformInfoBase.GetPlatformImpl(ePlatformType.Web).GetUIElementFilterList();
+                    PomLearnUtils.AutoMapBasicElementTypesList = elementList["Basic"];
+                    PomLearnUtils.AutoMapAdvanceElementTypesList = elementList["Advanced"];
+                }
                 PomLearnUtils.PrepareLearningConfigurations();
                 PomLearnUtils.LearnScreenShot();//this will set screen size to be same as in learning time
                 PrepareCurrentPOMElementsData();
@@ -558,7 +561,7 @@ namespace GingerCoreNET.Application_Models
                     {
                         latestLocator.Active = originalLocator.Active;
                         int originalIndex = existingElement.Locators.IndexOf(originalLocator);
-                        if (originalIndex <= latestElement.Locators.Count)
+                        if (originalIndex < latestElement.Locators.Count)
                         {
                             latestElement.Locators.Move(latestElement.Locators.IndexOf(latestLocator), originalIndex);
                             matchedDeltaElement.Locators.Move(matchedDeltaElement.Locators.IndexOf(matchedDeltaElement.Locators.First(x => x.ElementLocator == latestLocator)), originalIndex);
