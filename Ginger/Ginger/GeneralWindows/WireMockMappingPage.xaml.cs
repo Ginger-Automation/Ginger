@@ -41,7 +41,6 @@ namespace Ginger.GeneralWindows
 
             //Set the Tool Bar look
             xGridMapping.ShowUpDown = Visibility.Collapsed;
-            xGridMapping.ShowUndo = Visibility.Visible;
 
             //Set the Data Grid columns
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
@@ -63,6 +62,8 @@ namespace Ginger.GeneralWindows
             xGridMapping.AddToolbarTool("@ArrowDown_16x16.png", "Download Mapping", xDownloadMapping_Click, 0);
             xGridMapping.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.ID, "Copy selected item ID", CopySelectedItemID);
 
+            xGridMapping.SetRefreshBtnHandler(new RoutedEventHandler(RefreshMappings));
+
         }
 
         private void CopySelectedItemID(object sender, RoutedEventArgs e)
@@ -79,6 +80,11 @@ namespace Ginger.GeneralWindows
         private DataTemplate CreateOperationTemplate()
         {
             return (DataTemplate)xMappingWindowPage.Resources["xMappingOperationTab"];
+        }
+
+        private async void RefreshMappings(object sender, RoutedEventArgs e)
+        {
+            await SetGridData();
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.OnlyDialog)
@@ -155,6 +161,12 @@ namespace Ginger.GeneralWindows
         {
             try
             {
+                if (xGridMapping.DataSourceList.Count == 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.WireMockMappingDownloadEmpty);
+                    return;
+                }
+
                 string mappingJson = await wmController.DownloadWireMockMappingsAsync();
 
                 if (string.IsNullOrEmpty(mappingJson))
