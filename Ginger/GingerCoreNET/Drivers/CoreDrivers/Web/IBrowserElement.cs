@@ -64,6 +64,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task DrawObjectAsync();
         public Task DragDropAsync(IBrowserElement targetElement);
+        public Task DragDropJSAsync(IBrowserElement targetElement);
         public Task DragDropXYCordinateAsync(int x,int y);
         public Task<int> GetTextLengthAsync();
         public Task<string> GetValidValuesAsync();

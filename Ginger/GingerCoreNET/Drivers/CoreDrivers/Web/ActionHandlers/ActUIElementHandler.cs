@@ -283,8 +283,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                         await sourceElement.DragDropAsync(targetElement);
                         break;
                     case ActUIElement.eElementDragDropType.DragDropJS:
-                        string script = JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.draganddrop_playwright);
-                        await sourceElement.ExecuteJavascriptAsync(script, new[] { sourceElement, targetElement });
+                        await sourceElement.DragDropJSAsync(targetElement);
                         break;
                     default:
                         _act.Error = "Failed to perform drag and drop, invalid drag and drop type";

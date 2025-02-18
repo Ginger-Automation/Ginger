@@ -614,7 +614,52 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             return selectedValue;
         }
+        /// <summary>
+        /// Drags and drops the current element to the target element using JavaScript.
+        /// </summary>
+        /// <param name="targetElement">The target element to drop to.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task DragDropJSAsync(IBrowserElement targetElement)
+        {
+            if (_playwrightLocator != null)
+            {
+                return DragDropJSAsync(_playwrightLocator, targetElement);
+            }
+            else
+            {
+                throw new InvalidOperationException("Element locator is null.");
+            }
+        }
 
+        /// <summary>
+        /// Drags and drops the current element to the target element using JavaScript.
+        /// </summary>
+        /// <param name="sourceLocator">The Playwright locator of the current element.</param>
+        /// <param name="targetElement">The target element to drop to.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task DragDropJSAsync(IPlaywrightLocator sourceLocator, IBrowserElement targetElement)
+        {
+            var sourceHandle = await sourceLocator.ElementHandleAsync();
+            var targetLocator = GetElementLocator(targetElement);
+            if (targetLocator == null)
+            {
+                throw new InvalidActionConfigurationException("Target element locator is null");
+            }
+            var targetHandle = await targetLocator.ElementHandleAsync();
+            if (targetHandle == null)
+            {
+                throw new InvalidActionConfigurationException("Target element handle is null");
+            }
+            string jsScript = @"
+                                async ({ source, target }) => {
+                                    const dataTransfer = new DataTransfer();
+                                    source.dispatchEvent(new DragEvent('dragstart', { bubbles: true, cancelable: true, dataTransfer }));
+                                    target.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer }));
+                                    source.dispatchEvent(new DragEvent('dragend', { bubbles: true, cancelable: true, dataTransfer }));
+                                }";
+
+            await sourceLocator.Page.EvaluateAsync(jsScript, new { source = sourceHandle, target = targetHandle });
+        }
         /// <summary>
         /// Drags and drops the current element to the target element.
         /// </summary>
@@ -640,7 +685,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// <returns>A task representing the asynchronous operation.</returns>
         private async Task DragDropAsync(IPlaywrightLocator playwrightLocator, IBrowserElement targetElement)
         {
-            
+
             ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
             ArgumentNullException.ThrowIfNull(targetElement, nameof(targetElement));
             try
@@ -709,7 +754,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
             float sourceX = sourceBoundingBox.X + sourceBoundingBox.Width / 2;
             float sourceY = sourceBoundingBox.Y + sourceBoundingBox.Height / 2;
-            await playwrightLocator.Page.Mouse.MoveAsync(sourceX,sourceY);
+            await playwrightLocator.Page.Mouse.MoveAsync(sourceX, sourceY);
             await playwrightLocator.Page.Mouse.DownAsync();
             await playwrightLocator.Page.Mouse.MoveAsync(targetX, targetY);
             await playwrightLocator.Page.Mouse.UpAsync();
