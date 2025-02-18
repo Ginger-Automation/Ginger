@@ -82,7 +82,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             });
         }
 
-        public Task ClickAsync(System.Drawing.Point point)
+        public Task ClickAsync(Point point)
         {
             if (_playwrightLocator != null)
             {
@@ -640,16 +640,23 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// <returns>A task representing the asynchronous operation.</returns>
         private async Task DragDropAsync(IPlaywrightLocator playwrightLocator, IBrowserElement targetElement)
         {
+            
             ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
             ArgumentNullException.ThrowIfNull(targetElement, nameof(targetElement));
-
-            var targetLocator = GetElementLocator(targetElement);
-            if (targetLocator == null)
+            try
             {
-                throw new InvalidActionConfigurationException("Target element locator is null");
-            }
+                var targetLocator = GetElementLocator(targetElement);
+                if (targetLocator == null)
+                {
+                    throw new InvalidActionConfigurationException("Target element locator is null");
+                }
 
-            await playwrightLocator.DragToAsync(targetLocator);
+                await playwrightLocator.DragToAsync(targetLocator);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         /// <summary>

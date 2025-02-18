@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 
@@ -227,7 +226,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                     {
                         await element.ClearAsync();
                         await element.SetTextAsync(_act.GetInputParamCalculatedValue("Value"));
-                        await Task.Delay(2000);
+                        await Task.Delay(500);
                     }
                 }
                 else
@@ -237,7 +236,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
             catch
             {
-                throw new InvalidActionConfigurationException($"Elements not found - " + _act.ElementLocateBy + " " + _act.ElementLocateValueForDriver);
+                throw new InvalidActionConfigurationException($"Multi set value operation cancelled.");
             }
         }
 
