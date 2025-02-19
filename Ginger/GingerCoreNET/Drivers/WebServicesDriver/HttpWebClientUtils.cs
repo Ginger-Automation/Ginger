@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.CoreNET.Platform;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.WebServices;
@@ -42,7 +43,7 @@ namespace GingerCore.Actions.WebAPI
     {
         HttpClient Client = null;
         HttpClientHandler Handler = null;
-
+        private WireMockConfiguration mockConfiguration;
         //Task _Task = null; //thread for sending events
         HttpRequestMessage RequestMessage = null;
         ActWebAPIBase mAct;
@@ -57,7 +58,7 @@ namespace GingerCore.Actions.WebAPI
         public string ResponseFileContent = null;
 
         public bool RequestConstructor(ActWebAPIBase act, string ProxySettings, bool useProxyServerSettings)
-         {
+        {
             mAct = act;
             Handler = new HttpClientHandler();
 
@@ -348,7 +349,20 @@ namespace GingerCore.Actions.WebAPI
         private bool SetEndPointURL()
         {
             string url = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.EndPointURL);
-            if (!string.IsNullOrEmpty(url))
+
+            if (!mAct.UseLiveAPI && !string.IsNullOrEmpty(url))
+            {
+                mockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
+                string mockUrl = mockConfiguration.WireMockUrl;
+                if (mockUrl != null)
+                {
+                    Uri uri = new Uri(url);
+                    string path = uri.PathAndQuery;
+                    string newUrl = mockUrl.Replace("/__admin", string.Empty);
+                    Client.BaseAddress = new Uri(newUrl + path);
+                }
+            }
+            else if (!string.IsNullOrEmpty(url) && mAct.UseLiveAPI)
             {
                 Client.BaseAddress = new Uri(url);
             }
@@ -836,19 +850,19 @@ namespace GingerCore.Actions.WebAPI
 
                 case ApplicationAPIUtils.eRequestContentType.FormData:
                     return "multipart/form-data"; //update to correct value
-             
+
                 case ApplicationAPIUtils.eRequestContentType.TextPlain:
                     return "text/plain; charset=utf-8";
-            
+
                 case ApplicationAPIUtils.eRequestContentType.XML:
                     return "application/xml";
-    
+
                 case ApplicationAPIUtils.eRequestContentType.JSonWithoutCharset:
                     return "application/json";
-   
+
                 case ApplicationAPIUtils.eRequestContentType.PDF:
                     return "application/pdf";
-   
+
                 default:
                     throw new InvalidOperationException($"Unsupported RequestBodyType: {eContentType}");
             }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET.External.WireMock;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
 using GingerCore;
@@ -62,7 +63,7 @@ namespace GingerWPF.TreeViewItemsLib
         public enum eFolderNodePastOperations { None, Copy, Cut, CopyItems, CutItems }
         public static eFolderNodePastOperations mCurrentFolderNodePastOperations = eFolderNodePastOperations.None;
 
-        public void AddItemNodeBasicManipulationsOptions(ContextMenu CM, bool allowSave = true, bool allowCopy = true, bool allowCut = true, bool allowDuplicate = true, bool allowDelete = true, bool allowViewXML = true, bool allowOpenContainingFolder = true, bool allowEdit = false)
+        public void AddItemNodeBasicManipulationsOptions(ContextMenu CM, bool allowSave = true, bool allowCopy = true, bool allowCut = true, bool allowDuplicate = true, bool allowDelete = true, bool allowViewXML = true, bool allowOpenContainingFolder = true, bool allowEdit = false, bool allowWireMockMapping = false)
         {
             if (allowSave)
             {
@@ -103,6 +104,11 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 TreeViewUtils.AddMenuItem(CM, "Open Containing Folder", OpenTreeItemFolderHandler, null, "@Folder_16x16.png");
                 mTreeView.AddToolbarTool("@Folder_16x16.png", "Open Containing Folder", OpenTreeItemFolderHandler);
+            }
+            if (allowWireMockMapping)
+            {
+                TreeViewUtils.AddMenuItem(CM, "Create WireMock Mapping", CreateWireMockMappingHandler, null, "WireMockLogo16x16.png");
+                mTreeView.AddToolbarTool("WireMockLogo16x16.png", "Create WireMock Mapping", CreateWireMockMappingHandler);
             }
         }
 
@@ -202,8 +208,30 @@ namespace GingerWPF.TreeViewItemsLib
             ViewFolderFiles(ContainingFolderFullPath);
         }
 
+        private void CreateWireMockMappingHandler(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                object item = ((ITreeViewItem)this).NodeObject();
+                if (item is RepositoryItemBase repositoryItem)
+                {
+                    WireMockMappingGenerator.CreateWireMockMapping((ApplicationAPIModel)item);
+                    Reporter.ToUser(eUserMsgKey.ShowInfoMessage, "WireMock mapping created successfully.");
 
-        public void AddFolderNodeBasicManipulationsOptions(ContextMenu CM, string nodeItemTypeName, bool allowRefresh = true, bool allowAddNew = true, bool allowPaste = true, bool allowSaveAll = true, bool allowCutItems = true, bool allowCopyItems = true, bool allowRenameFolder = true, bool allowAddSubFolder = true, bool allowDeleteFolder = true, bool allowOpenFolder = true, bool allowDeleteAllItems = false)
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "WireMock mapping creation is not supported for this item type.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while creating WireMock mapping", ex);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "An error occurred while creating WireMock mapping. Please check the logs for more details.");
+            }
+        }
+
+        public void AddFolderNodeBasicManipulationsOptions(ContextMenu CM, string nodeItemTypeName, bool allowRefresh = true, bool allowAddNew = true, bool allowPaste = true, bool allowSaveAll = true, bool allowCutItems = true, bool allowCopyItems = true, bool allowRenameFolder = true, bool allowAddSubFolder = true, bool allowDeleteFolder = true, bool allowOpenFolder = true, bool allowDeleteAllItems = false, bool allowWireMockMapping = false)
         {
             if (allowRefresh)
             {
@@ -259,6 +287,11 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 TreeViewUtils.AddMenuItem(CM, "Open Folder in File Explorer", OpenTreeFolderHandler, null, "@Folder_16x16.png");
                 mTreeView.AddToolbarTool("@Folder_16x16.png", "Open Folder in File Explorer", OpenTreeFolderHandler);
+            }
+            if (allowWireMockMapping)
+            {
+                TreeViewUtils.AddMenuItem(CM, "Create WireMock Mapping", CreateWireMockMappingHandler, null, "WireMockLogo16x16.png");
+                mTreeView.AddToolbarTool("WireMockLogo16x16.png", "Create WireMock Mapping", CreateWireMockMappingHandler);
             }
         }
 

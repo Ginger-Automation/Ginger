@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -199,6 +199,7 @@ namespace Amdocs.Ginger.Repository
                 }
                 catch (Exception ex)
                 {
+                    Reporter.ToLog(eLogLevel.ERROR, $"error in model execution data :{ex.Message} ", ex);
                 }
             }
         }
