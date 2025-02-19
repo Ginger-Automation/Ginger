@@ -122,6 +122,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 Timeout = _options.Timeout,
                 Proxy = _options.Proxy,
                 ViewportSize = ViewportSize.NoViewport,
+                BypassCSP = true,
             };
 
             if (_browserType == WebBrowserType.Chrome)
