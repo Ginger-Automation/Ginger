@@ -417,7 +417,6 @@ namespace Ginger.Actions
                 BindingHandler.ObjFieldBinding(xEnableRetryMechanismCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableRetryMechanism));
                 BindingHandler.ObjFieldBinding(xRetryMechanismIntervalTextBox, TextBox.TextProperty, mAction, nameof(Act.RetryMechanismInterval));
                 BindingHandler.ObjFieldBinding(xRetryMechanismMaxRetriesTextBox, TextBox.TextProperty, mAction, nameof(Act.MaxNumberOfRetries));
-
                 SetRetryMechConfigsPnlView();
             }
 
