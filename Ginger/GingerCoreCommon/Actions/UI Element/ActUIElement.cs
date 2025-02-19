@@ -535,7 +535,7 @@ namespace GingerCore.Actions.Common
         {
             [EnumValueDescription("Using JavaScript")]
             DragDropJS,
-            [EnumValueDescription("Using Selenium")]
+            [EnumValueDescription("Using Web Driver")]
             DragDropSelenium,
             [EnumValueDescription("Mouse Drag Drop")]
             MouseDragDrop,
