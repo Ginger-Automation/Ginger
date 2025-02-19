@@ -63,7 +63,7 @@ namespace Amdocs.Ginger.Common
 
                 if (overwriteCurrentLine)
                 {
-                    if (!Console.IsOutputRedirected && Console.WindowHeight == 0)
+                    if (Console.IsOutputRedirected)
                     {
                         return;
                     }
