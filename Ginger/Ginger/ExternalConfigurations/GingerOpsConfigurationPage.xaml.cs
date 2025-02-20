@@ -101,9 +101,17 @@ namespace Ginger.ExternalConfigurations
 
         public async Task<bool> HandleTokenAuthorization()
         {
-            return await GingerOpsAPI.RequestToken(ValueExpression.PasswordCalculation(gingerOpsUserConfig.ClientId),
-                                      ValueExpression.PasswordCalculation(gingerOpsUserConfig.ClientSecret),
-                                      ValueExpression.PasswordCalculation(gingerOpsUserConfig.IdentityServiceURL));
+            try
+            {
+                return await GingerOpsAPI.RequestToken(ValueExpression.PasswordCalculation(gingerOpsUserConfig.ClientId),
+                                              ValueExpression.PasswordCalculation(gingerOpsUserConfig.ClientSecret),
+                                              ValueExpression.PasswordCalculation(gingerOpsUserConfig.IdentityServiceURL));
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to request GingerOps token", ex);
+                return false;
+            }
         }
 
         public static void ShowConnectionResult(bool isAuthorized)
