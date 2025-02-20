@@ -58,7 +58,7 @@ namespace Ginger.GeneralWindows
 
             xGridMapping.SetAllColumnsDefaultView(view);
             xGridMapping.InitViewItems();
-            xGridMapping.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Delete, "Delete All selected mapping", DeleteAllButton_Click);
+            xGridMapping.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Delete, "Delete All Mappings", DeleteAllButton_Click);
             xGridMapping.AddToolbarTool("@ArrowDown_16x16.png", "Download Mapping", xDownloadMapping_Click, 0);
             xGridMapping.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.ID, "Copy selected item ID", CopySelectedItemID);
 

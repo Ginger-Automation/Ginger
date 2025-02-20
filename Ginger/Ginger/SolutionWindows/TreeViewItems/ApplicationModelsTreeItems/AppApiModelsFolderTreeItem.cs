@@ -171,9 +171,8 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
                 if (apiModelPage.xMockAPIRadioButton.IsChecked != true)
                 {
-                    apiModelPage.CheckMockAPIRadioButton();
+                    apiModelPage.xMockAPIRadioButton_Checked(this, e);
                 }
-                apiModelPage.xMockAPIRadioButton_Checked(this, e);
             }
         }
 
@@ -182,11 +181,11 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             foreach (ApplicationAPIModel apiModel in mAPIModelFolder.GetFolderItems())
             {
                 APIModelPage apiModelPage = new APIModelPage(apiModel);
+
                 if (apiModelPage.xRealAPIRadioButton.IsChecked != true)
                 {
-                    apiModelPage.CheckRealAPIRadioButton();
+                    apiModelPage.xRealAPIRadioButton_Checked(this, e);
                 }
-                apiModelPage.xRealAPIRadioButton_Checked(this, e);
             }
         }
 

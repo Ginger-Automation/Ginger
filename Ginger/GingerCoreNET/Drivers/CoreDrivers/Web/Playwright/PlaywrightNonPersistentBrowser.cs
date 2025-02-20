@@ -132,6 +132,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             IPlaywrightBrowserContext context = await _browser.NewContextAsync(new BrowserNewContextOptions()
             {
                 ViewportSize = ViewportSize.NoViewport,
+                BypassCSP = true,
             });
 
             PlaywrightBrowserWindow window = new(context, OnWindowClose);

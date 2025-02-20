@@ -310,7 +310,7 @@ namespace GingerCore.Actions
 
                 if (!value)
                 {
-                    MaxNumberOfRetries = 0;
+                    MaxNumberOfRetries = 2;
                 }
             }
         }
@@ -330,7 +330,8 @@ namespace GingerCore.Actions
                     return mMaxNumberOfRetries;
                 }
                 return 0;
-            }
+
+                }
             set
             {
                 if (mMaxNumberOfRetries != value)

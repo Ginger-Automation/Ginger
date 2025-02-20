@@ -353,13 +353,22 @@ namespace GingerCore.Actions.WebAPI
             if (!mAct.UseLiveAPI && !string.IsNullOrEmpty(url))
             {
                 mockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
-                string mockUrl = mockConfiguration.WireMockUrl;
+                string mockUrl = ValueExpression.PasswordCalculation(mockConfiguration.WireMockUrl);
                 if (mockUrl != null)
                 {
-                    Uri uri = new Uri(url);
-                    string path = uri.PathAndQuery;
-                    string newUrl = mockUrl.Replace("/__admin", string.Empty);
-                    Client.BaseAddress = new Uri(newUrl + path);
+                    try
+                    {
+                        Uri uri = new Uri(url);
+                        string path = uri.PathAndQuery;
+                        string newUrl = mockUrl.Replace("/__admin", string.Empty);
+                        newUrl = newUrl.EndsWith("/") ? newUrl.TrimEnd('/') : newUrl;
+                        Client.BaseAddress = new Uri(newUrl + path);
+                    }
+                    catch (UriFormatException)
+                    {
+                        string newUrl = mockUrl.Replace("/__admin", string.Empty);
+                        Client.BaseAddress = new Uri(newUrl + url);
+                    }
                 }
             }
             else if (!string.IsNullOrEmpty(url) && mAct.UseLiveAPI)
