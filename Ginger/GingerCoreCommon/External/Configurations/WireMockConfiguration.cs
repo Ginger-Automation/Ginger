@@ -31,34 +31,13 @@ namespace Amdocs.Ginger.Common.External.Configurations
             {
                 if (mWireMockUrl != value)
                 {
-                    mWireMockUrl = NormalizeUrl(value);
+                    mWireMockUrl = value;
 
                     OnPropertyChanged(nameof(WireMockUrl));
                 }
             }
         }
 
-        private static string NormalizeUrl(string url)
-        {
-            if (string.IsNullOrEmpty(url))
-            {
-                return url;
-            }
-
-            // Remove trailing slash
-            if (url.EndsWith("/"))
-            {
-                url = url.TrimEnd('/');
-            }
-
-            // Add __admin if not present
-            if (!url.EndsWith("__admin"))
-            {
-                url += "/__admin";
-            }
-
-            return url;
-        }
         public override string ItemName
         {
             get

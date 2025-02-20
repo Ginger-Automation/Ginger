@@ -5,6 +5,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.TextEditor;
+using GingerWPF.TreeViewItemsLib;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using static Amdocs.Ginger.CoreNET.External.WireMock.WireMockMapping;
+using WireMockMapping = Amdocs.Ginger.CoreNET.External.WireMock.WireMockMapping.Mapping;
 
 namespace Ginger.ApplicationModelsLib.WireMockAPIModels
 {
@@ -38,8 +39,16 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
             SetGridView();
             SetGridData();
             RefreshDataOnLoad();
-        }
 
+            TreeViewItemGenericBase.MappingCreated += OnMappingCreated;
+
+        }
+        private async void OnMappingCreated(object sender, EventArgs e)
+        {
+            // Refresh the page
+            await SetGridData();
+            OnGridUpdated();
+        }
         private async void RefreshDataOnLoad()
         {
             await SetGridData();
@@ -58,7 +67,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
             {
                 GridColsView =
                 [
-                    new GridColView() { Field = nameof(Mapping.Name), WidthWeight = 100 },
+                    new GridColView() { Field = nameof(WireMockMapping.Name), WidthWeight = 100 },
                     new GridColView() { Field = "Request.Url", Header="Request URL", WidthWeight = 60, BindingMode = BindingMode.OneWay },
                     new GridColView() { Field = "Request.Method", Header="Request Method", WidthWeight = 50, BindingMode = BindingMode.OneWay },
                     new GridColView() { Field = "Response.Status", Header="Response Status Code", WidthWeight = 50, BindingMode = BindingMode.OneWay },
@@ -69,7 +78,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
 
             xGridMappingOutput.SetAllColumnsDefaultView(view);
             xGridMappingOutput.InitViewItems();
-            xGridMappingOutput.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Delete, "Delete All selected mapping", DeleteAllButton_Click);
+            xGridMappingOutput.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Delete, "Delete All Mappings", DeleteAllButton_Click);
             xGridMappingOutput.AddToolbarTool("@ArrowDown_16x16.png", "Download Mapping", xDownloadMapping_Click, 0);
             xGridMappingOutput.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.ID, "Copy selected item ID", CopySelectedItemID);
             xGridMappingOutput.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Add, "Add New Mapping", AddNewMappingAsync);
@@ -83,7 +92,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
         {
             if (xGridMappingOutput.Grid.SelectedItem != null)
             {
-                GingerCore.General.SetClipboardText(((WireMockMapping.Mapping)xGridMappingOutput.Grid.SelectedItem).Id.ToString());
+                GingerCore.General.SetClipboardText(((WireMockMapping)xGridMappingOutput.Grid.SelectedItem).Id.ToString());
             }
             else
             {
@@ -132,11 +141,28 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
             }
 
         }
+
+        public delegate void GridUpdatedEventHandler(object sender, EventArgs e);
+
+        public event GridUpdatedEventHandler GridUpdated;
+
+        // Method to raise the event
+        protected virtual void OnGridUpdated()
+        {
+            GridUpdated?.Invoke(this, EventArgs.Empty);
+        }
         private async void AddNewMappingAsync(object sender, RoutedEventArgs e)
         {
             try
             {
-                List<Mapping> mapList = await GetMatchingMapping();
+                List<WireMockMapping> mapList = await GetMatchingMapping();
+                if (mapList is null || mapList.Count == 0)
+                {
+                    await WireMockMappingGenerator.CreateWireMockMapping(mApplicationAPIModel);
+                    RefreshDataOnLoad();
+                    return;
+                }
+
                 string mappingJson = await wmController.mockAPI.GetStubAsync(mapList.FirstOrDefault()?.Id);
                 if (!string.IsNullOrEmpty(mappingJson))
                 {
@@ -184,7 +210,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
                             if (!string.IsNullOrEmpty(result))
                             {
                                 // Update the mapping in the grid
-                                xGridMappingOutput.DataSourceList.Add(JsonConvert.DeserializeObject<Mapping>(result));
+                                xGridMappingOutput.DataSourceList.Add(JsonConvert.DeserializeObject<WireMockMapping>(result));
                                 jsonWindow.Close();
                                 Reporter.ToUser(eUserMsgKey.WireMockMappingUpdateSuccess);
                             }
@@ -228,16 +254,15 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
         private async Task SetGridData()
         {
             var matchingMappings = await GetMatchingMapping();
-            xGridMappingOutput.DataSourceList = new ObservableList<Mapping>(matchingMappings);
+            xGridMappingOutput.DataSourceList = new ObservableList<WireMockMapping>(matchingMappings);
         }
 
-        public async Task<List<Mapping>> GetMatchingMapping()
+        public async Task<List<WireMockMapping>> GetMatchingMapping()
         {
             var mappings = await wmController.DeserializeWireMockResponseAsync();
             if (mappings.Count == 0)
             {
-                Reporter.ToUser(eUserMsgKey.WireMockMappingEmpty);
-                return new List<Mapping>();
+                return [];
             }
 
             string ApiName = mApplicationAPIModel.Name;
@@ -289,7 +314,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
 
         private async void xViewMappingbtn_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.DataContext is Mapping mapping)
+            if (sender is Button button && button.DataContext is WireMockMapping mapping)
             {
                 try
                 {
@@ -325,7 +350,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
 
         private async void xEditMappingbtn_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.DataContext is Mapping mapping)
+            if (sender is Button button && button.DataContext is WireMockMapping mapping)
             {
                 try
                 {
@@ -368,7 +393,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
                                 {
                                     // Update the mapping in the grid
                                     int index = xGridMappingOutput.DataSourceList.IndexOf(mapping);
-                                    xGridMappingOutput.DataSourceList[index] = JsonConvert.DeserializeObject<Mapping>(updatedJson);
+                                    xGridMappingOutput.DataSourceList[index] = JsonConvert.DeserializeObject<WireMockMapping>(updatedJson);
                                     jsonWindow.Close();
                                     Reporter.ToUser(eUserMsgKey.WireMockMappingUpdateSuccess);
                                 }
@@ -406,7 +431,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
 
         private async void xDeleteMappingBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.DataContext is Mapping mapping)
+            if (sender is Button button && button.DataContext is WireMockMapping mapping)
             {
                 try
                 {
