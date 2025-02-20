@@ -1,6 +1,4 @@
-﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.External.Configurations;
+﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Newtonsoft.Json;
 using System;
@@ -12,13 +10,9 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
     public class WireMockMappingGenerator
     {
         private static readonly WireMockAPI WireMockAPI = new();
-        private static WireMockConfiguration mockConfiguration;
-        private static string baseurl;
         public static async Task CreateWireMockMapping(ApplicationAPIModel model)
         {
-            mockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
             string trimmedUrl = RemovingURLPathQuery(model.URLDomain) + TrimApiEndpointUrl(model.EndpointURL);
-            baseurl = mockConfiguration.WireMockUrl;
 
             ApplicationAPIUtils.eRequestContentType ReqitemType = model.RequestContentType;
             string ReqcontentType = GetEnumValueDescription(ReqitemType);
@@ -135,7 +129,11 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
             }
             catch (UriFormatException ex)
             {
-                // Handle the exception if the URL is not in a valid format
+                Reporter.ToLog(eLogLevel.INFO, "Invalid URL format", ex);
+                return url;
+            }
+            catch (Exception ex)
+            {
                 Reporter.ToLog(eLogLevel.ERROR, "Invalid URL format", ex);
                 return string.Empty;
             }

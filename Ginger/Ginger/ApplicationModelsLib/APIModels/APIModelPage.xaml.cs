@@ -68,6 +68,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             WireMockTemplatePage wiremockTemplatePage = new WireMockTemplatePage(mApplicationAPIModel, viewMode);
             xWireMockTemplateFrame.ClearAndSetContent(wiremockTemplatePage);
+            wiremockTemplatePage.GridUpdated += WireMockTemplatePage_GridUpdated;
 
             mApplicationAPIModel.AppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
             mApplicationAPIModel.GlobalAppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
@@ -1047,12 +1048,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             xRealAPIRadioButton_Checked(xRealAPIRadioButton, null);
         }
 
-        public void CheckMockAPIRadioButton()
+        private async void WireMockTemplatePage_GridUpdated(object sender, EventArgs e)
         {
-            xRealAPIRadioButton.IsChecked = false;
-            xMockAPIRadioButton.IsChecked = true;
-            xMockAPIRadioButton_Checked(xMockAPIRadioButton, null);
+            await UpdateWireMockTemplateTabHeader();
         }
-
     }
 }
