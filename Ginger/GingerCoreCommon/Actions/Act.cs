@@ -319,16 +319,19 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public int RetryMechanismInterval { get { return mRetryMechanismInterval; } set { if (mRetryMechanismInterval != value) { mRetryMechanismInterval = value; OnPropertyChanged(Fields.RetryMechanismInterval); } } }
 
-        private int mMaxNumberOfRetries = 3;
+        private int mMaxNumberOfRetries = 2;
         [IsSerializedForLocalRepository]
         public int MaxNumberOfRetries
         {
             get
             {
+                if (EnableRetryMechanism)
+                {
+                    return mMaxNumberOfRetries;
+                }
+                return 0;
 
-                return mMaxNumberOfRetries;
-
-            }
+                }
             set
             {
                 if (mMaxNumberOfRetries != value)
