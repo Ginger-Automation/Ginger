@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using GingerCore.Actions.Common;
 using GingerCore.Platforms.PlatformsInfo;
 using System;
@@ -189,6 +190,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                     case ActUIElement.eElementAction.GetValidValues:
                         await GetValidValuesAsync();
                         break;
+                    case ActUIElement.eElementAction.DragDrop:
+                        await DragDropAsync();
+                        break;
+                    case ActUIElement.eElementAction.DrawObject:
+                        await DrawObjectAsync();
+                        break;
+                    case ActUIElement.eElementAction.MultiSetValue:
+                        await MultiSetValueAsync();
+                        break;
                     default:
                         string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActUIElement.eElementAction), _act.ElementAction);
                         _act.Error = $"Operation '{operationName}' is not supported";
@@ -198,6 +208,91 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             catch (Exception ex)
             {
                 _act.Error = ex.Message;
+            }
+        }
+
+
+        /// <summary>
+        /// Sets the value of multiple elements asynchronously.
+        /// </summary>
+        private async Task MultiSetValueAsync()
+        {
+            try
+            {
+                IEnumerable<IBrowserElement> elements = await _elementLocator.FindMatchingElements(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+                if (elements != null)
+                {
+                    foreach (IBrowserElement element in elements)
+                    {
+                        await element.ClearAsync();
+                        await element.SetTextAsync(_act.GetInputParamCalculatedValue("Value"));
+                        await Task.Delay(500);
+                    }
+                }
+                else
+                {
+                    throw new InvalidActionConfigurationException($"Elements not found - " + _act.ElementLocateBy + " " + _act.ElementLocateValueForDriver);
+                }
+            }
+            catch
+            {
+                throw new InvalidActionConfigurationException($"Multi set value operation cancelled.");
+            }
+        }
+
+        /// <summary>
+        /// Draws an object asynchronously.
+        /// </summary>
+        private async Task DrawObjectAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            await element.DrawObjectAsync();
+        }
+        /// <summary>
+        /// Performs a drag and drop operation asynchronously.
+        /// </summary>
+        private async Task DragDropAsync()
+        {
+            try
+            {
+                IBrowserElement sourceElement = await GetFirstMatchingElementAsync();
+
+                if (_act.TargetLocateBy == eLocateBy.ByXY)
+                {
+                    var xLocator = Convert.ToInt32(_act.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate));
+                    var yLocator = Convert.ToInt32(_act.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate));
+                    await sourceElement.DragDropXYCordinateAsync(xLocator, yLocator);
+                    return;
+                }
+
+                IEnumerable<IBrowserElement> elements = await _elementLocator.FindMatchingElements(_act.TargetLocateBy, _act.TargetLocateValue);
+                IBrowserElement? targetElement = elements?.FirstOrDefault();
+                if (targetElement == null || sourceElement == null)
+                {
+                    throw new InvalidActionConfigurationException($"Source or Target element not found - " + _act.TargetLocateBy + " " + _act.TargetLocateValue);
+                }
+
+                if (!Enum.TryParse(_act.GetInputParamValue(ActUIElement.Fields.DragDropType)?.ToString(), out ActUIElement.eElementDragDropType dragDropType))
+                {
+                    _act.Error = "Failed to perform drag and drop, invalid drag and drop type";
+                    return;
+                }
+                switch (dragDropType)
+                {
+                    case ActUIElement.eElementDragDropType.DragDropSelenium:
+                        await sourceElement.DragDropAsync(targetElement);
+                        break;
+                    case ActUIElement.eElementDragDropType.DragDropJS:
+                        await sourceElement.DragDropJSAsync(targetElement);
+                        break;
+                    default:
+                        _act.Error = "Failed to perform drag and drop, invalid drag and drop type";
+                        break;
+                }
+            }
+            catch
+            {
+                throw;
             }
         }
 
@@ -215,7 +310,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
             else
             {
-                throw new EntityNotFoundException("Valid text not found.");
+                throw new InvalidActionConfigurationException("Valid text not found.");
             }
         }
 
@@ -233,7 +328,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
             else
             {
-                throw new EntityNotFoundException("Text not found.");
+                throw new InvalidActionConfigurationException("Text not found.");
             }
         }
 
@@ -251,7 +346,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
             else
             {
-                throw new EntityNotFoundException("Selected value not found.");
+                throw new InvalidActionConfigurationException("Selected value not found.");
             }
         }
 
@@ -266,7 +361,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             IBrowserElement? firstElement = elements.FirstOrDefault();
             if (firstElement == null)
             {
-                throw new EntityNotFoundException($"No element found by locator '{_act.ElementLocateBy}' and value '{_act.ElementLocateValueForDriver}'");
+                throw new InvalidActionConfigurationException($"No element found by locator '{_act.ElementLocateBy}' and value '{_act.ElementLocateValueForDriver}'");
             }
 
             return firstElement;
@@ -783,7 +878,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             {
                 _act.Error = $"Validation element not found by locator '{validationElementLocateBy}' and value '{validationElementLocateValue}'";
                 return;
-            }            
+            }
         }
 
         /// <summary>
