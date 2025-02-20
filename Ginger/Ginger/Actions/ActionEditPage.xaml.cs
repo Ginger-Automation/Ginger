@@ -2358,7 +2358,10 @@ namespace Ginger.Actions
             {
                 xRetryMechConfigsPnl.Visibility = Visibility.Visible;
                 xRetryExpander.IsExpanded = true;
-                xRetryMechanismMaxRetriesTextBox.Text = mAction.MaxNumberOfRetries.ToString();
+                if (mAction?.MaxNumberOfRetries != null)
+                {
+                    xRetryMechanismMaxRetriesTextBox.Text = mAction.MaxNumberOfRetries.ToString();
+                }
             }
             else
             {
