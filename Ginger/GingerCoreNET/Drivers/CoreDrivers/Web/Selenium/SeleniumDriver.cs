@@ -9286,7 +9286,7 @@ namespace GingerCore.Drivers
                                .MoveByOffset(rnd.Next(e.Size.Width / 30, e.Size.Width / 10), -rnd.Next(e.Size.Height / 12, e.Size.Height / 8))
                                .MoveByOffset(-rnd.Next(e.Size.Width / 95, e.Size.Width / 65), rnd.Next(e.Size.Height / 6, e.Size.Height / 3))
                                .Release(e)
-                               .Build();
+                .Build();
             drawAction.Perform();
         }
 
