@@ -310,7 +310,7 @@ namespace GingerCore.Actions
 
                 if (!value)
                 {
-                    MaxNumberOfRetries = 0;
+                    MaxNumberOfRetries = 3;
                 }
             }
         }
