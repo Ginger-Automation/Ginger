@@ -205,7 +205,6 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
                 return null;
             }
         }
-
         public string NormalizeUrl(string url)
         {
             if (string.IsNullOrEmpty(url))
@@ -220,7 +219,7 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
             }
 
             // Add __admin if not present
-            if (!url.EndsWith("__admin"))
+            if (!url.ToLower().EndsWith("__admin"))
             {
                 url += "/__admin";
             }
