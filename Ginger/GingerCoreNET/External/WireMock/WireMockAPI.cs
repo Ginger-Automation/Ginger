@@ -29,7 +29,7 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    HttpResponseMessage response = await client.GetAsync(url);
+                    HttpResponseMessage response = await client.GetAsync(NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(url)));
                     return response.IsSuccessStatusCode;
                 }
             }
@@ -48,7 +48,7 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
 
                 using (HttpClient client = new HttpClient())
                 {
-                    HttpResponseMessage response = await client.GetAsync($"{_baseUrl}{MappingEndpoint}");
+                    HttpResponseMessage response = await client.GetAsync($"{NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(_baseUrl))}{MappingEndpoint}");
                     response.EnsureSuccessStatusCode();
                     return await response.Content.ReadAsStringAsync();
                 }
@@ -69,7 +69,7 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
                 using (HttpClient client = new HttpClient())
                 {
                     var content = new StringContent($"{{\"targetBaseUrl\": \"{targetUrl}\"}}", Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = await client.PostAsync($"{_baseUrl}{StartRecordingEndpoint}", content);
+                    HttpResponseMessage response = await client.PostAsync($"{NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(_baseUrl))}{StartRecordingEndpoint}", content);
                     response.EnsureSuccessStatusCode();
                     return await response.Content.ReadAsStringAsync();
                 }
@@ -88,7 +88,7 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    HttpResponseMessage response = await client.PostAsync($"{_baseUrl}{StopRecordingEndpoint}", null);
+                    HttpResponseMessage response = await client.PostAsync($"{NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(_baseUrl))}{StopRecordingEndpoint}", null);
                     response.EnsureSuccessStatusCode();
                     return await response.Content.ReadAsStringAsync();
                 }
@@ -113,7 +113,7 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
                         contentType = "application/json";
                     }
                     var content = new StringContent(stubMapping, Encoding.UTF8, contentType);
-                    HttpResponseMessage response = await client.PostAsync($"{_baseUrl}{MappingEndpoint}", content);
+                    HttpResponseMessage response = await client.PostAsync($"{NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(_baseUrl))}{MappingEndpoint}", content);
                     response.EnsureSuccessStatusCode();
                     return await response.Content.ReadAsStringAsync();
                 }
@@ -133,7 +133,7 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    HttpResponseMessage response = await client.GetAsync($"{_baseUrl}{MappingEndpoint}/{stubId}");
+                    HttpResponseMessage response = await client.GetAsync($"{NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(_baseUrl))}{MappingEndpoint}/{stubId}");
                     response.EnsureSuccessStatusCode();
                     return await response.Content.ReadAsStringAsync();
                 }
@@ -154,7 +154,7 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
                 using (HttpClient client = new HttpClient())
                 {
                     var content = new StringContent(stubMapping, Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = await client.PutAsync($"{_baseUrl}{MappingEndpoint}/{stubId}", content);
+                    HttpResponseMessage response = await client.PutAsync($"{NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(_baseUrl))}{MappingEndpoint}/{stubId}", content);
                     response.EnsureSuccessStatusCode();
                     return await response.Content.ReadAsStringAsync();
                 }
@@ -174,7 +174,7 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    HttpResponseMessage response = await client.DeleteAsync($"{_baseUrl}{MappingEndpoint}/{stubId}");
+                    HttpResponseMessage response = await client.DeleteAsync($"{NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(_baseUrl))}{MappingEndpoint}/{stubId}");
                     return response.EnsureSuccessStatusCode();
                 }
             }
@@ -193,7 +193,7 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    HttpResponseMessage response = await client.DeleteAsync($"{_baseUrl}{MappingEndpoint}");
+                    HttpResponseMessage response = await client.DeleteAsync($"{NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(_baseUrl))}{MappingEndpoint}");
                     return response.EnsureSuccessStatusCode();
 
                 }
@@ -204,6 +204,27 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
                 Reporter.ToLog(eLogLevel.ERROR, "Error in deleting all WireMock mapping", ex);
                 return null;
             }
+        }
+        public string NormalizeUrl(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+            {
+                return url;
+            }
+
+            // Remove trailing slash
+            if (url.EndsWith("/"))
+            {
+                url = url.TrimEnd('/');
+            }
+
+            // Add __admin if not present
+            if (!url.ToLower().EndsWith("__admin"))
+            {
+                url += "/__admin";
+            }
+
+            return url;
         }
     }
 }
