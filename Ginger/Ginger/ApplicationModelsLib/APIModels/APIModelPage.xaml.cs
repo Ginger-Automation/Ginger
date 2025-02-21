@@ -34,6 +34,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -294,6 +295,23 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(URLUserTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLUser));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(URLDomainTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLDomain));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(URLPasswordTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLPass));
+            xRealAPIRadioButton.SetBinding(RadioButton.IsCheckedProperty, new Binding
+            {
+                Source = mApplicationAPIModel,
+                Path = new PropertyPath(nameof(mApplicationAPIModel.UseLiveAPI)),
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                NotifyOnValidationError = true
+            });
+            xMockAPIRadioButton.SetBinding(RadioButton.IsCheckedProperty, new Binding
+            {
+                Source = mApplicationAPIModel,
+                Path = new PropertyPath(nameof(mApplicationAPIModel.UseLiveAPI)),
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                NotifyOnValidationError = true,
+                Converter = new BoolInverterConverter(),
+            });
 
             //Network Credential selection radio button:
             switch (mApplicationAPIModel.NetworkCredentials)
@@ -1047,6 +1065,33 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private async void WireMockTemplatePage_GridUpdated(object sender, EventArgs e)
         {
             await UpdateWireMockTemplateTabHeader();
+        }
+
+        public class BoolInverterConverter : IValueConverter
+        {
+            #region IValueConverter Members
+
+            public object Convert(object value, Type targetType, object parameter,
+                System.Globalization.CultureInfo culture)
+            {
+                if (value is bool)
+                {
+                    return !(bool)value;
+                }
+                return value;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter,
+                System.Globalization.CultureInfo culture)
+            {
+                if (value is bool)
+                {
+                    return !(bool)value;
+                }
+                return value;
+            }
+
+            #endregion
         }
     }
 }

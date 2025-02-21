@@ -212,6 +212,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
                                 // Update the mapping in the grid
                                 xGridMappingOutput.DataSourceList.Add(JsonConvert.DeserializeObject<WireMockMapping>(result));
                                 jsonWindow.Close();
+                                OnGridUpdated();
                                 Reporter.ToUser(eUserMsgKey.WireMockMappingUpdateSuccess);
                             }
                             else

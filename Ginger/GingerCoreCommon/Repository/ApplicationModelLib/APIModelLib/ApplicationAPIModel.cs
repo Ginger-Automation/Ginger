@@ -43,7 +43,7 @@ namespace Amdocs.Ginger.Repository
         /// Defaults to true to ensure live API usage unless explicitly configured for mocking.
         /// </summary>
         private bool mUseLiveAPI = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(DefaultValue: true)]
         public bool UseLiveAPI { get { return mUseLiveAPI; } set { if (mUseLiveAPI != value) { mUseLiveAPI = value; OnPropertyChanged(nameof(UseLiveAPI)); } } }
 
         //[IsSerializedForLocalRepository]
