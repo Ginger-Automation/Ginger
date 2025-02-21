@@ -737,12 +737,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     catch 
                     {
                         hadException = true;
-                        browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
                     }
 
-                    if (!hadException && browserElement == null)
+                    if (hadException || browserElement == null)
                     {
-                        browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.DeepestElementFromPoint();");
+                        browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
                     }
                 }
                 catch (Exception ex)
