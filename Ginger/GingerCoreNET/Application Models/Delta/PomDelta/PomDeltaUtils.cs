@@ -395,7 +395,7 @@ namespace GingerCoreNET.Application_Models
 
         public void SetMatchingElementDeltaDetails(ElementInfo existingElement, ElementInfo latestElement, string matchDetails = "")
         {
-            ePomElementCategory? expectedCategory = latestElement.Properties.FirstOrDefault().Category.Value;
+            ePomElementCategory? expectedCategory = latestElement.Properties.FirstOrDefault()?.Category;
             DeltaElementInfo matchedDeltaElement = new DeltaElementInfo();
             //copy possible customized fields from original
             latestElement.Guid = existingElement.Guid;
