@@ -469,6 +469,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
                 }
                 let parentElement = currentElement.parentElement;
 
+                // Handle elements within shadow DOM by using the shadow root's host as the parent
+                // This ensures correct XPath generation for elements inside shadow DOM
                 if (!parentElement && currentElement.getRootNode() instanceof ShadowRoot) {
                   parentElement = currentElement.getRootNode().host;
                 }
