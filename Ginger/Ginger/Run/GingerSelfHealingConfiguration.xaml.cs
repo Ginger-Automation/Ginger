@@ -56,6 +56,7 @@ namespace Ginger.Run
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoExecuteInSimulationChkBox, CheckBox.IsCheckedProperty, mRunSetConfig.SelfHealingConfiguration, nameof(SelfHealingConfig.AutoExecuteInSimulationMode));
 
             ShowHideConfigPanel();
+            mRunSetConfig.SelfHealingConfiguration.StartDirtyTracking();
         }
 
         public void ShowAsWindow()
