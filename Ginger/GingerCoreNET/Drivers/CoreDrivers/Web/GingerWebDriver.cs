@@ -460,25 +460,32 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
               let xpath = """";
               let stack = [];
               stack.push(element);
-              while(stack.length > 0) {
+              while (stack.length > 0) {
                 let currentElement = stack.pop();
                 let tag = currentElement.tagName;
-                if(tag.toUpperCase() === ""html"".toUpperCase()) {
-                  xpath = ""/""+tag+""[1]""+ xpath;
+                if (tag.toUpperCase() === ""html"".toUpperCase()) {
+                  xpath = ""/"" + tag + ""[1]"" + xpath;
                   continue;
                 }
                 let parentElement = currentElement.parentElement;
-                let count = 1;
-                for (let i = 0; i < parentElement.childElementCount; i++) {
-                  if (parentElement.children[i] === currentElement) {
-                    break;
-                  }
-                  if (tag.toUpperCase() === parentElement.children[i].tagName.toUpperCase()) {
-                    count++;
-                  }
+
+                if (!parentElement && currentElement.getRootNode() instanceof ShadowRoot) {
+                  parentElement = currentElement.getRootNode().host;
                 }
-                xpath = ""/""+tag+""[""+count+""]""+xpath;
-                stack.push(parentElement);
+
+                let count = 1;
+                if (parentElement) {
+                  for (let i = 0; i < parentElement.childElementCount; i++) {
+                    if (parentElement.children[i] === currentElement) {
+                      break;
+                    }
+                    if (tag.toUpperCase() === parentElement.children[i].tagName.toUpperCase()) {
+                      count++;
+                    }
+                  }
+                  xpath = ""/"" + tag + ""["" + count + ""]"" + xpath;
+                  stack.push(parentElement);
+                }
               }
               return xpath;
             }";

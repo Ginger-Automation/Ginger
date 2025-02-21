@@ -729,7 +729,21 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 IBrowserElement? browserElement = null;
                 try
                 {
-                    browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
+                    bool hadException = false;
+                    try
+                    {
+                        browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.DeepestElementFromPoint();");
+                    }
+                    catch 
+                    {
+                        hadException = true;
+                        browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
+                    }
+
+                    if (!hadException && browserElement == null)
+                    {
+                        browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.DeepestElementFromPoint();");
+                    }
                 }
                 catch (Exception ex)
                 {
