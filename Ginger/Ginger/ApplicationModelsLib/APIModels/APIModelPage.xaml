@@ -62,8 +62,8 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" >
                                     <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,10,0">API Mode :</Label>
-                                    <RadioButton x:Name="xRealAPIRadioButton" Content="Live API" Margin="0,0,10,0" VerticalAlignment="Center" IsChecked="True" Checked="xRealAPIRadioButton_Checked" Style="{StaticResource @InputRadioButtonStyle}"/>
-                                    <RadioButton x:Name="xMockAPIRadioButton" Content="Mock API" VerticalAlignment="Center" IsChecked="False" Checked="xMockAPIRadioButton_Checked" Style="{StaticResource @InputRadioButtonStyle}"/>
+                                    <RadioButton x:Name="xRealAPIRadioButton" Content="Live API" Margin="0,0,10,0" VerticalAlignment="Center" Style="{StaticResource @InputRadioButtonStyle}"/>
+                                    <RadioButton x:Name="xMockAPIRadioButton" Content="Mock API" VerticalAlignment="Center"  Style="{StaticResource @InputRadioButtonStyle}"/>
                                 </StackPanel>
                                 <StackPanel  VerticalAlignment="Top" Margin="0,0,0,0">
                                     <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,10,0">End Point URL:</Label>

@@ -34,6 +34,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -68,6 +69,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             WireMockTemplatePage wiremockTemplatePage = new WireMockTemplatePage(mApplicationAPIModel, viewMode);
             xWireMockTemplateFrame.ClearAndSetContent(wiremockTemplatePage);
+            wiremockTemplatePage.GridUpdated += WireMockTemplatePage_GridUpdated;
 
             mApplicationAPIModel.AppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
             mApplicationAPIModel.GlobalAppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
@@ -293,6 +295,23 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(URLUserTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLUser));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(URLDomainTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLDomain));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(URLPasswordTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLPass));
+            xRealAPIRadioButton.SetBinding(RadioButton.IsCheckedProperty, new Binding
+            {
+                Source = mApplicationAPIModel,
+                Path = new PropertyPath(nameof(mApplicationAPIModel.UseLiveAPI)),
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                NotifyOnValidationError = true
+            });
+            xMockAPIRadioButton.SetBinding(RadioButton.IsCheckedProperty, new Binding
+            {
+                Source = mApplicationAPIModel,
+                Path = new PropertyPath(nameof(mApplicationAPIModel.UseLiveAPI)),
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                NotifyOnValidationError = true,
+                Converter = new BoolInverterConverter(),
+            });
 
             //Network Credential selection radio button:
             switch (mApplicationAPIModel.NetworkCredentials)
@@ -1033,26 +1052,46 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         public void xRealAPIRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             mApplicationAPIModel.UseLiveAPI = true;
+            xRealAPIRadioButton.IsChecked = true;
         }
 
         public void xMockAPIRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             mApplicationAPIModel.UseLiveAPI = false;
-        }
-
-        public void CheckRealAPIRadioButton()
-        {
-            xMockAPIRadioButton.IsChecked = false;
-            xRealAPIRadioButton.IsChecked = true;
-            xRealAPIRadioButton_Checked(xRealAPIRadioButton, null);
-        }
-
-        public void CheckMockAPIRadioButton()
-        {
-            xRealAPIRadioButton.IsChecked = false;
             xMockAPIRadioButton.IsChecked = true;
-            xMockAPIRadioButton_Checked(xMockAPIRadioButton, null);
         }
 
+
+        private async void WireMockTemplatePage_GridUpdated(object sender, EventArgs e)
+        {
+            await UpdateWireMockTemplateTabHeader();
+        }
+
+        public class BoolInverterConverter : IValueConverter
+        {
+            #region IValueConverter Members
+
+            public object Convert(object value, Type targetType, object parameter,
+                System.Globalization.CultureInfo culture)
+            {
+                if (value is bool)
+                {
+                    return !(bool)value;
+                }
+                return value;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter,
+                System.Globalization.CultureInfo culture)
+            {
+                if (value is bool)
+                {
+                    return !(bool)value;
+                }
+                return value;
+            }
+
+            #endregion
+        }
     }
 }

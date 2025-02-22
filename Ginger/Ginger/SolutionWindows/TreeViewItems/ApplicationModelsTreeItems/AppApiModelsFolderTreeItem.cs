@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.ApiActionsConversion;
 using GingerCore;
@@ -167,26 +168,28 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         {
             foreach (ApplicationAPIModel apiModel in mAPIModelFolder.GetFolderItems())
             {
-                APIModelPage apiModelPage = new APIModelPage(apiModel);
-
-                if (apiModelPage.xMockAPIRadioButton.IsChecked != true)
-                {
-                    apiModelPage.CheckMockAPIRadioButton();
-                }
-                apiModelPage.xMockAPIRadioButton_Checked(this, e);
+                apiModel.UseLiveAPI = false;
             }
+            SaveModifiedActivities();
         }
 
         private void UseRealAPIURL(object sender, RoutedEventArgs e)
         {
             foreach (ApplicationAPIModel apiModel in mAPIModelFolder.GetFolderItems())
             {
-                APIModelPage apiModelPage = new APIModelPage(apiModel);
-                if (apiModelPage.xRealAPIRadioButton.IsChecked != true)
-                {
-                    apiModelPage.CheckRealAPIRadioButton();
-                }
-                apiModelPage.xRealAPIRadioButton_Checked(this, e);
+                apiModel.UseLiveAPI = true;
+            }
+            SaveModifiedActivities();
+        }
+
+        private void SaveModifiedActivities()
+        {
+            IEnumerable<ApplicationAPIModel> modifiedAPIModelListItems =
+                mAPIModelFolder.GetFolderItems();
+
+            foreach (ApplicationAPIModel item in modifiedAPIModelListItems)
+            {
+                SaveHandler.Save(item);
             }
         }
 

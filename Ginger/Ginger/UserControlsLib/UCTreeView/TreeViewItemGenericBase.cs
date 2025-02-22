@@ -208,6 +208,17 @@ namespace GingerWPF.TreeViewItemsLib
             ViewFolderFiles(ContainingFolderFullPath);
         }
 
+        // Define the delegate
+        public delegate void MappingCreatedEventHandler(object sender, EventArgs e);
+
+        // Declare the event
+        public static event MappingCreatedEventHandler MappingCreated;
+
+        // Method to raise the event
+        protected virtual void OnMappingCreated()
+        {
+            MappingCreated?.Invoke(this, EventArgs.Empty);
+        }
         private void CreateWireMockMappingHandler(object sender, RoutedEventArgs e)
         {
             try
@@ -216,8 +227,8 @@ namespace GingerWPF.TreeViewItemsLib
                 if (item is RepositoryItemBase repositoryItem)
                 {
                     WireMockMappingGenerator.CreateWireMockMapping((ApplicationAPIModel)item);
+                    OnMappingCreated();
                     Reporter.ToUser(eUserMsgKey.ShowInfoMessage, "WireMock mapping created successfully.");
-
                 }
                 else
                 {

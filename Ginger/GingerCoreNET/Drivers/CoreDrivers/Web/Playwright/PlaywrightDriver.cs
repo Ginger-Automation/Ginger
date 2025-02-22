@@ -729,7 +729,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 IBrowserElement? browserElement = null;
                 try
                 {
-                    browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
+                    bool hadException = false;
+                    try
+                    {
+                        browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.DeepestElementFromPoint();");
+                    }
+                    catch 
+                    {
+                        hadException = true;
+                    }
+
+                    if (hadException || browserElement == null)
+                    {
+                        browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -1925,6 +1938,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ActUIElement.eElementAction.GetValidValues,
             ActUIElement.eElementAction.GetTextLength,
             ActUIElement.eElementAction.GetSelectedValue,
+            ActUIElement.eElementAction.DragDrop,
+            ActUIElement.eElementAction.MultiSetValue,
+            ActUIElement.eElementAction.DrawObject,
         ];
 
 
