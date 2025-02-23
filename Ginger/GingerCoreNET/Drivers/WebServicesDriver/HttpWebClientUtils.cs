@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET.Platform;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.WebServices;
@@ -352,22 +353,26 @@ namespace GingerCore.Actions.WebAPI
 
             if (!mAct.UseLiveAPI && !string.IsNullOrEmpty(url))
             {
-                mockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
-                string mockUrl = ValueExpression.PasswordCalculation(mockConfiguration.WireMockUrl);
-                if (mockUrl != null)
+                using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.Wiremock))
                 {
-                    try
+                    featureTracker.Metadata.Add("operation", "execute");
+                    mockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
+                    string mockUrl = ValueExpression.PasswordCalculation(mockConfiguration.WireMockUrl);
+                    if (mockUrl != null)
                     {
-                        Uri uri = new Uri(url);
-                        string path = uri.PathAndQuery;
-                        string newUrl = mockUrl.Replace("/__admin", string.Empty);
-                        newUrl = newUrl.EndsWith("/") ? newUrl.TrimEnd('/') : newUrl;
-                        Client.BaseAddress = new Uri(newUrl + path);
-                    }
-                    catch (UriFormatException)
-                    {
-                        string newUrl = mockUrl.Replace("/__admin", string.Empty);
-                        Client.BaseAddress = new Uri(newUrl + url);
+                        try
+                        {
+                            Uri uri = new Uri(url);
+                            string path = uri.PathAndQuery;
+                            string newUrl = mockUrl.Replace("/__admin", string.Empty);
+                            newUrl = newUrl.EndsWith("/") ? newUrl.TrimEnd('/') : newUrl;
+                            Client.BaseAddress = new Uri(newUrl + path);
+                        }
+                        catch (UriFormatException)
+                        {
+                            string newUrl = mockUrl.Replace("/__admin", string.Empty);
+                            Client.BaseAddress = new Uri(newUrl + url);
+                        }
                     }
                 }
             }
