@@ -27,6 +27,11 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
         {
             try
             {
+                if (string.IsNullOrEmpty(url))
+                {
+                    return false;
+                }
+
                 using (HttpClient client = new HttpClient())
                 {
                     HttpResponseMessage response = await client.GetAsync(NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(url)));
@@ -45,6 +50,10 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
         {
             try
             {
+                if (string.IsNullOrEmpty(_baseUrl))
+                {
+                    return string.Empty;
+                }
 
                 using (HttpClient client = new HttpClient())
                 {
@@ -66,6 +75,11 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
         {
             try
             {
+                if (string.IsNullOrEmpty(_baseUrl))
+                {
+                    return string.Empty;
+                }
+
                 using (HttpClient client = new HttpClient())
                 {
                     var content = new StringContent($"{{\"targetBaseUrl\": \"{targetUrl}\"}}", Encoding.UTF8, "application/json");
@@ -86,6 +100,11 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
         {
             try
             {
+                if (string.IsNullOrEmpty(_baseUrl))
+                {
+                    return string.Empty;
+                }
+
                 using (HttpClient client = new HttpClient())
                 {
                     HttpResponseMessage response = await client.PostAsync($"{NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(_baseUrl))}{StopRecordingEndpoint}", null);
@@ -106,6 +125,11 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
         {
             try
             {
+                if (string.IsNullOrEmpty(_baseUrl))
+                {
+                    return string.Empty;
+                }
+
                 using (HttpClient client = new HttpClient())
                 {
                     if (string.IsNullOrEmpty(contentType))
@@ -131,6 +155,11 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
         {
             try
             {
+                if (string.IsNullOrEmpty(_baseUrl))
+                {
+                    return string.Empty;
+                }
+
                 using (HttpClient client = new HttpClient())
                 {
                     HttpResponseMessage response = await client.GetAsync($"{NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(_baseUrl))}{MappingEndpoint}/{stubId}");
@@ -151,6 +180,11 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
         {
             try
             {
+                if (string.IsNullOrEmpty(_baseUrl))
+                {
+                    return string.Empty;
+                }
+
                 using (HttpClient client = new HttpClient())
                 {
                     var content = new StringContent(stubMapping, Encoding.UTF8, "application/json");
@@ -172,6 +206,11 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
         {
             try
             {
+                if (string.IsNullOrEmpty(_baseUrl))
+                {
+                    return null;
+                }
+
                 using (HttpClient client = new HttpClient())
                 {
                     HttpResponseMessage response = await client.DeleteAsync($"{NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(_baseUrl))}{MappingEndpoint}/{stubId}");
@@ -191,6 +230,11 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
         {
             try
             {
+                if (string.IsNullOrEmpty(_baseUrl))
+                {
+                    return null;
+                }
+
                 using (HttpClient client = new HttpClient())
                 {
                     HttpResponseMessage response = await client.DeleteAsync($"{NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(_baseUrl))}{MappingEndpoint}");

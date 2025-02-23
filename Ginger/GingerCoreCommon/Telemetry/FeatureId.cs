@@ -35,5 +35,6 @@ namespace Amdocs.Ginger.Common.Telemetry
         Environment,
         GlobalParameter,
         ALM,
+        Wiremock
     }
 }
