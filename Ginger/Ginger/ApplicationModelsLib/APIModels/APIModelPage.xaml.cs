@@ -27,6 +27,7 @@ using Ginger.UserControlsLib;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
+using GingerWPF.TreeViewItemsLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -70,6 +71,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             WireMockTemplatePage wiremockTemplatePage = new WireMockTemplatePage(mApplicationAPIModel, viewMode);
             xWireMockTemplateFrame.ClearAndSetContent(wiremockTemplatePage);
             wiremockTemplatePage.GridUpdated += WireMockTemplatePage_GridUpdated;
+            TreeViewItemGenericBase.MappingCreated += OnMappingCreated;
+
 
             mApplicationAPIModel.AppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
             mApplicationAPIModel.GlobalAppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
@@ -89,6 +92,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             {
                 HttpHeadersGrid.ShowPaste = Visibility.Visible;
             }
+        }
+
+        private async void OnMappingCreated(object sender, EventArgs e)
+        {
+            // Refresh the page
+            UpdateWireMockTemplateTabHeader();
         }
 
         void UpdatePageAsReadOnly()

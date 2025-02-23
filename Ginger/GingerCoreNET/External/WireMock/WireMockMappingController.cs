@@ -20,6 +20,12 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
             try
             {
                 string jsonResponse = await mockAPI.ViewMappingAsync();
+
+                if (string.IsNullOrEmpty(jsonResponse))
+                {
+                    return [];
+                }
+
                 WireMockResponse wireMockResponse = JsonConvert.DeserializeObject<WireMockResponse>(jsonResponse);
                 return wireMockResponse?.Mappings ?? new ObservableList<Mapping>();
             }
