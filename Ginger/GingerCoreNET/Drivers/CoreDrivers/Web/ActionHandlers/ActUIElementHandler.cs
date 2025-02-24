@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
-using Amdocs.Ginger.CoreNET.GeneralLib;
 using GingerCore.Actions.Common;
 using GingerCore.Platforms.PlatformsInfo;
 using System;
@@ -320,11 +319,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         private async Task GetTextLengthAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
-
-            int textLenth = await element.GetTextLengthAsync();
-            if (textLenth > 0)
+            string textLenth = await element.AttributeValueAsync(name: "value");
+            if (!string.IsNullOrEmpty(textLenth))
             {
-                _act.AddOrUpdateReturnParamActual("Actual", textLenth.ToString());
+                _act.AddOrUpdateReturnParamActual("Actual", textLenth.Length.ToString());
             }
             else
             {
