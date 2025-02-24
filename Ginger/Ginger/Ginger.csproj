@@ -813,6 +813,9 @@
     <Reference Include="JiraRepositoryStd">
       <HintPath>..\GingerCoreNET\DLLS\JiraRepositoryStd.dll</HintPath>
     </Reference>
+    <Reference Include="LibGit2Sharp">
+      <HintPath>..\GingerCoreNET\DLLS\LibGit2Sharp.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.mshtml">
       <HintPath>..\GingerCoreNET\DLLS\Microsoft.mshtml.dll</HintPath>
     </Reference>
