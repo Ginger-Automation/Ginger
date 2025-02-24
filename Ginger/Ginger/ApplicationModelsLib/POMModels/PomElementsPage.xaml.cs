@@ -1032,7 +1032,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     {
                         Path = testElement.Path,
                         Locators = testElement.Locators,
-                        Properties = ((HTMLElementInfo)CurrentEI).Properties,
+                        Properties = CurrentEI.Properties,
                         FriendlyLocators = testElement.FriendlyLocators
                     };
                     testElement = htmlElementInfo;
