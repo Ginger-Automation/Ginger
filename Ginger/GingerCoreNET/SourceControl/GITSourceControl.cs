@@ -1399,7 +1399,7 @@ namespace GingerCore.SourceControl
                         return !cancellationToken.IsCancellationRequested;
                     };
 
-                    cloneOptions.OnCheckoutProgress = (path, completedSteps, totalSteps) =>
+                    cloneOptions.OnCheckoutProgress = (_, completedSteps, totalSteps) =>
                     {
                         progressNotifier?.NotifyProgressDetailText($"Checkout solution status: {completedSteps}/{totalSteps}");
                         progressNotifier?.NotifyProgressUpdated("Checkout solution status: ", completedSteps, totalSteps);
