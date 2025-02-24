@@ -456,6 +456,7 @@ namespace GingerCore.SourceControl
                 var co = new CloneOptions()
                 {
                     BranchName = string.IsNullOrEmpty(SourceControlBranch) ? "master" : SourceControlBranch,
+                    CredentialsProvider= GetSourceCredentialsHandler()
                 };
                 GetFetchOptions(co.FetchOptions);
                 RepositoryRootFolder = LibGit2Sharp.Repository.Clone(URI, Path, co);
@@ -1242,6 +1243,7 @@ namespace GingerCore.SourceControl
                     {
                         FailOnConflict = true,
                     },
+                    
                 };
                 GetFetchOptions(pullOption?.FetchOptions);
                 return pullOption;
@@ -1377,7 +1379,9 @@ namespace GingerCore.SourceControl
                     {
                         progressNotifier?.NotifyProgressDetailText($"Checkout solution status: {completedSteps}/{totalSteps}");
                         progressNotifier?.NotifyProgressUpdated("Checkout solution status: ", completedSteps, totalSteps);
-                    }
+                    },
+                    FetchOptions = new FetchOptions(),
+                    CredentialsProvider= GetSourceCredentialsHandler()
                 };
 
                 GetFetchOptionsWithProgress(cloneOptions.FetchOptions, progressNotifier, cancellationToken);
@@ -1465,7 +1469,7 @@ namespace GingerCore.SourceControl
                     {
                         var pullOptions = new PullOptions()
                         {
-                            FetchOptions = new FetchOptions()
+                            FetchOptions = new FetchOptions(),                            
 
                         };
 
