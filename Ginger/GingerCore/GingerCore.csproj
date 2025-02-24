@@ -75,9 +75,8 @@
     <Reference Include="Interop.TDAPIOLELib">
       <HintPath>DLLs\Interop.TDAPIOLELib.dll</HintPath>
     </Reference>
-    <Reference Include="LibGit2Sharp, Version=0.24.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLL's\LibGit2Sharp.dll</HintPath>
+    <Reference Include="LibGit2Sharp">
+      <HintPath>..\GingerCoreNET\DLLS\LibGit2Sharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.mshtml">
       <HintPath>..\GingerCoreNET\DLLS\Microsoft.mshtml.dll</HintPath>
@@ -498,9 +497,8 @@
     <PackageReference Include="HtmlAgilityPack">
       <Version>1.11.58</Version>
     </PackageReference>
-    <PackageReference Include="LibGit2Sharp" Version="0.31.0" />
     <PackageReference Include="LibGit2Sharp.NativeBinaries">
-      <Version>2.0.323</Version>
+      <Version>2.0.278</Version>
     </PackageReference>
     <PackageReference Include="log4net">
       <Version>2.0.15</Version>

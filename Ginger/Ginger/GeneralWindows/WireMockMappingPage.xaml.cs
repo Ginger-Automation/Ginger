@@ -249,7 +249,7 @@ namespace Ginger.GeneralWindows
                         {
                             Title = "Edit WireMock Mapping",
                             Width = 600,
-                            Height = 400
+                            Height = 500
                         };
 
                         TextBox jsonTextBox = new TextBox
