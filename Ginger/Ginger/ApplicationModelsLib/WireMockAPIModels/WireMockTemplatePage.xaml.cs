@@ -52,6 +52,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
         private async void RefreshDataOnLoad()
         {
             await SetGridData();
+            OnGridUpdated();
         }
 
         private void SetGridView()
@@ -126,6 +127,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
                 {
                     // Remove the mapping from the grid
                     xGridMappingOutput.DataSourceList.ClearAll();
+                    OnGridUpdated();
                     Reporter.ToUser(eUserMsgKey.WireMockMappingDeleteSuccess);
                 }
                 else
@@ -180,7 +182,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
                     {
                         Title = "Edit WireMock Mapping",
                         Width = 600,
-                        Height = 400
+                        Height = 500
                     };
 
                     TextBox jsonTextBox = new TextBox
@@ -363,7 +365,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
                         {
                             Title = "Edit WireMock Mapping",
                             Width = 600,
-                            Height = 400
+                            Height = 500
                         };
 
                         TextBox jsonTextBox = new TextBox
@@ -441,6 +443,7 @@ namespace Ginger.ApplicationModelsLib.WireMockAPIModels
                     {
                         // Remove the mapping from the grid
                         xGridMappingOutput.DataSourceList.Remove(mapping);
+                        OnGridUpdated();
                         Reporter.ToUser(eUserMsgKey.WireMockMappingDeleteSuccess);
 
                         // Refresh the grid data to ensure the mappings are updated
