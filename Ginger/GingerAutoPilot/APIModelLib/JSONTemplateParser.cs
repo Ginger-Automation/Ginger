@@ -106,14 +106,11 @@ namespace Amdocs.Ginger.Common.APIModelLib
                 {
                     continue;
                 }
+                bool Isjt2tokentypeBool = false;
                 JToken jt2 = jt.SelectToken(Jn.Path);
-
-                // here jt2 value is False, trying to convert it to false
                 if (jt2.Type == JTokenType.Boolean)
                 {
-                    bool boolValue = jt2.Value<bool>(); // Get actual boolean
-                    jt2.Replace(new JValue(boolValue));
-                    jt2 = JToken.FromObject(boolValue); // Recreate token correctly
+                    Isjt2tokentypeBool = true;// after change jt2 need this token to get the type of original token
                 }
 
                 if (IsValidJson(Jn.JsonString))
@@ -183,8 +180,9 @@ namespace Amdocs.Ginger.Common.APIModelLib
                 }
                 try
                 {
-                    JToken jt2token = jt.SelectToken(Jn.Path);
-                    if (jt2token.Type == JTokenType.Boolean)
+                    //// here jt2 value is False, trying to convert it to false
+                    
+                    if (Isjt2tokentypeBool)
                     {
                         AppModelParameters.Add(new AppModelParameter(param, "", tagName, Jn.Path, new ObservableList<OptionalValue> { new OptionalValue() { Value = !string.IsNullOrEmpty(Jn.JsonString) ? Jn.JsonString.ToLower(): "false", IsDefault = true } }));
                     }
