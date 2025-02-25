@@ -97,6 +97,8 @@ namespace Amdocs.Ginger.Common.APIModelLib
             Dictionary<string, string> ParamPath = new Dictionary<string, string>();
             List<string> consts = new List<string>();
 
+
+            // till here value comes as false but after JE.GetEndingNodes(), it gets converted to False. made some changes to GetEndingNodes also but did not work.
             IEnumerable<JsonExtended> EndingNodesList = JE.GetEndingNodes();
             foreach (var Jn in EndingNodesList)
             {
@@ -105,6 +107,15 @@ namespace Amdocs.Ginger.Common.APIModelLib
                     continue;
                 }
                 JToken jt2 = jt.SelectToken(Jn.Path);
+
+                // here jt2 value is False, trying to convert it to false
+                if (jt2.Type == JTokenType.Boolean)
+                {
+                    bool boolValue = jt2.Value<bool>(); // Get actual boolean
+                    jt2.Replace(new JValue(boolValue));
+                    jt2 = JToken.FromObject(boolValue); // Recreate token correctly
+                }
+
                 if (IsValidJson(Jn.JsonString))
                 {
                     JsonExtended je4Jn = new JsonExtended(Jn.JsonString);

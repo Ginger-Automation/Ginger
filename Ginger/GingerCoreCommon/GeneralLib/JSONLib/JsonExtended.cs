@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json.Linq;
 
 namespace Amdocs.Ginger.Common.GeneralLib
 {
@@ -172,21 +172,31 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
         public IEnumerable<JsonExtended> GetEndingNodes(bool IncludeSelfClosingTags = true)
         {
-            List<JsonExtended> mEndingnodes = [];
+            List<JsonExtended> mEndingnodes = new List<JsonExtended>();
 
             var Jpropertytype = typeof(JProperty);
-
             List<JsonExtended> allNodesList = this.GetAllNodes();
 
             foreach (var nodes in allNodesList)
             {
-                if (nodes.GetToken().GetType() == Jpropertytype)
+                JToken token = nodes.GetToken();
+
+                if (token.Type == JTokenType.Boolean)
+                {
+                    // Ensure boolean remains lowercase
+                    bool boolValue = token.Value<bool>();
+                    token.Replace(new JValue(boolValue)); // Replace with correct JSON format
+                }
+
+                if (token.GetType() == Jpropertytype)
                 {
                     mEndingnodes.Add(nodes);
                 }
             }
+
             return allNodesList.Where(x => !x.GetToken().Children().Any());
         }
+
 
 
         #endregion
