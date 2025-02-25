@@ -181,9 +181,23 @@ namespace Amdocs.Ginger.Common.APIModelLib
                     }
                     jt2.Replace(param);
                 }
-                AppModelParameters.Add(new AppModelParameter(param, "", tagName, Jn.Path, new ObservableList<OptionalValue> { new OptionalValue() { Value = Jn.JsonString.Replace("\"", ""), IsDefault = true } }));
-
-
+                try
+                {
+                    JToken jt2token = jt.SelectToken(Jn.Path);
+                    if (jt2token.Type == JTokenType.Boolean)
+                    {
+                        bool boolValue = jt2token.Value<bool>();
+                        AppModelParameters.Add(new AppModelParameter(param, "", tagName, Jn.Path, new ObservableList<OptionalValue> { new OptionalValue() { Value = !string.IsNullOrEmpty(Jn.JsonString) ? Jn.JsonString.ToLower(): "false", IsDefault = true } }));
+                    }
+                    else
+                    {
+                        AppModelParameters.Add(new AppModelParameter(param, "", tagName, Jn.Path, new ObservableList<OptionalValue> { new OptionalValue() { Value = Jn.JsonString.Replace("\"", ""), IsDefault = true } }));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    AppModelParameters.Add(new AppModelParameter(param, "", tagName, Jn.Path, new ObservableList<OptionalValue> { new OptionalValue() { Value = Jn.JsonString.Replace("\"", ""), IsDefault = true } }));
+                }
             }
             string body = jt.ToString();
             foreach (var item in consts)
