@@ -169,7 +169,7 @@ namespace Amdocs.Ginger.CoreNET
         public ObservableList<DriverConfigParam> AppiumCapabilities { get; set; }
 
         protected IWebDriver webDriver;
- 
+
 
         bool mIsDeviceConnected = false;
         string mDefaultURL = null;
@@ -744,7 +744,7 @@ namespace Amdocs.Ginger.CoreNET
                 act.Error = ex.Message;
             }
         }
-        
+
         private bool PullXandYofElement(ActUIElement act)
         {
             IWebElement e = null;
@@ -1163,7 +1163,7 @@ namespace Amdocs.Ginger.CoreNET
                             if (!string.IsNullOrEmpty(appPackage))
                             {
                                 Driver.ActivateApp(appPackage);
-                            }                            
+                            }
                         }
                         else
                         {
@@ -1178,7 +1178,7 @@ namespace Amdocs.Ginger.CoreNET
                             if (!string.IsNullOrEmpty(appPackage))
                             {
                                 Driver.TerminateApp(appPackage);
-                            }                            
+                            }
                         }
                         else
                         {
@@ -1349,7 +1349,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.StopRecordingScreen:
-                        string pathRecording = StopRecordingScreen(act.FilePathInput.ValueForDriver).ToString();
+                        string pathRecording = StopRecordingScreen(act.FolderPathInput.ValueForDriver).ToString();
                         act.AddOrUpdateReturnParamActual("ScreenRecordingFilePath", pathRecording);
                         Act.AddArtifactToAction(Path.GetFileName(pathRecording), act, pathRecording);
                         break;
@@ -1415,7 +1415,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         break;
 
-                    case ActMobileDevice.eMobileDeviceAction.PerformMultiTouch:         
+                    case ActMobileDevice.eMobileDeviceAction.PerformMultiTouch:
                         PerformMultiTouch(act.MobileTouchOperations);
                         break;
 
@@ -1720,7 +1720,7 @@ namespace Amdocs.Ginger.CoreNET
             actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageStartX, pageStartY, TimeSpan.Zero));
             actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
             actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageEndX, pageEndY, swipeDuration));
-            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));          
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
             Driver.PerformActions(actionBuilder.ToActionSequenceList());
         }
 
@@ -1728,7 +1728,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
             ActionBuilder actionBuilder = new ActionBuilder();
-            foreach (MobileTouchOperation operation in operations) 
+            foreach (MobileTouchOperation operation in operations)
             {
                 int xCoordinate = 0;
                 int yCoordinate = 0;
@@ -1736,7 +1736,7 @@ namespace Amdocs.Ginger.CoreNET
                 if (operation.OperationDuration != null)
                 {
                     duration = TimeSpan.FromMilliseconds(int.Parse(operation.OperationDuration.ToString()));
-                }        
+                }
                 if (operation.MoveXcoordinate != null)
                 {
                     xCoordinate = int.Parse(operation.MoveXcoordinate.ToString());
@@ -1763,7 +1763,7 @@ namespace Amdocs.Ginger.CoreNET
                     case MobileTouchOperation.eFingerOperationType.Cancel:
                         actionBuilder.AddAction(finger.CreatePointerCancel());
                         break;
-                }    
+                }
             }
             Driver.PerformActions(actionBuilder.ToActionSequenceList());
         }
@@ -2027,7 +2027,7 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     currentPackage = string.Format("{0}", ((AndroidDriver)Driver).CurrentPackage);
                 }
-                else 
+                else
                 {
                     currentPackage = Driver.ExecuteScript("mobile: activeAppInfo")
                                     .ToString()
@@ -2747,7 +2747,7 @@ namespace Amdocs.Ginger.CoreNET
         }
 
 
-       
+
 
         public event RecordingEventHandler RecordingEvent;
 
@@ -3236,9 +3236,9 @@ namespace Amdocs.Ginger.CoreNET
                 RecordingOperations(mobDevAction);
             }
         }
-       
+
         public void SwitchToLandscape()
-        {         
+        {
             try
             {
                 Driver.Orientation = ScreenOrientation.Landscape;
@@ -3253,7 +3253,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                Driver.Orientation = ScreenOrientation.Portrait;              
+                Driver.Orientation = ScreenOrientation.Portrait;
             }
             finally
             {
@@ -3871,7 +3871,7 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        private async Task<string> GetDeviceMetricOverAPI(string dataType, string AppPackage= "")
+        private async Task<string> GetDeviceMetricOverAPI(string dataType, string AppPackage = "")
         {
             string url = this.AppiumServer + "/session/" + Driver.SessionId + "/appium/getPerformanceData";
             if (string.IsNullOrEmpty(AppPackage))
@@ -3945,7 +3945,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             return dict;
         }
-       
+
         public Dictionary<string, string> GetDeviceActivityAndPackage()
         {
             if (DevicePlatformType == eDevicePlatformType.Android)
@@ -3960,12 +3960,12 @@ namespace Amdocs.Ginger.CoreNET
             else
             {
                 Dictionary<string, string> dict2 = new Dictionary<string, string>
-                {                   
-                    { "Bundle ID", (string)((IOSDriver)Driver).ExecuteScript("mobile: currentApp") }            
+                {
+                    { "Bundle ID", (string)((IOSDriver)Driver).ExecuteScript("mobile: currentApp") }
                 };
                 return dict2;
             }
-        } 
+        }
 
         public async Task<bool> IsRealDeviceAsync()
         {
@@ -4029,13 +4029,13 @@ namespace Amdocs.Ginger.CoreNET
 
         public string GetAppPackageNameByOs()
         {
-            return Driver is AndroidDriver ? "package" : "bundleId"; 
+            return Driver is AndroidDriver ? "package" : "bundleId";
         }
 
         public string SetFilePath(string FileType, string FilePath, string FileName)
-        {            
+        {
             string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
-            string fileName = Path.GetFileName(FilePath); 
+            string fileName = Path.GetFileName(FilePath);
             string targetFile = string.IsNullOrEmpty(fileName) ? Path.Combine(FilePath, $"{FileName}_{timestamp}.{FileType}") : $"{FilePath}.{FileType}";
             return targetFile;
         }
@@ -4072,19 +4072,19 @@ namespace Amdocs.Ginger.CoreNET
 
         public AppState QueryAppState(string appId)
         {
-            return Driver is AndroidDriver ? ((AndroidDriver)Driver).GetAppState(appId): ((IOSDriver)Driver).GetAppState(appId);
+            return Driver is AndroidDriver ? ((AndroidDriver)Driver).GetAppState(appId) : ((IOSDriver)Driver).GetAppState(appId);
         }
 
         public void RotateSimulation(string state)
         {
-            if(state is "Landscape")
+            if (state is "Landscape")
             {
                 SwitchToLandscape();
             }
             else
             {
                 SwitchToPortrait();
-            }         
+            }
         }
 
         public void RunScriptOnDevice(string script)
@@ -4100,7 +4100,7 @@ namespace Amdocs.Ginger.CoreNET
         }
 
         public void StartDeviceScreenRecording()
-        {          
+        {
             try
             {
                 if (Driver is AndroidDriver)
@@ -4130,11 +4130,11 @@ namespace Amdocs.Ginger.CoreNET
             string videoBase64 = string.Empty;
             if (Driver is AndroidDriver)
             {
-                 videoBase64 = ((AndroidDriver)Driver).StopRecordingScreen();
+                videoBase64 = ((AndroidDriver)Driver).StopRecordingScreen();
             }
             else
             {
-                 videoBase64 = ((IOSDriver)Driver).StopRecordingScreen();
+                videoBase64 = ((IOSDriver)Driver).StopRecordingScreen();
             }
             byte[] videoBytes = Convert.FromBase64String(videoBase64);
             File.WriteAllBytes(targetFile, videoBytes); //"format mp4"
@@ -4182,7 +4182,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 fileContent = ((IOSDriver)Driver).PullFile($"{DeviceFilePath}");
             }
-            else 
+            else
             {
                 fileContent = ((AndroidDriver)Driver).PullFile($"{DeviceFilePath}");
             }
@@ -4202,7 +4202,7 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        public void GetSpecificPerformanceData(string appPackage, string specificData, ActMobileDevice act) 
+        public void GetSpecificPerformanceData(string appPackage, string specificData, ActMobileDevice act)
         {
             IList<object> perfData = ((AndroidDriver)Driver).GetPerformanceData(appPackage, specificData, 5);
             var dict = new Dictionary<string, object>();
@@ -4213,18 +4213,18 @@ namespace Amdocs.Ginger.CoreNET
                 string key = keys[i].ToString();
                 object value = values[i];
                 dict[key] = value;
-            }            
+            }
             foreach (var entry in dict)
             {
-                if(entry.Key!=null)
+                if (entry.Key != null)
                 {
                     string valueStr = entry.Value?.ToString() ?? string.Empty; // Convert null value to empty string
-                    act.AddOrUpdateReturnParamActual(entry.Key.ToString(), valueStr);                                                       
-                }                      
-            } 
+                    act.AddOrUpdateReturnParamActual(entry.Key.ToString(), valueStr);
+                }
+            }
         }
 
-        public string GetDeviceLogs(string path) 
+        public string GetDeviceLogs(string path)
         {
             string targetFile = SetFilePath("txt", path, "DeviceLogs");
             // Get device logs
@@ -4236,7 +4236,7 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     writer.WriteLine($"{logEntry.Timestamp}: {logEntry.Message}");
                 }
-            }             
+            }
             return targetFile;
         }
 

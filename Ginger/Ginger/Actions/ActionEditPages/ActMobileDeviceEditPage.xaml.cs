@@ -320,6 +320,7 @@ namespace Ginger.Actions
                     xFilePathTextBox.Visibility = Visibility.Collapsed;
                     xFolderPathLbl.Content = "Save to Folder\\File:";
                     xFileTransferPnl.Visibility = Visibility.Visible;
+                    xFolderPathTxtBox.Visibility = Visibility.Visible;
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.PushFileToDevice:
