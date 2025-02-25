@@ -179,16 +179,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
             foreach (var nodes in allNodesList)
             {
-                JToken token = nodes.GetToken();
-
-                if (token.Type == JTokenType.Boolean)
-                {
-                    // Ensure boolean remains lowercase
-                    bool boolValue = token.Value<bool>();
-                    token.Replace(new JValue(boolValue)); // Replace with correct JSON format
-                }
-
-                if (token.GetType() == Jpropertytype)
+                if (nodes.GetToken().GetType() == Jpropertytype)
                 {
                     mEndingnodes.Add(nodes);
                 }

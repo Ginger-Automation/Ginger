@@ -186,7 +186,6 @@ namespace Amdocs.Ginger.Common.APIModelLib
                     JToken jt2token = jt.SelectToken(Jn.Path);
                     if (jt2token.Type == JTokenType.Boolean)
                     {
-                        bool boolValue = jt2token.Value<bool>();
                         AppModelParameters.Add(new AppModelParameter(param, "", tagName, Jn.Path, new ObservableList<OptionalValue> { new OptionalValue() { Value = !string.IsNullOrEmpty(Jn.JsonString) ? Jn.JsonString.ToLower(): "false", IsDefault = true } }));
                     }
                     else
