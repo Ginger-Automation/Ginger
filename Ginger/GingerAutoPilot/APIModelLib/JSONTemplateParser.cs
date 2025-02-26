@@ -97,6 +97,8 @@ namespace Amdocs.Ginger.Common.APIModelLib
             Dictionary<string, string> ParamPath = new Dictionary<string, string>();
             List<string> consts = new List<string>();
 
+
+            // till here value comes as false but after JE.GetEndingNodes(), it gets converted to False. made some changes to GetEndingNodes also but did not work.
             IEnumerable<JsonExtended> EndingNodesList = JE.GetEndingNodes();
             foreach (var Jn in EndingNodesList)
             {
@@ -104,7 +106,13 @@ namespace Amdocs.Ginger.Common.APIModelLib
                 {
                     continue;
                 }
+                bool Isjt2tokentypeBool = false;
                 JToken jt2 = jt.SelectToken(Jn.Path);
+                if (jt2.Type == JTokenType.Boolean)
+                {
+                    Isjt2tokentypeBool = true;// after change jt2 need this token to get the type of original token
+                }
+
                 if (IsValidJson(Jn.JsonString))
                 {
                     JsonExtended je4Jn = new JsonExtended(Jn.JsonString);
@@ -170,9 +178,23 @@ namespace Amdocs.Ginger.Common.APIModelLib
                     }
                     jt2.Replace(param);
                 }
-                AppModelParameters.Add(new AppModelParameter(param, "", tagName, Jn.Path, new ObservableList<OptionalValue> { new OptionalValue() { Value = Jn.JsonString.Replace("\"", ""), IsDefault = true } }));
-
-
+                try
+                {
+                    //// here jt2 value is False, trying to convert it to false
+                    
+                    if (Isjt2tokentypeBool)
+                    {
+                        AppModelParameters.Add(new AppModelParameter(param, "", tagName, Jn.Path, new ObservableList<OptionalValue> { new OptionalValue() { Value = !string.IsNullOrEmpty(Jn.JsonString) ? Jn.JsonString.ToLower(): "false", IsDefault = true } }));
+                    }
+                    else
+                    {
+                        AppModelParameters.Add(new AppModelParameter(param, "", tagName, Jn.Path, new ObservableList<OptionalValue> { new OptionalValue() { Value = Jn.JsonString.Replace("\"", ""), IsDefault = true } }));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    AppModelParameters.Add(new AppModelParameter(param, "", tagName, Jn.Path, new ObservableList<OptionalValue> { new OptionalValue() { Value = Jn.JsonString.Replace("\"", ""), IsDefault = true } }));
+                }
             }
             string body = jt.ToString();
             foreach (var item in consts)
