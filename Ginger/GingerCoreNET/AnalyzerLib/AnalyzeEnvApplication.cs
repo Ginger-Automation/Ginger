@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -128,8 +128,8 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
             string ApplicationName = AnalyzeTargetApplication.ItemName;
             string EnvironmentName = AnalyzeTargetApplication.ItemParent;
 
-            ProjEnvironment SelectedEnvironment = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault((proj) => proj.Name.Equals(EnvironmentName));
-            ApplicationPlatform ApplicationPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault((appPlat) => appPlat.AppName.Equals(ApplicationName));
+            ProjEnvironment SelectedEnvironment = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault((proj) => !string.IsNullOrWhiteSpace(proj.Name) && proj.Name.Equals(EnvironmentName));
+            ApplicationPlatform ApplicationPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault((appPlat) => !string.IsNullOrWhiteSpace(appPlat.AppName) && appPlat.AppName.Equals(ApplicationName));
 
             if (SelectedEnvironment == null || ApplicationPlatform == null)
             {
@@ -162,7 +162,7 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
                 return true;
             }
 
-            ProjEnvironment CurrentProjEnv = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault((proj) => proj.Name.Equals(CurrentEnvironment));
+            ProjEnvironment CurrentProjEnv = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault((proj) => !string.IsNullOrWhiteSpace(proj.Name) && proj.Name.Equals(CurrentEnvironment));
 
 
             if (CurrentProjEnv == null)
@@ -182,14 +182,14 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
                     return false;
                 }
 
-                EnvApplication CurrentEnvApp = CurrentProjEnv.Applications.FirstOrDefault((app) => app.Name.Equals(AppName));
+                EnvApplication CurrentEnvApp = CurrentProjEnv.Applications.FirstOrDefault((app) => !string.IsNullOrWhiteSpace(app.Name) && app.Name.Equals(AppName));
 
                 lock (lockObject)
                 {
                     CurrentEnvApp?.ConvertGeneralParamsToVariable();
                 }
 
-                bool doesParamExistInCurrEnv = CurrentEnvApp?.Variables?.Any((Param) => Param.Name.Equals(GlobalParamName)) ?? false;
+                bool doesParamExistInCurrEnv = CurrentEnvApp?.Variables?.Any((Param) => !string.IsNullOrWhiteSpace(Param.Name) && Param.Name.Equals(GlobalParamName)) ?? false;
 
                 if (!doesParamExistInCurrEnv)
                 {
@@ -215,7 +215,7 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
                     return false;
                 }
 
-                return CurrentProjEnv.Applications.Any((envApp) => envApp.Name.Equals(AppName));
+                return CurrentProjEnv.Applications.Any((envApp) => !string.IsNullOrWhiteSpace(envApp.Name) && envApp.Name.Equals(AppName));
             }
 
             return false;

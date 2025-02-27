@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -160,7 +160,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                         string MessageBoxText = _act.GetInputParamCalculatedValue("Value");
                         await HandleSetMessageBoxTextOperationAsync(MessageBoxText);
                         break;
-
                     case ActBrowserElement.eControlAction.StartMonitoringNetworkLog:
                         await HandleStartMonitoringNetworkLogOperationAsync();
                         break;
@@ -169,6 +168,24 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                         break;
                     case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
                         await HandleStopMonitoringNetworkLogOperationAsync();
+                        break;
+                    case ActBrowserElement.eControlAction.InjectJS:
+                        await HandleInjectJS();
+                        break;
+                    case ActBrowserElement.eControlAction.Maximize:
+                        await HandleMaximizeWindow();
+                        break;
+                    case ActBrowserElement.eControlAction.SwitchToShadowDOM:
+                        await HandleSwitchToShadowDOM();
+                        break;
+                    case ActBrowserElement.eControlAction.SwitchToDefaultDOM:
+                        await HandleSwitchToDefaultDOM();
+                        break;
+                    case ActBrowserElement.eControlAction.SetBlockedUrls:
+                        await HandleSetBlockedUrls();
+                        break;
+                    case ActBrowserElement.eControlAction.UnblockeUrls:
+                        await HandleUnblockUrls();
                         break;
                     default:
                         string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActBrowserElement.eControlAction), _act.ControlAction);
@@ -182,6 +199,139 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
         }
 
+        /// <summary>
+        /// Unblocks previously blocked URLs in the current browser tab.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task HandleUnblockUrls()
+        {
+            try
+            {
+                if (!await _browser.CurrentWindow.CurrentTab.UnblockURLAsync())
+                {
+                    _act.Error = "Failed to unblock the URLs";
+                }
+            }
+            catch (Exception ex)
+            {
+                _act.Error = $"Error unblocking URLs: {ex.Message}";
+                Reporter.ToLog(eLogLevel.ERROR, "Error: Failed to unblock the URLs", ex);
+            }
+        }
+
+        /// <summary>
+        /// Blocks specified URLs in the current browser tab.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task HandleSetBlockedUrls()
+        {
+            try
+            {
+                string sURL = _act.GetInputParamCalculatedValue("sBlockedUrls");
+                if (string.IsNullOrEmpty(sURL))
+                {
+                    _act.Error = "Error: Provided URL is empty. Please provide valid URL.";
+                    return;
+                }
+                if (!await _browser.CurrentWindow.CurrentTab.SetBlockedURLAsync(sURL))
+                {
+                    _act.Error = "Failed to block the URLs";
+                }
+            }
+            catch (Exception ex)
+            {
+                _act.Error = $"Error blocking URLs: {ex.Message}";
+                Reporter.ToLog(eLogLevel.ERROR, "Error: Failed to block the URLs", ex);
+            }
+        }
+
+        /// <summary>
+        /// Switches to the default DOM in the current browser tab.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task HandleSwitchToDefaultDOM()
+        {
+            try
+            {
+                if (!await _browser.CurrentWindow.CurrentTab.SwitchToDefaultDomAsync())
+                {
+                    _act.Error = "Failed to switch to default DOM";
+                }
+            }
+            catch (Exception ex)
+            {
+                _act.Error = $"Error switching to default DOM: {ex.Message}";
+                Reporter.ToLog(eLogLevel.ERROR, "Error: Failed to switch to default DOM", ex);
+            }
+        }
+
+        /// <summary>
+        /// Switches to the shadow DOM in the current browser tab.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task HandleSwitchToShadowDOM()
+        {
+            try
+            {
+                string locateValue = _act.LocateValueCalculated;
+                if (string.IsNullOrEmpty(locateValue))
+                {
+                    _act.Error = "Error: Locate value is empty.";
+                    return;
+                }
+                if (!await _browser.CurrentWindow.CurrentTab.SwitchToShadowDomAsync())
+                {
+                    _act.Error = "Failed to switch to shadow DOM";
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to switch to shadow DOM");
+                }
+            }
+            catch (Exception ex)
+            {
+                _act.Error = $"Error switching to shadow DOM: {ex.Message}";
+                Reporter.ToLog(eLogLevel.ERROR, "Error switching to shadow DOM", ex);
+            }
+        }
+
+        /// <summary>
+        /// Maximizes the current browser window.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task HandleMaximizeWindow()
+        {
+            try
+            {
+                await _browser.CurrentWindow.CurrentTab.MaximizeWindowAsync();
+            }
+            catch (Exception ex)
+            {
+                _act.Error = "Error: Failed to maximize the window";
+                Reporter.ToLog(eLogLevel.ERROR, "Error: Failed to maximize the window", ex);
+            }
+        }
+
+        /// <summary>
+        /// Injects JavaScript into the current browser tab.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task HandleInjectJS()
+        {
+            string script = _act.GetInputParamCalculatedValue("Value");
+            if (string.IsNullOrEmpty(script))
+            {
+                _act.Error = "Error: Script value is empty";
+                return;
+            }
+            try
+            {
+                await _browser.CurrentWindow.CurrentTab.InjectJavascriptAsync(script);
+            }
+            catch (Exception ex)
+            {
+                _act.Error = "Error: Failed to Inject the provided Javascript";
+                Reporter.ToLog(eLogLevel.ERROR, "Error: Failed to Inject the provided Javascript", ex);
+            }
+
+        }
         private async Task HandleGotoUrlOperationAsync()
         {
             string url = GetTargetUrl();
@@ -656,7 +806,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         {
             try
             {
-               await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).StartCaptureNetworkLog(_act);
+                await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).StartCaptureNetworkLog(_act);
             }
             catch (Exception ex)
             {

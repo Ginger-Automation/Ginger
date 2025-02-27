@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -68,6 +68,7 @@ namespace Ginger.ALM
             if (CurrentAlmConfigurations != null)
             {
                 CurrentAlmConfigurations.PropertyChanged += CurrentAlmConfigurations_PropertyChanged;
+
                 CurrentAlmUserConfigurations = ALMIntegration.Instance.GetCurrentAlmUserConfig(CurrentAlmConfigurations.AlmType);
                 ALMIntegration.Instance.UpdateALMType(CurrentAlmConfigurations.AlmType);
 
@@ -76,7 +77,8 @@ namespace Ginger.ALM
                 this.almConectStyle = almConnectStyle;
 
                 Bind();
-
+                TokenCheckBox.Checked += TokenCheckBox_Checked;
+                TokenCheckBox.Unchecked += TokenCheckBox_Unchecked;
                 if (!WorkSpace.Instance.BetaFeatures.Rally)
                 {
                     RallyRadioButton.Visibility = Visibility.Hidden;
@@ -147,6 +149,10 @@ namespace Ginger.ALM
             PasswordTextBox.IsEnabled = true;
             RestAPICheckBox.IsEnabled = false;
             TokenCheckBox.IsEnabled = true;
+            if (CurrentAlmConfigurations.UseToken)
+            {
+                PasswordLabel.Content = "Token";
+            }
             if (isConnWin)
             {
                 LoginServerButton.Content = "Connect ALM Server";
@@ -566,6 +572,8 @@ namespace Ginger.ALM
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     SetLoadPackageButtonContent();
                     ServerURLTextBox.Cursor = null;
+                    TokenCheckBox.Visibility = Visibility.Visible;
+                    TokenCheckBox.IsEnabled = true;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest:

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task GoToURLAsync(string url);
 
-          public Task<string> TitleAsync();
+        public Task<string> TitleAsync();
 
         public Task NavigateBackAsync();
 
@@ -110,6 +110,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task<bool> WaitForElementsPresenceAsync(eLocateBy locateBy, string locateValue, float timeout);
         public Task<bool> WaitForElementsInvisibleAsync(eLocateBy locateBy, string locateValue, float timeout);
         public Task<bool> WaitForElementsVisibleAsync(eLocateBy locateBy, string locateValue, float timeout);
-
+        public Task MaximizeWindowAsync();
+        public Task<bool> SetBlockedURLAsync(string urlPattern);
+        public Task<bool> UnblockURLAsync();
+        public Task<bool> SwitchToShadowDomAsync();
+        public Task<bool> SwitchToDefaultDomAsync();
     }
 }

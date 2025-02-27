@@ -18,19 +18,24 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.External.WireMock;
 using Amdocs.Ginger.Repository;
 using Ginger;
+using Ginger.ApplicationModelsLib.WireMockAPIModels;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
+using GingerWPF.TreeViewItemsLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -38,6 +43,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 {
     public partial class APIModelPage : GingerUIPage
     {
+        private WireMockMappingController wmController = new();
+
         ApplicationAPIModel mApplicationAPIModel;
         ModelParamsPage modelParamsPage;
         private bool saveWasDone = false;
@@ -61,11 +68,18 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             OutputTemplatePage outputTemplatePage = new OutputTemplatePage(mApplicationAPIModel, viewMode);
             xOutputTemplateFrame.ClearAndSetContent(outputTemplatePage);
 
+            WireMockTemplatePage wiremockTemplatePage = new WireMockTemplatePage(mApplicationAPIModel, viewMode);
+            xWireMockTemplateFrame.ClearAndSetContent(wiremockTemplatePage);
+            wiremockTemplatePage.GridUpdated += WireMockTemplatePage_GridUpdated;
+            TreeViewItemGenericBase.MappingCreated += OnMappingCreated;
+
+
             mApplicationAPIModel.AppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
             mApplicationAPIModel.GlobalAppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
             UpdateModelParametersTabHeader();
             mApplicationAPIModel.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
             UpdateOutputTemplateTabHeader();
+            _ = UpdateWireMockTemplateTabHeader();
 
             mPageViewMode = viewMode;
 
@@ -78,6 +92,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             {
                 HttpHeadersGrid.ShowPaste = Visibility.Visible;
             }
+        }
+
+        private async void OnMappingCreated(object sender, EventArgs e)
+        {
+            // Refresh the page
+            UpdateWireMockTemplateTabHeader();
         }
 
         void UpdatePageAsReadOnly()
@@ -188,6 +208,39 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             xOutputTemplateTab.Text = string.Format("Output Values Template ({0})", mApplicationAPIModel.ReturnValues.Count);
         }
 
+        private async Task UpdateWireMockTemplateTabHeader()
+        {
+            try
+            {
+                int count = await WireMockTemplateTabCount();
+                xWireMockTemplateTab.Text = string.Format("WireMock Mapping ({0})", count);
+            }
+            catch (Exception ex)
+            {
+
+                Reporter.ToLog(eLogLevel.ERROR, "error in getting wiremock mapping count", ex);
+            }
+        }
+
+        public async Task<int> WireMockTemplateTabCount()
+        {
+            try
+            {
+                var mappings = await wmController.DeserializeWireMockResponseAsync();
+
+                string ApiName = mApplicationAPIModel.Name;
+
+                // Filter the mappings based on the Name
+                int filteredMappings = mappings.Where(mapping => mapping.Name == ApiName).Count();
+                return filteredMappings;
+            }
+            catch (Exception ex)
+            {
+
+                Reporter.ToLog(eLogLevel.ERROR, "error in getting wiremock mappings count", ex);
+                return 0;
+            }
+        }
         private void FillTargetAppsComboBox()
         {
             //get key object 
@@ -251,6 +304,23 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(URLUserTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLUser));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(URLDomainTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLDomain));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(URLPasswordTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLPass));
+            xRealAPIRadioButton.SetBinding(RadioButton.IsCheckedProperty, new Binding
+            {
+                Source = mApplicationAPIModel,
+                Path = new PropertyPath(nameof(mApplicationAPIModel.UseLiveAPI)),
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                NotifyOnValidationError = true
+            });
+            xMockAPIRadioButton.SetBinding(RadioButton.IsCheckedProperty, new Binding
+            {
+                Source = mApplicationAPIModel,
+                Path = new PropertyPath(nameof(mApplicationAPIModel.UseLiveAPI)),
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                NotifyOnValidationError = true,
+                Converter = new BoolInverterConverter(),
+            });
 
             //Network Credential selection radio button:
             switch (mApplicationAPIModel.NetworkCredentials)
@@ -986,6 +1056,51 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             Mouse.OverrideCursor = null;
 
             _pageGenericWin.Close();
+        }
+
+        public void xRealAPIRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mApplicationAPIModel.UseLiveAPI = true;
+            xRealAPIRadioButton.IsChecked = true;
+        }
+
+        public void xMockAPIRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mApplicationAPIModel.UseLiveAPI = false;
+            xMockAPIRadioButton.IsChecked = true;
+        }
+
+
+        private async void WireMockTemplatePage_GridUpdated(object sender, EventArgs e)
+        {
+            await UpdateWireMockTemplateTabHeader();
+        }
+
+        public class BoolInverterConverter : IValueConverter
+        {
+            #region IValueConverter Members
+
+            public object Convert(object value, Type targetType, object parameter,
+                System.Globalization.CultureInfo culture)
+            {
+                if (value is bool)
+                {
+                    return !(bool)value;
+                }
+                return value;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter,
+                System.Globalization.CultureInfo culture)
+            {
+                if (value is bool)
+                {
+                    return !(bool)value;
+                }
+                return value;
+            }
+
+            #endregion
         }
     }
 }

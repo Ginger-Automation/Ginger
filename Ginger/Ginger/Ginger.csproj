@@ -582,6 +582,8 @@
     <None Remove="Images\Variables32x32.png" />
     <None Remove="Images\VBS16x16.png" />
     <None Remove="Images\Views32x32.png" />
+    <None Remove="Images\WireMockLogo16x16.png" />
+    <None Remove="Images\WireMock_Logo.png" />
     <None Remove="Images\Workflow16x16.png" />
     <None Remove="Images\Workflow32x32.png" />
     <None Remove="Images\X16x16.png" />
@@ -631,6 +633,8 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\sendArrow.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\smart.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\VRTLogo.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\WireMockLogo.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\WireMockLogo16x16.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\xml.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\xml.svg" />
   </ItemGroup>
@@ -689,6 +693,12 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\Lisa.jpg" />
+    <Resource Include="Images\WireMockLogo16x16.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\WireMock_Logo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
     <Resource Include="Resources\GingerDataSource.mdb">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
@@ -802,6 +812,9 @@
     </Reference>
     <Reference Include="JiraRepositoryStd">
       <HintPath>..\GingerCoreNET\DLLS\JiraRepositoryStd.dll</HintPath>
+    </Reference>
+    <Reference Include="LibGit2Sharp">
+      <HintPath>..\GingerCoreNET\DLLS\LibGit2Sharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.mshtml">
       <HintPath>..\GingerCoreNET\DLLS\Microsoft.mshtml.dll</HintPath>
@@ -2538,7 +2551,16 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\VRTLogo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\WireMockLogo16x16.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\xml.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\WireMockLogo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

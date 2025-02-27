@@ -1,0 +1,70 @@
+﻿<Page
+    x:Class="Ginger.GeneralWindows.WireMockMappingPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Ginger.GeneralWindows"
+        xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls" xmlns:Ginger="clr-namespace:Ginger"
+        mc:Ignorable="d"
+        Title="WireMock Mapping Window" Height="550" Width="850">
+
+    <Grid x:Name="xMappingWindowPage" Background="{StaticResource $BackgroundColor_White}">
+        <Grid.Resources>
+            <Thickness
+            x:Key="@ActionButtonPadding"
+            Left="4"
+            Top="2"
+            Right="4"
+            Bottom="2" />
+            <DataTemplate
+            x:Key="xMappingOperationTab">
+                <StackPanel
+                Orientation="Horizontal">
+                    <Button
+                    x:Name="xViewMappingBtn"
+                    Click="xViewMappingbtn_Click"
+                    ToolTip="View Mapping"
+                    Style="{StaticResource @InputImageGridCellButtonStyle}"
+                    Padding="{StaticResource @ActionButtonPadding}">
+                        <Image
+                        Source="{StaticResource @View_16x16}"
+                        Height="16"
+                        Width="16" />
+                    </Button>
+                    <Button
+                    x:Name="xEditMappingBtn"
+                    Click="xEditMappingbtn_Click"
+                    ToolTip="Edit Mapping"
+                    Style="{StaticResource @InputImageGridCellButtonStyle}"
+                    Padding="{StaticResource @ActionButtonPadding}"
+                    Tag="{Binding .}">
+                        <Image
+                        Source="{StaticResource @Edit_16x16}"
+                        Height="16"
+                        Width="16" />
+                    </Button>
+                    <Button
+                            x:Name="xDeleteMappingBtn"
+                            Click="xDeleteMappingBtn_Click"
+                            ToolTip="Deleting Mapping"
+                            Style="{StaticResource @InputImageGridCellButtonStyle}"
+                            Padding="{StaticResource @ActionButtonPadding}"
+                            Tag="{Binding .}">
+                        <Image
+                                Source="{StaticResource @Delete_32x32}"
+                                Height="16"
+                                Width="16" />
+                    </Button>
+                </StackPanel>
+            </DataTemplate>
+        </Grid.Resources>
+        <DockPanel>
+            <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto"  >
+                <Ginger:ucGrid x:Name="xGridMapping" Title="Available API Mappings" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUndo="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Visible" ShowUpDown="Collapsed" IsReadOnly="True" ShowTagsFilter="Collapsed">
+
+                </Ginger:ucGrid>
+            </ScrollViewer>
+        </DockPanel>
+    </Grid>
+    </Page>

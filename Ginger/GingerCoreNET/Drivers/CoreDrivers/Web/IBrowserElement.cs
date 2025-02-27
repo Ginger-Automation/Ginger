@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -60,14 +60,21 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task SetAttributeValueAsync(string name, string value);
 
         public Task<string> TextContentAsync();
+        public Task<string> GetSelectedValueAsync();
 
+        public Task DrawObjectAsync();
+        public Task DragDropAsync(IBrowserElement targetElement);
+        public Task DragDropJSAsync(IBrowserElement targetElement);
+        public Task DragDropXYCordinateAsync(int x,int y);
+        public Task<int> GetTextLengthAsync();
+        public Task<string> GetValidValuesAsync();
         public Task<string> InnerTextAsync();
 
         public Task<string> InputValueAsync();
 
         public Task RightClickAsync();
 
-        public Task<string> ExecuteJavascriptAsync(string script);
+        public Task<string> ExecuteJavascriptAsync(string script, object? args = null);
 
         public Task ScrollToViewAsync();
 
