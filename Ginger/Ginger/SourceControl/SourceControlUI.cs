@@ -85,7 +85,6 @@ namespace Ginger.SourceControl
                         }
                         else
                         {
-                            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unable to resolve conflict");
                             return false;
                         }
                     }

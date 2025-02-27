@@ -315,8 +315,9 @@ namespace GingerCore.SourceControl
             {
                 MergeResult result;
                 result = Pull(progressNotifier);
+                
 
-                if (result.Status != MergeStatus.Conflicts)
+                if (result!=null&&result.Status != MergeStatus.Conflicts)
                 {
                     using var repo = new Repository(RepositoryRootFolder);
                     if (supressMessage == true)
