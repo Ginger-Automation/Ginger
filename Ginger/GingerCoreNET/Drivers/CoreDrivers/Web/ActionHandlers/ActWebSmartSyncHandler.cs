@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -151,9 +151,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             Stopwatch stopwatch = Stopwatch.StartNew();
             while (stopwatch.Elapsed.TotalSeconds < waitUntilTimeout)
             {
-                var elements = await _browserTab.GetElementsAsync(_actWebSmartSync.ElementLocateBy, _actWebSmartSync.ElementLocateValue);
-                if (elements.Any())
-                {
+                IEnumerable<IBrowserElement> elements = await _elementLocator.FindMatchingElements(_actWebSmartSync.ElementLocateBy, _actWebSmartSync.ElementLocateValue);
+                IBrowserElement? firstElement = elements.FirstOrDefault();
+
+                if (firstElement != null)
+                {   
                     return;
                 }
                 await Task.Delay(100);

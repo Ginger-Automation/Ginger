@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
@@ -528,6 +529,58 @@ namespace GingerCoreNET.GeneralLib
             }
         }
 
+        public static void DeleteTempTextFile(string tempFilePath)
+        {
+            if (System.IO.File.Exists(tempFilePath))
+            {
+                try
+                {
+                    System.IO.File.Delete(tempFilePath);
+                }
+                catch (Exception)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Unable to delete Temp file:" + tempFilePath);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Create the temp json file format from a string
+        /// </summary>
+        /// <param name="jsonContent"></param>
+        /// <returns></returns>
+        public static string CreateTempJsonFile(string jsonContent)
+        {
+            byte[] bytes = null;
+            try
+            {
+                // Validate JSON format
+                var jsonToken = Newtonsoft.Json.Linq.JToken.Parse(jsonContent);
+
+                string filePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName() + ".json");
+                bytes = System.Text.Encoding.Default.GetBytes(jsonContent);
+                File.WriteAllBytes(filePath, bytes);
+                return filePath;
+            }
+            catch (Newtonsoft.Json.JsonReaderException)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Invalid JSON format");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to create temp text file", ex);
+                return null;
+            }
+            finally
+            {
+                if (bytes != null)
+                {
+                    Array.Clear(bytes);
+                }
+            }
+        }
+
         public static byte[] ImageToByteArray(Image img, System.Drawing.Imaging.ImageFormat format)
         {
             using (var ms = new MemoryStream())
@@ -680,11 +733,31 @@ namespace GingerCoreNET.GeneralLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error creating Ginger Analytics Configuration configuration", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error creating GingerOps configuration", ex);
                 return false;
             }
         }
-
+        public static bool CreateWireMockConfiguration()
+        {
+            try
+            {
+                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0)
+                {
+                    WireMockConfiguration newWMConfiguration = new WireMockConfiguration() { Name = "WireMockConfig" };
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newWMConfiguration);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error creating WireMock configuration", ex);
+                return false;
+            }
+        }
         public static bool IsConfigPackageExists(string PackagePath, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType eALMType)
         {
             string settingsFolder = string.Empty;

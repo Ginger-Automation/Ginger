@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -37,6 +37,14 @@ namespace Amdocs.Ginger.Repository
         private bool mIsSelected = true;
         // [IsSerializedForLocalRepository]
         public bool IsSelected { get { return mIsSelected; } set { if (mIsSelected != value) { mIsSelected = value; OnPropertyChanged(nameof(IsSelected)); } } }
+
+        /// <summary>
+        /// Controls whether to use live API (true) or mock API (false).
+        /// Defaults to true to ensure live API usage unless explicitly configured for mocking.
+        /// </summary>
+        private bool mUseLiveAPI = true;
+        [IsSerializedForLocalRepository(DefaultValue: true)]
+        public bool UseLiveAPI { get { return mUseLiveAPI; } set { if (mUseLiveAPI != value) { mUseLiveAPI = value; OnPropertyChanged(nameof(UseLiveAPI)); } } }
 
         //[IsSerializedForLocalRepository]
         public Guid ApplicationGuid { get; set; }//Do not use, for backward support

@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -181,6 +181,9 @@ namespace Amdocs.Ginger.Common.Enums
         ExpandToFullScreen,
         Exchange,
         GingerAnalytics,
+        WireMockLogo,
+        WireMock_Logo,
+        WireMockLogo16x16,
         Export,
         Filter,
         ImportFile,

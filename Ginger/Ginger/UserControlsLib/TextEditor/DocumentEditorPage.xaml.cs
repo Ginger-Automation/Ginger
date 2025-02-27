@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.External.WireMock;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.PlugInsWindows;
@@ -29,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Ginger.UserControlsLib.TextEditor
@@ -39,10 +41,27 @@ namespace Ginger.UserControlsLib.TextEditor
     public partial class DocumentEditorPage : Page
     {
         static List<TextEditorBase> TextEditors = null;
+        private WireMockAPI mockAPI;
+        private bool isFromWireMock;
+        private string wireMockmappingId;
 
-        public DocumentEditorPage(string FileName, bool enableEdit = true, bool RemoveToolBar = false, string UCTextEditorTitle = null)
+        public DocumentEditorPage(string FileName, bool enableEdit = true, bool RemoveToolBar = false, string UCTextEditorTitle = null, bool isFromWireMock = false, string wireMockmappingId = null)
         {
             InitializeComponent();
+
+            if (isFromWireMock)
+            {
+                try
+                {
+                    this.isFromWireMock = true;
+                    this.wireMockmappingId = wireMockmappingId;
+                    mockAPI = new WireMockAPI();
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "error in getting wiremock api", ex);
+                }
+            }
 
             TextEditorBase TE = GetTextEditorByExtension(FileName);
 
@@ -291,8 +310,9 @@ namespace Ginger.UserControlsLib.TextEditor
 
 
 
-        public void Save()
+        public async Task Save()
         {
+
             if (EditorFrame.Content is UCTextEditor)
             {
                 ((UCTextEditor)EditorFrame.Content).Save();
@@ -301,6 +321,10 @@ namespace Ginger.UserControlsLib.TextEditor
             if (EditorFrame.Content is ITextEditorPage)
             {
                 ((ITextEditorPage)EditorFrame.Content).Save();
+            }
+            else if (isFromWireMock)
+            {
+                await mockAPI.UpdateStubAsync(wireMockmappingId, ((UCTextEditor)EditorFrame.Content).Text);
             }
             else
             {

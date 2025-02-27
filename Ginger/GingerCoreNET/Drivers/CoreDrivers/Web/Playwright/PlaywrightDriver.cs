@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -334,7 +334,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             message = string.Empty;
 
-            if (act is ActWithoutDriver or ActScreenShot or ActGotoURL or ActAccessibilityTesting or ActSmartSync or ActWebSmartSync)
+            if (act is ActWithoutDriver or ActScreenShot or ActGotoURL or ActAccessibilityTesting or ActSmartSync or ActWebSmartSync or ActBrowserElement)
             {
                 return true;
             }
@@ -729,7 +729,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 IBrowserElement? browserElement = null;
                 try
                 {
-                    browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
+                    bool hadException = false;
+                    try
+                    {
+                        browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.DeepestElementFromPoint();");
+                    }
+                    catch 
+                    {
+                        hadException = true;
+                    }
+
+                    if (hadException || browserElement == null)
+                    {
+                        browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -1922,7 +1935,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ActUIElement.eElementAction.GetCustomAttribute,
             ActUIElement.eElementAction.GetFont,
             ActUIElement.eElementAction.MousePressRelease,
-            ActUIElement.eElementAction.MouseClick,
+            ActUIElement.eElementAction.GetValidValues,
+            ActUIElement.eElementAction.GetTextLength,
+            ActUIElement.eElementAction.GetSelectedValue,
+            ActUIElement.eElementAction.DragDrop,
+            ActUIElement.eElementAction.MultiSetValue,
+            ActUIElement.eElementAction.DrawObject,
         ];
 
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ namespace GingerCore.ALM.JIRA.Bll
 
             if (defectsToExport.Count > 0)
             {
-                var exportedDefects = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, defectsToExport);
+                var exportedDefects = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, defectsToExport, ALMCore.DefaultAlmConfig.UseToken);
                 if (exportedDefects.Count > 0)
                 {
                     for (var a = 0; a < exportedDefects.Count; a++)
@@ -123,7 +123,7 @@ namespace GingerCore.ALM.JIRA.Bll
                 }
             }
 
-            var issues = jiraRepObj.GetJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMProjectKey, ResourceType.DEFECT, filterData);
+            var issues = jiraRepObj.GetJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMProjectKey, ResourceType.DEFECT, filterData, ALMCore.DefaultAlmConfig.UseToken);
             if (issues.DataResult.Count > 0)
             {
                 return issues.DataResult.FirstOrDefault().key.ToString();
@@ -221,7 +221,7 @@ namespace GingerCore.ALM.JIRA.Bll
             List<IJiraExportData> tcArray = CreateExportArrayFromActivites(bftestCases);
             JiraIssueExport jiraIssue = CreateJiraTestSet(businessFlow, testSetFields, testCaseFields, tcArray);
             exportData.Add(jiraIssue);
-            var exportResponse = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, exportData);
+            var exportResponse = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, exportData, ALMCore.DefaultAlmConfig.UseToken);
             if (exportResponse.Count > 0 && exportResponse.First().AuthenticationResponseObj.ErrorCode == 0)
             {
                 if (string.IsNullOrEmpty(businessFlow.ExternalID) && exportResponse.First().DataResult != null)
@@ -288,7 +288,7 @@ namespace GingerCore.ALM.JIRA.Bll
                     { "labels", [new JiraExportData() { value = tc.ExternalID2 }] }
                 };
                 List<JiraIssueExport> tcList = [this.UpdateTestCaseWithSpecificFields(tc, fields)];
-                var exportResponse = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, tcList);
+                var exportResponse = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, tcList, ALMCore.DefaultAlmConfig.UseToken);
             }
         }
 
@@ -365,7 +365,7 @@ namespace GingerCore.ALM.JIRA.Bll
                             string comment = CreateCommentForRun(act.Acts.ToList());
                             stepColl.Add(new JiraRunStepStautus() { comment = comment, status = jiraStatus });
                         }
-                        resultFlag = jiraRepObj.ExecuteRunStatusBySteps(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, runs, relevantTcRun.TestCaseRunId);
+                        resultFlag = jiraRepObj.ExecuteRunStatusBySteps(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, runs, relevantTcRun.TestCaseRunId, ALMCore.DefaultAlmConfig.UseToken);
 
                         // Attach ActivityGroup execution Report if needed(if Checkbox is selected in GUI)
                         if (publishToALMConfig.ToAttachActivitiesGroupReport)
@@ -635,7 +635,7 @@ namespace GingerCore.ALM.JIRA.Bll
             }
 
             exportData.Add(jiraIssue);
-            var exportExecutionResponse = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, exportData);
+            var exportExecutionResponse = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, exportData, ALMCore.DefaultAlmConfig.UseToken);
             SetBusinessFlowAlmData(exportExecutionResponse, businessFlow);
             SetDataFromTestExecution(exportExecutionResponse, testCaseTemplate, businessFlow, businessFlow.AlmData);
             return result;
@@ -674,7 +674,7 @@ namespace GingerCore.ALM.JIRA.Bll
         private void SetDataFromTestExecution(List<AlmResponseWithData<JiraIssue>> exportExecutionResponse, FieldSchema testCaseTemplate, BusinessFlow businessFlow, string testExecutionKey)
         {
 
-            var thisTestExecution = jiraRepObj.GetJiraIssueById(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMProjectName, testExecutionKey, ResourceType.TEST_CASE_EXECUTION_RECORDS);
+            var thisTestExecution = jiraRepObj.GetJiraIssueById(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMProjectName, testExecutionKey, ResourceType.TEST_CASE_EXECUTION_RECORDS, ALMCore.DefaultAlmConfig.UseToken);
             int jiraVersion = jiraRepObj.GetJiraVersion(ALMCore.DefaultAlmConfig.ALMServerURL);
             if (thisTestExecution != null && thisTestExecution.fields != null)
             {
@@ -848,7 +848,7 @@ namespace GingerCore.ALM.JIRA.Bll
             var testCaseFilterdFields = testCaseFields.Where(tc => tc.ToUpdate || tc.Mandatory);
             JiraIssueExport jiraIssue = CreateJiraTestCase(activtiesGroup, testCaseFilterdFields);
             exportData.Add(jiraIssue);
-            var exportResponse = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, exportData);
+            var exportResponse = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, exportData, ALMCore.DefaultAlmConfig.UseToken);
 
             if (exportResponse.Count > 0 && exportResponse.First().AuthenticationResponseObj.ErrorCode == 0)
             {
