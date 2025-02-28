@@ -44,4 +44,10 @@ namespace Amdocs.Ginger.Common.UIElement
             StatusUpdateHandler?.Invoke(this, (progressLabel, completedSteps, totalSteps));
         }
     }
+    public class ProgressStatus
+    {
+        public string ProgressMessage;
+        public int ProgressStep;
+        public int TotalSteps;
+    }
 }

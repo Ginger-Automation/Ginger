@@ -79,6 +79,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SourceApplicationUser;
 
         ProgressNotifier progressNotifier = new();
+        ProgressStatus progressInformer;
         public bool SelfHealingCheckInConfigured;
         public static event EventHandler<string> GitProgresStatus;
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
@@ -565,7 +566,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             try
             {
-                progressNotifier.StatusUpdateHandler += ProgressNotifier_ProgressUpdated;                
+                progressNotifier.StatusUpdateHandler += ProgressNotifier_ProgressUpdated;
+                progressInformer = new();
                 if (!string.IsNullOrEmpty(SourceControlURL) && !string.IsNullOrEmpty(SourcecontrolUser) && !string.IsNullOrEmpty(sourceControlPass))
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
@@ -580,10 +582,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.Message);
-
             }
             finally
             {
+                progressInformer = null;
                 progressNotifier.StatusUpdateHandler -= ProgressNotifier_ProgressUpdated;
             }
         }
@@ -597,16 +599,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         private void ProgressNotifier_ProgressUpdated(object sender, (string ProgressType, int CompletedSteps, int TotalSteps) e)
         {
             try
+
             {
                 if (e.CompletedSteps > 0 && e.TotalSteps > 0 && e.CompletedSteps <= e.TotalSteps)
                 {
                     double progress = Math.Round(((double)e.CompletedSteps / e.TotalSteps) * 100, 2);
-                    if (progress == 0)
+                    if (progressInformer==null|| progress == 0)
                     {
                         return;
                     }
                     string gitProgress = $"{e.ProgressType}{progress:F2}% complete";
-                    Reporter.ToLog(eLogLevel.INFO, gitProgress, overwriteCurrentLine: true);
+                    progressInformer.ProgressMessage = gitProgress;
+                    progressInformer.ProgressStep=e.CompletedSteps;
+                    progressInformer.TotalSteps = e.TotalSteps;
+                    Reporter.ToLog(eLogLevel.INFO, null, progressInformer:progressInformer);
                     GitProgresStatus?.Invoke(this, gitProgress);
                 }
                 else

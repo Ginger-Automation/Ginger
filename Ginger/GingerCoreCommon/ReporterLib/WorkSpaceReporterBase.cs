@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.UIElement;
 using System;
 using System.Text;
 
@@ -32,13 +33,10 @@ namespace Amdocs.Ginger.Common
         public abstract void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null);
 
 
-        private static bool prevOverwriteCurrentLine = false;
-
-        public void ToConsole(eLogLevel logLevel, string message, Boolean overwriteCurrentLine = false)
+        public void ToConsole(eLogLevel logLevel, string message, ProgressStatus progressStatus = null)
         {
-            
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append('[').Append(logLevel).Append(" | ").Append(DateTime.Now.ToString("HH:mm:ss:fff_dd-MMM")).Append("] ").Append(message).Append(Environment.NewLine);
+
+            string logDetails = $"[{logLevel} | {DateTime.Now:HH:mm:ss:fff_dd-MMM}]";
 
             try
             {
@@ -60,35 +58,45 @@ namespace Amdocs.Ginger.Common
                         Console.ForegroundColor = ConsoleColor.DarkYellow;
                         break;
                 }
+                
+                if (progressStatus == null)
+                {
+                    if (!Console.IsOutputRedirected && Console.CursorLeft != 0)
+                    {
+                        Console.WriteLine("\n\n");
+                    }
 
-                if (overwriteCurrentLine)
+                    logDetails += message + Environment.NewLine + Environment.NewLine;
+                    Console.WriteLine(logDetails);
+                    Console.ResetColor();
+                }
+                else
                 {
                     if (Console.IsOutputRedirected)
                     {
                         return;
                     }
-                    int cursorRow = prevOverwriteCurrentLine ? Console.CursorTop - 3 : Console.CursorTop;
-                    Console.SetCursorPosition(0, cursorRow);
-                    Console.Write(new string(' ', Console.WindowWidth));
-                    Console.SetCursorPosition(0, cursorRow);
-                    stringBuilder.Append(Environment.NewLine);
-                    Console.WriteLine(stringBuilder.ToString());
-                }
-                else
-                {
-                    stringBuilder.Append(Environment.NewLine);
-                    Console.WriteLine(stringBuilder.ToString());
-                    Console.ResetColor();
+                    string progressBarPrefix = $" {progressStatus.ProgressMessage} [";
+                    string progressBarSuffix = "]";
+                    int widthRequiredWithoutProgressBar = logDetails.Length + progressBarPrefix.Length + progressBarSuffix.Length;
+                    if (widthRequiredWithoutProgressBar >= Console.WindowWidth)
+                    {
+                        Console.WriteLine($"{logDetails} {progressStatus.ProgressMessage}\n");
+                        return;
+                    }
+                    int visibleTotalProgress = Console.WindowWidth - widthRequiredWithoutProgressBar;
+
+                    int currentProgress = (int)(((double)progressStatus.ProgressStep / progressStatus.TotalSteps) * visibleTotalProgress);
+
+                    string progressBar = progressBarPrefix + new string('█', currentProgress) + new string(' ', visibleTotalProgress - currentProgress) + string.Format(progressBarSuffix, (currentProgress));
+
+                    Console.Write($"\r{logDetails}{progressBar}");
                 }
             }
             catch (Exception ex)
             {
                 Console.ResetColor();
                 Console.WriteLine($"[ERROR | {DateTime.Now.ToString("HH:mm:ss:fff_dd-MMM")}] An error occurred: {ex.Message}");
-            }
-            finally
-            {
-                prevOverwriteCurrentLine = overwriteCurrentLine;
             }
         }
         public abstract eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResualt);
