@@ -52,7 +52,7 @@ namespace Amdocs.Ginger.Common
 
             if (ReportAllAlsoToConsole)
             {
-                ToConsole(logLevel, messageToLog, exceptionToLog,progressInformer: progressInformer);
+                ToConsole(logLevel, messageToLog, exceptionToLog, progressStatus: progressInformer);
             }
             if(progressInformer==null)
             {
@@ -325,7 +325,7 @@ namespace Amdocs.Ginger.Common
 
 
         #region ToConsole        
-        public static void ToConsole(eLogLevel logLevel, string messageToConsole, Exception exceptionToConsole = null, ProgressStatus progressInformer=null)
+        public static void ToConsole(eLogLevel logLevel, string messageToConsole, Exception exceptionToConsole = null, ProgressStatus progressStatus = null)
         {
             try
             {
@@ -338,7 +338,7 @@ namespace Amdocs.Ginger.Common
                     msg += Environment.NewLine + "Exception Details:" + Environment.NewLine + excFullInfo;
                 }
 
-                WorkSpaceReporter.ToConsole(logLevel, msg, progressStatus: progressInformer);
+                WorkSpaceReporter.ToConsole(logLevel, msg, progressStatus: progressStatus);
 
                 // if we have log to console event listener send the message 
                 logToConsoleEvent?.Invoke(logLevel, msg);

@@ -76,20 +76,17 @@ namespace Amdocs.Ginger.Common
                     {
                         return;
                     }
-                    string progressBarPrefix = $" {progressStatus.ProgressMessage} [";
-                    string progressBarSuffix = "]";
-                    int widthRequiredWithoutProgressBar = logDetails.Length + progressBarPrefix.Length + progressBarSuffix.Length;
+                    string progressBarPrefix = $" {progressStatus.ProgressMessage} ";
+                    int widthRequiredWithoutProgressBar = logDetails.Length + progressBarPrefix.Length+20;
                     if (widthRequiredWithoutProgressBar >= Console.WindowWidth)
                     {
                         Console.WriteLine($"{logDetails} {progressStatus.ProgressMessage}\n");
                         return;
                     }
                     int visibleTotalProgress = Console.WindowWidth - widthRequiredWithoutProgressBar;
-
-                    int currentProgress = (int)(((double)progressStatus.ProgressStep / progressStatus.TotalSteps) * visibleTotalProgress);
-
-                    string progressBar = progressBarPrefix + new string('█', currentProgress) + new string(' ', visibleTotalProgress - currentProgress) + string.Format(progressBarSuffix, (currentProgress));
-
+                    int totalSteps = progressStatus.TotalSteps > 0 ? progressStatus.TotalSteps : 1;
+                    int currentProgress = (int)(((double)progressStatus.ProgressStep / totalSteps) * visibleTotalProgress);
+                    string progressBar = progressBarPrefix + new string('█', currentProgress) + new string(' ', visibleTotalProgress - currentProgress);
                     Console.Write($"\r{logDetails}{progressBar}");
                 }
             }
