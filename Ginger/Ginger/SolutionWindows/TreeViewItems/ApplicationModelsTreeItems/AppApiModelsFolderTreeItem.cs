@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.ApiActionsConversion;
 using GingerCore;
@@ -125,13 +126,19 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             TreeViewUtils.AddSubMenuItem(addMenu, "SOAP API Model", AddSoapAPIModel, null, eImageType.APIModel);
             TreeViewUtils.AddSubMenuItem(addMenu, "REST API Model", AddRESTAPIModel, null, eImageType.APIModel);
             TreeViewUtils.AddSubMenuItem(addMenu, "Convert Web services Actions", WebServiceActionsConversionHandler, null, eImageType.Convert);
+
+            // for wiremock related changes
+            MenuItem addWireMock = TreeViewUtils.CreateSubMenu(mContextMenu, "API Mode", eImageType.MapALM);
+            TreeViewUtils.AddSubMenuItem(addWireMock, "Use Mock API", UseMockedAPIURL, null, eImageType.WireMockLogo);
+            TreeViewUtils.AddSubMenuItem(addWireMock, "Use Live API", UseRealAPIURL, null, eImageType.APIModel);
+
             if (mAPIModelFolder.IsRootFolder)
             {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true);
             }
             else
             {
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew: false, allowRefresh: false);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew: false, allowRefresh: false, allowWireMockMapping: true);
             }
 
             AddSourceControlOptions(mContextMenu);
@@ -155,6 +162,35 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         private void AddRESTAPIModel(object sender, RoutedEventArgs e)
         {
             AddSingleAPIModel(ApplicationAPIUtils.eWebApiType.REST);
+        }
+
+        private void UseMockedAPIURL(object sender, RoutedEventArgs e)
+        {
+            foreach (ApplicationAPIModel apiModel in mAPIModelFolder.GetFolderItems())
+            {
+                apiModel.UseLiveAPI = false;
+            }
+            SaveModifiedActivities();
+        }
+
+        private void UseRealAPIURL(object sender, RoutedEventArgs e)
+        {
+            foreach (ApplicationAPIModel apiModel in mAPIModelFolder.GetFolderItems())
+            {
+                apiModel.UseLiveAPI = true;
+            }
+            SaveModifiedActivities();
+        }
+
+        private void SaveModifiedActivities()
+        {
+            IEnumerable<ApplicationAPIModel> modifiedAPIModelListItems =
+                mAPIModelFolder.GetFolderItems();
+
+            foreach (ApplicationAPIModel item in modifiedAPIModelListItems)
+            {
+                SaveHandler.Save(item);
+            }
         }
 
         private void AddSingleAPIModel(ApplicationAPIUtils.eWebApiType type)

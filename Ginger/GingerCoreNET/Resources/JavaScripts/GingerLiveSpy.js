@@ -150,6 +150,31 @@ function define_GingerLibLiveSpy() {
 
         return resultElementFromPoint;
     }
+
+    GingerLibLiveSpy.DeepestElementFromPoint = function () {
+        const x = GingerLibLiveSpy.GetXPoint();
+        const y = GingerLibLiveSpy.GetYPoint();
+
+        let element = document.elementFromPoint(x, y);
+
+        function getDeepestElement(currElement, x, y) {
+            let children = currElement.querySelectorAll('*');
+            if (children.length === 0)
+                children = currElement.shadowRoot.querySelectorAll('*');
+
+            for (let i = 0; i < children.length; i++) {
+                let child = children[i];
+                let bounds = child.getBoundingClientRect();
+                if (x >= bounds.left && x <= bounds.right && y >= bounds.top && y <= bounds.bottom)
+                    return getDeepestElement(child, x, y);
+            }
+
+            return currElement;
+        }
+
+        return getDeepestElement(element, x, y);
+    }
+
     GingerLibLiveSpy.IsLiveSpyExist = function () {
         //  Return true if there is click event on the element
         //  Return el.haveclickevent…

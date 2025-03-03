@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -138,6 +138,7 @@ namespace Ginger.SolutionWindows
                 mSolution.SolutionOperations.SetReportsConfigurations();
                 GingerCoreNET.GeneralLib.General.CreateDefaultAccessiblityconfiguration();
                 GingerCoreNET.GeneralLib.General.CreateGingerOpsConfiguration();
+                GingerCoreNET.GeneralLib.General.CreateWireMockConfiguration();
                 //Save again to keep all defualt configurations setup
                 mSolution.SolutionOperations.SaveSolution(false);
                 //show success message to user

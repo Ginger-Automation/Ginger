@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@ namespace GingerCore.ALM.JIRA
         {
             bool isUserAuthen;
 
-            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL, UseAPIToken = ALMCore.DefaultAlmConfig.UseToken };
             isUserAuthen = jiraRepositoryObj.IsUserAuthenticated(loginData);
 
             return isUserAuthen;
@@ -103,8 +103,8 @@ namespace GingerCore.ALM.JIRA
 
         internal List<string> GetJiraDomains()
         {
-            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
-            jiraDomainsProjectsDataList = jiraRepositoryObj.GetLoginProjects(loginData.User, loginData.Password, loginData.Server).DataResult;
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL, UseAPIToken = ALMCore.DefaultAlmConfig.UseToken };
+            jiraDomainsProjectsDataList = jiraRepositoryObj.GetLoginProjects(loginData.User, loginData.Password, loginData.Server, loginData.UseAPIToken).DataResult;
             List<string> jiraDomains = [];
             foreach (var domain in jiraDomainsProjectsDataList)
             {

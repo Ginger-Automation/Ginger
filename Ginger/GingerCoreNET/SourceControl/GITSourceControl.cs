@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -452,11 +452,13 @@ namespace GingerCore.SourceControl
 
             try
 
-            {                
-                var co = new CloneOptions(GetFetchOptions())
+            {
+                var co = new CloneOptions()
                 {
                     BranchName = string.IsNullOrEmpty(SourceControlBranch) ? "master" : SourceControlBranch,
+                    CredentialsProvider = GetSourceCredentialsHandler()
                 };
+                GetFetchOptions(co.FetchOptions);
                 RepositoryRootFolder = LibGit2Sharp.Repository.Clone(URI, Path, co);
             }
             catch (Exception ex)
@@ -466,7 +468,7 @@ namespace GingerCore.SourceControl
             }
             return true;
         }
-   
+
         private void AddSolution(ObservableList<SolutionInfo> SourceControlSolutions, string LocalFolder, string SourceControlLocation)
         {
             SolutionInfo sol = new SolutionInfo
@@ -1233,29 +1235,35 @@ namespace GingerCore.SourceControl
         /// <returns>A PullOptions object configured with merge and fetch options.</returns>
         private PullOptions GetPullOptions()
         {
-            return new PullOptions
+            try
             {
-                MergeOptions = new MergeOptions
+                var pullOption = new PullOptions
                 {
-                    FailOnConflict = true,
-                },
+                    MergeOptions = new MergeOptions
+                    {
+                        FailOnConflict = true,
+                    },
 
-                FetchOptions = GetFetchOptions()
-            };
+                };
+                GetFetchOptions(pullOption?.FetchOptions);
+                return pullOption;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting pull options.", ex);
+                return null;
+            }
         }
 
         /// <summary>
         /// Gets the options for fetching changes from the remote repository.
         /// </summary>
         /// <returns>A FetchOptions object configured with credentials, depth, and certificate check.</returns>
-        private FetchOptions GetFetchOptions()
+        private void GetFetchOptions(FetchOptions fetchOptions)
         {
-            return new FetchOptions
-            {
-                CredentialsProvider = GetSourceCredentialsHandler(),
-                Depth = 1,
-                CertificateCheck = (_, valid, host) => true,
-            };
+            if (fetchOptions == null) throw new ArgumentNullException(nameof(fetchOptions));
+            fetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
+            fetchOptions.CertificateCheck = (_, _, _) => true;
         }
 
         public override bool UnLock(string _, ref string error)
@@ -1364,18 +1372,40 @@ namespace GingerCore.SourceControl
             try
             {
                 EnsureDirectoryExists(path);
-                var fetchOptions = GetFetchOptionsWithProgress(progressNotifier, cancellationToken);
-
-                var cloneOptions = new CloneOptions(fetchOptions)
+                var cloneOptions = new CloneOptions()
                 {
                     BranchName = string.IsNullOrEmpty(SourceControlBranch) ? "master" : SourceControlBranch,
-                    OnCheckoutProgress = (path, completedSteps, totalSteps) =>
+                    FetchOptions = new FetchOptions(),
+                    CredentialsProvider = GetSourceCredentialsHandler()
+                };
+                if (progressNotifier != null)
+                {
+                    cloneOptions.OnProgress = progress =>
+                    {
+                        progressNotifier.NotifyProgressDetailText($"{progress}");
+                        return !cancellationToken.IsCancellationRequested;
+                    };
+
+                    cloneOptions.OnTransferProgress = progress =>
+                    {
+                        if (progress.TotalObjects == 0)
+                        {
+                            progressNotifier.NotifyProgressDetailText("Initializing...");
+                            return true;
+                        }
+                        double percentage = (double)progress.ReceivedObjects / progress.TotalObjects * 100;
+                        progressNotifier.NotifyProgressDetailText($"{percentage:F2}% {progress.ReceivedObjects}/{progress.TotalObjects} files downloaded.");
+                        progressNotifier.NotifyProgressUpdated("Download solution status: ", progress.ReceivedObjects, progress.TotalObjects);
+                        return !cancellationToken.IsCancellationRequested;
+                    };
+
+                    cloneOptions.OnCheckoutProgress = (_, completedSteps, totalSteps) =>
                     {
                         progressNotifier?.NotifyProgressDetailText($"Checkout solution status: {completedSteps}/{totalSteps}");
                         progressNotifier?.NotifyProgressUpdated("Checkout solution status: ", completedSteps, totalSteps);
-                    }
-                };
-
+                    };
+                }
+                GetFetchOptions(cloneOptions.FetchOptions);
                 RepositoryRootFolder = LibGit2Sharp.Repository.Clone(uri, path, cloneOptions);
             }
             catch (Exception ex)
@@ -1408,31 +1438,37 @@ namespace GingerCore.SourceControl
         /// <param name="progressNotifier">Optional progress notifier for reporting progress.</param>
         /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
         /// <returns>Fetch options configured with progress notifications and cancellation support.</returns>
-        private FetchOptions GetFetchOptionsWithProgress(ProgressNotifier progressNotifier, CancellationToken cancellationToken)
+        private void GetFetchOptionsWithProgress(FetchOptions fetchOptions, ProgressNotifier progressNotifier, CancellationToken cancellationToken)
         {
-            var fetchOptions = GetFetchOptions();
-            if (progressNotifier != null)
+            try
             {
-                fetchOptions.OnProgress = progress =>
+                GetFetchOptions(fetchOptions);
+                if (progressNotifier != null)
                 {
-                    progressNotifier.NotifyProgressDetailText($"{progress}");
-                    return !cancellationToken.IsCancellationRequested;
-                };
-
-                fetchOptions.OnTransferProgress = progress =>
-                {
-                    if (progress.TotalObjects == 0)
+                    fetchOptions.OnProgress = progress =>
                     {
-                        progressNotifier.NotifyProgressDetailText("Initializing...");
-                        return true;
-                    }
-                    double percentage = (double)progress.ReceivedObjects / progress.TotalObjects * 100;
-                    progressNotifier.NotifyProgressDetailText($"{percentage:F2}% {progress.ReceivedObjects}/{progress.TotalObjects} files downloaded.");
-                    progressNotifier.NotifyProgressUpdated("Download solution status: ", progress.ReceivedObjects, progress.TotalObjects);
-                    return !cancellationToken.IsCancellationRequested;
-                };
+                        progressNotifier.NotifyProgressDetailText($"{progress}");
+                        return !cancellationToken.IsCancellationRequested;
+                    };
+
+                    fetchOptions.OnTransferProgress = progress =>
+                    {
+                        if (progress.TotalObjects == 0)
+                        {
+                            progressNotifier.NotifyProgressDetailText("Initializing...");
+                            return true;
+                        }
+                        double percentage = (double)progress.ReceivedObjects / progress.TotalObjects * 100;
+                        progressNotifier.NotifyProgressDetailText($"{percentage:F2}% {progress.ReceivedObjects}/{progress.TotalObjects} files downloaded.");
+                        progressNotifier.NotifyProgressUpdated("Download solution status: ", progress.ReceivedObjects, progress.TotalObjects);
+                        return !cancellationToken.IsCancellationRequested;
+                    };
+                }
             }
-            return fetchOptions;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting fetch options with progress.", ex);
+            }
         }
 
         /// <summary>
@@ -1443,28 +1479,39 @@ namespace GingerCore.SourceControl
         /// <returns>The result of the merge operation.</returns>
         private MergeResult Pull(ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
         {
-            MergeResult mergeResult = null;
-            ReportFeatureUsage(operation: "Pull");
-
-            Task.Run(() =>
+            try
             {
-                using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                MergeResult mergeResult = null;
+                ReportFeatureUsage(operation: "Pull");
+
+                Task.Run(() =>
                 {
-                    var pullOptions = new PullOptions
+                    using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
                     {
-                        FetchOptions = GetFetchOptionsWithProgress(progressNotifier, cancellationToken)
-                    };
+                        var pullOptions = new PullOptions()
+                        {
+                            FetchOptions = new FetchOptions(),
+                        };
 
-                    var signature = new Signature(
-                        IsRepositoryPublic() ? "dummy" : SourceControlUser,
-                        IsRepositoryPublic() ? "dummy" : SourceControlUser,
-                        DateTimeOffset.Now
-                    );
 
-                    mergeResult = Commands.Pull(repo, signature, pullOptions);
-                }
-            }).Wait();
-            return mergeResult;
+                        GetFetchOptionsWithProgress(pullOptions.FetchOptions, progressNotifier, cancellationToken);
+
+                        var signature = new Signature(
+                            IsRepositoryPublic() ? "dummy" : SourceControlUser,
+                            IsRepositoryPublic() ? "dummy" : SourceControlUser,
+                            DateTimeOffset.Now
+                        );
+
+                        mergeResult = Commands.Pull(repo, signature, pullOptions);
+                    }
+                }).Wait();
+                return mergeResult;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while pulling the latest changes.", ex);
+                return null;
+            }
         }
 
         private Commit Commit(string Comments)
