@@ -1394,13 +1394,13 @@ namespace GingerCore.SourceControl
                             return true;
                         }
                         double percentage = (double)progress.ReceivedObjects / progress.TotalObjects * 100;
-                        if(percentage== previousPercentage)
+                        if (Math.Abs(percentage - previousPercentage) < 0.01)
                         {
                             return true;
                         }
                         progressNotifier.NotifyProgressDetailText($"{percentage:F2}% {progress.ReceivedObjects}/{progress.TotalObjects} files downloaded.");
                         progressNotifier.NotifyProgressUpdated("Download solution status: ", progress.ReceivedObjects, progress.TotalObjects);
-                        previousPercentage=percentage;
+                        previousPercentage = percentage;
                         return !cancellationToken.IsCancellationRequested;
                     };
 
@@ -1458,20 +1458,20 @@ namespace GingerCore.SourceControl
 
                     fetchOptions.OnTransferProgress = progress =>
                     {
-                     
+
                         if (progress.TotalObjects == 0)
                         {
                             progressNotifier.NotifyProgressDetailText("Initializing...");
                             return true;
                         }
                         double percentage = (double)progress.ReceivedObjects / progress.TotalObjects * 100;
-                        if (percentage == previousPercentage)
+                        if (Math.Abs(percentage - previousPercentage) < 0.01)
                         {
                             return true;
                         }
                         progressNotifier.NotifyProgressDetailText($"{percentage:F2}% {progress.ReceivedObjects}/{progress.TotalObjects} files downloaded.");
                         progressNotifier.NotifyProgressUpdated("Download solution status: ", progress.ReceivedObjects, progress.TotalObjects);
-                        previousPercentage= percentage; 
+                        previousPercentage = percentage;
                         return !cancellationToken.IsCancellationRequested;
                     };
                 }
