@@ -53,6 +53,7 @@ using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Safari;
 using OpenQA.Selenium.Support.UI;
 using Protractor;
 using System;
@@ -950,6 +951,37 @@ namespace GingerCore.Drivers
                             else
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), edgeOptions.ToCapabilities());
+                            }
+
+                            break;
+                        }
+                        else if (RemoteBrowserName.Equals("safari"))
+                        {
+                            SafariOptions safariOptions = new SafariOptions
+                            {
+                                Proxy = mProxy
+                            };
+                            if (!string.IsNullOrEmpty(RemotePlatform))
+                            {
+                                safariOptions.AddAdditionalOption(RemotePlatformParam, RemotePlatform);
+                            }
+                            if (!string.IsNullOrEmpty(RemoteVersion))
+                            {
+                                safariOptions.AddAdditionalOption(SeleniumDriver.RemoteVersionParam, RemoteVersion);
+                            }
+
+                            SetUnhandledPromptBehavior(safariOptions);
+                            if (Convert.ToInt32(HttpServerTimeOut) > 60)
+                            {
+                                Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), safariOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
+                            else if (WorkSpace.Instance.BetaFeatures.ShowHealenium && IsHealenium)
+                            {
+                                Driver = new RemoteWebDriver(new Uri(HealeniumUrl), safariOptions.ToCapabilities());
+                            }
+                            else
+                            {
+                                Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), safariOptions.ToCapabilities());
                             }
 
                             break;
