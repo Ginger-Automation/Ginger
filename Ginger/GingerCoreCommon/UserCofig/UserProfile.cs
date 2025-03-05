@@ -23,6 +23,7 @@ using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Repository;
 using Ginger.UserConfig;
@@ -168,50 +169,57 @@ namespace Ginger
         [IsSerializedForLocalRepository]
         public Guid RecentRunset { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public SourceControlBase.eSourceControlType SourceControlType { get; set; }
+        /*    [IsSerializedForLocalRepository]
+            public SourceControlBase.eSourceControlType SourceControlType { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public string SourceControlURL { get; set; }
+            [IsSerializedForLocalRepository]
+            public string SourceControlURL { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public string SourceControlUser { get; set; }
+            [IsSerializedForLocalRepository]
+            public string SourceControlUser { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public string SolutionSourceControlUser { get; set; }
+            [IsSerializedForLocalRepository]
+            public string SolutionSourceControlUser { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public string SourceControlBranch { get; set; }
+            [IsSerializedForLocalRepository]
+            public string SourceControlBranch { get; set; }
 
-        public string SolutionSourceControlBranch { get; set; }
+            public string SolutionSourceControlBranch { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public bool SolutionSourceControlConfigureProxy { get; set; }
+            [IsSerializedForLocalRepository]
+            public bool SolutionSourceControlConfigureProxy { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public string SolutionSourceControlProxyAddress { get; set; }
+            [IsSerializedForLocalRepository]
+            public string SolutionSourceControlProxyAddress { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public string SolutionSourceControlAuthorName { get; set; }
+            [IsSerializedForLocalRepository]
+            public string SolutionSourceControlAuthorName { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public string SolutionSourceControlAuthorEmail { get; set; }
+            [IsSerializedForLocalRepository]
+            public string SolutionSourceControlAuthorEmail { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public string SolutionSourceControlProxyPort { get; set; }
+            [IsSerializedForLocalRepository]
+            public string SolutionSourceControlProxyPort { get; set; }
 
 
-        [IsSerializedForLocalRepository(80)]
-        public int SolutionSourceControlTimeout { get; set; }
+            [IsSerializedForLocalRepository(80)]
+            public int SolutionSourceControlTimeout { get; set; }
+
+
+            [IsSerializedForLocalRepository]
+            public string SourceControlLocalFolder { get; set; }*/
 
         //[IsSerializedForLocalRepository]
+
+
+
+
+
         public string EncryptedSourceControlPass { get; set; }
 
         //[IsSerializedForLocalRepository]
         public string EncryptedSolutionSourceControlPass { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public string SourceControlLocalFolder { get; set; }
 
         [IsSerializedForLocalRepository]
         public string ReportTemplateName { get; set; }
@@ -261,6 +269,13 @@ namespace Ginger
         {
             get; set;
         }
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<GingerSolution> GingerSolutions { get; set; } = [];
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<string> RecentDownloadedSolutionGuid { get; set; } = [];
+
 
         [IsSerializedForLocalRepository]
         public ObservableList<ALMUserConfig> ALMUserConfigs { get; set; } = [];
@@ -721,30 +736,81 @@ namespace Ginger
         public List<string> ShownHelpLayoutsKeys = [];
         public override bool SerializationError(SerializationErrorType errorType, string name, string value)
         {
-            if (errorType == SerializationErrorType.PropertyNotFound)
+            if (errorType != SerializationErrorType.PropertyNotFound) return false;
+
+            name = name.ToLower();
+            if (name.Contains("alm"))
             {
-                if (name.ToLower().Contains("alm"))
+                var almUserConfig = ALMUserConfigs.FirstOrDefault() ?? new ALMUserConfig();
+                if (!ALMUserConfigs.Contains(almUserConfig)) ALMUserConfigs.Add(almUserConfig);
+
+                switch (name)
                 {
-                    ALMUserConfig AlmUserConfig = ALMUserConfigs.FirstOrDefault();
-                    if (AlmUserConfig == null)
-                    {
-                        AlmUserConfig = new ALMUserConfig();
-                        ALMUserConfigs.Add(AlmUserConfig);
-                    }
-                    if (name == "ALMUserName")
-                    {
-                        AlmUserConfig.ALMUserName = value;
+                    case "almusername":
+                        almUserConfig.ALMUserName = value;
                         return true;
-                    }
-                    if (name == "EncryptedALMPassword")
-                    {
-                        AlmUserConfig.EncryptedALMPassword = value;
+                    case "encryptedalmpassword":
+                        almUserConfig.EncryptedALMPassword = value;
                         return true;
-                    }
                 }
             }
+            else if (name.Contains("sourcecontrol"))
+            {
+                var gingerSolution = GingerSolutions.FirstOrDefault() ?? new GingerSolution { SourceControlInfo = new SourceControlInfo() };
+                if (!GingerSolutions.Contains(gingerSolution)) GingerSolutions.Add(gingerSolution);
+
+                switch (name)
+                {
+                    case "sourcecontroltype":
+                        if (Enum.TryParse(value, out SourceControlBase.eSourceControlType sourceControlType))
+                        {
+                            gingerSolution.SourceControlInfo.Type = sourceControlType;
+                            return true;
+                        }
+                        break;
+                    case "sourcecontrolurl":
+                        gingerSolution.SourceControlInfo.Url = value;
+                        return true;
+                    case "solutionsourcecontroluser":
+                        gingerSolution.SourceControlInfo.Username = value;
+                        return true;
+                    case "sourcecontrolbranch":
+                        gingerSolution.SourceControlInfo.Branch = value;
+                        return true;
+                    case "solutionsourcecontrolconfigureproxy":
+                        if (bool.TryParse(value, out bool isProxyConfigure))
+                        {
+                            gingerSolution.SourceControlInfo.IsProxyConfigure = isProxyConfigure;
+                            return true;
+                        }
+                        break;
+                    case "solutionsourcecontrolproxyaddress":
+                        gingerSolution.SourceControlInfo.ProxyAddress = value;
+                        return true;
+                    case "solutionsourcecontrolauthorname":
+                        gingerSolution.SourceControlInfo.AuthorName = value;
+                        return true;
+                    case "solutionsourcecontrolauthoremail":
+                        gingerSolution.SourceControlInfo.AuthorEmail = value;
+                        return true;
+                    case "solutionsourcecontrolproxyport":
+                        gingerSolution.SourceControlInfo.ProxyPort = value;
+                        return true;
+                    case "sourcecontrollocalfolder":
+                        gingerSolution.SourceControlInfo.LocalFolderPath = value;
+                        return true;
+                    case "solutionsourcecontroltimeout":
+                        if (int.TryParse(value, out int timeout))
+                        {
+                            gingerSolution.SourceControlInfo.Timeout = timeout;
+                            return true;
+                        }
+                        break;
+                }
+            }
+
             return false;
         }
-
     }
 }
+
