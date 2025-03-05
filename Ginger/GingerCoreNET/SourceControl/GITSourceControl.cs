@@ -1395,8 +1395,13 @@ namespace GingerCore.SourceControl
                             return true;
                         }
                         double percentage = (double)progress.ReceivedObjects / progress.TotalObjects * 100;
+                        if (Math.Abs(percentage - previousPercentage) < 0.01)
+                        {
+                            return true;
+                        }
                         progressNotifier.NotifyProgressDetailText($"{percentage:F2}% {progress.ReceivedObjects}/{progress.TotalObjects} files downloaded.");
                         progressNotifier.NotifyProgressUpdated("Download solution status: ", progress.ReceivedObjects, progress.TotalObjects);
+                        previousPercentage = percentage;
                         return !cancellationToken.IsCancellationRequested;
                     };
 
@@ -1432,7 +1437,7 @@ namespace GingerCore.SourceControl
                 System.IO.Directory.CreateDirectory(path);
             }
         }
-
+        private double previousPercentage = 0;
         /// <summary>
         /// Gets fetch options with progress notifications and cancellation support.
         /// </summary>
@@ -1454,14 +1459,20 @@ namespace GingerCore.SourceControl
 
                     fetchOptions.OnTransferProgress = progress =>
                     {
+
                         if (progress.TotalObjects == 0)
                         {
                             progressNotifier.NotifyProgressDetailText("Initializing...");
                             return true;
                         }
                         double percentage = (double)progress.ReceivedObjects / progress.TotalObjects * 100;
+                        if (Math.Abs(percentage - previousPercentage) < 0.01)
+                        {
+                            return true;
+                        }
                         progressNotifier.NotifyProgressDetailText($"{percentage:F2}% {progress.ReceivedObjects}/{progress.TotalObjects} files downloaded.");
                         progressNotifier.NotifyProgressUpdated("Download solution status: ", progress.ReceivedObjects, progress.TotalObjects);
+                        previousPercentage = percentage;
                         return !cancellationToken.IsCancellationRequested;
                     };
                 }
