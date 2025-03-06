@@ -61,6 +61,13 @@ namespace Amdocs.Ginger.Common.SourceControlLib
         [IsSerializedForLocalRepository(80)]
         public int Timeout { get; set; }
 
+
+        public string Password{get; set;}
+
+
+        public string EncryptedPassword { get; set; }
+
+
         public override string ItemName { get => nameof(SourceControlInfo); set { } }
     }
 

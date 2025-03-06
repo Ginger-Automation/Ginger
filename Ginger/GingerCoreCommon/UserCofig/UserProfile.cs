@@ -169,55 +169,64 @@ namespace Ginger
         [IsSerializedForLocalRepository]
         public Guid RecentRunset { get; set; }
 
-        /*    [IsSerializedForLocalRepository]
-            public SourceControlBase.eSourceControlType SourceControlType { get; set; }
+        [IsSerializedForLocalRepository]
+        public SourceControlBase.eSourceControlType SourceControlType { get; set; }
 
-            [IsSerializedForLocalRepository]
-            public string SourceControlURL { get; set; }
+        [IsSerializedForLocalRepository]
+        public string SourceControlURL { get; set; }
 
-            [IsSerializedForLocalRepository]
-            public string SourceControlUser { get; set; }
+        [IsSerializedForLocalRepository]
+        public string SourceControlUser { get; set; }
 
-            [IsSerializedForLocalRepository]
-            public string SolutionSourceControlUser { get; set; }
+        [IsSerializedForLocalRepository]
+        public string SolutionSourceControlUser { get; set; }
 
-            [IsSerializedForLocalRepository]
-            public string SourceControlBranch { get; set; }
+        [IsSerializedForLocalRepository]
+        public string SourceControlBranch { get; set; }
 
-            public string SolutionSourceControlBranch { get; set; }
+        public string SolutionSourceControlBranch { get; set; }
 
-            [IsSerializedForLocalRepository]
-            public bool SolutionSourceControlConfigureProxy { get; set; }
+        [IsSerializedForLocalRepository]
+        public bool SolutionSourceControlConfigureProxy { get; set; }
 
-            [IsSerializedForLocalRepository]
-            public string SolutionSourceControlProxyAddress { get; set; }
+        [IsSerializedForLocalRepository]
+        public string SolutionSourceControlProxyAddress { get; set; }
 
-            [IsSerializedForLocalRepository]
-            public string SolutionSourceControlAuthorName { get; set; }
+        [IsSerializedForLocalRepository]
+        public string SolutionSourceControlAuthorName { get; set; }
 
-            [IsSerializedForLocalRepository]
-            public string SolutionSourceControlAuthorEmail { get; set; }
+        [IsSerializedForLocalRepository]
+        public string SolutionSourceControlAuthorEmail { get; set; }
 
-            [IsSerializedForLocalRepository]
-            public string SolutionSourceControlProxyPort { get; set; }
-
-
-            [IsSerializedForLocalRepository(80)]
-            public int SolutionSourceControlTimeout { get; set; }
+        [IsSerializedForLocalRepository]
+        public string SolutionSourceControlProxyPort { get; set; }
 
 
-            [IsSerializedForLocalRepository]
-            public string SourceControlLocalFolder { get; set; }*/
+        [IsSerializedForLocalRepository(80)]
+        public int SolutionSourceControlTimeout { get; set; }
+
+
+        [IsSerializedForLocalRepository]
+        public string SourceControlLocalFolder { get; set; }
 
         //[IsSerializedForLocalRepository]
 
 
 
 
+        public string SourceControlPass
+        {
+            get; set;
+        }
+
+        public string SolutionSourceControlPass
+        {
+            get; set;
+        }
 
         public string EncryptedSourceControlPass { get; set; }
 
-        //[IsSerializedForLocalRepository]
+
         public string EncryptedSolutionSourceControlPass { get; set; }
 
 
@@ -260,15 +269,6 @@ namespace Ginger
             }
         }
 
-        public string SourceControlPass
-        {
-            get; set;
-        }
-
-        public string SolutionSourceControlPass
-        {
-            get; set;
-        }
 
         [IsSerializedForLocalRepository]
         public ObservableList<GingerSolution> GingerSolutions { get; set; } = [];
