@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ namespace Ginger.Run
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoExecuteInSimulationChkBox, CheckBox.IsCheckedProperty, mRunSetConfig.SelfHealingConfiguration, nameof(SelfHealingConfig.AutoExecuteInSimulationMode));
 
             ShowHideConfigPanel();
+            mRunSetConfig.SelfHealingConfiguration.StartDirtyTracking();
         }
 
         public void ShowAsWindow()
@@ -89,6 +90,18 @@ namespace Ginger.Run
                     mRunSetConfig.SelfHealingConfiguration.AutoExecuteInSimulationMode = false;
                 }
 
+            }
+        }
+
+        private void xAutoUpdateModelChkBox_CheckedUnchecked(object sender, RoutedEventArgs e)
+        {
+            if (xAutoUpdateModelChkBox.IsChecked ?? false)
+            {
+                AutoUpdateModelNoteTextBlock.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                AutoUpdateModelNoteTextBlock.Visibility = Visibility.Hidden;
             }
         }
     }

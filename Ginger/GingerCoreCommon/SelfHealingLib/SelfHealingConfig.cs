@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,21 +21,76 @@ namespace Amdocs.Ginger.Common.SelfHealingLib
 {
     public class SelfHealingConfig : RepositoryItemBase
     {
+        private bool mEnableSelfHealing;
+        [IsSerializedForLocalRepository(true)]
+        public bool EnableSelfHealing
+        {
+            get { return mEnableSelfHealing; }
+            set
+            {
+                if (mEnableSelfHealing != value)
+                {
+                    mEnableSelfHealing = value;
+                    OnPropertyChanged(nameof(EnableSelfHealing));
+                }
+            }
+        }
+        private bool mReprioritizePOMLocators;
+        [IsSerializedForLocalRepository(true)]
+        public bool ReprioritizePOMLocators
+        {
+            get { return mReprioritizePOMLocators; }
+            set
+            {
+                if (mReprioritizePOMLocators != value)
+                {
+                    mReprioritizePOMLocators = value;
+                    OnPropertyChanged(nameof(ReprioritizePOMLocators));
+                }
+            }
+        }
+        private bool mAutoFixAnalyzerIssue;
         [IsSerializedForLocalRepository]
-        public bool EnableSelfHealing { get; set; } = true;
-
+        public bool AutoFixAnalyzerIssue
+        {
+            get { return mAutoFixAnalyzerIssue; }
+            set
+            {
+                if (mAutoFixAnalyzerIssue != value)
+                {
+                    mAutoFixAnalyzerIssue = value;
+                    OnPropertyChanged(nameof(AutoFixAnalyzerIssue));
+                }
+            }
+        }
+        private bool mAutoUpdateApplicationModel;
         [IsSerializedForLocalRepository]
-        public bool ReprioritizePOMLocators { get; set; } = true;
-
+        public bool AutoUpdateApplicationModel
+        {
+            get { return mAutoUpdateApplicationModel; }
+            set
+            {
+                if (mAutoUpdateApplicationModel != value)
+                {
+                    mAutoUpdateApplicationModel = value;
+                    OnPropertyChanged(nameof(AutoUpdateApplicationModel));
+                }
+            }
+        }
+        private bool mAutoExecuteInSimulationMode;
         [IsSerializedForLocalRepository]
-        public bool AutoFixAnalyzerIssue { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public bool AutoUpdateApplicationModel { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public bool AutoExecuteInSimulationMode { get; set; }
-
+        public bool AutoExecuteInSimulationMode
+        {
+            get { return mAutoExecuteInSimulationMode; }
+            set
+            {
+                if (mAutoExecuteInSimulationMode != value)
+                {
+                    mAutoExecuteInSimulationMode = value;
+                    OnPropertyChanged(nameof(AutoExecuteInSimulationMode));
+                }
+            }
+        }
         public bool SaveChangesInSourceControl { get; set; }
 
         public override string ItemName { get { return string.Empty; } set { } }

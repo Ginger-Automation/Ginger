@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,7 +22,9 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
+using CommandLine;
 using Ginger.BusinessFlowWindows;
 using Ginger.ReporterLib;
 using Ginger.SourceControl;
@@ -31,7 +33,9 @@ using GingerCore.Repository;
 using GingerWPF.WorkSpaceLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -240,46 +244,262 @@ namespace Ginger
             }
         }
 
-
+        CLIProcessor cliProcessor;
 
         // Main entry point to Ginger UI/CLI
-        private void Application_Startup(object sender, StartupEventArgs e)
+        /// <summary>
+        /// Handles the startup sequence of the application. Initializes logging, workspace, 
+        /// processes command-line arguments, and determines the running mode (UI or execution).
+        /// </summary>
+        private async void Application_Startup(object sender, StartupEventArgs e)
         {
-            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.InitLog4Net();
-
-
-
-            bool startGrid = e.Args.Length == 0; // no need to start grid if we have args
-            WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
-            if (e.Args.Length != 0)
+            try
             {
-                WorkSpace.Instance.RunningInExecutionMode = true;
-                Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console      
-            }
-            // add additional classes from Ginger and GingerCore
-            InitClassTypesDictionary();
+                InitLogging();
+                bool startGrid = ShouldStartGrid(e.Args);
+                WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
+                var parserResult = ParseCommandLineArguments(e.Args);
 
-            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new DotNetFrameworkHelper());
-            WorkSpace.Instance.InitTelemetry();
+                DoOptions doOptions = ExtractDoOptions(parserResult);
 
-            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();
-
-
-            if (!WorkSpace.Instance.RunningInExecutionMode)
-            {
-                if (WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug)
+                if (IsExecutionMode(e.Args, doOptions))
                 {
-                    GingerLog.StartCustomTraceListeners();
+                    WorkSpace.Instance.RunningInExecutionMode = true;
+                    Reporter.ReportAllAlsoToConsole = true;
                 }
-                HideConsoleWindow();
-                StartGingerUI();// start regular Ginger UI
+                InitializeGingerCore();
+                if (!WorkSpace.Instance.RunningInExecutionMode)
+                {
+                    ProcessGingerUIStartup(doOptions);
+                }
+                else
+                {
+                    await RunNewCLI(parserResult);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                RunNewCLI(e.Args);
+                Reporter.ToLog(eLogLevel.ERROR, "Unhandled exception in Application_Startup", ex);
             }
         }
 
+
+        /// <summary>
+        /// Initializes the logging mechanism for the application using log4net.
+        /// </summary>
+        private void InitLogging()
+        {
+            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.InitLog4Net();
+        }
+
+        /// <summary>
+        /// Determines whether the application should start with the grid view.
+        /// Returns true if there are no command-line arguments.
+        /// </summary>
+        /// <param name="args">Command-line arguments.</param>
+        /// <returns>True if no arguments are provided, otherwise false.</returns>
+        private bool ShouldStartGrid(string[] args)
+        {
+            return args.Length == 0;
+        }
+
+        /// <summary>
+        /// Parses the command line arguments and returns the parsed result.
+        /// </summary>
+        /// <param name="args">The command line arguments.</param>
+        /// <returns>The parsed result of the command line arguments.</returns>
+        private ParserResult<object> ParseCommandLineArguments(string[] args)
+        {
+            string[] arguments;
+            //Added this codition if only user want to launch Ginger without any solution from browser.
+            if (args.Length == 1 && System.Web.HttpUtility.UrlDecode(args[0]).Equals("ginger:///", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+            if (args.Length == 1)
+            {
+                string input = args[0];
+                input = input.Replace("\n", "").Replace("\r", "");
+                input = System.Web.HttpUtility.UrlDecode(input);
+                if (input.StartsWith("ginger://"))
+                {
+                    input = input["ginger://".Length..];
+                }
+                if (input.EndsWith("/"))
+                {
+                    input = input[..^1];
+                }
+                List<string> resultList = General.SplitWithPaths(input).Select(s => s.Trim('\"', '\'')).ToList();
+                arguments = resultList.ToArray();
+            }
+            else
+            {
+                arguments = args;
+            }
+
+            cliProcessor = new CLIProcessor();
+            return arguments.Length != 0 ? cliProcessor.ParseArguments(arguments) : null;
+        }
+        /// <summary>
+        /// Extracts the DoOptions object from the parser result if available and the operation is 'open'.
+        /// Otherwise, returns null.
+        /// </summary>
+        /// <param name="parserResult">Parsed command-line arguments.</param>
+        /// <returns>DoOptions object or null.</returns>
+        private DoOptions ExtractDoOptions(ParserResult<object> parserResult)
+        {
+            if (parserResult?.Value is DoOptions tempOptions && (tempOptions.Operation == DoOptions.DoOperation.open))
+            {
+                return tempOptions;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Determines if the application is in execution mode based on command-line arguments and DoOptions.
+        /// Returns true if there are arguments and DoOptions is null.
+        /// </summary>
+        /// <param name="args">Command-line arguments.</param>
+        /// <param name="doOptions">DoOptions extracted from the parsed arguments.</param>
+        /// <returns>True if the application is in execution mode, otherwise false.</returns>
+        private bool IsExecutionMode(string[] args, DoOptions doOptions)
+        {
+            if (args.Length == 1 && System.Web.HttpUtility.UrlDecode(args[0]).Equals("ginger:///", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+            return args.Length != 0 && doOptions == null;
+        }
+
+        /// <summary>
+        /// Initializes various core components of Ginger such as class types, workspace, and telemetry.
+        /// Logs the startup information.
+        /// </summary>
+        private void InitializeGingerCore()
+        {
+            InitClassTypesDictionary();
+            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new DotNetFrameworkHelper());
+            WorkSpace.Instance.InitTelemetry();
+            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();
+        }
+
+        /// <summary>
+        /// Processes the startup for the Ginger UI. Initializes logging, checks the user profile settings, 
+        /// hides the console window, and loads the last solution if applicable.
+        /// </summary>
+        private async void ProcessGingerUIStartup(DoOptions doOptions)
+        {
+            if (WorkSpace.Instance?.UserProfile?.AppLogLevel == eAppReporterLoggingLevel.Debug)
+            {
+                GingerLog.StartCustomTraceListeners();
+            }
+
+            HideConsoleWindow();
+            bool checkAutoLoadSolution = WorkSpace.Instance?.UserProfile?.AutoLoadLastSolution ?? false;
+
+            try
+            {
+                if (doOptions != null&& WorkSpace.Instance?.UserProfile!=null)
+                {
+                    WorkSpace.Instance.UserProfile.AutoLoadLastSolution = false;
+                }
+
+                StartGingerUI();
+
+                if (doOptions != null && !string.IsNullOrWhiteSpace(doOptions.Solution))
+                {
+                    await LoadGingerSolutionAsync(doOptions);
+                }
+            }
+            finally
+            {
+                if (doOptions != null && WorkSpace.Instance?.UserProfile != null)
+                {
+                    WorkSpace.Instance.UserProfile.AutoLoadLastSolution = checkAutoLoadSolution;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Loads the Ginger solution asynchronously based on the provided DoOptions.
+        /// </summary>
+        /// <param name="doOptions">The options for loading the solution.</param>
+        private async Task LoadGingerSolutionAsync(DoOptions doOptions)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(doOptions.URL ))
+                {
+                    CLIHelper.GitProgresStatus += CLIHelper_GitProgresStatus;
+                }
+                MainWindow.ShowStatus(eStatusMsgType.PROCESS, "Loading Ginger Solution via deeplink...");
+                Reporter.ToLog(eLogLevel.INFO, "Loading Ginger Solution via deeplink...");
+
+                if (doOptions.SaveCredentials)
+                {
+                    await new DoOptionsHandler().RunAsync(doOptions);
+                }
+                else
+                {
+                    await LoadSolutionWithoutSavingCredentialsAsync(doOptions);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while processing command-line arguments", ex);
+            }
+            finally
+            {
+                if (!string.IsNullOrEmpty(doOptions.URL))
+                {
+                    CLIHelper.GitProgresStatus -= CLIHelper_GitProgresStatus;
+                }
+                this.Dispatcher.Invoke(() =>
+                {
+                    MainWindow.xProcessMsgIcon.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Empty;
+                    MainWindow.xProcessMsgTxtBlock.Text = string.Empty;
+                });
+            }
+        }
+
+        /// <summary>
+        /// Loads the solution without saving credentials asynchronously.
+        /// </summary>
+        /// <param name="doOptions">The options for loading the solution.</param>
+        private async Task LoadSolutionWithoutSavingCredentialsAsync(DoOptions doOptions)
+        {
+            if (WorkSpace.Instance?.UserProfile == null)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "User Profile is not found.");                
+            }
+
+            var gitUserName = WorkSpace.Instance?.UserProfile?.SourceControlUser;
+            var gitUserPassword = WorkSpace.Instance?.UserProfile?.SourceControlPass;
+
+            try
+            {
+                await new DoOptionsHandler().RunAsync(doOptions);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while processing command-line arguments", ex);
+            }
+            finally
+            {
+                if (WorkSpace.Instance?.UserProfile != null)
+                {
+                    WorkSpace.Instance.UserProfile.SourceControlUser = gitUserName;
+                    WorkSpace.Instance.UserProfile.SourceControlPass = gitUserPassword;
+                }
+            }
+        }
+        private void CLIHelper_GitProgresStatus(object? sender, string e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                MainWindow.xProcessMsgTxtBlock.Text = e;
+            });
+        }
 
         [DllImport("kernel32.dll")]
         static extern IntPtr GetConsoleWindow();
@@ -302,15 +522,33 @@ namespace Ginger
             ShowWindow(handle, SW_SHOW);
         }
 
-        private async void RunNewCLI(string[] args)
+        /// <summary>
+        /// Runs the new CLI process with the provided parsed arguments.
+        /// </summary>
+        /// <param name="parserResult">The parsed result of the command line arguments.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task RunNewCLI(ParserResult<object> parserResult)
         {
-            CLIProcessor cLIProcessor = new CLIProcessor();
-            await cLIProcessor.ExecuteArgs(args);
-
-            // do proper close !!!         
-            System.Windows.Application.Current.Shutdown(Environment.ExitCode);
+            try
+            {
+                if (parserResult != null)
+                {
+                    await cliProcessor.ProcessParsedArguments(parserResult);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while processing command-line arguments", ex);
+            }
+            finally
+            {
+                System.Windows.Application.Current.Shutdown(Environment.ExitCode);
+            }
         }
 
+        /// <summary>
+        /// Starts the Ginger UI. Initializes dictionaries and the main window.
+        /// </summary>
         public void StartGingerUI()
         {
             if (WorkSpace.Instance.RunningFromUnitTest)

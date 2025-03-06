@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1013,6 +1013,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             /// Dynamic/Virtual Runset Execution Request
             else
             {
+               
                 //## Creating new Runset
                 runSetConfig = new RunSetConfig();
                 if (gingerExecConfig.ExecutionID != null)
@@ -1246,6 +1247,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             {
                                 //using Virtual BF
                                 bf = new BusinessFlow() { Name = businessFlowConfig.Name, ExternalID = businessFlowConfig.ExternalID };
+                                bf.IsVirtual = true;
                                 ///Add Shared Activities 
                                 if (businessFlowConfig.SharedActivities != null && businessFlowConfig.SharedActivities.Count > 0)
                                 {
@@ -1634,7 +1636,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         {
                             publishToQCRunSetOperation = new RunSetActionPublishToQC();
                         }
-                        if (publishToALMOperationExecConfig.ALMType.ToLower() == "default")
+                        if (publishToALMOperationExecConfig.ALMType.Equals("default", StringComparison.CurrentCultureIgnoreCase))
                         {
                             publishToQCRunSetOperation.PublishALMType = gingerExecConfig.AlmsDetails != null ? gingerExecConfig.AlmsDetails.FirstOrDefault(x => x.IsDefault != null && x.IsDefault.Value == true).ALMType : publishToALMOperationExecConfig.ALMType.ToLower();
                         }
@@ -1749,7 +1751,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 runSetConfig.AllowInterActivityFlowControls = (bool)dynamicRunsetConfigs.AllowInterActivityFlowControls;
             }
-
             return runSetConfig;
         }
 

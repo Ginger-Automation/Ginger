@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using System.ComponentModel;
+using System.Reflection;
+using System;
 using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.Repository
@@ -97,20 +100,42 @@ namespace Amdocs.Ginger.Repository
             HTTPV11,
         }
 
-        public enum eContentType
+        public enum eRequestContentType
         {
-            [EnumValueDescription("application/json")]
+            [EnumValueDescription("application/json; charset=utf-8")]
             JSon,
             [EnumValueDescription("text/plain;charset=utf-8")]
             TextPlain,
-            [EnumValueDescription("xml")]
+            [EnumValueDescription("application/xml")]
             XML,
             [EnumValueDescription("application/x-www-form-urlencoded")]
             XwwwFormUrlEncoded,
             [EnumValueDescription("multipart/form-data")]
             FormData,
             [EnumValueDescription("application/pdf")]
-            PDF
+            PDF,
+            [EnumValueDescription("application/json")]
+            JSonWithoutCharset
+        }
+
+        public enum eResponseContentType
+        {
+            [EnumValueDescription("application/json; charset=utf-8")]
+            JSon,
+            [EnumValueDescription("text/plain")]
+            TextPlain,
+            [EnumValueDescription("application/xml")]
+            XML,
+            [EnumValueDescription("application/x-www-form-urlencoded")]
+            XwwwFormUrlEncoded,
+            [EnumValueDescription("multipart/form-data")]
+            FormData,
+            [EnumValueDescription("application/pdf")]
+            PDF,
+            [EnumValueDescription("*/*")]
+            Any,
+            [EnumValueDescription("application/json")]
+            JSonWithoutCharset
         }
 
         public enum eCookieMode

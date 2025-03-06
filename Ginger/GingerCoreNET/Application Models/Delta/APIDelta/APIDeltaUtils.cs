@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -105,7 +105,7 @@ namespace GingerCoreNET.Application_Models
                 existingAPIs = existingAPIs.Where(m => m.ResponseContentType == learnedModel.ResponseContentType).ToList();
 
                 // Filter matching APIs based on Content Type
-                existingAPIs = existingAPIs.Where(m => m.ContentType == learnedModel.ContentType).ToList();
+                existingAPIs = existingAPIs.Where(m => m.RequestContentType == learnedModel.RequestContentType).ToList();
             }
 
             // Filter matching APIs based on URL Domain

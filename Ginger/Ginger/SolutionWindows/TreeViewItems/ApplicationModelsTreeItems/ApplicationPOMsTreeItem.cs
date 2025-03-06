@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib;
+using Ginger.External.Katalon;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.TreeViewItemsLib;
@@ -130,8 +131,15 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowRefresh: false);
             }
+            MenuItem importMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Import", eImageType.ImportFile);
+            TreeViewUtils.AddSubMenuItem(importMenu, "Katalon Object-Repository", ImportFromKatalonObjectRepository, CommandParameter: null!, icon: eImageType.Katalon);
 
             AddSourceControlOptions(mContextMenu);
+        }
+
+        private void ImportFromKatalonObjectRepository(object sender, RoutedEventArgs e)
+        {
+            WizardWindow.ShowWizard(new ImportKatalonObjectRepositoryWizard(mPOMModelFolder), width: 1000);
         }
 
         internal void AddPOM(object sender, RoutedEventArgs e)

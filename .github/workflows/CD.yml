@@ -1,105 +1,62 @@
 name: CD
 
 on:
+    # Trigger the workflow manually with the `workflow_dispatch` event
     workflow_dispatch: 
-        inputs:
-            major:
-                description: Year
-                type: number 
-                required: true
-                default: '24'
-            minor:
-                description: Release
-                type: number 
-                required: true
-                default: '4'
-            build:
-                description: Beta
-                type: number 
-                required: true
-                default: '0'
-            revision:
-                description: Alpha
-                type: number 
-                required: true
-                default: '0'
-            SSLCert:
-                description: "Add Certificate"
-                type: choice
-                required: true
-                default: 'No'
-                options:
-                  - 'Yes'
-                  - 'No'
-jobs:
-    Create-version-Number:
-        runs-on: ubuntu-latest
-        
-        outputs:
-          version_number: ${{ steps.version.outputs.number }}
-          version_tag: ${{ steps.version.outputs.tag }}
+      inputs:
+        major:
+          description: Year # The year of the release, e.g., 24 for 2024
+          type: number 
+          required: true
+          default: '25'
+        minor:
+          description: Release # The minor version of the release, e.g., 4 for the fourth release of the year
+          type: number 
+          required: true
+          default: '1'
+        build:
+          description: Beta # The build number, typically used for beta versions
+          type: number 
+          required: true
+          default: '0'
+        revision:
+          description: Alpha # The revision number, typically used for alpha versions
+          type: number 
+          required: true
+          default: '0'
+        SSLCert:
+          description: "Add Certificate" # Option to add an SSL certificate
+          type: choice
+          required: true
+          default: 'No'
+          options:
+          - 'Yes' # Add SSL certificate
+          - 'No'  # Do not add SSL certificate
+jobs:            
+    Builder:
+        name: Build Solution
+        uses: ./.github/workflows/Build.yml
+        secrets: inherit
 
-        steps:           
-          - name: create version environment variable - alpha
-            if: ${{ github.event.inputs.revision != 0 }}
-            run: |
-                echo "gingertag=20${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}-Alpha.${{github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
-                echo "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.${{ github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
-          
-          - name: create version environment variable - BETA
-            if: ${{ (github.event.inputs.build != 0) && (github.event.inputs.revision == 0 )}} 
-            run: |
-              echo "gingertag=20${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}-Beta.${{ github.event.inputs.build}}" >> $GITHUB_ENV
-              echo "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.${{ github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
-
-          - name: create version environment variable - Release
-            if: ${{ (github.event.inputs.build == 0 ) && ( github.event.inputs.revision == 0) }} 
-            run: |
-              echo "gingertag=20${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}-Official" >> $GITHUB_ENV
-              echo "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.${{ github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
-
-          - name: create environment variable 
-            id: version
-            run: |
-              echo "number=${{ env.gingernumber}}" >> $GITHUB_OUTPUT
-              echo "tag=${{ env.gingertag}}" >> $GITHUB_OUTPUT
-
-          - name: create version variable text file
-            run: |
-              echo "NUMBER=${{env.gingernumber}}" > version.txt
-              echo "TAG=${{ env.gingertag}}" >> version.txt
-              cat version.txt
-          
-          - name: Cache Version text file
-            id: cache
-            uses: actions/cache@v3.2.6
-            with:
-              path: 
-                ./version.txt
-              key: 
-                cache-version-${{ github.run_number }}
-              enableCrossOsArchive:
-                true
-               
-    CI:
-        name: CI
-        needs: Create-version-Number
-        uses: ./.github/workflows/CI-2.yml
+    Ginger_Unit-Test:
+        name: Execute Unit Tests
+        needs: Builder
+        uses: ./.github/workflows/Test.yml
         secrets: inherit
      
     Release:
         name: Release
-        needs: CI
-        uses: ./.github/workflows/Release-2.yml
+        needs: Ginger_Unit-Test
+        uses: ./.github/workflows/Release.yml
         secrets: inherit
      
     Deploy:
         name: Deploy
         needs: Release
-        uses: ./.github/workflows/Deploy-2.yml
+        uses: ./.github/workflows/Deploy.yml
 
     Docker:
         name: Docker
-        needs: CI
+        needs: Ginger_Unit-Test
         uses: ./.github/workflows/Docker.yml
         secrets: inherit

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -57,6 +58,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     {
                         isEnableFriendlyLocatorGrid = true;
                     }
+                    BindingHandler.ObjFieldBinding(AcceptElementsFoundByMatchersCheckBox, CheckBox.IsCheckedProperty, mWizard.mPomDeltaUtils, nameof(PomDeltaUtils.AcceptElementFoundByMatcher));
                     SetAutoMapElementTypes();
                     SetAutoMapElementTypesGridView();
                     xLearnOnlyMappedElements.BindControl(mWizard.mPomDeltaUtils.PomLearnUtils, nameof(mWizard.mPomDeltaUtils.PomLearnUtils.LearnOnlyMappedElements));

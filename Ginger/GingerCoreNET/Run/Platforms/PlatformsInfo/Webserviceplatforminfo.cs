@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -92,15 +92,15 @@ namespace Amdocs.Ginger.CoreNET.Platform
                 contentType = mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType);
             }
 
-            if (contentType == ApplicationAPIUtils.eContentType.XML.ToString())
+            if (contentType == ApplicationAPIUtils.eRequestContentType.XML.ToString())
             {
                 extension = "xml";
             }
-            else if (contentType == ApplicationAPIUtils.eContentType.JSon.ToString())
+            else if (contentType == ApplicationAPIUtils.eRequestContentType.JSon.ToString())
             {
                 extension = "json";
             }
-            else if (contentType == ApplicationAPIUtils.eContentType.PDF.ToString())
+            else if (contentType == ApplicationAPIUtils.eRequestContentType.PDF.ToString())
             {
                 extension = "pdf";
             }
@@ -122,7 +122,7 @@ namespace Amdocs.Ginger.CoreNET.Platform
                 actName = PathHelper.CleanInValidPathChars(mAct.Description);
                 fullFileName = Path.Combine(directoryFullPath, actName + "_" + timeStamp + "_" + fileType + "." + extension);
                 Act.AddArtifactToAction(Path.GetFileName(fullFileName), mAct, fullFileName);
-                if (contentType != ApplicationAPIUtils.eContentType.PDF.ToString())
+                if (contentType != ApplicationAPIUtils.eRequestContentType.PDF.ToString())
                 {
                     File.WriteAllText(fullFileName, fileContent);
                 }

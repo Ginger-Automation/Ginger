@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -578,11 +578,19 @@ namespace Ginger.ALM
 
         public void RefreshALMItemFields(ObservableList<ExternalItemFieldBase> exitingFields, bool online, BackgroundWorker bw = null)
         {
-            if (ALMIntegration.Instance.AutoALMProjectConnect())
+            try
             {
-                //Get latestALMFields from ALMCore with Online flag
-                ObservableList<ExternalItemFieldBase> latestALMFields = AlmCore.GetALMItemFields(bw, online);
-                ObservableList<ExternalItemFieldBase> mergedFields = AlmCore.RefreshALMItemFields(exitingFields, latestALMFields);
+                if (ALMIntegration.Instance.AutoALMProjectConnect())
+                {
+                    //Get latestALMFields from ALMCore with Online flag
+                    ObservableList<ExternalItemFieldBase> latestALMFields = AlmCore.GetALMItemFields(bw, online);
+                    ObservableList<ExternalItemFieldBase> mergedFields = AlmCore.RefreshALMItemFields(exitingFields, latestALMFields);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Field are empty, Please refer to the error log for details", ex);
+                throw;
             }
         }
         internal ObservableList<ExternalItemFieldBase> GetUpdatedFields(ObservableList<ExternalItemFieldBase> mItemsFields, bool online, BackgroundWorker bw = null)

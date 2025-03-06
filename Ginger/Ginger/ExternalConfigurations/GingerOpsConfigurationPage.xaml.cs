@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -85,14 +85,6 @@ namespace Ginger.ExternalConfigurations
             GingerCoreNET.GeneralLib.General.CreateGingerOpsConfiguration();
 
 
-            if (GingerOpsAPI.IsTokenValid())
-            {
-                Reporter.ToUser(eUserMsgKey.GingerOpsConnectionSuccess);
-                HideLoader();
-                xTestConBtn.IsEnabled = true;
-                return;
-            }
-
             bool isAuthorized = await HandleTokenAuthorization();
             ShowConnectionResult(isAuthorized);
             HideLoader();
@@ -109,14 +101,17 @@ namespace Ginger.ExternalConfigurations
 
         public async Task<bool> HandleTokenAuthorization()
         {
-            if (string.IsNullOrEmpty(gingerOpsUserConfig.Token))
+            try
             {
                 return await GingerOpsAPI.RequestToken(ValueExpression.PasswordCalculation(gingerOpsUserConfig.ClientId),
-                                          ValueExpression.PasswordCalculation(gingerOpsUserConfig.ClientSecret),
-                                          ValueExpression.PasswordCalculation(gingerOpsUserConfig.IdentityServiceURL));
+                                              ValueExpression.PasswordCalculation(gingerOpsUserConfig.ClientSecret),
+                                              ValueExpression.PasswordCalculation(gingerOpsUserConfig.IdentityServiceURL));
             }
-
-            return true;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to request GingerOps token", ex);
+                return false;
+            }
         }
 
         public static void ShowConnectionResult(bool isAuthorized)

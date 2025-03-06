@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright;
 using Amdocs.Ginger.CoreNET.Drivers.WebServicesDriver;
 using Amdocs.Ginger.CoreNET.SourceControl;
@@ -181,7 +182,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             }
         }
 
-        public bool GetLatest(string path, SourceControlBase SourceControl)
+        public bool GetLatest(string path, SourceControlBase SourceControl, ProgressNotifier progressNotifier = null)
         {
             return SourceControlIntegration.GetLatest(path, SourceControl);
         }
@@ -289,6 +290,22 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                     break;
                 case eALMType.Azure:
                     almCore = new AzureDevOpsCore();
+                    break;
+                case eALMType.Qtest:
+                    almCore = new QtestCore();
+                    break;
+                case eALMType.QC:
+                    if (CurrentAlmConfigurations.UseRest)
+                    {
+                        almCore = new QCRestAPICore();
+                    }
+                    else
+                    {
+                        almCore = new QCCore();
+                    }
+                    break;
+                case eALMType.RQM:
+                    almCore = new RQMCore();
                     break;
                 default:
                     Reporter.ToLog(eLogLevel.ERROR, $"Invalid ALM Type - {almType}");

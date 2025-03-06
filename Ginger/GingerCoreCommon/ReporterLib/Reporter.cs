@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Timers;
 using Amdocs.Ginger.Common.Telemetry;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Amdocs.Ginger.Common
 {
@@ -37,7 +38,7 @@ namespace Amdocs.Ginger.Common
 
         #region ToLog
         public static eAppReporterLoggingLevel AppLoggingLevel { get; set; }
-        public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, TelemetryMetadata metadata = null)
+        public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, TelemetryMetadata metadata = null, ProgressStatus progressInformer=null)
         {
             if (WorkSpaceReporter == null || (logLevel == eLogLevel.DEBUG && AppLoggingLevel != eAppReporterLoggingLevel.Debug))
             {
@@ -51,10 +52,13 @@ namespace Amdocs.Ginger.Common
 
             if (ReportAllAlsoToConsole)
             {
-                ToConsole(logLevel, messageToLog, exceptionToLog);
+                ToConsole(logLevel, messageToLog, exceptionToLog, progressStatus: progressInformer);
             }
-
-            WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog);
+            if(progressInformer==null)
+            {
+                WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog);
+            }
+            
 
             if (TelemetryQueueManager != null)
             {
@@ -321,7 +325,7 @@ namespace Amdocs.Ginger.Common
 
 
         #region ToConsole        
-        public static void ToConsole(eLogLevel logLevel, string messageToConsole, Exception exceptionToConsole = null)
+        public static void ToConsole(eLogLevel logLevel, string messageToConsole, Exception exceptionToConsole = null, ProgressStatus progressStatus = null)
         {
             try
             {
@@ -334,7 +338,7 @@ namespace Amdocs.Ginger.Common
                     msg += Environment.NewLine + "Exception Details:" + Environment.NewLine + excFullInfo;
                 }
 
-                WorkSpaceReporter.ToConsole(logLevel, msg);
+                WorkSpaceReporter.ToConsole(logLevel, msg, progressStatus: progressStatus);
 
                 // if we have log to console event listener send the message 
                 logToConsoleEvent?.Invoke(logLevel, msg);

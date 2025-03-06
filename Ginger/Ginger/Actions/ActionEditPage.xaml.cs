@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -81,7 +81,6 @@ namespace Ginger.Actions
         private Act mAction;
         static public string sMultiLocatorVals = "";
         GenericWindow _pageGenericWin = null!;
-        //public ActionsPage ap;
 
         bool IsPageClosing = false;
 
@@ -418,7 +417,6 @@ namespace Ginger.Actions
                 BindingHandler.ObjFieldBinding(xEnableRetryMechanismCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableRetryMechanism));
                 BindingHandler.ObjFieldBinding(xRetryMechanismIntervalTextBox, TextBox.TextProperty, mAction, nameof(Act.RetryMechanismInterval));
                 BindingHandler.ObjFieldBinding(xRetryMechanismMaxRetriesTextBox, TextBox.TextProperty, mAction, nameof(Act.MaxNumberOfRetries));
-
                 SetRetryMechConfigsPnlView();
             }
 
@@ -718,7 +716,7 @@ namespace Ginger.Actions
             {
                 return; // no need to update the UI since we are closing, when done in Undo changes/Cancel 
             }
-            // we do restore and don't want to raise events which will cause exception  (a.Value = ""  - is the messer)
+            // we do restore and don't want to raise events which will cause exception  (a.Value = ""  - is the messier)
 
             if (mAction.ValueConfigsNeeded == false)
             {
@@ -970,6 +968,7 @@ namespace Ginger.Actions
                 viewCols.Add(new GridColView() { Field = ".....", Header = "  ...", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["SimulatedlValueExpressionButton"] });
                 viewCols.Add(new GridColView() { Field = "<<", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["AddActualToSimulButton"] });
                 viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Actual, Header = "Actual Value", WidthWeight = 180, BindingMode = BindingMode.OneWay });
+                viewCols.Add(new GridColView() { Field = ".......", Header = "...", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["ShowActualValueButton"] });                
                 viewCols.Add(new GridColView() { Field = ">>", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["AddActualToExpectButton"] });
                 viewCols.Add(new GridColView() { Field = nameof(ActReturnValue.Operator), Header = "Operator", WidthWeight = 130, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = OperatorList });
                 // viewCols.Add(new GridColView() { Field = ">>", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["AddActualToExpectButton"] });
@@ -1015,7 +1014,7 @@ namespace Ginger.Actions
                 supportSimulationCheckbox = xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns));
 
 
-                //Added the check box list in multiselected combo box
+                //Added the check box list in multi-selected combo box
                 columnMultiSelectComboBox.ItemsSource = new Dictionary<string, object>
                         {
                             { "Description", ActReturnValue.Fields.Description },
@@ -1054,6 +1053,8 @@ namespace Ginger.Actions
                             case "Store To":
                                 node.IsSelected = columnPreferences.Contains("StoreTo", StringComparison.OrdinalIgnoreCase);
                                 break;
+                            case "All":
+                                break;
                             default:
                                 Reporter.ToLog(eLogLevel.ERROR, "Invalid format in column preferences");
                                 break;
@@ -1066,7 +1067,6 @@ namespace Ginger.Actions
                     }
                 }
 
-                // Creating the CheckBox for "Description"
                 CheckBox descriptionCheckBox = new CheckBox
                 {
                     Content = "Description",
@@ -1101,9 +1101,9 @@ namespace Ginger.Actions
         }
 
         /// <summary>
-        /// Handles the click event of the checkboxes within the ColumnMultiSelectComboBox.
+        /// Handles the click event of the check-boxes within the ColumnMultiSelectComboBox.
         /// Updates the GridColsView of the customDynamicView based on the selected columns.
-        /// If the "All" checkbox is clicked, it selects or deselects all columns accordingly.
+        /// If the "All" check-box is clicked, it selects or deselects all columns accordingly.
         /// Iterates through the node list to add the selected columns to the GridColsView.
         /// Updates the column count and sets the text of the ColumnMultiSelectComboBox to reflect the number of selected columns.
         /// If the action supports simulation, it adds simulated actual columns to the GridColsView.
@@ -1182,6 +1182,8 @@ namespace Ginger.Actions
                         });
                         columnCount = node.IsSelected ? columnCount + 1 : columnCount;
                         columnPreferences += node.IsSelected ? "StoreTo" : "";
+                        break;
+                    case "All":
                         break;
                     default:
                         Reporter.ToLog(eLogLevel.ERROR, "Invalid format in column preferences");
@@ -1459,6 +1461,20 @@ namespace Ginger.Actions
         {
             ActReturnValue ARV = (ActReturnValue)xOutputValuesGrid.CurrentItem;
             ARV.Expected = ARV.Actual;
+        }
+
+        private void GridShowActualValueButton_Click(object sender, RoutedEventArgs e)
+        {
+            ActReturnValue ARV = (ActReturnValue)xOutputValuesGrid.CurrentItem;
+            if (!string.IsNullOrEmpty(ARV.Actual))
+            {
+                string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(ARV.Actual);
+
+                DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
+                docPage.ShowAsWindow("Actual Value");
+
+                GingerCoreNET.GeneralLib.General.DeleteTempTextFile(tempFilePath);
+            }
         }
 
         private void GridAddActualToSimulButton_Click(object sender, RoutedEventArgs e)
@@ -2342,6 +2358,10 @@ namespace Ginger.Actions
             {
                 xRetryMechConfigsPnl.Visibility = Visibility.Visible;
                 xRetryExpander.IsExpanded = true;
+                if (mAction?.MaxNumberOfRetries != null)
+                {
+                    xRetryMechanismMaxRetriesTextBox.Text = mAction.MaxNumberOfRetries.ToString();
+                }
             }
             else
             {

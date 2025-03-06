@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,8 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Ginger.ExecuterService.Contracts;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
+using GingerCore;
 using GingerCore.Environments;
 using System;
 using static GingerCore.Environments.Database;
@@ -79,7 +81,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             ValidateDatabaseConfig(databaseConfig);
             return new()
             {
-                ConnectionString = databaseConfig.ConnectionString,
+                ConnectionString = DecryptConnectionString(databaseConfig),
                 Name = databaseConfig.Name,
                 KeepConnectionOpen = databaseConfig.KeepConnectionOpen ?? false,
                 DBType = ConvertDBConfigTypeToDBType(databaseConfig.DBType)
@@ -90,9 +92,21 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
         {
             ValidateDatabaseConfig(db);
             dbFromGinger.Name = db.Name;
-            dbFromGinger.ConnectionString = db.ConnectionString;
+            dbFromGinger.ConnectionString = DecryptConnectionString(db); 
             dbFromGinger.KeepConnectionOpen = db.KeepConnectionOpen ?? false;
             dbFromGinger.DBType = ConvertDBConfigTypeToDBType(db.DBType);
+        }
+
+        public static string DecryptConnectionString(DatabaseConfig db)
+        {                      
+            if (db.IsConnectionStringEncrypted!=null && db.IsConnectionStringEncrypted.Value)
+            {
+                return EncryptionHandler.DecryptwithKey(db.ConnectionString, WorkSpace.Instance.Solution.EncryptionKey);
+            }
+            else
+            {
+                return db.ConnectionString;
+            }          
         }
     }
 }

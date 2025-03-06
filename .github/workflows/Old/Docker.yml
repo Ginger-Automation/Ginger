@@ -1,0 +1,121 @@
+name: dockerdemo
+
+on:
+  workflow_dispatch: 
+    inputs:
+      Version:
+        type: string 
+        required: true
+  workflow_call:
+  
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: Deploy
+    permissions:
+      contents: read
+      packages: write
+    
+    env:
+      BUILD_CONFIGURATION: Release
+      
+    steps: 
+      - name: Restore Version text file
+        uses: actions/cache@v3.2.6
+        with:
+          path: ./version.txt
+          key: cache-version-${{ github.run_number }}
+          enableCrossOsArchive:
+            true     
+   
+      - name: Create variables from Version text file 
+        shell: bash
+        run: |
+          source version.txt
+          echo $TAG
+          echo "gingernumber=$NUMBER" >> $GITHUB_ENV
+          echo "gingertag=$TAG" >> $GITHUB_ENV
+          
+      - name: Restore static site content
+        uses: actions/cache@v3.2.6
+        with:
+          path: ./**
+          key: cache-site-${{ github.run_number }}
+          enableCrossOsArchive:
+            true  
+
+# ------------------------------------------------------------------------------------------------------
+# Log in to the Container registry - GHCR
+# ------------------------------------------------------------------------------------------------------
+
+      - name: Log in to the Container registry - GHCR
+        run: | 
+          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} 
+# ------------------------------------------------------------------------------------------------------
+# Create GingerRuntime docker image
+# ------------------------------------------------------------------------------------------------------
+      - name: Building GingerRuntime docker image
+        run: |
+          cd Ginger/GingerRuntime
+          docker build -t gingerruntime .
+        
+      - name: Change image tag to be pushed for GHCR
+        run: |
+          docker tag gingerruntime ghcr.io/${{ github.actor }}/gingerruntime:"${{ env.gingertag}}"
+          
+      - name: Pushing GingerRuntime Image
+        run: | 
+          docker push ghcr.io/${{ github.actor }}/gingerruntime:"${{ env.gingertag}}"
+
+      - name: Change image tag(latest) to be pushed for GHCR
+        run: |
+          docker tag gingerruntime ghcr.io/${{ github.actor }}/gingerruntime:latest
+          
+      - name: Pushing GingerRuntime Image
+        run: | 
+          docker push ghcr.io/${{ github.actor }}/gingerruntime:latest
+
+# ------------------------------------------------------------------------------------------------------
+# Create GingerRuntime with Browsers docker image
+# ------------------------------------------------------------------------------------------------------
+      - name: Building gingerruntime-browsers docker image
+        run: |
+          cd Ginger/GingerRuntime/Containers/Browsers
+          docker build -t gingerruntime-browsers .
+        
+      - name: Change image tag to be pushed for GHCR
+        run: |
+          docker tag gingerruntime-browsers ghcr.io/${{ github.actor }}/gingerruntime-browsers:"${{ env.gingertag}}"
+          
+      - name: Pushing gingerruntime-browsers Image
+        run: | 
+          docker push ghcr.io/${{ github.actor }}/gingerruntime-browsers:"${{ env.gingertag}}"
+
+      - name: Change image tag(latest) to be pushed for GHCR
+        run: |
+          docker tag gingerruntime-browsers ghcr.io/${{ github.actor }}/gingerruntime-browsers:latest
+          
+      - name: Pushing gingerruntime-browsers Image
+        run: | 
+          docker push ghcr.io/${{ github.actor }}/gingerruntime-browsers:latest
+
+# ------------------------------------------------------------------------------------------------------
+# Create Ginger  docker image [Switch to docker desktop containers]
+# ------------------------------------------------------------------------------------------------------
+      # - name: Building ginger docker image
+      #   run: |
+      #     cd Ginger
+      #     dir
+      #     docker build -t ginger .
+        
+      # - name: Change image tag to be pushed for GHCR
+      #   run: |
+      #     docker tag ginger ghcr.io/${{ github.actor }}/ginger:"${{env.gingertag}}"
+          
+      # - name: Pushing Ginger Image
+      #   run: | 
+      #     docker push ghcr.io/${{ github.actor }}/ginger:"${{ env.gingertag}}"

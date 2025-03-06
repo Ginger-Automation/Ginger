@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,13 +21,16 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.MoveToGingerWPF.Run_Set_Pages;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.DataSource;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -74,7 +77,7 @@ namespace Ginger.Run
                 {
                     return eRunnerItemType.BusinessFlow;
                 }
-                else if (ItemObject.GetType() == typeof(GingerCore.Activity))
+                else if (ItemObject is Activity)
                 {
                     return eRunnerItemType.Activity;
                 }
@@ -161,15 +164,6 @@ namespace Ginger.Run
             {
                 foreach (Activity ac in ((BusinessFlow)ItemObject).Activities)
                 {
-                    if (ac.GetType() == typeof(ErrorHandler))
-                    {
-                        continue;//do not show Error Handler for now
-                    }
-
-                    if (ac.GetType() == typeof(CleanUpActivity))
-                    {
-                        continue;//do not show Clean Up Activity for now
-                    }
 
                     RunnerItemPage ri = new RunnerItemPage(Runnerobj: ac, runnerItemEventHandler: _runnerItemEventHandler);
                     this.Context.BusinessFlow = (BusinessFlow)ItemObject;
@@ -190,20 +184,25 @@ namespace Ginger.Run
                     mItemChilds.Add(ri);
                 }
             }
-            else if (ItemObject.GetType() == typeof(Activity))
+            else if (ItemObject is Activity activity)
             {
-                foreach (GingerCore.Actions.Act act in ((Activity)ItemObject).Acts)
+                IEnumerable<GingerCore.Actions.Act> acts = ((Activity)ItemObject).Acts.OfType<GingerCore.Actions.Act>();
+                if (acts != null)
                 {
-                    RunnerItemPage ri = new RunnerItemPage(Runnerobj: act, runnerItemEventHandler: _runnerItemEventHandler);
-                    this.Context.Activity = (Activity)ItemObject;
-                    ri.Context = this.Context;
-                    act.Context = this.Context;
-                    ri.xItemSeparator.Visibility = Visibility.Collapsed;
-                    ri.ItemName = act.Description;
-                    ri.ItemGuid = act.Guid;
-                    ri.xViewRunnerItem.Visibility = Visibility.Visible;
-                    ri.xDetailView.ToolTip = "Expand / Collapse Action";
-                    mItemChilds.Add(ri);
+
+                    foreach (GingerCore.Actions.Act act in acts)
+                    {
+                        RunnerItemPage ri = new RunnerItemPage(Runnerobj: act, runnerItemEventHandler: _runnerItemEventHandler);
+                        this.Context.Activity = activity;
+                        ri.Context = this.Context;
+                        act.Context = this.Context;
+                        ri.xItemSeparator.Visibility = Visibility.Collapsed;
+                        ri.ItemName = act.Description;
+                        ri.ItemGuid = act.Guid;
+                        ri.xViewRunnerItem.Visibility = Visibility.Visible;
+                        ri.xDetailView.ToolTip = "Expand / Collapse Action";
+                        mItemChilds.Add(ri);
+                    }
                 }
             }
         }
@@ -224,10 +223,10 @@ namespace Ginger.Run
                     xRunnerItemContinue.ToolTip = "Resume Run from this " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                     xViewRunnerItem.ToolTip = "View " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                 }
-                else if (ItemObject.GetType() == typeof(GingerCore.Activity))
+                else if (ItemObject is Activity activity)
                 {
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(Activity.Status), BindingMode.OneWay);
-                    PropertyChangedEventManager.AddHandler(source: ((Activity)ItemObject), handler: RunnerItem_ActivityPropertyChanged, propertyName: allProperties);
+                    PropertyChangedEventManager.AddHandler(source: activity, handler: RunnerItem_ActivityPropertyChanged, propertyName: allProperties);
                     xRunnerItemContinue.ToolTip = "Resume Run from this " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     xViewRunnerItem.ToolTip = "View " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     xRunnerItemMenu.Visibility = Visibility.Collapsed;

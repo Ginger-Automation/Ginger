@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
+using System;
+using System.Collections.Generic;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -37,6 +37,14 @@ namespace Amdocs.Ginger.Repository
         private bool mIsSelected = true;
         // [IsSerializedForLocalRepository]
         public bool IsSelected { get { return mIsSelected; } set { if (mIsSelected != value) { mIsSelected = value; OnPropertyChanged(nameof(IsSelected)); } } }
+
+        /// <summary>
+        /// Controls whether to use live API (true) or mock API (false).
+        /// Defaults to true to ensure live API usage unless explicitly configured for mocking.
+        /// </summary>
+        private bool mUseLiveAPI = true;
+        [IsSerializedForLocalRepository(DefaultValue: true)]
+        public bool UseLiveAPI { get { return mUseLiveAPI; } set { if (mUseLiveAPI != value) { mUseLiveAPI = value; OnPropertyChanged(nameof(UseLiveAPI)); } } }
 
         //[IsSerializedForLocalRepository]
         public Guid ApplicationGuid { get; set; }//Do not use, for backward support
@@ -140,13 +148,19 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public ApplicationAPIUtils.eRequestType RequestType { get { return mRequestType; } set { if (mRequestType != value) { mRequestType = value; OnPropertyChanged(nameof(RequestType)); } } }
 
-        ApplicationAPIUtils.eContentType mResponseContentType = ApplicationAPIUtils.eContentType.JSon;
+        /// <summary>
+        /// Gets or sets the content type expected in the response.
+        /// </summary>
+        ApplicationAPIUtils.eResponseContentType mResponseContentType = ApplicationAPIUtils.eResponseContentType.JSon;
         [IsSerializedForLocalRepository]
-        public ApplicationAPIUtils.eContentType ResponseContentType { get { return mResponseContentType; } set { if (mResponseContentType != value) { mResponseContentType = value; OnPropertyChanged(nameof(ResponseContentType)); } } }
+        public ApplicationAPIUtils.eResponseContentType ResponseContentType { get { return mResponseContentType; } set { if (mResponseContentType != value) { mResponseContentType = value; OnPropertyChanged(nameof(ResponseContentType)); } } }
 
-        ApplicationAPIUtils.eContentType mContentType = ApplicationAPIUtils.eContentType.JSon;
+        /// <summary>
+        /// Gets or sets the content type to be used in the request.
+        /// </summary>
+        ApplicationAPIUtils.eRequestContentType mRequestContentType = ApplicationAPIUtils.eRequestContentType.JSon;
         [IsSerializedForLocalRepository]
-        public ApplicationAPIUtils.eContentType ContentType { get { return mContentType; } set { if (mContentType != value) { mContentType = value; OnPropertyChanged(nameof(ContentType)); } } }
+        public ApplicationAPIUtils.eRequestContentType RequestContentType { get { return mRequestContentType; } set { if (mRequestContentType != value) { mRequestContentType = value; OnPropertyChanged(nameof(RequestContentType)); } } }
 
         ApplicationAPIUtils.eCookieMode mCookieMode = ApplicationAPIUtils.eCookieMode.Session;
         [IsSerializedForLocalRepository]
@@ -179,6 +193,11 @@ namespace Amdocs.Ginger.Repository
         {
             List<string> list = [nameof(this.HttpHeaders), nameof(this.APIModelBodyKeyValueHeaders)];
             return list;
+        }
+
+        public override string GetItemType()
+        {
+            return nameof(ApplicationAPIModel);
         }
     }
 }

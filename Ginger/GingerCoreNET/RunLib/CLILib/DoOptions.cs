@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,25 +17,74 @@ limitations under the License.
 #endregion
 
 using CommandLine;
+using System;
+using System.IO;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
 
-    [Verb("do", HelpText = "Solution Operations like: analyze, clean and more for list run 'ginger help solution")]
-    public class DoOptions  // 'ginger do --operation analyze' run analyzer on solution
+    [Verb("do", HelpText = "Solution Operations like: open, analyze, info and more 'ginger help solution")]
+    public class DoOptions : SourceControlOptions  // 'ginger do --operation analyze' run analyzer on solution
     {
         public enum DoOperation
         {
             analyze,
             info,
-            clean
+            clean,
+            open
         }
 
         [Option('o', "operation", Required = true, HelpText = "Select operation to run on solution")]
         public DoOperation Operation { get; set; }
 
-        [Option('s', "solution", Required = true, HelpText = "Set solution folder")]
-        public string Solution { get; set; }
+        private string _solution;
+
+        [Option('s', "solution", Required = true, HelpText = "Provide solution folder path")]
+        public string Solution
+        {
+            get => _solution;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    return;
+                }
+                if (value.IndexOf("Ginger.Solution.xml", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    value = Path.GetDirectoryName(value)?.Trim() ?? string.Empty;
+
+                }
+                _solution = value;
+            }
+        }
+
+
+        [Option("encryptionKey", Required = false, HelpText = "(Optional) Encryption key of your solution.")]
+        public string EncryptionKey { get; set; }
+
+        [Option("savecredentials", Required = false, Default = false, HelpText = "(Optional) To save the Credentials")]
+        public bool SaveCredentials { get; set; }
+
+        [Option("executionId", Required = false, HelpText = "(Optional) Id of a RunSet execution.")]
+        public string ExecutionId { get; set; }
+
+        [Option("runSetId", Required = false, HelpText = "(Optional) Id of the RunSet to be opened.")]
+        public string RunSetId { get; set; }
+
+        [Option("runSetName", Required = false, HelpText = "(Optional) Name of the RunSet to be opened.")]
+        public string RunSetName { get; set; }
+
+        [Option("businessFlowId", Required = false, HelpText = "(Optional) Id of the Business Flow to be opened.")]
+        public string BusinessFlowId { get; set; }
+
+        [Option("businessFlowName", Required = false, HelpText = "(Optional) Name of the Business Flow to be opened.")]
+        public string BusinessFlowName { get; set; }
+
+        [Option("sharedActivityName", Required = false, HelpText = "(Optional) Name of the Shared Repository Activity to be opened.")]
+        public string SharedActivityName { get; set; }
+
+        [Option("sharedActivityId", Required = false, HelpText = "(Optional) Id of the Shared Repository Activity to be opened.")]
+        public string SharedActivityId { get; set; }
 
     }
 

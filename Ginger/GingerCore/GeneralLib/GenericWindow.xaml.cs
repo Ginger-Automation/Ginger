@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -54,8 +54,7 @@ namespace Ginger
         double mPageOriginalHeight = -1;
         private bool OwnerWindowClosing = false;
 
-        public GenericWindow(Window Owner, eWindowShowStyle windowStyle, string windowTitle,
-                                Page windowPage, ObservableList<Button> windowBtnsList = null, bool showCloseBtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, FrameworkElement loaderElement = null)
+        public GenericWindow(Window Owner, eWindowShowStyle windowStyle, string windowTitle, Page windowPage, ObservableList<Button> windowBtnsList = null, bool showCloseBtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, FrameworkElement loaderElement = null, FrameworkElement progressBar = null, FrameworkElement progressBarText = null)
         {
             InitializeComponent();
             this.Owner = Owner;
@@ -268,10 +267,34 @@ namespace Ginger
                 }
 
                 loaderElement.Margin = margin;
-                //loaderElement.Style = this.FindResource("$RoundTextButtonStyle_Generic") as Style;
                 DockPanel.SetDock(loaderElement, Dock.Left);
                 BottomPanel.Children.Add(loaderElement);
 
+            }
+            if (progressBar != null)
+            {
+                Thickness margin = progressBar.Margin;
+                if (margin.Left < 10)
+                {
+                    margin.Left = 10;
+                }
+
+                progressBar.Margin = margin;
+                DockPanel.SetDock(progressBar, Dock.Top); // Changed to Top to stack elements vertically
+                BottomPanel.Children.Add(progressBar);
+            }
+
+            if (progressBarText != null)
+            {
+                Thickness margin = progressBarText.Margin;
+                if (margin.Left < 10)
+                {
+                    margin.Left = 10;
+                }
+
+                progressBarText.Margin = margin;
+                DockPanel.SetDock(progressBarText, Dock.Top); // Changed to Top to stack elements vertically
+                BottomPanel.Children.Add(progressBarText);
             }
         }
 

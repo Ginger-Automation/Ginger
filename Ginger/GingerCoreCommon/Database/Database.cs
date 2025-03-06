@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ namespace GingerCore.Environments
                 eDBTypes.MySQL => "Server={Server URL};Database={Database Name};UID={User Name};PWD={User Password};",
                 eDBTypes.CosmosDb => "AccountEndpoint={End Point URL};AccountKey={Account Key};",
                 eDBTypes.Hbase => "Server={Server URL};Port={Port No};User Id={User Name}; Password={Password};Database={Database Name};",
-                eDBTypes.MongoDb => "mongodb://database_username:password@server_url/DBName",
+                eDBTypes.MongoDb => "mongodb://database_username:password@server_url/DBName\nIf database_username/password/DBName contains special characters (e.g. @) then replace them with URL encoded characters",
                 _ => "Data Source={Data Source};User Id={User Name};Password={User Password};",
             };
         }

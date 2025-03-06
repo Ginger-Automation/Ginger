@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,8 +31,14 @@ namespace Amdocs.Ginger.Common.UIElement
         [IsSerializedForLocalRepository]
         public string Value { get; set; }
 
+
+        private ePomElementCategory? mCategory;
         [IsSerializedForLocalRepository]
-        public ePomElementCategory? Category { get; set; }
+        public ePomElementCategory? Category
+        {
+            get { return mCategory; }
+            set { if (mCategory != value) { mCategory = value; OnPropertyChanged(nameof(Category)); } }
+        }
 
         [IsSerializedForLocalRepository(true)]
         public bool ShowOnUI { get; set; } = true;

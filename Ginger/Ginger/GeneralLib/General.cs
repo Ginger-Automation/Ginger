@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,12 +21,14 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Help;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -662,6 +664,29 @@ namespace Ginger
             }
 
             return s.Replace("_", "__");
+        }
+
+        /// <summary>
+        /// Splits the input string into a list of strings, preserving paths enclosed in quotes.
+        /// </summary>
+        /// <param name="input">The input string to split.</param>
+        /// <returns>A list of strings split from the input.</returns>
+        public static List<string> SplitWithPaths(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return [];
+            }
+            var pattern = @"[^\s""']+|""([^""]*)""|'([^']*)'";
+            var matches = Regex.Matches(input, pattern);
+            List<string> results = [];
+
+            foreach (Match match in matches)
+            {
+                results.Add(match.Value.Trim());
+            }
+
+            return results;
         }
     }
 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using GingerCore.Actions.Common;
+using GingerCore.Platforms.PlatformsInfo;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -178,6 +180,24 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                     case ActUIElement.eElementAction.MouseClick:
                         await HandleMouseClickAsync();
                         break;
+                    case ActUIElement.eElementAction.GetSelectedValue:
+                        await GetSelectedValueAsync();
+                        break;
+                    case ActUIElement.eElementAction.GetTextLength:
+                        await GetTextLengthAsync();
+                        break;
+                    case ActUIElement.eElementAction.GetValidValues:
+                        await GetValidValuesAsync();
+                        break;
+                    case ActUIElement.eElementAction.DragDrop:
+                        await DragDropAsync();
+                        break;
+                    case ActUIElement.eElementAction.DrawObject:
+                        await DrawObjectAsync();
+                        break;
+                    case ActUIElement.eElementAction.MultiSetValue:
+                        await MultiSetValueAsync();
+                        break;
                     default:
                         string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActUIElement.eElementAction), _act.ElementAction);
                         _act.Error = $"Operation '{operationName}' is not supported";
@@ -187,6 +207,144 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             catch (Exception ex)
             {
                 _act.Error = ex.Message;
+            }
+        }
+
+
+        /// <summary>
+        /// Sets the value of multiple elements asynchronously.
+        /// </summary>
+        private async Task MultiSetValueAsync()
+        {
+            try
+            {
+                IEnumerable<IBrowserElement> elements = await _elementLocator.FindMatchingElements(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+                if (elements != null)
+                {
+                    foreach (IBrowserElement element in elements)
+                    {
+                        await element.ClearAsync();
+                        await element.SetTextAsync(_act.GetInputParamCalculatedValue("Value"));
+                        await Task.Delay(500);
+                    }
+                }
+                else
+                {
+                    throw new InvalidActionConfigurationException($"Elements not found - " + _act.ElementLocateBy + " " + _act.ElementLocateValueForDriver);
+                }
+            }
+            catch
+            {
+                throw new InvalidActionConfigurationException($"Multi set value operation cancelled.");
+            }
+        }
+
+        /// <summary>
+        /// Draws an object asynchronously.
+        /// </summary>
+        private async Task DrawObjectAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            await element.DrawObjectAsync();
+        }
+        /// <summary>
+        /// Performs a drag and drop operation asynchronously.
+        /// </summary>
+        private async Task DragDropAsync()
+        {
+            try
+            {
+                IBrowserElement sourceElement = await GetFirstMatchingElementAsync();
+
+                if (_act.TargetLocateBy == eLocateBy.ByXY)
+                {
+                    var xLocator = Convert.ToInt32(_act.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate));
+                    var yLocator = Convert.ToInt32(_act.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate));
+                    await sourceElement.DragDropXYCordinateAsync(xLocator, yLocator);
+                    return;
+                }
+
+                IEnumerable<IBrowserElement> elements = await _elementLocator.FindMatchingElements(_act.TargetLocateBy, _act.TargetLocateValue);
+                IBrowserElement? targetElement = elements?.FirstOrDefault();
+                if (targetElement == null || sourceElement == null)
+                {
+                    throw new InvalidActionConfigurationException($"Source or Target element not found - " + _act.TargetLocateBy + " " + _act.TargetLocateValue);
+                }
+
+                if (!Enum.TryParse(_act.GetInputParamValue(ActUIElement.Fields.DragDropType)?.ToString(), out ActUIElement.eElementDragDropType dragDropType))
+                {
+                    _act.Error = "Failed to perform drag and drop, invalid drag and drop type";
+                    return;
+                }
+                switch (dragDropType)
+                {
+                    case ActUIElement.eElementDragDropType.DragDropSelenium:
+                        await sourceElement.DragDropAsync(targetElement);
+                        break;
+                    case ActUIElement.eElementDragDropType.DragDropJS:
+                        await sourceElement.DragDropJSAsync(targetElement);
+                        break;
+                    default:
+                        _act.Error = "Failed to perform drag and drop, invalid drag and drop type";
+                        break;
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the valid values of the first matching browser element asynchronously.
+        /// </summary>
+        private async Task GetValidValuesAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+
+            string text = await element.GetValidValuesAsync();
+            if (!string.IsNullOrEmpty(text))
+            {
+                _act.AddOrUpdateReturnParamActual("Actual", text);
+            }
+            else
+            {
+                throw new InvalidActionConfigurationException("Valid text not found.");
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the text length of the first matching browser element asynchronously.
+        /// </summary>
+        private async Task GetTextLengthAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            string textLenth = await element.AttributeValueAsync(name: "value");
+            if (!string.IsNullOrEmpty(textLenth))
+            {
+                _act.AddOrUpdateReturnParamActual("Actual", textLenth.Length.ToString());
+            }
+            else
+            {
+                throw new InvalidActionConfigurationException("Text not found.");
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the selected value of the first matching browser element asynchronously.
+        /// </summary>
+        private async Task GetSelectedValueAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+
+            string value = await element.GetSelectedValueAsync();
+            if (!string.IsNullOrEmpty(value))
+            {
+                _act.AddOrUpdateReturnParamActual("Actual", value);
+            }
+            else
+            {
+                throw new InvalidActionConfigurationException("Selected value not found.");
             }
         }
 
@@ -201,7 +359,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             IBrowserElement? firstElement = elements.FirstOrDefault();
             if (firstElement == null)
             {
-                throw new EntityNotFoundException($"No element found by locator '{_act.ElementLocateBy}' and value '{_act.ElementLocateValueForDriver}'");
+                throw new InvalidActionConfigurationException($"No element found by locator '{_act.ElementLocateBy}' and value '{_act.ElementLocateValueForDriver}'");
             }
 
             return firstElement;
@@ -221,7 +379,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         /// </summary>
         private async Task HandleClickOperationAsync()
         {
-
             IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.ClickAsync();
         }
@@ -610,52 +767,116 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         /// </summary>
         private async Task HandleClickAndValidateAsync()
         {
-            //Click Type
-            ActUIElement.eElementAction clickType = Enum.Parse<ActUIElement.eElementAction>(_act.GetInputParamValue(ActUIElement.Fields.ClickType).ToString() ?? "");
-            switch (clickType)
+            string clickTypeAsString = _act.GetInputParamValue(ActUIElement.Fields.ClickType).ToString() ?? "";
+            if (!Enum.TryParse(clickTypeAsString, out ActUIElement.eElementAction clickType))
             {
-                case ActUIElement.eElementAction.Click:
-                    await HandleClickOperationAsync();
-                    break;
-                case ActUIElement.eElementAction.JavaScriptClick:
-                    await HandleJavaScriptClickAsync();
-                    break;
-                case ActUIElement.eElementAction.MouseClick:
-                    await HandleMouseClickAsync();
-                    break;
-                case ActUIElement.eElementAction.MousePressRelease:
-                    await HandleMousePressReleaseAsync();
-                    break;
-                case ActUIElement.eElementAction.AsyncClick:
-                    await HandleAsyncClickAsync();
-                    break;
-                default:
-                    _act.Error = $"Operation '{clickType}' is not supported by Playwright driver";
-                    break;
+                _act.Error = $"Unknown click type '{clickTypeAsString}'";
+                return;
             }
 
-            // Validate the element
-            eLocateBy validateElementLocateBy = Enum.Parse<eLocateBy>(_act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString() ?? "");
-            string validationElementLocatorValue = _act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocatorValue).ToString() ?? "";
-            IEnumerable<IBrowserElement> validationElementSearchResult = await _elementLocator.FindMatchingElements(validateElementLocateBy, validationElementLocatorValue);
-            IBrowserElement? elementToValidate;
-            if (validationElementSearchResult.Any())
+            string validationElementLocateByAsString = _act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString() ?? "";
+            if (!Enum.TryParse(validationElementLocateByAsString, out eLocateBy validationElementLocateBy))
             {
-                elementToValidate = validationElementSearchResult.FirstOrDefault();
+                _act.Error = $"Unknown locate by '{validationElementLocateByAsString}' for validation element";
+                return;
+            }
+            string validationElementLocateValue = _act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocatorValue).ToString() ?? "";
+
+            string validationTypeAsString = _act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString() ?? "";
+            if (!Enum.TryParse(validationTypeAsString, out ActUIElement.eElementAction validationType))
+            {
+                _act.Error = $"Unsupported validation type '{validationTypeAsString}'";
+                return;
+            }
+
+            string loopThroughClicksAsString = _act.GetInputParamValue(ActUIElement.Fields.LoopThroughClicks);
+            if (!bool.TryParse(loopThroughClicksAsString, out bool loopThroughClicks))
+            {
+                _act.Error = $"Loop Through '{loopThroughClicksAsString}' is not a valid boolean value";
+                return;
+            }
+
+            IBrowserElement? validationElement = null;
+
+            IEnumerable<ActUIElement.eElementAction> clicks;
+            if (loopThroughClicks)
+            {
+                clicks = [clickType, .. new WebPlatform().GetPlatformUIClickTypeList()];
             }
             else
             {
-                throw new EntityNotFoundException($"No element found for validation by locator '{validateElementLocateBy}' and value '{validationElementLocatorValue}'");
+                clicks = [clickType];
             }
-            //Validation type
-            string validationType = _act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString() ?? "";
-            bool validationResult = validationType switch
-            {
-                nameof(ActUIElement.eElementAction.IsEnabled) => await elementToValidate.IsEnabledAsync(),
-                nameof(ActUIElement.eElementAction.IsVisible) => await elementToValidate.IsVisibleAsync(),
-                _ => throw new NotImplementedException($"Unsupported validation type '{validationType}'")
-            };
 
+            bool wasAnyClickSuccessful = false;
+            foreach (ActUIElement.eElementAction click in clicks)
+            {
+                bool wasClickSuccessful = false;
+                try
+                {
+                    switch (click)
+                    {
+                        case ActUIElement.eElementAction.Click:
+                            await HandleClickOperationAsync();
+                            break;
+                        case ActUIElement.eElementAction.JavaScriptClick:
+                            await HandleJavaScriptClickAsync();
+                            break;
+                        case ActUIElement.eElementAction.MouseClick:
+                            await HandleMouseClickAsync();
+                            break;
+                        case ActUIElement.eElementAction.MousePressRelease:
+                            await HandleMousePressReleaseAsync();
+                            break;
+                        case ActUIElement.eElementAction.AsyncClick:
+                            await HandleAsyncClickAsync();
+                            break;
+                        default:
+                            _act.Error = $"Click type '{click}' is not supported";
+                            return;
+                    }
+                    wasClickSuccessful = true;
+                    wasAnyClickSuccessful = wasAnyClickSuccessful || wasClickSuccessful;
+                }
+                catch (Exception ex) when (ex is not EntityNotFoundException)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while performing '{click}' on element");
+                }
+
+                if (!wasClickSuccessful)
+                {
+                    continue;
+                }
+
+                validationElement = (await _elementLocator.FindMatchingElements(validationElementLocateBy, validationElementLocateValue)).FirstOrDefault();
+                if (validationElement != null)
+                {
+                    bool validationResult = validationType switch
+                    {
+                        ActUIElement.eElementAction.IsEnabled => await validationElement.IsEnabledAsync(),
+                        ActUIElement.eElementAction.IsVisible => await validationElement.IsVisibleAsync(),
+                        _ => throw new NotImplementedException($"Validation type '{validationType}' is not implemented")
+                    };
+
+                    if (!validationResult)
+                    {
+                        _act.Error = $"Validation {validationType} failed";
+                    }
+                    break;
+                }
+            }
+
+            if (!wasAnyClickSuccessful)
+            {
+                _act.Error = $"No click operation was performed successfully";
+                return;
+            }
+
+            if (validationElement == null)
+            {
+                _act.Error = $"Validation element not found by locator '{validationElementLocateBy}' and value '{validationElementLocateValue}'";
+                return;
+            }
         }
 
         /// <summary>
@@ -693,7 +914,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         /// </summary>
         private async Task HandleAsyncClickAsync()
         {
-            string script = "element => setTimeout(function() { element.click(); }, 100);";
+            await _browserTab.StartListenDialogsAsync();
+            const string script = "element => setTimeout(function() { element.click(); }, 100);";
             IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.ExecuteJavascriptAsync(script);
         }
@@ -721,18 +943,30 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
 
         /// <summary>
-        /// Handles sending keys to a browser element.
-        /// Retrieves the element, clears its current value, and sends the specified keys.
+        /// Handles sending keys to a browser element. 
+        /// If the element is a file input, it sets the file value. 
+        /// For other input types, it clears the current value and performs an operation based on the provided keys.
         /// </summary>
         private async Task HandleSendKeysAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
-            await element.ClearAsync();
             string keys = _act.GetInputParamCalculatedValue("Value");
-            Func<Task> elementOperation = ConvertSeleniumKeyIdentifierToElementOperation(keys, element);
-            await elementOperation();
+            string tagName = await element.TagNameAsync();
+            string type = await element.AttributeValueAsync("type");
+            if (string.Equals(tagName, IBrowserElement.InputTagName, StringComparison.OrdinalIgnoreCase) && string.Equals(type, "file", StringComparison.OrdinalIgnoreCase))
+            {
+                if (!string.IsNullOrEmpty(keys))
+                {
+                    await element.SetFileValueAsync(keys.Split(',').Select(path => path.Replace("\"", "").Trim()).ToArray());
+                }
+            }
+            else
+            {
+                await element.ClearAsync();
+                Func<Task> elementOperation = ConvertSeleniumKeyIdentifierToElementOperation(keys, element);
+                await elementOperation();
+            }
         }
-
         /// <summary>
         /// Converts a Selenium key identifier to the corresponding element operation.
         /// Maps the key identifier to the appropriate key press action on the element.

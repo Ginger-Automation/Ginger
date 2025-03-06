@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -307,6 +307,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         private void UploadToGlobalParam(object sender, RoutedEventArgs e)
         {
             AppModelParameter CurrentAMDP = (AppModelParameter)ModelParametersGrid.CurrentItem;
+            if (CurrentAMDP == null)
+            {
+                return;
+            }
 
             GlobalAppModelParameter globalAppModelParameter = GlobalAppModelParameter.DuplicateAppModelParamAsGlobal(CurrentAMDP);
 
@@ -353,7 +357,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         private void DeleteParams(bool ClearAllParams)
         {
             Amdocs.Ginger.Common.eUserMsgSelection messageResult = Amdocs.Ginger.Common.eUserMsgSelection.No;
-            if (mApplicationModel is ApplicationAPIModel && (((ApplicationAPIModel)mApplicationModel).ContentType == ApplicationAPIUtils.eContentType.XML || ((ApplicationAPIModel)mApplicationModel).ContentType == ApplicationAPIUtils.eContentType.JSon))
+            if (mApplicationModel is ApplicationAPIModel && (((ApplicationAPIModel)mApplicationModel).RequestContentType == ApplicationAPIUtils.eRequestContentType.XML || ((ApplicationAPIModel)mApplicationModel).RequestContentType == ApplicationAPIUtils.eRequestContentType.JSon))
             {
                 messageResult = Reporter.ToUser(eUserMsgKey.DeleteNodesFromRequest);
             }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -364,7 +364,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             List<ComboEnumItem> locateByList = GingerCore.General.GetEnumValuesForCombo(typeof(eLocateBy));
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.Position), Header = "Position", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = positionList, ReadOnly = true, BindingMode = BindingMode.OneWay });
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateBy), Header = "Locate By", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.ReferanceElement), Header = "Locate Value", WidthWeight = 65 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.ReferanceElement), Header = "Locate Value", WidthWeight = 65, ReadOnly = true, BindingMode = BindingMode.OneWay });
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.Category), WidthWeight = 100, ReadOnly = true, BindingMode = BindingMode.OneWay });
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 100, ReadOnly = true, BindingMode = BindingMode.OneWay });
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.DeltaStatusIcon), Header = "Comparison Status", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xDeltaStatusIconTemplate"] });

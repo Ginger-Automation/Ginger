@@ -1,0 +1,125 @@
+name: Deploy
+
+on:
+    workflow_dispatch: 
+    
+    workflow_call:
+
+jobs:
+    Deploy-Project:
+      name: Deploy Releases to Github Release
+      runs-on: ubuntu-latest
+      steps:
+# ------------------------------------------------------------------------------------------------------
+# Createin version Tag & Number variables 
+# ------------------------------------------------------------------------------------------------------
+          - name: Download Version Artifacts
+            uses: actions/download-artifact@v3
+            with:
+              name: ginger-version     
+
+          - name: Create variables from Artifacts file
+            shell: bash
+            run: |
+              source version.txt
+              echo $TAG
+              echo "gingernumber=$NUMBER" >> $GITHUB_ENV
+              echo "gingertag=$TAG" >> $GITHUB_ENV
+          
+# ------------------------------------------------------------------------------------------------------
+# Copy Ginger repo
+# ------------------------------------------------------------------------------------------------------
+          - uses: actions/checkout@v3
+          
+# ------------------------------------------------------------------------------------------------------
+# Download GingerRuntime Artifact
+# ------------------------------------------------------------------------------------------------------
+          - name: Download GingerRuntime Artifact
+            uses: actions/download-artifact@v3
+            with:
+                name: GingerRuntime
+
+# ------------------------------------------------------------------------------------------------------
+#  Download Windows Installer Artifact
+# ------------------------------------------------------------------------------------------------------      
+          - name: Download Windows Installer Artifact
+            uses: actions/download-artifact@v3
+            with:
+                name: WindowsInstaller
+                
+# ------------------------------------------------------------------------------------------------------
+# Create new Release for ginger
+# ------------------------------------------------------------------------------------------------------
+          - name: Create Github new Release
+            id: create-new-release
+            uses: actions/create-release@v1
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+            with:
+              tag_name: v${{ env.gingertag}}
+              release_name: Release v${{ env.gingertag}}
+              draft: true
+
+# ------------------------------------------------------------------------------------------------------
+# Upload GingerRuntime.tar.gz to Github Releases 
+# ------------------------------------------------------------------------------------------------------
+          - name: Upload Assest to Github Releases - GingerRuntime.tar.gz
+            uses: actions/upload-release-asset@v1
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            with:
+              upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+              asset_path: ./GingerRuntime-root.tar.gz
+              asset_name: GingerRuntime.${{ env.gingertag}}.tar.gz
+              asset_content_type: application/gzip
+
+# ------------------------------------------------------------------------------------------------------
+# Upload Ginger.exe to Github Releases 
+# ------------------------------------------------------------------------------------------------------
+          - name: Upload Assest to Github Releases - Ginger.exe
+            uses: actions/upload-release-asset@v1
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            with:
+              upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+              asset_path: ./Ginger.exe
+              asset_name: Ginger.${{ env.gingertag}}.exe
+              asset_content_type: application/exe 
+
+# ------------------------------------------------------------------------------------------------------
+# Upload Ginger Documents to Github Releases 
+# ------------------------------------------------------------------------------------------------------
+          - name: Upload Assest to Github Releases - Ginger.Release.Notes.pdf
+            if: ( !(contains(env.gingertag , 'Beta' )) && !(contains(env.gingertag , 'Alpha' )) )
+            uses: actions/upload-release-asset@v1
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            with:
+              upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+              asset_path: ./Documents/Ginger.Release.Notes.pdf
+              asset_name: Ginger.Release.Notes.pdf
+              asset_content_type: application/doc
+
+
+          - name: Upload Assest to Github Releases -  Ginger.System.Requirements.pdf
+            if: ( !(contains(env.gingertag , 'Beta' )) && !(contains(env.gingertag , 'Alpha' )) )
+            uses: actions/upload-release-asset@v1
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            with:
+              upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+              asset_path: ./Documents/Ginger.System.Requirements.pdf
+              asset_name: Ginger.System.Requirements.pdf
+              asset_content_type: application/doc 
+
+
+          - name: Upload Assest to Github Releases - GingerRuntime.System.Requirements.pdf
+            if: ( !(contains(env.gingertag , 'Beta' )) && !(contains(env.gingertag , 'Alpha' )) )
+            uses: actions/upload-release-asset@v1
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            with:
+              upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+              asset_path: ./Documents/GingerRuntime.System.Requirements.pdf
+              asset_name: GingerRuntime.System.Requirements.pdf
+              asset_content_type: application/doc 

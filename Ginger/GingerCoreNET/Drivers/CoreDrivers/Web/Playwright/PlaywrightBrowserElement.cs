@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,9 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Playwright;
 using Microsoft.Playwright;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -456,6 +459,376 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return new Point((int)x, (int)y);
         }
 
+
+        /// <summary>
+        /// Gets the valid values of the select element.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the valid values as a string.</returns>
+        public Task<string> GetValidValuesAsync()
+        {
+            if (_playwrightLocator != null)
+            {
+                return GetValidValuesAsync(_playwrightLocator);
+            }
+            else
+            {
+                return GetValidValuesAsync(_playwrightElementHandle!);
+            }
+        }
+
+        /// <summary>
+        /// Gets the valid values of the select element using the specified Playwright locator.
+        /// </summary>
+        /// <param name="playwrightLocator">The Playwright locator.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the valid values as a string.</returns>
+        private async Task<string> GetValidValuesAsync(IPlaywrightLocator playwrightLocator)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            var options = await playwrightLocator.EvaluateAsync<string[]>("select => Array.from(select.options).map(option => option.text)");
+            string optionValues = string.Empty;
+            foreach (var option in options)
+            {
+                if (!string.IsNullOrEmpty(option))
+                {
+                    optionValues += option + "|";
+                }
+            }
+
+            return optionValues;
+        }
+
+        /// <summary>
+        /// Gets the valid values of the select element using the specified Playwright element handle.
+        /// </summary>
+        /// <param name="playwrightElementHandle">The Playwright element handle.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the valid values as a string.</returns>
+        private async Task<string> GetValidValuesAsync(IPlaywrightElementHandle playwrightElementHandle)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightElementHandle, nameof(playwrightElementHandle));
+            var options = await playwrightElementHandle.EvaluateAsync<string[]>("select => Array.from(select.options).map(option => option.text)");
+            string optionValues = string.Empty;
+            foreach (var option in options)
+            {
+                if (!string.IsNullOrEmpty(option))
+                {
+                    optionValues += option + "|";
+                }
+            }
+
+            return optionValues;
+        }
+
+        /// <summary>
+        /// Gets the text length of the element.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the text length.</returns>
+        public Task<int> GetTextLengthAsync()
+        {
+            if (_playwrightLocator != null)
+            {
+                return GetTextLengthAsync(_playwrightLocator);
+            }
+            else
+            {
+                return GetTextLengthAsync(_playwrightElementHandle!);
+            }
+        }
+
+        /// <summary>
+        /// Gets the text length of the element using the specified Playwright locator.
+        /// </summary>
+        /// <param name="playwrightLocator">The Playwright locator.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the text length.</returns>
+        private async Task<int> GetTextLengthAsync(IPlaywrightLocator playwrightLocator)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            var textContent = await playwrightLocator.EvaluateAsync<string>("element => element.textContent");
+
+            return textContent?.Length ?? 0;
+        }
+
+        /// <summary>
+        /// Gets the text length of the element using the specified Playwright element handle.
+        /// </summary>
+        /// <param name="playwrightElementHandle">The Playwright element handle.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the text length.</returns>
+        private async Task<int> GetTextLengthAsync(IPlaywrightElementHandle playwrightElementHandle)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightElementHandle, nameof(playwrightElementHandle));
+            var textContent = await playwrightElementHandle.EvaluateAsync<string>("element => element.textContent");
+
+            return textContent?.Length ?? 0;
+        }
+
+        /// <summary>
+        /// Gets the selected value of the select element.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the selected value as a string.</returns>
+        public Task<string> GetSelectedValueAsync()
+        {
+            if (_playwrightLocator != null)
+            {
+                return GetSelectedValueAsync(_playwrightLocator);
+            }
+            else
+            {
+                return GetSelectedValueAsync(_playwrightElementHandle!);
+            }
+        }
+
+        /// <summary>
+        /// Gets the selected value of the select element using the specified Playwright locator.
+        /// </summary>
+        /// <param name="playwrightLocator">The Playwright locator.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the selected value as a string.</returns>
+        private async Task<string> GetSelectedValueAsync(IPlaywrightLocator playwrightLocator)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            var selectedValue = await playwrightLocator.EvaluateAsync<string>("select => select.options[select.selectedIndex].value");
+
+            if (string.IsNullOrEmpty(selectedValue))
+            {
+                return string.Empty;
+            }
+
+            return selectedValue;
+        }
+
+        /// <summary>
+        /// Gets the selected value of the select element using the specified Playwright element handle.
+        /// </summary>
+        /// <param name="playwrightElementHandle">The Playwright element handle.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the selected value as a string.</returns>
+        private async Task<string> GetSelectedValueAsync(IPlaywrightElementHandle playwrightElementHandle)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightElementHandle, nameof(playwrightElementHandle));
+            var selectedValue = await playwrightElementHandle.EvaluateAsync<string>("select => select.options[select.selectedIndex].value");
+
+            if (string.IsNullOrEmpty(selectedValue))
+            {
+                return string.Empty;
+            }
+
+            return selectedValue;
+        }
+        /// <summary>
+        /// Drags and drops the current element to the target element using JavaScript.
+        /// </summary>
+        /// <param name="targetElement">The target element to drop to.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task DragDropJSAsync(IBrowserElement targetElement)
+        {
+            if (_playwrightLocator != null)
+            {
+                return DragDropJSAsync(_playwrightLocator, targetElement);
+            }
+            else
+            {
+                throw new InvalidOperationException("Element locator is null.");
+            }
+        }
+
+        /// <summary>
+        /// Drags and drops the current element to the target element using JavaScript.
+        /// </summary>
+        /// <param name="sourceLocator">The Playwright locator of the current element.</param>
+        /// <param name="targetElement">The target element to drop to.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task DragDropJSAsync(IPlaywrightLocator sourceLocator, IBrowserElement targetElement)
+        {
+            var sourceHandle = await sourceLocator.ElementHandleAsync();
+            var targetLocator = GetElementLocator(targetElement);
+            if (targetLocator == null)
+            {
+                throw new InvalidActionConfigurationException("Target element locator is null");
+            }
+            var targetHandle = await targetLocator.ElementHandleAsync();
+            if (targetHandle == null)
+            {
+                throw new InvalidActionConfigurationException("Target element handle is null");
+            }
+            string jsScript = @"
+                                async ({ source, target }) => {
+                                    const dataTransfer = new DataTransfer();
+                                    source.dispatchEvent(new DragEvent('dragstart', { bubbles: true, cancelable: true, dataTransfer }));
+                                    target.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer }));
+                                    source.dispatchEvent(new DragEvent('dragend', { bubbles: true, cancelable: true, dataTransfer }));
+                                }";
+
+            await sourceLocator.Page.EvaluateAsync(jsScript, new { source = sourceHandle, target = targetHandle });
+        }
+        /// <summary>
+        /// Drags and drops the current element to the target element.
+        /// </summary>
+        /// <param name="targetElement">The target element to drop to.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task DragDropAsync(IBrowserElement targetElement)
+        {
+            if (_playwrightLocator != null)
+            {
+                return DragDropAsync(_playwrightLocator, targetElement);
+            }
+            else
+            {
+                throw new InvalidOperationException("Element locator is null.");
+            }
+        }
+
+        /// <summary>
+        /// Drags and drops the current element to the target element using the specified Playwright locator.
+        /// </summary>
+        /// <param name="playwrightLocator">The Playwright locator of the current element.</param>
+        /// <param name="targetElement">The target element to drop to.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task DragDropAsync(IPlaywrightLocator playwrightLocator, IBrowserElement targetElement)
+        {
+
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+            ArgumentNullException.ThrowIfNull(targetElement, nameof(targetElement));
+            try
+            {
+                var targetLocator = GetElementLocator(targetElement);
+                if (targetLocator == null)
+                {
+                    throw new InvalidActionConfigurationException("Target element locator is null");
+                }
+
+                await playwrightLocator.DragToAsync(targetLocator);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Gets the Playwright locator of the specified element.
+        /// </summary>
+        /// <param name="element">The element to get the locator for.</param>
+        /// <returns>The Playwright locator if available, otherwise null.</returns>
+        private IPlaywrightLocator? GetElementLocator(IBrowserElement element)
+        {
+            if (element is PlaywrightBrowserElement playwrightElement)
+            {
+                return playwrightElement._playwrightLocator;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Drags and drops the current element to the specified coordinates.
+        /// </summary>
+        /// <param name="targetX">The target X coordinate.</param>
+        /// <param name="targetY">The target Y coordinate.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task DragDropXYCordinateAsync(int targetX, int targetY)
+        {
+            if (_playwrightLocator != null)
+            {
+                return DragDropXYCordinateAsync(_playwrightLocator, targetX, targetY);
+            }
+            else
+            {
+                throw new InvalidOperationException("Element locator is null.");
+            }
+        }
+
+        /// <summary>
+        /// Drags and drops the current element to the specified coordinates using the specified Playwright locator.
+        /// </summary>
+        /// <param name="playwrightLocator">The Playwright locator of the current element.</param>
+        /// <param name="targetX">The target X coordinate.</param>
+        /// <param name="targetY">The target Y coordinate.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task DragDropXYCordinateAsync(IPlaywrightLocator playwrightLocator, int targetX, int targetY)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            var sourceBoundingBox = await playwrightLocator.BoundingBoxAsync();
+            if (sourceBoundingBox == null)
+            {
+                throw new InvalidActionConfigurationException("source bounding box not found");
+            }
+            float sourceX = sourceBoundingBox.X + sourceBoundingBox.Width / 2;
+            float sourceY = sourceBoundingBox.Y + sourceBoundingBox.Height / 2;
+            await playwrightLocator.Page.Mouse.MoveAsync(sourceX, sourceY);
+            await playwrightLocator.Page.Mouse.DownAsync();
+            await playwrightLocator.Page.Mouse.MoveAsync(targetX, targetY);
+            await playwrightLocator.Page.Mouse.UpAsync();
+        }
+        /// <summary>
+        /// Draws an object on the element using random mouse movements.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task DrawObjectAsync()
+        {
+            if (_playwrightLocator != null)
+            {
+                return DrawObjectAsync(_playwrightLocator);
+            }
+            else
+            {
+                throw new InvalidOperationException("Element locator is null.");
+            }
+        }
+
+        /// <summary>
+        /// Draws an object on the element using random mouse movements with the specified Playwright locator.
+        /// </summary>
+        /// <param name="playwrightLocator">The Playwright locator of the element.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task DrawObjectAsync(IPlaywrightLocator playwrightLocator)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+            var boundingBox = await playwrightLocator.BoundingBoxAsync();
+            if (boundingBox == null)
+            {
+                throw new InvalidActionConfigurationException("Bounding box not found");
+            }
+
+            var page = playwrightLocator.Page;
+            Random rnd = new Random();
+
+            var width = boundingBox.Width;
+            var height = boundingBox.Height;
+            int steps = 1;
+
+            int mouseX = 0, mouseY = 0;
+
+            mouseX = (int)((boundingBox.X + boundingBox.Width) / 2) + rnd.Next((int)boundingBox.Width / 98, (int)boundingBox.Width / 90);
+            mouseY = (int)((boundingBox.Y + boundingBox.Height) / 2) + rnd.Next((int)boundingBox.Height / 4, (int)boundingBox.Height / 3);
+
+            int startX = mouseX, startY = mouseY;
+            await page.Mouse.MoveAsync(mouseX, mouseY, new MouseMoveOptions { Steps = steps });
+            await page.Mouse.DownAsync();
+
+            mouseX = mouseX + rnd.Next((int)boundingBox.Width / 95, (int)boundingBox.Width / 75);
+            mouseY = mouseY - rnd.Next((int)boundingBox.Height / 6, (int)boundingBox.Height / 3);
+            await page.Mouse.MoveAsync(mouseX, mouseY, new MouseMoveOptions { Steps = steps });
+
+            mouseX = mouseX - rnd.Next((int)boundingBox.Width / 30, (int)boundingBox.Width / 15);
+            mouseY = mouseY + rnd.Next((int)boundingBox.Height / 12, (int)boundingBox.Height / 8);
+            await page.Mouse.MoveAsync(mouseX, mouseY, new MouseMoveOptions { Steps = steps });
+
+            mouseX = mouseX + rnd.Next((int)boundingBox.Width / 95, (int)boundingBox.Width / 80);
+            mouseY = mouseY + rnd.Next((int)boundingBox.Height / 12, (int)boundingBox.Height / 8);
+            await page.Mouse.MoveAsync(mouseX, mouseY, new MouseMoveOptions { Steps = steps });
+
+            mouseX = mouseX + rnd.Next((int)boundingBox.Width / 30, (int)boundingBox.Width / 10);
+            mouseY = mouseY - rnd.Next((int)boundingBox.Height / 12, (int)boundingBox.Height / 8);
+            await page.Mouse.MoveAsync(mouseX, mouseY, new MouseMoveOptions { Steps = steps });
+
+            mouseX = mouseX - rnd.Next((int)boundingBox.Width / 95, (int)boundingBox.Width / 65);
+            mouseY = mouseY + rnd.Next((int)boundingBox.Height / 6, (int)boundingBox.Height / 3);
+            await page.Mouse.MoveAsync(mouseX, mouseY, new MouseMoveOptions { Steps = steps });
+
+            await page.Mouse.MoveAsync(startX, startY, new MouseMoveOptions { Steps = steps });
+
+            await page.Mouse.UpAsync();
+        }
         public Task<string> TextContentAsync()
         {
             if (_playwrightLocator != null)
@@ -492,28 +865,28 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return content;
         }
 
-        public Task<string> ExecuteJavascriptAsync(string script)
+        public Task<string> ExecuteJavascriptAsync(string script, object? args = null)
         {
             if (_playwrightLocator != null)
             {
-                return ExecuteJavascriptAsync(_playwrightLocator, script);
+                return ExecuteJavascriptAsync(_playwrightLocator, script, args);
             }
             else
             {
-                return ExecuteJavascriptAsync(_playwrightElementHandle!, script);
+                return ExecuteJavascriptAsync(_playwrightElementHandle!, script, args);
             }
         }
 
-        public Task<string> ExecuteJavascriptAsync(IPlaywrightLocator playwrightLocator, string script)
+        public Task<string> ExecuteJavascriptAsync(IPlaywrightLocator playwrightLocator, string script, object? args)
         {
             ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
-            return playwrightLocator.EvaluateAsync<string>(script);
+            return playwrightLocator.EvaluateAsync<string>(script, args);
         }
 
-        public Task<string> ExecuteJavascriptAsync(IPlaywrightElementHandle playwrightElementHandle, string script)
+        public Task<string> ExecuteJavascriptAsync(IPlaywrightElementHandle playwrightElementHandle, string script, object? args)
         {
             ArgumentNullException.ThrowIfNull(playwrightElementHandle, nameof(playwrightElementHandle));
-            return playwrightElementHandle.EvaluateAsync<string>(script);
+            return playwrightElementHandle.EvaluateAsync<string>(script, args);
         }
 
         public Task<string> InnerTextAsync()
@@ -1002,5 +1375,257 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             return await _playwrightLocator.RunAxe(options);
         }
+
+        /// <summary>
+        /// Sets the file value using the appropriate Playwright locator or element handle.
+        /// </summary>
+        /// <param name="value">The file path to set.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task SetFileValueAsync(string[] value)
+        {
+            if (_playwrightLocator != null)
+            {
+                return SetFileValueAsync(_playwrightLocator, value);
+            }
+            else
+            {
+                return SetFileValueAsync(_playwrightElementHandle!, value);
+            }
+        }
+
+        /// <summary>
+        /// Sets the file value using a Playwright locator.
+        /// </summary>
+        /// <param name="playwrightLocator">The Playwright locator.</param>
+        /// <param name="value">The file path to set.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private Task SetFileValueAsync(IPlaywrightLocator playwrightLocator, string[] value)
+        {
+            return playwrightLocator.SetInputFilesAsync(value);
+        }
+
+        /// <summary>
+        /// Sets the file value using a Playwright element handle.
+        /// </summary>
+        /// <param name="playwrightElementHandle">The Playwright element handle.</param>
+        /// <param name="value">The file path to set.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private Task SetFileValueAsync(IPlaywrightElementHandle playwrightElementHandle, string[] value)
+        {
+            return playwrightElementHandle.SetInputFilesAsync(value);
+        }
+
+
+        /// <summary>
+        /// Waits for the element to be visible within the specified timeout.
+        /// </summary>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the element is visible, otherwise false.</returns>
+        public Task<bool> ToBeVisibleAsync(float timeOut) => ToBeVisibleAsync(_playwrightLocator, timeOut);
+
+        /// <summary>
+        /// Waits for the element to be visible within the specified timeout.
+        /// </summary>
+        /// <param name="playwrightLocator">The locator of the element.</param>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the element is visible, otherwise false.</returns>
+        public async Task<bool> ToBeVisibleAsync(IPlaywrightLocator playwrightLocator, float timeOut)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            try
+            {
+                var options = new LocatorAssertionsToBeVisibleOptions { Timeout = timeOut };
+                await playwrightLocator.WaitForAsync(new LocatorWaitForOptions { Timeout = timeOut });
+                await Assertions.Expect(playwrightLocator).ToBeVisibleAsync(options);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Error in Element To Be Visible: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Waits for the element to be selected within the specified timeout.
+        /// </summary>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the element is selected, otherwise false.</returns>
+        public Task<bool> ElementIsSelectedAsync(float timeOut) => ElementIsSelectedAsync(_playwrightLocator, timeOut);
+
+        /// <summary>
+        /// Waits for the element to be selected within the specified timeout.
+        /// </summary>
+        /// <param name="playwrightLocator">The locator of the element.</param>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the element is selected, otherwise false.</returns>
+        public async Task<bool> ElementIsSelectedAsync(IPlaywrightLocator playwrightLocator, float timeOut)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            try
+            {
+                var options = new LocatorAssertionsToBeCheckedOptions { Timeout = timeOut };
+                await playwrightLocator.WaitForAsync(new LocatorWaitForOptions { Timeout = timeOut });
+                await Assertions.Expect(playwrightLocator).ToBeCheckedAsync(options);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Error in Element To Be Checked: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Waits for the element to be clickable within the specified timeout.
+        /// </summary>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the element is clickable, otherwise false.</returns>
+        public Task<bool> ElementToBeClickableAsync(float timeOut) => ElementToBeClickableAsync(_playwrightLocator, timeOut);
+
+        /// <summary>
+        /// Waits for the element to be clickable within the specified timeout.
+        /// </summary>
+        /// <param name="playwrightLocator">The locator of the element.</param>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the element is clickable, otherwise false.</returns>
+        public async Task<bool> ElementToBeClickableAsync(IPlaywrightLocator playwrightLocator, float timeOut)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            try
+            {
+                var options = new LocatorAssertionsToBeVisibleOptions { Timeout = timeOut };
+                await playwrightLocator.WaitForAsync(new LocatorWaitForOptions { Timeout = timeOut });
+                await Assertions.Expect(playwrightLocator).ToBeVisibleAsync(options);
+                await Assertions.Expect(playwrightLocator).ToBeEnabledAsync(new LocatorAssertionsToBeEnabledOptions { Timeout = timeOut });
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Error in Element To Be Clickable: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Waits for the element's text to match the specified text within the specified timeout.
+        /// </summary>
+        /// <param name="textToMatch">The text to match.</param>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the text matches, otherwise false.</returns>
+        public Task<bool> TextMatchesAsync(string textToMatch, float timeOut) => TextMatchesAsync(_playwrightLocator, textToMatch, timeOut);
+
+        /// <summary>
+        /// Waits for the element's text to match the specified text within the specified timeout.
+        /// </summary>
+        /// <param name="playwrightLocator">The locator of the element.</param>
+        /// <param name="textToMatch">The text to match.</param>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the text matches, otherwise false.</returns>
+        public async Task<bool> TextMatchesAsync(IPlaywrightLocator playwrightLocator, string textToMatch, float timeOut)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            try
+            {
+                var options = new LocatorAssertionsToContainTextOptions { Timeout = timeOut };
+                await playwrightLocator.WaitForAsync(new LocatorWaitForOptions { Timeout = timeOut });
+                await Assertions.Expect(playwrightLocator).ToContainTextAsync(textToMatch, options);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Error in Text Matches: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Waits for the element's attribute to match the specified value within the specified timeout.
+        /// </summary>
+        /// <param name="attributeName">The name of the attribute.</param>
+        /// <param name="attributeValue">The value of the attribute.</param>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the attribute matches, otherwise false.</returns>
+        public Task<bool> AttributeMatchesAsync(string attributeName, string attributeValue, float timeOut) => AttributeMatchesAsync(_playwrightLocator, attributeName, attributeValue, timeOut);
+
+        /// <summary>
+        /// Waits for the element's attribute to match the specified value within the specified timeout.
+        /// </summary>
+        /// <param name="playwrightLocator">The locator of the element.</param>
+        /// <param name="attributeName">The name of the attribute.</param>
+        /// <param name="attributeValue">The value of the attribute.</param>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the attribute matches, otherwise false.</returns>
+        public async Task<bool> AttributeMatchesAsync(IPlaywrightLocator playwrightLocator, string attributeName, string attributeValue, float timeOut)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            try
+            {
+                var options = new LocatorAssertionsToHaveAttributeOptions { Timeout = timeOut };
+                await playwrightLocator.WaitForAsync(new LocatorWaitForOptions { Timeout = timeOut });
+                await Assertions.Expect(playwrightLocator).ToHaveAttributeAsync(attributeName, attributeValue, options);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Error in Attribute Matches: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Waits for the element to be not visible within the specified timeout.
+        /// </summary>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the element is not visible, otherwise false.</returns>
+        public Task<bool> ToBeNotVisibleAsync(float timeOut) => ToBeNotVisibleAsync(_playwrightLocator, timeOut);
+
+        /// <summary>
+        /// Waits for the element to be not visible within the specified timeout.
+        /// </summary>
+        /// <param name="playwrightLocator">The locator of the element.</param>
+        /// <param name="timeOut">The timeout in milliseconds.</param>
+        /// <returns>True if the element is not visible, otherwise false.</returns>
+        public async Task<bool> ToBeNotVisibleAsync(IPlaywrightLocator playwrightLocator, float timeOut)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+
+            try
+            {
+                var options = new LocatorAssertionsToBeVisibleOptions { Timeout = timeOut };
+                await playwrightLocator.WaitForAsync(new LocatorWaitForOptions { Timeout = timeOut, State = WaitForSelectorState.Hidden });
+                await Assertions.Expect(playwrightLocator).Not.ToBeVisibleAsync(options);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error in To Be Not Visible: {ex.Message}");
+                return false;
+            }
+        }
+        /// <summary>
+        /// Gets the Playwright locator of the element.
+        /// </summary>
+        /// <returns>The Playwright locator if available, otherwise null.</returns>
+        public async Task<string?> GetElementLocator() => await GetElementLocatorAsync();
+
+        /// <summary>
+        /// Gets the Playwright locator of the element.
+        /// </summary>
+        /// <returns>The Playwright locator if available, otherwise null.</returns>
+        public async Task<string?> GetElementLocatorAsync()
+        {
+            if (_playwrightLocator == null)
+            {
+                return null;
+            }
+            return _playwrightLocator.ToString();
+        }
     }
+
 }

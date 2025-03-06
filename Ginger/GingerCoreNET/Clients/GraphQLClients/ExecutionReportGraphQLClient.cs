@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -101,4 +101,50 @@ public class ExecutionReportGraphQLClient
         }
 
     }
+    /// <summary>
+    /// Fetches data by matching the solution ID and execution ID.
+    /// </summary>
+    public async Task<GraphQLResponse<GraphQLRunsetResponse>> FetchDataBySolutionAndExecutionId(Guid solutionId, Guid executionId)
+    {
+        if (solutionId == Guid.Empty)
+        {
+            throw new ArgumentException("Solution ID cannot be empty.", nameof(solutionId));
+        }
+        if (executionId == Guid.Empty)
+        {
+            throw new ArgumentException("Execution ID cannot be empty.", nameof(executionId));
+        }
+
+        const string paraList = "executionId, entityId, name,startTime";
+
+        var queryInfo = new GraphQLQueryInfo
+        {
+            Filters =
+            [
+                new Filter
+                {
+                    Field = "solutionId",
+                    Operator = "eq",
+                    Value = solutionId
+                },
+                new Filter
+                {
+                    Field = "executionId",
+                    Operator = "eq",
+                    Value = executionId
+                }
+            ]
+        };
+
+        var generatedQuery = RunsetQueryBuilder.CreateQuery(queryInfo, paraList);
+        try
+        {
+            return await graphQlClient.GetRunsets(generatedQuery);
+        }
+        catch (Exception ex)
+        {
+            throw new ArgumentException("Error executing the GraphQL query.", ex);
+        }
+    }
+
 }

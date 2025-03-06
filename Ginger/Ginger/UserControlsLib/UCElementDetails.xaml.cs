@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace Ginger
@@ -243,7 +244,7 @@ namespace Ginger
             [
                 new GridColView() { Field = "Name", WidthWeight = 3, ReadOnly = true },
                 new GridColView() { Field = "Value", WidthWeight = 5, ReadOnly = true },
-                new GridColView() { Field = nameof(ControlProperty.Category), WidthWeight = 2, ReadOnly = true },
+                new GridColView() { Field = nameof(ControlProperty.Category), WidthWeight = 2, ReadOnly = true, BindingMode = BindingMode.TwoWay },
             ]
             };
 
@@ -599,7 +600,16 @@ namespace Ginger
 
                 if (SelectedElement.Properties == null || SelectedElement.Properties.Count == 0)
                 {
-                    SelectedElement.Properties = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties();
+                    if (mCurrentControlTreeViewItem != null)
+                    {
+                        SelectedElement.Properties = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties();
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Retaining existing properties for element '{SelectedElement.ElementName}' as tree view item is null");
+                        // Keep existing properties
+                    }
+
                 }
 
                 if (SelectedElement.Locators == null || SelectedElement.Locators.Count == 0)

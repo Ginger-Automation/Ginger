@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
 using GingerCore.FlowControlLib;
 using GingerCore.Variables;
 
@@ -77,6 +78,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         /// Gets a value indicating whether automatic screenshot capture is enabled on failure.
         /// </summary>
         bool AutoScreenShotOnFailure { get; }
-
+        public bool AreEqual(Act other);
+        public bool AreEqual(object other);
     }
 }

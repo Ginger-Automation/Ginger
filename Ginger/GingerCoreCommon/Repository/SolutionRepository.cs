@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ namespace Amdocs.Ginger.Repository
              @"Backups\",
              @"ExecutionResults\",
              @"HTMLReports\",
-
+             @"ExecutionResults\GingerExecutionResults.db",
              $@"BusinessFlows\{ISolution.CacheDirectoryName}\",
              $@"RunSetConfigs\{ISolution.CacheDirectoryName}\",
 
@@ -690,12 +690,13 @@ namespace Amdocs.Ginger.Repository
                         filefullPath = filefullPath.Replace(Nameex, "");
                     }
                     counter++;
+
                     Nameex = "~" + counter;
                     filefullPath = filefullPath.Replace(ext, Nameex + ext);
 
                     if (counter > 100)
                     {
-                        throw new Exception("cannot find unique file after 100 tries");
+                        counter = Random.Shared.Next(minValue: 101, maxValue: 10000);
                     }
                 }
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -320,13 +320,22 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
             return valueExpression.Calculate(value);
         }
 
-        private protected async Task<bool> IsLiveSpyScriptInjectedAsync(IBrowserTab tab)
+        private protected async Task<bool> IsLiveSpyScriptInjectedAsync(IBrowserTab tab, bool isFromIframe = false)
         {
             string isInjected = "no";
             try
             {
-                object? output = await tab.ExecuteJavascriptAsync("GingerLibLiveSpy.IsLiveSpyExist();");
-                string? outputString = output?.ToString();
+                string? outputString = string.Empty;
+                if (isFromIframe)
+                {
+                    object? output = await tab.ExecuteJavascriptIframeAsync("GingerLibLiveSpy.IsLiveSpyExist();");
+                    outputString = output?.ToString();
+                }
+                else
+                {
+                    object? output = await tab.ExecuteJavascriptAsync("GingerLibLiveSpy.IsLiveSpyExist();");
+                    outputString = output?.ToString();
+                }
                 if (!string.IsNullOrEmpty(outputString))
                 {
                     isInjected = outputString;
@@ -337,25 +346,43 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
             return !string.Equals(isInjected, "no");
         }
 
-        private protected async Task InjectLiveSpyScriptAsync(IBrowserTab tab)
+        private protected async Task InjectLiveSpyScriptAsync(IBrowserTab tab, bool isFromIframe = false)
         {
-            if (await IsLiveSpyScriptInjectedAsync(tab))
+            if (await IsLiveSpyScriptInjectedAsync(tab, isFromIframe))
             {
                 return;
+
             }
 
             string liveSpyScript = JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLiveSpy);
-            await InjectScriptAsync(tab, liveSpyScript);
+            await InjectScriptAsync(tab, liveSpyScript, isFromIframe);
+            if (isFromIframe)
+            {
+                await tab.ExecuteJavascriptIframeAsync("define_GingerLibLiveSpy();");
+                await tab.ExecuteJavascriptIframeAsync($"arg => GingerLibLiveSpy.AddScript(arg);", JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min));
+                await tab.ExecuteJavascriptIframeAsync("GingerLibLiveSpy.StartEventListner();");
+            }
+            else
+            {
+                await tab.ExecuteJavascriptAsync("define_GingerLibLiveSpy();");
+                await tab.ExecuteJavascriptAsync($"arg => GingerLibLiveSpy.AddScript(arg);", JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min));
+                await tab.ExecuteJavascriptAsync("GingerLibLiveSpy.StartEventListner();");
+            }
 
-            await tab.ExecuteJavascriptAsync("define_GingerLibLiveSpy();");
-            await tab.ExecuteJavascriptAsync($"arg => GingerLibLiveSpy.AddScript(arg);", JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min));
-            await tab.ExecuteJavascriptAsync("GingerLibLiveSpy.StartEventListner();");
         }
 
-        private protected Task InjectScriptAsync(IBrowserTab tab, string script)
+        private protected Task InjectScriptAsync(IBrowserTab tab, string script, bool isFromIframe = false)
         {
             string injectionableScript = PrepareScriptForInjection(script);
-            return tab.InjectJavascriptAsync(injectionableScript);
+            if (isFromIframe)
+            {
+                return tab.InjectJavascriptIframeAsync(injectionableScript);
+            }
+            else
+            {
+                return tab.InjectJavascriptAsync(injectionableScript);
+            }
+
         }
 
         private string PrepareScriptForInjection(string script)
@@ -433,25 +460,34 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
               let xpath = """";
               let stack = [];
               stack.push(element);
-              while(stack.length > 0) {
+              while (stack.length > 0) {
                 let currentElement = stack.pop();
                 let tag = currentElement.tagName;
-                if(tag.toUpperCase() === ""html"".toUpperCase()) {
-                  xpath = ""/""+tag+""[1]""+ xpath;
+                if (tag.toUpperCase() === ""html"".toUpperCase()) {
+                  xpath = ""/"" + tag + ""[1]"" + xpath;
                   continue;
                 }
                 let parentElement = currentElement.parentElement;
-                let count = 1;
-                for (let i = 0; i < parentElement.childElementCount; i++) {
-                  if (parentElement.children[i] === currentElement) {
-                    break;
-                  }
-                  if (tag.toUpperCase() === parentElement.children[i].tagName.toUpperCase()) {
-                    count++;
-                  }
+
+                // Handle elements within shadow DOM by using the shadow root's host as the parent
+                // This ensures correct XPath generation for elements inside shadow DOM
+                if (!parentElement && currentElement.getRootNode() instanceof ShadowRoot) {
+                  parentElement = currentElement.getRootNode().host;
                 }
-                xpath = ""/""+tag+""[""+count+""]""+xpath;
-                stack.push(parentElement);
+
+                let count = 1;
+                if (parentElement) {
+                  for (let i = 0; i < parentElement.childElementCount; i++) {
+                    if (parentElement.children[i] === currentElement) {
+                      break;
+                    }
+                    if (tag.toUpperCase() === parentElement.children[i].tagName.toUpperCase()) {
+                      count++;
+                    }
+                  }
+                  xpath = ""/"" + tag + ""["" + count + ""]"" + xpath;
+                  stack.push(parentElement);
+                }
               }
               return xpath;
             }";

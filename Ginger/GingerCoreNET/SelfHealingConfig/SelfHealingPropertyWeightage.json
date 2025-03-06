@@ -1,0 +1,20 @@
+{
+  "mobile": {
+    "high": [
+      "id",
+      "name",
+      "text"
+    ],
+    "low": [
+      "element type",
+      "label",
+      "class"
+    ],
+    "unknown": 0.7
+  },
+  "web": {
+    "high": [],
+    "low": [],
+    "unknown": 1
+  }
+}

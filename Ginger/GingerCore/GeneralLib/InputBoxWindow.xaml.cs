@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -55,6 +56,27 @@ namespace GingerCore.GeneralLib
                 return false;
             }
 
+        }
+
+        public static bool OpenDialog(string title, string message, ref string Value, List<string> possibleValues)
+        {
+            InputBoxWindow IBW = new InputBoxWindow();
+            if (possibleValues == null || possibleValues.Count == 0)
+            {
+                throw new ArgumentException("possibleValues cannot be null or empty", nameof(possibleValues));
+            }
+            IBW.Init(title, message, possibleValues);
+            CurrentInputBoxWindow = IBW;
+            IBW.ShowDialog();
+            if (IBW.OK)
+            {
+                Value = IBW.value;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public static bool OpenDialog(string title, string message, Object obj, string Property)
@@ -96,6 +118,32 @@ namespace GingerCore.GeneralLib
             ValueTextBox.Focus();
         }
 
+        public void Init(string title, string message, List<string> possibleValues)
+        {
+            winTitle.Content = title;
+            MessageLabel.Text = message;
+            if (possibleValues == null || possibleValues.Count == 0)
+            {
+                throw new ArgumentException("possibleValues cannot be null or empty", nameof(possibleValues));
+            }
+            ValueTextBox.Visibility = System.Windows.Visibility.Collapsed;
+            xValueComboBox.Visibility = System.Windows.Visibility.Visible;
+            xValueComboBox.ItemsSource = possibleValues;
+            xValueComboBox.SelectedIndex = 0;//auto selecting first value
+            xValueComboBox.Focus();
+        }
+
+        public void Init(string title, string message, Object obj, string Property)
+        {
+            winTitle.Content = title;
+            MessageLabel.Text = message;
+            ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, Property);
+            mOriginalValue = ValueTextBox.Text;
+            ValueTextBox.Focus();
+        }
+
+
+
         void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property)
         {
             Binding b = new Binding
@@ -108,14 +156,7 @@ namespace GingerCore.GeneralLib
             control.SetBinding(dependencyProperty, b);
         }
 
-        public void Init(string title, string message, Object obj, string Property)
-        {
-            winTitle.Content = title;
-            MessageLabel.Text = message;
-            ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, Property);
-            mOriginalValue = ValueTextBox.Text;
-            ValueTextBox.Focus();
-        }
+       
 
         public InputBoxWindow()
         {
@@ -124,7 +165,14 @@ namespace GingerCore.GeneralLib
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
-            value = ValueTextBox.Text;
+            if (xValueComboBox.Visibility == System.Windows.Visibility.Visible)
+            {
+                value = (string)xValueComboBox.SelectedValue;
+            }
+            else
+            {
+                value = ValueTextBox.Text;
+            }
             OK = true;
             this.Close();
         }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -148,6 +148,10 @@ namespace GingerCore.GeneralLib
                 {
                     string CertificateName = Path.GetFileName(Email.CertificatePath);
                     string CertificateKey = Email.CertificatePasswordUCValueExpression;
+                    if (!string.IsNullOrEmpty(CertificateKey))
+                    {
+                        CertificateKey = DecryptPassword(CertificateKey, ValueExpression.IsThisAValueExpression(CertificateKey));
+                    }
                     string targetPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\EmailCertificates");//certificate is present in this folder //used this since relative path cannot be used during execution
                     string Certificatepath = Path.Combine(targetPath, CertificateName);
                     if (!string.IsNullOrEmpty(Certificatepath))
@@ -283,6 +287,26 @@ namespace GingerCore.GeneralLib
                 return false;
             }
             return true;
+        }
+        public string DecryptPassword(string password, bool isPasswordValueExpression)
+        {
+            string decryptedPassword = string.Empty;
+
+            if (isPasswordValueExpression)
+            {
+
+
+                mVE.Value = password;
+                string evaluatedValue = mVE.ValueCalculated;
+
+                decryptedPassword = EncryptionHandler.IsStringEncrypted(evaluatedValue) ? EncryptionHandler.DecryptwithKey(evaluatedValue) : evaluatedValue;
+            }
+            else
+            {
+                decryptedPassword = EncryptionHandler.IsStringEncrypted(password) ? EncryptionHandler.DecryptwithKey(password) : password;
+            }
+
+            return decryptedPassword;
         }
     }
 }

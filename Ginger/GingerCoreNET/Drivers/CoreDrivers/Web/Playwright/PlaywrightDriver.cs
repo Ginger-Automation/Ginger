@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.Drivers;
 using GingerCore.Drivers.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using HtmlAgilityPack;
@@ -82,12 +83,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return null;
             }
         }
+        PlaywrightBrowser.Options browserOptions;
         public override void StartDriver()
         {
             ValidateBrowserTypeSupport(BrowserType);
 
             IPlaywright playwright = Microsoft.Playwright.Playwright.CreateAsync().Result;
-            PlaywrightBrowser.Options browserOptions = BuildPlaywrightBrowserOptions();
+            browserOptions = BuildPlaywrightBrowserOptions();
             if (BrowserPrivateMode)
             {
                 _browser = new PlaywrightNonPersistentBrowser(playwright, BrowserType, browserOptions, OnBrowserClose);
@@ -251,6 +253,76 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         }
                         actAccessibilityTestingHandler.HandleAsync().Wait();
                         break;
+                    case ActSmartSync actSmartSync:
+                        ActSmartSyncHandler actSmartSyncHandler = new(
+                            actSmartSync,
+                            _browser.CurrentWindow.CurrentTab,
+                            new BrowserElementLocator(
+                                _browser.CurrentWindow.CurrentTab,
+                                new()
+                                {
+                                    BusinessFlow = BusinessFlow,
+                                    Environment = Environment,
+                                    POMExecutionUtils = new POMExecutionUtils(act, act.LocateValue),
+                                    Agent = BusinessFlow.CurrentActivity.CurrentAgent,
+                                }));
+                        float? driverDefaultTimeout = browserOptions.Timeout;
+                        try
+                        {
+                            int smartSyncTimeout = DriverBase.GetMaxTimeout(actSmartSync) * 1000;
+                            browserOptions.Timeout = smartSyncTimeout;
+                            actSmartSyncHandler.HandleAsync(act, smartSyncTimeout).Wait();
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Error = ex.Message;
+                        }
+                        finally
+                        {
+                            browserOptions.Timeout = driverDefaultTimeout;
+                        }
+                        break;
+                    case ActWebSmartSync actWebSmartSync:
+                        ActWebSmartSyncHandler actWebSmartSyncHandler = new(
+                            actWebSmartSync,
+                            _browser.CurrentWindow.CurrentTab,
+                            new BrowserElementLocator(
+                                _browser.CurrentWindow.CurrentTab,
+                                new()
+                                {
+                                    BusinessFlow = BusinessFlow,
+                                    Environment = Environment,
+                                    POMExecutionUtils = new POMExecutionUtils(actWebSmartSync, actWebSmartSync.ElementLocateValue),
+                                    Agent = BusinessFlow.CurrentActivity.CurrentAgent,
+                                }));
+                        float? driverDefaultTimeout1 = browserOptions.Timeout;
+                        float waitUntilTime;
+                        if (act.Timeout > 0)
+                        {
+                            waitUntilTime = act.Timeout.GetValueOrDefault();
+                        }
+                        else if(browserOptions.Timeout>0)
+                        {
+                            waitUntilTime = browserOptions.Timeout.Value;
+                        }
+                        else
+                        {
+                            waitUntilTime = 5;
+                        }
+                        browserOptions.Timeout = waitUntilTime;
+                        try
+                        {                          
+                            actWebSmartSyncHandler.HandleAsync(act, waitUntilTime*1000).Wait();
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Error = ex.Message;
+                        }
+                        finally
+                        {
+                            browserOptions.Timeout = driverDefaultTimeout1;
+                        }
+                        break;
                     default:
                         act.Error = $"This Action is not supported for Playwright driver";
                         break;
@@ -262,7 +334,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             message = string.Empty;
 
-            if (act is ActWithoutDriver or ActScreenShot or ActGotoURL or ActAccessibilityTesting)
+            if (act is ActWithoutDriver or ActScreenShot or ActGotoURL or ActAccessibilityTesting or ActSmartSync or ActWebSmartSync or ActBrowserElement)
             {
                 return true;
             }
@@ -646,7 +718,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return Task.Run(async () =>
             {
                 IBrowserTab currentTab = _browser.CurrentWindow.CurrentTab;
-
+                await currentTab.SwitchToParentFrameAsync();
                 if (_lastHighlightedElement != null)
                 {
                     await UnhighlightElementAsync(_lastHighlightedElement);
@@ -657,11 +729,25 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 IBrowserElement? browserElement = null;
                 try
                 {
-                    browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
+                    bool hadException = false;
+                    try
+                    {
+                        browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.DeepestElementFromPoint();");
+                    }
+                    catch 
+                    {
+                        hadException = true;
+                    }
+
+                    if (hadException || browserElement == null)
+                    {
+                        browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
+                    }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     //when we spy the element for the first time, it throws exception because X,Y point of mouse position is undefined for some reason
+                    Reporter.ToLog(eLogLevel.DEBUG, "Failed to get element from point - this is expected on first spy attempt", ex);
                 }
                 if (browserElement == null)
                 {
@@ -680,21 +766,86 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
                 string tag = await browserElement.TagNameAsync();
                 string xPath = string.Empty;
-                if (string.Equals(tag, "iframe", StringComparison.OrdinalIgnoreCase) && string.Equals(tag, "frame", StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(tag) && (string.Equals(tag, "iframe", StringComparison.InvariantCultureIgnoreCase) || string.Equals(tag, "frame", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     xPath = await GenerateXPathFromBrowserElementAsync(browserElement);
                     //TODO: create HTMLElementInfo specific for IFrame
                 }
 
-                return new HTMLElementInfo()
+                HTMLElementInfo foundElemntInfo = new HTMLElementInfo()
                 {
                     ElementObject = browserElement,
                     ScreenShotImage = screenshot,
                     XPath = xPath,
                 };
+
+                if (!string.IsNullOrEmpty(tag) && (string.Equals(tag, "iframe", StringComparison.InvariantCultureIgnoreCase) || string.Equals(tag, "frame", StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    foundElemntInfo.Path = xPath;
+                    foundElemntInfo.XPath = xPath;
+                    return await GetElementFromIframeAsync(foundElemntInfo, currentTab);
+                }
+                return foundElemntInfo;
+
             }).Result;
         }
 
+        private async Task<ElementInfo> GetElementFromIframeAsync(ElementInfo IframeElementInfo, IBrowserTab currentTab)
+        {
+            await SwitchToFrameOfElementAsync(IframeElementInfo);
+            return Task.Run(async () =>
+            {
+                IBrowserTab IframecurrentTab = _browser.CurrentWindow.CurrentTab;
+                await InjectLiveSpyScriptAsync(IframecurrentTab, true);
+                IBrowserElement? browserElement = null;
+                try
+                {
+                    browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
+                }
+                catch (Exception ex)
+                {
+                    //when we spy the element for the first time, it throws exception because X,Y point of mouse position is undefined for some reason
+                    Reporter.ToLog(eLogLevel.DEBUG, "Failed to get element from point - this is expected on first spy attempt", ex);
+                }
+                if (browserElement == null)
+                {
+                    return null!;
+                }
+
+                string? screenshot = null;
+                try
+                {
+                    screenshot = Convert.ToBase64String(await browserElement.ScreenshotAsync());
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "error while taking element screenshot", ex);
+                }
+
+                string tag = await browserElement.TagNameAsync();
+                string xPath = string.Empty;
+                if (!string.IsNullOrEmpty(tag) && (string.Equals(tag, "iframe", StringComparison.InvariantCultureIgnoreCase) || string.Equals(tag, "frame", StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    xPath = await GenerateXPathFromBrowserElementAsync(browserElement);
+                    //TODO: create HTMLElementInfo specific for IFrame
+                }
+
+                HTMLElementInfo foundElemntInfo = new HTMLElementInfo()
+                {
+                    ElementObject = browserElement,
+                    ScreenShotImage = screenshot,
+                    XPath = xPath,
+                };
+
+                if (!string.IsNullOrEmpty(tag) && (string.Equals(tag, "iframe", StringComparison.InvariantCultureIgnoreCase) || string.Equals(tag, "frame", StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    foundElemntInfo.Path = xPath;
+                    foundElemntInfo.XPath = xPath;
+                    return await GetElementFromIframeAsync(foundElemntInfo, currentTab);
+                }
+                return foundElemntInfo;
+            }).Result;
+        }
         public AppWindow GetActiveWindow()
         {
             ThrowIfClosed();
@@ -1784,7 +1935,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ActUIElement.eElementAction.GetCustomAttribute,
             ActUIElement.eElementAction.GetFont,
             ActUIElement.eElementAction.MousePressRelease,
-            ActUIElement.eElementAction.MouseClick,
+            ActUIElement.eElementAction.GetValidValues,
+            ActUIElement.eElementAction.GetTextLength,
+            ActUIElement.eElementAction.GetSelectedValue,
+            ActUIElement.eElementAction.DragDrop,
+            ActUIElement.eElementAction.MultiSetValue,
+            ActUIElement.eElementAction.DrawObject,
         ];
 
 
@@ -1810,6 +1966,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ActBrowserElement.eControlAction.SwitchToParentFrame,
             ActBrowserElement.eControlAction.SwitchWindow,
             ActBrowserElement.eControlAction.SwitchToDefaultWindow,
+            ActBrowserElement.eControlAction.AcceptMessageBox,
+            ActBrowserElement.eControlAction.DismissMessageBox,
+            ActBrowserElement.eControlAction.GetMessageBoxText,
+            ActBrowserElement.eControlAction.SetAlertBoxText,
+            ActBrowserElement.eControlAction.StartMonitoringNetworkLog,
+            ActBrowserElement.eControlAction.GetNetworkLog,
+            ActBrowserElement.eControlAction.StopMonitoringNetworkLog,
         ];
     }
 }

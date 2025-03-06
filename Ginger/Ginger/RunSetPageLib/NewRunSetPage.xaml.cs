@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
@@ -91,7 +92,7 @@ namespace Ginger.Run
         private FileSystemWatcher mBusinessFlowsXmlsChangeWatcher = null;
         private bool mRunSetBusinessFlowWasChanged = false;
         private bool mSolutionWasChanged = false;
-        Context mContext = new Context();
+        Context mContext = new();
         private readonly bool _ignoreValidationRules;
         private Task<GraphQLResponse<GraphQLRunsetResponse>> response;
         private GraphQLResponse<GraphQLRunsetResponse> data;
@@ -243,11 +244,10 @@ namespace Ginger.Run
                 else
                 {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("No {0} found to load, please add {0}.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                    //TODO: hide all pages elements
                 }
             }
         }
-
+        
         private void LoadRunSetConfigBySelection(RunSetConfig defaultRunSet)
         {
             //hide current Run set UI

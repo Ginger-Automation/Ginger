@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Drawing;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.ALM;
@@ -80,7 +81,7 @@ namespace Amdocs.Ginger.Common
 
 
 
-        bool GetLatest(string path, SourceControlBase SourceControl);
+        bool GetLatest(string path, SourceControlBase SourceControl, ProgressNotifier progressNotifier = null);
 
         bool Revert(string path, SourceControlBase SourceControl);
 

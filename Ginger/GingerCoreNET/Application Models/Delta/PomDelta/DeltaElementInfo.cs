@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ namespace GingerCoreNET.Application_Models
     public class DeltaElementInfo : DeltaItemBase
     {
         public ElementInfo ElementInfo = null;
+
+        public ElementInfo PredictedElementInfo { get; set; } = null;
 
         public string ElementName { get { return ElementInfo.ElementName; } }
 

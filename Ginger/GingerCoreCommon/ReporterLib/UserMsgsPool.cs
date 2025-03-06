@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ limitations under the License.
 #endregion
 
 
-using System;
-using System.Collections.Generic;
 using Amdocs.Ginger.Repository;
 using GingerCore;
+using System;
+using System.Collections.Generic;
 
 namespace Amdocs.Ginger.Common
 {
@@ -174,6 +174,19 @@ namespace Amdocs.Ginger.Common
         GingerOpsSyncFailed,
         GingerOpsSyncSuccess,
         GingerOpsDeleteDisable,
+        GingerOpsDataFetchingError,
+        WireMockConnectionSuccess,
+        WireMockMappingDownload,
+        WireMockMappingDownloadFailed,
+        WireMockConnectionFail,
+        WireMockAPIError,
+        WireMockMappingEmpty,
+        WireMockMappingDeleteEmpty,
+        WireMockMappingDeleteFail,
+        WireMockMappingDeleteSuccess,
+        WireMockMappingUpdateFail,
+        WireMockMappingDownloadEmpty,
+        WireMockMappingUpdateSuccess,
         RequiredFieldsEmpty,
         EnvParamNameEmpty,
         NoPublishRepositoryInfo,
@@ -202,6 +215,7 @@ namespace Amdocs.Ginger.Common
         LocatorTestInProgress,
         DeleteSelectedDB,
         RemoteExecutionReportFolder,
+        InvalidKatalonObjectRepository
     }
 
     public static class UserMsgsPool
@@ -802,6 +816,19 @@ namespace Amdocs.Ginger.Common
                 { eUserMsgKey.GingerOpsSyncFailed, new UserMsg(eUserMsgType.INFO, "GingerOps Sync Info", " GingerOps Sync Failed.", eUserMsgOption.OK, eUserMsgSelection.None) },
                 { eUserMsgKey.GingerOpsSyncSuccess, new UserMsg(eUserMsgType.INFO, "GingerOps Sync Info", " GingerOps Sync Successful.", eUserMsgOption.OK, eUserMsgSelection.None) },
                 { eUserMsgKey.GingerOpsDeleteDisable, new UserMsg(eUserMsgType.INFO, "GingerOps Application Info", " GingerOps imported Application can not be deleted.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.GingerOpsDataFetchingError, new UserMsg(eUserMsgType.ERROR, "GingerOps Application Error", "Error fetching Data from GingerOps, Please Check Access/Credentials in Configuration > External Integration > GingerOps", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockConnectionFail, new UserMsg(eUserMsgType.ERROR, "WireMock Connection Fail", " WireMock Connection Failed.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockConnectionSuccess, new UserMsg(eUserMsgType.INFO, "WireMock Connection Success", " WireMock Connection Successful.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockMappingDownload, new UserMsg(eUserMsgType.INFO, "WireMock Mapping Download", " WireMock Mapping downloaded Successful.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockMappingDownloadFailed, new UserMsg(eUserMsgType.ERROR, "WireMock Mapping Download", " WireMock Mapping download failed.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockMappingEmpty, new UserMsg(eUserMsgType.INFO, "No WireMock Mapping Found", " No WireMock Mapping Available to Show.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockMappingDownloadEmpty, new UserMsg(eUserMsgType.INFO, "No WireMock Mapping Found", " No WireMock Mapping Available to Download.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockMappingDeleteEmpty, new UserMsg(eUserMsgType.INFO, "No WireMock Mapping Found", " No WireMock Mapping Available to Delete.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockAPIError, new UserMsg(eUserMsgType.ERROR, "WireMock API Issue", " WireMock API got issue, please check server.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockMappingUpdateFail, new UserMsg(eUserMsgType.ERROR, "WireMock Mapping", "WireMock mapping failed to Update, please check server", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockMappingUpdateSuccess, new UserMsg(eUserMsgType.INFO, "WireMock Mapping", "WireMock mapping successfully Updated.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockMappingDeleteSuccess, new UserMsg(eUserMsgType.INFO, "WireMock Mapping", "WireMock mapping successfully Deleted.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.WireMockMappingDeleteFail, new UserMsg(eUserMsgType.ERROR, "WireMock Mapping", "WireMock mapping failed to delete, please check server.", eUserMsgOption.OK, eUserMsgSelection.None) },
                 { eUserMsgKey.FileAlreadyExistWarn, new UserMsg(eUserMsgType.WARN, "File Already Exists", "File already exists, do you want to override?", eUserMsgOption.OKCancel, eUserMsgSelection.Cancel) },
                 { eUserMsgKey.SuccessfulConversionDone, new UserMsg(eUserMsgType.INFO, "Obsolete actions converted successfully", "The obsolete actions have been converted successfully" + Environment.NewLine + "Do you want to convert more actions?", eUserMsgOption.YesNo, eUserMsgSelection.No) },
                 {
@@ -819,7 +846,11 @@ namespace Amdocs.Ginger.Common
    "Unrecovered items will be deleted. Do you want to continue?",
    eUserMsgOption.YesNo, eUserMsgSelection.No)
                 },
-                { eUserMsgKey.RemoteExecutionReportFolder, new UserMsg(eUserMsgType.INFO, "Remote Execution History", "Open execution folder not supported for Remote Execution History source.", eUserMsgOption.OK, eUserMsgSelection.OK) }
+                { eUserMsgKey.RemoteExecutionReportFolder, new UserMsg(eUserMsgType.INFO, "Remote Execution History", "Open execution folder not supported for Remote Execution History source.", eUserMsgOption.OK, eUserMsgSelection.OK) },
+                {
+                    eUserMsgKey.InvalidKatalonObjectRepository,
+                    new UserMsg(eUserMsgType.ERROR, "Invalid Katalon Object Repository", "{0}", eUserMsgOption.OK, eUserMsgSelection.OK)
+                }
             };
 
 

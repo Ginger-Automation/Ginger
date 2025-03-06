@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -55,10 +55,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task<string> ExecuteJavascriptAsync(string script);
 
         public Task<string> ExecuteJavascriptAsync(string script, object arg);
-
         public Task InjectJavascriptAsync(string script);
 
-        public Task WaitTillLoadedAsync();
+        public Task<string> ExecuteJavascriptIframeAsync(string script);
+
+        public Task<string> ExecuteJavascriptIframeAsync(string script, object arg);
+
+        public Task InjectJavascriptIframeAsync(string script);
+
+        public Task<bool> WaitTillLoadedAsync(float timeOut = 0);
 
         public Task<string> ConsoleLogsAsync();
 
@@ -92,5 +97,23 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task<AxeResult?> TestAccessibilityAsync(AxeRunOptions? options = null);
 
         public Task CloseAsync();
+
+        public Task StartListenDialogsAsync();
+
+        public Task<bool> WaitForUrlMatchAsync(string urlPattern, float timeout);
+
+        public Task<bool> WaitForAlertAsync(float timeout);
+
+        public Task<bool> WaitForElementsEnabledAsync(eLocateBy locateBy, string selector, float timeout);
+
+        public Task<bool> WaitForElementsCheckedAsync(eLocateBy locateBy, string locateValue, float timeout);
+        public Task<bool> WaitForElementsPresenceAsync(eLocateBy locateBy, string locateValue, float timeout);
+        public Task<bool> WaitForElementsInvisibleAsync(eLocateBy locateBy, string locateValue, float timeout);
+        public Task<bool> WaitForElementsVisibleAsync(eLocateBy locateBy, string locateValue, float timeout);
+        public Task MaximizeWindowAsync();
+        public Task<bool> SetBlockedURLAsync(string urlPattern);
+        public Task<bool> UnblockURLAsync();
+        public Task<bool> SwitchToShadowDomAsync();
+        public Task<bool> SwitchToDefaultDomAsync();
     }
 }

@@ -31,6 +31,9 @@
             <DataTemplate x:Key="AddActualToExpectButton">
                 <Button x:Name="GridAddActualToExpectButton" Content=">>" Click="GridAddActualToExpectButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}" ToolTip="Copy Actual Value to Expected Value"/>
             </DataTemplate>
+            <DataTemplate x:Key="ShowActualValueButton">
+                <Button x:Name="GridShowActualValueButton" Content="..." Click="GridShowActualValueButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}" ToolTip="Show Actual Value in Editor"/>
+            </DataTemplate>
             <DataTemplate x:Key="AddActualToSimulButton">
                 <Button x:Name="GridAddActualToSimulButton" Content="&lt;&lt;" Click="GridAddActualToSimulButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}" ToolTip="Copy Actual Value to Simulated Value"/>
             </DataTemplate>

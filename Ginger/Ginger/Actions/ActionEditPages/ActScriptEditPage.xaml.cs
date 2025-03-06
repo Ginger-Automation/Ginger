@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 using System;
 using System.IO;
@@ -53,8 +54,8 @@ namespace Ginger.Actions
 
             WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: ScriptNameComboBox, eventName: nameof(Selector.SelectionChanged), handler: ScriptNameComboBox_SelectionChanged);
 
-            ScriptInterPreter.FileExtensions.Add(".exe");
-            ScriptInterPreter.Init(Act, nameof(ActScript.ScriptInterpreter), true);
+            xVScriptInterPreter.Init(Context.GetAsContext(actScript.Context), actScript, nameof(ActScript.ScriptInterpreter), true, true, UCValueExpression.eBrowserType.File, "*.*");
+
             actScript.ScriptPath = SHFilesPath;
 
             var comboEnumItem = ScriptInterpreterComboBox.Items.Cast<GingerCore.GeneralLib.ComboEnumItem>().FirstOrDefault(x => x.text == ActScript.eScriptInterpreterType.JS.ToString());

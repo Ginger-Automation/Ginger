@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Ginger.ConflictResolve;
 using GingerCoreNET.SourceControl;
 using System;
@@ -57,12 +58,12 @@ namespace Ginger.SourceControl
                 return false;
             }
         }
-        public static bool GetLatest(string path, SourceControlBase SourceControl)
+        public static bool GetLatest(string path, SourceControlBase SourceControl, ProgressNotifier progressNotifier = null)
         {
             string error = string.Empty;
             List<string> conflictsPaths = [];
 
-            if (!SourceControl.GetLatest(path, ref error, ref conflictsPaths))
+            if (!SourceControl.GetLatest(path, ref error, ref conflictsPaths, progressNotifier))
             {
                 if (conflictsPaths.Count != 0)
                 {

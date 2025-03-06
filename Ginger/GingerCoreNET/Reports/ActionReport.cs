@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -290,7 +290,15 @@ namespace Ginger.Reports
                     dr["ActualValue"] = elementsAfter[1];
                     dr["ExpectedValue"] = elementsAfter[2];
                     dr["Status"] = elementsAfter[3];
-                    dr["Description"] = elementsAfter[4];
+                    if (elementsAfter.Length > 4)
+                    {
+                        dr["Description"] = elementsAfter[4];
+                    }
+                    else
+                    {
+                        dr["Description"] = string.Empty;
+                    }
+
                     dt.Rows.Add(dr);
                 }
                 return dt;

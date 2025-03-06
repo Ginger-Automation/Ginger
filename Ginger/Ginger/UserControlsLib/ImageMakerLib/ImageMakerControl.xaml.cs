@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -207,6 +207,15 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.GingerAnalytics:
                     SetAsStaticImage("GingerAnalytics.png");
+                    break;
+                case eImageType.WireMockLogo:
+                    SetAsStaticImage("WireMockLogo.png");
+                    break;
+                case eImageType.WireMock_Logo:
+                    SetAsStaticImage("WireMock_Logo.png");
+                    break;
+                case eImageType.WireMockLogo16x16:
+                    SetAsStaticImage("WireMockLogo16x16.png");
                     break;
                 case eImageType.SendArrow:
                     SetAsStaticImage("sendArrow.png");
@@ -485,6 +494,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.MoveUpDown:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowsUpDown);
+                    break;
+                case eImageType.Category:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_StackExchange);
                     break;
                 case eImageType.Reorder:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_FirstOrder);
@@ -1119,6 +1131,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.AndroidWhite:
                     SetAsStaticImage("androidWhite.png");
+                    break;
+                case eImageType.Katalon:
+                    SetAsStaticImage("katalon.png");
                     break;
                 #endregion
 

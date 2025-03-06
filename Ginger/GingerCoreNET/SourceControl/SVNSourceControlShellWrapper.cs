@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SourceControl;
 using Medallion.Shell;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 namespace Amdocs.Ginger.CoreNET.SourceControl
 {
 
@@ -115,7 +117,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
             throw new NotImplementedException();
         }
 
-        public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths)
+        public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths, ProgressNotifier progressNotifier = null)
         {
             Console.WriteLine("Reverting and Get Latest");
             RunSVNCommand(new object[] { "revert", "-R", ".", "--username", SourceControlUser, "--password", SourceControlPass }, path);
@@ -135,7 +137,6 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
         public override bool GetProject(string Path, string URI, ref string error)
         {
             Console.WriteLine("Check Out");
-
 
             SourceControlURL = URI;
 
@@ -250,6 +251,11 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
         public override bool UndoUncommitedChanges(List<SourceControlFileInfo> selectedFiles)
         {
             throw new NotImplementedException("UndoUncommitedChanges not Implemented");
+        }
+
+        public override bool GetProjectWithProgress(string Path, string URI, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

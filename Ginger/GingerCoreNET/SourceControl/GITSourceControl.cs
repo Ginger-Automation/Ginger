@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Telemetry;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SourceControl;
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
@@ -26,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GingerCore.SourceControl
@@ -301,7 +303,7 @@ namespace GingerCore.SourceControl
             return remoteURL;
         }
 
-        public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths)
+        public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths, ProgressNotifier progressNotifier = null)
         {
             if (!TestConnection(ref error))
             {
@@ -312,9 +314,10 @@ namespace GingerCore.SourceControl
             try
             {
                 MergeResult result;
-                result = Pull();
+                result = Pull(progressNotifier);
 
-                if (result.Status != MergeStatus.Conflicts)
+
+                if (result != null && result.Status != MergeStatus.Conflicts)
                 {
                     using var repo = new Repository(RepositoryRootFolder);
                     if (supressMessage == true)
@@ -385,10 +388,10 @@ namespace GingerCore.SourceControl
                 {
                     foreach (var item in repo.RetrieveStatus())
                     {
-                        //if (WorkSpace.Instance.SolutionRepository.IsSolutionPathToAvoid(System.IO.Path.Combine(RepositoryRootFolder, item.FilePath)))
-                        //{
-                        //    continue;
-                        //}
+                        if (WorkSpace.Instance.SolutionRepository.IsSolutionPathToAvoid(System.IO.Path.Combine(RepositoryRootFolder, item.FilePath)))
+                        {
+                            continue;
+                        }
 
                         //if (System.IO.Path.GetExtension(item.FilePath) == ".ldb" || System.IO.Path.GetExtension(item.FilePath) == ".ignore" || System.IO.Path.GetExtension(item.FilePath) == ".db")
                         //{
@@ -449,12 +452,14 @@ namespace GingerCore.SourceControl
             }
 
             try
+
             {
-                var co = new CloneOptions
+                var co = new CloneOptions()
                 {
                     BranchName = string.IsNullOrEmpty(SourceControlBranch) ? "master" : SourceControlBranch,
                     CredentialsProvider = GetSourceCredentialsHandler()
                 };
+                GetFetchOptions(co.FetchOptions);
                 RepositoryRootFolder = LibGit2Sharp.Repository.Clone(URI, Path, co);
             }
             catch (Exception ex)
@@ -462,7 +467,6 @@ namespace GingerCore.SourceControl
                 error = ex.Message + Environment.NewLine + ex.InnerException;
                 return false;
             }
-
             return true;
         }
 
@@ -1184,18 +1188,7 @@ namespace GingerCore.SourceControl
 
                 if (!String.IsNullOrEmpty(SourceControlBranch) && isRemoteBranchExist())
                 {
-                    PullOptions pullOptions = new PullOptions
-                    {
-                        MergeOptions = new MergeOptions
-                        {
-                            FailOnConflict = true
-                        },
-
-                        FetchOptions = new FetchOptions
-                        {
-                            CredentialsProvider = GetSourceCredentialsHandler()
-                        }
-                    };
+                    var pullOptions = GetPullOptions();
 
                     Signature merger = author;
 
@@ -1237,8 +1230,44 @@ namespace GingerCore.SourceControl
                 repo.Network.Push(remote, @"refs/heads/" + SourceControlBranch, options);
             }
         }
+        /// <summary>
+        /// Gets the options for pulling changes from the remote repository.
+        /// </summary>
+        /// <returns>A PullOptions object configured with merge and fetch options.</returns>
+        private PullOptions GetPullOptions()
+        {
+            try
+            {
+                var pullOption = new PullOptions
+                {
+                    MergeOptions = new MergeOptions
+                    {
+                        FailOnConflict = true,
+                    },
 
-        public override bool UnLock(string path, ref string error)
+                };
+                GetFetchOptions(pullOption?.FetchOptions);
+                return pullOption;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting pull options.", ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the options for fetching changes from the remote repository.
+        /// </summary>
+        /// <returns>A FetchOptions object configured with credentials, depth, and certificate check.</returns>
+        private void GetFetchOptions(FetchOptions fetchOptions)
+        {
+            if (fetchOptions == null) throw new ArgumentNullException(nameof(fetchOptions));
+            fetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
+            fetchOptions.CertificateCheck = (_, _, _) => true;
+        }
+
+        public override bool UnLock(string _, ref string error)
         {
             throw new NotImplementedException();
         }
@@ -1331,38 +1360,170 @@ namespace GingerCore.SourceControl
         }
 
         /// <summary>
-        /// Perform a Git Fetch and Merge operation to get the latest changes.
+        /// Clones a Git repository to the specified path with progress notifications.
         /// </summary>
-        /// <returns><see cref="MergeResult"/> representing the result of the merge operation after fetch.</returns>
-        /// <exception cref="CheckoutConflictException">If local branch has uncommited changes.</exception>
-        private MergeResult Pull()
+        /// <param name="path">The local path where the repository will be cloned.</param>
+        /// <param name="uri">The URI of the remote repository.</param>
+        /// <param name="error">Output parameter to capture any error messages.</param>
+        /// <param name="progressNotifier">Optional progress notifier for reporting progress.</param>
+        /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
+        /// <returns>True if the operation succeeds, otherwise false.</returns>
+        public override bool GetProjectWithProgress(string path, string uri, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
         {
-            MergeResult mergeResult = null;
-            ReportFeatureUsage(operation: "Pull");
-            //Pull = Fetch + Merge
-            Task.Run(() =>
+            try
             {
-                using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                EnsureDirectoryExists(path);
+                var cloneOptions = new CloneOptions()
                 {
-
-                    PullOptions PullOptions = new PullOptions
+                    BranchName = string.IsNullOrEmpty(SourceControlBranch) ? "master" : SourceControlBranch,
+                    FetchOptions = new FetchOptions(),
+                    CredentialsProvider = GetSourceCredentialsHandler()
+                };
+                if (progressNotifier != null)
+                {
+                    cloneOptions.OnProgress = progress =>
                     {
-                        FetchOptions = new FetchOptions
-                        {
-                            CredentialsProvider = GetSourceCredentialsHandler()
-                        }
+                        progressNotifier.NotifyProgressDetailText($"{progress}");
+                        return !cancellationToken.IsCancellationRequested;
                     };
-                    if (!IsRepositoryPublic())
+
+                    cloneOptions.OnTransferProgress = progress =>
                     {
-                        mergeResult = Commands.Pull(repo, new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), PullOptions);
-                    }
-                    else
+                        if (progress.TotalObjects == 0)
+                        {
+                            progressNotifier.NotifyProgressDetailText("Initializing...");
+                            return true;
+                        }
+                        double percentage = (double)progress.ReceivedObjects / progress.TotalObjects * 100;
+                        if (Math.Abs(percentage - previousPercentage) < 0.01)
+                        {
+                            return true;
+                        }
+                        progressNotifier.NotifyProgressDetailText($"{percentage:F2}% {progress.ReceivedObjects}/{progress.TotalObjects} files downloaded.");
+                        progressNotifier.NotifyProgressUpdated("Download solution status: ", progress.ReceivedObjects, progress.TotalObjects);
+                        previousPercentage = percentage;
+                        return !cancellationToken.IsCancellationRequested;
+                    };
+
+                    cloneOptions.OnCheckoutProgress = (_, completedSteps, totalSteps) =>
                     {
-                        mergeResult = Commands.Pull(repo, new Signature("dummy", "dummy", new DateTimeOffset(DateTime.Now)), PullOptions);
-                    }
+                        progressNotifier?.NotifyProgressDetailText($"Checkout solution status: {completedSteps}/{totalSteps}");
+                        progressNotifier?.NotifyProgressUpdated("Checkout solution status: ", completedSteps, totalSteps);
+                    };
                 }
-            }).Wait();
-            return mergeResult;
+                GetFetchOptions(cloneOptions.FetchOptions);
+                RepositoryRootFolder = LibGit2Sharp.Repository.Clone(uri, path, cloneOptions);
+            }
+            catch (Exception ex)
+            {
+                if (!cancellationToken.IsCancellationRequested)
+                {
+                    error = $"{ex.Message}{Environment.NewLine}{ex.InnerException}";
+                }
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Ensures that the specified directory exists, creating it if necessary.
+        /// </summary>
+        /// <param name="path">The path of the directory to check or create.</param>
+        private void EnsureDirectoryExists(string path)
+        {
+            if (!System.IO.Directory.Exists(path))
+            {
+                System.IO.Directory.CreateDirectory(path);
+            }
+        }
+        private double previousPercentage = 0;
+        /// <summary>
+        /// Gets fetch options with progress notifications and cancellation support.
+        /// </summary>
+        /// <param name="progressNotifier">Optional progress notifier for reporting progress.</param>
+        /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
+        /// <returns>Fetch options configured with progress notifications and cancellation support.</returns>
+        private void GetFetchOptionsWithProgress(FetchOptions fetchOptions, ProgressNotifier progressNotifier, CancellationToken cancellationToken)
+        {
+            try
+            {
+                GetFetchOptions(fetchOptions);
+                if (progressNotifier != null)
+                {
+                    fetchOptions.OnProgress = progress =>
+                    {
+                        progressNotifier.NotifyProgressDetailText($"{progress}");
+                        return !cancellationToken.IsCancellationRequested;
+                    };
+
+                    fetchOptions.OnTransferProgress = progress =>
+                    {
+
+                        if (progress.TotalObjects == 0)
+                        {
+                            progressNotifier.NotifyProgressDetailText("Initializing...");
+                            return true;
+                        }
+                        double percentage = (double)progress.ReceivedObjects / progress.TotalObjects * 100;
+                        if (Math.Abs(percentage - previousPercentage) < 0.01)
+                        {
+                            return true;
+                        }
+                        progressNotifier.NotifyProgressDetailText($"{percentage:F2}% {progress.ReceivedObjects}/{progress.TotalObjects} files downloaded.");
+                        progressNotifier.NotifyProgressUpdated("Download solution status: ", progress.ReceivedObjects, progress.TotalObjects);
+                        previousPercentage = percentage;
+                        return !cancellationToken.IsCancellationRequested;
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting fetch options with progress.", ex);
+            }
+        }
+
+        /// <summary>
+        /// Pulls the latest changes from the remote repository with progress notifications and cancellation support.
+        /// </summary>
+        /// <param name="progressNotifier">Optional progress notifier for reporting progress.</param>
+        /// <param name="cancellationToken">Optional cancellation token to cancel the operation.</param>
+        /// <returns>The result of the merge operation.</returns>
+        private MergeResult Pull(ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                MergeResult mergeResult = null;
+                ReportFeatureUsage(operation: "Pull");
+
+                Task.Run(() =>
+                {
+                    using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                    {
+                        var pullOptions = new PullOptions()
+                        {
+                            FetchOptions = new FetchOptions(),
+                        };
+
+
+                        GetFetchOptionsWithProgress(pullOptions.FetchOptions, progressNotifier, cancellationToken);
+
+                        var signature = new Signature(
+                            IsRepositoryPublic() ? "dummy" : SourceControlUser,
+                            IsRepositoryPublic() ? "dummy" : SourceControlUser,
+                            DateTimeOffset.Now
+                        );
+
+                        mergeResult = Commands.Pull(repo, signature, pullOptions);
+                    }
+                }).Wait();
+                return mergeResult;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while pulling the latest changes.", ex);
+                return null;
+            }
         }
 
         private Commit Commit(string Comments)
@@ -1371,10 +1532,8 @@ namespace GingerCore.SourceControl
             CheckinComment = Comments;
             using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
             {
-                // Create the committer's signature and commit
                 Signature author = new LibGit2Sharp.Signature(SolutionSourceControlAuthorName, SolutionSourceControlAuthorEmail, DateTime.Now);
                 Signature committer = author;
-                // Commit to the repository
                 return repo.Commit(Comments, author, committer);
             }
         }
@@ -1608,7 +1767,7 @@ namespace GingerCore.SourceControl
                     return false;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }

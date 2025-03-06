@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -104,14 +104,7 @@ namespace Ginger.Repository
                             }
                             srAction.ParentGuid = Guid.Empty;
                         }
-                        foreach (VariableBase srVariable in srActivity.Variables)
-                        {
-                            if (srVariable.ParentGuid != Guid.Empty)
-                            {
-                                srVariable.Guid = srVariable.ParentGuid;
-                            }
-                            srVariable.ParentGuid = Guid.Empty;
-                        }
+
                         foreach (Act action in srActivity.Acts.Cast<Act>())
                         {
                             foreach (FlowControl fc in action.FlowControls)
@@ -134,10 +127,6 @@ namespace Ginger.Repository
                         foreach (Act bfAction in bfActivity.Acts.Cast<Act>())
                         {
                             bfAction.ParentGuid = bfAction.Guid;
-                        }
-                        foreach (VariableBase bfVariable in bfActivity.Variables)
-                        {
-                            bfVariable.ParentGuid = bfVariable.Guid;
                         }
                     }
                 }
@@ -628,14 +617,6 @@ namespace Ginger.Repository
                         action.Guid = action.ParentGuid;
                     }
                     action.ParentGuid = Guid.Empty;
-                }
-                foreach (VariableBase variable in sharedActivity.Variables)
-                {
-                    if (variable.ParentGuid != Guid.Empty)
-                    {
-                        variable.Guid = variable.ParentGuid;
-                    }
-                    variable.ParentGuid = Guid.Empty;
                 }
                 foreach (FlowControl fc in sharedActivity.Acts.SelectMany(a => a.FlowControls))
                 {

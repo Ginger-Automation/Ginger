@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.GeneralLib;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
@@ -36,6 +38,7 @@ using Ginger.Help;
 using Ginger.MenusLib;
 using Ginger.SolutionGeneral;
 using Ginger.SolutionWindows;
+using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.SourceControl;
 using Ginger.User;
 using GingerCore;
@@ -44,6 +47,8 @@ using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
+using GingerWPF.UserControlsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -56,6 +61,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -211,6 +217,9 @@ namespace Ginger
 
                 WorkSpace.Instance.UserProfile.PropertyChanged += AskLisaPropertyChanged;
 
+                DoOptionsHandler.LoadRunSetConfigEvent += DoOptionsHandler_LoadRunSetConfigEvent;
+                DoOptionsHandler.LoadSharedRepoEvent += DoOptionsHandler_LoadSharedRepoEvent;
+                DoOptionsHandler.LoadSourceControlDownloadPage += DoOptionsHandler_LoadSourceControlDownloadPage;
             }
             catch (Exception ex)
             {
@@ -228,6 +237,84 @@ namespace Ginger
 
         }
 
+        private void DoOptionsHandler_LoadSourceControlDownloadPage(object? sender, EventArgs e)
+        {
+            xDownloadSolutionMenuItem_Click(null, null);
+        }
+
+
+        /// <summary>
+        /// Handles the event to load a shared repository.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="activity">The activity to load.</param>
+        private void DoOptionsHandler_LoadSharedRepoEvent(object? sender, GingerCore.Activity activity)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    if (xResourcesListItem.Tag == null)
+                    {
+                        xResourcesListItem.Tag = ResourcesMenu.MenusPage;
+                    }
+                    xSolutionTabsListView.SelectedItem = xResourcesListItem;
+                    var menuPage = xResourcesListItem.Tag as TwoLevelMenuPage;
+                    if (menuPage == null)
+                    {
+                        throw new InvalidOperationException("Menu page not initialized");
+                    }
+                    menuPage.SelectTopMenu(0);
+                    menuPage.xSubNavigationListView.SelectedIndex = 1;
+
+                    var treeView = ((SingleItemTreeViewExplorerPage)ResourcesMenu.MenusPage.mTwoLevelMenu.MenuList[0].SubItems[1].ItemPage)?.xTreeView?.Tree;
+
+
+
+                    if (treeView != null)
+                    {
+
+                        ITreeViewItem s = new SharedActivityTreeItem(activity);
+
+                        treeView.SelectItemByNameAndOpenFolder(activity);
+
+                    }
+
+
+
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to load shared repository", ex);
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load shared repository: ", ex.Message);
+                }
+            });
+        }
+
+        /// <summary>
+        /// Handles the event to load a run set configuration.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The run set configuration to load.</param>
+        private void DoOptionsHandler_LoadRunSetConfigEvent(object? sender, Run.RunSetConfig e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    if (xSolutionTabsListView == null || xRunListItem == null)
+                    {
+                        throw new InvalidOperationException("UI elements not initialized");
+                    }
+                    xSolutionTabsListView.SelectedItem = xRunListItem;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to load run set configuration", ex);
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load run set: " + ex.Message);
+                }
+            });
+        }
 
         private void AskLisaPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -614,32 +701,25 @@ namespace Ginger
                     if (xBusinessFlowsListItem.Tag == null)
                     {
                         xBusinessFlowsListItem.Tag = BusinessFlowsMenu.MenusPage;
+                        SelectBusinessFlowsMenu();
                     }
+
                     SelectedSolutionTab = eSolutionTabType.BusinessFlows;
                 }
                 else if (selectedTopListItem == xRunListItem)
                 {
-                    if (xRunListItem.Tag == null)
-                    {
-                        xRunListItem.Tag = RunMenu.MenusPage;
-                    }
+                    xRunListItem.Tag ??= RunMenu.MenusPage;
                     SelectedSolutionTab = eSolutionTabType.Run;
                     RunMenu.MenusPage.SelectFirstTopMenu();
                 }
                 else if (selectedTopListItem == xConfigurationsListItem)
                 {
-                    if (xConfigurationsListItem.Tag == null)
-                    {
-                        xConfigurationsListItem.Tag = ConfigurationsMenu.MenusPage;
-                    }
+                    xConfigurationsListItem.Tag ??= ConfigurationsMenu.MenusPage;
                     SelectedSolutionTab = eSolutionTabType.Configurations;
                 }
                 else
                 {
-                    if (xResourcesListItem.Tag == null)
-                    {
-                        xResourcesListItem.Tag = ResourcesMenu.MenusPage;
-                    }
+                    xResourcesListItem.Tag ??= ResourcesMenu.MenusPage;
                     SelectedSolutionTab = eSolutionTabType.Resources;
                 }
 
@@ -855,6 +935,7 @@ namespace Ginger
 
         private void xDownloadSolutionMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            
             SourceControlProjectsPage p = new SourceControl.SourceControlProjectsPage();
             p.ShowAsWindow();
         }
@@ -868,25 +949,100 @@ namespace Ginger
 
             App.CheckIn(WorkSpace.Instance.Solution.Folder);
         }
-
+        ProgressNotifier progressNotifier = null;
+        /// <summary>
+        /// Handles the event to get the latest changes from the source control.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void btnSourceControlGetLatest_Click(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) { return; }
-
-            Reporter.ToStatus(eStatusMsgKey.GetLatestFromSourceControl);
-            if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.Folder))
+            try
             {
-                Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
-            }
-            else
-            {
-                SourceControlUI.GetLatest(WorkSpace.Instance.Solution.Folder, WorkSpace.Instance.Solution.SourceControl);
-            }
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
-            Reporter.HideStatusMessage();
+                if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                {
+                    return;
+                }
 
+                InitializeProgressNotifier();
+
+                Reporter.ToStatus(eStatusMsgKey.GetLatestFromSourceControl);
+
+                if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.Folder))
+                {
+                    Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided. Please check the solution folder path.");
+                }
+                else
+                {
+                    SourceControlUI.GetLatest(WorkSpace.Instance.Solution.Folder, WorkSpace.Instance.Solution.SourceControl, progressNotifier);
+                }
+
+                App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
+               
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get the latest from source control. Please check the logs for more details.", ex);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+                CleanupProgressNotifier();
+            }
         }
 
+        /// <summary>
+        /// Initializes the progress notifier for source control operations.
+        /// </summary>
+        private void InitializeProgressNotifier()
+        {
+            progressNotifier = new ProgressNotifier();
+            progressNotifier.StatusUpdateHandler += ProgressNotifier_ProgressUpdated;
+        }
+
+        /// <summary>
+        /// Cleans up the progress notifier after source control operations.
+        /// </summary>
+        private void CleanupProgressNotifier()
+        {
+            if (progressNotifier != null)
+            {
+                progressNotifier.StatusUpdateHandler -= ProgressNotifier_ProgressUpdated;
+            }
+        }
+
+        /// <summary>
+        /// Updates the progress notifier with the current progress of the operation.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">A tuple containing the completed steps and total steps.</param>
+        private void ProgressNotifier_ProgressUpdated(object? sender, (string ProgressType, int CompletedSteps, int TotalSteps) e)
+        {
+            try
+            {
+                if (e.CompletedSteps > 0 && e.TotalSteps > 0 && e.CompletedSteps <= e.TotalSteps)
+                {
+                    double progress = Math.Round(((double)e.CompletedSteps / e.TotalSteps) * 100, 2);
+                    if (Math.Abs(progress) < 0.01) 
+                    {
+                        return;
+                    }
+                    string gitProgress = $"{e.ProgressType}{progress}% complete ";
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        xProcessMsgTxtBlock.Text = gitProgress;
+                    }));
+                }
+                else
+                {
+                    return;
+                }
+            }
+            catch (Exception t)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, t.Message);
+            }
+        }
         private void btnGlobalSolutionImport_Click(object sender, RoutedEventArgs e)
         {
             GingerWPF.WizardLib.WizardWindow.ShowWizard(new Ginger.GlobalSolutionLib.ImportItemWizardLib.ImportItemWizard());

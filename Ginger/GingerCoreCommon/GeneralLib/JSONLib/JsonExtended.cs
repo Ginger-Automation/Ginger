@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json.Linq;
 
 namespace Amdocs.Ginger.Common.GeneralLib
 {
@@ -172,10 +172,9 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
         public IEnumerable<JsonExtended> GetEndingNodes(bool IncludeSelfClosingTags = true)
         {
-            List<JsonExtended> mEndingnodes = [];
+            List<JsonExtended> mEndingnodes = new List<JsonExtended>();
 
             var Jpropertytype = typeof(JProperty);
-
             List<JsonExtended> allNodesList = this.GetAllNodes();
 
             foreach (var nodes in allNodesList)
@@ -185,8 +184,10 @@ namespace Amdocs.Ginger.Common.GeneralLib
                     mEndingnodes.Add(nodes);
                 }
             }
+
             return allNodesList.Where(x => !x.GetToken().Children().Any());
         }
+
 
 
         #endregion

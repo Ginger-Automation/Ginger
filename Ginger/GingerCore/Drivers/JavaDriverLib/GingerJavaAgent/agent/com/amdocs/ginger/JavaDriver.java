@@ -1819,6 +1819,41 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 				return plrc;
 	
 			}
+			if (controlAction.equals("ClickXY"))
+			{	
+				GingerAgent.WriteLog("ControlAction: ClickXY Coordinates: " + XCoordinate + "-" + YCoordinate);
+				// Validate coordinates are provided
+				if (XCoordinate == null || YCoordinate == null || XCoordinate.isEmpty() || YCoordinate.isEmpty()) {
+					return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(), "XCoordinate and YCoordinate must be provided");
+				}
+				
+				int x = 0;
+				try {
+					x = Integer.parseInt(XCoordinate);
+				} catch (Exception ex) {
+					return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(), "Invalid XCoordinate format: " + XCoordinate);
+				}
+				int y = 0;
+				try {
+					y = Integer.parseInt(YCoordinate);
+				} catch (Exception ex) {
+					return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(), "Invalid YCoordinate format: " + YCoordinate);
+				}
+				
+				// Validate coordinates are within component bounds
+				try {
+					if (x < 0 || x > c.getWidth() || y < 0 || y > c.getHeight()) {
+						return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(), String.format("Coordinates (%d,%d) outside component bounds (0,0,%d,%d)", x, y, c.getWidth(), c.getHeight()));
+					}
+				}
+				catch(Exception ex) {}
+				
+				PayLoad plrc = ClickComponent(c, x, y, Value, mCommandTimeout);
+								
+				GingerAgent.WriteLog("After ClickXY and Wait");
+				return plrc;
+	
+			}
 			if (controlAction.equals("WinClick"))
 			{					
 				if (XCoordinate != null && !XCoordinate.isEmpty() && YCoordinate != null && !YCoordinate.isEmpty())		
@@ -3114,7 +3149,12 @@ private PayLoad GetComponentState(Component c)
 		}
 		return PayLoad.OK("Done");
 	}
-	private PayLoad ClickComponent(final Component c,final String value,final int Timeout) {
+	
+	private PayLoad ClickComponent(final Component c, final String value, final int Timeout) {
+		return ClickComponent(c, 0, 0, value, Timeout);
+	}
+	
+	private PayLoad ClickComponent(final Component c, final int x, final int y,final String value,final int Timeout) {
 		 final String[] response = new String[3];
 
 		 GingerAgent.WriteLog("ClickComponent " + c.getClass() + " - " + value);
@@ -3122,12 +3162,7 @@ private PayLoad GetComponentState(Component c)
 		 response[1]="false";// to ensure the click passed and used to come out in case no response from application
 		 response[2]=""; // to keep error message
 		//TODO: check control is enabled
-		 if (!(c instanceof JButton) && !(c instanceof JRadioButton) && !(c instanceof JMenu) 
-				 && !(c instanceof JMenuItem) && !(c instanceof JTree) && !((c instanceof JCheckBox)) 
-				 && !(c instanceof JPanel) && !(c instanceof JScrollPane)
-				 && !(c.getClass().toString().contains("uif.widgets.DropDownButtonNative")))
-				return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Unknown Element for click action - Class=" + c.getClass().getName());
-		 
+
 		 if (c instanceof JTree)
 		 {
 			GingerAgent.WriteLog("c instance of JTree");
@@ -3350,7 +3385,36 @@ private PayLoad GetComponentState(Component c)
 						Component cPanel=FindPanelInsideScroll(c);						
 						boolean status = HandleTabClickForJPanel(cPanel);
 						response[0]= String.valueOf(status);
-					}							
+					}
+					else {
+						//Handle click for unknown elements by simulating mouse events
+						int count = 1;
+						
+						try {
+							Robot bot = new Robot();
+					        bot.mouseMove(x, y);
+						}
+						catch (Exception ex) {
+							
+						}
+						
+						long when = System.currentTimeMillis();
+						MouseEvent mouseEvent = new MouseEvent(c, MouseEvent.MOUSE_PRESSED, when, MouseEvent.BUTTON1_DOWN_MASK, x, y, count, false);
+						c.dispatchEvent(mouseEvent);
+						
+						try {
+							Thread.sleep(100);
+						}
+						catch (Exception ex) {
+							GingerAgent.WriteLog(ex.toString());
+						}
+
+						when = System.currentTimeMillis();
+						mouseEvent = new MouseEvent(c, MouseEvent.MOUSE_RELEASED, when, MouseEvent.BUTTON1_DOWN_MASK, x, y, count, false);
+						c.dispatchEvent(mouseEvent);
+						
+						response[0] = "true";
+					}
 					
 					response[1] = "true";
 				}

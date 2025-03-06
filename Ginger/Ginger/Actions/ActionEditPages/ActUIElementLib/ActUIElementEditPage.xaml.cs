@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -276,6 +276,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     pageContent = new UIElementXYCoordinatePage(mAction);
                     break;
 
+                case eElementAction.ScrollToElement:
+                    pageContent = new UIElementScrollToElementOptionsPage(mAction);
+                    break;
 
                 case eElementAction.DoubleClick:
                 case eElementAction.WinClick:

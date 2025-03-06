@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,35 +18,54 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Reports;
 using Ginger.AnalyzerLib;
+using Ginger.Reports;
+using Ginger.Run;
 using GingerCore;
+using GraphQLClient.Clients;
 using System;
+using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
-    class DoOptionsHanlder
+
+    public class DoOptionsHandler
     {
-        internal static void Run(DoOptions opts)
+        public static event EventHandler<BusinessFlow> AutomateBusinessFlowEvent;
+        public static event EventHandler<RunSetConfig> LoadRunSetConfigEvent;
+        public static event EventHandler<Activity> LoadSharedRepoEvent;
+        public static event EventHandler LoadSourceControlDownloadPage;
+        DoOptions mOpts;
+        CLIHelper mCLIHelper = new();
+        public async Task RunAsync(DoOptions opts)
         {
+            mOpts = opts;
             switch (opts.Operation)
             {
                 case DoOptions.DoOperation.analyze:
-                    DoAnalyze(opts.Solution);
+                    DoAnalyze();
                     break;
                 case DoOptions.DoOperation.clean:
                     // TODO: remove execution folder, backups and more
                     break;
                 case DoOptions.DoOperation.info:
-                    DoInfo(opts.Solution);
+                    DoInfo();
+                    break;
+                case DoOptions.DoOperation.open:
+                    await DoOpenAsync();
                     break;
             }
         }
 
-        private static void DoInfo(string solution)
+
+        private void DoInfo()
         {
             // TODO: print info on solution, how many BFs etc, try to read all items - for Linux deser test
-            WorkSpace.Instance.OpenSolution(solution);
+            WorkSpace.Instance.OpenSolution(mOpts.Solution);
             StringBuilder stringBuilder = new StringBuilder(Environment.NewLine);
             stringBuilder.Append("Solution Name  :").Append(WorkSpace.Instance.Solution.Name).Append(Environment.NewLine);
             stringBuilder.Append("Business Flows :").Append(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Count).Append(Environment.NewLine);
@@ -57,9 +76,293 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
         }
 
-        private static void DoAnalyze(string solution)
+        /// <summary>
+        /// Opens the solution specified in the options.
+        /// </summary>
+        /// <param name="solutionFolder">The folder path of the solution to open.</param>
+        /// <param name="encryptionKey">The encryption key for the solution, if any.</param>
+        private async Task DoOpenAsync()
         {
-            WorkSpace.Instance.OpenSolution(solution);
+            string solutionFolder = mOpts.Solution;
+            string encryptionKey = mOpts.EncryptionKey;
+            try
+            {
+                // Check if solutionFolder is null or empty
+                if (string.IsNullOrWhiteSpace(solutionFolder))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "The provided solution folder path is null or empty.");
+                    return;
+                }
+                // Check if the folder path contains the solution file name
+                if (solutionFolder.Contains("Ginger.Solution.xml"))
+                {
+                    solutionFolder = Path.GetDirectoryName(solutionFolder)?.Trim() ?? string.Empty;
+
+                    if (string.IsNullOrEmpty(solutionFolder))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Invalid solution folder path derived from the solution file.");
+                        return;
+                    }
+                }
+
+                // Attempt to open the solution
+                mCLIHelper.AddCLIGitProperties(mOpts);
+                mCLIHelper.SetWorkSpaceGitProperties(mOpts);
+                mCLIHelper.SetEncryptionKey(encryptionKey);
+                if (mOpts.PasswordEncrypted)
+                {
+                    mCLIHelper.PasswordEncrypted(mOpts.PasswordEncrypted.ToString());
+                }
+                mCLIHelper.Solution = mOpts.Solution;
+                if (!await mCLIHelper.LoadSolutionAsync())
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                    LoadSourceControlDownloadPage?.Invoke(null, EventArgs.Empty);
+                    return;
+                }
+                          
+
+                if (!string.IsNullOrWhiteSpace(mOpts.ExecutionId))
+                {
+                    if (await OpenRunSetByExecutionId()) 
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Runset not found by given Execution ID:{mOpts.ExecutionId}");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(mOpts.RunSetId))
+                {
+                    if (LoadCLIRunSetByID())
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Runset not found by given ID:{mOpts.RunSetId}");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(mOpts.RunSetName))
+                {
+                    if (OpenCLIRunSetByName())
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Runset not found by given Name:{mOpts.RunSetName}");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(mOpts.BusinessFlowId))
+                {
+                    var businessFlow = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(Guid.Parse(mOpts.BusinessFlowId));
+                    if (businessFlow != null)
+                    {
+                        AutomateBusinessFlowEvent?.Invoke(null, businessFlow);
+                        return;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Businessflow not found by given ID:{mOpts.BusinessFlowId}");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(mOpts.BusinessFlowName))
+                {
+                    var businessFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()
+                        .FirstOrDefault(bf => bf.Name.Equals(mOpts.BusinessFlowName, StringComparison.OrdinalIgnoreCase));
+                    if (businessFlow != null)
+                    {
+                        AutomateBusinessFlowEvent?.Invoke(null, businessFlow);
+                        return;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Businessflow not found by given Name:{mOpts.BusinessFlowName}");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(mOpts.SharedActivityId))
+                {
+                    var sharedActivity = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(Guid.Parse(mOpts.SharedActivityId));
+                    if (sharedActivity != null)
+                    {
+                        LoadSharedRepoEvent?.Invoke(null, sharedActivity);
+                        return;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Shared Activity not found by given id:{mOpts.SharedActivityId}");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(mOpts.SharedActivityName))
+                {
+                    var sharedActivity = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().FirstOrDefault(sa => sa.ActivityName.Equals(mOpts.SharedActivityName, StringComparison.OrdinalIgnoreCase));
+                    if (sharedActivity != null)
+                    {
+                        LoadSharedRepoEvent?.Invoke(null, sharedActivity);
+                        return;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Shared Activity not found by given Name:{mOpts.SharedActivityName}");
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"An unexpected error occurred while opening the solution in folder '{solutionFolder}'. Error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Opens the CLI runset by name.
+        /// </summary>
+        /// <returns>True if the runset is found and opened successfully, otherwise false.</returns>
+        private bool OpenCLIRunSetByName()
+        {
+            bool autoLoadLastRunSetFlag = WorkSpace.Instance.UserProfile.AutoLoadLastRunSet;
+            try
+            {
+                ObservableList<RunSetConfig> allRunsets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                RunSetConfig cliRunset = allRunsets.FirstOrDefault(runsets => runsets.Name == mOpts.RunSetName);
+
+                if (cliRunset != null)
+                {
+                    WorkSpace.Instance.UserProfile.AutoLoadLastRunSet = true;
+                    WorkSpace.Instance.UserProfile.RecentRunset = cliRunset.Guid;
+                    LoadRunSetConfigEvent?.Invoke(sender: this, cliRunset);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            finally
+            {
+                WorkSpace.Instance.UserProfile.AutoLoadLastRunSet = autoLoadLastRunSetFlag;
+            }
+        }
+
+        /// <summary>
+        /// Loads the CLI runset by ID.
+        /// </summary>
+        /// <returns>True if the runset is found and loaded successfully, otherwise false.</returns>
+        private bool LoadCLIRunSetByID()
+        {
+            bool autoLoadLastRunSetFlag = WorkSpace.Instance.UserProfile.AutoLoadLastRunSet;
+            try
+            {
+                var cliRunset = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<RunSetConfig>(Guid.Parse(mOpts.RunSetId));
+
+                if (cliRunset != null)
+                {
+                    WorkSpace.Instance.UserProfile.AutoLoadLastRunSet = true;
+                    WorkSpace.Instance.UserProfile.RecentRunset = cliRunset.Guid;
+                    LoadRunSetConfigEvent?.Invoke(sender: this, cliRunset);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            finally
+            {
+                WorkSpace.Instance.UserProfile.AutoLoadLastRunSet = autoLoadLastRunSetFlag;
+            }
+        }
+
+        /// <summary>
+        /// Opens the runset by execution ID.
+        /// </summary>
+        /// <returns>True if the runset is found and opened successfully, otherwise false.</returns>
+        private async Task<bool> OpenRunSetByExecutionId()
+        {
+            bool autoLoadLastRunSetFlag = WorkSpace.Instance.UserProfile.AutoLoadLastRunSet;
+            DateTime? executionStartTime = null; // Initialize the variable
+
+            try
+            {
+                string endPoint = GingerRemoteExecutionUtils.GetReportDataServiceUrl();
+                if (!string.IsNullOrEmpty(endPoint))
+                {
+                    GraphQlClient graphQlClient = new GraphQlClient($"{endPoint}api/graphql");
+                    ExecutionReportGraphQLClient executionReportGraphQLClient = new ExecutionReportGraphQLClient(graphQlClient);
+                    var response = await executionReportGraphQLClient.FetchDataBySolutionAndExecutionId(WorkSpace.Instance.Solution.Guid, Guid.Parse(mOpts.ExecutionId));
+
+                    if (response?.Data?.Runsets?.Nodes.Count > 0)
+                    {
+                        var node = response.Data.Runsets.Nodes.First();
+                        executionStartTime = node.StartTime;
+                        var cliRunset = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<RunSetConfig>(node.EntityId.Value);
+                        if (cliRunset != null)
+                        {
+                            WorkSpace.Instance.UserProfile.RecentRunset = cliRunset.Guid;
+                            WorkSpace.Instance.UserProfile.AutoLoadLastRunSet = true;
+                            LoadRunSetConfigEvent?.Invoke(sender: this, cliRunset);
+                            return true;
+                        }
+                    }
+                }
+
+                return await LoadVirtualRunset(executionStartTime);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while connecting remote.", ex);
+                return false;
+            }
+            finally
+            {
+                WorkSpace.Instance.UserProfile.AutoLoadLastRunSet = autoLoadLastRunSetFlag;
+            }
+        }
+
+        /// <summary>
+        /// Loads a virtual runset based on the provided execution ID.
+        /// </summary>
+        /// <returns>True if the virtual runset is loaded successfully, otherwise false.</returns>
+        private async Task<bool> LoadVirtualRunset(DateTime? executionStartTime)
+        {
+            if (!Guid.TryParse(mOpts.ExecutionId, out Guid executionId))
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Invalid Execution ID format.");
+                return false;
+            }
+
+            RunSetReport runsetReport = new()
+            {
+                GUID = mOpts.ExecutionId,
+                RunSetGuid = executionId,
+            };
+            if (executionStartTime != null)
+            {
+                runsetReport.StartTimeStamp = (DateTime)executionStartTime;
+            }
+            RunsetFromReportLoader _runsetFromReportLoader = new RunsetFromReportLoader();
+            RunSetConfig? runset = await _runsetFromReportLoader.LoadAsync(runsetReport);
+            if (runset != null)
+            {
+                WorkSpace.Instance.UserProfile.RecentRunset = runset.Guid;
+                WorkSpace.Instance.UserProfile.AutoLoadLastRunSet = true;
+                LoadRunSetConfigEvent?.Invoke(sender: this, runset);
+                return true;
+            }
+            return false;
+        }
+
+        private void DoAnalyze()
+        {
+            WorkSpace.Instance.OpenSolution(mOpts.Solution);
 
             AnalyzerUtils analyzerUtils = new AnalyzerUtils();
             ObservableList<AnalyzerItemBase> issues = [];
@@ -98,5 +401,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
             }
         }
+
     }
 }

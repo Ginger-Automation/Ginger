@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using Microsoft.CodeAnalysis;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -96,6 +95,9 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
                 case EventType.Prev:
                     mWizard.mWizardWindow.SetFinishButtonEnabled(false);
                     break;
+                case EventType.Active:
+                    CheckDataLoaded();
+                    break;
                 default:
                     break;
 
@@ -148,7 +150,7 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
 
                 }
 
-                if (xEnvironmentComboBox.ItemsSource.IsNullOrEmpty())
+                if (xEnvironmentComboBox.ItemsSource?.Count == 0)
                 {
                     mWizard.mWizardWindow.NextButton(false);
                 }
@@ -164,17 +166,30 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
             try
             {
                 mWizard.ImportedEnvs.Clear();
-                if (xEnvironmentComboBox.SelectedItems.Count > 0)
+                if (xEnvironmentComboBox.SelectedItems != null)
                 {
-                    foreach (var env in xEnvironmentComboBox.SelectedItems)
+                    if (xEnvironmentComboBox.SelectedItems.Count > 0)
                     {
-                        await HandleEnvironmentSelection(env);
-                    }
+                        foreach (var env in xEnvironmentComboBox.SelectedItems)
+                        {
+                            await HandleEnvironmentSelection(env);
+                        }
 
-                    if (mWizard.ImportedEnvs.Any(k => k.GingerOpsStatus == "Import Successful"))
-                    {
-                        mWizard.mWizardWindow.SetFinishButtonEnabled(true);
+                        if (mWizard.ImportedEnvs.Any(k => k.GingerOpsStatus == "Import Successful"))
+                        {
+                            mWizard.mWizardWindow.SetFinishButtonEnabled(true);
+                        }
                     }
+                }
+                else if (projectListGOps.Count == 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.GingerOpsDataFetchingError);
+                    mWizard.Prev();
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.AskToSelectItem);
+                    mWizard.Prev();
                 }
             }
             catch (Exception ex)
@@ -334,5 +349,12 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
             envApp.Platform = existingPlatform.Platform;
         }
 
+        private void CheckDataLoaded()
+        {
+            if (projectListGOps.Count == 0)
+            {
+                Reporter.ToUser(eUserMsgKey.GingerOpsDataFetchingError);
+            }
+        }
     }
 }

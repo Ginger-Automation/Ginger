@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -169,26 +169,37 @@ namespace Ginger.ALM.Repository
             if (!String.IsNullOrEmpty(businessFlow.ExternalID))
             {
                 matchingTS = ((OctaneCore)ALMIntegration.Instance.AlmCore).GetTestSuiteById(businessFlow.ExternalID);
-                if (matchingTS != null)
+                if (!string.IsNullOrEmpty(businessFlow.ALMTestSetLevel) && businessFlow.ALMTestSetLevel.Equals("RunSet", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    //ask user if want to continute
-                    userSelec = Reporter.ToUser(eUserMsgKey.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.Name);
-                    if (userSelec == eUserMsgSelection.Cancel)
+                    if (String.IsNullOrEmpty(testPlanUploadPath))
                     {
-                        return false;
+                        testPlanUploadPath = matchingTS.ParentId;
                     }
-                    else if (userSelec == eUserMsgSelection.No)
+                }
+                else
+                {
+                    if (matchingTS != null)
                     {
-                        matchingTS = null;
-                    }
-                    else
-                    {
-                        if (String.IsNullOrEmpty(testPlanUploadPath))
+                        //ask user if want to continute
+                        userSelec = Reporter.ToUser(eUserMsgKey.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.Name);
+                        if (userSelec == eUserMsgSelection.Cancel)
                         {
-                            testPlanUploadPath = matchingTS.ParentId;
+                            return false;
+                        }
+                        else if (userSelec == eUserMsgSelection.No)
+                        {
+                            matchingTS = null;
+                        }
+                        else
+                        {
+                            if (String.IsNullOrEmpty(testPlanUploadPath))
+                            {
+                                testPlanUploadPath = matchingTS.ParentId;
+                            }
                         }
                     }
                 }
+
             }
 
 

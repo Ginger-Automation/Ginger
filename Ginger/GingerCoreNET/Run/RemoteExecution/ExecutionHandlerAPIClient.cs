@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -174,11 +174,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
                 };
 
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-
                 if (!response.IsSuccessStatusCode)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Starting remote execution failed, got back unsuccessful response code('{(int)response.StatusCode}').");
                     return false;
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.INFO, $"Execution to handler submitted successfully {response?.Headers?.Location?.Query?.TrimStart('?')}");
                 }
 
                 return true;

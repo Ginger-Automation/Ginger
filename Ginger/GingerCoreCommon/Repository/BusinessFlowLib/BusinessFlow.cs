@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ namespace GingerCore
             AllowAutoSave = true;
             this.OnDirtyStatusChanged += BusinessFlow_OnDirtyStatusChanged;
         }
-
+      
         public BusinessFlow(string sName)
         {
             Name = sName;
@@ -117,6 +117,7 @@ namespace GingerCore
 
         public object Platforms { get; set; } // keep it for backword compatibility when loading old XML, or handle in RI serializer
 
+        public bool IsVirtual = false;
         public List<string> VariablesBeforeExec { get; set; }
 
         private TimeSpan mDevelopmentTime;
@@ -2044,6 +2045,51 @@ namespace GingerCore
                 }
                 return variableDetails;
             }
+        }
+
+        public bool AreEqual(BusinessFlow other)
+        {
+            if (other == null || string.IsNullOrEmpty(this.Name) || !this.Name.StartsWith(other.Name, StringComparison.InvariantCultureIgnoreCase)
+                 || this.Activities.Count != other.Activities.Count
+                 || this.Variables.Count != other.Variables.Count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < this.Variables.Count; i++)
+            {
+                if (!this.Variables[i].AreEqual(other.Variables[i]))
+                {
+                    return false;
+                }
+            }
+
+            LoadLinkedActivities();
+
+            for (int i = 0; i < this.Activities.Count; i++)
+            {
+                if (!this.Activities[i].AreEqual(other.Activities[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Compares this instance with another object to determine if they are equal.
+        /// </summary>
+        /// <param name="obj">The object to compare with.</param>
+        /// <returns>True if the objects are equal; otherwise, false.</returns>
+        public bool AreEqual(object obj)
+        {
+            if (obj == null || obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+
+            return AreEqual(obj as BusinessFlow);
         }
     }
 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.ActionsLib.Webservices;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.WebServices.WebAPI;
@@ -97,7 +98,8 @@ namespace Ginger.ApiModelsFolder
                     APIModelParamsValue = GetEnhancedUpdatedParams(aamb.MergedParamsList),
                     ReturnValues = ConvertTemplateReturnValues(aamb.ReturnValues),
                     AddNewReturnParams = true,
-                    SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper()
+                    SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper(),
+                    actWebAPIModelOperation = new ActWebAPIModelOperation()
                 };
 
 

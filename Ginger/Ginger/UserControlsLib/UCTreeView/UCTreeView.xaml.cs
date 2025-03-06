@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -153,12 +153,16 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             TreeItemDoubleClicked = true;
-            if (ItemDoubleClick != null)
+            if (ItemDoubleClick != null && e.Source is TreeViewItem treeViewItem)
             {
+                if (treeViewItem.Tag is ITreeViewItem ItreeViewItem && ItreeViewItem.IsExpandable())
+                {
+                    return;
+                }
                 Mouse.OverrideCursor = Cursors.Wait;
                 try
                 {
-                    if (e.Source is TreeViewItem && (e.Source as TreeViewItem).IsSelected)
+                    if (treeViewItem.IsSelected)
                     {
                         ItemDoubleClick(Tree.SelectedItem, e);
                     }
@@ -275,15 +279,22 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         private async Task LoadChildItems(TreeViewItem treeViewItem)
         {
-            bool hadDummyNode = TryRemoveDummyNode(treeViewItem);
-            if (hadDummyNode)
+            try
             {
-                SetRepositoryFolderIsExpanded(treeViewItem, isExpanded: true);
-                await SetTreeNodeItemChilds(treeViewItem);
-                GingerCore.General.DoEvents();
-                // remove the handler as expand data is cached now on tree
-                WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(treeViewItem, nameof(TreeViewItem.Expanded), TVI_Expanded);
-                WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(treeViewItem, nameof(TreeViewItem.Expanded), TVI_ExtraExpanded);
+                bool hadDummyNode = TryRemoveDummyNode(treeViewItem);
+                if (hadDummyNode)
+                {
+                    SetRepositoryFolderIsExpanded(treeViewItem, isExpanded: true);
+                    await SetTreeNodeItemChilds(treeViewItem);
+                    GingerCore.General.DoEvents();
+                    // remove the handler as expand data is cached now on tree
+                    WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(treeViewItem, nameof(TreeViewItem.Expanded), TVI_Expanded);
+                    WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(treeViewItem, nameof(TreeViewItem.Expanded), TVI_ExtraExpanded);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
         }
 
@@ -440,7 +451,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         private bool TryRemoveDummyNode(TreeViewItem node)
         {
-            if (node.Items.Count > 0)
+            if (node?.Items.Count > 0)
             {
                 string? header = ((TreeViewItem)node.Items[0]).Header.ToString();
                 if (header != null && header.IndexOf("DUMMY") >= 0)
@@ -475,9 +486,16 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         public void RefreshTreeViewItemChildrens(TreeViewItem TVI)
         {
-            TVI.Items.Clear();
-            SetTreeNodeItemChilds(TVI);
-            TVI.IsExpanded = true;
+            try
+            {
+                TVI.Items.Clear();
+                SetTreeNodeItemChilds(TVI);
+                TVI.IsExpanded = true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+            }
         }
 
         public void RefreshTreeNodeChildrens(ITreeViewItem NodeItem)
@@ -782,10 +800,17 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     wasFound = true;
                 }
 
-                if (FilterItemsByTextNew(item.Childrens(), text))
+                bool foundMatchInChildren = FilterItemsByTextNew(item.Childrens(), text);
+                if (foundMatchInChildren)
                 {
                     wasFound = true;
                     itemBase.Visibility = Visibility.Visible;
+                }
+
+                bool canExpand = item.IsExpandable() && itemBase.TreeViewItem != null;
+                if (foundMatchInChildren && canExpand)
+                {
+                    itemBase.TreeViewItem!.IsExpanded = true;
                 }
             }
 
@@ -1105,7 +1130,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             TVI.Focus();
         }
 
-        public void GetChildItembyNameandSelect(string nodeName, ITreeViewItem Parent = null)
+        public void GetChildItembyNameandSelect(string nodeName, ITreeViewItem Parent = null, bool expandChildren = false)
         {
             Task.Run(() =>
             {
@@ -1123,7 +1148,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                         GingerCore.General.DoEvents();
                     }
 
-                    TreeViewItem TVIChild = ExpandNodeByNameTVIRecursive(TVI, nodeName, true, false);
+                    TreeViewItem TVIChild = ExpandNodeByNameTVIRecursive(TVI, nodeName, true, expandChildren);
                     if (TVIChild != null)
                     {
                         TVIChild.Focus();
@@ -1341,6 +1366,78 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             return null;
         }
 
+
+        /// <summary>
+        /// Expands and selects a TreeViewItem based on the target item name.
+        /// </summary>
+        /// <param name="StartNode">The starting TreeViewItem node.</param>
+        /// <param name="targetItem">The name of the target item to expand and select.</param>
+        /// <param name="Refresh">Indicates whether to refresh the TreeViewItem children.</param>
+        /// <param name="ExpandChildren">Indicates whether to expand the children of the TreeViewItem.</param>
+        /// <returns>The expanded and selected TreeViewItem, or null if not found.</returns>
+        private async Task<TreeViewItem?> ExpandAndSelectTreeViewItem(TreeViewItem StartNode, string targetItem, bool Refresh, bool ExpandChildren)
+        {
+            try
+            {
+                foreach (TreeViewItem treeViewItem in StartNode.Items)
+                {
+                    StackPanel head = null;
+                    string itemName = null;
+                    if (treeViewItem.Header.ToString() != "DUMMY") //added for stability bc sometimes i was getting issues
+                    {
+                        head = (StackPanel)treeViewItem.Header;
+                        foreach (var child in head.Children)
+                        {
+                            if (child is Label label)
+                            {
+                                itemName = label.Content?.ToString();
+                                break;
+                            }
+                        }
+                    }
+
+                    if (itemName != null && itemName.Equals(targetItem))
+                    {
+                        if (Refresh)
+                        {
+                            treeViewItem.IsSelected = true;
+                            RefreshTreeViewItemChildrens(treeViewItem);
+                        }
+                        if (ExpandChildren)
+                        {
+                            treeViewItem.IsSelected = true;
+                        }
+                        else
+                        {
+                            treeViewItem.IsExpanded = true;
+                        }
+                        return treeViewItem;
+                    }
+
+                    if (treeViewItem != null)
+                    {
+                        await LoadChildItems(treeViewItem);
+                        treeViewItem.IsExpanded = true;
+                        if (treeViewItem.Items.Count > 0)
+                        {
+                            TreeViewItem? foundTreeViewItem = await ExpandAndSelectTreeViewItem(treeViewItem, targetItem, Refresh, ExpandChildren);
+                            if (foundTreeViewItem != null)
+                            {
+                                return foundTreeViewItem;
+                            }
+                        }
+                        treeViewItem.IsExpanded = false;
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                return null;
+            }
+        }
+
         // DragDrop handlers
 
         void IDragDrop.StartDrag(DragInfo Info)
@@ -1429,6 +1526,37 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             return validationRes;
         }
 
+        /// <summary>
+        /// Selects an item by its name and opens its folder in the tree view.
+        /// </summary>
+        /// <param name="activity">The activity whose name is used to select the item.</param>
+        public void SelectItemByNameAndOpenFolder(GingerCore.Activity activity)
+        {
+            Task.Run(() =>
+            {
+                try
+                {
+                    mSetTreeNodeItemChildsEvent?.WaitOne();
+
+                    Dispatcher.Invoke(async () =>
+                    {
+                        try
+                        {
+                            _ = await ExpandAndSelectTreeViewItem((TreeViewItem)Tree.Items[0], activity.ActivityName, false, true);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                        }
+
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                }
+            });
+        }
 
     }
 }

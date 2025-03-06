@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,12 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Configurations;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.ALM.RQM;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -121,9 +123,36 @@ namespace GingerCoreNET.GeneralLib
         }
 
 
+        /// <summary>  
+        /// Defines the possible vertical alignment options for scrolling elements into view.  
+        /// </summary>  
+        public enum eScrollAlignment
+        {
+            /// <summary>  
+            /// Aligns the top of the element with the top of the visible area of the scrollable ancestor.  
+            /// </summary>  
+            Start,
+
+            /// <summary>  
+            /// Centers the element vertically in the visible area of the scrollable ancestor.  
+            /// </summary>  
+            Center,
+
+            /// <summary>  
+            /// Aligns the bottom of the element with the bottom of the visible area of the scrollable ancestor.  
+            /// </summary>  
+            End,
+
+            /// <summary>  
+            /// Aligns the element with the nearest edge of the visible area of the scrollable ancestor,  
+            /// either the top or bottom, depending on which is closer.  
+            /// </summary>  sssss
+            Nearest
+        }
+
         #endregion ENUM
 
-        static Regex rxvarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
+        static Regex rxvarPattern = new(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
         static string GetDatetimeFormat() => DateTime.Now.ToString("ddMMyyyy_HHmmssfff");
         public static T ParseEnum<T>(string value)
         {
@@ -500,6 +529,58 @@ namespace GingerCoreNET.GeneralLib
             }
         }
 
+        public static void DeleteTempTextFile(string tempFilePath)
+        {
+            if (System.IO.File.Exists(tempFilePath))
+            {
+                try
+                {
+                    System.IO.File.Delete(tempFilePath);
+                }
+                catch (Exception)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Unable to delete Temp file:" + tempFilePath);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Create the temp json file format from a string
+        /// </summary>
+        /// <param name="jsonContent"></param>
+        /// <returns></returns>
+        public static string CreateTempJsonFile(string jsonContent)
+        {
+            byte[] bytes = null;
+            try
+            {
+                // Validate JSON format
+                var jsonToken = Newtonsoft.Json.Linq.JToken.Parse(jsonContent);
+
+                string filePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName() + ".json");
+                bytes = System.Text.Encoding.Default.GetBytes(jsonContent);
+                File.WriteAllBytes(filePath, bytes);
+                return filePath;
+            }
+            catch (Newtonsoft.Json.JsonReaderException)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Invalid JSON format");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to create temp text file", ex);
+                return null;
+            }
+            finally
+            {
+                if (bytes != null)
+                {
+                    Array.Clear(bytes);
+                }
+            }
+        }
+
         public static byte[] ImageToByteArray(Image img, System.Drawing.Imaging.ImageFormat format)
         {
             using (var ms = new MemoryStream())
@@ -652,9 +733,205 @@ namespace GingerCoreNET.GeneralLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error creating Ginger Analytics Configuration configuration", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error creating GingerOps configuration", ex);
                 return false;
             }
+        }
+        public static bool CreateWireMockConfiguration()
+        {
+            try
+            {
+                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0)
+                {
+                    WireMockConfiguration newWMConfiguration = new WireMockConfiguration() { Name = "WireMockConfig" };
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newWMConfiguration);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error creating WireMock configuration", ex);
+                return false;
+            }
+        }
+        public static bool IsConfigPackageExists(string PackagePath, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType eALMType)
+        {
+            string settingsFolder = string.Empty;
+            settingsFolder = eALMType switch
+            {
+                GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira => "JiraSettings",
+                GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest => "QTestSettings",
+                _ => "JiraSettings",
+            };
+            if (Directory.Exists(Path.Combine(PackagePath, settingsFolder)))
+            {
+                return true;
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.WARN, "Configuration package not exist in solution, Settings not exist at: " + Path.Combine(PackagePath, settingsFolder));
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Retrieves external fields from either online RQM or workspace solution based on configuration.
+        /// </summary>
+        /// <returns>List of external fields with their values.</returns>
+        public static ObservableList<ExternalItemFieldBase> GetExternalFields()
+        {
+            ObservableList<ExternalItemFieldBase> originalExternalFields = [];
+
+            var defaultALMConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm);
+            var firstExternalItemField = WorkSpace.Instance.Solution.ExternalItemsFields.FirstOrDefault();
+
+            if (defaultALMConfig != null && firstExternalItemField != null &&
+                defaultALMConfig.ALMProjectGUID != firstExternalItemField.ProjectGuid)
+            {
+                var externalOnlineItemsFields = ImportFromRQM.GetOnlineFields(null);
+                if (externalOnlineItemsFields == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to retrieve online fields from RQM");
+                    return originalExternalFields;
+                }
+                foreach (var externalItemField in externalOnlineItemsFields)
+                {
+                    ExternalItemFieldBase item = MapExternalField(externalItemField);
+                    if (item != null)
+                    {
+                        originalExternalFields.Add(item);
+                    }
+                }
+            }
+            else
+            {
+                originalExternalFields = WorkSpace.Instance.Solution.ExternalItemsFields;
+            }
+
+            return originalExternalFields;
+        }
+
+        private static ExternalItemFieldBase MapExternalField(ExternalItemFieldBase externalItemField)
+        {
+            try
+            {
+                var existingField = WorkSpace.Instance.Solution.ExternalItemsFields
+                    .FirstOrDefault(x => x.Name.Equals(externalItemField.Name, StringComparison.CurrentCultureIgnoreCase) && x.ProjectGuid == externalItemField.ProjectGuid);
+
+                string value = "";
+                string valuekey = "";
+
+                if (existingField == null)
+                {
+                    if (externalItemField.Mandatory)
+                    {
+                        if (!string.IsNullOrEmpty(externalItemField.SelectedValue))
+                        {
+                            value = externalItemField.SelectedValue;
+                        }
+                        else
+                        {
+                            value = GetDefaultValue(externalItemField);
+                        }
+                        valuekey = externalItemField.SelectedValueKey;
+                    }
+                }
+                else
+                {
+                    if (externalItemField.Mandatory)
+                    {
+                        if (!string.IsNullOrEmpty(existingField.SelectedValue))
+                        {
+                            value = existingField.SelectedValue;
+                        }
+                        else
+                        {
+                            value = GetDefaultValue(externalItemField);
+                        }
+                        valuekey = externalItemField.SelectedValueKey;
+                    }
+                }
+                return new ExternalItemFieldBase
+                {
+                    Name = externalItemField.Name,
+                    ID = externalItemField.ID,
+                    ItemType = externalItemField.ItemType,
+                    Type = externalItemField.Type,
+                    Guid = externalItemField.Guid,
+                    IsCustomField = externalItemField.IsCustomField,
+                    SelectedValue = value,
+                    SelectedValueKey = valuekey
+                };
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Map External Fields", ex.InnerException);
+                return null;
+            }
+        }
+
+        private static string GetDefaultValue(ExternalItemFieldBase externalItemField)
+        {
+            // Return default values based on the field type.
+            return (externalItemField.Type.ToUpperInvariant()) switch
+            {
+                "INTEGER" => "1",
+                "MEDIUMSTRING" => "Dummy",
+                "SMALLSTRING" => "Dummy",
+                _ => externalItemField.SelectedValue
+            };
+        }
+
+        public string UpdateSelectedValueKey(string SelectedValue, string ProjectGuid)
+        {
+            string ValueKey = string.Empty;
+            if (!string.IsNullOrEmpty(SelectedValue))
+            {
+                var existingField = WorkSpace.Instance.Solution.ExternalItemsFields
+                    .FirstOrDefault(x => x.Name.Equals(SelectedValue, StringComparison.CurrentCultureIgnoreCase) && x.ProjectGuid == ProjectGuid);
+
+
+                if (existingField != null)
+                {
+                    if (!string.IsNullOrEmpty(SelectedValue))
+                    {
+                        ValueKey = existingField.SelectedValueKey;
+                    }
+                }
+            }
+            return ValueKey;
+        }
+
+        /// <summary>
+        /// Decrypts the given password. If the password is a value expression, it evaluates the expression before decryption.
+        /// </summary>
+        /// <param name="password">The password to decrypt.</param>
+        /// <param name="isPasswordValueExpression">Indicates if the password is a value expression.</param>
+        /// <param name="act">The Act instance containing the value expression.</param>
+        /// <returns>The decrypted password.</returns>
+        public static string DecryptPassword(string password, bool isPasswordValueExpression, Act act)
+        {
+            if (password == null)
+            {
+                return null;
+            }
+
+            string decryptedPassword = string.Empty;
+            string evaluatedValue = password;
+
+            if (isPasswordValueExpression)
+            {
+                act.ValueExpression.Value = password;
+                evaluatedValue = act.ValueExpression.ValueCalculated;
+            }
+
+            decryptedPassword = EncryptionHandler.IsStringEncrypted(evaluatedValue) ? EncryptionHandler.DecryptwithKey(evaluatedValue) : evaluatedValue;
+
+            return decryptedPassword;
         }
     }
 

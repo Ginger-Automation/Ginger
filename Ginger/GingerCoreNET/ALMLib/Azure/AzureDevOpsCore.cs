@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.ALMLib.Azure;
 using Amdocs.Ginger.CoreNET.ALMLib.DataContract;
 using Amdocs.Ginger.Repository;
+using Applitools.Utils;
 using AzureRepositoryStd;
 using AzureRepositoryStd.BLL;
 using GingerCore.Activities;
@@ -42,8 +43,10 @@ using OctaneStdSDK.Entities.Base;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using TestPlan = Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlan;
@@ -122,7 +125,7 @@ namespace GingerCore.ALM
 
         public Dictionary<string, string> AzureProjectList()
         {
-            dynamic list = AzureDevOpsRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMPassword);
+            dynamic list = AzureDevOpsManager.GetProjectsList(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMPassword);
             Dictionary<string, string> listOfItems = [];
             if (list.DataResult is null)
             {
@@ -146,27 +149,9 @@ namespace GingerCore.ALM
             {
 
                 Dictionary<Guid, string> defectsOpeningResults = [];
-                List<string> screenshots = [];
                 foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
                 {
-                    string summaryValue = defectForOpening.Value.ContainsKey("Summary") ? defectForOpening.Value["Summary"] : string.Empty;
-                    if (!string.IsNullOrEmpty(summaryValue))
-                    {
-                        string defectId = CheckIfDefectExist(summaryValue);
-                        if (!string.IsNullOrEmpty(defectId))
-                        {
-                            defectsOpeningResults.Add(defectForOpening.Key, defectId);
-                            continue;
-                        }
-                        else
-                        {
-                            string paths = defectForOpening.Value.ContainsKey("screenshots") ? defectForOpening.Value["screenshots"] : string.Empty;
-                            screenshots.Add(paths);
-                        }
-                    }
-
-                    defectsOpeningResults.Add(defectForOpening.Key, CreateDefectData(defectForOpening).Id.ToString());
-
+                    defectsOpeningResults.Add(defectForOpening.Key, CreateOrUpdateDefectData(defectForOpening).Id.ToString());
                 }
                 return defectsOpeningResults;
             }
@@ -178,15 +163,29 @@ namespace GingerCore.ALM
             }
         }
 
-        private static WorkItem CreateDefectData(KeyValuePair<Guid, Dictionary<string, string>> defectForOpening)
+        private static WorkItem CreateOrUpdateDefectData(KeyValuePair<Guid, Dictionary<string, string>> defectForOpening)
         {
             try
             {
+                string tempDefectId = string.Empty;
+
+                string summaryValue = defectForOpening.Value.ContainsKey("Summary") ? defectForOpening.Value["Summary"] : string.Empty;
+                if (!string.IsNullOrEmpty(summaryValue))
+                {
+                    string defectId = CheckIfDefectExist(summaryValue);
+                    if (!string.IsNullOrEmpty(defectId))
+                    {
+                        tempDefectId = defectId;
+                    }
+                }
+
                 LoginDTO login = GetLoginDTO();
 
                 VssConnection connection = AzureDevOpsRepository.LoginAzure(login);
 
                 WorkItemTrackingHttpClient workItemTrackingClient = connection.GetClient<WorkItemTrackingHttpClient>();
+
+                Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem newWorkItem = null;
 
                 JsonPatchDocument patchDocument =
                 [
@@ -206,7 +205,14 @@ namespace GingerCore.ALM
 
                 patchDocument = AddAttachmentsToDefect(patchDocument, defectForOpening, workItemTrackingClient);
 
-                Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem newWorkItem = workItemTrackingClient.CreateWorkItemAsync(patchDocument, login.Project, "Bug").Result;
+                if (!string.IsNullOrEmpty(tempDefectId))
+                {
+                    newWorkItem = workItemTrackingClient.UpdateWorkItemAsync(patchDocument, tempDefectId.ToInt32()).Result;
+                }
+                else
+                {
+                    newWorkItem = workItemTrackingClient.CreateWorkItemAsync(patchDocument, login.Project, AzureDevOpsManager.WorkItemTypeEnum.Bug.ToString()).Result;
+                }
 
                 return newWorkItem;
             }
@@ -227,36 +233,73 @@ namespace GingerCore.ALM
             }
 
             var attachmentPathsArray = attachmentPaths.Split(',');
+            dynamic attachment = null;
 
             foreach (var attachmentPath in attachmentPathsArray)
             {
+                bool IsSuccess = false;
+                int retryCount = 5;
                 try
                 {
-                    var attachment = wit.CreateAttachmentAsync(attachmentPath.Trim()).Result;
-
-                    patchDocument.Add(
-                        new JsonPatchOperation()
+                    Task.Run(async () =>
+                    {
+                        for (int attempt = 1; attempt <= retryCount; attempt++)
                         {
-                            Operation = Operation.Add,
-                            Path = "/relations/-",
-                            Value = new
+                            try
                             {
-                                rel = "AttachedFile",
-                                url = attachment.Url,
-                                attributes = new
-                                {
-                                    comment = "Attached Screenshot"
-                                }
+                                attachment = await wit.CreateAttachmentAsync(attachmentPath.Trim());
+                                IsSuccess = true;
+                                break;
+                            }
+                            catch (IOException ioEx) when (ioEx.Message.Contains("being used by another process"))
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, $"Attempt {attempt} failed: File '{attachmentPath.Trim()}' is being used by another process. Retrying...");
+                                Thread.Sleep(1000);
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error adding attachment '{attachmentPath.Trim()}': {ex.Message}", ex);
+                                break;
                             }
                         }
-                    );
+
+                        if (!IsSuccess)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to add attachment '{attachmentPath.Trim()}' after {retryCount} attempts.");
+                        }
+                    }).Wait();
+
+                    if (IsSuccess)
+                    {
+                        patchDocument.Add(
+                            new JsonPatchOperation()
+                            {
+                                Operation = Operation.Add,
+                                Path = "/relations/-",
+                                Value = new
+                                {
+                                    rel = "AttachedFile",
+                                    url = attachment.Url,
+                                    attributes = new
+                                    {
+                                        comment = "Attached Screenshot"
+                                    }
+                                }
+                            }
+                        );
+                    }
+
                 }
+
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Error adding attachment '{attachmentPath.Trim()}': {ex.Message}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error adding attachment '{attachmentPath.Trim()}': {ex.Message}", ex);
+                    break;
                 }
+
             }
             return patchDocument;
+
         }
 
 
@@ -403,7 +446,7 @@ namespace GingerCore.ALM
             string[] witType = ["Test Case", "Test Suite", "Test Plan"];
             foreach (var i in witType)
             {
-                List<WorkItemTypeFieldWithReferences> listnodes = AzureDevOpsRepository.GetListNodes(_loginDto, i);
+                List<WorkItemTypeFieldWithReferences> listnodes = AzureDevOpsManager.GetListNodes(_loginDto, i);
                 ExtractFields(fields, i, listnodes);
             }
 

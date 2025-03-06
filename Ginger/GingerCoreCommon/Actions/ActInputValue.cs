@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -225,6 +225,40 @@ namespace Amdocs.Ginger.Repository
                 return this.Param;
             }
         }
+
+        /// <summary>
+        /// Compares this instance with another ActInputValue instance for equality.
+        /// </summary>
+        /// <param name="other">The other ActInputValue instance to compare with.</param>
+        /// <returns>True if both instances are equal; otherwise, false.</returns>
+        public bool AreEqual(ActInputValue other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return this.Param == other.Param &&
+                ((this.Value == null && string.IsNullOrEmpty(other.Value))
+                || this.Value == other.Value);
+
+        }
+
+        /// <summary>
+        /// Compares this instance with another object for equality.
+        /// </summary>
+        /// <param name="obj">The object to compare with.</param>
+        /// <returns>True if the object is an ActInputValue instance and both instances are equal; otherwise, false.</returns>
+        public bool AreEqual(object obj)
+        {
+            if (obj == null || obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+
+            return Equals(obj as ActInputValue);
+        }
+
 
     }
 }

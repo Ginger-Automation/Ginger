@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -141,6 +141,9 @@ namespace GingerCore.Actions.Common
             //used for SelectandValidate
             public static string SubElementLocateBy = "SubElementLocateBy";
             public static string SubElementLocatorValue = "SubElementLocatorValue";
+
+            //used for ScrollToElement
+            public static string VerticalScrollAlignment = "VerticalScrollAlignment";
         }
 
         // Fields Helper for specific action, will create AIV with param name based on enum
@@ -532,7 +535,7 @@ namespace GingerCore.Actions.Common
         {
             [EnumValueDescription("Using JavaScript")]
             DragDropJS,
-            [EnumValueDescription("Using Selenium")]
+            [EnumValueDescription("Using Web Driver")]
             DragDropSelenium,
             [EnumValueDescription("Mouse Drag Drop")]
             MouseDragDrop,

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -82,8 +82,27 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public eScriptAct ScriptCommand { get; set; }
 
+
+        private string mScriptInterpreter;
         [IsSerializedForLocalRepository]
-        public string ScriptInterpreter { get; set; }
+        public string ScriptInterpreter
+        {
+            get
+            {
+                return mScriptInterpreter;
+            }
+            set
+            {
+                if (mScriptInterpreter != value)
+                {
+                    mScriptInterpreter = value;
+                    OnPropertyChanged(nameof(ScriptInterpreter));
+
+                }
+            }
+        }
+
+
 
         [IsSerializedForLocalRepository]
         public eScriptInterpreterType ScriptInterpreterType { get; set; }
@@ -142,6 +161,13 @@ namespace GingerCore.Actions
         }
         public override void Execute()
         {
+            string calculatedScriptInterpreter = ScriptInterpreter;
+            if (this.ValueExpression != null)
+            {
+                this.ValueExpression.Value = ScriptInterpreter;
+                calculatedScriptInterpreter = this.ValueExpression.ValueCalculated;
+            }
+
             if (ScriptName == null && ScriptCommand == eScriptAct.Script)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Script file not Selected. Kindly select suitable file");
@@ -178,9 +204,9 @@ namespace GingerCore.Actions
                     p.StartInfo.FileName = "/bin/bash";
                     break;
                 case eScriptInterpreterType.Other:
-                    if (!string.IsNullOrEmpty(ScriptInterpreter))
+                    if (!string.IsNullOrEmpty(calculatedScriptInterpreter))
                     {
-                        p.StartInfo.FileName = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ScriptInterpreter);
+                        p.StartInfo.FileName = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedScriptInterpreter);
                     }
                     break;
             }
@@ -232,7 +258,7 @@ namespace GingerCore.Actions
                         string filePath = Path.Combine(p.StartInfo.WorkingDirectory, ScriptName);
                         p.StartInfo.Arguments = filePath + Params;
                     }
-                    else if (ScriptInterpreter != null && ScriptInterpreter.Contains("cmd.exe"))
+                    else if (calculatedScriptInterpreter != null && calculatedScriptInterpreter.Contains("cmd.exe"))
                     {
                         p.StartInfo.Arguments = " /k " + ScriptName + " " + Params;
                     }
@@ -254,22 +280,26 @@ namespace GingerCore.Actions
                     }
                     else if (ScriptInterpreterType == eScriptInterpreterType.Other)
                     {
-                        if (ScriptInterpreter != null && ScriptInterpreter.ToLower().Contains("cmd.exe"))
+                        if (calculatedScriptInterpreter != null && calculatedScriptInterpreter.ToLower().Contains("cmd.exe"))
                         {
                             TempFileName = CreateTempFile("cmd");
                         }
-                        else if (ScriptInterpreter != null && ScriptInterpreter.ToLower().Contains("powershell.exe"))
+                        else if (calculatedScriptInterpreter != null && calculatedScriptInterpreter.ToLower().Contains("powershell.exe"))
                         {
                             TempFileName = CreateTempFile("ps1");
                             p.StartInfo.Arguments = @"-executionpolicy bypass -file .\" + TempFileName + " " + Params;
                         }
-                        else if (ScriptInterpreter != null && ScriptInterpreter.ToLower().Contains("python.exe"))
+                        else if (calculatedScriptInterpreter != null && calculatedScriptInterpreter.ToLower().Contains("python.exe"))
                         {
                             TempFileName = CreateTempFile("py");
                         }
-                        else if (ScriptInterpreter != null && ScriptInterpreter.ToLower().Contains("perl.exe"))
+                        else if (calculatedScriptInterpreter != null && calculatedScriptInterpreter.ToLower().Contains("perl.exe"))
                         {
                             TempFileName = CreateTempFile("pl");
+                        }
+                        else if (calculatedScriptInterpreter != null && calculatedScriptInterpreter.ToLower().Contains(".exe"))
+                        {
+                            TempFileName = CreateTempFile("log");
                         }
                         else
                         {

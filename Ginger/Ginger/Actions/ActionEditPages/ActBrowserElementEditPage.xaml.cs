@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -189,6 +189,12 @@ namespace Ginger.Actions
             {
                 ResetPOMView();
             }
+            else if(mAct.ControlAction == ActBrowserElement.eControlAction.SetAlertBoxText)
+            {
+                xValueGrid.Visibility = System.Windows.Visibility.Visible;
+                xValueLabel.Content = "Value:";
+                
+            }
             else
             {
                 if (mAct.ControlAction == ActBrowserElement.eControlAction.InitializeBrowser)
@@ -202,6 +208,7 @@ namespace Ginger.Actions
                     }
                 }
             }
+            
         }
 
         private void ElementLocateByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

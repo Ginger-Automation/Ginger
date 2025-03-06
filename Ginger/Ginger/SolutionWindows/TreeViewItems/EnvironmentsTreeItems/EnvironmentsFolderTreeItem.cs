@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -115,7 +115,6 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
             mContextMenu = new ContextMenu();
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Add New Environment", AddItemHandler, null, eImageType.Add);
-            TreeViewUtils.AddMenuItem(mContextMenu, "Import From GingerOps", AddItemHandlerGA, null, eImageType.ImportFile);
             if (mProjEnvironmentFolder.IsRootFolder)
             {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Environment", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true);
@@ -126,6 +125,7 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
             }
 
             AddSourceControlOptions(mContextMenu);
+            TreeViewUtils.AddMenuItem(mContextMenu, "Import From GingerOps", AddItemHandlerGA, null, eImageType.ImportFile);
         }
 
         public override void PostSaveTreeItemHandler()

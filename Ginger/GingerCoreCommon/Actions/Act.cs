@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
+using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
@@ -309,7 +310,7 @@ namespace GingerCore.Actions
 
                 if (!value)
                 {
-                    MaxNumberOfRetries = 0;
+                    MaxNumberOfRetries = 2;
                 }
             }
         }
@@ -329,7 +330,8 @@ namespace GingerCore.Actions
                     return mMaxNumberOfRetries;
                 }
                 return 0;
-            }
+
+                }
             set
             {
                 if (mMaxNumberOfRetries != value)
@@ -636,7 +638,7 @@ namespace GingerCore.Actions
             }
             set
             {
-                if (!string.IsNullOrEmpty(mExInfo) && value.Contains(mExInfo) && value.IndexOf(mExInfo) == 0)//meaning act.ExInfo += was used
+                if (!string.IsNullOrEmpty(mExInfo) && value != null && value.Contains(mExInfo) && value.IndexOf(mExInfo) == 0)//meaning act.ExInfo += was used
                 {
                     //add line break
                     mExInfo = string.Format("{0}{1}{2}", value[..mExInfo.Length], Environment.NewLine, value[mExInfo.Length..]);
@@ -2066,7 +2068,7 @@ namespace GingerCore.Actions
 
         public override void PrepareItemToBeCopied()
         {
-            this.IsSharedRepositoryInstance = TargetFrameworkHelper.Helper.IsSharedRepositoryItem(this);
+            this.IsSharedRepositoryInstance = TargetFrameworkHelper.Helper?.IsSharedRepositoryItem(this) ?? false;
         }
 
         public override string GetItemType()
@@ -2074,6 +2076,65 @@ namespace GingerCore.Actions
             return "Action";
         }
 
+
+        /// <summary>
+        /// Compares the current Act instance with another Act instance to determine equality.
+        /// </summary>
+        /// <param name="other">The other Act instance to compare with.</param>
+        /// <returns>True if the instances are equal; otherwise, false.</returns>
+        public bool AreEqual(Act other)
+        {
+            if (other == null || this.ActInputValues.Count != other.ActInputValues.Count)
+            {
+                return false;
+            }
+
+            if (this.Description != other.Description ||
+                   this.Platform != other.Platform)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < this.ActInputValues.Count; i++)
+            {
+                if (!this.ActInputValues[i].AreEqual(other.ActInputValues[i]))
+                {
+                    return false;
+                }
+            }
+
+            if (this is ActWebAPIModel thisAction && other is ActWebAPIModel otherAction)
+            {
+                if (thisAction.APIModelParamsValue.Count != otherAction.APIModelParamsValue.Count)
+                {
+                    return false;
+                }
+                for (int i = 0; i < thisAction.APIModelParamsValue.Count; i++)
+                {
+                    if (!thisAction.APIModelParamsValue[i].AreEqual(otherAction.APIModelParamsValue[i]))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Compares the current Act instance with another object to determine equality.
+        /// </summary>
+        /// <param name="obj">The object to compare with.</param>
+        /// <returns>True if the object is an Act instance and is equal to the current instance; otherwise, false.</returns>
+        public bool AreEqual(object obj)
+        {
+            if (obj == null || obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+
+            return AreEqual(obj as Act);
+        }
 
     }
 }

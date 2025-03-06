@@ -31,15 +31,15 @@
             </StackPanel>
 
             <StackPanel x:Name="RestHeader"  Orientation="Horizontal" Visibility="Visible" Margin="0,10,0,0">
-                <StackPanel Width="160" Margin="0,0,0,0">
+                <StackPanel Width="130" Margin="0,0,0,0">
                     <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">Request Type:</Label>
                     <UserControlsLib:UCComboBox x:Name="RequestTypeComboBox"></UserControlsLib:UCComboBox>
                 </StackPanel>
-                <StackPanel Width="160" Margin="10,0,10,0">
+                <StackPanel Width="130" Margin="10,0,10,0">
                     <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">HTTP Version:</Label>
                     <UserControlsLib:UCComboBox x:Name="HttpVersioncombobox"></UserControlsLib:UCComboBox>
                 </StackPanel>
-                <StackPanel Width="160" Margin="10,0,10,0">
+                <StackPanel Width="220" Margin="10,0,10,0">
                     <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">Response Content Type:</Label>
                     <UserControlsLib:UCComboBox x:Name="ResponseTypeComboBox"></UserControlsLib:UCComboBox>
                 </StackPanel>
@@ -185,7 +185,7 @@
                                 <CheckBox x:Name="DoNotCertificateImportFile" Content="Import Certificate file to Solution folder" ToolTip="If checked the selected certificate file will be imported to ~Documents\Certificates\" HorizontalAlignment="Left" Margin="0,1,0,0" Style="{StaticResource @InputCheckBoxStyle}" Checked="DoNotCertificateImportFile_Checked"/>
                             </StackPanel>
                             <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,5,0,0">Certificate Password:</Label>
-                            <Actions:UCValueExpression x:Name="CertificatePasswordUCValueExpression" Margin="0,0,0,0"/>
+                            <Actions:UCValueExpression x:Name="CertificatePasswordUCValueExpression" LostKeyboardFocus="CertificatePasswordUCValueExpression_LostKeyboardFocus" Margin="0,0,0,0"/>
                         </StackPanel>
                         <StackPanel Width="175" HorizontalAlignment="Left" Margin="0,5,0,0">
                             <Label Style="{StaticResource @InputFieldLabelStyle}">Security Type:</Label>

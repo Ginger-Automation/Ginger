@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1225,8 +1225,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void CopySelectedHandler(object sender, RoutedEventArgs e)
         {
-            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
-            foreach (VariableBase var in ListView.List.SelectedItems)
+            ObservableList<RepositoryItemBase> list = [];
+            foreach (Activity var in ListView.List.SelectedItems)
             {
                 list.Add(var);
             }
@@ -1235,8 +1235,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void CutSelectedHandler(object sender, RoutedEventArgs e)
         {
-            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
-            foreach (VariableBase var in ListView.List.SelectedItems)
+            ObservableList<RepositoryItemBase> list = [];
+            foreach (Activity var in ListView.List.SelectedItems)
             {
                 list.Add(var);
             }

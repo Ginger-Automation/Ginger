@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.WebServices;
+using GingerCoreNET.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -150,8 +151,12 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 { commandParam = commandParam + " -u" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Username) + Quotationmark; }
 
                 //The password to use in any authentications, overrides any password set for any TestRequests
-                if (!string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Password)))
-                { commandParam = commandParam + " -p" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Password) + Quotationmark; }
+                string password = mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Password);
+                if (!string.IsNullOrEmpty(password))
+                {
+                    var decryptedPassword = General.DecryptPassword(password, ValueExpression.IsThisAValueExpression(password), mAct);
+                    commandParam = commandParam + " -p" + Quotationmark + decryptedPassword + Quotationmark;
+                }
 
                 //The domain to use in any authentications, overrides any domain set for any TestRequests
                 if (!string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Domain)))

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.ALM.RQM;
 using GingerCore;
 using GingerCore.Activities;
@@ -30,6 +31,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Windows.Input;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.ALM.Repository
@@ -59,9 +61,10 @@ namespace Ginger.ALM.Repository
                 importDestinationFolderPath = WorkSpace.Instance.Solution.BusinessFlowsMainFolder;
             }
             // get activities groups
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             RQMImportReviewPage win = new RQMImportReviewPage(RQMConnect.Instance.GetRQMTestPlanFullData(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectKey, (RQMTestPlan)selectedTestPlan), importDestinationFolderPath);
             win.ShowAsWindow();
-
+            Mouse.OverrideCursor = null;
             return true;
         }
 
@@ -175,6 +178,7 @@ namespace Ginger.ALM.Repository
 
         public override void UpdateActivitiesGroup(ref BusinessFlow businessFlow, List<Tuple<string, string>> TCsIDs)
         {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName, System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
             {
                 if (testPlan.RQMID == ExportToRQM.GetExportedIDString(businessFlow.ExternalIdCalCulated, "RQMID"))
@@ -183,10 +187,12 @@ namespace Ginger.ALM.Repository
                     ((RQMCore)ALMIntegration.Instance.AlmCore).UpdatedRQMTestInBF(ref businessFlow, currentRQMTestPlan, TCsIDs.Select(x => x.Item1.ToString()).ToList());
                 }
             }
+            Mouse.OverrideCursor = null;
         }
 
         public override void UpdateBusinessFlow(ref BusinessFlow businessFlow)
         {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName, System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
             {
                 if (testPlan.RQMID == ExportToRQM.GetExportedIDString(businessFlow.ExternalIdCalCulated, "RQMID"))
@@ -195,6 +201,7 @@ namespace Ginger.ALM.Repository
                     ((RQMCore)ALMIntegration.Instance.AlmCore).UpdateBusinessFlow(ref businessFlow, currentRQMTestPlan);
                 }
             }
+            Mouse.OverrideCursor = null;
         }
 
         public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
@@ -234,7 +241,9 @@ namespace Ginger.ALM.Repository
             {
                 return false;
             }
-            if (WorkSpace.Instance.Solution.ExternalItemsFields.Where(x => x.ItemType == "TestCase").ToList().Count == 0)
+            var originalExternalFields = GingerCoreNET.GeneralLib.General.GetExternalFields();
+
+            if (!originalExternalFields.Any(x => x.ItemType == "TestCase"))
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Current solution have no predefined values for RQM's mandatory fields. Please configure before doing export. ('ALM'-'ALM Items Fields Configuration')");
                 return false;
@@ -250,7 +259,7 @@ namespace Ginger.ALM.Repository
             string res = string.Empty;
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
 
-            exportRes = ((RQMCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRQM(businessFlow, WorkSpace.Instance.Solution.ExternalItemsFields, ref res);
+            exportRes = ((RQMCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRQM(businessFlow, originalExternalFields, ref res);
 
             if (exportRes)
             {
@@ -281,6 +290,7 @@ namespace Ginger.ALM.Repository
             Reporter.HideStatusMessage();
             return exportRes;
         }
+
 
         #region External Item Fields
 

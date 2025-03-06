@@ -13,64 +13,105 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Createin version Tag & Number variables 
 # ------------------------------------------------------------------------------------------------------
-          - name: Download Version Artifacts
-            uses: actions/download-artifact@v3
-            with:
-              name: ginger-version     
+          -   name: Create Version Environment Variable
+              id: set_version
+              if: ${{github.workflow == 'CD'}} 
+              run: |
+                  if [[ ${{github.event.inputs.revision}} != 0 ]]; then 
+                      echo "Alpha Version"
+                      echo "gingertag=20${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}-Alpha.${{github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
+                  elif [[ ${{github.event.inputs.build}} != 0 && ${{github.event.inputs.revision}} == 0 ]]; then
+                      echo "Beta Version"
+                      echo "gingertag=20${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}-Beta.${{ github.event.inputs.build}}" >> $GITHUB_ENV
+                  elif [[ ${{github.event.inputs.build}} == 0  &&  ${{github.event.inputs.revision}} == 0 ]]; then
+                      echo "Official Version"
+                      echo "gingertag=20${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}-Official" >> $GITHUB_ENV
+                  fi
+                  echo "ginger gingertag ${{env.gingertag}}"
 
-          - name: Create variables from Artifacts file
-            shell: bash
-            run: |
-              source version.txt
-              echo $TAG
-              echo "gingernumber=$NUMBER" >> $GITHUB_ENV
-              echo "gingertag=$TAG" >> $GITHUB_ENV
+          -   name: Print Version Environment Variable
+              if: ${{github.workflow == 'CD'}} 
+              run: |
+                  echo "GingerNumber Version: ${{ env.gingernumber}}"
           
 # ------------------------------------------------------------------------------------------------------
 # Copy Ginger repo
 # ------------------------------------------------------------------------------------------------------
-          - uses: actions/checkout@v3
-          
-# ------------------------------------------------------------------------------------------------------
-# Download GingerRuntime Artifact
-# ------------------------------------------------------------------------------------------------------
-          - name: Download GingerRuntime Artifact
-            uses: actions/download-artifact@v3
-            with:
-                name: GingerRuntime
-
+          - uses: actions/checkout@v4
+  
 # ------------------------------------------------------------------------------------------------------
 #  Download Windows Installer Artifact
 # ------------------------------------------------------------------------------------------------------      
           - name: Download Windows Installer Artifact
-            uses: actions/download-artifact@v3
+            uses: actions/download-artifact@v4
             with:
-                name: WindowsInstaller
-                
+                name: WindowsInstaller  
+
+# ------------------------------------------------------------------------------------------------------
+# Download GingerRuntime_Linux Artifact
+# ------------------------------------------------------------------------------------------------------
+          -   name: Restore GingerRuntime_Linux
+              uses: actions/cache@v4
+              with:
+                  path: ./GingerRuntime_Linux-root.tar.gz
+                  key: cache-GingerRuntime_Linux-${{ github.run_number }}
+                  enableCrossOsArchive:
+                      true
+
+# ------------------------------------------------------------------------------------------------------
+# Download GingerRuntime_MacOS Artifact
+# ------------------------------------------------------------------------------------------------------
+          - name: Restore GingerRuntime_MacOS
+            uses: actions/cache@v4
+            with:
+              path: ./GingerRuntime_MacOS-root.tar.gz
+              key: cache-GingerRuntime_MacOS-${{ github.run_number }}
+              enableCrossOsArchive:
+                true
+        
 # ------------------------------------------------------------------------------------------------------
 # Create new Release for ginger
 # ------------------------------------------------------------------------------------------------------
-          - name: Create Github new Release
-            id: create-new-release
-            uses: actions/create-release@v1
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-            with:
-              tag_name: v${{ env.gingertag}}
-              release_name: Release v${{ env.gingertag}}
-              draft: true
-
+          -   name: Create Github Release
+              id: create-new-release
+              uses: GongT/actions-recreate-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+              with:
+                  tag_name: v${{ env.gingertag}}
+                  release_name: Ginger v${{ env.gingertag}}
+                  draft: true
+                  
+                  
+          - name: Print File Content
+            run: | 
+              ls  
+              echo "==============================================="
+ 
 # ------------------------------------------------------------------------------------------------------
-# Upload GingerRuntime.tar.gz to Github Releases 
+# Upload GingerRuntime_Linux.tar.gz to Github Releases 
 # ------------------------------------------------------------------------------------------------------
-          - name: Upload Assest to Github Releases - GingerRuntime.tar.gz
+          - name: Upload Assest to Github Releases - GingerRuntime_Linux.tar.gz
             uses: actions/upload-release-asset@v1
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             with:
               upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-              asset_path: ./GingerRuntime-root.tar.gz
-              asset_name: GingerRuntime.${{ env.gingertag}}.tar.gz
+              asset_path: ./GingerRuntime_Linux-root.tar.gz
+              asset_name: GingerRuntime_Linux.${{ env.gingertag}}.tar.gz
+              asset_content_type: application/gzip
+
+# ------------------------------------------------------------------------------------------------------
+# Upload GingerRuntime_MacOS.tar.gz to Github Releases 
+# ------------------------------------------------------------------------------------------------------
+          - name: Upload Assest to Github Releases - GingerRuntime_MacOS.tar.gz
+            uses: actions/upload-release-asset@v1
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            with:
+              upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+              asset_path: ./GingerRuntime_MacOS-root.tar.gz
+              asset_name: GingerRuntime_MacOS.${{ env.gingertag}}.tar.gz
               asset_content_type: application/gzip
 
 # ------------------------------------------------------------------------------------------------------
@@ -123,3 +164,5 @@ jobs:
               asset_path: ./Documents/GingerRuntime.System.Requirements.pdf
               asset_name: GingerRuntime.System.Requirements.pdf
               asset_content_type: application/doc 
+
+              

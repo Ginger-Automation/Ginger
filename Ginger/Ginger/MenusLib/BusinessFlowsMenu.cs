@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -80,8 +80,21 @@ namespace Ginger.MenusLib
 
             App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEvent;
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
-
+            Amdocs.Ginger.CoreNET.RunLib.CLILib.DoOptionsHandler.AutomateBusinessFlowEvent += OpenCLIBusinessFlow;
             return twoLevelMenu;
+        }
+
+        private static void OpenCLIBusinessFlow(object? sender, BusinessFlow bf)
+        {
+            if (bf != null)
+            {
+                mNewAutomatePage = new NewAutomatePage(bf);
+                App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, bf);
+            }
+            else
+            {
+                return;
+            }
         }
 
         private static async void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
@@ -121,18 +134,18 @@ namespace Ginger.MenusLib
             {
                 ITreeViewItem iv = (ITreeViewItem)i.Tag;
 
-                if (iv.NodeObject() is not null and BusinessFlow)
+                if (iv.NodeObject() is BusinessFlow businessFlow)
                 {
-                    App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, (BusinessFlow)iv.NodeObject());
+                    App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, businessFlow);
                 }
             }
         }
 
         private static BusinessFlow GetBusinessFlowToAutomate()
         {
-            if (mBusFlowsPage.SelectedItemObject is not null and BusinessFlow)
+            if (mBusFlowsPage.SelectedItemObject is BusinessFlow businessFlow)
             {
-                return (BusinessFlow)mBusFlowsPage.SelectedItemObject;
+                return businessFlow;
             }
             else if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Count > 0)
             {

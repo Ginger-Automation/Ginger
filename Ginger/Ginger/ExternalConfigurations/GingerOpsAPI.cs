@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -146,7 +146,7 @@ namespace Ginger.ExternalConfigurations
                     }
                 }
 
-                string apiUrl = $"{GingerOpsUserConfig.AccountUrl}/Report/GetGingerAnalyticsProjects";
+                string apiUrl = $"{GingerOpsUserConfig.AccountUrl}/Project/GetProjects";
 
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
                 var response = await client.GetStringAsync(apiUrl);
@@ -186,7 +186,7 @@ namespace Ginger.ExternalConfigurations
                     }
                 }
 
-                string apiUrl = $"{GingerOpsUserConfig.AccountUrl}/Report/GetGingerAnalyticsEnvironmentsByArchitecture/{publishedEnvironment}?architectureIds={architectureId}";
+                string apiUrl = $"{GingerOpsUserConfig.AccountUrl}/Environment/GetEnvironments/{publishedEnvironment}?architectureIds={architectureId}";
 
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
 
@@ -227,7 +227,7 @@ namespace Ginger.ExternalConfigurations
                     }
                 }
 
-                string apiUrl = $"{GingerOpsUserConfig.AccountUrl}/Report/GetGingerAnalyticsApplicationByEnvironment?environmentIds={environmentId}";
+                string apiUrl = $"{GingerOpsUserConfig.AccountUrl}/Application/GetApplications?environmentIds={environmentId}";
 
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
 

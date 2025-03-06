@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,9 +20,10 @@ using AccountReport.Contracts;
 using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.Repository;
+using Ginger;
 using Ginger.AnalyzerLib;
 using Ginger.Configurations;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
@@ -37,6 +38,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using static GingerCoreNET.SourceControl.SourceControlBase;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
@@ -76,8 +78,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SourceApplication;
         public string SourceApplicationUser;
 
+        ProgressNotifier progressNotifier = new();
+        ProgressStatus progressStatus;
         public bool SelfHealingCheckInConfigured;
-
+        public static event EventHandler<string> GitProgresStatus;
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
         public bool ShowAutoRunWindow
         {
@@ -215,18 +219,57 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         //UserProfile WorkSpace.Instance.UserProfile;
         RunSetConfig mRunSetConfig;
 
-        public bool LoadSolution()
+        /// <summary>
+        /// Adds CLI Git properties from the provided SourceControlOptions.
+        /// </summary>
+        /// <param name="runOptions">The SourceControlOptions containing the Git properties.</param>
+        internal void AddCLIGitProperties(SourceControlOptions runOptions)
+        {
+            SourceControlURL = runOptions.URL;
+            SourcecontrolUser = runOptions.User;
+            sourceControlType = runOptions.SCMType;
+            SetSourceControlBranch(runOptions.Branch);
+            sourceControlPass = runOptions.Pass;
+            sourceControlPassEncrypted = runOptions.PasswordEncrypted;
+            SourceControlProxyServer(runOptions.SourceControlProxyServer);
+            SourceControlProxyPort(runOptions.SourceControlProxyPort);
+        }
+
+        /// <summary>
+        /// Sets the workspace Git properties from the provided SourceControlOptions.
+        /// </summary>
+        /// <param name="runOptions">The SourceControlOptions containing the Git properties.</param>
+        internal void SetWorkSpaceGitProperties(SourceControlOptions runOptions)
+        {
+            if (WorkSpace.Instance.UserProfile == null)
+            {
+                WorkSpace.Instance.UserProfile = new UserProfile();
+                UserProfileOperations userProfileOperations = new UserProfileOperations(WorkSpace.Instance.UserProfile);
+                WorkSpace.Instance.UserProfile.UserProfileOperations = userProfileOperations;
+            }
+            WorkSpace.Instance.UserProfile.SourceControlURL = runOptions.URL;
+            WorkSpace.Instance.UserProfile.SourceControlUser = runOptions.User;
+            WorkSpace.Instance.UserProfile.SourceControlType = runOptions.SCMType;
+            WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlIgnoreCertificate = runOptions.ignoreCertificate;
+            WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlUseShellClient = runOptions.useScmShell;
+            WorkSpace.Instance.UserProfile.EncryptedSourceControlPass = runOptions.Pass;
+            WorkSpace.Instance.UserProfile.SourceControlPass = runOptions.Pass;
+        }
+        /// <summary>
+        /// Loads the solution.
+        /// </summary>
+        /// <returns>True if the solution is loaded successfully, otherwise false.</returns>
+        public async Task<bool> LoadSolutionAsync()
         {
             try
             {
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution...");
-                // SetDebugLevel();//disabling because it is overwriting the UserProfile setting for logging level
-                DownloadSolutionFromSourceControl();
+                await DownloadSolutionFromSourceControl();
                 return OpenSolution();
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Unexpected error occurred while Loading the Solution", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Unexpected error occurred while opening the Solution", ex);
                 return false;
             }
         }
@@ -351,7 +394,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         List<RunsetHLInfoResponse> accountReportRunset = accountReportApiHandler.GetRunsetExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
                         if (accountReportRunset != null && accountReportRunset.Count > 0)
                         {
-                            if (accountReportRunset.Any(x => !x.Status.Equals(eRunStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
+                            if (accountReportRunset.Any(x => !x.Status.Equals(AccountReport.Contracts.Enum.eExecutionStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
                             {
                                 Reporter.ToLog(eLogLevel.INFO, string.Format("The Runset is already Passed or In_progress for provided reference execution id: {0}", mRunSetConfig.ReRunConfigurations.ReferenceExecutionID));
                                 Result = false;
@@ -368,9 +411,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         List<AccountReportRunner> accountReportRunnerList = accountReportApiHandler.GetRunnerExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
                         if (accountReportRunnerList != null)
                         {
-                            if (accountReportRunnerList.Any(x => x.RunStatus.Equals(eRunStatus.Failed)))
+                            if (accountReportRunnerList.Any(x => x.RunStatus.Equals(AccountReport.Contracts.Enum.eExecutionStatus.Failed)))
                             {
-                                var FailedRunnerGuidList = accountReportRunnerList.Where(x => x.RunStatus.Equals(eRunStatus.Failed)).Select(x => x.EntityId);
+                                var FailedRunnerGuidList = accountReportRunnerList.Where(x => x.RunStatus.Equals(AccountReport.Contracts.Enum.eExecutionStatus.Failed)).Select(x => x.EntityId);
                                 foreach (GingerRunner runner in mRunsetExecutor.RunSetConfig.GingerRunners)
                                 {
                                     if (!FailedRunnerGuidList.Contains(runner.Guid))
@@ -396,10 +439,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         List<AccountReportBusinessFlow> accountReportBusinessFlows = accountReportApiHandler.GetBusinessflowExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
                         if (accountReportBusinessFlows != null && accountReportBusinessFlows.Count > 0)
                         {
-                            if (accountReportBusinessFlows.Any(x => x.RunStatus.Equals(eRunStatus.Failed)))
+                            if (accountReportBusinessFlows.Any(x => x.RunStatus.Equals(AccountReport.Contracts.Enum.eExecutionStatus.Failed)))
                             {
 
-                                var FailedBFGuidList = accountReportBusinessFlows.Where(x => x.RunStatus.Equals(eRunStatus.Failed)).Select(x => x.InstanceGUID);
+                                var FailedBFGuidList = accountReportBusinessFlows.Where(x => x.RunStatus.Equals(AccountReport.Contracts.Enum.eExecutionStatus.Failed)).Select(x => x.InstanceGUID);
                                 foreach (GingerRunner runner in mRunsetExecutor.RunSetConfig.GingerRunners)
                                 {
                                     foreach (BusinessFlowRun business in runner.BusinessFlowsRunList)
@@ -519,18 +562,69 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        private void DownloadSolutionFromSourceControl()
+        private async Task DownloadSolutionFromSourceControl()
         {
-            if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
+            try
             {
-                Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
-                if (!SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges))
+                progressNotifier.StatusUpdateHandler += ProgressNotifier_ProgressUpdated;
+                progressStatus = new();
+                if (!string.IsNullOrEmpty(SourceControlURL) && !string.IsNullOrEmpty(SourcecontrolUser) && !string.IsNullOrEmpty(sourceControlPass))
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                    Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
+                    bool solutionDownloadedSuccessfully = await Task.Run(() => SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier));
+                    if (!solutionDownloadedSuccessfully)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                    }
                 }
+                Reporter.ToLog(eLogLevel.INFO, "Solution downloaded/updated successfully");
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+            }
+            finally
+            {
+                progressStatus = null;
+                progressNotifier.StatusUpdateHandler -= ProgressNotifier_ProgressUpdated;
             }
         }
 
+       
+        /// <summary>
+        /// Updates the progress of the download and logs the progress percentage.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">A tuple containing the number of completed steps and the total number of steps.</param>
+        private void ProgressNotifier_ProgressUpdated(object sender, (string ProgressType, int CompletedSteps, int TotalSteps) e)
+        {
+            try
+            {
+                double progress = Math.Round(((double)e.CompletedSteps / e.TotalSteps) * 100, 2);
+                if (e.CompletedSteps > 0 && e.TotalSteps > 0 && e.CompletedSteps <= e.TotalSteps )
+                {
+                    const double epsilon = 0.0001;
+                    if (progressStatus == null || Math.Abs(progress) < epsilon)
+                    {
+                        return;
+                    }
+                    string gitProgress = $"{e.ProgressType}{progress:F2}% ";
+                    progressStatus.ProgressMessage = gitProgress;
+                    progressStatus.ProgressStep = e.CompletedSteps;
+                    progressStatus.TotalSteps = e.TotalSteps;
+                    Reporter.ToLog(eLogLevel.INFO, null, progressInformer: progressStatus);
+                    GitProgresStatus?.Invoke(this, gitProgress);               
+                }
+                else
+                {
+                    return;
+                }
+            }
+            catch (Exception t)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, t.Message);
+            }
+        }
         internal void SetSourceControlBranch(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlBranch: '{value}'");
@@ -665,7 +759,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             else
             {
                 WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
-                if (!value.ToUpper().StartsWith("HTTP://"))
+                if (!value.StartsWith("HTTP://", StringComparison.CurrentCultureIgnoreCase))
                 {
                     value = "http://" + value;
                 }

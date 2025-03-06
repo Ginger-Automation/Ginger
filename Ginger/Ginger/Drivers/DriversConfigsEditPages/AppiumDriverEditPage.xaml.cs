@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Ginger.UserControls;
+using Ginger.ValidationRules;
 using GingerCore;
 using GingerCore.GeneralLib;
 using System;
@@ -76,6 +77,14 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             //xScreenScaleFactorCorrectionYTextBox.Init(null, screenScaleFactorCorrectionY, nameof(DriverConfigParam.Value));
             //BindingHandler.ObjFieldBinding(xScreenScaleFactorCorrectionYTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionY)), nameof(DriverConfigParam.Description));
 
+            DriverConfigParam screenshotHeight = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenshotHeight));
+            xScreenshotHeightTextBox.Init(null, screenshotHeight, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xScreenshotHeightTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenshotHeight)), nameof(DriverConfigParam.Description));
+
+            DriverConfigParam screenshotWidth = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenshotWidth));
+            xScreenshotWidthTextBox.Init(null, screenshotWidth, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xScreenshotWidthTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenshotWidth)), nameof(DriverConfigParam.Description));
+
             xLoadTimeoutTxtbox.Init(null, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Description));
 
@@ -86,12 +95,33 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             BindRadioButtons();
 
+            ApplyValidationRules();
+
             if (mAppiumCapabilities.MultiValues == null || mAppiumCapabilities.MultiValues.Count == 0)
             {
                 mAppiumCapabilities.MultiValues = [];
                 AutoSetCapabilities(true);
             }
             SetCapabilitiesGridView();
+        }
+
+        private void ApplyValidationRules()
+        {
+            xServerURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("URL cannot be empty"));
+            xLoadTimeoutTxtbox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Load Timeout cannot be empty"));
+            xScreenshotHeightTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Height cannot be empty"));
+            xScreenshotWidthTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Width cannot be empty"));
+
+            CallConfigPropertyChange();
+        }
+
+        private void CallConfigPropertyChange()
+        {
+            // need in order to trigger the validation's rules 
+            mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.AppiumServer));
+            mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.LoadDeviceWindow));
+            mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.ScreenshotHeight));
+            mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.ScreenshotWidth));
         }
 
         private void BindRadioButtons()
@@ -194,10 +224,10 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
             else if (mDeviceSource.Value == nameof(eDeviceSource.Kobiton) && !IsKobitonCapabilityExist())
             {
-                DriverConfigParam kobitonUserName = new DriverConfigParam() { Parameter = "username", Description = "Kobiton account User Name" };
-                DriverConfigParam kobitonAccessKey = new DriverConfigParam() { Parameter = "accessKey", Description = "Kobiton account Access Key" };
-                DriverConfigParam KobitonSessionName = new DriverConfigParam() { Parameter = "sessionName", Value = "Mobile testing via Ginger by Amdocs", Description = "Testing session name" };
-                DriverConfigParam kobitonDeviceGroup = new DriverConfigParam() { Parameter = "deviceGroup", Value = "KOBITON", Description = "The device group within the Kobiton test session metadata" };
+                DriverConfigParam kobitonUserName = new DriverConfigParam() { Parameter = "kobiton:username", Description = "Kobiton account User Name" };
+                DriverConfigParam kobitonAccessKey = new DriverConfigParam() { Parameter = "kobiton:accessKey", Description = "Kobiton account Access Key" };
+                DriverConfigParam KobitonSessionName = new DriverConfigParam() { Parameter = "kobiton:sessionName", Value = "Mobile testing via Ginger by Amdocs", Description = "Testing session name which will appear on kobiton" };
+                DriverConfigParam kobitonDeviceGroup = new DriverConfigParam() { Parameter = "kobiton:deviceGroup", Value = "KOBITON", Description = "The device group within the Kobiton test session metadata" };
 
                 DeleteUFTMServerCapabilities();
                 DeleteUFTMSupportSimulationsCapabilities();
@@ -504,6 +534,12 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void DeleteKobitonServerCapabilities()
         {
+            DeleteCapabilityIfExist("kobiton:username");
+            DeleteCapabilityIfExist("kobiton:accessKey");
+            DeleteCapabilityIfExist("kobiton:sessionName");
+            DeleteCapabilityIfExist("kobiton:deviceGroup");
+
+            //for backward support
             DeleteCapabilityIfExist("username");
             DeleteCapabilityIfExist("accessKey");
             DeleteCapabilityIfExist("sessionName");

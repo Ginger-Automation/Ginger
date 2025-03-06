@@ -1,0 +1,46 @@
+﻿<Page x:Class="Ginger.External.Katalon.SelectObjectRepositoryFolderWizardPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.External.Katalon"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="SelectObjectRepositoryFolderWizardPage">
+
+    <Grid
+        Background="{StaticResource $BackgroundColor_White}">
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="auto"
+                MinHeight="30"/>
+            <RowDefinition
+                Height="auto"
+                MinHeight="30"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition
+                Width="*" />
+            <ColumnDefinition
+                Width="auto" />
+        </Grid.ColumnDefinitions>
+        <Label
+            Style="{StaticResource @InputFieldLabelStyle}"
+            Content="Select Katalon Object-Repository Folder" />
+        <TextBox
+            x:Name="DirectoryTextBox"
+            Grid.Row="1"
+            Grid.Column="0"
+            Style="{StaticResource $TextBoxStyle}"
+            ToolTip="Enter or browse for the Katalon Object Repository folder location" />
+        <Button
+            x:Name="DirectoryBrowseButton"
+            Grid.Row="1"
+            Grid.Column="1"
+            Content="Browse"
+            VerticalAlignment="Center"
+            Style="{StaticResource $InputButtonStyle}"
+            Click="DirectoryBrowseButton_Click"
+            ToolTip="Click to browse and select the Katalon Object Repository folder" />
+    </Grid>
+</Page>

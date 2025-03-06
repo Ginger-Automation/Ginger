@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,22 +22,17 @@ using GingerCoreNET.SourceControl;
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     [Verb("run", HelpText = "Open Solution and execute run set")]
-    public class RunOptions : OptionsBase
+    public class RunOptions : SourceControlOptions
     {
         public static string Verb => CLIOptionClassHelper.GetClassVerb<RunOptions>();
-
         [Option('s', "solution", Required = true, HelpText = "Set solution folder")]
         public string Solution { get; set; }
-
-        [Option('m', "branch", Required = false, HelpText = "Set solution source control branch")]
-        public string Branch { get; set; }
 
         [Option('r', "runset", Required = true, HelpText = "Set runset name")]
         public string Runset { get; set; }
 
         [Option('e', "env", Required = false, Default = "Default", HelpText = "Set environment name")]
         public string Environment { get; set; }
-
 
         [Option('d', "do-not-analyze", Required = false, HelpText = "runAnalyzer")]
         public bool DoNotAnalyze { get; set; }
@@ -48,44 +43,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option('a', "artifacts-path", Required = false, HelpText = "Select Artifacts output directory")]
         public string TestArtifactsPath { get; set; }
 
-
-
-        [Option('t', "type", Required = false, HelpText = "Source Control Management type i.e: GIT, SVN")]
-        public SourceControlBase.eSourceControlType SCMType { get; set; }
-
-        [Option('h', "url", Required = false, HelpText = "Source Control URL")]
-        public string URL { get; set; }
-
-        [Option('u', "user", Required = false, HelpText = "Source Control User")]
-        public string User { get; set; }
-
-        [Option('p', "pass", Required = false, HelpText = "Source Control Pass")]
-        public string Pass { get; set; }
-
-        [Option('g', "encrypted", Required = false, Default = false, HelpText = "password is encrypted")]
-        public bool PasswordEncrypted { get; set; }
-
-        [Option('c', "ignoreCertificate", Required = false, HelpText = "Ignore certificate errors while cloning solution")]
-        public bool ignoreCertificate { get; set; }
-
-        [Option('g', "useScmShell", Required = false, HelpText = "Use shell Git Client")]
-        public bool useScmShell { get; set; }
-
-        [Option('z', "sourceControlProxyServer", Required = false, HelpText = "Proxy for Source cotnrol URL")]
-        public string SourceControlProxyServer { get; set; }
-
-        [Option('x', "sourceControlProxyPort", Required = false, HelpText = "Proxy port")]
-        public string SourceControlProxyPort { get; set; }
-
         [Option('q', "executionId", Required = false, HelpText = "Execution Id")]
         public string RunSetExecutionId { get; set; }
 
-        [Option('k', "encryptionKey", Required = false, HelpText = "Encryption key password vairables")]
+        [Option('k', "encryptionKey", Required = false, HelpText = "Encryption key password variables")]
         public string EncryptionKey { get; set; }
 
         [Option('b', "selfHealingCheckInConfigured", Required = false, HelpText = "SelfHealing setting for save and check-in changes.")]
         public bool SelfHealingCheckInConfigured { get; set; }
-
 
         // Gideon
         [Option("sealightsEnable", Required = false, HelpText = "Set Sealights Enable")]
@@ -115,7 +80,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option("sealightsTestRecommendations", Required = false, HelpText = "Set Sealights Test Recommendations")]
         public bool SealightsTestRecommendations { get; set; }
 
-        //pravin
+        // Pravin
         [Option("ReRunFailed", Required = false, HelpText = "Set Rerun Configuration Enable")]
         public bool ReRunFailed { get; set; }
 
@@ -125,7 +90,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option("RerunLevel", Required = false, HelpText = "Set RerunLevel")]
         public string RerunLevel { get; set; }
 
-        //adding to support account level execution details
+        // Adding to support account level execution details
         [Option("sourceApplication", Required = false, HelpText = "Set Source Application name")]
         public string SourceApplication { get; set; }
 

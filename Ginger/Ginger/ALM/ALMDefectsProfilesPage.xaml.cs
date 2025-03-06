@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -226,7 +226,7 @@ namespace Ginger.ALM
             if (grdDefectsProfiles.Grid.SelectedItems.Count > 0)
             {
                 if (Reporter.ToUser(eUserMsgKey.AskBeforeDefectProfileDeleting) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-                {               
+                {
                     foreach (ALMDefectProfile profileToDelete in grdDefectsProfiles.Grid.SelectedItems)
                     {
                         WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(profileToDelete);
@@ -242,27 +242,35 @@ namespace Ginger.ALM
 
         private void RefreshgrdDefectsFieldsHandler(object sender, RoutedEventArgs e)
         {
-            ALMDefectProfile AlmDefectProfile = (ALMDefectProfile)grdDefectsProfiles.CurrentItem;
+            try
             {
-                mALMDefectProfileFields = FetchDefectFields(AlmDefectProfile.AlmType);
-                mALMDefectProfileFields.Where(z => z.Mandatory).ToList().ForEach(x => x.SelectedValue = string.Empty);
-                mALMDefectProfileFieldsExisted = [];
-                foreach (ExternalItemFieldBase aLMDefectProfileField in mALMDefectProfileFields)
+                ALMDefectProfile AlmDefectProfile = (ALMDefectProfile)grdDefectsProfiles.CurrentItem;
                 {
-                    ExternalItemFieldBase aLMDefectProfileFieldExisted = (ExternalItemFieldBase)aLMDefectProfileField.CreateCopy();
-                    if (!string.IsNullOrEmpty(aLMDefectProfileField.ExternalID))
+                    mALMDefectProfileFields = FetchDefectFields(AlmDefectProfile.AlmType);
+                    mALMDefectProfileFields.Where(z => z.Mandatory).ToList().ForEach(x => x.SelectedValue = string.Empty);
+                    mALMDefectProfileFieldsExisted = [];
+                    foreach (ExternalItemFieldBase aLMDefectProfileField in mALMDefectProfileFields)
                     {
-                        aLMDefectProfileFieldExisted.ExternalID = string.Copy(aLMDefectProfileField.ExternalID);
+                        ExternalItemFieldBase aLMDefectProfileFieldExisted = (ExternalItemFieldBase)aLMDefectProfileField.CreateCopy();
+                        if (!string.IsNullOrEmpty(aLMDefectProfileField.ExternalID))
+                        {
+                            aLMDefectProfileFieldExisted.ExternalID = string.Copy(aLMDefectProfileField.ExternalID);
+                        }
+                        ExternalItemFieldBase field = AlmDefectProfile.ALMDefectProfileFields.FirstOrDefault(x => x.ID == aLMDefectProfileField.ID);
+                        if (field != null)
+                        {
+                            aLMDefectProfileFieldExisted.SelectedValue = field.SelectedValue;
+                        }
+                        aLMDefectProfileFieldExisted.PossibleValues = aLMDefectProfileField.PossibleValues;
+                        mALMDefectProfileFieldsExisted.Add(aLMDefectProfileFieldExisted);
                     }
-                    ExternalItemFieldBase field = AlmDefectProfile.ALMDefectProfileFields.FirstOrDefault(x => x.ID == aLMDefectProfileField.ID);
-                    if (field != null)
-                    {
-                        aLMDefectProfileFieldExisted.SelectedValue = field.SelectedValue;
-                    }
-                    aLMDefectProfileFieldExisted.PossibleValues = aLMDefectProfileField.PossibleValues;
-                    mALMDefectProfileFieldsExisted.Add(aLMDefectProfileFieldExisted);
+                    AlmDefectProfile.ALMDefectProfileFields = mALMDefectProfileFieldsExisted;
                 }
-                AlmDefectProfile.ALMDefectProfileFields = mALMDefectProfileFieldsExisted;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "No Defect Profile is created");
+                Reporter.ToUser(eUserMsgKey.NoDefectProfileCreated);
             }
         }
         private void FetchgrdDefectsFieldsHandler(object sender, RoutedEventArgs e)

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -385,7 +385,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             WeakEventManager<DataGrid, SelectionChangedEventArgs>.AddHandler(source: xMainElementsGrid.grdMain, eventName: nameof(DataGrid.SelectionChanged), handler: Grid_SelectionChanged);
 
-
+            xMainElementsGrid.AddToolbarTool(eImageType.Category, toolTip: "Set missing Categories for selected Elements", new RoutedEventHandler(SetMissingCategoriesForSelectedElements));
         }
 
         /// <summary>
@@ -625,7 +625,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xElementDetails.xLocatorsGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteLocatorClicked));
             WeakEventManager<DataGrid, DataGridPreparingCellForEditEventArgs>.AddHandler(source: xElementDetails.xLocatorsGrid.grdMain, eventName: nameof(DataGrid.PreparingCellForEdit), handler: LocatorsGrid_PreparingCellForEdit);
 
-
             xElementDetails.xLocatorsGrid.PasteItemEvent += PasteLocatorEvent;
         }
 
@@ -640,6 +639,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 elementStatus.Add(new ComboEnumItem() { text = category.ToString(), Value = category });
             }
             return elementStatus;
+        }
+
+        private List<string> GetPossibleCategoriesAsString()
+        {
+            ePlatformType mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
+            List<ePomElementCategory> categoriesList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetPlatformPOMElementCategories();
+
+            List<string> categories = [];
+            foreach (ePomElementCategory category in categoriesList)
+            {
+                categories.Add(category.ToString());
+            }
+            return categories;
         }
 
         private List<ComboEnumItem> GetPositionList()
@@ -1020,7 +1032,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     {
                         Path = testElement.Path,
                         Locators = testElement.Locators,
-                        Properties = ((HTMLElementInfo)CurrentEI).Properties,
+                        Properties = CurrentEI.Properties,
                         FriendlyLocators = testElement.FriendlyLocators
                     };
                     testElement = htmlElementInfo;
@@ -1053,13 +1065,75 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        private void xCopyLocatorButton_Click(object sender, RoutedEventArgs e)
+        private void SetMissingCategoriesForSelectedElements(object sender, RoutedEventArgs e)
         {
-            if (!ValidateDriverAvalability())
+            if (xMainElementsGrid.Grid.SelectedItems.Count == 0)
             {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select elements to set missing categories.");
                 return;
             }
 
+            bool isCategoryUpdated = false;
+            string selectedCategory = "";
+            if (InputBoxWindow.OpenDialog("Set Missing Categories", "Select Category to set:", ref selectedCategory, GetPossibleCategoriesAsString()))
+            {
+                if (!string.IsNullOrEmpty(selectedCategory))
+                {
+                    try
+                    {
+                        Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "setting all missing categories for selected elements...");
+                        foreach (ElementInfo element in xMainElementsGrid.Grid.SelectedItems)
+                        {
+                            if (element.Properties.All(y => y.Category == null) && element.Locators.All(y => y.Category == null))
+                            {
+                                SetMissingCategoriesForElement(element, (ePomElementCategory)Enum.Parse(typeof(ePomElementCategory), selectedCategory));
+                                isCategoryUpdated = true;
+                            }
+
+                        }
+                        if (isCategoryUpdated)
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Missing categories updated successfully.");
+                        }
+                        else
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No missing categoriess found.");
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error in setting missing categories for selected elements", ex);
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error in setting missing categories for all/some elements");
+                    }
+                    finally
+                    {
+                        Reporter.HideStatusMessage();
+                    }
+                }
+            }
+        }
+
+        private void SetMissingCategoriesForElement(ElementInfo element, ePomElementCategory category)
+        {
+            foreach (ElementLocator locator in element.Locators)
+            {
+                if (locator.Category == null)
+                {
+                    locator.Category = category;
+                }
+            }
+            foreach (ControlProperty property in element.Properties)
+            {
+                if (property.Category == null)
+                {
+                    property.Category = category;
+                }
+            }
+        }
+
+        private void xCopyLocatorButton_Click(object sender, RoutedEventArgs e)
+        {
             if (mSelectedLocator != null)
             {
                 GingerCore.General.SetClipboardText(mSelectedLocator.LocateValue);
