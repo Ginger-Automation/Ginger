@@ -780,7 +780,7 @@ namespace Ginger
                     case "solutionsourcecontrolconfigureproxy":
                         if (bool.TryParse(value, out bool isProxyConfigure))
                         {
-                            gingerSolution.SourceControlInfo.IsProxyConfigure = isProxyConfigure;
+                            gingerSolution.SourceControlInfo.IsProxyConfigured = isProxyConfigure;
                             return true;
                         }
                         break;

@@ -6,7 +6,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
     public class GingerSolution : RepositoryItemBase
     {
         [IsSerializedForLocalRepository]
-        public new Guid Guid { get; set; }
+        public  Guid SolutionGuid { get; set; }
         [IsSerializedForLocalRepository]
         public SourceControlInfo SourceControlInfo { get; set; }
         public override string ItemName { get => nameof(GingerSolution); set { } }
@@ -47,7 +47,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
 
 
         [IsSerializedForLocalRepository]
-        public bool IsProxyConfigure { get; set; }
+        public bool IsProxyConfigured { get; set; }
 
 
         [IsSerializedForLocalRepository]
