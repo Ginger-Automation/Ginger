@@ -18,9 +18,11 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.UserControls;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
+using MathNet.Numerics;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -51,28 +53,29 @@ namespace Ginger.SourceControl
             Init();
 
         }
-
+    
         private void SourceControlInit()
         {
             mSourceControl = new GITSourceControl();
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
             if (mSourceControl != null)
             {
-                WorkSpace.Instance.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
-                mSourceControl.SourceControlURL = "";
-                mSourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
-                mSourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
-                mSourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
-                mSourceControl.SourceControlBranch = WorkSpace.Instance.UserProfile.SourceControlBranch;
+                GingerSolutionSourceControl.SourceControlInfo.Type = mSourceControl.GetSourceControlType;
+                mSourceControl.URL = "";
+                mSourceControl.Username = GingerSolutionSourceControl.SourceControlInfo.Username;
+                mSourceControl.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
+                mSourceControl.LocalFolder = GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath;
+                mSourceControl.BranchName = GingerSolutionSourceControl.SourceControlInfo.Branch;
 
-                mSourceControl.SourceControlConfigureProxy = WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy;
-                mSourceControl.SourceControlProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
-                mSourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
+                mSourceControl.IsProxyConfigured = GingerSolutionSourceControl.SourceControlInfo.IsProxyConfigured;
+                mSourceControl.ProxyAddress = GingerSolutionSourceControl.SourceControlInfo.ProxyAddress;
+                mSourceControl.ProxyPort = GingerSolutionSourceControl.SourceControlInfo.ProxyPort;
 
-                if (WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout == 0)
+                if (GingerSolutionSourceControl.SourceControlInfo.Timeout == 0)
                 {
-                    WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout = 80;
+                    GingerSolutionSourceControl.SourceControlInfo.Timeout = 80;
                 }
-                mSourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
+                mSourceControl.Timeout = GingerSolutionSourceControl.SourceControlInfo.Timeout;
                 mSourceControl.PropertyChanged += SourceControl_PropertyChanged;
 
                 FetchBranchRadioBtn.IsChecked = true;
@@ -81,51 +84,52 @@ namespace Ginger.SourceControl
 
         private static void SourceControl_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            WorkSpace.Instance.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
-            WorkSpace.Instance.UserProfile.SourceControlURL = mSourceControl.SourceControlURL;
-            WorkSpace.Instance.UserProfile.SourceControlUser = mSourceControl.SourceControlUser;
-            WorkSpace.Instance.UserProfile.SourceControlPass = mSourceControl.SourceControlPass;
-            WorkSpace.Instance.UserProfile.SourceControlLocalFolder = mSourceControl.SourceControlLocalFolder;
-            WorkSpace.Instance.UserProfile.SourceControlBranch = mSourceControl.SourceControlBranch;
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            GingerSolutionSourceControl.SourceControlInfo.Type = mSourceControl.GetSourceControlType;
+            GingerSolutionSourceControl.SourceControlInfo.Url = mSourceControl.URL;
+            GingerSolutionSourceControl.SourceControlInfo.Username = mSourceControl.Username;
+            GingerSolutionSourceControl.SourceControlInfo.Password = mSourceControl.Password;
+            GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath = mSourceControl.LocalFolder;
+            GingerSolutionSourceControl.SourceControlInfo.Branch= mSourceControl.BranchName;
 
-            WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = mSourceControl.SourceControlConfigureProxy;
-            WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress = mSourceControl.SourceControlProxyAddress;
-            WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort = mSourceControl.SourceControlProxyPort;
-            WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout = mSourceControl.SourceControlTimeout;
+            GingerSolutionSourceControl.SourceControlInfo.IsProxyConfigured = mSourceControl.IsProxyConfigured;
+            GingerSolutionSourceControl.SourceControlInfo.ProxyAddress = mSourceControl.ProxyAddress;
+            GingerSolutionSourceControl.SourceControlInfo.ProxyPort = mSourceControl.ProxyPort;
+            GingerSolutionSourceControl.SourceControlInfo.Timeout = mSourceControl.Timeout;
         }
 
         private void Init()
         {
-            if (WorkSpace.Instance.UserProfile.SourceControlURL == null)
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            if (GingerSolutionSourceControl.SourceControlInfo.Url == null)
             {
-
-                WorkSpace.Instance.UserProfile.SourceControlURL = "";
+                GingerSolutionSourceControl.SourceControlInfo.Url = "";
             }
-            mSourceControl.SourceControlLocalFolder = WorkSpace.Instance.Solution.Folder;
+            mSourceControl.LocalFolder = WorkSpace.Instance.Solution.Folder;
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConfigureProxyCheckBox, CheckBox.IsCheckedProperty, mSourceControl, nameof(SourceControlBase.SourceControlConfigureProxy));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConfigureProxyCheckBox, CheckBox.IsCheckedProperty, mSourceControl, nameof(SourceControlBase.IsProxyConfigured));
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProxyAddressTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlProxyAddress));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProxyAddressTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.ProxyAddress));
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProxyPortTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlProxyPort));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProxyPortTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.ProxyPort));
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlURLTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlURL));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlUser));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlPass));
-            SourceControlPassTextBox.Password = mSourceControl.SourceControlPass;
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlURLTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.URL));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.Username));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.Password));
+            SourceControlPassTextBox.Password = mSourceControl.Password;
 
             //xBranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBranchesCombo, ComboBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlBranch));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBranchesCombo, ComboBox.TextProperty, mSourceControl, nameof(SourceControlBase.BranchName));
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlBranchTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlBranch));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlBranchTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.BranchName));
 
             SourceControlPassTextBox.PasswordChanged += SourceControlPassTextBox_PasswordChanged;
         }
 
         private void SourceControlPassTextBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            mSourceControl.SourceControlPass = ((PasswordBox)sender).Password;
+            mSourceControl.Password = ((PasswordBox)sender).Password;
             SourceControlIntegration.Init(mSourceControl);
         }
 
@@ -144,7 +148,7 @@ namespace Ginger.SourceControl
             }
             else
             {
-                mSourceControl.SourceControlBranch = "";
+                mSourceControl.BranchName = "";
             }
             loaderElement.Visibility = Visibility.Collapsed;
         }
@@ -221,9 +225,9 @@ namespace Ginger.SourceControl
                     Reporter.ToUser(eUserMsgKey.SourceControlBranchNameEmpty);
                     return;
                 }
-                if (mSourceControl.InitializeRepository(mSourceControl.SourceControlURL))
+                if (mSourceControl.InitializeRepository(mSourceControl.URL))
                 {
-                    Reporter.ToUser(eUserMsgKey.UploadSolutionInfo, "Solution was successfully uploaded into: '" + mSourceControl.SourceControlURL + "'");
+                    Reporter.ToUser(eUserMsgKey.UploadSolutionInfo, "Solution was successfully uploaded into: '" + mSourceControl.URL + "'");
                     UpdateSourceControlDetails();
                     if (WorkSpace.Instance.Solution.SourceControl == null)
                     {
@@ -261,36 +265,38 @@ namespace Ginger.SourceControl
 
         private void UpdateSourceControlAuthorDetails()
         {
-            if (String.IsNullOrEmpty(mSourceControl.SolutionSourceControlAuthorEmail))
+            if (String.IsNullOrEmpty(mSourceControl.AuthorEmail))
             {
                 UpdateSourceControlAuthorEmail();
             }
-            if (String.IsNullOrEmpty(mSourceControl.SolutionSourceControlAuthorName))
+            if (String.IsNullOrEmpty(mSourceControl.AuthorName))
             {
                 UpdateSourceControlAuthorName();
             }
         }
         private void UpdateSourceControlAuthorEmail()
         {
-            if (!String.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail))
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            if (!String.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.AuthorEmail))
             {
-                mSourceControl.SolutionSourceControlAuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
+                mSourceControl.AuthorEmail = GingerSolutionSourceControl.SourceControlInfo.AuthorEmail;
             }
             else
             {
-                mSourceControl.SolutionSourceControlAuthorEmail = mSourceControl.SourceControlUser;
+                mSourceControl.AuthorEmail = mSourceControl.Username;
             }
         }
 
         private void UpdateSourceControlAuthorName()
         {
-            if (!String.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName))
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            if (!String.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.AuthorName))
             {
-                mSourceControl.SolutionSourceControlAuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
+                mSourceControl.AuthorName = GingerSolutionSourceControl.SourceControlInfo.AuthorName;
             }
             else
             {
-                mSourceControl.SolutionSourceControlAuthorName = mSourceControl.SourceControlUser;
+                mSourceControl.AuthorName = mSourceControl.Username;
             }
         }
 
@@ -301,12 +307,13 @@ namespace Ginger.SourceControl
                 PopProcessIsBusyMsg();
                 return;
             }
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
             if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.SourceControl != null)
             {
-                WorkSpace.Instance.UserProfile.SolutionSourceControlUser = WorkSpace.Instance.Solution.SourceControl.SourceControlUser;
-                WorkSpace.Instance.UserProfile.SolutionSourceControlPass = WorkSpace.Instance.Solution.SourceControl.SourceControlPass;
-                WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName = WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorName;
-                WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail = WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorName;
+                GingerSolutionSourceControl.SourceControlInfo.Username = WorkSpace.Instance.Solution.SourceControl.Username;
+                GingerSolutionSourceControl.SourceControlInfo.Password = WorkSpace.Instance.Solution.SourceControl.Password;
+                GingerSolutionSourceControl.SourceControlInfo.AuthorName = WorkSpace.Instance.Solution.SourceControl.AuthorName;
+                GingerSolutionSourceControl.SourceControlInfo.AuthorEmail = WorkSpace.Instance.Solution.SourceControl.AuthorEmail;
                 SourceControlIntegration.Disconnect(WorkSpace.Instance.Solution.SourceControl);
             }
             genWin.Close();
@@ -335,7 +342,7 @@ namespace Ginger.SourceControl
 
         private bool ValidateBranchNameIsNotEmpty()
         {
-            if (String.IsNullOrEmpty(mSourceControl.SourceControlBranch))
+            if (String.IsNullOrEmpty(mSourceControl.BranchName))
             {
                 return false;
             }
@@ -352,13 +359,13 @@ namespace Ginger.SourceControl
             {
                 SP_CreateNewBranch.Visibility = Visibility.Collapsed;
                 SP_FetchBranches.Visibility = Visibility.Visible;
-                mSourceControl.SourceControlBranch = "";
+                mSourceControl.BranchName = "";
             }
             if ((bool)CreateBranchRadioBtn.IsChecked)
             {
                 SP_FetchBranches.Visibility = Visibility.Collapsed;
                 SP_CreateNewBranch.Visibility = Visibility.Visible;
-                mSourceControl.SourceControlBranch = "";
+                mSourceControl.BranchName = "";
             }
         }
     }

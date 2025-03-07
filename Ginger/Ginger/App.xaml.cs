@@ -468,7 +468,7 @@ namespace Ginger
         /// <param name="doOptions">The options for loading the solution.</param>
         private async Task LoadSolutionWithoutSavingCredentialsAsync(DoOptions doOptions)
         {
-            if (WorkSpace.Instance?.UserProfile == null)
+           /* if (WorkSpace.Instance?.UserProfile == null)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "User Profile is not found.");                
             }
@@ -491,7 +491,7 @@ namespace Ginger
                     WorkSpace.Instance.UserProfile.SourceControlUser = gitUserName;
                     WorkSpace.Instance.UserProfile.SourceControlPass = gitUserPassword;
                 }
-            }
+            }*/
         }
         private void CLIHelper_GitProgresStatus(object? sender, string e)
         {
