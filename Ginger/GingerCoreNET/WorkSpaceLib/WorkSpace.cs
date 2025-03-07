@@ -584,30 +584,31 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        private static void HandleSolutionLoadSourceControl(Solution solution)
+        /*private static void HandleSolutionLoadSourceControl(Solution solution)
         {
             string repositoryRootFolder = string.Empty;
             WorkSpace.Instance.EventHandler.SetSolutionSourceControl(solution, ref repositoryRootFolder);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
 
             if (solution.SourceControl != null && WorkSpace.Instance.UserProfile != null)
             {
-                if (string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlPass) ||
+                if (string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.Username) || string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.Password) ||
                     solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
-                    if (WorkSpace.Instance.UserProfile.SourceControlUser != null && WorkSpace.Instance.UserProfile.SourceControlPass != null)
+                    if (GingerSolutionSourceControl.SourceControlInfo.Username != null && GingerSolutionSourceControl.SourceControlInfo.Password != null)
                     {
-                        solution.SourceControl.Username = WorkSpace.Instance.UserProfile.SourceControlUser;
-                        solution.SourceControl.Password = WorkSpace.Instance.UserProfile.SourceControlPass;
-                        solution.SourceControl.AuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
-                        solution.SourceControl.AuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
+                        solution.SourceControl.Username = GingerSolutionSourceControl.SourceControlInfo.Username;
+                        solution.SourceControl.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
+                        solution.SourceControl.AuthorEmail = GingerSolutionSourceControl.SourceControlInfo.AuthorEmail;
+                        solution.SourceControl.AuthorName = GingerSolutionSourceControl.SourceControlInfo.AuthorName;
                     }
                 }
                 else
                 {
-                    solution.SourceControl.Username = WorkSpace.Instance.UserProfile.SolutionSourceControlUser;
-                    solution.SourceControl.Password = WorkSpace.Instance.UserProfile.SolutionSourceControlPass;
-                    solution.SourceControl.AuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
-                    solution.SourceControl.AuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
+                    solution.SourceControl.Username = GingerSolutionSourceControl.SourceControlInfo.Username;
+                    solution.SourceControl.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
+                    solution.SourceControl.AuthorEmail = GingerSolutionSourceControl.SourceControlInfo.AuthorEmail;
+                    solution.SourceControl.AuthorName = GingerSolutionSourceControl.SourceControlInfo.AuthorName;
                 }
 
                 string error = string.Empty;
@@ -615,10 +616,47 @@ namespace amdocs.ginger.GingerCoreNET
                 solution.SourceControl.SolutionFolder = solution.Folder;
                 solution.SourceControl.RepositoryRootFolder = repositoryRootFolder;
                 solution.SourceControl.URL = solution.SourceControl.GetRepositoryURL(ref error);
-                solution.SourceControl.LocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
-                solution.SourceControl.ProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
-                solution.SourceControl.ProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
-                solution.SourceControl.Timeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
+                solution.SourceControl.LocalFolder = GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath;
+                solution.SourceControl.ProxyAddress = GingerSolutionSourceControl.SourceControlInfo.ProxyAddress;
+                solution.SourceControl.ProxyPort = GingerSolutionSourceControl.SourceControlInfo.ProxyPort;
+                solution.SourceControl.Timeout = GingerSolutionSourceControl.SourceControlInfo.Timeout;
+
+                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
+                {
+                    solution.SourceControl.BranchName = Ginger.SourceControl.SourceControlIntegration.GetCurrentBranchForSolution(solution.SourceControl);
+                }
+
+                WorkSpace.Instance.SourceControl = solution.SourceControl;
+                RepositoryItemBase.SetSourceControl(solution.SourceControl);
+                RepositoryFolderBase.SetSourceControl(solution.SourceControl);
+            }
+        }*/
+
+        private static void HandleSolutionLoadSourceControl(Solution solution)
+        {
+            string repositoryRootFolder = string.Empty;
+            WorkSpace.Instance.EventHandler.SetSolutionSourceControl(solution, ref repositoryRootFolder);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(solution.Guid);
+
+            if (solution.SourceControl != null && WorkSpace.Instance.UserProfile != null)
+            {
+                if (GingerSolutionSourceControl.SourceControlInfo.Username != null && GingerSolutionSourceControl.SourceControlInfo.Password != null)
+                {
+                    solution.SourceControl.Username = GingerSolutionSourceControl.SourceControlInfo.Username;
+                    solution.SourceControl.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
+                    solution.SourceControl.AuthorEmail = GingerSolutionSourceControl.SourceControlInfo.AuthorEmail;
+                    solution.SourceControl.AuthorName = GingerSolutionSourceControl.SourceControlInfo.AuthorName;
+                }
+
+                string error = string.Empty;
+
+                solution.SourceControl.SolutionFolder = solution.Folder;
+                solution.SourceControl.RepositoryRootFolder = repositoryRootFolder;
+                solution.SourceControl.URL = solution.SourceControl.GetRepositoryURL(ref error);
+                solution.SourceControl.LocalFolder = GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath;
+                solution.SourceControl.ProxyAddress = GingerSolutionSourceControl.SourceControlInfo.ProxyAddress;
+                solution.SourceControl.ProxyPort = GingerSolutionSourceControl.SourceControlInfo.ProxyPort;
+                solution.SourceControl.Timeout = GingerSolutionSourceControl.SourceControlInfo.Timeout;
 
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {

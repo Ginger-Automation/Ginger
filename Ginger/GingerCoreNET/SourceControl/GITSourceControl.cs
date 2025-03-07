@@ -33,7 +33,7 @@ using System.Threading.Tasks;
 namespace GingerCore.SourceControl
 {
 
-    public class GITSourceControl : SourceControlBase
+    public class GITSourceControl : SourceControlBase 
     {
         private const string XMLFileExtension = ".xml";
         private const string IgnoreFileExtension = ".ignore";
@@ -47,7 +47,7 @@ namespace GingerCore.SourceControl
 
         public override bool IsSupportingGetLatestForIndividualFiles { get { return false; } }
 
-        public override eSourceControlType GetSourceControlType { get { return eSourceControlType.GIT; } }
+        public override eSourceControlType GetSourceControlType { get; set; }
 
         public override List<string> GetSourceControlmConflict { get { return null; } }
 

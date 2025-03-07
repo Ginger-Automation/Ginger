@@ -68,6 +68,11 @@ namespace Amdocs.Ginger.Common.SourceControlLib
         public string EncryptedPassword { get; set; }
 
 
+        public bool UseShellClient { get; internal set; }
+
+        public bool IgnoreCertificate { get; internal set; }
+
+
         public override string ItemName { get => nameof(SourceControlInfo); set { } }
     }
 

@@ -51,7 +51,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override bool IsSupportingGetLatestForIndividualFiles { get { return true; } }
 
-        public override eSourceControlType GetSourceControlType { get { return eSourceControlType.GIT; } }
+        public override eSourceControlType GetSourceControlType { get; set; }
 
         public override List<string> GetSourceControlmConflict => throw new NotImplementedException();
 

@@ -120,6 +120,8 @@ namespace Ginger.SourceControl
 
         private void SaveConfiguration_Click(object sender, RoutedEventArgs e)
         {
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+
             if (TestSourceControlConnection(true))
             {
                 if (SourceControlClassTextBox.Text != SourceControlBase.eSourceControlType.GIT.ToString())
@@ -130,8 +132,8 @@ namespace Ginger.SourceControl
                         return;
                     }
                 }
-                WorkSpace.Instance.UserProfile.SourceControlPass = WorkSpace.Instance.Solution.SourceControl.Password;
-                WorkSpace.Instance.UserProfile.SourceControlUser = WorkSpace.Instance.Solution.SourceControl.Username;
+                GingerSolutionSourceControl.SourceControlInfo.Password = WorkSpace.Instance.Solution.SourceControl.Password;
+                GingerSolutionSourceControl.SourceControlInfo.Username = WorkSpace.Instance.Solution.SourceControl.Username;
                 WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
                 WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
                 Close();
@@ -144,12 +146,13 @@ namespace Ginger.SourceControl
 
         private void Close()
         {
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
             if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.SourceControl != null)
             {
-                WorkSpace.Instance.UserProfile.SolutionSourceControlUser = WorkSpace.Instance.Solution.SourceControl.Username;
-                WorkSpace.Instance.UserProfile.SolutionSourceControlPass = WorkSpace.Instance.Solution.SourceControl.Password;
-                WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName = WorkSpace.Instance.Solution.SourceControl.AuthorName;
-                WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail = WorkSpace.Instance.Solution.SourceControl.AuthorName;
+                GingerSolutionSourceControl.SourceControlInfo.Username = WorkSpace.Instance.Solution.SourceControl.Username;
+                GingerSolutionSourceControl.SourceControlInfo.Password = WorkSpace.Instance.Solution.SourceControl.Password;
+                GingerSolutionSourceControl.SourceControlInfo.AuthorName = WorkSpace.Instance.Solution.SourceControl.AuthorName;
+                GingerSolutionSourceControl.SourceControlInfo.AuthorEmail = WorkSpace.Instance.Solution.SourceControl.AuthorName;
                 SourceControlIntegration.Disconnect(WorkSpace.Instance.Solution.SourceControl);
             }
             genWin.Close();
@@ -185,7 +188,9 @@ namespace Ginger.SourceControl
             {
                 return;
             }
-            WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout = Int32.Parse(xTextSourceControlConnectionTimeout.Text);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+
+            GingerSolutionSourceControl.SourceControlInfo.Timeout = Int32.Parse(xTextSourceControlConnectionTimeout.Text);
         }
     }
 }

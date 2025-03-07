@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -29,6 +30,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.UserConfig;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
+using Microsoft.CodeAnalysis;
 using Newtonsoft.Json.Linq;
 
 namespace Ginger
@@ -169,65 +171,69 @@ namespace Ginger
         [IsSerializedForLocalRepository]
         public Guid RecentRunset { get; set; }
 
-      /*  [IsSerializedForLocalRepository]
-        public SourceControlBase.eSourceControlType SourceControlType { get; set; }
+        /*  [IsSerializedForLocalRepository]
+          public SourceControlBase.eSourceControlType SourceControlType { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public string SourceControlURL { get; set; }
+          [IsSerializedForLocalRepository]
+          public string SourceControlURL { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public string SourceControlUser { get; set; }
+          [IsSerializedForLocalRepository]
+          public string SourceControlUser { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public string SolutionSourceControlUser { get; set; }
+          [IsSerializedForLocalRepository]
+          public string SolutionSourceControlUser { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public string SourceControlBranch { get; set; }
+          [IsSerializedForLocalRepository]
+          public string SourceControlBranch { get; set; }
 
-        public string SolutionSourceControlBranch { get; set; }
+          public string SolutionSourceControlBranch { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public bool SolutionSourceControlConfigureProxy { get; set; }
+          [IsSerializedForLocalRepository]
+          public bool SolutionSourceControlConfigureProxy { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public string SolutionSourceControlProxyAddress { get; set; }
+          [IsSerializedForLocalRepository]
+          public string SolutionSourceControlProxyAddress { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public string SolutionSourceControlAuthorName { get; set; }
+          [IsSerializedForLocalRepository]
+          public string SolutionSourceControlAuthorName { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public string SolutionSourceControlAuthorEmail { get; set; }
+          [IsSerializedForLocalRepository]
+          public string SolutionSourceControlAuthorEmail { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public string SolutionSourceControlProxyPort { get; set; }
-
-
-        [IsSerializedForLocalRepository(80)]
-        public int SolutionSourceControlTimeout { get; set; }
+          [IsSerializedForLocalRepository]
+          public string SolutionSourceControlProxyPort { get; set; }
 
 
-        [IsSerializedForLocalRepository]
-        public string SourceControlLocalFolder { get; set; }*/
-
-        //[IsSerializedForLocalRepository]
+          [IsSerializedForLocalRepository(80)]
+          public int SolutionSourceControlTimeout { get; set; }
 
 
+          [IsSerializedForLocalRepository]
+          public string SourceControlLocalFolder { get; set; }
+
+          //[IsSerializedForLocalRepository]
 
 
-        public string SourceControlPass
-        {
-            get; set;
-        }
-
-        public string SolutionSourceControlPass
-        {
-            get; set;
-        }
-
-        public string EncryptedSourceControlPass { get; set; }
 
 
-        public string EncryptedSolutionSourceControlPass { get; set; }
+          public string SourceControlPass
+          {
+              get; set;
+          }
+
+          public string SolutionSourceControlPass
+          {
+              get; set;
+          }
+
+          public string EncryptedSourceControlPass { get; set; }
+
+
+          public string EncryptedSolutionSourceControlPass { get; set; }
+        */
+
+
+
 
 
         [IsSerializedForLocalRepository]
@@ -268,10 +274,32 @@ namespace Ginger
                 }
             }
         }
+        // get the GingerSolution in the mGingerSolution from the GingerSolutions list which match the WorkSpace.Instance.Solution.Guid
 
 
         [IsSerializedForLocalRepository]
         public ObservableList<GingerSolution> GingerSolutions { get; set; } = [];
+
+
+        public GingerSolution SourceControlInfo(Guid solutionGuid)
+        {
+            foreach (GingerSolution item in GingerSolutions)
+            {
+                if (item.SolutionGuid == solutionGuid)
+                {
+                    return item;
+                }
+            }
+            GingerSolution solutionSourceControlInfo = new Amdocs.Ginger.Common.SourceControlLib.GingerSolution()
+            {
+                SolutionGuid = solutionGuid,
+                SourceControlInfo = new Amdocs.Ginger.Common.SourceControlLib.SourceControlInfo()
+            };
+            GingerSolutions.Add(solutionSourceControlInfo);
+
+            return solutionSourceControlInfo;
+        }
+
 
         [IsSerializedForLocalRepository]
         public ObservableList<string> RecentDownloadedSolutionGuid { get; set; } = [];
@@ -728,9 +756,6 @@ namespace Ginger
                 }
             }
         }
-        public bool SourceControlUseShellClient { get; internal set; }
-
-        public bool SourceControlIgnoreCertificate { get; internal set; }
 
         [IsSerializedForLocalRepository]
         public List<string> ShownHelpLayoutsKeys = [];
