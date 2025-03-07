@@ -62,10 +62,10 @@ namespace Ginger.SourceControl
             SourceControlURLTextBox.IsReadOnly = true;
             SourceControlURLTextBox.IsEnabled = false;
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SourceControlUser));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SourceControlPass));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.Username));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.Password));
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSourceControlBranchTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SourceControlBranch));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSourceControlBranchTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.BranchName));
 
             if (SourceControlClassTextBox.Text == SourceControlBase.eSourceControlType.GIT.ToString())
             {
@@ -73,11 +73,11 @@ namespace Ginger.SourceControl
             }
             else
             {
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTextSourceControlConnectionTimeout, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SourceControlTimeout));
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTextSourceControlConnectionTimeout, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.Timeout));
                 xBranchRow.Height = new GridLength(0);
             }
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserAuthorNameTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SolutionSourceControlAuthorName));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlAuthorEmailTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SolutionSourceControlAuthorEmail));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserAuthorNameTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.AuthorName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlAuthorEmailTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.AuthorEmail));
 
             if (WorkSpace.Instance.Solution.SourceControl.IsSupportingLocks)
             {
@@ -85,23 +85,23 @@ namespace Ginger.SourceControl
             }
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ShowIndicationkForLockedItems, CheckBox.IsCheckedProperty, WorkSpace.Instance.Solution, nameof(Solution.ShowIndicationkForLockedItems));
 
-            SourceControlPassTextBox.Password = WorkSpace.Instance.Solution.SourceControl.SourceControlPass;
+            SourceControlPassTextBox.Password = WorkSpace.Instance.Solution.SourceControl.Password;
 
             SourceControlPassTextBox.PasswordChanged += SourceControlPassTextBox_PasswordChanged;
 
-            if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorEmail))
+            if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.AuthorEmail))
             {
-                WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorEmail = WorkSpace.Instance.Solution.SourceControl.SourceControlUser;
+                WorkSpace.Instance.Solution.SourceControl.AuthorEmail = WorkSpace.Instance.Solution.SourceControl.Username;
             }
-            if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorName))
+            if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.AuthorName))
             {
-                WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorName = WorkSpace.Instance.Solution.SourceControl.SourceControlUser;
+                WorkSpace.Instance.Solution.SourceControl.AuthorName = WorkSpace.Instance.Solution.SourceControl.Username;
             }
         }
 
         private void SourceControlPassTextBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            WorkSpace.Instance.Solution.SourceControl.SourceControlPass = ((PasswordBox)sender).Password;
+            WorkSpace.Instance.Solution.SourceControl.Password = ((PasswordBox)sender).Password;
             WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();//todo: check if needed
             SourceControlIntegration.Init(WorkSpace.Instance.Solution.SourceControl);
         }
@@ -130,8 +130,8 @@ namespace Ginger.SourceControl
                         return;
                     }
                 }
-                WorkSpace.Instance.UserProfile.SourceControlPass = WorkSpace.Instance.Solution.SourceControl.SourceControlPass;
-                WorkSpace.Instance.UserProfile.SourceControlUser = WorkSpace.Instance.Solution.SourceControl.SourceControlUser;
+                WorkSpace.Instance.UserProfile.SourceControlPass = WorkSpace.Instance.Solution.SourceControl.Password;
+                WorkSpace.Instance.UserProfile.SourceControlUser = WorkSpace.Instance.Solution.SourceControl.Username;
                 WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
                 WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
                 Close();
@@ -146,10 +146,10 @@ namespace Ginger.SourceControl
         {
             if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.SourceControl != null)
             {
-                WorkSpace.Instance.UserProfile.SolutionSourceControlUser = WorkSpace.Instance.Solution.SourceControl.SourceControlUser;
-                WorkSpace.Instance.UserProfile.SolutionSourceControlPass = WorkSpace.Instance.Solution.SourceControl.SourceControlPass;
-                WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName = WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorName;
-                WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail = WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorName;
+                WorkSpace.Instance.UserProfile.SolutionSourceControlUser = WorkSpace.Instance.Solution.SourceControl.Username;
+                WorkSpace.Instance.UserProfile.SolutionSourceControlPass = WorkSpace.Instance.Solution.SourceControl.Password;
+                WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName = WorkSpace.Instance.Solution.SourceControl.AuthorName;
+                WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail = WorkSpace.Instance.Solution.SourceControl.AuthorName;
                 SourceControlIntegration.Disconnect(WorkSpace.Instance.Solution.SourceControl);
             }
             genWin.Close();

@@ -55,9 +55,9 @@ namespace UnitTests.NonUITests
             {
                 SourceControl = new GITSourceControl();
             }
-            SourceControl.SourceControlURL = SourceControlURL;
-            SourceControl.SourceControlUser = SourceControlUser;
-            SourceControl.SourceControlPass = SourceControlPass;
+            SourceControl.URL = SourceControlURL;
+            SourceControl.Username = SourceControlUser;
+            SourceControl.Password = SourceControlPass;
         }
 
         [TestMethod]

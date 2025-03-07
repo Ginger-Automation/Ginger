@@ -144,14 +144,14 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
             string GetCloneUrlString()
             {
-                if (string.IsNullOrEmpty(SourceControlUser))
+                if (string.IsNullOrEmpty(Username))
                 {
                     return URI;
                 }
                 Uri url = new Uri(URI);
                 string scheme = url.Scheme;
 
-                return url.Scheme + @"://" + SourceControlUser + ":" + SourceControlPass + "@" + url.Host + url.AbsolutePath;
+                return url.Scheme + @"://" + Username + ":" + Password + "@" + url.Host + url.AbsolutePath;
             }
         }
 

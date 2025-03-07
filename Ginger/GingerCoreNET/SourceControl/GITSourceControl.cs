@@ -456,7 +456,7 @@ namespace GingerCore.SourceControl
             {
                 var co = new CloneOptions()
                 {
-                    BranchName = string.IsNullOrEmpty(SourceControlBranch) ? "master" : SourceControlBranch,
+                    BranchName = string.IsNullOrEmpty(BranchName) ? "master" : BranchName,
                     CredentialsProvider = GetSourceCredentialsHandler()
                 };
                 GetFetchOptions(co.FetchOptions);
@@ -494,14 +494,14 @@ namespace GingerCore.SourceControl
             ObservableList<SolutionInfo> SourceControlSolutions = [];
             try
             {
-                string repositoryName = SourceControlURL[(SourceControlURL.LastIndexOf("/") + 1)..];
+                string repositoryName = URL[(URL.LastIndexOf("/") + 1)..];
                 if (repositoryName == string.Empty)
                 {
-                    string SourceControlURLExcludeSlash = SourceControlURL[..SourceControlURL.LastIndexOf("/")];
+                    string SourceControlURLExcludeSlash = URL[..URL.LastIndexOf("/")];
                     repositoryName = SourceControlURLExcludeSlash[(SourceControlURLExcludeSlash.LastIndexOf("/") + 1)..];
                 }
                 //check which path to show to download
-                string localPath = SourceControlLocalFolder;
+                string localPath = LocalFolder;
                 if (IsImportSolution)
                 {
                     localPath = SourceControlLocalFolderForGlobalSolution;
@@ -1076,7 +1076,7 @@ namespace GingerCore.SourceControl
                     else
                     {
                         //undo specific changes
-                        string committishOrBranchSpec = SourceControlBranch;
+                        string committishOrBranchSpec = BranchName;
                         CheckoutOptions checkoutOptions = new CheckoutOptions
                         {
                             CheckoutModifiers = CheckoutModifiers.Force,
@@ -1108,14 +1108,14 @@ namespace GingerCore.SourceControl
             {
                 if (IsRepositoryPublic())
                 {
-                    IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL);
+                    IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(URL);
                 }
                 else
                 {
-                    if (SourceControlUser != null && SourceControlUser.Length != 0)
+                    if (Username != null && Username.Length != 0)
                     {
                         CredentialsHandler credentialsHandler = GetSourceCredentialsHandler();
-                        IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL, credentialsHandler);
+                        IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(URL, credentialsHandler);
                     }
                     else
                     {
@@ -1156,7 +1156,7 @@ namespace GingerCore.SourceControl
             var remoteBranches = GetBranches();
             foreach (var branch in remoteBranches)
             {
-                if (branch.Equals(SourceControlBranch))
+                if (branch.Equals(BranchName))
                 {
                     return true;
                 }
@@ -1172,7 +1172,7 @@ namespace GingerCore.SourceControl
                 Commands.Stage(repo, "*");
 
                 // Create the committer's signature and commit
-                Signature author = new LibGit2Sharp.Signature(SourceControlUser, SourceControlUser, DateTime.Now);
+                Signature author = new LibGit2Sharp.Signature(Username, Username, DateTime.Now);
                 Signature committer = author;
 
                 //Commit the staged items 
@@ -1186,7 +1186,7 @@ namespace GingerCore.SourceControl
                     CredentialsProvider = GetSourceCredentialsHandler()
                 };
 
-                if (!String.IsNullOrEmpty(SourceControlBranch) && isRemoteBranchExist())
+                if (!String.IsNullOrEmpty(BranchName) && isRemoteBranchExist())
                 {
                     var pullOptions = GetPullOptions();
 
@@ -1194,13 +1194,13 @@ namespace GingerCore.SourceControl
 
                     Branch localBranch = repo.Head;
 
-                    if (!repo.Head.FriendlyName.Equals(SourceControlBranch))
+                    if (!repo.Head.FriendlyName.Equals(BranchName))
                     {
-                        repo.CreateBranch(SourceControlBranch);
-                        localBranch = repo.Branches[SourceControlBranch];
+                        repo.CreateBranch(BranchName);
+                        localBranch = repo.Branches[BranchName];
 
                         repo.Branches.Update(localBranch, b => b.TrackedBranch = localBranch.CanonicalName);
-                        Commands.Checkout(repo, SourceControlBranch);
+                        Commands.Checkout(repo, BranchName);
 
                         repo.Branches.Update(localBranch,
                             b => b.Remote = remote.Name,
@@ -1217,17 +1217,17 @@ namespace GingerCore.SourceControl
                 }
                 else
                 {
-                    repo.CreateBranch(SourceControlBranch);
-                    Branch localBranch = repo.Branches[SourceControlBranch];
+                    repo.CreateBranch(BranchName);
+                    Branch localBranch = repo.Branches[BranchName];
 
                     repo.Branches.Update(localBranch, b => b.TrackedBranch = localBranch.CanonicalName);
-                    Commands.Checkout(repo, SourceControlBranch);
+                    Commands.Checkout(repo, BranchName);
 
                     repo.Branches.Update(localBranch,
                         b => b.Remote = remote.Name,
                         b => b.UpstreamBranch = localBranch.CanonicalName);
                 }
-                repo.Network.Push(remote, @"refs/heads/" + SourceControlBranch, options);
+                repo.Network.Push(remote, @"refs/heads/" + BranchName, options);
             }
         }
         /// <summary>
@@ -1375,7 +1375,7 @@ namespace GingerCore.SourceControl
                 EnsureDirectoryExists(path);
                 var cloneOptions = new CloneOptions()
                 {
-                    BranchName = string.IsNullOrEmpty(SourceControlBranch) ? "master" : SourceControlBranch,
+                    BranchName = string.IsNullOrEmpty(BranchName) ? "master" : BranchName,
                     FetchOptions = new FetchOptions(),
                     CredentialsProvider = GetSourceCredentialsHandler()
                 };
@@ -1509,8 +1509,8 @@ namespace GingerCore.SourceControl
                         GetFetchOptionsWithProgress(pullOptions.FetchOptions, progressNotifier, cancellationToken);
 
                         var signature = new Signature(
-                            IsRepositoryPublic() ? "dummy" : SourceControlUser,
-                            IsRepositoryPublic() ? "dummy" : SourceControlUser,
+                            IsRepositoryPublic() ? "dummy" : Username,
+                            IsRepositoryPublic() ? "dummy" : Username,
                             DateTimeOffset.Now
                         );
 
@@ -1532,7 +1532,7 @@ namespace GingerCore.SourceControl
             CheckinComment = Comments;
             using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
             {
-                Signature author = new LibGit2Sharp.Signature(SolutionSourceControlAuthorName, SolutionSourceControlAuthorEmail, DateTime.Now);
+                Signature author = new LibGit2Sharp.Signature(AuthorName, AuthorEmail, DateTime.Now);
                 Signature committer = author;
                 return repo.Commit(Comments, author, committer);
             }
@@ -1544,7 +1544,7 @@ namespace GingerCore.SourceControl
             {
                 using (var repo = new Repository(RepositoryRootFolder))
                 {
-                    var localBranch = repo.Branches[SourceControlBranch];
+                    var localBranch = repo.Branches[BranchName];
                     var trackingBranch = localBranch.TrackedBranch;
 
                     var filter = new CommitFilter
@@ -1627,7 +1627,7 @@ namespace GingerCore.SourceControl
                 options.OnPushStatusError += ErrorOnppush;
                 options.CredentialsProvider = GetSourceCredentialsHandler();
 
-                Branch currentBranch = repo.Branches.FirstOrDefault(x => x.FriendlyName == SourceControlBranch);
+                Branch currentBranch = repo.Branches.FirstOrDefault(x => x.FriendlyName == BranchName);
                 repo.Network.Push(currentBranch, options);
             }
         }
@@ -1668,18 +1668,18 @@ namespace GingerCore.SourceControl
                 string ConfigFileContent = string.Empty;
                 string ConfigFilePath = Path.Combine(UserFolder, ".gitconfig");
 
-                if (SourceControlConfigureProxy || IgnoreCertificate)
+                if (IsProxyConfigured || IgnoreCertificate)
                 {
                     if (File.Exists(ConfigFilePath))
                     {
                         ConfigFileContent = File.ReadAllText(ConfigFilePath);
-                        if (!ConfigFileContent.Contains(SourceControlProxyAddress + ":" + SourceControlProxyPort))
+                        if (!ConfigFileContent.Contains(ProxyAddress + ":" + ProxyPort))
                         {
                             ConfigFileContent += Environment.NewLine + "[http]";
 
-                            if (SourceControlConfigureProxy)
+                            if (IsProxyConfigured)
                             {
-                                ConfigFileContent += Environment.NewLine + "proxy =" + '\u0022' + SourceControlProxyAddress + ":" + SourceControlProxyPort + '\u0022';
+                                ConfigFileContent += Environment.NewLine + "proxy =" + '\u0022' + ProxyAddress + ":" + ProxyPort + '\u0022';
 
                             }
 
@@ -1697,9 +1697,9 @@ namespace GingerCore.SourceControl
                     {
                         ConfigFileContent = "[http]";
 
-                        if (SourceControlConfigureProxy)
+                        if (IsProxyConfigured)
                         {
-                            ConfigFileContent += Environment.NewLine + "proxy =" + '\u0022' + SourceControlProxyAddress + ":" + SourceControlProxyPort + '\u0022';
+                            ConfigFileContent += Environment.NewLine + "proxy =" + '\u0022' + ProxyAddress + ":" + ProxyPort + '\u0022';
 
                         }
                         if (IgnoreCertificate)
@@ -1715,7 +1715,7 @@ namespace GingerCore.SourceControl
                     if (File.Exists(ConfigFilePath))
                     {
                         ConfigFileContent = File.ReadAllText(ConfigFilePath);
-                        string ConfigFilePortContent = "[http]" + Environment.NewLine + "proxy =" + '\u0022' + SourceControlProxyAddress + ":" + SourceControlProxyPort + '\u0022';
+                        string ConfigFilePortContent = "[http]" + Environment.NewLine + "proxy =" + '\u0022' + ProxyAddress + ":" + ProxyPort + '\u0022';
                         if (ConfigFileContent.Contains(ConfigFilePortContent))
                         {
                             ConfigFileContent = ConfigFileContent.Remove(ConfigFileContent.IndexOf(ConfigFilePortContent), ConfigFilePortContent.Length);
@@ -1735,7 +1735,7 @@ namespace GingerCore.SourceControl
         {
             try
             {
-                return Repository.ListRemoteReferences(SourceControlURL, GetSourceCredentialsHandler())
+                return Repository.ListRemoteReferences(URL, GetSourceCredentialsHandler())
                     .Where(elem => elem.CanonicalName.Contains("refs/heads/"))
                     .Select(elem => elem.CanonicalName.Replace("refs/heads/", ""))
                     .ToList();
@@ -1758,7 +1758,7 @@ namespace GingerCore.SourceControl
         {
             try
             {
-                var branchesList = Repository.ListRemoteReferences(SourceControlURL, GetEmptySourceCredentialsHandler())
+                var branchesList = Repository.ListRemoteReferences(URL, GetEmptySourceCredentialsHandler())
                     .Where(elem => elem.CanonicalName.Contains("refs/heads/"))
                     .Select(elem => elem.CanonicalName.Replace("refs/heads/", ""))
                     .ToList();
@@ -1799,8 +1799,8 @@ namespace GingerCore.SourceControl
         {
             var credentials = new UsernamePasswordCredentials()
             {
-                Username = SourceControlUser,
-                Password = SourceControlPass,
+                Username = Username,
+                Password = Password,
 
             };
             CredentialsHandler credentialHandler = (_url, _user, _cred) => credentials;

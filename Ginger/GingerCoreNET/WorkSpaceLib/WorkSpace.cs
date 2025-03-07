@@ -596,33 +596,33 @@ namespace amdocs.ginger.GingerCoreNET
                 {
                     if (WorkSpace.Instance.UserProfile.SourceControlUser != null && WorkSpace.Instance.UserProfile.SourceControlPass != null)
                     {
-                        solution.SourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
-                        solution.SourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
-                        solution.SourceControl.SolutionSourceControlAuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
-                        solution.SourceControl.SolutionSourceControlAuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
+                        solution.SourceControl.Username = WorkSpace.Instance.UserProfile.SourceControlUser;
+                        solution.SourceControl.Password = WorkSpace.Instance.UserProfile.SourceControlPass;
+                        solution.SourceControl.AuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
+                        solution.SourceControl.AuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
                     }
                 }
                 else
                 {
-                    solution.SourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SolutionSourceControlUser;
-                    solution.SourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SolutionSourceControlPass;
-                    solution.SourceControl.SolutionSourceControlAuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
-                    solution.SourceControl.SolutionSourceControlAuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
+                    solution.SourceControl.Username = WorkSpace.Instance.UserProfile.SolutionSourceControlUser;
+                    solution.SourceControl.Password = WorkSpace.Instance.UserProfile.SolutionSourceControlPass;
+                    solution.SourceControl.AuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
+                    solution.SourceControl.AuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
                 }
 
                 string error = string.Empty;
 
                 solution.SourceControl.SolutionFolder = solution.Folder;
                 solution.SourceControl.RepositoryRootFolder = repositoryRootFolder;
-                solution.SourceControl.SourceControlURL = solution.SourceControl.GetRepositoryURL(ref error);
-                solution.SourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
-                solution.SourceControl.SourceControlProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
-                solution.SourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
-                solution.SourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
+                solution.SourceControl.URL = solution.SourceControl.GetRepositoryURL(ref error);
+                solution.SourceControl.LocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
+                solution.SourceControl.ProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
+                solution.SourceControl.ProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
+                solution.SourceControl.Timeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
 
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
-                    solution.SourceControl.SourceControlBranch = Ginger.SourceControl.SourceControlIntegration.GetCurrentBranchForSolution(solution.SourceControl);
+                    solution.SourceControl.BranchName = Ginger.SourceControl.SourceControlIntegration.GetCurrentBranchForSolution(solution.SourceControl);
                 }
 
                 WorkSpace.Instance.SourceControl = solution.SourceControl;

@@ -575,21 +575,21 @@ namespace Ginger.SourceControl
                 if (mSourceControl != null)
                 {
                     WorkSpace.Instance.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
-                    mSourceControl.SourceControlURL = WorkSpace.Instance.UserProfile.SourceControlURL;
-                    mSourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
-                    mSourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
-                    mSourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
+                    mSourceControl.URL = WorkSpace.Instance.UserProfile.SourceControlURL;
+                    mSourceControl.Username = WorkSpace.Instance.UserProfile.SourceControlUser;
+                    mSourceControl.Password = WorkSpace.Instance.UserProfile.SourceControlPass;
+                    mSourceControl.LocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
                     mSourceControl.IgnoreCertificate = WorkSpace.Instance.UserProfile.SourceControlIgnoreCertificate;
 
                     mSourceControl.SolutionFolder = SolutionFolder;
 
-                    mSourceControl.SourceControlConfigureProxy = WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy;
-                    mSourceControl.SourceControlProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
-                    mSourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
-                    mSourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
+                    mSourceControl.IsProxyConfigured = WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy;
+                    mSourceControl.ProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
+                    mSourceControl.ProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
+                    mSourceControl.Timeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
                     mSourceControl.supressMessage = true;
 
-                    mSourceControl.SourceControlBranch = WorkSpace.Instance.UserProfile.SolutionSourceControlBranch;
+                    mSourceControl.BranchName = WorkSpace.Instance.UserProfile.SolutionSourceControlBranch;
                 }
 
                 if (WorkSpace.Instance.UserProfile.SourceControlLocalFolder == string.Empty)

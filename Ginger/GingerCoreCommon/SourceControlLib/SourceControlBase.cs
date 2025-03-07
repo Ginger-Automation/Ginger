@@ -46,48 +46,48 @@ namespace GingerCoreNET.SourceControl
 
         public static bool Active { get; internal set; }
 
-        string mSourceControlURL;
-        public string SourceControlURL { get { return mSourceControlURL; } set { mSourceControlURL = value; OnPropertyChanged(nameof(SourceControlURL)); } }
+        string mURL;
+        public string URL { get { return mURL; } set { mURL = value; OnPropertyChanged(nameof(URL)); } }
 
-        string mSourceControlUser;
-        public string SourceControlUser { get { return mSourceControlUser; } set { mSourceControlUser = value; OnPropertyChanged(nameof(SourceControlUser)); } }
+        string mUsername;
+        public string Username { get { return mUsername; } set { mUsername = value; OnPropertyChanged(nameof(Username)); } }
 
-        string mSourceControlBranch;
-        public string SourceControlBranch { get { return mSourceControlBranch; } set { mSourceControlBranch = value; OnPropertyChanged(nameof(SourceControlBranch)); } }
+        string mBranchName;
+        public string BranchName { get { return mBranchName; } set { mBranchName = value; OnPropertyChanged(nameof(BranchName)); } }
 
-        string mSourceControlPass;
-        public string SourceControlPass { get { return mSourceControlPass; } set { mSourceControlPass = value; OnPropertyChanged(nameof(SourceControlPass)); } }
+        string mPassword;
+        public string Password { get { return mPassword; } set { mPassword = value; OnPropertyChanged(nameof(Password)); } }
 
-        string mSourceControlLocalFolder;
-        public string SourceControlLocalFolder { get { return mSourceControlLocalFolder; } set { mSourceControlLocalFolder = value; OnPropertyChanged(nameof(SourceControlLocalFolder)); } }
+        string mLocalFolder;
+        public string LocalFolder { get { return mLocalFolder; } set { mLocalFolder = value; OnPropertyChanged(nameof(LocalFolder)); } }
 
         string mSourceControlLocalFolderForGlobalSolution;
         public string SourceControlLocalFolderForGlobalSolution { get { return mSourceControlLocalFolderForGlobalSolution; } set { mSourceControlLocalFolderForGlobalSolution = value; OnPropertyChanged(nameof(SourceControlLocalFolderForGlobalSolution)); } }
 
-        string mSourceControlProxyAddress;
-        public string SourceControlProxyAddress { get { return mSourceControlProxyAddress; } set { mSourceControlProxyAddress = value; OnPropertyChanged(nameof(SourceControlProxyAddress)); } }
+        string mProxyAddress;
+        public string ProxyAddress { get { return mProxyAddress; } set { mProxyAddress = value; OnPropertyChanged(nameof(ProxyAddress)); } }
 
-        string mSourceControlProxyPort;
-        public string SourceControlProxyPort { get { return mSourceControlProxyPort; } set { mSourceControlProxyPort = value; OnPropertyChanged(nameof(SourceControlProxyPort)); } }
+        string mProxyPort;
+        public string ProxyPort { get { return mProxyPort; } set { mProxyPort = value; OnPropertyChanged(nameof(ProxyPort)); } }
 
 
-        int mSourceControlTimeout = 80;
-        public int SourceControlTimeout { get { return mSourceControlTimeout; } set { mSourceControlTimeout = value; OnPropertyChanged(nameof(SourceControlTimeout)); } }
+        int mTimeout = 80;
+        public int Timeout { get { return mTimeout; } set { mTimeout = value; OnPropertyChanged(nameof(Timeout)); } }
 
-        bool mSourceControlConfigureProxy;
-        public bool SourceControlConfigureProxy { get { return mSourceControlConfigureProxy; } set { mSourceControlConfigureProxy = value; OnPropertyChanged(nameof(SourceControlConfigureProxy)); } }
+        bool mIsProxyConfigured;
+        public bool IsProxyConfigured { get { return mIsProxyConfigured; } set { mIsProxyConfigured = value; OnPropertyChanged(nameof(IsProxyConfigured)); } }
 
         bool mIgnoreCertificate;
         public bool IgnoreCertificate { get { return mIgnoreCertificate; } set { mIgnoreCertificate = value; } }
 
-        string mSolutionSourceControlAuthorName;
-        public string SolutionSourceControlAuthorName { get { return mSolutionSourceControlAuthorName; } set { mSolutionSourceControlAuthorName = value; OnPropertyChanged(nameof(SourceControlConfigureProxy)); } }
+        string mAuthorName;
+        public string AuthorName { get { return mAuthorName; } set { mAuthorName = value; OnPropertyChanged(nameof(AuthorName)); } }
 
-        string mSolutionSourceControlAuthorEmail;
-        public string SolutionSourceControlAuthorEmail { get { return mSolutionSourceControlAuthorEmail; } set { mSolutionSourceControlAuthorEmail = value; OnPropertyChanged(nameof(SourceControlConfigureProxy)); } }
+        string mAuthorEmail;
+        public string AuthorEmail { get { return mAuthorEmail; } set { mAuthorEmail = value; OnPropertyChanged(nameof(AuthorEmail)); } }
 
         bool mIsPublicRepo;
-        public bool IsPublicRepo { get { return mIsPublicRepo; } set { mIsPublicRepo = value; OnPropertyChanged(nameof(mIsPublicRepo)); } }
+        public bool IsPublicRepo { get { return mIsPublicRepo; } set { mIsPublicRepo = value; OnPropertyChanged(nameof(IsPublicRepo)); } }
 
         public string SolutionFolder { get; set; }
 

@@ -69,19 +69,19 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 };
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.SVN)//added for supporting Jenkins way of config creation- need to improve it
                 {
-                    string modifiedURI = solution.SourceControl.SourceControlURL.TrimEnd(new char[] { '/' });
+                    string modifiedURI = solution.SourceControl.URL.TrimEnd(new char[] { '/' });
                     int lastSlash = modifiedURI.LastIndexOf('/');
                     modifiedURI = (lastSlash > -1) ? modifiedURI[..lastSlash] : modifiedURI;
                     dynamicExecution.SolutionDetails.SourceControlDetails.Url = modifiedURI;
                 }
                 else
                 {
-                    dynamicExecution.SolutionDetails.SourceControlDetails.Url = solution.SourceControl.SourceControlURL.ToString();
+                    dynamicExecution.SolutionDetails.SourceControlDetails.Url = solution.SourceControl.URL.ToString();
                 }
-                if (solution.SourceControl.SourceControlUser != null && solution.SourceControl.SourceControlPass != null)
+                if (solution.SourceControl.Username != null && solution.SourceControl.Password != null)
                 {
-                    dynamicExecution.SolutionDetails.SourceControlDetails.User = solution.SourceControl.SourceControlUser;
-                    dynamicExecution.SolutionDetails.SourceControlDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
+                    dynamicExecution.SolutionDetails.SourceControlDetails.User = solution.SourceControl.Username;
+                    dynamicExecution.SolutionDetails.SourceControlDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.Password);
                     dynamicExecution.SolutionDetails.SourceControlDetails.PasswordEncrypted = "Y";
                 }
                 else
@@ -89,10 +89,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     dynamicExecution.SolutionDetails.SourceControlDetails.User = "N/A";
                     dynamicExecution.SolutionDetails.SourceControlDetails.Password = "N/A";
                 }
-                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.SourceControlProxyAddress != null && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
+                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.ProxyAddress != null && solution.SourceControl.ProxyAddress.ToLower().ToString() == "true")
                 {
-                    dynamicExecution.SolutionDetails.SourceControlDetails.ProxyServer = solution.SourceControl.SourceControlProxyAddress.ToString();
-                    dynamicExecution.SolutionDetails.SourceControlDetails.ProxyPort = solution.SourceControl.SourceControlProxyPort.ToString();
+                    dynamicExecution.SolutionDetails.SourceControlDetails.ProxyServer = solution.SourceControl.ProxyAddress.ToString();
+                    dynamicExecution.SolutionDetails.SourceControlDetails.ProxyPort = solution.SourceControl.ProxyPort.ToString();
                 }
             }
             dynamicExecution.SolutionDetails.Path = solution.Folder;
@@ -450,19 +450,19 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 };
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.SVN)//added for supporting Jenkins way of config creation- need to improve it
                 {
-                    string modifiedURI = solution.SourceControl.SourceControlURL.TrimEnd(new char[] { '/' });
+                    string modifiedURI = solution.SourceControl.URL.TrimEnd(new char[] { '/' });
                     int lastSlash = modifiedURI.LastIndexOf('/');
                     modifiedURI = (lastSlash > -1) ? modifiedURI[..lastSlash] : modifiedURI;
                     executionConfig.SolutionScmDetails.SolutionRepositoryUrl = modifiedURI;
                 }
                 else
                 {
-                    executionConfig.SolutionScmDetails.SolutionRepositoryUrl = solution.SourceControl.SourceControlURL.ToString();
+                    executionConfig.SolutionScmDetails.SolutionRepositoryUrl = solution.SourceControl.URL.ToString();
                 }
-                if (solution.SourceControl.SourceControlUser != null && solution.SourceControl.SourceControlPass != null)
+                if (solution.SourceControl.Username != null && solution.SourceControl.Password != null)
                 {
-                    executionConfig.SolutionScmDetails.User = solution.SourceControl.SourceControlUser;
-                    executionConfig.SolutionScmDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
+                    executionConfig.SolutionScmDetails.User = solution.SourceControl.Username;
+                    executionConfig.SolutionScmDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.Password);
                     executionConfig.SolutionScmDetails.PasswordEncrypted = true;
                 }
                 else
@@ -470,13 +470,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     executionConfig.SolutionScmDetails.User = "N/A";
                     executionConfig.SolutionScmDetails.Password = "N/A";
                 }
-                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.SourceControlProxyAddress != null && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
+                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.ProxyAddress != null && solution.SourceControl.ProxyAddress.ToLower().ToString() == "true")
                 {
-                    executionConfig.SolutionScmDetails.ProxyServer = solution.SourceControl.SourceControlProxyAddress.ToString();
-                    executionConfig.SolutionScmDetails.ProxyPort = solution.SourceControl.SourceControlProxyPort.ToString();
+                    executionConfig.SolutionScmDetails.ProxyServer = solution.SourceControl.ProxyAddress.ToString();
+                    executionConfig.SolutionScmDetails.ProxyPort = solution.SourceControl.ProxyPort.ToString();
                 }
                 executionConfig.SolutionScmDetails.UndoSolutionLocalChanges = false;
-                executionConfig.SolutionScmDetails.Branch = solution.SourceControl.SourceControlBranch;
+                executionConfig.SolutionScmDetails.Branch = solution.SourceControl.BranchName;
             }
             if (cliHelper.SetAlmConnectionDetails == true)
             {

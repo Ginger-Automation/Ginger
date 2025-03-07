@@ -169,7 +169,7 @@ namespace Ginger
         [IsSerializedForLocalRepository]
         public Guid RecentRunset { get; set; }
 
-        [IsSerializedForLocalRepository]
+      /*  [IsSerializedForLocalRepository]
         public SourceControlBase.eSourceControlType SourceControlType { get; set; }
 
         [IsSerializedForLocalRepository]
@@ -207,7 +207,7 @@ namespace Ginger
 
 
         [IsSerializedForLocalRepository]
-        public string SourceControlLocalFolder { get; set; }
+        public string SourceControlLocalFolder { get; set; }*/
 
         //[IsSerializedForLocalRepository]
 

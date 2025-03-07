@@ -121,11 +121,11 @@ namespace GingerCore.SourceControl
                     targetUri = GetRemoteUriFromPath(Path, out ListEventArgs);
 
 
-                    if (ListEventArgs != null && ListEventArgs[0].Lock != null && ListEventArgs[0].Lock.Owner == SourceControlUser)
+                    if (ListEventArgs != null && ListEventArgs[0].Lock != null && ListEventArgs[0].Lock.Owner == Username)
                     {
                         return SourceControlFileInfo.eRepositoryItemStatus.LockedByMe;
                     }
-                    else if (ListEventArgs != null && ListEventArgs[0].Lock != null && ListEventArgs[0].Lock.Owner != SourceControlUser)
+                    else if (ListEventArgs != null && ListEventArgs[0].Lock != null && ListEventArgs[0].Lock.Owner != Username)
                     {
                         return SourceControlFileInfo.eRepositoryItemStatus.LockedByAnotherUser;
                     }
@@ -472,7 +472,7 @@ namespace GingerCore.SourceControl
             {
                 string relativePath = System.IO.Path.GetFullPath(Path);
                 relativePath = relativePath.Replace(SolutionFolder, "");
-                Uri targetUri = new Uri(SourceControlURL + relativePath);
+                Uri targetUri = new Uri(URL + relativePath);
                 SvnTarget target = SvnTarget.FromUri(targetUri);
                 SvnListArgs args = new SvnListArgs
                 {
@@ -503,7 +503,7 @@ namespace GingerCore.SourceControl
                 string relativePath = System.IO.Path.GetFullPath(Path);
                 relativePath = relativePath.Replace(SolutionFolder, "");
 
-                Uri targetUri = new Uri(SourceControlURL + relativePath);
+                Uri targetUri = new Uri(URL + relativePath);
                 result = client.RemoteLock(targetUri, lockComment);
             }
             catch (Exception e)
@@ -528,7 +528,7 @@ namespace GingerCore.SourceControl
                 Collection<SvnListEventArgs> ListEventArgs;
                 Uri targetUri = GetRemoteUriFromPath(Path, out ListEventArgs);
 
-                if (ListEventArgs != null && ListEventArgs[0].Lock != null && ListEventArgs[0].Lock.Owner != SourceControlUser)
+                if (ListEventArgs != null && ListEventArgs[0].Lock != null && ListEventArgs[0].Lock.Owner != Username)
                 {
                     if ((Reporter.ToUser(eUserMsgKey.SourceControlFileLockedByAnotherUser, Path, ListEventArgs[0].Lock.Owner, ListEventArgs[0].Lock.Comment) == eUserMsgSelection.Yes))
                     {
@@ -544,7 +544,7 @@ namespace GingerCore.SourceControl
                     }
 
                 }
-                else if (ListEventArgs != null && ListEventArgs[0].Lock != null && ListEventArgs[0].Lock.Owner == SourceControlUser)
+                else if (ListEventArgs != null && ListEventArgs[0].Lock != null && ListEventArgs[0].Lock.Owner == Username)
                 {
                     result = client.RemoteUnlock(targetUri);
                 }
@@ -883,17 +883,17 @@ namespace GingerCore.SourceControl
             ObservableList<SolutionInfo> SourceControlSolutions = [];
 
             //check which path to show to download
-            string localPath = SourceControlLocalFolder;
+            string localPath = LocalFolder;
             if (IsImportSolution)
             {
                 localPath = SourceControlLocalFolderForGlobalSolution;
             }
 
-            if (SourceControlURL.ToUpper().Trim().StartsWith("HTTP"))
+            if (URL.ToUpper().Trim().StartsWith("HTTP"))
             {
-                WebRequest request = WebRequest.Create(SourceControlURL);
+                WebRequest request = WebRequest.Create(URL);
                 request.Timeout = 60000;
-                request.Credentials = new System.Net.NetworkCredential(SourceControlUser, SourceControlPass);
+                request.Credentials = new System.Net.NetworkCredential(Username, Password);
                 SourceControlSolutions.Clear();
                 Stream objStream;
 
@@ -927,12 +927,12 @@ namespace GingerCore.SourceControl
                     }
                 }
             }
-            else if (SourceControlURL.ToUpper().Trim().StartsWith("SVN"))
+            else if (URL.ToUpper().Trim().StartsWith("SVN"))
             {
                 using (SvnClient sc = new SvnClient())
                 {
-                    sc.Authentication.DefaultCredentials = new System.Net.NetworkCredential(SourceControlUser, SourceControlPass);
-                    Uri targetUri = new Uri(SourceControlURL);
+                    sc.Authentication.DefaultCredentials = new System.Net.NetworkCredential(Username, Password);
+                    Uri targetUri = new Uri(URL);
                     var target = SvnTarget.FromUri(targetUri);
                     Collection<SvnInfoEventArgs> info;
                     bool result = sc.GetInfo(target, new SvnInfoArgs { ThrowOnError = false }, out info);
@@ -974,7 +974,7 @@ namespace GingerCore.SourceControl
             {
                 client = new SvnClient();
                 client.Authentication.Clear();
-                client.Authentication.DefaultCredentials = new System.Net.NetworkCredential(SourceControlUser, SourceControlPass);
+                client.Authentication.DefaultCredentials = new System.Net.NetworkCredential(Username, Password);
                 client.Conflict += Client_Conflict;
                 client.Authentication.SslServerTrustHandlers += new EventHandler<SharpSvn.Security.SvnSslServerTrustEventArgs>(Authentication_SslServerTrustHandlers);
             }
@@ -1004,24 +1004,24 @@ namespace GingerCore.SourceControl
                    );
 
                 bool result = false;
-                if (SourceControlURL.ToUpper().Trim().StartsWith("HTTP"))
+                if (URL.ToUpper().Trim().StartsWith("HTTP"))
                 {
-                    if (!SourceControlURL.EndsWith("/"))
+                    if (!URL.EndsWith("/"))
                     {
-                        SourceControlURL = SourceControlURL + "/";
+                        URL = URL + "/";
                     }
-                    WebRequest request = WebRequest.Create(SourceControlURL);
+                    WebRequest request = WebRequest.Create(URL);
 
-                    request.Timeout = SourceControlTimeout * 1000;
-                    request.Credentials = new System.Net.NetworkCredential(SourceControlUser, SourceControlPass);
+                    request.Timeout = Timeout * 1000;
+                    request.Credentials = new System.Net.NetworkCredential(Username, Password);
                     response = request.GetResponse();
                 }
-                else if (SourceControlURL.ToUpper().Trim().StartsWith("SVN"))
+                else if (URL.ToUpper().Trim().StartsWith("SVN"))
                 {
                     using (SvnClient sc = new SvnClient())
                     {
-                        sc.Authentication.DefaultCredentials = new System.Net.NetworkCredential(SourceControlUser, SourceControlPass);
-                        Uri targetUri = new Uri(SourceControlURL);
+                        sc.Authentication.DefaultCredentials = new System.Net.NetworkCredential(Username, Password);
+                        Uri targetUri = new Uri(URL);
                         var target = SvnTarget.FromUri(targetUri);
                         Collection<SvnInfoEventArgs> info;
                         result = sc.GetInfo(target, new SvnInfoArgs { ThrowOnError = false }, out info);
