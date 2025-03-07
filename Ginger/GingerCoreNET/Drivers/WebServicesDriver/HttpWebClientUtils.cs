@@ -298,7 +298,7 @@ namespace GingerCore.Actions.WebAPI
                 }
                 else if (CertificateTypeRadioButton == ApplicationAPIUtils.eCertificateType.Ignore.ToString())
                 {
-                    handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+                    handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
                 }
                 return true;
             }
