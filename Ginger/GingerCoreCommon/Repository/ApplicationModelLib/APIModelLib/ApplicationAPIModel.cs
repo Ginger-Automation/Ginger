@@ -90,7 +90,7 @@ namespace Amdocs.Ginger.Repository
         public ApplicationAPIUtils.eRequestBodyType RequestBodyType { get; set; }
 
         [IsSerializedForLocalRepository]
-        public ApplicationAPIUtils.eCretificateType CertificateType { get; set; }
+        public ApplicationAPIUtils.eCertificateType CertificateType { get; set; }
 
         string mCertificatePath;
         [IsSerializedForLocalRepository]

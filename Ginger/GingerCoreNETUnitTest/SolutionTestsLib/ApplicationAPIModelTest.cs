@@ -270,7 +270,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
 
             AAMS1.HttpHeaders = [AMKV];
             AAMS1.RequestBodyType = ApplicationAPIUtils.eRequestBodyType.FreeText;
-            AAMS1.CertificateType = ApplicationAPIUtils.eCretificateType.AllSSL;
+            AAMS1.CertificateType = ApplicationAPIUtils.eCertificateType.AllSSL;
             AAMS1.CertificatePath = "CertificatePath";
             AAMS1.ImportCetificateFile = true;
             AAMS1.CertificatePassword = "CertificatePassword";
@@ -311,7 +311,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             Assert.AreEqual(AAMS2.DoNotFailActionOnBadRespose, true, "Value Check");
             Assert.AreEqual(AAMS2.HttpHeaders.Count, 1, "Value Check");
             Assert.AreEqual(AAMS2.RequestBodyType, ApplicationAPIUtils.eRequestBodyType.FreeText, "Value Check");
-            Assert.AreEqual(AAMS2.CertificateType, ApplicationAPIUtils.eCretificateType.AllSSL, "Value Check");
+            Assert.AreEqual(AAMS2.CertificateType, ApplicationAPIUtils.eCertificateType.AllSSL, "Value Check");
             Assert.AreEqual(AAMS2.CertificatePath, "CertificatePath", "Value Check");
             Assert.AreEqual(AAMS2.ImportCetificateFile, true, "Value Check");
             Assert.AreEqual(AAMS2.CertificatePassword, "CertificatePassword", "Value Check");

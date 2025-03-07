@@ -16,9 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System.ComponentModel;
-using System.Reflection;
-using System;
 using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.Repository
@@ -46,12 +43,14 @@ namespace Amdocs.Ginger.Repository
             TemplateFile
         }
 
-        public enum eCretificateType
+        public enum eCertificateType
         {
             [EnumValueDescription("All Certificates")]
             AllSSL,
             [EnumValueDescription("Custom")]
-            Custom
+            Custom,
+            [EnumValueDescription("Ignore")]
+            Ignore
         }
 
         public enum eSercurityType
