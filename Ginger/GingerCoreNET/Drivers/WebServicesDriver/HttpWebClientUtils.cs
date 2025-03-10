@@ -244,12 +244,12 @@ namespace GingerCore.Actions.WebAPI
             {
                 string CertificateTypeRadioButton = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificateTypeRadioButton);
 
-                if (CertificateTypeRadioButton == ApplicationAPIUtils.eCertificateType.AllSSL.ToString())
+                if (CertificateTypeRadioButton == nameof(ApplicationAPIUtils.eCertificateType.AllSSL))
                 {
                     ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
                     handler.ServerCertificateCustomValidationCallback += (_, _, _, _) => { return true; };
                 }
-                else if (CertificateTypeRadioButton == ApplicationAPIUtils.eCertificateType.Custom.ToString())
+                else if (CertificateTypeRadioButton == nameof(ApplicationAPIUtils.eCertificateType.Custom))
                 {
                     //Use Custom Certificate:
                     handler.ClientCertificateOptions = ClientCertificateOption.Manual;
@@ -296,7 +296,7 @@ namespace GingerCore.Actions.WebAPI
                         return false;
                     }
                 }
-                else if (CertificateTypeRadioButton == ApplicationAPIUtils.eCertificateType.Ignore.ToString())
+                else if (CertificateTypeRadioButton == nameof(ApplicationAPIUtils.eCertificateType.Ignore))
                 {
                     handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
                 }

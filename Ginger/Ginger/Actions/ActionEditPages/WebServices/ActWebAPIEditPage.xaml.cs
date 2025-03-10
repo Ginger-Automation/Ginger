@@ -227,7 +227,7 @@ namespace Ginger.Actions.WebServices
 
         private void CheckCertificateSelection()
         {
-            if (mAct.GetInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton) == ApplicationAPIUtils.eCertificateType.Custom.ToString())
+            if (mAct.GetInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton) == nameof(ApplicationAPIUtils.eCertificateType.Custom))
             {
                 CertificateStackPanel.Visibility = System.Windows.Visibility.Visible;
             }
@@ -438,7 +438,7 @@ namespace Ginger.Actions.WebServices
         private void CertificateSelection_Changed(object sender, RoutedEventArgs e)
         {
             mAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, (((RadioButton)sender).Tag).ToString());
-            if ((mAct.GetInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton)) == ApplicationAPIUtils.eCertificateType.Custom.ToString())
+            if ((mAct.GetInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton)) == nameof(ApplicationAPIUtils.eCertificateType.Custom))
             {
                 CertificateStackPanel.Visibility = Visibility.Visible;
             }
