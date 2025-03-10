@@ -194,7 +194,7 @@ namespace GingerCore.NoSqlBase
             var db = mMongoClient.GetDatabase(DbName);
             var collection = db.GetCollection<BsonDocument>(collectionName);
 
-            var result = collection.Find(new BsonDocument()).Project(Builders<BsonDocument>.Projection.Exclude("_id")).ToList();
+            var result = collection.Find(new BsonDocument()).ToList();
             foreach (var row in result)
             {
                 IEnumerable<string> columnNames = row.Elements.Select(x => x.Name);
