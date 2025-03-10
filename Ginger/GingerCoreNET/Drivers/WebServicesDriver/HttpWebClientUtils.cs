@@ -240,61 +240,73 @@ namespace GingerCore.Actions.WebAPI
 
         private bool SetCertificates(HttpClientHandler handler)
         {
-            string CertificateTypeRadioButton = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificateTypeRadioButton);
-
-            if (CertificateTypeRadioButton == ApplicationAPIUtils.eCretificateType.AllSSL.ToString())
+            try
             {
-                ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
-                handler.ServerCertificateCustomValidationCallback += (_, _, _, _) => { return true; };
-            }
-            else if (CertificateTypeRadioButton == ApplicationAPIUtils.eCretificateType.Custom.ToString())
-            {
-                //Use Custom Certificate:
-                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                string path = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath));
+                string CertificateTypeRadioButton = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificateTypeRadioButton);
 
-                if (!string.IsNullOrEmpty(path))
+                if (CertificateTypeRadioButton == nameof(ApplicationAPIUtils.eCertificateType.AllSSL))
                 {
-                    string certificateKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
+                    ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
+                    handler.ServerCertificateCustomValidationCallback += (_, _, _, _) => { return true; };
+                }
+                else if (CertificateTypeRadioButton == nameof(ApplicationAPIUtils.eCertificateType.Custom))
+                {
+                    //Use Custom Certificate:
+                    handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+                    string path = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath));
 
-                    certificateKey = General.DecryptPassword(certificateKey, ValueExpression.IsThisAValueExpression(certificateKey), mAct);
                     if (!string.IsNullOrEmpty(path))
                     {
-                        if (string.IsNullOrEmpty(certificateKey))
+                        string certificateKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
+
+                        certificateKey = General.DecryptPassword(certificateKey, ValueExpression.IsThisAValueExpression(certificateKey), mAct);
+                        if (!string.IsNullOrEmpty(path))
                         {
-                            handler.ClientCertificates.Add(new X509Certificate2(path));
+                            if (string.IsNullOrEmpty(certificateKey))
+                            {
+                                handler.ClientCertificates.Add(new X509Certificate2(path));
+                            }
+                            else
+                            {
+                                handler.ClientCertificates.Add(new X509Certificate2(path, certificateKey));
+                            }
+
+                            ServicePointManager.ServerCertificateValidationCallback += delegate (object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+                            {
+                                if (sslPolicyErrors == SslPolicyErrors.None)
+                                {
+                                    return true;
+                                }
+
+                                mAct.Error = GetCertificateChainErrorStatusInfo(chain);
+                                mAct.ExInfo = "Server side certificate not valid.";
+                                return false;
+                            };
                         }
                         else
                         {
-                            handler.ClientCertificates.Add(new X509Certificate2(path, certificateKey));
-                        }
-
-                        ServicePointManager.ServerCertificateValidationCallback += delegate (object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-                        {
-                            if (sslPolicyErrors == SslPolicyErrors.None)
-                            {
-                                return true;
-                            }
-
-                            mAct.Error = GetCertificateChainErrorStatusInfo(chain);
-                            mAct.ExInfo = "Server side certificate not valid.";
+                            mAct.Error = "Request setup Failed because of missing/wrong input";
                             return false;
-                        };
+                        }
                     }
                     else
                     {
                         mAct.Error = "Request setup Failed because of missing/wrong input";
+                        mAct.ExInfo = "Certificate path is missing";
                         return false;
                     }
                 }
-                else
+                else if (CertificateTypeRadioButton == nameof(ApplicationAPIUtils.eCertificateType.Ignore))
                 {
-                    mAct.Error = "Request setup Failed because of missing/wrong input";
-                    mAct.ExInfo = "Certificate path is missing";
-                    return false;
+                    handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
                 }
+                return true;
             }
-            return true;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "SSL Error: " + ex.Message);
+                return false;
+            }
         }
 
         private static string GetCertificateChainErrorStatusInfo(X509Chain chain)

@@ -348,11 +348,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             //CertficiateRadioButtons :
             switch (mApplicationAPIModel.CertificateType)
             {
-                case ApplicationAPIUtils.eCretificateType.AllSSL:
+                case ApplicationAPIUtils.eCertificateType.AllSSL:
                     SSLCertificateTypeAllCertificatesRadioButton.IsChecked = true;
                     break;
-                case ApplicationAPIUtils.eCretificateType.Custom:
+                case ApplicationAPIUtils.eCertificateType.Custom:
                     SSLCertificateTypeCustomRadioButton.IsChecked = true;
+                    break;
+                case ApplicationAPIUtils.eCertificateType.Ignore:
+                    IgnoreSSLCertification.IsChecked = true;
                     break;
             }
 
@@ -544,7 +547,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void CheckCertificateSelection()
         {
-            if (mApplicationAPIModel.CertificateType == ApplicationAPIUtils.eCretificateType.Custom)
+            if (mApplicationAPIModel.CertificateType == ApplicationAPIUtils.eCertificateType.Custom)
             {
                 CertificateStackPanel.Visibility = System.Windows.Visibility.Visible;
             }
@@ -735,13 +738,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void SetCertificatePanel()
         {
-            if (mApplicationAPIModel.CertificateType == ApplicationAPIUtils.eCretificateType.AllSSL)
+            if (mApplicationAPIModel.CertificateType == ApplicationAPIUtils.eCertificateType.Custom)
             {
-                CertificateStackPanel.Visibility = Visibility.Collapsed;
+                CertificateStackPanel.Visibility = Visibility.Visible;
             }
             else
             {
-                CertificateStackPanel.Visibility = Visibility.Visible;
+                CertificateStackPanel.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -758,10 +761,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 switch (rBtn.Name)
                 {
                     case "SSLCertificateTypeAllCertificatesRadioButton":
-                        mApplicationAPIModel.CertificateType = ApplicationAPIUtils.eCretificateType.AllSSL;
+                        mApplicationAPIModel.CertificateType = ApplicationAPIUtils.eCertificateType.AllSSL;
                         break;
                     case "SSLCertificateTypeCustomRadioButton":
-                        mApplicationAPIModel.CertificateType = ApplicationAPIUtils.eCretificateType.Custom;
+                        mApplicationAPIModel.CertificateType = ApplicationAPIUtils.eCertificateType.Custom;
+                        break;
+                    case "IgnoreSSLCertification":
+                        mApplicationAPIModel.CertificateType = ApplicationAPIUtils.eCertificateType.Ignore;
                         break;
                 }
                 SetCertificatePanel();

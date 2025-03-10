@@ -203,6 +203,7 @@
                                                     <StackPanel Orientation="Horizontal" x:Name="CertificateSelection" VerticalAlignment="Center">
                                                         <RadioButton x:Name="SSLCertificateTypeAllCertificatesRadioButton" Content="All Certificates" Checked="CertificateSelection_Changed" GroupName="CertificatesSelectionRadioButtonGroup" Margin="0,0,10,0" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
                                                         <RadioButton x:Name="SSLCertificateTypeCustomRadioButton" Content="Custom" Checked="CertificateSelection_Changed" GroupName="CertificatesSelectionRadioButtonGroup" Margin="0,0,10,0" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
+                                                        <RadioButton x:Name="IgnoreSSLCertification" Content="Ignore" Checked="CertificateSelection_Changed" GroupName="CertificatesSelectionRadioButtonGroup" Margin="0,0,10,0" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
 
                                                     </StackPanel>
                                                 </StackPanel>
