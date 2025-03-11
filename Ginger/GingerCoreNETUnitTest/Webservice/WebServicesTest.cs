@@ -300,10 +300,10 @@ namespace UnitTests.NonUITests
 
             //Build SOAP Request:
             soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "http://www.thomas-bayer.com/axis2/services/BLZService");
-            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, nameof(ApplicationAPIUtils.eCertificateType.AllSSL));
             soapAct.AddOrUpdateInputParamValue(ActWebAPISoap.Fields.SOAPAction, "UnitTest");
-            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
-            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, nameof(ApplicationAPIUtils.eSercurityType.None));
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, nameof(ApplicationAPIUtils.eRequestBodyType.FreeText));
             //Set Request body content:
             soapAct.mUseRequestBody = true;
             soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, getXML());
@@ -352,16 +352,16 @@ namespace UnitTests.NonUITests
 
             //Build REST Request:
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "https://petstore.swagger.io/v2/pet");
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.POST.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eRequestContentType.JSon.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eResponseContentType.JSon.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.None.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, nameof(ApplicationAPIUtils.eCertificateType.AllSSL));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, nameof(ApplicationAPIUtils.eRequestType.POST));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, nameof(ApplicationAPIUtils.eRequestContentType.JSon));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, nameof(ApplicationAPIUtils.eResponseContentType.JSon));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, nameof(ApplicationAPIUtils.eSercurityType.None));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, nameof(ApplicationAPIUtils.eAuthType.NoAuthentication));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, nameof(ApplicationAPIUtils.eCookieMode.None));
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, "{\r\n  \"id\": 55,\r\n  \"category\": {\r\n    \"id\": 0,\r\n    \"name\": \"string\"\r\n  },\r\n  \"name\": \"Rexi\",\r\n  \"photoUrls\": [\r\n    \"string\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"string\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}");
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV11.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, nameof(ApplicationAPIUtils.eHttpVersion.HTTPV11));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, nameof(ApplicationAPIUtils.eRequestBodyType.FreeText));
 
 
             context = Context.GetAsContext(restAct.Context);
@@ -403,13 +403,13 @@ namespace UnitTests.NonUITests
 
             //Build SOAP Request:
             soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "http://www.dneonline.com/calculator.asmx");
-            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, nameof(ApplicationAPIUtils.eCertificateType.AllSSL));
             soapAct.AddOrUpdateInputParamValue(ActWebAPISoap.Fields.SOAPAction, "http://tempuri.org/Multiply");
-            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
-            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
-            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, nameof(ApplicationAPIUtils.eSercurityType.None));
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, nameof(ApplicationAPIUtils.eRequestBodyType.FreeText));
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, nameof(ApplicationAPIUtils.eAuthType.NoAuthentication));
             soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\r\n  <soapenv:Header />\r\n  <soapenv:Body>\r\n    <tem:Multiply>\r\n      <tem:intA>2</tem:intA>\r\n      <tem:intB>3</tem:intB>\r\n    </tem:Multiply>\r\n  </soapenv:Body>\r\n</soapenv:Envelope>");
-            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, nameof(ApplicationAPIUtils.eRequestBodyType.FreeText));
 
 
             //Set Request body content:
@@ -452,17 +452,17 @@ namespace UnitTests.NonUITests
 
             //Build REST Request:
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "https://petstore.swagger.io/v2/pet");
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.POST.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eRequestContentType.XML.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eResponseContentType.JSon.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.None.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, ApplicationAPIUtils.eNetworkCredentials.Default.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, nameof(ApplicationAPIUtils.eCertificateType.AllSSL));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, nameof(ApplicationAPIUtils.eRequestType.POST));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, nameof(ApplicationAPIUtils.eRequestContentType.XML));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, nameof(ApplicationAPIUtils.eResponseContentType.JSon));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, nameof(ApplicationAPIUtils.eSercurityType.None));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, nameof(ApplicationAPIUtils.eAuthType.NoAuthentication));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, nameof(ApplicationAPIUtils.eCookieMode.None));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, nameof(ApplicationAPIUtils.eNetworkCredentials.Default));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, nameof(ApplicationAPIUtils.eRequestBodyType.FreeText));
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, "<Pet>\r\n  <id>111</id>\r\n  <category>\r\n    <id>222</id>\r\n    <name>Dogs</name>\r\n  </category>\r\n  <name>Dogs</name>\r\n  <photoUrls />\r\n  <tags>\r\n    <id>333</id>\r\n    <name>Rexi</name>\r\n  </tags>\r\n  <status>available</status>\r\n</Pet>");
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV11.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, nameof(ApplicationAPIUtils.eHttpVersion.HTTPV11));
 
             context = Context.GetAsContext(restAct.Context);
             if (context != null && context.Runner != null)
@@ -517,15 +517,15 @@ namespace UnitTests.NonUITests
 
             //Build REST Request:
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "https://petstore.swagger.io/v2/pet/9223372000668906000");
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.POST.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eRequestContentType.FormData.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eResponseContentType.JSon.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.None.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV11.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, nameof(ApplicationAPIUtils.eCertificateType.AllSSL));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, nameof(ApplicationAPIUtils.eRequestType.POST));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, nameof(ApplicationAPIUtils.eRequestContentType.FormData));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, nameof(ApplicationAPIUtils.eResponseContentType.JSon));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, nameof(ApplicationAPIUtils.eSercurityType.None));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, nameof(ApplicationAPIUtils.eAuthType.NoAuthentication));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, nameof(ApplicationAPIUtils.eCookieMode.None));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, nameof(ApplicationAPIUtils.eRequestBodyType.FreeText));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, nameof(ApplicationAPIUtils.eHttpVersion.HTTPV11));
 
             context = Context.GetAsContext(restAct.Context);
             if (context != null && context.Runner != null)
@@ -574,15 +574,15 @@ namespace UnitTests.NonUITests
 
             //Build REST Request:
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "http://dummyhost:8002/api/v1/executions?executionIds=33b2dea1-c24a-494c-97d4-0bd47e59620c");
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.GET.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eRequestContentType.FormData.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eResponseContentType.JSon.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.None.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV10.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, nameof(ApplicationAPIUtils.eCertificateType.AllSSL));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, nameof(ApplicationAPIUtils.eRequestType.GET));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, nameof(ApplicationAPIUtils.eRequestContentType.FormData));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, nameof(ApplicationAPIUtils.eResponseContentType.JSon));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, nameof(ApplicationAPIUtils.eSercurityType.None));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, nameof(ApplicationAPIUtils.eAuthType.NoAuthentication));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, nameof(ApplicationAPIUtils.eCookieMode.None));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, nameof(ApplicationAPIUtils.eRequestBodyType.FreeText));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, nameof(ApplicationAPIUtils.eHttpVersion.HTTPV10));
 
             context = Context.GetAsContext(restAct.Context);
             if (context != null && context.Runner != null)
@@ -615,17 +615,17 @@ namespace UnitTests.NonUITests
 
             //Build REST Request:
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "https://petstore.swagger.io/v2/user/login");
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.GET.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eRequestContentType.JSon.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eResponseContentType.JSon.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.BasicAuthentication.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.None.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, nameof(ApplicationAPIUtils.eCertificateType.AllSSL));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, nameof(ApplicationAPIUtils.eRequestType.GET));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, nameof(ApplicationAPIUtils.eRequestContentType.JSon));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, nameof(ApplicationAPIUtils.eResponseContentType.JSon));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, nameof(ApplicationAPIUtils.eSercurityType.None));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, nameof(ApplicationAPIUtils.eAuthType.BasicAuthentication));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, nameof(ApplicationAPIUtils.eCookieMode.None));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, nameof(ApplicationAPIUtils.eRequestBodyType.FreeText));
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthUsername, "tom5012");
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthPassword, "12345678");
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV11.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, nameof(ApplicationAPIUtils.eHttpVersion.HTTPV11));
 
             context = Context.GetAsContext(restAct.Context);
             if (context != null && context.Runner != null)
@@ -686,19 +686,19 @@ namespace UnitTests.NonUITests
 
             //Build REST Request:
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "https://petstore.swagger.io/v2/pet");
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.POST.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eRequestContentType.JSon.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eResponseContentType.JSon.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.Session.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, nameof(ApplicationAPIUtils.eCertificateType.AllSSL));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, nameof(ApplicationAPIUtils.eRequestType.POST));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, nameof(ApplicationAPIUtils.eRequestContentType.JSon));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, nameof(ApplicationAPIUtils.eResponseContentType.JSon));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, nameof(ApplicationAPIUtils.eSercurityType.None));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, nameof(ApplicationAPIUtils.eAuthType.NoAuthentication));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, nameof(ApplicationAPIUtils.eCookieMode.Session));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, nameof(ApplicationAPIUtils.eRequestBodyType.FreeText));
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, Boolean.FalseString);
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.UseLegacyJSONParsing, Boolean.FalseString);
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, "{\r\n  \"id\": 55,\r\n  \"category\": {\r\n    \"id\": 0,\r\n    \"name\": \"string\"\r\n  },\r\n  \"name\": \"{CS Exp=System.Environment.UserName}\",\r\n  \"photoUrls\": [\r\n    \"string\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"string\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}");
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV10.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, ApplicationAPIUtils.eNetworkCredentials.Default.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, nameof(ApplicationAPIUtils.eHttpVersion.HTTPV10));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, nameof(ApplicationAPIUtils.eNetworkCredentials.Default));
 
             restAct.Active = true;
             restAct.EnableRetryMechanism = false;
@@ -749,13 +749,13 @@ namespace UnitTests.NonUITests
             ActWebAPIRest restAct = new ActWebAPIRest();
 
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "https://jsonplaceholder.typicode.com/posts/1");
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.GET.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eRequestContentType.JSon.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eResponseContentType.JSon.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.None.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, nameof(ApplicationAPIUtils.eCertificateType.AllSSL));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, nameof(ApplicationAPIUtils.eRequestType.GET));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, nameof(ApplicationAPIUtils.eRequestContentType.JSon));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, nameof(ApplicationAPIUtils.eResponseContentType.JSon));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, nameof(ApplicationAPIUtils.eSercurityType.None));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, nameof(ApplicationAPIUtils.eAuthType.NoAuthentication));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, nameof(ApplicationAPIUtils.eCookieMode.None));
 
             restAct.Active = true;
             restAct.EnableRetryMechanism = false;

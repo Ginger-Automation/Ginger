@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Timers;
 using Amdocs.Ginger.Common.Telemetry;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Amdocs.Ginger.Common
 {
@@ -37,7 +38,7 @@ namespace Amdocs.Ginger.Common
 
         #region ToLog
         public static eAppReporterLoggingLevel AppLoggingLevel { get; set; }
-        public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, TelemetryMetadata metadata = null,Boolean overwriteCurrentLine=false)
+        public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, TelemetryMetadata metadata = null, ProgressStatus progressInformer=null)
         {
             if (WorkSpaceReporter == null || (logLevel == eLogLevel.DEBUG && AppLoggingLevel != eAppReporterLoggingLevel.Debug))
             {
@@ -51,9 +52,9 @@ namespace Amdocs.Ginger.Common
 
             if (ReportAllAlsoToConsole)
             {
-                ToConsole(logLevel, messageToLog, exceptionToLog,overwriteCurrentLine: overwriteCurrentLine);
+                ToConsole(logLevel, messageToLog, exceptionToLog, progressStatus: progressInformer);
             }
-            if(!overwriteCurrentLine)
+            if(progressInformer==null)
             {
                 WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog);
             }
@@ -324,7 +325,7 @@ namespace Amdocs.Ginger.Common
 
 
         #region ToConsole        
-        public static void ToConsole(eLogLevel logLevel, string messageToConsole, Exception exceptionToConsole = null, Boolean overwriteCurrentLine = false)
+        public static void ToConsole(eLogLevel logLevel, string messageToConsole, Exception exceptionToConsole = null, ProgressStatus progressStatus = null)
         {
             try
             {
@@ -337,7 +338,7 @@ namespace Amdocs.Ginger.Common
                     msg += Environment.NewLine + "Exception Details:" + Environment.NewLine + excFullInfo;
                 }
 
-                WorkSpaceReporter.ToConsole(logLevel, msg,overwriteCurrentLine:overwriteCurrentLine);
+                WorkSpaceReporter.ToConsole(logLevel, msg, progressStatus: progressStatus);
 
                 // if we have log to console event listener send the message 
                 logToConsoleEvent?.Invoke(logLevel, msg);
