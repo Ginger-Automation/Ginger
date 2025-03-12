@@ -51,7 +51,35 @@ namespace GingerWPF.WorkSpaceLib
                 solution.SourceControl = new SVNSourceControl();
             }
         }
-
+        /*  public void SetSolutionSourceControl(Solution solution, ref string repositoryRootFolder)
+        {
+            SourceControlBase.eSourceControlType type = SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref repositoryRootFolder);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(solution.Guid);
+            var temp= GingerSolutionSourceControl.SourceControlInfo;
+            if (type == SourceControlBase.eSourceControlType.GIT)
+            {
+                solution.SourceControl = new GITSourceControl()
+                {
+                   URL= temp.Url,
+                   Username= temp.Username,
+                   GetSourceControlType= temp.Type,
+                   AuthorName= temp.AuthorName,
+                   AuthorEmail= temp.AuthorEmail,
+                   BranchName= temp.Branch,
+                   LocalFolder=  temp.LocalFolderPath,
+                   IsProxyConfigured= temp.IsProxyConfigured,
+                   ProxyAddress= temp.ProxyAddress,
+                   ProxyPort= temp.ProxyPort,
+                   Timeout= temp.Timeout,
+                   Password= temp.Password,
+                   IgnoreCertificate= temp.IgnoreCertificate,
+                };
+            }
+            else if (type == SourceControlBase.eSourceControlType.SVN)
+            {
+                solution.SourceControl = new SVNSourceControl();
+            }
+        }*/
         public void ShowBusinessFlows()
         {
             throw new System.NotImplementedException();

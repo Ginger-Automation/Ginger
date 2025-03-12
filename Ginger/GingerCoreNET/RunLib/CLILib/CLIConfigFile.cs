@@ -61,19 +61,19 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 sConfig = "SourceControlType=" + solution.SourceControl.GetSourceControlType.ToString() + Environment.NewLine;
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.SVN)//added for supporting Jenkins way of config creation- need to improve it
                 {
-                    string modifiedURI = solution.SourceControl.SourceControlURL.TrimEnd(new char[] { '/' });
+                    string modifiedURI = solution.SourceControl.URL.TrimEnd(new char[] { '/' });
                     int lastSlash = modifiedURI.LastIndexOf('/');
                     modifiedURI = (lastSlash > -1) ? modifiedURI[..lastSlash] : modifiedURI;
                     sConfig += "SourceControlUrl=" + modifiedURI + Environment.NewLine;
                 }
                 else
                 {
-                    sConfig += "SourceControlUrl=" + solution.SourceControl.SourceControlURL + Environment.NewLine;
+                    sConfig += "SourceControlUrl=" + solution.SourceControl.URL + Environment.NewLine;
                 }
-                if (solution.SourceControl.SourceControlUser != null && solution.SourceControl.SourceControlPass != null)
+                if (solution.SourceControl.Username != null && solution.SourceControl.Password != null)
                 {
-                    sConfig += "SourceControlUser=" + solution.SourceControl.SourceControlUser + Environment.NewLine;
-                    sConfig += "SourceControlPassword=" + EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass) + Environment.NewLine;
+                    sConfig += "SourceControlUser=" + solution.SourceControl.Username + Environment.NewLine;
+                    sConfig += "SourceControlPassword=" + EncryptionHandler.EncryptwithKey(solution.SourceControl.Password) + Environment.NewLine;
                     sConfig += "PasswordEncrypted=" + "Y" + Environment.NewLine;
                 }
                 else
@@ -83,10 +83,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 }
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
-                    if (solution.SourceControl.SourceControlProxyAddress != null && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
+                    if (solution.SourceControl.ProxyAddress != null && solution.SourceControl.ProxyAddress.ToLower().ToString() == "true")
                     {
-                        sConfig += "SourceControlProxyServer=" + solution.SourceControl.SourceControlProxyAddress.ToString() + Environment.NewLine;
-                        sConfig += "SourceControlProxyPort=" + solution.SourceControl.SourceControlProxyPort.ToString() + Environment.NewLine;
+                        sConfig += "SourceControlProxyServer=" + solution.SourceControl.ProxyAddress.ToString() + Environment.NewLine;
+                        sConfig += "SourceControlProxyPort=" + solution.SourceControl.ProxyPort.ToString() + Environment.NewLine;
                     }
                 }
             }
