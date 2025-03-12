@@ -73,6 +73,26 @@ namespace Ginger.Run.RunSetActions
         {
             try
             {
+                if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Any(htmlRC => htmlRC.IsDefault))
+                {
+                    if (RunSetActionHTMLReportSendEmail.HTMLReportTemplate == RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Invalid Body Content type, No Default HTML Report template available to generate report. Please set a default template in Configurations -> Reports -> Reports Template.");
+                        RunSetActionHTMLReportSendEmail.Errors = "Invalid Body Content type, No Default HTML Report template available to generate report. Please set a default template in Configurations -> Reports -> Reports Template.";
+                        Reporter.HideStatusMessage();
+                        RunSetActionHTMLReportSendEmail.Status = eRunSetActionStatus.Failed;
+                        return;
+                    }
+                    if (RunSetActionHTMLReportSendEmail.EmailAttachments.Any(att => att.AttachmentType == EmailAttachment.eAttachmentType.Report))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Invalid Attachment type, No Default HTML Report template available to generate report. Please set a default template in Configurations -> Reports -> Reports Template.");
+                        RunSetActionHTMLReportSendEmail.Errors = "Invalid Attachment type, No Default HTML Report template available to generate report. Please set a default template in Configurations -> Reports -> Reports Template.";
+                        Reporter.HideStatusMessage();
+                        RunSetActionHTMLReportSendEmail.Status = eRunSetActionStatus.Failed;
+                        return;
+                    }
+                }
+
                 EmailOperations emailOperations = new EmailOperations(RunSetActionHTMLReportSendEmail.Email);
                 RunSetActionHTMLReportSendEmail.Email.EmailOperations = emailOperations;
 
@@ -109,8 +129,11 @@ namespace Ginger.Run.RunSetActions
                     {
                         reportsResultFolder = reportsResultFolder.Replace(DateTimeStamp, DateTime.UtcNow.ToString("yyyymmddhhmmssfff") + "_" + ++numberOfRetry);
                     }
-                    WebReportGenerator webReporterRunner = new WebReportGenerator();
-                    liteDbRunSet = webReporterRunner.RunNewHtmlReport(reportsResultFolder, null, null, false);
+                    if (RunSetActionHTMLReportSendEmail.HTMLReportTemplate == RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport)
+                    {
+                        WebReportGenerator webReporterRunner = new WebReportGenerator();
+                        liteDbRunSet = webReporterRunner.RunNewHtmlReport(reportsResultFolder, null, null, false);
+                    }
                 }
 
                 tempFolder = WorkSpace.Instance.ReportsInfo.EmailReportTempFolder;
