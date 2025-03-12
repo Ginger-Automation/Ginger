@@ -781,7 +781,7 @@ namespace Amdocs.Ginger.Repository
         void RemoveItemFromLists(RepositoryItemBase repositoryItem)
         {
             //Delete from folder cache
-            mFolderItemsCache.DeleteItem(repositoryItem.FilePath);
+            mFolderItemsCache.DeleteItem(repositoryItem?.FilePath);
             if (mFolderItemsList != null)
             {
                 mFolderItemsList.Remove((T)(object)repositoryItem);

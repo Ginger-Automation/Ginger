@@ -50,7 +50,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 {
                     string fileContent = FileContentProvider(FileName);
                     JToken.Parse(fileContent);  // doing the Jtoken to validate the json file
-                    Swaggerdoc = SwaggerDocument.FromJsonAsync(FileContentProvider(FileName)).Result;
+                    Swaggerdoc = SwaggerDocument.FromJsonAsync(fileContent).Result;
                 }
                 catch (Exception ex)
                 {

@@ -46,7 +46,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             InitializeComponent();
             GingerCore.General.FillComboFromEnumType(APITypeComboBox, typeof(eAPIType), null);
             APITypeComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
-            APITypeComboBox.Text = eAPIType.WSDL.ToString();
+            APITypeComboBox.Text = GingerCore.General.GetEnumDescription(typeof(eAPIType), eAPIType.Swagger);
             XMLTemplatesGrid.SetTitleLightStyle = true;
             SetFieldsGrid();
         }
@@ -440,7 +440,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     System.Windows.Forms.OpenFileDialog dlg2 = new System.Windows.Forms.OpenFileDialog
                     {
-                        Filter = "JSON Files (*.json)|*.json|YAML Files (*.yaml, *.yml)|*.yaml;*.yml|All Files (*.*)|*.*"
+                        Filter = "JSON or YAML Files (*.json;*.yaml;*.yml)|*.json;*.yaml;*.yml|All Files (*.*)|*.*"
                     };
 
                     System.Windows.Forms.DialogResult result = dlg2.ShowDialog();
@@ -707,12 +707,12 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
         private string GetRelevantFilter()
         {
-            if (APITypeComboBox.SelectedValue.ToString() == eAPIType.XMLTemplates.ToString())
+            if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.XMLTemplates))
             {
 
                 return "XML Files (*.xml)|*.xml" + "|WSDL Files (*.wsdl)|*.wsdl" + "|All Files (*.*)|*.*";
             }
-            else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.JsonTemplate.ToString())
+            else if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.JsonTemplate))
             {
                 return "JSON Files (*.json)|*.json" + "|TXT Files (*.txt)|*.txt" + "|All Files (*.*)|*.*";
             }
