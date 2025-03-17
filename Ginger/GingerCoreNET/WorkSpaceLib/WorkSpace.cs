@@ -636,7 +636,7 @@ namespace amdocs.ginger.GingerCoreNET
         {
             string repositoryRootFolder = string.Empty;
             WorkSpace.Instance.EventHandler.SetSolutionSourceControl(solution, ref repositoryRootFolder);
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(solution.Guid);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(solution.Guid);
 
             if (solution.SourceControl != null && WorkSpace.Instance.UserProfile != null)
             {

@@ -45,7 +45,7 @@ namespace Amdocs.Ginger.GingerRuntime
         public void SetSolutionSourceControl(Solution solution, ref string repositoryRootFolder)
         {
             SourceControlBase.eSourceControlType type = SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref repositoryRootFolder);
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
 
             if (type == SourceControlBase.eSourceControlType.GIT)
             {

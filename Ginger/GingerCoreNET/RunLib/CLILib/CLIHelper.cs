@@ -240,7 +240,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public static void checkGingerSolutionSourceControlObjec()
         {
-            var solutionSourceControlDetail = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            var solutionSourceControlDetail = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             if (solutionSourceControlDetail == null)
             {
                 solutionSourceControlDetail = new Amdocs.Ginger.Common.SourceControlLib.GingerSolution()
@@ -266,7 +266,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 UserProfileOperations userProfileOperations = new UserProfileOperations(WorkSpace.Instance.UserProfile);
                 WorkSpace.Instance.UserProfile.UserProfileOperations = userProfileOperations;
             }
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             GingerSolutionSourceControl.SourceControlInfo.Url = runOptions.URL;
             GingerSolutionSourceControl.SourceControlInfo.Username = runOptions.User;
             GingerSolutionSourceControl.SourceControlInfo.Type = runOptions.SCMType;
@@ -648,7 +648,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         internal void SetSourceControlBranch(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlBranch: '{value}'");
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             GingerSolutionSourceControl.SourceControlInfo.Branch = value;
         }
 
@@ -725,7 +725,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             //Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlPassword: '" + value + "'");//we should not show the password in log
 
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             GingerSolutionSourceControl.SourceControlInfo.Password = value;
             sourceControlPass = value;
         }
@@ -738,7 +738,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         internal void PasswordEncrypted(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, $"PasswordEncrypted: '{value}'");
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             string pswd =GingerSolutionSourceControl.SourceControlInfo.Password ;
             
             if (value is "Y" or "true" or "True")
@@ -761,7 +761,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void SourceControlProxyPort(string value)
         {
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             if (string.IsNullOrEmpty(value))
             {
                 GingerSolutionSourceControl.SourceControlInfo.IsProxyConfigured = false;
@@ -777,7 +777,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void SourceControlProxyServer(string value)
         {
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
 
             Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlProxyServer: '{value}'");
             if (string.IsNullOrEmpty(value))
@@ -800,7 +800,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         internal void SetSourceControlUser(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlUser: '{value}'");
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             if (GingerSolutionSourceControl.SourceControlInfo.Type == SourceControlBase.eSourceControlType.GIT && value == "")
             {
                 value = "Test";
@@ -813,7 +813,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         internal void SetSourceControlURL(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlUrl: '{value}'");
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
 
             if (GingerSolutionSourceControl.SourceControlInfo.Type == SourceControlBase.eSourceControlType.SVN)
             {
@@ -832,7 +832,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void SetSourceControlType(string value)
         {
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
 
             Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlType: '{value}'");
             if (value.Equals("GIT"))

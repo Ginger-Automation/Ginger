@@ -57,7 +57,7 @@ namespace Ginger.SourceControl
         private void SourceControlInit()
         {
             mSourceControl = new GITSourceControl();
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             if (mSourceControl != null)
             {
                 GingerSolutionSourceControl.SourceControlInfo.Type = mSourceControl.GetSourceControlType;
@@ -84,7 +84,7 @@ namespace Ginger.SourceControl
 
         private static void SourceControl_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             GingerSolutionSourceControl.SourceControlInfo.Type = mSourceControl.GetSourceControlType;
             GingerSolutionSourceControl.SourceControlInfo.Url = mSourceControl.URL;
             GingerSolutionSourceControl.SourceControlInfo.Username = mSourceControl.Username;
@@ -100,7 +100,7 @@ namespace Ginger.SourceControl
 
         private void Init()
         {
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             if (GingerSolutionSourceControl.SourceControlInfo.Url == null)
             {
                 GingerSolutionSourceControl.SourceControlInfo.Url = "";
@@ -276,7 +276,7 @@ namespace Ginger.SourceControl
         }
         private void UpdateSourceControlAuthorEmail()
         {
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             if (!String.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.AuthorEmail))
             {
                 mSourceControl.AuthorEmail = GingerSolutionSourceControl.SourceControlInfo.AuthorEmail;
@@ -289,7 +289,7 @@ namespace Ginger.SourceControl
 
         private void UpdateSourceControlAuthorName()
         {
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             if (!String.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.AuthorName))
             {
                 mSourceControl.AuthorName = GingerSolutionSourceControl.SourceControlInfo.AuthorName;
@@ -307,7 +307,7 @@ namespace Ginger.SourceControl
                 PopProcessIsBusyMsg();
                 return;
             }
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.SourceControl != null)
             {
                 GingerSolutionSourceControl.SourceControlInfo.Username = WorkSpace.Instance.Solution.SourceControl.Username;

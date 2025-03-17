@@ -281,7 +281,7 @@ namespace Ginger
         public ObservableList<GingerSolution> GingerSolutions { get; set; } = [];
 
 
-        public GingerSolution SourceControlInfo(Guid solutionGuid)
+        public GingerSolution GetSolutionSourceControlInfo(Guid solutionGuid)
         {
             foreach (GingerSolution item in GingerSolutions)
             {
@@ -302,7 +302,7 @@ namespace Ginger
 
 
         [IsSerializedForLocalRepository]
-        public ObservableList<string> RecentDownloadedSolutionGuid { get; set; } = [];
+        public string RecentDownloadedSolutionGuid { get; set; }
 
 
         [IsSerializedForLocalRepository]

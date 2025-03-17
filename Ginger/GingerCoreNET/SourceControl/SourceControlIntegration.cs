@@ -102,10 +102,6 @@ namespace Ginger.SourceControl
             return OL;
         }
 
-        public static string GetSourceControlType(SourceControlBase SourceControl)
-        {
-            return SourceControl.GetSourceControlType.ToString();
-        }
 
         public static string GetRepositoryURL(SourceControlBase SourceControl)
         {
@@ -531,7 +527,7 @@ namespace Ginger.SourceControl
         {
             try
             {
-                var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+                var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
 
                 SourceControlBase mSourceControl;
                 if (GingerSolutionSourceControl.SourceControlInfo.Type == SourceControlBase.eSourceControlType.GIT)

@@ -286,16 +286,19 @@ namespace Ginger
 
         public UserProfile LoadPasswords(UserProfile userProfile)
         {
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            if (WorkSpace.Instance.Solution != null)
+            {
+                var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
 
-            string credintioalTitle = $"Ginger_SolutionSourceControl_{WorkSpace.Instance.Solution.Guid}";
-            if (!string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.EncryptedPassword))
-            {
-                GingerSolutionSourceControl.SourceControlInfo.Password = EncryptionHandler.DecryptwithKey(GingerSolutionSourceControl.SourceControlInfo.EncryptedPassword);
-            }
-            else
-            {
-                GingerSolutionSourceControl.SourceControlInfo.Password = WinCredentialUtil.GetCredential(credintioalTitle);
+                string credintioalTitle = $"Ginger_SolutionSourceControl_{WorkSpace.Instance.Solution.Guid}";
+                if (!string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.EncryptedPassword))
+                {
+                    GingerSolutionSourceControl.SourceControlInfo.Password = EncryptionHandler.DecryptwithKey(GingerSolutionSourceControl.SourceControlInfo.EncryptedPassword);
+                }
+                else
+                {
+                    GingerSolutionSourceControl.SourceControlInfo.Password = WinCredentialUtil.GetCredential(credintioalTitle);
+                }
             }
 
 
@@ -317,14 +320,16 @@ namespace Ginger
 
         public void SavePasswords()
         {
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
-
-            if (!string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.Password))
+            if (WorkSpace.Instance.Solution != null)
             {
-                string credintioalTitle = $"Ginger_SolutionSourceControl_{WorkSpace.Instance.Solution.Guid}";
-                WinCredentialUtil.SetCredentials(credintioalTitle, GingerSolutionSourceControl.SourceControlInfo.Username, GingerSolutionSourceControl.SourceControlInfo.Password);
-            }
+                var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
 
+                if (!string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.Password))
+                {
+                    string credintioalTitle = $"Ginger_SolutionSourceControl_{WorkSpace.Instance.Solution.Guid}";
+                    WinCredentialUtil.SetCredentials(credintioalTitle, GingerSolutionSourceControl.SourceControlInfo.Username, GingerSolutionSourceControl.SourceControlInfo.Password);
+                }
+            }
             //Save ALM passwords on windows credential manager
             foreach (GingerCoreNET.ALMLib.ALMUserConfig almConfig in UserProfile.ALMUserConfigs.Where(f => !string.IsNullOrEmpty(f.ALMPassword)))
             {
@@ -343,10 +348,10 @@ namespace Ginger
 
         public bool SourceControlIgnoreCertificate { get; set; }
 
-        public void RefreshSourceControlCredentials()
+        public void RefreshSourceControlCredentials(Guid solutionGuid)
         {
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
-            string credintioalTitle = $"Ginger_SolutionSourceControl_{WorkSpace.Instance.Solution.Guid}";
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(solutionGuid);
+            string credintioalTitle = $"Ginger_SolutionSourceControl_{solutionGuid}";
             UserPass userPassObj = WinCredentialUtil.ReadCredential(credintioalTitle);
             GingerSolutionSourceControl.SourceControlInfo.Password = userPassObj.Password;
             GingerSolutionSourceControl.SourceControlInfo.Username= userPassObj.Username;
