@@ -42,6 +42,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided yaml document ", ex);
                     Reporter.ToUser(eUserMsgKey.InvalidYAML);
+                    return [];
                 }
             }
             else
@@ -56,10 +57,11 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided json document ", ex);
                     Reporter.ToUser(eUserMsgKey.InvalidJSON);
+                    return [];
                 }
             }
 
-            if (Swaggerdoc.SchemaType.ToString() == "Swagger2")
+            if (Swaggerdoc?.SchemaType.ToString() == "Swagger2")
             {
                 SwaggerVer2 s2 = new SwaggerVer2();
                 SwaggerModels = s2.SwaggerTwo(Swaggerdoc, SwaggerModels);

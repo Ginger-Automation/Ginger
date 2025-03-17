@@ -500,21 +500,21 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             bool bIsFileValid = false;
             try
             {
-                if (APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString())
+                if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.WSDL))
                 {
                     fileName = xURLTextBox.Text;
                     bIsFileValid = LoadWSDLFileValidation();
                 }
-                else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
+                else if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.Swagger))
                 {
                     bIsFileValid = CheckForSwaggerParser(fileName);
                 }
-                else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.JsonTemplate.ToString())
+                else if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.JsonTemplate))
                 {
                     bIsFileValid = CheckForJsonParser(fileName);
 
                 }
-                else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.XMLTemplates.ToString())
+                else if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.XMLTemplates))
                 {
                     bIsFileValid = CheckForXmlParser(fileName);
                 }

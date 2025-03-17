@@ -223,11 +223,12 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         {
 
             string SampleBody = JsonSchemaTools.JsonSchemaFaker(operation, null, true);
-            string XMlName = operation.HasReference ? XMlName = operation.Reference.Xml.Name : XMlName = operation.Xml.Name;
-
-
-
-
+            string XMlName = operation.HasReference ? XMlName = operation.Reference.Xml.Name : XMlName = operation.Xml?.Name;
+            
+            if(string.IsNullOrWhiteSpace(XMlName))
+            {
+                return [];
+            }
             SampleBody = "{\"" + XMlName + "\":" + SampleBody + "}";
             string s2 = SampleBody;
             string xmlbody = JsonConvert.DeserializeXmlNode(SampleBody).OuterXml;
@@ -514,7 +515,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             Dictionary<string, string> exampleValues = new Dictionary<string, string>();
             try
             {
-                if (apidoc.Definitions != null && apidoc.Definitions.Count != 0)
+                if (apidoc?.Definitions != null && apidoc.Definitions.Count != 0)
                 {
                     foreach (var schemaEntry in apidoc.Definitions)
                     {
@@ -529,10 +530,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                 var actualDefinition = item.Value.Example?.ToString();
                                 if (actualDefinition != null && !exampleValues.ContainsKey(actualName.ToLower()))
                                 {
-
                                     exampleValues.Add(actualName, actualDefinition.ToString());
                                 }
-
                             }
                         }
                         else if (schemaDefinition.Example != null)
