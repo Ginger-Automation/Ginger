@@ -407,7 +407,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
         private void BrowseButtonClicked(object sender, RoutedEventArgs e)
         {
             AddAPIModelWizard.IsParsingWasDone = false;
-            if (APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString())
+            if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.WSDL))
             {
                 if (FileRadioButton.IsChecked == true)
                 {
@@ -433,7 +433,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                     ValidateFile();
                 }
             }
-            else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
+            else if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.Swagger))
             {
                 AddAPIModelWizard.APIType = eAPIType.Swagger;
                 if (FileRadioButton.IsChecked == true)

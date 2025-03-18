@@ -37,9 +37,8 @@ namespace Amdocs.Ginger.Common.GeneralLib
             HttpClient httpClient = new HttpClient(handler);
 
             // Make the request and get the response  
-            var response = httpClient.GetStringAsync(url);
-            response.Wait();
-            return response.Result;
+            var response = httpClient.GetStringAsync(url).GetAwaiter().GetResult();
+            return response;
         }
     }
 }
