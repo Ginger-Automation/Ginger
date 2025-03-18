@@ -18,6 +18,8 @@ limitations under the License.
 
 using System;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Common.GeneralLib
 {
@@ -26,11 +28,18 @@ namespace Amdocs.Ginger.Common.GeneralLib
     {
         public static string Download(Uri url)
         {
-            WebClient wbClient = new WebClient
+            HttpClientHandler handler = new HttpClientHandler
             {
-                Proxy = WebRequest.GetSystemWebProxy()
+                Proxy = WebRequest.GetSystemWebProxy(),
+                UseProxy = true
             };
-            return wbClient.DownloadString(url);
+
+            HttpClient httpClient = new HttpClient(handler);
+
+            // Make the request and get the response  
+            var response = httpClient.GetStringAsync(url);
+            response.Wait();
+            return response.Result;
         }
     }
 }
