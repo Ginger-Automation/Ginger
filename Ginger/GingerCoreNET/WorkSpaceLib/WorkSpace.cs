@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.OS;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.CoreNET.Repository;
@@ -636,27 +637,17 @@ namespace amdocs.ginger.GingerCoreNET
         {
             string repositoryRootFolder = string.Empty;
             WorkSpace.Instance.EventHandler.SetSolutionSourceControl(solution, ref repositoryRootFolder);
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(solution.Guid);
 
             if (solution.SourceControl != null && WorkSpace.Instance.UserProfile != null)
             {
-                if (GingerSolutionSourceControl.SourceControlInfo.Username != null && GingerSolutionSourceControl.SourceControlInfo.Password != null)
-                {
-                    solution.SourceControl.Username = GingerSolutionSourceControl.SourceControlInfo.Username;
-                    solution.SourceControl.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
-                    solution.SourceControl.AuthorEmail = GingerSolutionSourceControl.SourceControlInfo.AuthorEmail;
-                    solution.SourceControl.AuthorName = GingerSolutionSourceControl.SourceControlInfo.AuthorName;
-                }
+                WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfile(solution.SourceControl, solution.Guid);
+
 
                 string error = string.Empty;
-
                 solution.SourceControl.SolutionFolder = solution.Folder;
                 solution.SourceControl.RepositoryRootFolder = repositoryRootFolder;
                 solution.SourceControl.URL = solution.SourceControl.GetRepositoryURL(ref error);
-                solution.SourceControl.LocalFolder = GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath;
-                solution.SourceControl.ProxyAddress = GingerSolutionSourceControl.SourceControlInfo.ProxyAddress;
-                solution.SourceControl.ProxyPort = GingerSolutionSourceControl.SourceControlInfo.ProxyPort;
-                solution.SourceControl.Timeout = GingerSolutionSourceControl.SourceControlInfo.Timeout;
+                solution.SourceControl.LocalFolder = repositoryRootFolder;
 
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {

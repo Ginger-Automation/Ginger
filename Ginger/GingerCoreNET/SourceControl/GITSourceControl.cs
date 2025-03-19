@@ -1244,6 +1244,7 @@ namespace GingerCore.SourceControl
                     {
                         FailOnConflict = true,
                     },
+                    FetchOptions=new FetchOptions()
 
                 };
                 GetFetchOptions(pullOption?.FetchOptions);

@@ -285,7 +285,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution...");
                 await DownloadSolutionFromSourceControl();
-                return OpenSolution();
+                 var result = OpenSolution();
+                //if result is true // SaveOnUserProfile
+                return result;
             }
             catch (Exception ex)
             {

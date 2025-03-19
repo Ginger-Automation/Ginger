@@ -106,15 +106,30 @@ namespace Ginger.SourceControl
             WorkSpace.Instance.UserProfile.UserProfileOperations.LoadPasswords(WorkSpace.Instance.UserProfile);
 
             if (GingerSolutionSourceControl != null) {
-                SourceControlClassTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Type.ToString();
+                
                 GingerSolutionSourceControl.SourceControlInfo.Url = SourceControlIntegration.GetRepositoryURL(WorkSpace.Instance.Solution.SourceControl);
                 SourceControlURLTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Url;
+                if (SourceControlURLTextBox.Text.Contains("git", StringComparison.OrdinalIgnoreCase)){
+                    SourceControlClassTextBox.Text = SourceControlBase.eSourceControlType.GIT.ToString();
+                }
+                else
+                {
+                    SourceControlClassTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Type.ToString();
+                }
                 xSourceControlBranchTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Branch;
                 SourceControlUserTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Username;
                 SourceControlPassTextBox.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
                 SourceControlUserAuthorNameTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.AuthorName;
                 SourceControlAuthorEmailTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.AuthorEmail;
-                xTextSourceControlConnectionTimeout.Text = GingerSolutionSourceControl.SourceControlInfo.Timeout.ToString();
+
+                if (GingerSolutionSourceControl.SourceControlInfo.Timeout <= 0)
+                {
+                    xTextSourceControlConnectionTimeout.Text = "80";
+                }
+                else
+                {
+                    xTextSourceControlConnectionTimeout.Text = GingerSolutionSourceControl.SourceControlInfo.Timeout.ToString();
+                }
                 }
 
         }
@@ -140,8 +155,7 @@ namespace Ginger.SourceControl
 
         private void SaveConfiguration_Click(object sender, RoutedEventArgs e)
         {
-            //var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
-
+            
             if (TestSourceControlConnection(true))
             {
                 if (SourceControlClassTextBox.Text != SourceControlBase.eSourceControlType.GIT.ToString())
@@ -151,9 +165,7 @@ namespace Ginger.SourceControl
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide valid value for connection timeout");
                         return;
                     }
-                }/*
-                GingerSolutionSourceControl.SourceControlInfo.Password = WorkSpace.Instance.Solution.SourceControl.Password;
-                GingerSolutionSourceControl.SourceControlInfo.Username = WorkSpace.Instance.Solution.SourceControl.Username;*/
+                }
                 Close();
                 WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
                 WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
@@ -167,15 +179,11 @@ namespace Ginger.SourceControl
 
         private void Close()
         {
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.SourceControl != null)
             {
-                GingerSolutionSourceControl.SourceControlInfo.Username = WorkSpace.Instance.Solution.SourceControl.Username;
-                GingerSolutionSourceControl.SourceControlInfo.Password = WorkSpace.Instance.Solution.SourceControl.Password;
-                GingerSolutionSourceControl.SourceControlInfo.AuthorName = WorkSpace.Instance.Solution.SourceControl.AuthorName;
-                GingerSolutionSourceControl.SourceControlInfo.AuthorEmail = WorkSpace.Instance.Solution.SourceControl.AuthorEmail;
-                GingerSolutionSourceControl.SourceControlInfo.Branch = WorkSpace.Instance.Solution.SourceControl.BranchName;
-                GingerSolutionSourceControl.SourceControlInfo.Timeout= WorkSpace.Instance.Solution.SourceControl.Timeout;
+
+                WorkSpace.Instance.UserProfile.SetSourceControlPropertyOnUserProfile(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Guid);
+
                 SourceControlIntegration.Disconnect(WorkSpace.Instance.Solution.SourceControl);
             }
             genWin.Close();
@@ -211,9 +219,7 @@ namespace Ginger.SourceControl
             {
                 return;
             }
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
-
-            GingerSolutionSourceControl.SourceControlInfo.Timeout = Int32.Parse(xTextSourceControlConnectionTimeout.Text);
+            WorkSpace.Instance.Solution.SourceControl.Timeout = Int32.Parse(xTextSourceControlConnectionTimeout.Text);
         }
     }
 }

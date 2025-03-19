@@ -24,6 +24,7 @@ using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Repository;
@@ -273,36 +274,7 @@ namespace Ginger
                     OnPropertyChanged(nameof(AutoGenerateAutomatePageReport));
                 }
             }
-        }
-        // get the GingerSolution in the mGingerSolution from the GingerSolutions list which match the WorkSpace.Instance.Solution.Guid
-
-
-        [IsSerializedForLocalRepository]
-        public ObservableList<GingerSolution> GingerSolutions { get; set; } = [];
-
-
-        public GingerSolution GetSolutionSourceControlInfo(Guid solutionGuid)
-        {
-            foreach (GingerSolution item in GingerSolutions)
-            {
-                if (item.SolutionGuid == solutionGuid)
-                {
-                    return item;
-                }
-            }
-            GingerSolution solutionSourceControlInfo = new Amdocs.Ginger.Common.SourceControlLib.GingerSolution()
-            {
-                SolutionGuid = solutionGuid,
-                SourceControlInfo = new Amdocs.Ginger.Common.SourceControlLib.SourceControlInfo()
-            };
-            GingerSolutions.Add(solutionSourceControlInfo);
-
-            return solutionSourceControlInfo;
-        }
-
-
-        [IsSerializedForLocalRepository]
-        public string RecentDownloadedSolutionGuid { get; set; }
+        }    
 
 
         [IsSerializedForLocalRepository]
@@ -759,6 +731,110 @@ namespace Ginger
 
         [IsSerializedForLocalRepository]
         public List<string> ShownHelpLayoutsKeys = [];
+
+
+
+        private ObservableList<GingerSolution> mGingerSolutions = new ObservableList<GingerSolution>();
+        [IsSerializedForLocalRepository]
+        public ObservableList<GingerSolution> GingerSolutions
+        {
+            get
+            {
+                return mGingerSolutions;
+            }
+            set
+            {
+                if (mGingerSolutions != value)
+                {
+                    mGingerSolutions = value;
+                    OnPropertyChanged(nameof(GingerSolutions));
+                }
+            }
+        }
+
+        private Guid mRecentDownloadedSolutionGuid;
+        [IsSerializedForLocalRepository]
+        public Guid RecentDownloadedSolutionGuid
+        {
+            get
+            {
+                return mRecentDownloadedSolutionGuid;
+            }
+            set
+            {
+                if (mRecentDownloadedSolutionGuid != value)
+                {
+                    mRecentDownloadedSolutionGuid = value;
+                    OnPropertyChanged(nameof(RecentDownloadedSolutionGuid));
+                }
+            }
+        }
+
+        public GingerSolution GetSolutionSourceControlInfo(Guid solutionGuid)
+        {
+            foreach (GingerSolution item in GingerSolutions)
+            {
+                if (item.SolutionGuid == solutionGuid)
+                {
+                    return item;
+                }
+            }
+            GingerSolution solutionSourceControlInfo = new Amdocs.Ginger.Common.SourceControlLib.GingerSolution()
+            {
+                SolutionGuid = solutionGuid,
+                SourceControlInfo = new Amdocs.Ginger.Common.SourceControlLib.SourceControlInfo()
+            };
+            GingerSolutions.Add(solutionSourceControlInfo);
+
+            return solutionSourceControlInfo;
+        }
+
+
+        public void SetSourceControlPropertyOnUserProfile(SourceControlBase mSourceControl, Guid solutionGuid)
+        {
+            var GingerSolutionSourceControl = GetSolutionSourceControlInfo(solutionGuid);
+            GingerSolutionSourceControl.SourceControlInfo.Type = mSourceControl.GetSourceControlType;
+            GingerSolutionSourceControl.SourceControlInfo.Url = mSourceControl.URL;
+            GingerSolutionSourceControl.SourceControlInfo.Username = mSourceControl.Username;
+            GingerSolutionSourceControl.SourceControlInfo.Password = mSourceControl.Password;
+            GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath = mSourceControl.LocalFolder;
+            GingerSolutionSourceControl.SourceControlInfo.Branch = mSourceControl.BranchName;
+            GingerSolutionSourceControl.SourceControlInfo.AuthorName = mSourceControl.AuthorName;
+            GingerSolutionSourceControl.SourceControlInfo.AuthorEmail = mSourceControl.AuthorEmail;
+            GingerSolutionSourceControl.SourceControlInfo.Timeout = mSourceControl.Timeout;
+            GingerSolutionSourceControl.SourceControlInfo.IsProxyConfigured = mSourceControl.IsProxyConfigured;
+            GingerSolutionSourceControl.SourceControlInfo.ProxyAddress = mSourceControl.ProxyAddress;
+            GingerSolutionSourceControl.SourceControlInfo.ProxyPort = mSourceControl.ProxyPort;
+            UserProfileOperations.SaveUserProfile();
+        }
+
+
+        public void GetSourceControlPropertyFromUserProfile(SourceControlBase mSourceControl, Guid solutionGuid)
+        {
+
+            UserProfileOperations.RefreshSourceControlCredentials(solutionGuid);
+            var GingerSolutionSourceControl = GetSolutionSourceControlInfo(solutionGuid);
+            mSourceControl.GetSourceControlType = GingerSolutionSourceControl.SourceControlInfo.Type;
+            mSourceControl.URL = GingerSolutionSourceControl.SourceControlInfo.Url;
+            mSourceControl.Username = GingerSolutionSourceControl.SourceControlInfo.Username;
+            mSourceControl.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
+            mSourceControl.LocalFolder = GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath;
+            mSourceControl.BranchName = GingerSolutionSourceControl.SourceControlInfo.Branch;
+            mSourceControl.IsProxyConfigured = GingerSolutionSourceControl.SourceControlInfo.IsProxyConfigured;
+            mSourceControl.ProxyAddress = GingerSolutionSourceControl.SourceControlInfo.ProxyAddress;
+            mSourceControl.ProxyPort = GingerSolutionSourceControl.SourceControlInfo.ProxyPort;
+
+            if (GingerSolutionSourceControl.SourceControlInfo.Timeout == 0)
+            {
+                GingerSolutionSourceControl.SourceControlInfo.Timeout = 80;
+            }
+            mSourceControl.Timeout = GingerSolutionSourceControl.SourceControlInfo.Timeout;
+        }
+
+
+
+
+
         public override bool SerializationError(SerializationErrorType errorType, string name, string value)
         {
             if (errorType != SerializationErrorType.PropertyNotFound) return false;
