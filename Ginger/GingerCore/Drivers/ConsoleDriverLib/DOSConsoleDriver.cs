@@ -39,7 +39,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         string mOutputs = string.Empty;
         int mlastOutputsLength = 0;
 
-        public DOSConsoleDriver(BusinessFlow BusinessFlow)
+        public DOSConsoleDriver(BusinessFlow BusinessFlow, ConsoleDriverBase.GingerConsoleFactory gingerConsoleFactor) : base(gingerConsoleFactor)
         {
             this.BusinessFlow = BusinessFlow;
         }
@@ -139,7 +139,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             {
                 while (mOutputs.Contains(mExpString) == false && ((DateTime.Now - startingTime).TotalSeconds <= mWait))
                 {
-                    if (!mConsoleDriverWindow.mConsoleDriver.IsDriverRunning)
+                    if (!IsDriverRunning)
                     {
                         break;
                     }
@@ -165,12 +165,12 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             Thread.Sleep(1000);
             while (mOutputs.Length > mlastOutputsLength)
             {
-                if (!mConsoleDriverWindow.mConsoleDriver.IsDriverRunning)
+                if (!IsDriverRunning)
                 {
                     break;
                 }
 
-                mConsoleDriverWindow.ConsoleWriteText(mOutputs[mlastOutputsLength..]);//get the output addition to console
+                _gingerConsole.WriteConsoleText(mOutputs[mlastOutputsLength..]);//get the output addition to console
 
                 if (waitForRestOfOutputs)
                 {

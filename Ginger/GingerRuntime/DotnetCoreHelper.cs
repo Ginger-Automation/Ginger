@@ -32,6 +32,7 @@ using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Drivers;
+using GingerCore.Drivers.ConsoleDriverLib;
 using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
@@ -175,6 +176,10 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                     return new GenericAppiumDriver(zAgent.BusinessFlow);
                 case Agent.eDriverType.WebServices:
                     return new WebServicesDriver(zAgent.BusinessFlow);
+                //case eDriverType.DOSConsole:
+                //    return new DOSConsoleDriver(zAgent.BusinessFlow);
+                //case eDriverType.UnixShell:
+                //    return new UnixShellDriver(zAgent.BusinessFlow, zAgent.ProjEnvironment);
                 default:
                     {
                         throw new Exception("Matching Driver was not found.");

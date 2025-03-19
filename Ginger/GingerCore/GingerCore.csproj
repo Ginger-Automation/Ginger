@@ -203,7 +203,6 @@
     <Compile Include="Actions\ActCreatePDFChart.cs" />
     <Compile Include="Actions\ActActivateRow.cs" />
     <Compile Include="Actions\ActGetMsgboxText.cs" />
-    <Compile Include="Actions\ActConsoleCommand.cs" />
     <Compile Include="Actions\ActLaunchJavaWSApplication.cs" />
     <Compile Include="Actions\ActGenerateFileFromTemplate.cs" />
     <Compile Include="Actions\ActionFlowControl.cs" />
@@ -258,6 +257,7 @@
     <Compile Include="Drivers\Common\TableElementInfo.cs" />
     <Compile Include="Common\Utility.cs" />
     <Compile Include="Drivers\Common\UIElementOperationsHelper.cs" />
+    <Compile Include="Drivers\ConsoleDriverLib\DOSConsoleDriver.cs" />
     <Compile Include="Drivers\DriverWindowDispatcher.cs" />
     <Compile Include="Drivers\InternalBrowserLib\DeviceEmulation.cs" />
     <Compile Include="Drivers\InternalBrowserLib\WebBrowserPage.xaml.cs">
@@ -305,13 +305,10 @@
     <Compile Include="Drivers\ConsoleDriverLib\ConsoleNewActionPage.xaml.cs">
       <DependentUpon>ConsoleNewActionPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\ConsoleDriverLib\UnixShellDriver.cs" />
-    <Compile Include="Drivers\ConsoleDriverLib\ConsoleDriverBase.cs" />
     <Compile Include="Drivers\ConsoleDriverLib\ConsoleDriverWindow.xaml.cs">
       <DependentUpon>ConsoleDriverWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Drivers\ConsoleDriverLib\UnixServerSimulator.cs" />
-    <Compile Include="Drivers\ConsoleDriverLib\DOSConsoleDriver.cs" />
     <Compile Include="Drivers\InternalBrowserLib\CreateNewActionPage.xaml.cs">
       <DependentUpon>CreateNewActionPage.xaml</DependentUpon>
     </Compile>

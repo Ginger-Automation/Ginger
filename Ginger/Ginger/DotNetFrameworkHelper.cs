@@ -114,9 +114,23 @@ namespace Ginger
                 case eDriverType.ASCF:
                     return new ASCFDriver(zAgent.BusinessFlow, agent.Name);
                 case eDriverType.DOSConsole:
-                    return new DOSConsoleDriver(zAgent.BusinessFlow);
+                    return new DOSConsoleDriver(zAgent.BusinessFlow, (driver, title, bf) => 
+                    {
+                        ConsoleDriverWindow window = new(bf)
+                        {
+                            mConsoleDriver = driver,
+                            Title = title,
+                        };
+                        return new ConsoleDriverWindow.GingerConsole(
+                            closeDelegate: () => window.ConsoleClose(),
+                            openDelegate: () => window.ConsoleOpen(),
+                            runConsoleCommandDelegate: (command, waitForText) => window.ConsoleRunConsoleCommand(command, waitForText),
+                            takeScreenshotDelegate: (act) => window.ConsoleTakeScreenshot(act),
+                            writeConsoleTextDelegate: (txt, applyFormat) => window.ConsoleWriteConsoleText(txt, applyFormat));
+                    });
                 case eDriverType.UnixShell:
-                    return new UnixShellDriver(zAgent.BusinessFlow, zAgent.ProjEnvironment);
+                    //TODO: Implement non-UI GingerConsole for Unix
+                    return new UnixShellDriver(zAgent.BusinessFlow, zAgent.ProjEnvironment, (driver, title, bf) => null);
                 case eDriverType.WebServices:
                     return new WebServicesDriver(zAgent.BusinessFlow);
                 case eDriverType.WindowsAutomation:

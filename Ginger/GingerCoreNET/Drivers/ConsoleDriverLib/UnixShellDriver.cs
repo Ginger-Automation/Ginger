@@ -30,6 +30,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using static GingerCore.Drivers.ConsoleDriverLib.ConsoleDriverBase;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -78,11 +79,11 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         ShellStream ss;
 
         string mScriptsFolder;
-        public UnixShellDriver(BusinessFlow BF)
+        public UnixShellDriver(BusinessFlow BF, ConsoleDriverBase.GingerConsoleFactory gingerConsoleFactor) : base(gingerConsoleFactor)
         {
             this.BusinessFlow = BF;
         }
-        public UnixShellDriver(BusinessFlow BF, Environments.ProjEnvironment env)
+        public UnixShellDriver(BusinessFlow BF, Environments.ProjEnvironment env, ConsoleDriverBase.GingerConsoleFactory gingerConsoleFactory) : base(gingerConsoleFactory)
         {
             this.BusinessFlow = BF;
             this.Environment = env;
@@ -213,12 +214,11 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 while (!task.IsCompleted && st.ElapsedMilliseconds < SSHConnectionTimeout * 1000)
                 {
                     task.Wait(500);  // Give user feedback every 500ms
-                    GingerCore.General.DoEvents();
                 }
 
                 if (UnixClient.IsConnected)
                 {
-                    mConsoleDriverWindow.ConsoleWriteText("Connected!");
+                    _gingerConsole.WriteConsoleText("Connected!");
 
                     s = ss.ReadLine(new TimeSpan(0, 0, 2));
                     while (!String.IsNullOrEmpty(s))
@@ -228,7 +228,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                         s = ss.ReadLine(new TimeSpan(0, 0, 2));
 
                     }
-                    mConsoleDriverWindow.ConsoleWriteText(result);
+                    _gingerConsole.WriteConsoleText(result);
 
                     return true;
                 }
@@ -361,7 +361,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 }
                 if (command != "\u0003\n")
                 {
-                    mConsoleDriverWindow.ConsoleWriteText(reply.ToString(), true);
+                    _gingerConsole.WriteConsoleText(reply.ToString(), true);
                     reply.Clear();
                 }
                 taskFinished = true;
@@ -370,7 +370,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.Message);
             }
-            mConsoleDriverWindow.ConsoleWriteText(reply.ToString(), true);
+            _gingerConsole.WriteConsoleText(reply.ToString(), true);
             reply.Clear();
         }
 

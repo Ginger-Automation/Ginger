@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.ConsoleDriverLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using GingerCore.Actions;
 using System;
@@ -25,9 +26,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -44,7 +42,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             return true;
         }
 
-        public ConsoleDriverWindow mConsoleDriverWindow;
+        public IGingerConsole _gingerConsole;
 
         public abstract bool Connect();
         public abstract void Disconnect();
@@ -53,6 +51,16 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         protected int? mWait;
         protected string mExpString;
+
+        public delegate IGingerConsole GingerConsoleFactory(ConsoleDriverBase driver, string title, BusinessFlow bf);
+
+        private GingerConsoleFactory _gingerConsoleFactory;
+
+        public ConsoleDriverBase(GingerConsoleFactory gingerConsoleFactory)
+        {
+            _gingerConsoleFactory = gingerConsoleFactory;
+        }
+
         // Derived class need to return the window title
         public abstract string ConsoleWindowTitle();
 
@@ -69,24 +77,19 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         public void ShowDriverWindow()
         {
-            mConsoleDriverWindow = new ConsoleDriverWindow(BusinessFlow)
-            {
-                mConsoleDriver = this,
-                Title = ConsoleWindowTitle()
-            };
-            mConsoleDriverWindow.Show();
+            _gingerConsole = _gingerConsoleFactory(this, ConsoleWindowTitle(), BusinessFlow);
+            _gingerConsole.Open();
             IsDriverConnected = Connect();
 
             if (IsDriverConnected)
             {
-                Dispatcher = new DriverWindowDispatcher(mConsoleDriverWindow.Dispatcher);
-                Dispatcher.Invoke(new Action(() => OnDriverMessage(eDriverMessageType.DriverStatusChanged)));
-                System.Windows.Threading.Dispatcher.Run();
+                OnDriverMessage(eDriverMessageType.DriverStatusChanged);
             }
             else
             {
-                mConsoleDriverWindow.Close();
-                mConsoleDriverWindow = null; OnDriverMessage(eDriverMessageType.DriverStatusChanged);
+                _gingerConsole.Close();
+                _gingerConsole = null; 
+                OnDriverMessage(eDriverMessageType.DriverStatusChanged);
             }
         }
 
@@ -94,12 +97,11 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         {
             try
             {
-                if (mConsoleDriverWindow != null)
+                if (_gingerConsole != null)
                 {
-                    mConsoleDriverWindow.Close();
-                    Dispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
+                    _gingerConsole.Close();
                     Thread.Sleep(100);
-                    mConsoleDriverWindow = null;
+                    _gingerConsole = null;
                 }
             }
             catch (InvalidOperationException e)
@@ -152,11 +154,11 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                         if (ACC.ConsoleCommand == ActConsoleCommand.eConsoleCommand.Script)
                         {
                             //TODO: externalize static const for ~~~GINGER_RC_END~~~ and all hard coded multi use strings
-                            sRC = mConsoleDriverWindow.RunConsoleCommand(command, "~~~GINGER_RC_END~~~");
+                            sRC = _gingerConsole.RunConsoleCommand(command, "~~~GINGER_RC_END~~~");
                         }
                         else
                         {
-                            sRC = mConsoleDriverWindow.RunConsoleCommand(command);
+                            sRC = _gingerConsole.RunConsoleCommand(command);
                         }
                         if (mExpString != null && sRC.Contains(mExpString) == false)
                         {
@@ -213,23 +215,24 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         {
             try
             {
-                int width = (int)mConsoleDriverWindow.Width;
-                int height = (int)mConsoleDriverWindow.Height;
-                RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
-                renderTargetBitmap.Render(mConsoleDriverWindow);
+                _gingerConsole.TakeScreenshot(act);
+                //int width = (int)_gingerConsole.Width;
+                //int height = (int)_gingerConsole.Height;
+                //RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+                //renderTargetBitmap.Render(_gingerConsole);
 
-                //no need to create file (will be created later by the action) so creating only Bitmap
-                using (MemoryStream stream = new MemoryStream())
-                {
-                    BitmapEncoder encoder = new BmpBitmapEncoder();
-                    encoder.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
-                    encoder.Save(stream);
+                ////no need to create file (will be created later by the action) so creating only Bitmap
+                //using (MemoryStream stream = new MemoryStream())
+                //{
+                //    BitmapEncoder encoder = new BmpBitmapEncoder();
+                //    encoder.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
+                //    encoder.Save(stream);
 
-                    using (Bitmap bitmap = new Bitmap(stream))
-                    {
-                        act.AddScreenShot(bitmap);
-                    }
-                }
+                //    using (Bitmap bitmap = new Bitmap(stream))
+                //    {
+                //        act.AddScreenShot(bitmap);
+                //    }
+                //}
             }
             catch (Exception ex)
             {

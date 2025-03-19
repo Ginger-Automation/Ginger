@@ -17,14 +17,18 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.ConsoleDriverLib;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using System;
+using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -33,14 +37,47 @@ namespace GingerCore.Drivers.ConsoleDriverLib
     /// </summary>
     public partial class ConsoleDriverWindow : Window
     {
+        public sealed class GingerConsole : IGingerConsole
+        {
+            private readonly Action _closeDelegate;
+            private readonly Action _openDelegate;
+            private readonly Func<string, string, string> _runConsoleCommandDelegate;
+            private readonly Action<Act> _takeScreenshotDelegate;
+            private readonly Action<string, bool> _writeConsoleTextDelegate;
+
+            public GingerConsole(
+                Action closeDelegate, 
+                Action openDelegate, 
+                Func<string, string, string> runConsoleCommandDelegate,
+                Action<Act> takeScreenshotDelegate,
+                Action<string, bool> writeConsoleTextDelegate)
+            {
+                _closeDelegate = closeDelegate;
+                _openDelegate = openDelegate;
+                _runConsoleCommandDelegate = runConsoleCommandDelegate;
+                _takeScreenshotDelegate = takeScreenshotDelegate;
+                _writeConsoleTextDelegate = writeConsoleTextDelegate;
+            }
+
+            public void Close() => _closeDelegate();
+
+            public void Open() => _openDelegate();
+
+            public string RunConsoleCommand(string command, string waitForText = null) => _runConsoleCommandDelegate(command, waitForText);
+
+            public void TakeScreenshot(Act act) => _takeScreenshotDelegate(act);
+
+            public void WriteConsoleText(string txt, bool applyFormat = false) => _writeConsoleTextDelegate(txt, applyFormat);
+        }
+
         bool mRecording = false;
         StringBuilder mConsoleBuffer = new StringBuilder();
 
         // default brush style 
-        Brush ConsoleBackgroundBrush = Brushes.White;
-        Brush ConsoleTextBrush = Brushes.Green;
-        Brush ConsoleCommandBrush = Brushes.Blue;
-        Brush ConsoleErrorBrush = Brushes.Red;
+        System.Windows.Media.Brush ConsoleBackgroundBrush = System.Windows.Media.Brushes.White;
+        System.Windows.Media.Brush ConsoleTextBrush = System.Windows.Media.Brushes.Green;
+        System.Windows.Media.Brush ConsoleCommandBrush = System.Windows.Media.Brushes.Blue;
+        System.Windows.Media.Brush ConsoleErrorBrush = System.Windows.Media.Brushes.Red;
         BusinessFlow mBusinessFlow;
 
         public ConsoleDriverBase mConsoleDriver;
@@ -49,6 +86,37 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         {
             InitializeComponent();
             mBusinessFlow = BF;
+        }
+
+        public void ConsoleOpen()
+        {
+            Show();
+        }
+
+        public void ConsoleClose()
+        {
+            Close();
+        }
+
+        public void ConsoleTakeScreenshot(Act act)
+        {
+            int width = (int)Width;
+            int height = (int)Height;
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            renderTargetBitmap.Render(this);
+
+            //no need to create file (will be created later by the action) so creating only Bitmap
+            using (MemoryStream stream = new MemoryStream())
+            {
+                BitmapEncoder encoder = new BmpBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
+                encoder.Save(stream);
+
+                using (Bitmap bitmap = new Bitmap(stream))
+                {
+                    act.AddScreenShot(bitmap);
+                }
+            }
         }
 
         private void GoButton_Click(object sender, RoutedEventArgs e)
@@ -105,7 +173,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             ConsoleTextBox.Document.Blocks.Add(p);
             ConsoleTextBox.ScrollToEnd();
         }
-        public void ConsoleWriteText(string txt, bool applyFormat = false)
+        public void ConsoleWriteConsoleText(string txt, bool applyFormat = false)
         {
             mConsoleBuffer.Append(txt + Environment.NewLine);
             Paragraph p = new Paragraph
@@ -147,11 +215,11 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
             if (mRecording)
             {
-                RecordButton.Foreground = Brushes.Red;
+                RecordButton.Foreground = System.Windows.Media.Brushes.Red;
             }
             else
             {
-                RecordButton.Foreground = Brushes.Black;
+                RecordButton.Foreground = System.Windows.Media.Brushes.Black;
             }
         }
 
@@ -164,7 +232,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             }
         }
 
-        internal string RunConsoleCommand(string Command, string WaitForText = null)
+        public string ConsoleRunConsoleCommand(string Command, string WaitForText = null)
         {
             mConsoleBuffer.Clear();
             CommandTextBox.Text = Command;
@@ -189,26 +257,26 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         private void GreenBackgroundButton_Click(object sender, RoutedEventArgs e)
         {
-            ConsoleTextBox.Background = Brushes.Green;
-            ConsoleTextBrush = Brushes.Black;
-            ConsoleCommandBrush = Brushes.Blue;
-            ConsoleErrorBrush = Brushes.Orange;
+            ConsoleTextBox.Background = System.Windows.Media.Brushes.Green;
+            ConsoleTextBrush = System.Windows.Media.Brushes.Black;
+            ConsoleCommandBrush = System.Windows.Media.Brushes.Blue;
+            ConsoleErrorBrush = System.Windows.Media.Brushes.Orange;
         }
 
         private void BlackBackgroundButton_Click(object sender, RoutedEventArgs e)
         {
-            ConsoleTextBox.Background = Brushes.Black;
-            ConsoleTextBrush = Brushes.Yellow;
-            ConsoleCommandBrush = Brushes.Orange;
-            ConsoleErrorBrush = Brushes.Red;
+            ConsoleTextBox.Background = System.Windows.Media.Brushes.Black;
+            ConsoleTextBrush = System.Windows.Media.Brushes.Yellow;
+            ConsoleCommandBrush = System.Windows.Media.Brushes.Orange;
+            ConsoleErrorBrush = System.Windows.Media.Brushes.Red;
         }
 
         private void WhiteBackgroundButton_Click(object sender, RoutedEventArgs e)
         {
-            ConsoleTextBox.Background = Brushes.White;
-            ConsoleTextBrush = Brushes.Black;
-            ConsoleCommandBrush = Brushes.Orange;
-            ConsoleErrorBrush = Brushes.Red;
+            ConsoleTextBox.Background = System.Windows.Media.Brushes.White;
+            ConsoleTextBrush = System.Windows.Media.Brushes.Black;
+            ConsoleCommandBrush = System.Windows.Media.Brushes.Orange;
+            ConsoleErrorBrush = System.Windows.Media.Brushes.Red;
         }
 
         private void TopButton_Click(object sender, RoutedEventArgs e)
@@ -229,7 +297,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             try
             {
                 mConsoleDriver.Disconnect();
-                mConsoleDriver.mConsoleDriverWindow = null;
+                mConsoleDriver._gingerConsole = null;
                 mConsoleDriver.CloseDriver();
             }
             catch (Exception ex)
