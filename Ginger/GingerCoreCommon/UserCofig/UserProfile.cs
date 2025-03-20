@@ -172,69 +172,44 @@ namespace Ginger
         [IsSerializedForLocalRepository]
         public Guid RecentRunset { get; set; }
 
-        /*  [IsSerializedForLocalRepository]
-          public SourceControlBase.eSourceControlType SourceControlType { get; set; }
-
-          [IsSerializedForLocalRepository]
-          public string SourceControlURL { get; set; }
-
-          [IsSerializedForLocalRepository]
-          public string SourceControlUser { get; set; }
-
-          [IsSerializedForLocalRepository]
-          public string SolutionSourceControlUser { get; set; }
-
-          [IsSerializedForLocalRepository]
-          public string SourceControlBranch { get; set; }
-
-          public string SolutionSourceControlBranch { get; set; }
-
-          [IsSerializedForLocalRepository]
-          public bool SolutionSourceControlConfigureProxy { get; set; }
-
-          [IsSerializedForLocalRepository]
-          public string SolutionSourceControlProxyAddress { get; set; }
-
-          [IsSerializedForLocalRepository]
-          public string SolutionSourceControlAuthorName { get; set; }
-
-          [IsSerializedForLocalRepository]
-          public string SolutionSourceControlAuthorEmail { get; set; }
-
-          [IsSerializedForLocalRepository]
-          public string SolutionSourceControlProxyPort { get; set; }
 
 
-          [IsSerializedForLocalRepository(80)]
-          public int SolutionSourceControlTimeout { get; set; }
+        public SourceControlBase.eSourceControlType Type { get; set; }
+
+        public string URL { get; set; }
+
+        public string Username { get; set; }
 
 
-          [IsSerializedForLocalRepository]
-          public string SourceControlLocalFolder { get; set; }
+        public string Branch { get; set; }
 
-          //[IsSerializedForLocalRepository]
+        public bool IsProxyConfigured { get; set; }
+
+        public string ProxyAddress { get; set; }
+
+        public string AuthorName { get; set; }
+
+        public string AuthorEmail { get; set; }
+
+        public string ProxyPort { get; set; }
+
+
+        public int Timeout { get; set; }
+
+
+        public string LocalFolderPath { get; set; }
 
 
 
 
-          public string SourceControlPass
-          {
-              get; set;
-          }
 
-          public string SolutionSourceControlPass
-          {
-              get; set;
-          }
-
-          public string EncryptedSourceControlPass { get; set; }
+        public string Password
+        {
+            get; set;
+        }
 
 
-          public string EncryptedSolutionSourceControlPass { get; set; }
-        */
-
-
-
+        public string EncryptedPassword { get; set; }
 
 
         [IsSerializedForLocalRepository]
@@ -274,7 +249,7 @@ namespace Ginger
                     OnPropertyChanged(nameof(AutoGenerateAutomatePageReport));
                 }
             }
-        }    
+        }
 
 
         [IsSerializedForLocalRepository]
