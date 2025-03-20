@@ -33,7 +33,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             {
                 try
                 {
-                    string fileContent = FileContentProvider(FileName);
+                    string fileContent = Ginger.Common.GeneralLib.General.FileContentProvider(FileName);
                     string fileConverted = ConvertYamlToJson(fileContent);
                     JToken.Parse(fileConverted); // doing the Jtoken to validate the json file
                     Swaggerdoc = SwaggerDocument.FromJsonAsync(fileConverted).Result;
@@ -42,24 +42,26 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided yaml document ", ex);
                     Reporter.ToUser(eUserMsgKey.InvalidYAML);
+                    return [];
                 }
             }
             else
             {
                 try
                 {
-                    string fileContent = FileContentProvider(FileName);
+                    string fileContent = Ginger.Common.GeneralLib.General.FileContentProvider(FileName);
                     JToken.Parse(fileContent);  // doing the Jtoken to validate the json file
-                    Swaggerdoc = SwaggerDocument.FromJsonAsync(FileContentProvider(FileName)).Result;
+                    Swaggerdoc = SwaggerDocument.FromJsonAsync(fileContent).Result;
                 }
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided json document ", ex);
                     Reporter.ToUser(eUserMsgKey.InvalidJSON);
+                    return [];
                 }
             }
 
-            if (Swaggerdoc.SchemaType.ToString() == "Swagger2")
+            if (Swaggerdoc?.SchemaType.ToString() == "Swagger2")
             {
                 SwaggerVer2 s2 = new SwaggerVer2();
                 SwaggerModels = s2.SwaggerTwo(Swaggerdoc, SwaggerModels);
@@ -73,10 +75,9 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             return SwaggerModels;
         }
 
-        public string getInfoTitle()
+        public string GetInfoTitle()
         {
-            return Swaggerdoc.Info.Title;
+            return Swaggerdoc?.Info?.Title;
         }
-
     }
 }

@@ -134,25 +134,6 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public static string FileContentProvider(string filename)
-        {
-
-            Uri url = new Uri(filename);
-
-
-            string orignaljson = "";
-            if (url.IsFile)
-            {
-                orignaljson = System.IO.File.ReadAllText(filename);
-            }
-            else
-            {
-                orignaljson = Common.GeneralLib.HttpUtilities.Download(url);
-
-            }
-            return orignaljson;
-        }
-
         public static string ConvertYamlToJson(string originalYaml)
         {
             using (var stringReader = new StringReader(originalYaml))
