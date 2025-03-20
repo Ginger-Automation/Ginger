@@ -296,39 +296,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             }
         }
 
-        private bool mUseShellClient;
-        public bool UseShellClient
-        {
-            get
-            {
-                return mUseShellClient;
-            }
-            internal set
-            {
-                if (mUseShellClient != value)
-                {
-                    mUseShellClient = value;
-                    OnPropertyChanged(nameof(UseShellClient));
-                }
-            }
-        }
-
-        private bool mIgnoreCertificate;
-        public bool IgnoreCertificate
-        {
-            get
-            {
-                return mIgnoreCertificate;
-            }
-            internal set
-            {
-                if (mIgnoreCertificate != value)
-                {
-                    mIgnoreCertificate = value;
-                    OnPropertyChanged(nameof(IgnoreCertificate));
-                }
-            }
-        }
+   
 
         public override string ItemName { get => nameof(SourceControlInfo); set { } }
     }

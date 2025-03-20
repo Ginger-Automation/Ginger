@@ -83,7 +83,7 @@ namespace Ginger.SourceControl
 
             if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.AuthorEmail))
             {
-                WorkSpace.Instance.Solution.SourceControl.AuthorEmail = WorkSpace.Instance.Solution.SourceControl.AuthorEmail;
+                WorkSpace.Instance.Solution.SourceControl.AuthorEmail = WorkSpace.Instance.Solution.SourceControl.Username;
             }
             if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.AuthorName))
             {
@@ -137,7 +137,6 @@ namespace Ginger.SourceControl
         private void SourceControlPassTextBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             WorkSpace.Instance.Solution.SourceControl.Password = ((PasswordBox)sender).Password;
-            WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();//todo: check if needed
             SourceControlIntegration.Init(WorkSpace.Instance.Solution.SourceControl);
         }
 
@@ -219,7 +218,13 @@ namespace Ginger.SourceControl
             {
                 return;
             }
-            WorkSpace.Instance.Solution.SourceControl.Timeout = Int32.Parse(xTextSourceControlConnectionTimeout.Text);
+            try
+            {
+                WorkSpace.Instance.Solution.SourceControl.Timeout = Int32.Parse(xTextSourceControlConnectionTimeout.Text);
+            }
+            catch(Exception EX) {            
+                Reporter.ToLog(eLogLevel.ERROR,EX.ToString());
+            }
         }
     }
 }

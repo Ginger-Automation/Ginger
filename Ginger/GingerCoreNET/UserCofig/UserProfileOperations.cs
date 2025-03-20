@@ -23,8 +23,6 @@ using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNET.SourceControl;
-using Microsoft.TeamFoundation.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -290,14 +288,13 @@ namespace Ginger
             {
                 var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
 
-                string credintioalTitle = $"Ginger_Sol_Git_{WorkSpace.Instance.Solution.Guid}";
                 if (!string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.EncryptedPassword))
                 {
                     GingerSolutionSourceControl.SourceControlInfo.Password = EncryptionHandler.DecryptwithKey(GingerSolutionSourceControl.SourceControlInfo.EncryptedPassword);
                 }
                 else
                 {
-                    GingerSolutionSourceControl.SourceControlInfo.Password = WinCredentialUtil.GetCredential(credintioalTitle);
+                    GingerSolutionSourceControl.SourceControlInfo.Password = WinCredentialUtil.GetCredential($"Ginger_Sol_Git_{WorkSpace.Instance.Solution.Guid}");
                 }
             }
 
@@ -326,8 +323,7 @@ namespace Ginger
 
                 if (!string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.Password))
                 {
-                    string credintioalTitle = $"Ginger_Sol_Git_{WorkSpace.Instance.Solution.Guid}";
-                    WinCredentialUtil.SetCredentials(credintioalTitle, GingerSolutionSourceControl.SourceControlInfo.Username, GingerSolutionSourceControl.SourceControlInfo.Password);
+                    WinCredentialUtil.SetCredentials($"Ginger_Sol_Git_{WorkSpace.Instance.Solution.Guid}", GingerSolutionSourceControl.SourceControlInfo.Username, GingerSolutionSourceControl.SourceControlInfo.Password);
                 }
             }
             //Save ALM passwords on windows credential manager
@@ -340,8 +336,7 @@ namespace Ginger
         public void RefreshSourceControlCredentials(Guid solutionGuid)
         {
             var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(solutionGuid);
-            string credintioalTitle = $"Ginger_Sol_Git_{solutionGuid}";
-            UserPass userPassObj = WinCredentialUtil.ReadCredential(credintioalTitle);
+            UserPass userPassObj = WinCredentialUtil.ReadCredential($"Ginger_Sol_Git_{solutionGuid}");
             GingerSolutionSourceControl.SourceControlInfo.Password = userPassObj.Password;
             GingerSolutionSourceControl.SourceControlInfo.Username = userPassObj.Username;
         }

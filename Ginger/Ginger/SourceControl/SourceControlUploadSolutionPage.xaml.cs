@@ -18,11 +18,9 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.UserControls;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
-using MathNet.Numerics;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -196,7 +194,7 @@ namespace Ginger.SourceControl
                 if (mSourceControl.InitializeRepository(mSourceControl.URL))
                 {
                     Reporter.ToUser(eUserMsgKey.UploadSolutionInfo, "Solution was successfully uploaded into: '" + mSourceControl.URL + "'");
-                    if (mSourceControl.URL.Contains("git", StringComparison.OrdinalIgnoreCase))
+                    if (mSourceControl.URL.Contains(".git", StringComparison.OrdinalIgnoreCase))
                     {
                         mSourceControl.GetSourceControlType = SourceControlBase.eSourceControlType.GIT;
                     }

@@ -18,20 +18,17 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Repository;
 using Ginger.UserConfig;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
-using Microsoft.CodeAnalysis;
 using Newtonsoft.Json.Linq;
 
 namespace Ginger

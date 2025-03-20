@@ -18,17 +18,16 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.UserControls;
-using GingerCore.GeneralLib;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
-using NPOI.OpenXmlFormats.Spreadsheet;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -69,18 +68,31 @@ namespace Ginger.SourceControl
             SolutionsGrid.Visibility = Visibility.Collapsed;
 
             IsImportSolution = IsCalledFromImportPage;
-            Init();
+
             progressNotifier.LabelHandler += HandleProgressUpdated;
             progressNotifier.StatusUpdateHandler += HandleProgressBarUpdated;
+
+
+            var recentDownloadedSolutionGuid = WorkSpace.Instance.UserProfile.RecentDownloadedSolutionGuid;
+
+            if (recentDownloadedSolutionGuid != Guid.Empty)
+            {
+                SourceControlInit(recentDownloadedSolutionGuid);
+                Init();
+            }
+            else
+            {
+                mSourceControl = new GITSourceControl();
+                Init();
+
+            }
         }
 
         private void Init()
         {
 
-            SourceControlClassComboBox.Init(WorkSpace.Instance.UserProfile, nameof(GingerSolution.SourceControlInfo.Type), typeof(SourceControlBase.eSourceControlType), SourceControlClassComboBox_SelectionChanged);
-            //SourceControlClassComboBox.ComboBox.Items.RemoveAt(0);//removing the NONE option from user selection
+            SourceControlClassComboBox.Init(mSourceControl, nameof(mSourceControl.GetSourceControlType), typeof(SourceControlBase.eSourceControlType), SourceControlClassComboBox_SelectionChanged);
 
-            //ProjectPage Binding.
             if (IsImportSolution)
             {
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlLocalFolderTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlLocalFolderForGlobalSolution));
@@ -93,97 +105,99 @@ namespace Ginger.SourceControl
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlURLTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.URL));
 
-            SourceControlURLTextBox.TextChanged += SourceControlURLTextBox_TextChanged1;
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBranchesCombo, ComboBox.TextProperty, mSourceControl, nameof(SourceControlBase.BranchName));
-
-            xBranchesCombo.SelectionChanged += XBranchesCombo_SelectionChanged;
+            xBranchesCombo.ItemsSource = new ObservableList<string>();
+            ObservableList<string> itemsource = (ObservableList<string>)xBranchesCombo.ItemsSource;
+            itemsource.ClearAll();
+            itemsource.Add(mSourceControl.BranchName);
+            xBranchesCombo.SelectedIndex = 0;
 
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.Username));
 
-            SourceControlUserTextBox.TextChanged += SourceControlUserTextBox_TextChanged1;
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.Password));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, PasswordBox.PasswordCharProperty, mSourceControl, nameof(SourceControlBase.Password));
+            SourceControlPassTextBox.Password = mSourceControl.Password;
 
-            SourceControlPassTextBox.PasswordChanged += SourceControlPassTextBox_PasswordChanged;
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConfigureProxyCheckBox, CheckBox.IsCheckedProperty, mSourceControl, nameof(SourceControlBase.IsProxyConfigured));
 
-            ConfigureProxyCheckBox.Checked += ConfigureProxyCheckBox_Checked;
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProxyAddressTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.ProxyAddress));
 
-            ProxyAddressTextBox.TextChanged += ProxyAddressTextBox_TextChanged;
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProxyPortTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.ProxyPort));
 
-            ProxyPortTextBox.TextChanged += ProxyPortTextBox_OnTextChanged;
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtConnectionTimeout, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.Timeout));
 
             SolutionsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
 
-            xBranchesCombo.ItemsSource = new ObservableList<string>();
 
-            SetRecentSourceControlDownloadedSolutionConfigration();
+            // SetRecentSourceControlDownloadedSolutionConfigration();
         }
-
-        private void ProxyPortTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+        void setPassword()
         {
-            mSourceControl.ProxyPort = ((TextBox)sender).Text;
+            mSourceControl.Password = SourceControlPassTextBox.Password;
         }
-
-        private void ProxyAddressTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            mSourceControl.ProxyAddress = ((TextBox)sender).Text;
-        }
-
-        private void ConfigureProxyCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            mSourceControl.IsProxyConfigured = (bool)((CheckBox)sender).IsChecked;
-        }
-
-        private void XBranchesCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            setSourceControlProperty();
-        }
-
-        private void SourceControlUserTextBox_TextChanged1(object sender, TextChangedEventArgs e)
-        {
-            setSourceControlProperty();
-        }
-
-        private void SourceControlURLTextBox_TextChanged1(object sender, TextChangedEventArgs e)
-        {
-            setSourceControlProperty();
-        }
-
-        private void setSourceControlProperty()
+        private void SourceControlClassComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var sourceControlType = (SourceControlBase.eSourceControlType)SourceControlClassComboBox.ComboBoxSelectedValue;
-            setVisibility(sourceControlType);
-            if (mSourceControl == null)
+            if (mSourceControl != null && mSourceControl.GetSourceControlType == sourceControlType)
             {
-                if (sourceControlType == SourceControlBase.eSourceControlType.GIT)
-                {
-                    mSourceControl = new GITSourceControl();
-                }
-                else if (sourceControlType == SourceControlBase.eSourceControlType.SVN)
-                {
-                    mSourceControl = new SVNSourceControl();
-                }
+                return;
             }
+            setVisibility(sourceControlType);
+            if (sourceControlType == SourceControlBase.eSourceControlType.GIT)
+            {
+                mSourceControl = new GITSourceControl();
+                mSourceControl.GetSourceControlType = SourceControlBase.eSourceControlType.GIT;
+            }
+            else if (sourceControlType == SourceControlBase.eSourceControlType.SVN)
+            {
+                mSourceControl = new SVNSourceControl();
+                mSourceControl.GetSourceControlType = SourceControlBase.eSourceControlType.SVN;
 
-            mSourceControl.GetSourceControlType = sourceControlType;
-            mSourceControl.URL = SourceControlURLTextBox.Text;
-            mSourceControl.Username = SourceControlUserTextBox.Text;
-            mSourceControl.Password = SourceControlPassTextBox.Password;
-            mSourceControl.BranchName = xBranchesCombo.SelectedValue?.ToString();
-            SourceControlIntegration.Init(mSourceControl);
-
+            }
+            Init();
 
         }
+
+
+
+        public void SourceControlInit(Guid solutionGuid)
+        {
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(solutionGuid);
+            if (GingerSolutionSourceControl.SourceControlInfo.Type == SourceControlBase.eSourceControlType.GIT)
+            {
+                mSourceControl = new GITSourceControl();
+            }
+            else if (GingerSolutionSourceControl.SourceControlInfo.Type == SourceControlBase.eSourceControlType.SVN)
+            {
+                mSourceControl = new SVNSourceControl();
+            }
+            else if (GingerSolutionSourceControl.SourceControlInfo.Type == SourceControlBase.eSourceControlType.None)
+            {
+                mSourceControl = new GITSourceControl();
+                GingerSolutionSourceControl.SourceControlInfo.Type = SourceControlBase.eSourceControlType.GIT;
+            }
+
+            setSourceControlFromUserProfile(solutionGuid);
+        }
+
+        void setSourceControlFromUserProfile(Guid solutionGuid)
+        {
+
+            if (mSourceControl != null)
+            {
+                WorkSpace.Instance.UserProfile.UserProfileOperations.LoadPasswords(WorkSpace.Instance.UserProfile);
+                WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfile(mSourceControl, solutionGuid);
+                mSourceControl.IsImportSolution = IsImportSolution;
+            }
+        }
+
+
         private void setVisibility(SourceControlBase.eSourceControlType sourceControlType)
         {
 
@@ -204,52 +218,8 @@ namespace Ginger.SourceControl
 
         }
 
-        void SetRecentSourceControlDownloadedSolutionConfigration()
-        {
-            var recentDownloadedSolutionGuid = WorkSpace.Instance.UserProfile.RecentDownloadedSolutionGuid;
 
-            if (recentDownloadedSolutionGuid != Guid.Empty)
-            {
-                solutionGuid = recentDownloadedSolutionGuid;
-                SourceControlInit(recentDownloadedSolutionGuid);
-                var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(recentDownloadedSolutionGuid);
 
-                setVisibility(GingerSolutionSourceControl.SourceControlInfo.Type);
-
-                WorkSpace.Instance.UserProfile.UserProfileOperations.LoadPasswords(WorkSpace.Instance.UserProfile);
-
-                if (GingerSolutionSourceControl.SourceControlInfo.Type == SourceControlBase.eSourceControlType.GIT)
-                {
-                    SourceControlClassComboBox.ComboBox.SelectedIndex = 1;
-                }
-                else
-                {
-                    SourceControlClassComboBox.ComboBox.SelectedIndex = 2;
-                }
-                SourceControlURLTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Url;
-                SourceControlUserTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Username;
-                SourceControlPassTextBox.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
-                ObservableList<string> itemsource = (ObservableList<string>)xBranchesCombo.ItemsSource;
-                itemsource.ClearAll();
-                itemsource.Add(GingerSolutionSourceControl.SourceControlInfo.Branch);
-                xBranchesCombo.SelectedIndex = 0;
-                if (String.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath))
-                {
-                    mSourceControl.LocalFolder = @"C:\GingerSourceControl\Solutions\";
-                    GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath = @"C:\GingerSourceControl\Solutions\";
-                }
-            }
-        }
-
-        private void SourceControlClassComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            setSourceControlProperty();
-        }
-
-        private void SourceControlPassTextBox_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            setSourceControlProperty();
-        }
 
         private void RefreshGrid(object sender, RoutedEventArgs e)
         {
@@ -463,7 +433,14 @@ namespace Ginger.SourceControl
 
         private void SetLocalFolderPath()
         {
-            mSourceControl.LocalFolder = SourceControlLocalFolderTextBox.Text;
+            if (Directory.Exists(SourceControlLocalFolderTextBox.Text))
+            {
+                mSourceControl.LocalFolder = SourceControlLocalFolderTextBox.Text;
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Local folder path does not exists.");
+            }
         }
 
         private void ConnectionDetailsExpended(object sender, RoutedEventArgs e)
@@ -475,30 +452,7 @@ namespace Ginger.SourceControl
         {
             ExpenderDetailsRow.Height = new GridLength(50);
         }
-        private static Guid solutionGuid;
-        public static void SourceControlInit(Guid solutionGuid)
-        {
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(solutionGuid);
-            if (GingerSolutionSourceControl.SourceControlInfo.Type == SourceControlBase.eSourceControlType.GIT)
-            {
-                mSourceControl = new GITSourceControl();
-            }
-            else if (GingerSolutionSourceControl.SourceControlInfo.Type == SourceControlBase.eSourceControlType.SVN)
-            {
-                mSourceControl = new SVNSourceControl();
-            }
-            else if (GingerSolutionSourceControl.SourceControlInfo.Type == SourceControlBase.eSourceControlType.None)
-            {
-                mSourceControl = new GITSourceControl();
-                GingerSolutionSourceControl.SourceControlInfo.Type = SourceControlBase.eSourceControlType.GIT;
-            }
 
-            if (mSourceControl != null)
-            {
-                WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfile(mSourceControl, solutionGuid);
-                mSourceControl.IsImportSolution = IsImportSolution;
-            }
-        }
 
         private async void TestConnectionAndSearchRepositories_Click(object sender, RoutedEventArgs e)
         {
@@ -574,24 +528,31 @@ namespace Ginger.SourceControl
         }
         private void FetchBranches_Click(object sender, RoutedEventArgs e)
         {
-            loaderElement.Visibility = Visibility.Visible;
-            setSourceControlProperty();
-            mSourceControl.IsPublicRepo = false;
-            ObservableList<string> itemsource = (ObservableList<string>)xBranchesCombo.ItemsSource;
-            itemsource.ClearAll();
-            foreach (string branch in SourceControlIntegration.GetBranches(mSourceControl))
+            try
             {
-                itemsource.Add(branch);
-            }
-            if (xBranchesCombo.Items.Count > 0)
-            {
-                xBranchesCombo.SelectedIndex = 0;
-                if (String.IsNullOrEmpty(mSourceControl.Username) || String.IsNullOrEmpty(mSourceControl.Password))
+                loaderElement.Visibility = Visibility.Visible;
+                setPassword();
+                mSourceControl.IsPublicRepo = false;
+                ObservableList<string> itemsource = (ObservableList<string>)xBranchesCombo.ItemsSource;
+                itemsource.ClearAll();
+                foreach (string branch in SourceControlIntegration.GetBranches(mSourceControl))
                 {
-                    mSourceControl.IsPublicRepo = true;
+                    itemsource.Add(branch);
                 }
+                if (xBranchesCombo.Items.Count > 0)
+                {
+                    xBranchesCombo.SelectedIndex = 0;
+                    if (String.IsNullOrEmpty(mSourceControl.Username) || String.IsNullOrEmpty(mSourceControl.Password))
+                    {
+                        mSourceControl.IsPublicRepo = true;
+                    }
+                }
+                loaderElement.Visibility = Visibility.Collapsed;
             }
-            loaderElement.Visibility = Visibility.Collapsed;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+            }
         }
 
         private async void DownloadButton_Click(object sender, RoutedEventArgs e)
