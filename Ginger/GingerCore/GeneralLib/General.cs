@@ -291,7 +291,16 @@ namespace GingerCore
                 }
                 else
                 {
-                    s = "NA";
+                    EnumValueDescriptionAttribute[] _attributes = (EnumValueDescriptionAttribute[])EnumType.GetField(EnumValue.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false);
+              
+                    if (_attributes.Length > 0)
+                    {
+                        s = _attributes[0].ValueDescription;
+                    }
+                    else
+                    {
+                        s = "NA";
+                    }
                 }
                 return s;
             }

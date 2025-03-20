@@ -394,7 +394,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                         catch (Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.ERROR, $"Error Details: {ex.Message} Failed to Parse the JSon {XTF.FilePath}");
-                            return null;
+                            return [];
                         }
                     });
                     if (!string.IsNullOrEmpty(XTF.MatchingResponseFilePath))
