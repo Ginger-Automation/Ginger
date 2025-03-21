@@ -157,8 +157,12 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             if (mHTMLReportConfiguration != null)
             {
-                //HTMLGingerReportTreeItem r = new HTMLGingerReportTreeItem(mHTMLReportConfiguration);
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(mHTMLReportConfiguration);
+                if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Any(htmlRC => htmlRC.IsDefault))
+                {
+                    mHTMLReportConfiguration.IsDefault = true;
+                }
+
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(mHTMLReportConfiguration);                
             }
             else
             {
