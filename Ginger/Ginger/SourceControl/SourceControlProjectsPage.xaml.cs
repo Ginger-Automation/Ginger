@@ -51,9 +51,9 @@ namespace Ginger.SourceControl
         ProgressNotifier progressNotifier = new();
         GenericWindow genWin = null;
         Button downloadProjBtn = null;
-
         public static SourceControlBase mSourceControl;
         static bool IsImportSolution = true;
+        SourceControlBase.eSourceControlType SourceControlType;
         public SourceControlProjectsPage(bool IsCalledFromImportPage = false)
         {
             InitializeComponent();
@@ -72,26 +72,30 @@ namespace Ginger.SourceControl
             progressNotifier.LabelHandler += HandleProgressUpdated;
             progressNotifier.StatusUpdateHandler += HandleProgressBarUpdated;
 
-
+            SourceControlClassComboBox.ComboBox.SelectionChanged += SourceControlClassComboBox_SelectionChanged;
+            SourceControlInit();
+        }
+        private void SourceControlInit()
+        {
             var recentDownloadedSolutionGuid = WorkSpace.Instance.UserProfile.RecentDownloadedSolutionGuid;
 
             if (recentDownloadedSolutionGuid != Guid.Empty)
             {
                 SourceControlInit(recentDownloadedSolutionGuid);
-                Init();
+                BindComponent();
             }
             else
             {
                 mSourceControl = new GITSourceControl();
-                Init();
-
+                mSourceControl.GetSourceControlType = SourceControlBase.eSourceControlType.GIT;
+                BindComponent();
             }
+
         }
-
-        private void Init()
+        private void BindComponent()
         {
-
-            SourceControlClassComboBox.Init(mSourceControl, nameof(mSourceControl.GetSourceControlType), typeof(SourceControlBase.eSourceControlType), SourceControlClassComboBox_SelectionChanged);
+            SourceControlType = mSourceControl.GetSourceControlType;
+            SourceControlClassComboBox.Init(mSourceControl, nameof(mSourceControl.GetSourceControlType), typeof(SourceControlBase.eSourceControlType));
 
             if (IsImportSolution)
             {
@@ -134,8 +138,6 @@ namespace Ginger.SourceControl
 
             SolutionsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
 
-
-            // SetRecentSourceControlDownloadedSolutionConfigration();
         }
         void setPassword()
         {
@@ -143,29 +145,29 @@ namespace Ginger.SourceControl
         }
         private void SourceControlClassComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var sourceControlType = (SourceControlBase.eSourceControlType)SourceControlClassComboBox.ComboBoxSelectedValue;
-            if (mSourceControl != null && mSourceControl.GetSourceControlType == sourceControlType)
+            if (SourceControlClassComboBox.ComboBox.SelectedValue == null)
             {
                 return;
             }
-            setVisibility(sourceControlType);
-            if (sourceControlType == SourceControlBase.eSourceControlType.GIT)
+            var a = (SourceControlBase.eSourceControlType)SourceControlClassComboBox.ComboBox.SelectedValue;
+            if (a == SourceControlBase.eSourceControlType.None || a == SourceControlType)
+            {
+                return;
+            }
+            setVisibility(a);
+            if (a == SourceControlBase.eSourceControlType.SVN)
+            {
+                mSourceControl = new SVNSourceControl();
+                mSourceControl.GetSourceControlType = SourceControlBase.eSourceControlType.SVN;
+            }
+            else
             {
                 mSourceControl = new GITSourceControl();
                 mSourceControl.GetSourceControlType = SourceControlBase.eSourceControlType.GIT;
             }
-            else if (sourceControlType == SourceControlBase.eSourceControlType.SVN)
-            {
-                mSourceControl = new SVNSourceControl();
-                mSourceControl.GetSourceControlType = SourceControlBase.eSourceControlType.SVN;
-
-            }
-            Init();
+            BindComponent();
 
         }
-
-
-
         public void SourceControlInit(Guid solutionGuid)
         {
             var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(solutionGuid);
@@ -526,7 +528,7 @@ namespace Ginger.SourceControl
             ProxyAddressTextBox.IsEnabled = false;
             ProxyPortTextBox.IsEnabled = false;
         }
-        private void FetchBranches_Click(object sender, RoutedEventArgs e)
+        private async void FetchBranches_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -535,10 +537,17 @@ namespace Ginger.SourceControl
                 mSourceControl.IsPublicRepo = false;
                 ObservableList<string> itemsource = (ObservableList<string>)xBranchesCombo.ItemsSource;
                 itemsource.ClearAll();
-                foreach (string branch in SourceControlIntegration.GetBranches(mSourceControl))
+                await Task.Run(() =>
                 {
-                    itemsource.Add(branch);
-                }
+                    var branches = SourceControlIntegration.GetBranches(mSourceControl);
+                    Dispatcher.Invoke(() =>
+                    {
+                        foreach (string branch in branches)
+                        {
+                            itemsource.Add(branch);
+                        }
+                    });
+                });
                 if (xBranchesCombo.Items.Count > 0)
                 {
                     xBranchesCombo.SelectedIndex = 0;

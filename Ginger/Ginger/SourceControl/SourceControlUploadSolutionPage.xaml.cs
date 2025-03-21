@@ -22,7 +22,6 @@ using Amdocs.Ginger.UserControls;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
-using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -55,58 +54,31 @@ namespace Ginger.SourceControl
         private void SourceControlInit()
         {
             mSourceControl = new GITSourceControl();
-
             WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfile(mSourceControl, WorkSpace.Instance.Solution.Guid);
-
-            mSourceControl.PropertyChanged += SourceControl_PropertyChanged;
-
             FetchBranchRadioBtn.IsChecked = true;
         }
-        
 
-        private static void SourceControl_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            WorkSpace.Instance.UserProfile.SetSourceControlPropertyOnUserProfile(mSourceControl, WorkSpace.Instance.Solution.Guid);
 
-        }
+
         private void Init()
         {
             mSourceControl.LocalFolder = WorkSpace.Instance.Solution.Folder;
-
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConfigureProxyCheckBox, CheckBox.IsCheckedProperty, mSourceControl, nameof(SourceControlBase.IsProxyConfigured));
-
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProxyAddressTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.ProxyAddress));
-
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProxyPortTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.ProxyPort));
-
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlURLTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.URL));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.Username));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.Password));
-            SourceControlPassTextBox.Password = mSourceControl.Password;
-
-            //xBranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
-
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBranchesCombo, ComboBox.TextProperty, mSourceControl, nameof(SourceControlBase.BranchName));
-
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlBranchTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.BranchName));
 
-            SourceControlPassTextBox.PasswordChanged += SourceControlPassTextBox_PasswordChanged;
         }
 
-        private void SourceControlPassTextBox_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            mSourceControl.Password = ((PasswordBox)sender).Password;
-            SourceControlIntegration.Init(mSourceControl);
-        }
-
-        private void SourceControlUserTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            SourceControlIntegration.Init(mSourceControl);
-        }
 
         private void FetchBranches_Click(object sender, RoutedEventArgs e)
         {
             loaderElement.Visibility = Visibility.Visible;
+            mSourceControl.Password = SourceControlPassTextBox.Password;
             xBranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
             if (xBranchesCombo.Items.Count > 0)
             {
@@ -119,10 +91,7 @@ namespace Ginger.SourceControl
             loaderElement.Visibility = Visibility.Collapsed;
         }
 
-        private void SourceControlURLTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            SourceControlIntegration.Init(mSourceControl);
-        }
+
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
@@ -153,6 +122,7 @@ namespace Ginger.SourceControl
             try
             {
                 loaderElement.Visibility = Visibility.Visible;
+                mSourceControl.Password = SourceControlPassTextBox.Password;
                 if (SourceControlIntegration.BusyInProcessWhileDownloading)
                 {
                     PopProcessIsBusyMsg();
@@ -232,7 +202,7 @@ namespace Ginger.SourceControl
                 mSourceControl.SolutionFolder = WorkSpace.Instance.Solution.Folder;
             }
         }
-  
+
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {

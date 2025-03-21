@@ -43,13 +43,9 @@ namespace Ginger.SourceControl
         public SourceControlConnDetailsPage()
         {
             InitializeComponent();
-            Init();
-        }
-
-        private void Init()
-        {
             Bind();
         }
+
 
         private void Bind()
         {
@@ -94,44 +90,51 @@ namespace Ginger.SourceControl
 
         private void SetSourceControlDetailsFromUserProfile()
         {
+            try
+            {
+                var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
 
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
-          
-            SourceControlClassTextBox.IsReadOnly = true;
-            SourceControlClassTextBox.IsEnabled = false;
+                SourceControlClassTextBox.IsReadOnly = true;
+                SourceControlClassTextBox.IsEnabled = false;
 
-            SourceControlURLTextBox.IsReadOnly = true;
-            SourceControlURLTextBox.IsEnabled = false;
+                SourceControlURLTextBox.IsReadOnly = true;
+                SourceControlURLTextBox.IsEnabled = false;
 
-            WorkSpace.Instance.UserProfile.UserProfileOperations.LoadPasswords(WorkSpace.Instance.UserProfile);
+                WorkSpace.Instance.UserProfile.UserProfileOperations.LoadPasswords(WorkSpace.Instance.UserProfile);
 
-            if (GingerSolutionSourceControl != null) {
-                
-                GingerSolutionSourceControl.SourceControlInfo.Url = SourceControlIntegration.GetRepositoryURL(WorkSpace.Instance.Solution.SourceControl);
-                SourceControlURLTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Url;
-                if (SourceControlURLTextBox.Text.Contains("git", StringComparison.OrdinalIgnoreCase)){
-                    SourceControlClassTextBox.Text = SourceControlBase.eSourceControlType.GIT.ToString();
-                }
-                else
+                if (GingerSolutionSourceControl != null)
                 {
-                    SourceControlClassTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Type.ToString();
-                }
-                xSourceControlBranchTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Branch;
-                SourceControlUserTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Username;
-                SourceControlPassTextBox.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
-                SourceControlUserAuthorNameTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.AuthorName;
-                SourceControlAuthorEmailTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.AuthorEmail;
 
-                if (GingerSolutionSourceControl.SourceControlInfo.Timeout <= 0)
-                {
-                    xTextSourceControlConnectionTimeout.Text = "80";
-                }
-                else
-                {
-                    xTextSourceControlConnectionTimeout.Text = GingerSolutionSourceControl.SourceControlInfo.Timeout.ToString();
-                }
-                }
+                    GingerSolutionSourceControl.SourceControlInfo.Url = SourceControlIntegration.GetRepositoryURL(WorkSpace.Instance.Solution.SourceControl);
+                    SourceControlURLTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Url;
+                    if (SourceControlURLTextBox.Text.Contains("git", StringComparison.OrdinalIgnoreCase))
+                    {
+                        SourceControlClassTextBox.Text = SourceControlBase.eSourceControlType.GIT.ToString();
+                    }
+                    else
+                    {
+                        SourceControlClassTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Type.ToString();
+                    }
+                    xSourceControlBranchTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Branch;
+                    SourceControlUserTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Username;
+                    SourceControlPassTextBox.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
+                    SourceControlUserAuthorNameTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.AuthorName;
+                    SourceControlAuthorEmailTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.AuthorEmail;
 
+                    if (GingerSolutionSourceControl.SourceControlInfo.Timeout <= 0)
+                    {
+                        xTextSourceControlConnectionTimeout.Text = "80";
+                    }
+                    else
+                    {
+                        xTextSourceControlConnectionTimeout.Text = GingerSolutionSourceControl.SourceControlInfo.Timeout.ToString();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
+            }
         }
 
         private void SourceControlPassTextBox_PasswordChanged(object sender, RoutedEventArgs e)
@@ -154,7 +157,7 @@ namespace Ginger.SourceControl
 
         private void SaveConfiguration_Click(object sender, RoutedEventArgs e)
         {
-            
+
             if (TestSourceControlConnection(true))
             {
                 if (SourceControlClassTextBox.Text != SourceControlBase.eSourceControlType.GIT.ToString())
@@ -168,7 +171,7 @@ namespace Ginger.SourceControl
                 Close();
                 WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
                 WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
-              
+
             }
         }
         private void Close_Click(object sender, RoutedEventArgs e)
@@ -222,8 +225,9 @@ namespace Ginger.SourceControl
             {
                 WorkSpace.Instance.Solution.SourceControl.Timeout = Int32.Parse(xTextSourceControlConnectionTimeout.Text);
             }
-            catch(Exception EX) {            
-                Reporter.ToLog(eLogLevel.ERROR,EX.ToString());
+            catch (Exception EX)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, EX.ToString());
             }
         }
     }

@@ -764,43 +764,71 @@ namespace Ginger
 
         public void SetSourceControlPropertyOnUserProfile(SourceControlBase mSourceControl, Guid solutionGuid)
         {
-            var GingerSolutionSourceControl = GetSolutionSourceControlInfo(solutionGuid);
-            GingerSolutionSourceControl.SourceControlInfo.Type = mSourceControl.GetSourceControlType;
-            GingerSolutionSourceControl.SourceControlInfo.Url = mSourceControl.URL;
-            GingerSolutionSourceControl.SourceControlInfo.Username = mSourceControl.Username;
-            GingerSolutionSourceControl.SourceControlInfo.Password = mSourceControl.Password;
-            GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath = mSourceControl.LocalFolder;
-            GingerSolutionSourceControl.SourceControlInfo.Branch = mSourceControl.BranchName;
-            GingerSolutionSourceControl.SourceControlInfo.AuthorName = mSourceControl.AuthorName;
-            GingerSolutionSourceControl.SourceControlInfo.AuthorEmail = mSourceControl.AuthorEmail;
-            GingerSolutionSourceControl.SourceControlInfo.Timeout = mSourceControl.Timeout;
-            GingerSolutionSourceControl.SourceControlInfo.IsProxyConfigured = mSourceControl.IsProxyConfigured;
-            GingerSolutionSourceControl.SourceControlInfo.ProxyAddress = mSourceControl.ProxyAddress;
-            GingerSolutionSourceControl.SourceControlInfo.ProxyPort = mSourceControl.ProxyPort;
-            UserProfileOperations.SaveUserProfile();
+            try
+            {
+                if (mSourceControl == null || solutionGuid == Guid.Empty)
+                {
+                    return;
+                }
+                var GingerSolutionSourceControl = GetSolutionSourceControlInfo(solutionGuid);
+                GingerSolutionSourceControl.SourceControlInfo.Type = mSourceControl.GetSourceControlType;
+                GingerSolutionSourceControl.SourceControlInfo.Url = mSourceControl.URL;
+                GingerSolutionSourceControl.SourceControlInfo.Username = mSourceControl.Username;
+                GingerSolutionSourceControl.SourceControlInfo.Password = mSourceControl.Password;
+                if (mSourceControl.LocalFolder.EndsWith(".git"))
+                {
+                    GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath = mSourceControl.LocalFolder.Substring(0, mSourceControl.LocalFolder.LastIndexOf('\\'));
+                }
+                else
+                {
+                    GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath = mSourceControl.LocalFolder;
+                }
+                GingerSolutionSourceControl.SourceControlInfo.Branch = mSourceControl.BranchName;
+                GingerSolutionSourceControl.SourceControlInfo.AuthorName = mSourceControl.AuthorName;
+                GingerSolutionSourceControl.SourceControlInfo.AuthorEmail = mSourceControl.AuthorEmail;
+                GingerSolutionSourceControl.SourceControlInfo.Timeout = mSourceControl.Timeout;
+                GingerSolutionSourceControl.SourceControlInfo.IsProxyConfigured = mSourceControl.IsProxyConfigured;
+                GingerSolutionSourceControl.SourceControlInfo.ProxyAddress = mSourceControl.ProxyAddress;
+                GingerSolutionSourceControl.SourceControlInfo.ProxyPort = mSourceControl.ProxyPort;
+                UserProfileOperations.SaveUserProfile();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
+            }
         }
 
 
         public void GetSourceControlPropertyFromUserProfile(SourceControlBase mSourceControl, Guid solutionGuid)
         {
-
-            UserProfileOperations.RefreshSourceControlCredentials(solutionGuid);
-            var GingerSolutionSourceControl = GetSolutionSourceControlInfo(solutionGuid);
-            mSourceControl.GetSourceControlType = GingerSolutionSourceControl.SourceControlInfo.Type;
-            mSourceControl.URL = GingerSolutionSourceControl.SourceControlInfo.Url;
-            mSourceControl.Username = GingerSolutionSourceControl.SourceControlInfo.Username;
-            mSourceControl.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
-            mSourceControl.LocalFolder = GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath;
-            mSourceControl.BranchName = GingerSolutionSourceControl.SourceControlInfo.Branch;
-            mSourceControl.IsProxyConfigured = GingerSolutionSourceControl.SourceControlInfo.IsProxyConfigured;
-            mSourceControl.ProxyAddress = GingerSolutionSourceControl.SourceControlInfo.ProxyAddress;
-            mSourceControl.ProxyPort = GingerSolutionSourceControl.SourceControlInfo.ProxyPort;
-
-            if (GingerSolutionSourceControl.SourceControlInfo.Timeout == 0)
+            try
             {
-                GingerSolutionSourceControl.SourceControlInfo.Timeout = 80;
+                if (mSourceControl == null || solutionGuid == Guid.Empty)
+                {
+                    return;
+                }
+                UserProfileOperations.RefreshSourceControlCredentials(solutionGuid);
+                var GingerSolutionSourceControl = GetSolutionSourceControlInfo(solutionGuid);
+                mSourceControl.GetSourceControlType = GingerSolutionSourceControl.SourceControlInfo.Type;
+                mSourceControl.URL = GingerSolutionSourceControl.SourceControlInfo.Url;
+                mSourceControl.Username = GingerSolutionSourceControl.SourceControlInfo.Username;
+                mSourceControl.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
+                mSourceControl.LocalFolder = GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath;
+                mSourceControl.BranchName = GingerSolutionSourceControl.SourceControlInfo.Branch;
+                mSourceControl.IsProxyConfigured = GingerSolutionSourceControl.SourceControlInfo.IsProxyConfigured;
+                mSourceControl.ProxyAddress = GingerSolutionSourceControl.SourceControlInfo.ProxyAddress;
+                mSourceControl.ProxyPort = GingerSolutionSourceControl.SourceControlInfo.ProxyPort;
+
+                if (GingerSolutionSourceControl.SourceControlInfo.Timeout == 0)
+                {
+                    GingerSolutionSourceControl.SourceControlInfo.Timeout = 80;
+                }
+                mSourceControl.Timeout = GingerSolutionSourceControl.SourceControlInfo.Timeout;
             }
-            mSourceControl.Timeout = GingerSolutionSourceControl.SourceControlInfo.Timeout;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
+            }
         }
 
 

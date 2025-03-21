@@ -321,7 +321,7 @@ namespace Ginger
             {
                 var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
 
-                if (!string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.Password))
+                if (!string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.Password) && !string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.Username))
                 {
                     WinCredentialUtil.SetCredentials($"Ginger_Sol_Git_{WorkSpace.Instance.Solution.Guid}", GingerSolutionSourceControl.SourceControlInfo.Username, GingerSolutionSourceControl.SourceControlInfo.Password);
                 }

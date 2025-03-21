@@ -20,7 +20,6 @@ using AccountReport.Contracts;
 using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.Repository;
@@ -286,18 +285,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             WorkSpace.Instance.UserProfile.RecentDownloadedSolutionGuid = WorkSpace.Instance.Solution.Guid;
             var SetSourceControlParaOnUserProfile = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
-            SetSourceControlParaOnUserProfile.SourceControlInfo.Type=WorkSpace.Instance.UserProfile.Type;
+            SetSourceControlParaOnUserProfile.SourceControlInfo.Type = WorkSpace.Instance.UserProfile.Type;
             SetSourceControlParaOnUserProfile.SourceControlInfo.Url = WorkSpace.Instance.UserProfile.URL;
             SetSourceControlParaOnUserProfile.SourceControlInfo.Username = WorkSpace.Instance.UserProfile.Username;
             SetSourceControlParaOnUserProfile.SourceControlInfo.Password = WorkSpace.Instance.UserProfile.Password;
             if (Solution.Contains(".git", StringComparison.OrdinalIgnoreCase))
             {
 
-                SetSourceControlParaOnUserProfile.SourceControlInfo.LocalFolderPath = Solution.Substring(0,Solution.LastIndexOf('\\'));
+                SetSourceControlParaOnUserProfile.SourceControlInfo.LocalFolderPath = Solution.Substring(0, Solution.LastIndexOf('\\'));
             }
             else
             {
-                SetSourceControlParaOnUserProfile.SourceControlInfo.LocalFolderPath = Solution ;
+                SetSourceControlParaOnUserProfile.SourceControlInfo.LocalFolderPath = Solution;
             }
             WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
         }
@@ -753,8 +752,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
                 catch (Exception ex)
                 {
-                    string mess = ex.Message; //To avoid warning of ex not used
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to decrypt the source control password");//not showing ex details for not showing the password by mistake in log
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to decrypt the source control password" + ex.Message);//not showing ex details for not showing the password by mistake in log
                 }
             }
 
