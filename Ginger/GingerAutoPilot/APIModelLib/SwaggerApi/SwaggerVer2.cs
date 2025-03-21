@@ -43,28 +43,20 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 {
                     SwaggerOperation Operation = so.Value;
 
-
                     bool supportBody = true;
                     if (Operation.RequestBody == null && !Operation.ActualConsumes.Any())
                     {
-
                         ApplicationAPIModel basicModal = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key, swagTwo);
                         SetOptionalValue(basicModal.AppModelParameters, reqBodyNullExampleList, enumExampleList);
                         SwaggerModels.Add(basicModal);
                         GenerateResponse(Operation, basicModal);
                     }
 
-
                     else if (!Operation.ActualConsumes.Any() && Operation.RequestBody.Content.Any())
                     {
-
                         foreach (var body in Operation.RequestBody.Content)
                         {
-
                             ApplicationAPIModel AAM = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key, swagTwo);
-
-
-
                             if (supportBody)
                             {
                                 switch (body.Key)
@@ -113,16 +105,11 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                             GenerateResponse(Operation, AAM);
                             SwaggerModels.Add(AAM);
                         }
-
                     }
 
                     foreach (var body in Operation.ActualConsumes)
                     {
-
                         ApplicationAPIModel AAM = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key, swagTwo);
-
-
-
 
                         if (supportBody)
                         {
@@ -172,11 +159,6 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
                         SwaggerModels.Add(AAM);
                     }
-
-
-
-
-
                 }
             }
             return SwaggerModels;

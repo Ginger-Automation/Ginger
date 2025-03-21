@@ -43,27 +43,20 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 {
                     SwaggerOperation Operation = so.Value;
 
-
                     bool supportBody = true;
                     if (Operation.RequestBody == null)
                     {
-
                         ApplicationAPIModel basicModal = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key, opendoc);
                         SetOptionalValue(basicModal.AppModelParameters, reqBodyNullExampleList, enumValuesListAMP);
                         SwaggerModels.Add(basicModal);
                         GenerateResponse(Operation, basicModal);
                     }
 
-
                     else if (Operation.RequestBody.Content.Any())
                     {
-
                         foreach (var body in Operation.RequestBody.Content)
                         {
-
                             ApplicationAPIModel AAM = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key, opendoc);
-
-
 
                             if (supportBody)
                             {

@@ -670,13 +670,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private static string ReadFile(string fileName)
         {
-            if (!File.Exists(fileName))
-            {
-                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, "File not found: " + fileName);
-                throw new FileNotFoundException("Cannot find file", fileName);
-            }
-            string txt = File.ReadAllText(fileName);
-            return txt;
+            return Ginger.Common.GeneralLib.General.FileContentProvider(fileName);           
         }
     }
 }

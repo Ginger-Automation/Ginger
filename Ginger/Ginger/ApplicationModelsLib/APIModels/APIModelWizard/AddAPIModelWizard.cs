@@ -29,6 +29,7 @@ using GingerCore;
 using GingerCoreNET.Application_Models;
 using GingerWPF.WizardLib;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -46,12 +47,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             JsonTemplate,
             [EnumValueDescription("Swagger(Open API) Document")]
             Swagger
-        }
-
-        public enum eAPITypeTemp
-        {
-            [EnumValueDescription("WSDL")]
-            WSDL
         }
 
         public eAPIType APIType { get; set; }
@@ -138,6 +133,17 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 PlaceHolder = "{" + placehold + "}"
             };
             var GlobalParams = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
+            var existingMatchingParam = GlobalParams.FirstOrDefault(g => !string.IsNullOrEmpty(g.PlaceHolder)
+            && g.PlaceHolder.Equals(newModelGlobalParam.PlaceHolder, System.StringComparison.InvariantCultureIgnoreCase)
+            && g.OptionalValuesList.Any(f => !string.IsNullOrEmpty(f.Value)
+                 && f.Value.Equals(customurl, System.StringComparison.InvariantCultureIgnoreCase)
+                 && f.IsDefault));
+
+            if (existingMatchingParam != null)
+            {
+                return existingMatchingParam;
+            }
+
             if (GlobalParams.Any(x => x.PlaceHolder.Equals(newModelGlobalParam.PlaceHolder)))
             {
                 newModelGlobalParam.PlaceHolder = "{" + (!string.IsNullOrEmpty(newModelGlobalParam.PlaceHolder) ? newModelGlobalParam.PlaceHolder.Replace("{", "").Replace("}", "") : newModelGlobalParam.PlaceHolder) + "_Copy}";
@@ -158,20 +164,35 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void ImportAPIModels(ObservableList<ApplicationAPIModel> SelectedAAMList)
         {
-            GlobalAppModelParameter itemtoadd = null;
+            GlobalAppModelParameter globalAppModelParameterForUrl = null;
             string? customUrl = string.Empty;
             if (APIType == eAPIType.Swagger)
             {
                 customUrl = SelectedAAMList.FirstOrDefault()?.URLDomain;
-                itemtoadd = AddGlobalParam(customUrl, this.InfoTitle);
+                globalAppModelParameterForUrl = AddGlobalParam(customUrl, this.InfoTitle);
+                GetOrAddRootFolder();
             }
+
+
             foreach (ApplicationAPIModel apiModel in SelectedAAMList)
             {
                 if (APIType == eAPIType.Swagger)
                 {
-                    apiModel.EndpointURL = itemtoadd.PlaceHolder + apiModel.EndpointURL;
-                    apiModel.GlobalAppModelParameters = [  new GlobalAppModelParameter() { Guid = itemtoadd.Guid,PlaceHolder = itemtoadd.PlaceHolder,
-                     OptionalValuesList= [new OptionalValue() { Value = customUrl , IsDefault = true }] } ];
+                    apiModel.EndpointURL = globalAppModelParameterForUrl?.PlaceHolder + apiModel.EndpointURL;
+                    apiModel.GlobalAppModelParameters = [
+                        new GlobalAppModelParameter
+                        {
+                            Guid = globalAppModelParameterForUrl.Guid,
+                            PlaceHolder = globalAppModelParameterForUrl.PlaceHolder,
+                            OptionalValuesList = [                                
+                                new OptionalValue
+                                {
+                                    Value = customUrl,
+                                    IsDefault = true
+                                }                                
+                            ]
+                        }
+                    ];
                 }
 
                 Dictionary<System.Tuple<string, string>, List<string>> OptionalValuesPerParameterDict = [];
@@ -182,7 +203,24 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
                 if (string.IsNullOrEmpty(apiModel.ContainingFolder))
                 {
-                    apiModel.ContainingFolder = APIModelFolder.FolderFullPath;
+                    apiModel.ContainingFolder = APIModelFolder?.FolderFullPath;
+                    try
+                    {
+                        if (APIType == eAPIType.Swagger && apiModel.TagsKeys?.Count > 0)
+                        {
+                            var apiModelPath = Path.Combine(apiModel?.ContainingFolder, apiModel?.TagsKeys?.First()?.ItemName);
+                            if (amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(apiModelPath) == null)
+                            {
+                                APIModelFolder?.AddSubFolder(apiModel.TagsKeys.First().ItemName);
+                            }
+
+                            apiModel.ContainingFolder = apiModelPath;
+                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Error while creating folder according to the tag", ex);
+                    }
                 }
 
                 if (apiModel.TargetApplicationKey == null && TargetApplicationKey != null)
@@ -198,16 +236,29 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     }
                 }
 
-                if (APIModelFolder.FolderFullPath == apiModel.ContainingFolder)
+                if (APIModelFolder?.FolderFullPath == apiModel.ContainingFolder)
                 {
-                    APIModelFolder.AddRepositoryItem(apiModel);
+                    APIModelFolder?.AddRepositoryItem(apiModel);
                 }
                 else
                 {
                     RepositoryFolderBase rfFolderBase = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(apiModel.ContainingFolder);
                     rfFolderBase.AddRepositoryItem(apiModel);
                 }
+            }
+        }
 
+        private void GetOrAddRootFolder()
+        {
+            var apiModelPath = Path.Combine(APIModelFolder.FolderFullPath, this.InfoTitle);
+            var apimodelFolder = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(apiModelPath);
+            if (apimodelFolder == null)
+            {
+                APIModelFolder = APIModelFolder.AddSubFolder(folderName: this.InfoTitle) as RepositoryFolder<ApplicationAPIModel>;
+            }
+            else
+            {
+                APIModelFolder = apimodelFolder as RepositoryFolder<ApplicationAPIModel>;
             }
         }
     }

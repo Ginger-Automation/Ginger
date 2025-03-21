@@ -235,6 +235,28 @@ namespace Ginger.SolutionWindows
                 }
             }
 
+            foreach (ApplicationAPIModel applicationAPIModel in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>())
+            {
+                //update the shared repository activities 
+                if (applicationAPIModel.TargetApplicationKey?.ItemName == app.NameBeforeEdit)
+                {
+                    applicationAPIModel.StartDirtyTracking();
+                    applicationAPIModel.TargetApplicationKey.ItemName = app.AppName;
+                    numOfAfectedItems++;
+                }
+            }
+
+            foreach (ApplicationPOMModel applicationPOMModel in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>())
+            {
+                //update the shared repository activities 
+                if (applicationPOMModel.TargetApplicationKey?.ItemName == app.NameBeforeEdit)
+                {
+                    applicationPOMModel.StartDirtyTracking();
+                    applicationPOMModel.TargetApplicationKey.ItemName = app.AppName;
+                    numOfAfectedItems++;
+                }
+            }
+
             foreach (ProjEnvironment projEnv in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
             {
                 foreach (EnvApplication envApplication in projEnv.Applications)

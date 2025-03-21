@@ -505,6 +505,54 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
 
+        
+        public static string FileContentProvider(string filename)
+        {
+            Uri url = new Uri(filename);
+            string originalJson;
+            if (url.IsFile)
+            {
+                try
+                {
+                    if (!File.Exists(filename))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "File not found: " + filename);
+                        throw new FileNotFoundException("Cannot find file", filename);
+                    }
+                    originalJson = File.ReadAllText(filename);
+                    if (string.IsNullOrEmpty(originalJson))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "File is empty: " + filename);
+                        throw new Exception("File is empty: " + filename);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while reading {filename}", ex);
+                    throw;
+                }
+            }
+            else
+            {
+                try
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Downloading {filename}");
+                    originalJson = Common.GeneralLib.HttpUtilities.Download(url);
+                    if (string.IsNullOrEmpty(originalJson))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Downloaded content is empty: " + filename);
+                        throw new Exception("Downloaded content is empty: " + filename);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while downloading {filename}", ex);
+                    throw;
+                }
+            }
+            return originalJson;
+        }
+
         /// <summary>
         /// Represents a minimal record of a variable, including its name, initial value, and current value.
         /// </summary>
