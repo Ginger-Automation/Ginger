@@ -283,6 +283,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         void SetSourceControlParaOnUserProfile()
         {
+            if (WorkSpace.Instance.UserProfile.DoNotSaveCredentialsOnUserProfile)
+            {
+                return;
+            }
             WorkSpace.Instance.UserProfile.RecentDownloadedSolutionGuid = WorkSpace.Instance.Solution.Guid;
             var SetSourceControlParaOnUserProfile = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             SetSourceControlParaOnUserProfile.SourceControlInfo.Type = WorkSpace.Instance.UserProfile.Type;

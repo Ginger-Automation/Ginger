@@ -208,6 +208,7 @@ namespace Ginger
 
         public string EncryptedPassword { get; set; }
 
+        public bool DoNotSaveCredentialsOnUserProfile { get; set; } 
 
         [IsSerializedForLocalRepository]
         public string ReportTemplateName { get; set; }
@@ -766,7 +767,7 @@ namespace Ginger
         {
             try
             {
-                if (mSourceControl == null || solutionGuid == Guid.Empty)
+                if (mSourceControl == null || solutionGuid == Guid.Empty|| DoNotSaveCredentialsOnUserProfile)
                 {
                     return;
                 }
@@ -803,7 +804,7 @@ namespace Ginger
         {
             try
             {
-                if (mSourceControl == null || solutionGuid == Guid.Empty)
+                if (mSourceControl == null || solutionGuid == Guid.Empty || DoNotSaveCredentialsOnUserProfile)
                 {
                     return;
                 }
