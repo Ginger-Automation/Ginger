@@ -41,7 +41,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             }
         }
 
-        public override string ItemName { get => nameof(GingerSolution); set { } }
+        public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 
     public class SourceControlInfo : RepositoryItemBase
@@ -296,9 +296,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             }
         }
 
-   
-
-        public override string ItemName { get => nameof(SourceControlInfo); set { } }
+        public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 
 }

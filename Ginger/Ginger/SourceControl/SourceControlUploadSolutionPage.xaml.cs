@@ -164,7 +164,7 @@ namespace Ginger.SourceControl
                 if (mSourceControl.InitializeRepository(mSourceControl.URL))
                 {
                     Reporter.ToUser(eUserMsgKey.UploadSolutionInfo, "Solution was successfully uploaded into: '" + mSourceControl.URL + "'");
-                    if (mSourceControl.URL.Contains(".git", StringComparison.OrdinalIgnoreCase))
+                    if (mSourceControl.URL.EndsWith(".git", StringComparison.OrdinalIgnoreCase))
                     {
                         mSourceControl.GetSourceControlType = SourceControlBase.eSourceControlType.GIT;
                     }

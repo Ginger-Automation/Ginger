@@ -51,7 +51,7 @@ namespace Ginger.SourceControl
         ProgressNotifier progressNotifier = new();
         GenericWindow genWin = null;
         Button downloadProjBtn = null;
-        public static SourceControlBase mSourceControl;
+        public SourceControlBase mSourceControl=null;
         static bool IsImportSolution = true;
         SourceControlBase.eSourceControlType SourceControlType;
         public SourceControlProjectsPage(bool IsCalledFromImportPage = false)

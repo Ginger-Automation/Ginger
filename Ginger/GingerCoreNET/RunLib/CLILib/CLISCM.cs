@@ -84,10 +84,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public void Download(SCMOptions scmOptions)
         {
-           // WorkSpace.Instance.UserProfile.SourceControlURL = scmOptions.URL;
-
-            // TODO: need to update all other options but the download below use userprofile... TBD
-            // SourceControlIntegration.DownloadSolution(scmOptions.Solution);
 
             Reporter.ToLog(eLogLevel.ERROR, "SCM options are not implemented yet");
         }

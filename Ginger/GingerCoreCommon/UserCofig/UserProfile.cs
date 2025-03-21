@@ -208,7 +208,7 @@ namespace Ginger
 
         public string EncryptedPassword { get; set; }
 
-        public bool DoNotSaveCredentialsOnUserProfile { get; set; } 
+        public bool DoNotSaveCredentialsOnUserProfile { get; set; }
 
         [IsSerializedForLocalRepository]
         public string ReportTemplateName { get; set; }
@@ -767,7 +767,7 @@ namespace Ginger
         {
             try
             {
-                if (mSourceControl == null || solutionGuid == Guid.Empty|| DoNotSaveCredentialsOnUserProfile)
+                if (mSourceControl == null || solutionGuid == Guid.Empty || DoNotSaveCredentialsOnUserProfile)
                 {
                     return;
                 }
@@ -838,23 +838,35 @@ namespace Ginger
 
         public override bool SerializationError(SerializationErrorType errorType, string name, string value)
         {
-            if (errorType != SerializationErrorType.PropertyNotFound) return false;
+            if (errorType != SerializationErrorType.PropertyNotFound)
+            {
+                return false;
+            }
 
             name = name.ToLower();
             if (name.Contains("alm"))
             {
                 var almUserConfig = ALMUserConfigs.FirstOrDefault() ?? new ALMUserConfig();
-                if (!ALMUserConfigs.Contains(almUserConfig)) ALMUserConfigs.Add(almUserConfig);
-
-                switch (name)
+                if (!ALMUserConfigs.Contains(almUserConfig))
                 {
-                    case "almusername":
-                        almUserConfig.ALMUserName = value;
-                        return true;
-                    case "encryptedalmpassword":
-                        almUserConfig.EncryptedALMPassword = value;
-                        return true;
+                    ALMUserConfigs.Add(almUserConfig);
                 }
+
+                if (name == "almusername")
+                {
+                    almUserConfig.ALMUserName = value;
+                    return true;
+                }
+                else if (name == "encryptedalmpassword")
+                {
+                    almUserConfig.EncryptedALMPassword = value;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+                
             }
             else if (name.Contains("sourcecontrol"))
             {
