@@ -871,7 +871,10 @@ namespace Ginger
             else if (name.Contains("sourcecontrol"))
             {
                 var gingerSolution = GingerSolutions.FirstOrDefault() ?? new GingerSolution { SourceControlInfo = new SourceControlInfo() };
-                if (!GingerSolutions.Contains(gingerSolution)) GingerSolutions.Add(gingerSolution);
+                if (!GingerSolutions.Contains(gingerSolution))
+                {
+                    GingerSolutions.Add(gingerSolution);
+                }
 
                 switch (name)
                 {
@@ -920,6 +923,8 @@ namespace Ginger
                             return true;
                         }
                         break;
+                    default:
+                        return false;
                 }
             }
 
