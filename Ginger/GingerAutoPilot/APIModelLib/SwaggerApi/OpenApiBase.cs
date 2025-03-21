@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using Microsoft.CodeAnalysis;
 using Newtonsoft.Json;
@@ -106,7 +107,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             {
                 string modal = "<" + Match.ToString().ToUpper() + ">";
                 path = path.Replace(Match.ToString(), modal);
-                AAM.AppModelParameters.Add(new AppModelParameter(modal, Match.ToString() + "in url", "", "", new ObservableList<OptionalValue>()));
+                AAM.AppModelParameters.Add(new AppModelParameter(modal, $"{Match} in url. " +
+                    $"{Operation.Parameters.FirstOrDefault(g=>g.Name.Equals(Match.ToString().TrimStart('{').TrimEnd('}'), StringComparison.InvariantCultureIgnoreCase))?.Description}", "", "", new ObservableList<OptionalValue>()));
             }
             AAM.EndpointURL = path;
             AAM.APIType = ApplicationAPIUtils.eWebApiType.REST;
@@ -117,6 +119,30 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             }
             AAM.URLDomain = apidoc.BaseUrl;
             supportBody = true;
+            if (Operation.Tags.Count > 0)
+            {
+                try
+                {
+                    foreach (var tag in Operation.Tags)
+                    {
+                        var existingTag = GingerCoreCommonWorkSpace.Instance.Solution.Tags.FirstOrDefault(t => t.Name.Equals(tag, StringComparison.InvariantCultureIgnoreCase));
+                        if (existingTag != null)
+                        {
+                            AAM.TagsKeys.Add(existingTag.Key);
+                        }
+                        else
+                        {
+                            var newlyAddedTag = new RepositoryItemTag { Name = tag };
+                            GingerCoreCommonWorkSpace.Instance.Solution.Tags.Add(newlyAddedTag);
+                            AAM.TagsKeys.Add(newlyAddedTag.Key);
+                        }
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error while adding tags to solution according as per API tags", ex);
+                }
+            }
             switch (method)
             {
                 case SwaggerOperationMethod.Get:
@@ -174,17 +200,17 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                         Value = modelName
                     };
                     ObservableList<OptionalValue> listOptions = GetListOfParamEnums(parameter);
-                    AAM.AppModelParameters.Add(new AppModelParameter(modelName, parameter.Name + " in headers", "", "", listOptions));
+                    AAM.AppModelParameters.Add(new AppModelParameter(modelName,$"{parameter.Name} in headers. {parameter.Description}", "", "", listOptions));
                     AAM.HttpHeaders.Add(header);
                 }
                 else if (parameter.Kind == SwaggerParameterKind.Query)
                 {
                     string modelName = parameter.Name;
-                    AAM.EndpointURL = !AAM.EndpointURL.Contains("?") ?
+                    AAM.EndpointURL = !AAM.EndpointURL.Contains('?') ?
                         AAM.EndpointURL + "?" + parameter.Name + "=" + "[<" + parameter.Name + ">]" :
                         AAM.EndpointURL + "+" + parameter.Name + "=" + "[<" + parameter.Name + ">]";
                     ObservableList<OptionalValue> listOptions = GetListOfParamEnums(parameter);
-                    AAM.AppModelParameters.Add(new AppModelParameter(string.Format("[<{0}>]", modelName), parameter.Name + " in query", "", "", listOptions));
+                    AAM.AppModelParameters.Add(new AppModelParameter(string.Format("[<{0}>]", modelName), $"{parameter.Name} in query. {parameter.Description}", "", "", listOptions));
                 }
             }
 
@@ -197,11 +223,12 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         {
 
             string SampleBody = JsonSchemaTools.JsonSchemaFaker(operation, null, true);
-            string XMlName = operation.HasReference ? XMlName = operation.Reference.Xml.Name : XMlName = operation.Xml.Name;
-
-
-
-
+            string XMlName = operation.HasReference ? XMlName = operation.Reference.Xml.Name : XMlName = operation.Xml?.Name;
+            
+            if(string.IsNullOrWhiteSpace(XMlName))
+            {
+                return [];
+            }
             SampleBody = "{\"" + XMlName + "\":" + SampleBody + "}";
             string s2 = SampleBody;
             string xmlbody = JsonConvert.DeserializeXmlNode(SampleBody).OuterXml;
@@ -488,7 +515,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             Dictionary<string, string> exampleValues = new Dictionary<string, string>();
             try
             {
-                if (apidoc.Definitions != null && apidoc.Definitions.Count != 0)
+                if (apidoc?.Definitions != null && apidoc.Definitions.Count != 0)
                 {
                     foreach (var schemaEntry in apidoc.Definitions)
                     {
@@ -503,10 +530,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                 var actualDefinition = item.Value.Example?.ToString();
                                 if (actualDefinition != null && !exampleValues.ContainsKey(actualName.ToLower()))
                                 {
-
                                     exampleValues.Add(actualName, actualDefinition.ToString());
                                 }
-
                             }
                         }
                         else if (schemaDefinition.Example != null)

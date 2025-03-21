@@ -241,7 +241,7 @@ namespace Ginger.SolutionGeneral
                 Path.Combine(solutionFolder, "Ginger.Solution.xml"),
             ];
 
-            string[] SolutionMainFolders = new string[] { "Agents", "ALMDefectProfiles", "Applications Models", "BusinessFlows", "Configurations", "DataSources", "Environments", "HTMLReportConfigurations", "PluginPackages", "Plugins", "RunSetConfigs", "SharedRepository" };
+            string[] SolutionMainFolders = ["Agents", "ALMDefectProfiles", "Applications Models", "BusinessFlows", "Configurations", "DataSources", "Environments", "HTMLReportConfigurations", "PluginPackages", "Plugins", "RunSetConfigs", "SharedRepository"];
             Parallel.ForEach(SolutionMainFolders, folder =>
             {
                 // Get each main folder sub folder all levels
