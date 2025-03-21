@@ -35,10 +35,10 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Content="Source Control URL:" Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}"  Margin="10,5,0,0"/>
-                <TextBox x:Name="SourceControlURLTextBox" Grid.Column="1" Grid.Row="0" ToolTip="Please create a new git repository or uses an existing empty repository only." Margin="0,5,0,7"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   HorizontalAlignment="Stretch" Text=""  TextChanged="SourceControlURLTextBox_TextChanged" />
+                <TextBox x:Name="SourceControlURLTextBox" Grid.Column="1" Grid.Row="0" ToolTip="Please create a new git repository or uses an existing empty repository only." Margin="0,5,0,7"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   HorizontalAlignment="Stretch" Text=""   />
 
                 <Label Content="User Name:" Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" Grid.Row="1" Margin="10,5,0,0"/>
-                <TextBox x:Name="SourceControlUserTextBox" Grid.Column="1" Grid.Row="1" Margin="0,5,0,7" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" TextChanged="SourceControlUserTextBox_TextChanged"/>
+                <TextBox x:Name="SourceControlUserTextBox" Grid.Column="1" Grid.Row="1" Margin="0,5,0,7" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch"/>
 
                 <Label  Content="Password:" Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" Grid.Row="2" Margin="10,5,0,0"/>
                 <PasswordBox x:Name="SourceControlPassTextBox" Style="{StaticResource @PasswordBoxStyle}" Margin="0,5,0,7" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="2"/>
@@ -47,20 +47,20 @@
 
         <StackPanel Grid.Row="1">
             <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50*"/>
-                        <ColumnDefinition Width="120*"/>
-                        <ColumnDefinition Width="50*"/>
-                    </Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="120*"/>
+                    <ColumnDefinition Width="50*"/>
+                </Grid.ColumnDefinitions>
 
-                    <Label Content="Branch Options:" Grid.Column="0" Margin="10,5,0,0" Style="{StaticResource @InputFieldLabelStyle}"/>
-                    <StackPanel x:Name="SourceControlBranches" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,5,0,0">
-                        <RadioButton x:Name="FetchBranchRadioBtn" Content="Fetch Existing Branches" Checked="BranchesControl_SelectionChanged" GroupName="SourceControlBranchGroup" Margin="0,5,0,7" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
-                        <RadioButton x:Name="CreateBranchRadioBtn" Content="Create New Branch" Checked="BranchesControl_SelectionChanged" GroupName="SourceControlBranchGroup" Margin="20,5,0,7" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
-                    </StackPanel>
-                </Grid>
+                <Label Content="Branch Options:" Grid.Column="0" Margin="10,5,0,0" Style="{StaticResource @InputFieldLabelStyle}"/>
+                <StackPanel x:Name="SourceControlBranches" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,5,0,0">
+                    <RadioButton x:Name="FetchBranchRadioBtn" Content="Fetch Existing Branches" Checked="BranchesControl_SelectionChanged" GroupName="SourceControlBranchGroup" Margin="0,5,0,7" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
+                    <RadioButton x:Name="CreateBranchRadioBtn" Content="Create New Branch" Checked="BranchesControl_SelectionChanged" GroupName="SourceControlBranchGroup" Margin="20,5,0,7" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
+                </StackPanel>
+            </Grid>
 
-                <StackPanel x:Name="SP_FetchBranches" Visibility="Collapsed" Margin="0,0,0,0">
+            <StackPanel x:Name="SP_FetchBranches" Visibility="Collapsed" Margin="0,0,0,0">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50*"/>

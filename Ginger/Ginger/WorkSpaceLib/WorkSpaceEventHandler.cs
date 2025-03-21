@@ -51,24 +51,11 @@ namespace GingerWPF.WorkSpaceLib
                 solution.SourceControl = new SVNSourceControl();
             }
         }
-
+ 
         public void ShowBusinessFlows()
         {
             throw new System.NotImplementedException();
         }
-
-        //public void OpenContainingFolder(string folderPath)
-        //{
-        //    string FullPath = WorkSpace.Instance.SolutionRepository.GetFolderFullPath(folderPath);
-        //    if (string.IsNullOrEmpty(FullPath))
-        //        return;
-
-        //    if (!Directory.Exists(FullPath))
-        //    {
-        //        Directory.CreateDirectory(FullPath);
-        //    }
-        //    Process.Start(FullPath);
-        //}
 
 
 
