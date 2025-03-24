@@ -586,7 +586,7 @@ namespace Ginger.SourceControl
                     mSourceControl.Timeout = WorkSpace.Instance.UserProfile.Timeout;
                     mSourceControl.supressMessage = true;
 
-                    mSourceControl.BranchName = WorkSpace.Instance.UserProfile.Branch;
+                    mSourceControl.Branch = WorkSpace.Instance.UserProfile.Branch;
                 }
 
                 if (WorkSpace.Instance.UserProfile.LocalFolderPath == string.Empty)

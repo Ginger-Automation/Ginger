@@ -60,7 +60,7 @@ namespace Ginger.SourceControl
             if (WorkSpace.Instance.Solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
             {
                 xSourceControlBranchPanel.Visibility = Visibility.Visible;
-                xSourceControlBranchLabel.Content = WorkSpace.Instance.Solution.SourceControl.BranchName;
+                xSourceControlBranchLabel.Content = WorkSpace.Instance.Solution.SourceControl.Branch;
             }
             else
             {

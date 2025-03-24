@@ -53,7 +53,7 @@ namespace Ginger.SourceControl
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.Username));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.Password));
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSourceControlBranchTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.BranchName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSourceControlBranchTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.Branch));
 
             if (SourceControlClassTextBox.Text == SourceControlBase.eSourceControlType.GIT.ToString())
             {
@@ -109,11 +109,11 @@ namespace Ginger.SourceControl
                     SourceControlURLTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Url;
                     if (SourceControlURLTextBox.Text.Contains("git", StringComparison.OrdinalIgnoreCase))
                     {
-                        SourceControlClassTextBox.Text = SourceControlBase.eSourceControlType.GIT.ToString();
+                        SourceControlClassTextBox.Text = nameof(SourceControlBase.eSourceControlType.GIT);
                     }
                     else
                     {
-                        SourceControlClassTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Type.ToString();
+                        SourceControlClassTextBox.Text = nameof(GingerSolutionSourceControl.SourceControlInfo.Type);
                     }
                     xSourceControlBranchTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Branch;
                     SourceControlUserTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Username;
@@ -127,7 +127,7 @@ namespace Ginger.SourceControl
                     }
                     else
                     {
-                        xTextSourceControlConnectionTimeout.Text = GingerSolutionSourceControl.SourceControlInfo.Timeout.ToString();
+                        xTextSourceControlConnectionTimeout.Text = nameof(GingerSolutionSourceControl.SourceControlInfo.Timeout);
                     }
                 }
             }
@@ -160,7 +160,7 @@ namespace Ginger.SourceControl
 
             if (TestSourceControlConnection(true))
             {
-                if (SourceControlClassTextBox.Text != SourceControlBase.eSourceControlType.GIT.ToString())
+                if (SourceControlClassTextBox.Text != nameof(SourceControlBase.eSourceControlType.GIT))
                 {
                     if (string.IsNullOrEmpty(xTextSourceControlConnectionTimeout.Text) || !Int32.TryParse(xTextSourceControlConnectionTimeout.Text, out int _))
                     {

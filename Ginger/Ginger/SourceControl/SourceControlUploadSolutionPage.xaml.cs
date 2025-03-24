@@ -69,8 +69,8 @@ namespace Ginger.SourceControl
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlURLTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.URL));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.Username));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.Password));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBranchesCombo, ComboBox.TextProperty, mSourceControl, nameof(SourceControlBase.BranchName));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlBranchTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.BranchName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBranchesCombo, ComboBox.TextProperty, mSourceControl, nameof(SourceControlBase.Branch));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlBranchTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.Branch));
 
         }
 
@@ -86,7 +86,7 @@ namespace Ginger.SourceControl
             }
             else
             {
-                mSourceControl.BranchName = "";
+                mSourceControl.Branch = "";
             }
             loaderElement.Visibility = Visibility.Collapsed;
         }
@@ -242,7 +242,7 @@ namespace Ginger.SourceControl
 
         private bool ValidateBranchNameIsNotEmpty()
         {
-            if (String.IsNullOrEmpty(mSourceControl.BranchName))
+            if (String.IsNullOrEmpty(mSourceControl.Branch))
             {
                 return false;
             }
@@ -259,13 +259,13 @@ namespace Ginger.SourceControl
             {
                 SP_CreateNewBranch.Visibility = Visibility.Collapsed;
                 SP_FetchBranches.Visibility = Visibility.Visible;
-                mSourceControl.BranchName = "";
+                mSourceControl.Branch = "";
             }
             if ((bool)CreateBranchRadioBtn.IsChecked)
             {
                 SP_FetchBranches.Visibility = Visibility.Collapsed;
                 SP_CreateNewBranch.Visibility = Visibility.Visible;
-                mSourceControl.BranchName = "";
+                mSourceControl.Branch = "";
             }
         }
     }

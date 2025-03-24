@@ -456,7 +456,7 @@ namespace GingerCore.SourceControl
             {
                 var co = new CloneOptions()
                 {
-                    BranchName = string.IsNullOrEmpty(BranchName) ? "master" : BranchName,
+                    BranchName = string.IsNullOrEmpty(Branch) ? "master" : Branch,
                     CredentialsProvider = GetSourceCredentialsHandler()
                 };
                 GetFetchOptions(co.FetchOptions);
@@ -1076,7 +1076,7 @@ namespace GingerCore.SourceControl
                     else
                     {
                         //undo specific changes
-                        string committishOrBranchSpec = BranchName;
+                        string committishOrBranchSpec = Branch;
                         CheckoutOptions checkoutOptions = new CheckoutOptions
                         {
                             CheckoutModifiers = CheckoutModifiers.Force,
@@ -1156,7 +1156,7 @@ namespace GingerCore.SourceControl
             var remoteBranches = GetBranches();
             foreach (var branch in remoteBranches)
             {
-                if (branch.Equals(BranchName))
+                if (branch.Equals(Branch))
                 {
                     return true;
                 }
@@ -1186,7 +1186,7 @@ namespace GingerCore.SourceControl
                     CredentialsProvider = GetSourceCredentialsHandler()
                 };
 
-                if (!String.IsNullOrEmpty(BranchName) && isRemoteBranchExist())
+                if (!String.IsNullOrEmpty(Branch) && isRemoteBranchExist())
                 {
                     var pullOptions = GetPullOptions();
 
@@ -1194,13 +1194,13 @@ namespace GingerCore.SourceControl
 
                     Branch localBranch = repo.Head;
 
-                    if (!repo.Head.FriendlyName.Equals(BranchName))
+                    if (!repo.Head.FriendlyName.Equals(Branch))
                     {
-                        repo.CreateBranch(BranchName);
-                        localBranch = repo.Branches[BranchName];
+                        repo.CreateBranch(Branch);
+                        localBranch = repo.Branches[Branch];
 
                         repo.Branches.Update(localBranch, b => b.TrackedBranch = localBranch.CanonicalName);
-                        Commands.Checkout(repo, BranchName);
+                        Commands.Checkout(repo, Branch);
 
                         repo.Branches.Update(localBranch,
                             b => b.Remote = remote.Name,
@@ -1217,17 +1217,17 @@ namespace GingerCore.SourceControl
                 }
                 else
                 {
-                    repo.CreateBranch(BranchName);
-                    Branch localBranch = repo.Branches[BranchName];
+                    repo.CreateBranch(Branch);
+                    Branch localBranch = repo.Branches[Branch];
 
                     repo.Branches.Update(localBranch, b => b.TrackedBranch = localBranch.CanonicalName);
-                    Commands.Checkout(repo, BranchName);
+                    Commands.Checkout(repo, Branch);
 
                     repo.Branches.Update(localBranch,
                         b => b.Remote = remote.Name,
                         b => b.UpstreamBranch = localBranch.CanonicalName);
                 }
-                repo.Network.Push(remote, @"refs/heads/" + BranchName, options);
+                repo.Network.Push(remote, @"refs/heads/" + Branch, options);
             }
         }
         /// <summary>
@@ -1376,7 +1376,7 @@ namespace GingerCore.SourceControl
                 EnsureDirectoryExists(path);
                 var cloneOptions = new CloneOptions()
                 {
-                    BranchName = string.IsNullOrEmpty(BranchName) ? "master" : BranchName,
+                    BranchName = string.IsNullOrEmpty(Branch) ? "master" : Branch,
                     FetchOptions = new FetchOptions(),
                     CredentialsProvider = GetSourceCredentialsHandler()
                 };
@@ -1545,7 +1545,7 @@ namespace GingerCore.SourceControl
             {
                 using (var repo = new Repository(RepositoryRootFolder))
                 {
-                    var localBranch = repo.Branches[BranchName];
+                    var localBranch = repo.Branches[Branch];
                     var trackingBranch = localBranch.TrackedBranch;
 
                     var filter = new CommitFilter
@@ -1628,7 +1628,7 @@ namespace GingerCore.SourceControl
                 options.OnPushStatusError += ErrorOnppush;
                 options.CredentialsProvider = GetSourceCredentialsHandler();
 
-                Branch currentBranch = repo.Branches.FirstOrDefault(x => x.FriendlyName == BranchName);
+                Branch currentBranch = repo.Branches.FirstOrDefault(x => x.FriendlyName == Branch);
                 repo.Network.Push(currentBranch, options);
             }
         }

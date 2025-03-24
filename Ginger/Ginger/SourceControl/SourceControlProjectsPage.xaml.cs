@@ -51,7 +51,7 @@ namespace Ginger.SourceControl
         ProgressNotifier progressNotifier = new();
         GenericWindow genWin = null;
         Button downloadProjBtn = null;
-        public SourceControlBase mSourceControl=null;
+        public SourceControlBase mSourceControl = null;
         static bool IsImportSolution = true;
         SourceControlBase.eSourceControlType SourceControlType;
         public SourceControlProjectsPage(bool IsCalledFromImportPage = false)
@@ -110,11 +110,11 @@ namespace Ginger.SourceControl
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlURLTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.URL));
 
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBranchesCombo, ComboBox.TextProperty, mSourceControl, nameof(SourceControlBase.BranchName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBranchesCombo, ComboBox.TextProperty, mSourceControl, nameof(SourceControlBase.Branch));
             xBranchesCombo.ItemsSource = new ObservableList<string>();
             ObservableList<string> itemsource = (ObservableList<string>)xBranchesCombo.ItemsSource;
             itemsource.ClearAll();
-            itemsource.Add(mSourceControl.BranchName);
+            itemsource.Add(mSourceControl.Branch);
             xBranchesCombo.SelectedIndex = 0;
 
 
@@ -441,7 +441,7 @@ namespace Ginger.SourceControl
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Local folder path does not exists.");
+                Reporter.ToLog(eLogLevel.ERROR, "Local folder path does not exists." + SourceControlLocalFolderTextBox.Text);
             }
         }
 
@@ -539,14 +539,21 @@ namespace Ginger.SourceControl
                 itemsource.ClearAll();
                 await Task.Run(() =>
                 {
-                    var branches = SourceControlIntegration.GetBranches(mSourceControl);
-                    Dispatcher.Invoke(() =>
+                    try
                     {
-                        foreach (string branch in branches)
+                        var branches = SourceControlIntegration.GetBranches(mSourceControl);
+                        Dispatcher.Invoke(() =>
                         {
-                            itemsource.Add(branch);
-                        }
-                    });
+                            foreach (string branch in branches)
+                            {
+                                itemsource.Add(branch);
+                            }
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+                    }
                 });
                 if (xBranchesCombo.Items.Count > 0)
                 {
@@ -583,7 +590,7 @@ namespace Ginger.SourceControl
                     return;
                 }
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
-                if (mSourceControl.LocalFolder == string.Empty)
+                if (string.IsNullOrEmpty(mSourceControl.LocalFolder))
                 {
                     Reporter.ToUser(eUserMsgKey.SourceControlConnMissingLocalFolderInput);
                 }
@@ -606,7 +613,18 @@ namespace Ginger.SourceControl
                     ProjectURI = mSourceControl.URL;
                 }
                 _cancellationTokenSource = new CancellationTokenSource();
-                bool getProjectResult = await Task.Run(() => SourceControlIntegration.GetProject(mSourceControl, solutionInfo.LocalFolder, ProjectURI, progressNotifier, _cancellationTokenSource.Token));
+                bool getProjectResult = await Task.Run(() =>
+                {
+                    try
+                    {
+                        return SourceControlIntegration.GetProject(mSourceControl, solutionInfo.LocalFolder, ProjectURI, progressNotifier, _cancellationTokenSource.Token);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting the project:", ex);
+                        return false;
+                    }
+                });
 
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
 

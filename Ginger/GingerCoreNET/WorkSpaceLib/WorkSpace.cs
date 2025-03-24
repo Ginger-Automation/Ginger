@@ -585,53 +585,6 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        /*private static void HandleSolutionLoadSourceControl(Solution solution)
-        {
-            string repositoryRootFolder = string.Empty;
-            WorkSpace.Instance.EventHandler.SetSolutionSourceControl(solution, ref repositoryRootFolder);
-            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.SourceControlInfo(WorkSpace.Instance.Solution.Guid);
-
-            if (solution.SourceControl != null && WorkSpace.Instance.UserProfile != null)
-            {
-                if (string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.Username) || string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.Password) ||
-                    solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
-                {
-                    if (GingerSolutionSourceControl.SourceControlInfo.Username != null && GingerSolutionSourceControl.SourceControlInfo.Password != null)
-                    {
-                        solution.SourceControl.Username = GingerSolutionSourceControl.SourceControlInfo.Username;
-                        solution.SourceControl.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
-                        solution.SourceControl.AuthorEmail = GingerSolutionSourceControl.SourceControlInfo.AuthorEmail;
-                        solution.SourceControl.AuthorName = GingerSolutionSourceControl.SourceControlInfo.AuthorName;
-                    }
-                }
-                else
-                {
-                    solution.SourceControl.Username = GingerSolutionSourceControl.SourceControlInfo.Username;
-                    solution.SourceControl.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
-                    solution.SourceControl.AuthorEmail = GingerSolutionSourceControl.SourceControlInfo.AuthorEmail;
-                    solution.SourceControl.AuthorName = GingerSolutionSourceControl.SourceControlInfo.AuthorName;
-                }
-
-                string error = string.Empty;
-
-                solution.SourceControl.SolutionFolder = solution.Folder;
-                solution.SourceControl.RepositoryRootFolder = repositoryRootFolder;
-                solution.SourceControl.URL = solution.SourceControl.GetRepositoryURL(ref error);
-                solution.SourceControl.LocalFolder = GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath;
-                solution.SourceControl.ProxyAddress = GingerSolutionSourceControl.SourceControlInfo.ProxyAddress;
-                solution.SourceControl.ProxyPort = GingerSolutionSourceControl.SourceControlInfo.ProxyPort;
-                solution.SourceControl.Timeout = GingerSolutionSourceControl.SourceControlInfo.Timeout;
-
-                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
-                {
-                    solution.SourceControl.BranchName = Ginger.SourceControl.SourceControlIntegration.GetCurrentBranchForSolution(solution.SourceControl);
-                }
-
-                WorkSpace.Instance.SourceControl = solution.SourceControl;
-                RepositoryItemBase.SetSourceControl(solution.SourceControl);
-                RepositoryFolderBase.SetSourceControl(solution.SourceControl);
-            }
-        }*/
 
         private static void HandleSolutionLoadSourceControl(Solution solution)
         {
@@ -651,7 +604,7 @@ namespace amdocs.ginger.GingerCoreNET
 
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
-                    solution.SourceControl.BranchName = Ginger.SourceControl.SourceControlIntegration.GetCurrentBranchForSolution(solution.SourceControl);
+                    solution.SourceControl.Branch = Ginger.SourceControl.SourceControlIntegration.GetCurrentBranchForSolution(solution.SourceControl);
                 }
 
                 WorkSpace.Instance.SourceControl = solution.SourceControl;

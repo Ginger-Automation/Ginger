@@ -476,7 +476,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     executionConfig.SolutionScmDetails.ProxyPort = solution.SourceControl.ProxyPort.ToString();
                 }
                 executionConfig.SolutionScmDetails.UndoSolutionLocalChanges = false;
-                executionConfig.SolutionScmDetails.Branch = solution.SourceControl.BranchName;
+                executionConfig.SolutionScmDetails.Branch = solution.SourceControl.Branch;
             }
             if (cliHelper.SetAlmConnectionDetails == true)
             {

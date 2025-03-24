@@ -784,7 +784,7 @@ namespace Ginger
                 {
                     GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath = mSourceControl.LocalFolder;
                 }
-                GingerSolutionSourceControl.SourceControlInfo.Branch = mSourceControl.BranchName;
+                GingerSolutionSourceControl.SourceControlInfo.Branch = mSourceControl.Branch;
                 GingerSolutionSourceControl.SourceControlInfo.AuthorName = mSourceControl.AuthorName;
                 GingerSolutionSourceControl.SourceControlInfo.AuthorEmail = mSourceControl.AuthorEmail;
                 GingerSolutionSourceControl.SourceControlInfo.Timeout = mSourceControl.Timeout;
@@ -815,7 +815,7 @@ namespace Ginger
                 mSourceControl.Username = GingerSolutionSourceControl.SourceControlInfo.Username;
                 mSourceControl.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
                 mSourceControl.LocalFolder = GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath;
-                mSourceControl.BranchName = GingerSolutionSourceControl.SourceControlInfo.Branch;
+                mSourceControl.Branch = GingerSolutionSourceControl.SourceControlInfo.Branch;
                 mSourceControl.IsProxyConfigured = GingerSolutionSourceControl.SourceControlInfo.IsProxyConfigured;
                 mSourceControl.ProxyAddress = GingerSolutionSourceControl.SourceControlInfo.ProxyAddress;
                 mSourceControl.ProxyPort = GingerSolutionSourceControl.SourceControlInfo.ProxyPort;

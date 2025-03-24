@@ -52,8 +52,8 @@ namespace GingerCoreNET.SourceControl
         string mUsername;
         public string Username { get { return mUsername; } set { mUsername = value; OnPropertyChanged(nameof(Username)); } }
 
-        string mBranchName;
-        public string BranchName { get { return mBranchName; } set { mBranchName = value; OnPropertyChanged(nameof(BranchName)); } }
+        string mBranch;
+        public string Branch { get { return mBranch; } set { mBranch = value; OnPropertyChanged(nameof(Branch)); } }
 
         string mPassword;
         public string Password { get { return mPassword; } set { mPassword = value; OnPropertyChanged(nameof(Password)); } }
@@ -95,7 +95,6 @@ namespace GingerCoreNET.SourceControl
 
         public bool supressMessage { get; set; }
         public bool IsImportSolution { get; set; }
-
 
         public abstract eSourceControlType GetSourceControlType { get; set; }
 

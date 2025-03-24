@@ -612,9 +612,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
                 Reporter.ToLog(eLogLevel.INFO, "Solution downloaded/updated successfully");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
             }
             finally
             {

@@ -81,7 +81,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
                 options.PasswordEncrypted = true;
                 options.SCMType = solution.SourceControl.GetSourceControlType;
-                options.Branch = solution.SourceControl.BranchName;
+                options.Branch = solution.SourceControl.Branch;
             }
 
             if (runsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl)
