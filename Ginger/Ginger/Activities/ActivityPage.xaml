@@ -21,11 +21,11 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="30"></ColumnDefinition>
-                <ColumnDefinition Width="200*"></ColumnDefinition>
-                <ColumnDefinition Width="580"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"></ColumnDefinition>
+                    <ColumnDefinition Width="200*"></ColumnDefinition>
+                    <ColumnDefinition Width="580"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
 
             <usercontrols:ImageMakerControl x:Name="xIconImage" Grid.Column="0" DataContext="{Binding RelativeSource={RelativeSource Self}}" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"/>
             <TextBlock x:Name="xNameTextBlock" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,0" Text="Activity Name" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $TextBlockStyle}" FontSize="18" FontWeight="Bold" />

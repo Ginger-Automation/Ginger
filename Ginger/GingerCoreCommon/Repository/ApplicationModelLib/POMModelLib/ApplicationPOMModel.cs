@@ -19,12 +19,14 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace Amdocs.Ginger.Repository
@@ -355,5 +357,21 @@ namespace Amdocs.Ginger.Repository
                 mApplicationPOMMetaData = value;
             }
         }
+
+        private PomSetting mPomSetting;
+        [IsSerializedForLocalRepository]
+        public PomSetting PomSetting
+        {
+            get
+            {
+                return mPomSetting;
+            }
+            set
+            {
+                mPomSetting = value;
+                OnPropertyChanged(nameof(this.PomSetting));
+            }
+        }
+
     }
 }

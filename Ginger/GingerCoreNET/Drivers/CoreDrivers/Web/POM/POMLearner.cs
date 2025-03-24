@@ -100,7 +100,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
                 if (IsNodeLearnable(childNode))
                 {
-                    bool shouldLearnThisNode = _pomSetting?.filteredElementType.Contains(childNodeElementType) ?? false;
+                    bool shouldLearnThisNode = _pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(childNodeElementType));
                     browserElement = await _browserElementProvider.GetElementAsync(eLocateBy.ByXPath, childNode.XPath);
                     if (browserElement != null && await IsBrowserElementVisibleAsync(browserElement))
                     {
@@ -674,20 +674,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
         private IEnumerable<ElementLocator> GenerateXPathLocatorsFromUserTemplates(IEnumerable<HtmlAttribute> htmlAttributes)
         {
             if (_pomSetting == null ||
-                _pomSetting.relativeXpathTemplateList == null ||
-                _pomSetting.relativeXpathTemplateList.Count <= 0)
+                _pomSetting.RelativeXpathTemplateList == null ||
+                _pomSetting.RelativeXpathTemplateList.Count <= 0)
             {
                 return [];
             }
 
             List<ElementLocator> locators = [];
-            foreach (string template in _pomSetting.relativeXpathTemplateList)
+            foreach (var template in _pomSetting.RelativeXpathTemplateList)
             {
                 var relXpath = string.Empty;
 
                 var attributeCount = 0;
 
-                var attList = UserTemplateRegex.Matches(template);
+                var attList = UserTemplateRegex.Matches(template.Value);
                 var strList = new List<string>();
                 foreach (string? item in attList)
                 {
@@ -702,7 +702,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 {
                     if (strList.Contains(item.Name))
                     {
-                        relXpath = template.Replace(item.Name + "=\'\'", item.Name + "=\'" + item.Value + "\'");
+                        relXpath = template.Value.Replace(item.Name + "=\'\'", item.Name + "=\'" + item.Value + "\'");
 
                         attributeCount++;
                     }
