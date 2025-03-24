@@ -236,7 +236,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             pomSetting.FilteredElementType = SelectedElementTypesList;
             pomSetting.ElementLocatorsSettingsList = POM.PomSetting.ElementLocatorsSettingsList;
             pomSetting.isPOMLearn = true;
-            pomSetting.RelativeXpathTemplateList = POM.RelativeXpathTemplateList; //GetRelativeXpathTemplateList();
+            pomSetting.RelativeXpathTemplateList = POM.RelativeXpathTemplateList;
             pomSetting.SpecificFramePath = SpecificFramePath;
             pomSetting.LearnScreenshotsOfElements = LearnScreenshotsOfElements;
             pomSetting.LearnShadowDomElements = LearnShadowDomElements;

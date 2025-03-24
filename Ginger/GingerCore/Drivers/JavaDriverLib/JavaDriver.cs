@@ -2081,7 +2081,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     {
                         break;
                     }
-                    if(selectedElementTypesList.Any(x=>x.ElementType.Equals(htmlElement.ElementTypeEnum)))
+                    if(selectedElementTypesList != null && selectedElementTypesList.Any(x=>x.ElementType.Equals(htmlElement.ElementTypeEnum)))
                     {
                         htmlElement.IsAutoLearned = true;
                         htmlElement.Active = true;

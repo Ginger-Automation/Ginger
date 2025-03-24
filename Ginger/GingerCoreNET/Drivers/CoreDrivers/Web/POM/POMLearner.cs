@@ -100,7 +100,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
                 if (IsNodeLearnable(childNode))
                 {
-                    bool shouldLearnThisNode = _pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(childNodeElementType));
+                    bool shouldLearnThisNode = _pomSetting.FilteredElementType != null && _pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(childNodeElementType));
                     browserElement = await _browserElementProvider.GetElementAsync(eLocateBy.ByXPath, childNode.XPath);
                     if (browserElement != null && await IsBrowserElementVisibleAsync(browserElement))
                     {

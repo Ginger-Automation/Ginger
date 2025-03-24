@@ -535,6 +535,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             FirstRow.Height = new GridLength(6, GridUnitType.Star);
         }
 
+        /// <summary>
+        /// Sets the icon image type based on the POM model's item image type.
+        /// Ensures the update happens on the UI thread using the dispatcher.
+        /// </summary>
         private void SetIconImageType()
         {
             Dispatcher.Invoke(() =>

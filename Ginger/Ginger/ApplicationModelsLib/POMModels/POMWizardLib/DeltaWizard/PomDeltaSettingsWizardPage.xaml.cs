@@ -26,6 +26,7 @@ using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -210,7 +211,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     elem.Selected = valueToSet;
                     if (elem.Selected)
                     {
-                        mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Add(elem);
+                        if (!mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Any(x => x.ElementType.Equals(elem.ElementType)))
+                        {
+                            mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Add(elem);
+                        }
                     }
                     else
                     {
@@ -228,9 +232,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 foreach (UIElementFilter elem in mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList)
                 {
                     elem.Selected = valueToSet;
-                    if(elem.Selected)
+                    if (elem.Selected)
                     {
-                        mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Add(elem);
+                        if (!mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Any(x => x.ElementType.Equals(elem.ElementType)))
+                        {
+                            mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Add(elem);
+                        }
                     }
                     else
                     {
