@@ -39,7 +39,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Remove="Actions\REST\**" />
