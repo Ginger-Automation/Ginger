@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCoreNET.SourceControl;
 using SharpSvn;
 using System;
@@ -46,8 +47,23 @@ namespace GingerCore.SourceControl
 
         public override bool IsSupportingGetLatestForIndividualFiles { get { return true; } }
 
-        public override eSourceControlType GetSourceControlType { get { return eSourceControlType.SVN; } set { } }
 
+        private eSourceControlType mSourceControlType = eSourceControlType.SVN;
+
+        public override eSourceControlType GetSourceControlType
+        {
+            get
+            {
+                return mSourceControlType;
+            }
+            set
+            {
+                if (mSourceControlType != value)
+                {
+                    mSourceControlType = value;
+                }
+            }
+        }
         public override List<string> GetSourceControlmConflict { get { return mConflictsPaths; } }
 
         public override bool AddFile(string Path, ref string error)

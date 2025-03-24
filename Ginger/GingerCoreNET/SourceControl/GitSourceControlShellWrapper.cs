@@ -50,8 +50,23 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
         public override bool IsSupportingLocks { get { return true; } }
 
         public override bool IsSupportingGetLatestForIndividualFiles { get { return true; } }
-        public override eSourceControlType GetSourceControlType { get { return eSourceControlType.GIT; } set { } }
 
+        private eSourceControlType mSourceControlType = eSourceControlType.GIT;
+
+        public override eSourceControlType GetSourceControlType
+        {
+            get
+            {
+                return mSourceControlType;
+            }
+            set
+            {
+                if (mSourceControlType != value)
+                {
+                    mSourceControlType = value;
+                }
+            }
+        }
         public override List<string> GetSourceControlmConflict => throw new NotImplementedException();
 
         public override bool AddFile(string Path, ref string error)

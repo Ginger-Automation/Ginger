@@ -127,7 +127,7 @@ namespace Ginger.SourceControl
                     }
                     else
                     {
-                        xTextSourceControlConnectionTimeout.Text = nameof(GingerSolutionSourceControl.SourceControlInfo.Timeout);
+                        xTextSourceControlConnectionTimeout.Text =GingerSolutionSourceControl.SourceControlInfo.Timeout.ToString();
                     }
                 }
             }
