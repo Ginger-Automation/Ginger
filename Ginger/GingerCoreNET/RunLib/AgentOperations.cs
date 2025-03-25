@@ -130,7 +130,7 @@ namespace GingerCore
         BackgroundWorker CancelTask;
 
         public DriverBase CreateDriverInstance()
-        {
+        {//it will help tho create the driver instance 
             return (DriverBase)TargetFrameworkHelper.Helper.GetDriverObject(Agent);
         }
 

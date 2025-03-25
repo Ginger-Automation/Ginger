@@ -587,6 +587,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 executionConfig.Environments = EnvironmentConfigOperations.ConvertToEnvironmentRunsetConfig(runsetExecutor.RunsetExecutionEnvironment, runsetExecutor.RunSetConfig.GingerRunners);
             }
 
+            if (cliHelper.SetAgentDetails && runsetExecutor.RunSetConfig.GingerRunners.Count > 0)
+            {
+               // executionConfig.Agents = AgentConfigOperations.ConvertToAgentRunsetConfig(runsetExecutor.Agent, runsetExecutor.RunSetConfig.GingerRunners);
+            }
+
             RunsetExecConfig runset = new RunsetExecConfig
             {
                 Exist = true,

@@ -259,8 +259,6 @@
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="2024.4.1.6" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.5.4" />
-  
     <PackageReference Include="Google.Protobuf" Version="3.29.3" />
     
     <PackageReference Include="GraphQL" Version="8.3.1" />
@@ -395,6 +393,9 @@
     </Reference>
     <Reference Include="AzureDevOpsRepo">
       <HintPath>DLLS\AzureDevOpsRepo.dll</HintPath>
+    </Reference>
+    <Reference Include="Ginger.ExecuterService.Contracts">
+      <HintPath>..\..\..\ginger-execution-services\GingerExecuterService\bin\Debug\net8.0\Ginger.ExecuterService.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>
