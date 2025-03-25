@@ -589,7 +589,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
             if (cliHelper.SetAgentDetails && runsetExecutor.RunSetConfig.GingerRunners.Count > 0)
             {
-               // executionConfig.Agents = AgentConfigOperations.ConvertToAgentRunsetConfig(runsetExecutor.Agent, runsetExecutor.RunSetConfig.GingerRunners);
+                executionConfig.Agents = AgentConfigOperations.ConvertToAgentRunsetConfig(runsetExecutor.RunSetConfig.GingerRunners);
             }
 
             RunsetExecConfig runset = new RunsetExecConfig
@@ -676,16 +676,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 {
                     runner.AppAgentMappings = [];
                 }
-                foreach (ApplicationAgent applicationAgent in gingerRunner.ApplicationAgents)
-                {
-                    ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
-                    applicationAgent.ApplicationAgentOperations = applicationAgentOperations;
-                    if (applicationAgent.Agent == null)
+                    foreach (ApplicationAgent applicationAgent in gingerRunner.ApplicationAgents)
                     {
-                        continue;//probably target app without platform or no such Agent
+                        ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
+                        applicationAgent.ApplicationAgentOperations = applicationAgentOperations;
+                        if (applicationAgent.Agent == null)
+                        {
+                            continue;//probably target app without platform or no such Agent
+                        }
+                        runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.AgentID, ApplicationName = applicationAgent.AppName, ApplicationID = applicationAgent.AppID });
                     }
-                    runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.AgentID, ApplicationName = applicationAgent.AppName, ApplicationID = applicationAgent.AppID });
-                }
 
                 //
                 runner.RunInSimulationMode = gingerRunner.RunInSimulationMode;
