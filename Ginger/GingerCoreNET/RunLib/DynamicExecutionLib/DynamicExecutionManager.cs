@@ -1107,6 +1107,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 EnvironmentConfigOperations.AddNewEnvironmentDetails(NewlyAddedEnvironments, AllEnvironmentsInGinger);
             }
 
+            if (gingerExecConfig.Agents?.Count > 0)
+            {
+                AgentConfigOperations.CheckIfNameIsUnique<AgentConfig>(gingerExecConfig.Agents);
+
+                var ExistingAgents = gingerExecConfig.Agents.Where((env) => !env.Exist.HasValue || env.Exist.Value);
+                var NewlyAddedAgents = gingerExecConfig.Agents.Where((env) => env.Exist.HasValue && !env.Exist.Value);
+
+                var AllEnvironmentsInGinger = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+
+                AgentConfigOperations.UpdateExistingAgentDetails(ExistingAgents, AllEnvironmentsInGinger);
+
+                AgentConfigOperations.AddNewAgentDetails(NewlyAddedAgents, AllEnvironmentsInGinger);
+            }
+
             //Add or Update Runners
             if (dynamicRunsetConfigs.Runners != null)
             {
