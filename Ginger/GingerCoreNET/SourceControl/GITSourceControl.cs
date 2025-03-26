@@ -47,7 +47,7 @@ namespace GingerCore.SourceControl
 
         public override bool IsSupportingGetLatestForIndividualFiles { get { return false; } }
 
-        public override eSourceControlType GetSourceControlType { get; set; }
+        public override eSourceControlType GetSourceControlType { get { return eSourceControlType.GIT; } }
 
         public override List<string> GetSourceControlmConflict { get { return null; } }
 

@@ -571,7 +571,6 @@ namespace Ginger.SourceControl
 
                 if (mSourceControl != null)
                 {
-                    mSourceControl.GetSourceControlType = WorkSpace.Instance.UserProfile.Type ;
                     mSourceControl.URL = WorkSpace.Instance.UserProfile.URL;
                     mSourceControl.Username = WorkSpace.Instance.UserProfile.Username;
                     mSourceControl.Password = WorkSpace.Instance.UserProfile.Password;

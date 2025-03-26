@@ -96,7 +96,7 @@ namespace GingerCoreNET.SourceControl
         public bool supressMessage { get; set; }
         public bool IsImportSolution { get; set; }
 
-        public abstract eSourceControlType GetSourceControlType { get; set; }
+        public abstract eSourceControlType GetSourceControlType { get; }
 
         public abstract List<string> GetSourceControlmConflict { get; }
 

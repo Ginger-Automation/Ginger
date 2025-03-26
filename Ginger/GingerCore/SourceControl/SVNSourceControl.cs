@@ -47,23 +47,9 @@ namespace GingerCore.SourceControl
 
         public override bool IsSupportingGetLatestForIndividualFiles { get { return true; } }
 
+ 
 
-        private eSourceControlType mSourceControlType = eSourceControlType.SVN;
-
-        public override eSourceControlType GetSourceControlType
-        {
-            get
-            {
-                return mSourceControlType;
-            }
-            set
-            {
-                if (mSourceControlType != value)
-                {
-                    mSourceControlType = value;
-                }
-            }
-        }
+        public override eSourceControlType GetSourceControlType { get { return eSourceControlType.SVN; } }
         public override List<string> GetSourceControlmConflict { get { return mConflictsPaths; } }
 
         public override bool AddFile(string Path, ref string error)

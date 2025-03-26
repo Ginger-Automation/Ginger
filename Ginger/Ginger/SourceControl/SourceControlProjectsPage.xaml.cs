@@ -23,6 +23,7 @@ using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
+using Ginger.Run.RunSetActions;
 using Ginger.UserControls;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
@@ -87,7 +88,6 @@ namespace Ginger.SourceControl
             else
             {
                 mSourceControl = new GITSourceControl();
-                mSourceControl.GetSourceControlType = SourceControlBase.eSourceControlType.GIT;
                 BindComponent();
             }
 
@@ -95,7 +95,15 @@ namespace Ginger.SourceControl
         private void BindComponent()
         {
             SourceControlType = mSourceControl.GetSourceControlType;
-            SourceControlClassComboBox.Init(mSourceControl, nameof(mSourceControl.GetSourceControlType), typeof(SourceControlBase.eSourceControlType));
+            GingerCore.General.FillComboFromEnumType(SourceControlClassComboBox.ComboBox, typeof(SourceControlBase.eSourceControlType));
+            if (mSourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
+            {
+                SourceControlClassComboBox.ComboBox.SelectedIndex = 1;
+            }
+            else
+            {
+                SourceControlClassComboBox.ComboBox.SelectedIndex = 2;
+            }
 
             if (IsImportSolution)
             {
@@ -145,25 +153,31 @@ namespace Ginger.SourceControl
         }
         private void SourceControlClassComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (SourceControlClassComboBox.ComboBox.SelectedValue == null)
+            if (SourceControlClassComboBox.ComboBox.SelectedValue==null||(SourceControlBase.eSourceControlType)SourceControlClassComboBox.ComboBox.SelectedValue == SourceControlBase.eSourceControlType.None)
+            {
+                if (mSourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
+                {
+                    SourceControlClassComboBox.ComboBox.SelectedIndex = 1;
+                }
+                else
+                {
+                    SourceControlClassComboBox.ComboBox.SelectedIndex = 2;
+                }
+                return;
+            }
+            var selectedSourceControlType = (SourceControlBase.eSourceControlType)SourceControlClassComboBox.ComboBox.SelectedValue;
+            if (selectedSourceControlType == SourceControlBase.eSourceControlType.None || selectedSourceControlType == SourceControlType)
             {
                 return;
             }
-            var a = (SourceControlBase.eSourceControlType)SourceControlClassComboBox.ComboBox.SelectedValue;
-            if (a == SourceControlBase.eSourceControlType.None || a == SourceControlType)
-            {
-                return;
-            }
-            setVisibility(a);
-            if (a == SourceControlBase.eSourceControlType.SVN)
+            setVisibility(selectedSourceControlType);
+            if (selectedSourceControlType == SourceControlBase.eSourceControlType.SVN)
             {
                 mSourceControl = new SVNSourceControl();
-                mSourceControl.GetSourceControlType = SourceControlBase.eSourceControlType.SVN;
             }
             else
             {
                 mSourceControl = new GITSourceControl();
-                mSourceControl.GetSourceControlType = SourceControlBase.eSourceControlType.GIT;
             }
             BindComponent();
 

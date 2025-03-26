@@ -810,7 +810,6 @@ namespace Ginger
                 }
                 UserProfileOperations.RefreshSourceControlCredentials(solutionGuid);
                 var GingerSolutionSourceControl = GetSolutionSourceControlInfo(solutionGuid);
-                mSourceControl.GetSourceControlType = GingerSolutionSourceControl.SourceControlInfo.Type;
                 mSourceControl.URL = GingerSolutionSourceControl.SourceControlInfo.Url;
                 mSourceControl.Username = GingerSolutionSourceControl.SourceControlInfo.Username;
                 mSourceControl.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
