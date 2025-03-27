@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib;
+using Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizard;
 using Ginger.External.Katalon;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -125,7 +126,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             TreeViewUtils.AddSubMenuItem(addMenu, "Empty POM", AddEmptyPOM, null, eImageType.ApplicationPOMModel);
             if (mPOMModelFolder.IsRootFolder)
             {
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true,allowMultiPomUpdate:true);
             }
             else
             {
@@ -133,6 +134,9 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             }
             MenuItem importMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Import", eImageType.ImportFile);
             TreeViewUtils.AddSubMenuItem(importMenu, "Katalon Object-Repository", ImportFromKatalonObjectRepository, CommandParameter: null!, icon: eImageType.Katalon);
+
+            MenuItem updateMultiPomMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Update Multiple POM", eImageType.ApplicationPOMModel);
+            TreeViewUtils.AddSubMenuItem(updateMultiPomMenu, "Update Multiple POM", UpdateMultiplePOM, null, eImageType.ApplicationPOMModel);
 
             AddSourceControlOptions(mContextMenu);
         }
@@ -176,5 +180,21 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
                 PomLearnUtils.SaveLearnedPOM();
             }
         }
+
+        internal void UpdateMultiplePOM(object sender, RoutedEventArgs e)
+        {
+            List<ApplicationPlatform> TargetApplications = WorkSpace.Instance.Solution.GetListOfPomSupportedPlatform();
+            if (TargetApplications.Count != 0)
+            {
+                mTreeView.Tree.ExpandTreeItem(this);
+                WizardWindow.ShowWizard(new UpdateMultiplePomWizard(mPOMModelFolder), 1000, 700, DoNotShowAsDialog: true);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.MissingTargetApplication, $"Please Add at-least one {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} that supports POM to continue adding Page Object Models");
+            }
+        }
+
+
     }
 }
