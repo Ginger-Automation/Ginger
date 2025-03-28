@@ -52,6 +52,15 @@ namespace Ginger.Run.RunSetActions
 
         public void Execute(IReportInfo RI)
         {
+            if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Any(htmlRC => htmlRC.IsDefault))
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "No Default HTML Report template available to generate report. Please set a default template in Configurations -> Reports -> Reports Template.");
+                RunSetActionHTMLReport.Errors = "No Default HTML Report template available to generate report. Please set a default template in Configurations -> Reports -> Reports Template.";
+                Reporter.HideStatusMessage();
+                RunSetActionHTMLReport.Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
+                return;
+            }
+
             string reportsResultFolder = string.Empty;
             HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
