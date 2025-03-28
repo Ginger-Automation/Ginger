@@ -99,7 +99,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             if (mAppPlatform.Equals(ePlatformType.Web) || mAppPlatform.Equals(ePlatformType.Mobile))
             {
                 xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Visible;
-                if (mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList.Count > 0)
+                if (mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList != null && mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList.Count > 0)
                 {
                     xCustomRelativeXpathTemplateFrame.UpdateCustomRelPathGridList(mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList);
                 }

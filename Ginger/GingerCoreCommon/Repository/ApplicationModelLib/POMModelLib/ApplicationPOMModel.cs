@@ -236,10 +236,14 @@ namespace Amdocs.Ginger.Repository
         public override void PostDeserialization()
         {
             base.PostDeserialization();
-            PomSetting = new()
+            if (PomSetting == null)
             {
-                RelativeXpathTemplateList = RelativeXpathTemplateList
-            };
+                PomSetting = new PomSetting();
+            }
+            if (RelativeXpathTemplateList != null && RelativeXpathTemplateList.Count > 0)
+            {
+                PomSetting.RelativeXpathTemplateList = RelativeXpathTemplateList;
+            }
         }
         public ObservableList<ElementInfo> GetUnifiedElementsList()
         {
