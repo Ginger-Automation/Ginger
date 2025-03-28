@@ -680,7 +680,19 @@ namespace GingerCore.Drivers
                             profile.SetPreference("general.useragent.override", BrowserUserAgent.Trim());
                             FirefoxOption.Profile = profile;
                         }
-
+                        if (SeleniumUserArgs != null)
+                        {
+                            foreach (string arg in SeleniumUserArgs)
+                            {
+                                FirefoxOption.AddArgument(arg);
+                            }
+                        }
+                        if (BrowserPrivateMode)
+                        {
+                            // This is correct way of setting private mode in Firefox, it doesn't preserve history of ongoing session
+                            FirefoxOption.SetPreference("browser.privatebrowsing.autostart", true);
+                        }
+                        
                         driverService = FirefoxDriverService.CreateDefaultService();
                         AddCustomDriverPath(driverService);
                         driverService.HideCommandPromptWindow = HideConsoleWindow;
@@ -821,6 +833,10 @@ namespace GingerCore.Drivers
                             else
                             {
                                 SetProxy(EDOpts);
+                            }
+                            if (BrowserPrivateMode)
+                            {
+                                EDOpts.AddArgument("-inprivate");
                             }
 
                             if (SeleniumUserArgs != null)
