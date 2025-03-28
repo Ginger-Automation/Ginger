@@ -93,14 +93,12 @@
                                         </RadioButton>
                                 </StackPanel>
 
-                                <StackPanel Margin="20,20,0,0" Grid.Column="0" Grid.Row="4">
+                                <StackPanel Margin="-20,0,0,0" Grid.Column="1" Grid.Row="4">
                                     <StackPanel x:Name="xPageUrlStackPanel" Orientation="Horizontal" >
                                         <UserControl:UCValueExpression x:Name="xPageURLTextBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250"/>
                                         <UserControls:ucButton x:Name="xPageURLBtn" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoNext" Click="xPageURLBtn_Click" ToolTip="Go to Page" Margin="0,0,0,0"/>
+                                        <Frame VerticalAlignment="Top" Margin="0,0,0,0" x:Name="xFrameBusinessFlowControl" NavigationUIVisibility="Hidden" HorizontalAlignment="Left" BorderBrush="Transparent"/>
                                     </StackPanel>
-                                </StackPanel>
-                                <StackPanel Margin="20,0,0,0" Grid.Column="1" Grid.Row="4">
-                                    <Frame VerticalAlignment="Top" Margin="0,0,0,0" x:Name="xFrameBusinessFlowControl" NavigationUIVisibility="Hidden" HorizontalAlignment="Left" BorderBrush="Transparent"/>
                                 </StackPanel>
                             </Grid>
                         </StackPanel>

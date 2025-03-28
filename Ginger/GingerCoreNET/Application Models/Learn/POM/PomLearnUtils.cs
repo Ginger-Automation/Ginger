@@ -236,7 +236,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             pomSetting.FilteredElementType = SelectedElementTypesList;
             pomSetting.ElementLocatorsSettingsList = POM.PomSetting.ElementLocatorsSettingsList;
             pomSetting.isPOMLearn = true;
-            pomSetting.RelativeXpathTemplateList = POM.RelativeXpathTemplateList;
+            pomSetting.RelativeXpathTemplateList = POM.PomSetting.RelativeXpathTemplateList;
             pomSetting.SpecificFramePath = SpecificFramePath;
             pomSetting.LearnScreenshotsOfElements = LearnScreenshotsOfElements;
             pomSetting.LearnShadowDomElements = LearnShadowDomElements;
@@ -296,7 +296,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         {
             var customRelXpathTemplateList = new List<string>();
 
-            foreach (var item in POM.RelativeXpathTemplateList)
+            foreach (var item in POM.PomSetting.RelativeXpathTemplateList)
             {
                 customRelXpathTemplateList.Add(item.Value);
             }

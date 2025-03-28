@@ -86,11 +86,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             {
                 if (xCustomRelativeXpathTemplateFrame.xCustomRelativeXpathCofigChkBox.IsChecked == true)
                 {
-                    mWizard.mPomDeltaUtils.POM.RelativeXpathTemplateList = xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList;
+                    mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList = xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList;
                 }
                 else
                 {
-                    mWizard.mPomDeltaUtils.POM.RelativeXpathTemplateList.Clear();
+                    mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList.Clear();
                 }
             }
         }

@@ -133,7 +133,7 @@ namespace GingerCoreNET.Application_Models
         {
             var customRelXpathTemplateList = new List<string>();
 
-            foreach (var item in POM.RelativeXpathTemplateList)
+            foreach (var item in POM.PomSetting.RelativeXpathTemplateList)
             {
                 customRelXpathTemplateList.Add(item.Value);
             }

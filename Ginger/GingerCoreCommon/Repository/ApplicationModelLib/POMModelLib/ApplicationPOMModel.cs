@@ -232,9 +232,15 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        [IsSerializedForLocalRepository]
         public ObservableList<CustomRelativeXpathTemplate> RelativeXpathTemplateList = [];
-
+        public override void PostDeserialization()
+        {
+            base.PostDeserialization();
+            PomSetting = new()
+            {
+                RelativeXpathTemplateList = RelativeXpathTemplateList
+            };
+        }
         public ObservableList<ElementInfo> GetUnifiedElementsList()
         {
             ObservableList<ElementInfo> unifiedList = [];
