@@ -75,6 +75,10 @@ namespace Amdocs.Ginger.Repository
 
         public override string ItemName { get { return this.Name; } set { this.Name = value; } }
 
+        private bool mSelected = false;
+
+        public bool Selected { get { return mSelected; } set { if (mSelected != value) { mSelected = value; OnPropertyChanged(nameof(Selected)); } } }
+
         public override string GetNameForFileName()
         {
             return this.Name;

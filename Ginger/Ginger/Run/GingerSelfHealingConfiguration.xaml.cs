@@ -39,6 +39,7 @@ namespace Ginger.Run
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoFixAnalyzerChkBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.AutomateTabSelfHealingConfiguration, nameof(SelfHealingConfig.AutoFixAnalyzerIssue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRePrioritizeChkBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.AutomateTabSelfHealingConfiguration, nameof(SelfHealingConfig.ReprioritizePOMLocators));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoUpdateModelChkBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.AutomateTabSelfHealingConfiguration, nameof(SelfHealingConfig.AutoUpdateApplicationModel));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xForceUpdateModelChkBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.AutomateTabSelfHealingConfiguration, nameof(SelfHealingConfig.ForceUpdateApplicationModel));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoExecuteInSimulationChkBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.AutomateTabSelfHealingConfiguration, nameof(SelfHealingConfig.AutoExecuteInSimulationMode));
 
             ShowHideConfigPanel();
@@ -98,10 +99,12 @@ namespace Ginger.Run
             if (xAutoUpdateModelChkBox.IsChecked ?? false)
             {
                 AutoUpdateModelNoteTextBlock.Visibility = Visibility.Visible;
+                xForceUpdateModelChkBox.Visibility = Visibility.Visible;
             }
             else
             {
                 AutoUpdateModelNoteTextBlock.Visibility = Visibility.Hidden;
+                xForceUpdateModelChkBox.Visibility = Visibility.Collapsed;
             }
         }
     }

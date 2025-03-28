@@ -4280,6 +4280,13 @@ namespace GingerCore.Drivers
                         {
                             SwitchFrame(currentPOMElementInfo);
                         }
+
+                        if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SelfHealingConfiguration.ForceUpdateApplicationModel)
+                        {
+                            pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent);
+                            WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Add(currentPOM.Guid);
+                        }
+
                         elem = LocateElementByLocators(currentPOMElementInfo, currentPOM.MappedUIElements, false, pomExcutionUtil);
 
                         if (elem == null && pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent) != null)

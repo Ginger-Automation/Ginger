@@ -25,12 +25,16 @@ using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Telemetry;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
+using Ginger.Run;
 using Ginger.Variables;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.Activities;
 using GingerCore.FlowControlLib;
 using GingerCore.Platforms;
@@ -2091,5 +2095,40 @@ namespace GingerCore
 
             return AreEqual(obj as BusinessFlow);
         }
+
+        //public ObservableList<ApplicationPOMModel> usedApplicationPOMModels {
+        //    get
+        //    {
+        //        return GetAllUsedApplicationPOMModel();
+        //    }
+        //}
+
+        //public ObservableList<ApplicationPOMModel> GetAllUsedApplicationPOMModel()
+        //{
+        //    ObservableList<ApplicationPOMModel> POMList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
+        //    ObservableList <ApplicationPOMModel> usedPOMs = new ObservableList<ApplicationPOMModel>();
+        //    foreach (Activity activity in Activities)
+        //    {
+        //        foreach (IAct act in activity.Acts)
+        //        {
+        //            if (act is ActUIElement)
+        //            {
+        //                ActUIElement actUIElement = (ActUIElement)act;
+        //                if (actUIElement.ElementLocateBy == eLocateBy.POMElement)
+        //                {
+        //                    if (POMList.Any(x=>x.ItemName.Equals(actUIElement.ElementLocateValue)))
+        //                    {
+        //                        ApplicationPOMModel pom = POMList.FirstOrDefault(x => x.ItemName.Equals(actUIElement.ElementLocateValue));
+        //                        if (pom != null && !usedPOMs.Contains(pom))
+        //                        {
+        //                            usedPOMs.Add(pom);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return usedPOMs;
+        //}
     }
 }
