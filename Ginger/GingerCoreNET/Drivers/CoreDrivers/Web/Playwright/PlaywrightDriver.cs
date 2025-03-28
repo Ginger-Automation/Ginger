@@ -118,6 +118,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 recordVideoDir = recordVideoDir.Replace(@"~\", solutionFolder, StringComparison.InvariantCultureIgnoreCase);
             }
 
+            RecordVideoSize? recordVideoSize = null;
+            if (VideoHeight > 0 && VideoWidth > 0)
+            {
+                recordVideoSize = new RecordVideoSize { Height = VideoHeight, Width = VideoWidth };
+            }
+            
             PlaywrightBrowser.Options options = new()
             {
                 Args = new[] { "--start-maximized" },
@@ -125,7 +131,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 Timeout = DriverLoadWaitingTime * 1000, //convert to milliseconds
                 EnableVideoRecording = EnableVideoRecording,
                 RecordVideoDir = recordVideoDir,
-                RecordVideoSize = new RecordVideoSize { Height = VideoHeight, Width = VideoWidth }
+                RecordVideoSize = recordVideoSize
             };
 
             if (!string.IsNullOrEmpty(Proxy))
