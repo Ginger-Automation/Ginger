@@ -41,7 +41,6 @@
 
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.0" />
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.5.4" />
     <PackageReference Include="Microsoft.NETCore.App" Version="2.1.30" />
     <PackageReference Include="MimeKit" Version="4.10.0" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.100" />
@@ -59,5 +58,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Ginger.ExecuterService.Contracts">
+      <HintPath>..\..\..\ginger-execution-services\GingerExecuterService\bin\Debug\net8.0\Ginger.ExecuterService.Contracts.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
