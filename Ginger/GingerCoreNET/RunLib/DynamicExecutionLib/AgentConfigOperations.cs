@@ -132,8 +132,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     existingAgentFromGinger.AgentType = (Agent.eAgentType)jsonAgent.AgentType;
                     existingAgentFromGinger.DriverType = (Agent.eDriverType)jsonAgent.DriverType;
                     existingAgentFromGinger.Platform = (GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType)jsonAgent.PlatformType;
-
-                   
                     foreach (var newParam in jsonAgent.DriverParameter)
                     {
                         var existingParam = existingAgentFromGinger.DriverConfiguration.FirstOrDefault(p => p.Parameter == newParam.Name);
@@ -187,11 +185,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
         /// <exception cref="InvalidOperationException">Thrown if the agent already exists.</exception>
         public static void ValidateAgentConfig(ObservableList<Agent> AllAgentsInGinger, AgentConfig VirtualAgent)
         {
-            var doesAgentExist = AllAgentsInGinger.Any((existingAgent) => existingAgent.Guid.Equals(VirtualAgent.Guid));
-            if (!doesAgentExist)
-            {
-                doesAgentExist = AllAgentsInGinger.Any((existingAgent) => existingAgent.Name.Equals(VirtualAgent.Name));
-            }
+            var doesAgentExist = AllAgentsInGinger.Any(existingAgent =>existingAgent.Guid.Equals(VirtualAgent.Guid) ||existingAgent.Name.Equals(VirtualAgent.Name));
 
             if (doesAgentExist)
             {
