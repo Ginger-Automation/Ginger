@@ -97,7 +97,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
         /// <exception cref="InvalidOperationException">Thrown if the names are not unique.</exception>
         public static void CheckIfNameIsUnique<T>(IEnumerable<T> List)
         {
-            var distinctCount = List.Select((agent) => typeof(T).GetProperty("Name").GetValue(agent)).Distinct().Count();
+            var distinctCount = List.Select((agent) =>
+            {
+                var nameProperty = typeof(T).GetProperty("Name");
+                if (nameProperty == null)
+                {
+                    throw new InvalidOperationException($"Type {typeof(T).Name} does not contain a property named 'Name'");
+                }
+                return nameProperty.GetValue(agent);
+            }).Distinct().Count();
+
             var actualCount = List.Count();
             if (distinctCount != actualCount)
             {
