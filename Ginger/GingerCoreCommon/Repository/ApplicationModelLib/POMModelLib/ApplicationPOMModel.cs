@@ -19,12 +19,14 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace Amdocs.Ginger.Repository
@@ -230,9 +232,19 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        [IsSerializedForLocalRepository]
         public ObservableList<CustomRelativeXpathTemplate> RelativeXpathTemplateList = [];
-
+        public override void PostDeserialization()
+        {
+            base.PostDeserialization();
+            if (PomSetting == null)
+            {
+                PomSetting = new PomSetting();
+            }
+            if (RelativeXpathTemplateList != null && RelativeXpathTemplateList.Count > 0)
+            {
+                PomSetting.RelativeXpathTemplateList = RelativeXpathTemplateList;
+            }
+        }
         public ObservableList<ElementInfo> GetUnifiedElementsList()
         {
             ObservableList<ElementInfo> unifiedList = [];
@@ -355,5 +367,21 @@ namespace Amdocs.Ginger.Repository
                 mApplicationPOMMetaData = value;
             }
         }
+
+        private PomSetting mPomSetting;
+        [IsSerializedForLocalRepository]
+        public PomSetting PomSetting
+        {
+            get
+            {
+                return mPomSetting;
+            }
+            set
+            {
+                mPomSetting = value;
+                OnPropertyChanged(nameof(this.PomSetting));
+            }
+        }
+
     }
 }

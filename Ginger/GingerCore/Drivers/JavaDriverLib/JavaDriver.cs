@@ -2054,7 +2054,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         }
 
-        private void GetWidgetsElementList(List<eElementType> selectedElementTypesList, ObservableList<ElementInfo> elementInfoList, string currentFramePath)
+        private void GetWidgetsElementList(ObservableList<UIElementFilter> selectedElementTypesList, ObservableList<ElementInfo> elementInfoList, string currentFramePath)
         {
             var javaElementInfo = new JavaElementInfo()
             {
@@ -2081,7 +2081,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     {
                         break;
                     }
-                    if (selectedElementTypesList.Contains(htmlElement.ElementTypeEnum))
+                    if(selectedElementTypesList != null && selectedElementTypesList.Any(x=>x.ElementType.Equals(htmlElement.ElementTypeEnum)))
                     {
                         htmlElement.IsAutoLearned = true;
                         htmlElement.Active = true;
@@ -2169,16 +2169,17 @@ namespace GingerCore.Drivers.JavaDriverLib
                             {
                                 if (ci.ElementType.Contains("browser") && ci.ElementTypeEnum.Equals(eElementType.Browser))
                                 {
-                                    GetWidgetsElementList(pomSetting.filteredElementType, foundElementsList, ci.XPath);
+                                    GetWidgetsElementList(pomSetting.FilteredElementType, foundElementsList, ci.XPath);
                                 }
                                 else
                                 {
                                     ((IWindowExplorer)this).LearnElementInfoDetails(ci);
                                     // set the Flag in case you wish to learn the element or not
                                     bool learnElement = true;
-                                    if (pomSetting.filteredElementType != null)
+                                    if (pomSetting.FilteredElementType != null)
                                     {
-                                        if (!pomSetting.filteredElementType.Contains(ci.ElementTypeEnum))
+                                        //if (!pomSetting.FilteredElementType.Contains(ci.ElementTypeEnum))
+                                        if(!pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(ci.ElementTypeEnum)))
                                         {
                                             learnElement = false;
                                         }

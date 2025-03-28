@@ -680,7 +680,19 @@ namespace GingerCore.Drivers
                             profile.SetPreference("general.useragent.override", BrowserUserAgent.Trim());
                             FirefoxOption.Profile = profile;
                         }
-
+                        if (SeleniumUserArgs != null)
+                        {
+                            foreach (string arg in SeleniumUserArgs)
+                            {
+                                FirefoxOption.AddArgument(arg);
+                            }
+                        }
+                        if (BrowserPrivateMode)
+                        {
+                            // This is correct way of setting private mode in Firefox, it doesn't preserve history of ongoing session
+                            FirefoxOption.SetPreference("browser.privatebrowsing.autostart", true);
+                        }
+                        
                         driverService = FirefoxDriverService.CreateDefaultService();
                         AddCustomDriverPath(driverService);
                         driverService.HideCommandPromptWindow = HideConsoleWindow;
@@ -821,6 +833,10 @@ namespace GingerCore.Drivers
                             else
                             {
                                 SetProxy(EDOpts);
+                            }
+                            if (BrowserPrivateMode)
+                            {
+                                EDOpts.AddArgument("-inprivate");
                             }
 
                             if (SeleniumUserArgs != null)
@@ -5387,12 +5403,12 @@ namespace GingerCore.Drivers
         // Method to determine if the element should be learned
         private bool ShouldLearnElement(PomSetting pomSetting, eElementType elementType)
         {
-            if (pomSetting == null || pomSetting.filteredElementType == null)
+            if (pomSetting == null || pomSetting.FilteredElementType == null)
             {
                 return true; // Learn all elements if no filtering is specified
             }
 
-            return pomSetting.filteredElementType.Contains(elementType);
+            return pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(elementType));
         }
 
         // Method to retrieve the web element corresponding to the HTML node
@@ -5452,17 +5468,17 @@ namespace GingerCore.Drivers
             {
                 GetRelativeXpathElementLocators(foundElementInfo);
 
-                if (pomSetting != null && pomSetting.relativeXpathTemplateList != null && pomSetting.relativeXpathTemplateList.Count > 0)
+                if (pomSetting != null && pomSetting.RelativeXpathTemplateList != null && pomSetting.RelativeXpathTemplateList.Count > 0)
                 {
-                    foreach (var template in pomSetting.relativeXpathTemplateList)
+                    foreach (var template in pomSetting.RelativeXpathTemplateList)
                     {
-                        CreateXpathFromUserTemplate(template, foundElementInfo);
+                        CreateXpathFromUserTemplate(template.Value, foundElementInfo);
                     }
                 }
             }
 
             // Element Screenshot only mapped elements
-            if (pomSetting.LearnScreenshotsOfElements && pomSetting.filteredElementType.Contains(elementTypeEnum))
+            if (pomSetting.LearnScreenshotsOfElements && pomSetting.FilteredElementType.Any(x=>x.ElementType.Equals(elementTypeEnum)))
             {
                 foundElementInfo.ScreenShotImage = TakeElementScreenShot(webElement);
             }
@@ -7037,10 +7053,11 @@ namespace GingerCore.Drivers
             bool learnElement = true;
 
             //filter element if needed, in case we need to learn only the MappedElements .i.e., LearnMappedElementsOnly is checked
-            if (pomSetting?.filteredElementType != null)
+            if (pomSetting?.FilteredElementType != null)
             {
                 //Case Learn Only Mapped Element : set learnElement to false in case element doesn't exist in the filteredElementType List AND element is not frame element
-                if (!pomSetting.filteredElementType.Contains(elementTypeEnum.Item2))
+                //if (!pomSetting.FilteredElementType.Contains(elementTypeEnum.Item2))
+                if (!pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(elementTypeEnum.Item2)))
                 {
                     learnElement = false;
                 }
