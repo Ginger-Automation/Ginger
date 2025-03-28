@@ -91,11 +91,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (xCustomRelativeXpathTemplateFrame.xCustomRelativeXpathCofigChkBox.IsChecked == true
                 && (mAppPlatform.Equals(ePlatformType.Web) || mAppPlatform.Equals(ePlatformType.Mobile)))
             {
-                mWizard.mPomLearnUtils.POM.RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>(xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList.Where(x => x.Status == CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed));
+                mWizard.mPomLearnUtils.POM.PomSetting.RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>(xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList.Where(x => x.Status == CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed));
             }
             else
             {
-                mWizard.mPomLearnUtils.POM.RelativeXpathTemplateList.Clear();
+                mWizard.mPomLearnUtils.POM.PomSetting.RelativeXpathTemplateList.Clear();
             }
         }
 

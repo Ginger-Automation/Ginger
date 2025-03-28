@@ -133,7 +133,7 @@ namespace GingerCoreNET.Application_Models
         {
             var customRelXpathTemplateList = new List<string>();
 
-            foreach (var item in POM.RelativeXpathTemplateList)
+            foreach (var item in POM.PomSetting.RelativeXpathTemplateList)
             {
                 customRelXpathTemplateList.Add(item.Value);
             }
@@ -205,7 +205,7 @@ namespace GingerCoreNET.Application_Models
                     if (matchingOriginalElement == null)//New element
                     {
                         object groupToAddTo;
-                        if (PomLearnUtils.SelectedElementTypesList.Contains(latestElement.ElementTypeEnum))
+                        if (PomLearnUtils.SelectedElementTypesList.Any(x=>x.ElementType.Equals(latestElement.ElementTypeEnum)))
                         {
                             groupToAddTo = ApplicationPOMModel.eElementGroup.Mapped;
                         }
@@ -222,7 +222,7 @@ namespace GingerCoreNET.Application_Models
                     else if (matchingOriginalElement != null)
                     {
                         object groupToAddTo;
-                        if (PomLearnUtils.SelectedElementTypesList.Contains(latestElement.ElementTypeEnum))
+                        if (PomLearnUtils.SelectedElementTypesList.Any(x => x.ElementType.Equals(latestElement.ElementTypeEnum)))
                         {
                             groupToAddTo = ApplicationPOMModel.eElementGroup.Mapped;
                         }
