@@ -682,7 +682,7 @@ namespace Amdocs.Ginger.Repository
                 {
                     // Check if it one obj attr or list
                     string attrName = xdr.Name;
-
+                    
                     MemberInfo mi = obj.GetType().GetMember(attrName).SingleOrDefault();
 
                     if (mi == null)
@@ -1080,7 +1080,7 @@ namespace Amdocs.Ginger.Repository
                     {
                         PropertyInfo propertyInfo = obj.GetType().GetProperty(xdr.Name);
                         if (propertyInfo == null)
-                        {
+                        { 
                             if (xdr.Name is not "Created" and not "CreatedBy" and not "LastUpdate" and not "LastUpdateBy" and not "Version" and not "ExternalID")
                             {
                                 if (obj is RepositoryItemBase repoItemBaseItem)
