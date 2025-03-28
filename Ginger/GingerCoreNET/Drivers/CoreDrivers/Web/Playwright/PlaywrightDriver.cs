@@ -124,7 +124,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 Headless = HeadlessBrowserMode,
                 Timeout = DriverLoadWaitingTime * 1000, //convert to milliseconds
                 EnableVideoRecording = EnableVideoRecording,
-                RecordVideoDir = RecordVideoDir,
+                RecordVideoDir = recordVideoDir,
                 RecordVideoSize = new RecordVideoSize { Height = VideoHeight, Width = VideoWidth }
             };
 
