@@ -663,7 +663,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("The height in pixels of video recording")]
+        [UserConfiguredDescription("The width in pixels of video recording")]
         public int VideoWidth { get; set; }
 
         private protected override IBrowser GetBrowser()
