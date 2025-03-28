@@ -2247,7 +2247,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             if (AppType == eAppType.Web)
             {
-                mSeleniumDriver.ExtraLocatorsRequired = !(pomSetting.relativeXpathTemplateList == null || pomSetting.relativeXpathTemplateList.Count == 0);
+                mSeleniumDriver.ExtraLocatorsRequired = !(pomSetting.RelativeXpathTemplateList == null || pomSetting.RelativeXpathTemplateList.Count == 0);
 
                 return await Task.Run(() => ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(pomSetting, foundElementsList));
             }
@@ -2290,18 +2290,18 @@ namespace Amdocs.Ginger.CoreNET
                     ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
                     EI.IsAutoLearned = true;
 
-                    if (pomSetting.relativeXpathTemplateList != null && pomSetting.relativeXpathTemplateList.Count > 0)
+                    if (pomSetting.RelativeXpathTemplateList != null && pomSetting.RelativeXpathTemplateList.Count > 0)
                     {
-                        foreach (var template in pomSetting.relativeXpathTemplateList)
+                        foreach (var template in pomSetting.RelativeXpathTemplateList)
                         {
                             eLocateBy CustomLocLocateBy = eLocateBy.ByRelXPath;
 
-                            if (template.Contains('{'))
+                            if (template.Value.Contains('{'))
                             {
                                 CustomLocLocateBy = eLocateBy.iOSPredicateString;
                             }
 
-                            var customLocator = GetUserDefinedCustomLocatorFromTemplates(template, CustomLocLocateBy, EI.Properties.ToList());
+                            var customLocator = GetUserDefinedCustomLocatorFromTemplates(template.Value, CustomLocLocateBy, EI.Properties.ToList());
 
                             if (customLocator != null)
                             {
@@ -2314,8 +2314,8 @@ namespace Amdocs.Ginger.CoreNET
                     //set the POM category
                     EI.SetLocatorsAndPropertiesCategory(this.PomCategory);
 
-                    if (pomSetting.filteredElementType == null ||
-                        (pomSetting.filteredElementType != null && pomSetting.filteredElementType.Contains(EI.ElementTypeEnum)))
+                    if (pomSetting.FilteredElementType == null ||
+                        (pomSetting.FilteredElementType != null && pomSetting.FilteredElementType.Any(x=>x.ElementType.Equals(EI.ElementTypeEnum))))
                     {
                         foundElementsList.Add(EI);
                     }
