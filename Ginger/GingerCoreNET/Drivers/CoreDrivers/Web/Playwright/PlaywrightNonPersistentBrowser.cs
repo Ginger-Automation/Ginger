@@ -64,7 +64,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
             else
             {
-                _currentWindow = new PlaywrightBrowserWindow(_browser.Contexts[0], OnWindowClose);
+                _currentWindow = new PlaywrightBrowserWindow(_browser.Contexts[0], OnWindowClose);                
                 _windows.AddLast(_currentWindow);
             }
         }
@@ -74,6 +74,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             IPlaywrightBrowser browser;
             try
             {
+                if (_options.EnableVideoRecording)
+                {
+                    try
+                    {
+                        ExecutePlaywrightInstallation("ffmpeg");
+                    }
+                    catch (PlaywrightException ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Unable to install Playwright ffmpeg dependency, so disabling Video Recording.", ex);
+                        _options.EnableVideoRecording = false;
+                    }
+                }
                 browser = await LaunchBrowserAsync();
             }
             catch (PlaywrightException ex)
@@ -110,7 +122,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 Args = _options.Args,
                 Headless = _options.Headless,
                 Timeout = _options.Timeout,
-                Proxy = _options.Proxy,
+                Proxy = _options.Proxy,                
             };
 
             if (_browserType == WebBrowserType.Chrome)
@@ -129,11 +141,22 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             ThrowIfClosed();
 
-            IPlaywrightBrowserContext context = await _browser.NewContextAsync(new BrowserNewContextOptions()
+            RecordVideoSize recordVideoSize = null;
+            var recordVideoDir = string.Empty;
+
+            if (_options != null && _options.EnableVideoRecording)
+            {
+                recordVideoSize = _options.RecordVideoSize;
+                recordVideoDir = _options.RecordVideoDir;
+            }
+            var browserOptions = new BrowserNewContextOptions()
             {
                 ViewportSize = ViewportSize.NoViewport,
                 BypassCSP = true,
-            });
+                RecordVideoDir = recordVideoDir,
+                RecordVideoSize = recordVideoSize
+            };
+            IPlaywrightBrowserContext context = await _browser.NewContextAsync(browserOptions);
 
             PlaywrightBrowserWindow window = new(context, OnWindowClose);
             _windows.AddLast(window);
