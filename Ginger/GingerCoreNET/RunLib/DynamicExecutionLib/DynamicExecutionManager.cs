@@ -1111,8 +1111,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 AgentConfigOperations.CheckIfNameIsUnique<AgentConfig>(gingerExecConfig.Agents);
 
-                var ExistingAgents = gingerExecConfig.Agents.Where((env) => !env.Exist.HasValue || env.Exist.Value);
-                var NewlyAddedAgents = gingerExecConfig.Agents.Where((env) => env.Exist.HasValue && !env.Exist.Value);
+                var ExistingAgents = gingerExecConfig.Agents.Where((agent) => !agent.Exist.HasValue || agent.Exist.Value);
+                var NewlyAddedAgents = gingerExecConfig.Agents.Where((agent) => agent.Exist.HasValue && !agent.Exist.Value);
 
                 var AllEnvironmentsInGinger = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
 

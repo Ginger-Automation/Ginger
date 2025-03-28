@@ -28,7 +28,7 @@ using System.Linq;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
-    internal class AgentConfigOperations
+    static class AgentConfigOperations
     {
         /// <summary>
         /// Converts a list of GingerRunners to a list of AgentConfig.
