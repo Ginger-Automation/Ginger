@@ -643,6 +643,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return;
             }
             _isClosed = true;
+
+            if (_playwrightPage.Video != null)
+            {                
+                string path = await _playwrightPage.Video.PathAsync();                
+                var pageURL = _playwrightPage.Url;                
+                //string videoFilePath = videoRecordingDire.Parent.FullName + "Action_" + DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                //await _playwrightPage.Video.SaveAsAsync(videoFilePath);
+
+                Reporter.ToLog(eLogLevel.INFO, $"Playwright Video recording file path for URL {pageURL}: {path}");
+            }
+
             //_playwrightPage.Dialog -= OnDialog;
             await _playwrightPage.CloseAsync();
             RemoveEventHandlers();
