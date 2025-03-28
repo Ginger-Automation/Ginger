@@ -104,8 +104,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
             [
                 new GridColView() { Field = nameof(ApplicationPOMModel.Selected), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox },
                 new GridColView() { Field = nameof(ApplicationPOMModel.Name), Header = "POM Name", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true },
-                new GridColView() { Field = nameof(ApplicationPOMModel.PageURL), Header = "Page URL", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true },
-                new GridColView() { Field = nameof(ApplicationPOMModel.PageURL), Header = "Page URL", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true },
+                new GridColView() { Field = nameof(ApplicationPOMModel.PageURL), Header = "Page URL", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true }
             ]
             };
 
@@ -117,17 +116,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
 
         private void SetPomSelectionExpanderSection()
         {
-            xPomSelectionExpander.IsExpanded = true;
-            xPomSelectionExpander.IsEnabled = true;
             mWizard.mMultiPomDeltaUtils.mPOMModels = [];
             mWizard.mMultiPomDeltaUtils.mPOMModels = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where WorkSpace.Instance.Solution.GetTargetApplicationPlatform(x.TargetApplicationKey) == mAppPlatform select x).ToList());
             xPomSelectionGrid.DataSourceList = mWizard.mMultiPomDeltaUtils.mPOMModels;
-            //foreach (ApplicationPOMModel applicationPOMModel in mWizard.mMultiPomDeltaUtils.mPOMModels)
-            //{
-            //    string allProperties = string.Empty;
-            //    PropertyChangedEventManager.RemoveHandler(source: applicationPOMModel, handler: Item_PropertyChanged, propertyName: allProperties);
-            //    PropertyChangedEventManager.AddHandler(source: applicationPOMModel, handler: Item_PropertyChanged, propertyName: allProperties);
-            //}
         }
 
         private void CheckUnCheckAllBasicElements(object sender, RoutedEventArgs e)

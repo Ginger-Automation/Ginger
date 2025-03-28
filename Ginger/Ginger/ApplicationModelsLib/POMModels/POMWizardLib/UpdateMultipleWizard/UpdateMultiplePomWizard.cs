@@ -44,26 +44,18 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Page Objects Model Introduction", Page: new WizardIntroPage("/ApplicationModelsLib/POMModels/POMWizardLib/LearnWizard/AddPOMIntro.md"));
 
-            AddPage(Name: "Pom Selection", Title: "Pom Selection", SubTitle: "Page Objects Selection", Page: new UpdateMultiplePomConfigWizardPage());
+            AddPage(Name: "Target App POM Selector", Title: "Target App POM Selector", SubTitle: "Target Application  POM Selector", Page: new UpdateMultiplePomConfigWizardPage());
 
-            AddPage(Name: "Pom-Runset Mapping", Title: "Pom-Runset Mapping", SubTitle: "Map Page Objects with Runset", Page: new POMObjectMappingWithRunsetWizardPage());
-
-            //AddPage(Name: "General Details", Title: "General Details", SubTitle: "New Page Objects Model General Details", Page: new POMGeneralDetailsWizardPage());
+            AddPage(Name: "RunSet POM Selection", Title: "RunSet POM Selection", SubTitle: "RunSet POM Selection", Page: new POMObjectMappingWithRunsetWizardPage());
         }
 
         public override void Finish()
         {
-            //mMultiPomDeltaUtils.SaveLearnedPOM();
-
-            //close all Agents raised in Wizard
             CloseStartedAgents();
         }
 
         public override void Cancel()
         {
-            //mMultiPomDeltaUtils.StopLearning();
-
-            //close all Agents raised in Wizard
             CloseStartedAgents();
             base.Cancel();
         }

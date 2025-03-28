@@ -14,6 +14,7 @@
             <CheckBox Style="{StaticResource @CheckBoxStyle}"  x:Name="xEnableSelfHealingChkBox" Click="xEnableSelfHealingChkBox_Click" Content="Enable Self Healing Mode" />
             <StackPanel Margin="10 10 0 0"  x:Name="xSelfHealingConfigPanel" Visibility="Collapsed">
                 <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xAutoUpdateModelChkBox" Margin="5" Content="Auto-update Application Model During Execution" Checked="xAutoUpdateModelChkBox_CheckedUnchecked" Unchecked="xAutoUpdateModelChkBox_CheckedUnchecked"/>
+                <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xForceUpdateModelChkBox" Visibility="Collapsed" Margin="5" Content="Force update Application Model"/>
                 <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xRePrioritizeChkBox" Margin="5" Content="Re-Prioritize Failed POM Locators" />
                 <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xAutoFixAnalyzerChkBox" Margin="5" Content="Auto Fix Analyzer Issues" />
                 <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xAutoExecuteInSimulationChkBox" Margin="5" Content="Auto switch to simulation mode for failed actions" />

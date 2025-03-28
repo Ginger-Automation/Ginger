@@ -30,18 +30,9 @@
                 </StackPanel>-->
             </StackPanel>
 
-            <DockPanel  Grid.Row="1">
-                <Expander x:Name="xPomSelectionExpander" DockPanel.Dock="Top" Visibility="Visible" IsEnabled="False" IsExpanded="False" Margin="5,0,0,15">
-                    <Expander.Header>
-                        <Label x:Name="xPomSelectionExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12" Content="Pom Selection Preferences"/>
-                    </Expander.Header>
-                    <Expander.Content>
-                        <StackPanel>
-                            <Ginger:ucGrid x:Name="xPomSelectionGrid" AutomationProperties.AutomationId="AutoMapPomSelectionGrid AID" Title="POM:" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowTitle="Collapsed"/>
-                        </StackPanel>
-                    </Expander.Content>
-                </Expander>
-            </DockPanel>
+            <StackPanel  Grid.Row="1">
+                <Ginger:ucGrid x:Name="xPomSelectionGrid" AutomationProperties.AutomationId="AutoMapPomSelectionGrid AID" Title="Target Application and POM Selection:" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowTitle="Visible"/>
+            </StackPanel>
 
         </Grid>
     </ScrollViewer>

@@ -187,7 +187,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             if (TargetApplications.Count != 0)
             {
                 mTreeView.Tree.ExpandTreeItem(this);
-                WizardWindow.ShowWizard(new UpdateMultiplePomWizard(mPOMModelFolder), 1000, 700, DoNotShowAsDialog: true);
+                WizardWindow.ShowWizard(new UpdateMultiplePomWizard(mPOMModelFolder), 1200, 800, DoNotShowAsDialog: true);
             }
             else
             {

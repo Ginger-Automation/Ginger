@@ -490,7 +490,7 @@ namespace Ginger.Run
 
 
 
-        public void RunRunner(bool doContinueRun = false)
+        public void RunRunner(bool doContinueRun = false,bool IsUpdatePOM = false)
         {
             bool runnerExecutionSkipped = false;
 
@@ -514,10 +514,14 @@ namespace Ginger.Run
                 {
                     NotifyRunnerRunstart();
                 }
-
-                //Init 
-                mGingerRunner.Status = eRunStatus.Started;
-                IsRunning = true;
+                if (!IsUpdatePOM)
+                {
+                    //Init 
+                    mGingerRunner.Status = eRunStatus.Started;
+                    IsRunning = true;
+                }
+                
+                
                 mStopRun = false;
                 if (doContinueRun == false)
                 {
@@ -537,9 +541,11 @@ namespace Ginger.Run
                 {
                     UpdateApplicationAgents();
                 }
-
-                //Start execution
-                Status = eRunStatus.Running;
+                if (!IsUpdatePOM)
+                {
+                    //Start execution
+                    Status = eRunStatus.Running;
+                }
 
                 int startingBfIndx = 0;
                 if (doContinueRun == false)
