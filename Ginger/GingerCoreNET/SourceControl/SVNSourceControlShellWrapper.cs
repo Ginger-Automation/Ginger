@@ -120,8 +120,8 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
         public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths, ProgressNotifier progressNotifier = null)
         {
             Console.WriteLine("Reverting and Get Latest");
-            RunSVNCommand(new object[] { "revert", "-R", ".", "--username", SourceControlUser, "--password", SourceControlPass }, path);
-            return RunSVNCommand(new object[] { "up", "--username", SourceControlUser, "--password", SourceControlPass }, path);
+            RunSVNCommand(new object[] { "revert", "-R", ".", "--username", Username, "--password", Password }, path);
+            return RunSVNCommand(new object[] { "up", "--username", Username, "--password", Password }, path);
         }
 
         public override string GetLockOwner(string path, ref string error)
@@ -138,9 +138,9 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
         {
             Console.WriteLine("Check Out");
 
-            SourceControlURL = URI;
+            URL = URI;
 
-            return RunSVNCommand(new object[] { "checkout", URI, Path, "--username", SourceControlUser, "--password", SourceControlPass }, Path);
+            return RunSVNCommand(new object[] { "checkout", URI, Path, "--username", Username, "--password", Password }, Path);
         }
 
 
@@ -156,7 +156,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override string GetRepositoryURL(ref string error)
         {
-            return SourceControlURL;
+            return URL;
         }
 
         public override void Init()
