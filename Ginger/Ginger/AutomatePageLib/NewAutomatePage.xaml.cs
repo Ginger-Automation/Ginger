@@ -1834,6 +1834,11 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void GenerateReport()
         {
+            if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Any(htmlRC => htmlRC.IsDefault))
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "No Default HTML Report template available to generate report. Please set a default template in Configurations -> Reports -> Reports Template.");
+                return;
+            }
             if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 CreateLiteDBReport();

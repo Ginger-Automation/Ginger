@@ -1167,9 +1167,9 @@ namespace GingerCore.Drivers.WindowsLib
                         ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo, pomSetting);
 
                         bool learnElement = true;
-                        if (pomSetting.filteredElementType != null)
+                        if (pomSetting.FilteredElementType != null)
                         {
-                            if (!pomSetting.filteredElementType.Contains(foundElemntInfo.ElementTypeEnum))
+                            if (!pomSetting.FilteredElementType.Any(x=>x.ElementType.Equals(foundElemntInfo.ElementTypeEnum)))
                             {
                                 learnElement = false;
                             }

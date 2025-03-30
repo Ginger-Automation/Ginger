@@ -907,7 +907,7 @@ namespace Ginger.WindowExplorer
                     //StatusTextBlock.Text = "Loading";
                     PomSetting pomSetting = new PomSetting
                     {
-                        filteredElementType = CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList()
+                        FilteredElementType = CheckedFilteringCreteriaList
                     };
                     List<ElementInfo> list = await mWindowExplorerDriver.GetVisibleControls(pomSetting);
 

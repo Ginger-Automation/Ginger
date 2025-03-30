@@ -113,7 +113,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xFrameBusinessFlowControl.Content = mBusinessFlowControl;
 
             xShowIDUC.Init(mPOM);
-            xFirstRowExpanderLabel.Content = string.Format("'{0}' Details", mPOM.Name);
+            xFirstLabel.Text = string.Format("'{0}'", mPOM.Name);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
             if (!ignoreValidationRules)
             {
@@ -150,21 +150,17 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
 
             UIElementTabTextBlockUpdate();
-
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEditPageExpander, Expander.IsExpandedProperty, mPOM, nameof(mPOM.IsCollapseDetailsExapander));
-
             SetDefaultPage();
 
             if (mEditMode is eRIPageViewMode.View or eRIPageViewMode.ViewAndExecute)
             {
-                xDetailsStackPanel.IsEnabled = false;
                 xScreenshotOperationBtns.IsEnabled = false;
             }
             else
             {
-                xDetailsStackPanel.IsEnabled = true;
-                xScreenshotOperationBtns.IsEnabled = true;
+               xScreenshotOperationBtns.IsEnabled = true;
             }
+            SetIconImageType();
         }
 
         private void SetDefaultPage()
@@ -537,6 +533,18 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void xEditPageExpander_Collapsed(object sender, RoutedEventArgs e)
         {
             FirstRow.Height = new GridLength(6, GridUnitType.Star);
+        }
+
+        /// <summary>
+        /// Sets the icon image type based on the POM model's item image type.
+        /// Ensures the update happens on the UI thread using the dispatcher.
+        /// </summary>
+        private void SetIconImageType()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xIconImage.ImageType = mPOM.ItemImageType;
+            });
         }
     }
 }

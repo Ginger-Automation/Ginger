@@ -64,8 +64,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option("encryptionKey", Required = false, HelpText = "(Optional) Encryption key of your solution.")]
         public string EncryptionKey { get; set; }
 
-        [Option("savecredentials", Required = false, Default = false, HelpText = "(Optional) To save the Credentials")]
-        public bool SaveCredentials { get; set; }
+        [Option("doNotSaveCredentials", Required = false, Default = false, HelpText = "(Optional)  Do not save the credentials")]
+        public bool DoNotSaveCredentials { get; set; }
 
         [Option("executionId", Required = false, HelpText = "(Optional) Id of a RunSet execution.")]
         public string ExecutionId { get; set; }
