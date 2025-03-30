@@ -1029,7 +1029,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string GetTempFolderPathForRepo(string sourceControlUrl = null)
         {
             string urlToUse = sourceControlUrl ?? SourceControlURL;
-            var repoName = !string.IsNullOrEmpty(urlToUse) ? urlToUse.Split('/').Last() : string.Empty;
+            string repoName = string.Empty;
+
+            if (!string.IsNullOrEmpty(urlToUse))
+            {
+                // Remove trailing slash if present
+                urlToUse = urlToUse.TrimEnd('/');
+
+                repoName = Path.GetFileNameWithoutExtension(urlToUse.Split('/').Last());
+            }
+
             return Path.Combine(Path.GetTempPath(), repoName);
         }
     }
