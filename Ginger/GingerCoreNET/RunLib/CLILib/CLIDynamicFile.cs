@@ -29,6 +29,7 @@ using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using Newtonsoft.Json;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
@@ -122,6 +123,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     }
                     cliHelper.SetSourceControlBranch(exeConfiguration.SolutionScmDetails.Branch);
 
+                }
+                if (exeConfiguration.UseTempFolder)
+                {
+                    var repoName = !string.IsNullOrEmpty(cliHelper.SourceControlURL) 
+                        ? cliHelper.SourceControlURL.Split('/').Last() 
+                        : string.Empty;
+                    exeConfiguration.SolutionLocalPath = Path.Combine(Path.GetTempPath(), repoName);
                 }
                 if (!string.IsNullOrEmpty(exeConfiguration.SolutionLocalPath))
                 {
