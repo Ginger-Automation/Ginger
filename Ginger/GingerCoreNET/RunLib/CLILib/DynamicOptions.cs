@@ -33,7 +33,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option('f', CLIOptionClassHelper.FILENAME, Group = "source", HelpText = "Dynamic xml/json file path")]
         public string FileName { get; set; }
 
-        [Option('u', "url", Group = "source", HelpText = "URL to fetch Execution Configurations")]
+        [Option('u', "execConfigSourceUrl", Group = "source", HelpText = "URL to fetch Execution Configurations")]
         public Uri Url { get; set; }
 
         public bool Validate()
@@ -41,7 +41,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (!string.IsNullOrEmpty(FileName) && Url != null)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Validation failed for '{DynamicOptions.Verb}' command-line arguments.");
-                Reporter.ToLog(eLogLevel.ERROR, $"'{CLIOptionClassHelper.FILENAME}' & 'url' are mutually exclusive.");
+                Reporter.ToLog(eLogLevel.ERROR, $"'{CLIOptionClassHelper.FILENAME}' & 'execConfigSourceUrl' are mutually exclusive.");
                 return false;
             }
 

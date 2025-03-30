@@ -44,7 +44,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public async Task RunAsync(DoOptions opts)
         {
             mOpts = opts;
-            if (opts.UseTempFolder)
+            if (opts.UseTempSolutionFolder)
             {
                 mOpts.Solution = SetSolutionPathToTempFolder(opts.URL);
             }

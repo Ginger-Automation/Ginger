@@ -88,17 +88,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option("sharedActivityId", Required = false, HelpText = "(Optional) Id of the Shared Repository Activity to be opened.")]
         public string SharedActivityId { get; set; }
 
-        [Option("useTempFolder", Group = "solution path", HelpText = "(Optional) Use the Temp folder as the solution folder path.")]
-        public bool UseTempFolder { get; set; }
+        [Option("useTempSolutionFolder", Group = "solution path", HelpText = "(Optional) Use the Temp folder as the solution folder path.")]
+        public bool UseTempSolutionFolder { get; set; }
 
-        [Option("executionConfigSourceUrl", Required = false, HelpText = "(Optional) URL to fetch the execution configurations from.")]
+        [Option("execConfigSourceUrl", Required = false, HelpText = "(Optional) URL to fetch the execution configurations from.")]
         public Uri ExecutionConfigurationSourceUrl { get; set; }
 
         public bool Validate()
         {
-            if (UseTempFolder && !string.IsNullOrEmpty(Solution))
+            if (UseTempSolutionFolder && !string.IsNullOrEmpty(Solution))
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"'solution' & 'useTempFolder' are mutually exclusive.");
+                Reporter.ToLog(eLogLevel.ERROR, $"'solution' & 'useTempSolutionFolder' are mutually exclusive.");
                 return false;
             }
 
