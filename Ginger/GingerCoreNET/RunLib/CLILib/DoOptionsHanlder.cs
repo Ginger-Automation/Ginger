@@ -408,8 +408,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         private string SetSolutionPathToTempFolder(string sourceControlUrl)
         {
-            var repoName = !string.IsNullOrEmpty(sourceControlUrl) ? sourceControlUrl.Split('/').Last() : string.Empty;
-            return Path.Combine(Path.GetTempPath(), repoName);
+            return mCLIHelper.GetTempFolderPathForRepo(sourceControlUrl);
         }
     }
 }

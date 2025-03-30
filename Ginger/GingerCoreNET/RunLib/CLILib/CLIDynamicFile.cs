@@ -126,10 +126,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
                 if (exeConfiguration.UseTempFolder)
                 {
-                    var repoName = !string.IsNullOrEmpty(cliHelper.SourceControlURL) 
-                        ? cliHelper.SourceControlURL.Split('/').Last() 
-                        : string.Empty;
-                    exeConfiguration.SolutionLocalPath = Path.Combine(Path.GetTempPath(), repoName);
+                    exeConfiguration.SolutionLocalPath = cliHelper.GetTempFolderPathForRepo();
                 }
                 if (!string.IsNullOrEmpty(exeConfiguration.SolutionLocalPath))
                 {
