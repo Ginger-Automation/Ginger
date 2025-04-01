@@ -48,24 +48,24 @@ jobs:
                 name: WindowsInstaller  
 
 # ------------------------------------------------------------------------------------------------------
-# Download GingerRuntime Artifact
+# Download GingerRuntime_Linux Artifact
 # ------------------------------------------------------------------------------------------------------
-          -   name: Restore GingerRuntime
+          -   name: Restore GingerRuntime_Linux
               uses: actions/cache@v4
               with:
-                  path: ./GingerRuntime-root.tar.gz
-                  key: cache-GingerRuntime-${{ github.run_number }}
+                  path: ./GingerRuntime_Linux-root.tar.gz
+                  key: cache-GingerRuntime_Linux-${{ github.run_number }}
                   enableCrossOsArchive:
                       true
 
 # ------------------------------------------------------------------------------------------------------
-# Download GingerMacOSRuntime Artifact
+# Download GingerRuntime_MacOS Artifact
 # ------------------------------------------------------------------------------------------------------
-          - name: Restore GingerMacOSRuntime
+          - name: Restore GingerRuntime_MacOS
             uses: actions/cache@v4
             with:
-              path: ./GingerMacOSRuntime-root.tar.gz
-              key: cache-GingerMacOSRuntime-${{ github.run_number }}
+              path: ./GingerRuntime_MacOS-root.tar.gz
+              key: cache-GingerRuntime_MacOS-${{ github.run_number }}
               enableCrossOsArchive:
                 true
         
@@ -81,31 +81,37 @@ jobs:
                   tag_name: v${{ env.gingertag}}
                   release_name: Ginger v${{ env.gingertag}}
                   draft: true
-
+                  
+                  
+          - name: Print File Content
+            run: | 
+              ls  
+              echo "==============================================="
+ 
 # ------------------------------------------------------------------------------------------------------
-# Upload GingerRuntime.tar.gz to Github Releases 
+# Upload GingerRuntime_Linux.tar.gz to Github Releases 
 # ------------------------------------------------------------------------------------------------------
-          - name: Upload Assest to Github Releases - GingerRuntime.tar.gz
+          - name: Upload Assest to Github Releases - GingerRuntime_Linux.tar.gz
             uses: actions/upload-release-asset@v1
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             with:
               upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-              asset_path: ./GingerRuntime-root.tar.gz
-              asset_name: GingerRuntime.${{ env.gingertag}}.tar.gz
+              asset_path: ./GingerRuntime_Linux-root.tar.gz
+              asset_name: GingerRuntime_Linux.${{ env.gingertag}}.tar.gz
               asset_content_type: application/gzip
 
 # ------------------------------------------------------------------------------------------------------
-# Upload GingerMacOSRuntime.tar.gz to Github Releases 
+# Upload GingerRuntime_MacOS.tar.gz to Github Releases 
 # ------------------------------------------------------------------------------------------------------
-          - name: Upload Assest to Github Releases - GingerMacOSRuntime.tar.gz
+          - name: Upload Assest to Github Releases - GingerRuntime_MacOS.tar.gz
             uses: actions/upload-release-asset@v1
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             with:
               upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-              asset_path: ./GingerMacOSRuntime-root.tar.gz
-              asset_name: GingerMacOSRuntime.${{ env.gingertag}}.tar.gz
+              asset_path: ./GingerRuntime_MacOS-root.tar.gz
+              asset_name: GingerRuntime_MacOS.${{ env.gingertag}}.tar.gz
               asset_content_type: application/gzip
 
 # ------------------------------------------------------------------------------------------------------
@@ -158,3 +164,5 @@ jobs:
               asset_path: ./Documents/GingerRuntime.System.Requirements.pdf
               asset_name: GingerRuntime.System.Requirements.pdf
               asset_content_type: application/doc 
+
+              

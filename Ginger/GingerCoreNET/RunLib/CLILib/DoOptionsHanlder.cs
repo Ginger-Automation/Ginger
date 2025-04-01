@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -38,11 +38,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public static event EventHandler<BusinessFlow> AutomateBusinessFlowEvent;
         public static event EventHandler<RunSetConfig> LoadRunSetConfigEvent;
         public static event EventHandler<Activity> LoadSharedRepoEvent;
+        public static event EventHandler LoadSourceControlDownloadPage;
         DoOptions mOpts;
         CLIHelper mCLIHelper = new();
         public async Task RunAsync(DoOptions opts)
         {
             mOpts = opts;
+            if (opts.UseTempSolutionFolder)
+            {
+                mOpts.Solution = SetSolutionPathToTempFolder(opts.URL);
+            }
             switch (opts.Operation)
             {
                 case DoOptions.DoOperation.analyze:
@@ -116,10 +121,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 if (!await mCLIHelper.LoadSolutionAsync())
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                    LoadSourceControlDownloadPage?.Invoke(null, EventArgs.Empty);
                     return;
                 }
-
-
+                          
 
                 if (!string.IsNullOrWhiteSpace(mOpts.ExecutionId))
                 {
@@ -401,5 +406,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        private string SetSolutionPathToTempFolder(string sourceControlUrl)
+        {
+            return mCLIHelper.GetTempFolderPathForRepo(sourceControlUrl);
+        }
     }
 }

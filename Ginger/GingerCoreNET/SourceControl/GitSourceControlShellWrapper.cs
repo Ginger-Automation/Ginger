@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -51,8 +51,8 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override bool IsSupportingGetLatestForIndividualFiles { get { return true; } }
 
-        public override eSourceControlType GetSourceControlType { get { return eSourceControlType.GIT; } }
-
+        public override eSourceControlType GetSourceControlType {  get { return eSourceControlType.GIT; } }
+        
         public override List<string> GetSourceControlmConflict => throw new NotImplementedException();
 
         public override bool AddFile(string Path, ref string error)
@@ -115,7 +115,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
             throw new NotImplementedException();
         }
 
-        public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths)
+        public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths, ProgressNotifier progressNotifier = null)
         {
             RunGITCommand(new object[] { "reset", "--hard", "HEAD" }, path);
             RunGITCommand(new object[] { "fetch" }, path);
@@ -144,14 +144,14 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
             string GetCloneUrlString()
             {
-                if (string.IsNullOrEmpty(SourceControlUser))
+                if (string.IsNullOrEmpty(Username))
                 {
                     return URI;
                 }
                 Uri url = new Uri(URI);
                 string scheme = url.Scheme;
 
-                return url.Scheme + @"://" + SourceControlUser + ":" + SourceControlPass + "@" + url.Host + url.AbsolutePath;
+                return url.Scheme + @"://" + Username + ":" + Password + "@" + url.Host + url.AbsolutePath;
             }
         }
 

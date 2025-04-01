@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Threading;
 using System.Threading.Tasks;
 using IPlaywrightElementHandle = Microsoft.Playwright.IElementHandle;
 using IPlaywrightFrameLocator = Microsoft.Playwright.IFrameLocator;
@@ -55,6 +56,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             eLocateBy.ByRelXPath,
             eLocateBy.POMElement,
             eLocateBy.ByAutomationID,
+            eLocateBy.ByClassName,
+            eLocateBy.ByCSSSelector,
+            eLocateBy.ByLinkText
         ];
 
         private static readonly IEnumerable<eLocateBy> SupportedFrameLocators =
@@ -312,10 +316,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// Waits until the page is fully loaded.
         /// </summary>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public Task WaitTillLoadedAsync()
+        public async Task<bool> WaitTillLoadedAsync(float timeOut = 0)
         {
-            ThrowIfClosed();
-            return _playwrightPage.WaitForLoadStateAsync(LoadState.Load);
+            try
+            {
+                ThrowIfClosed();
+                var options = timeOut > 0 ? new PageWaitForLoadStateOptions { Timeout = timeOut } : null;
+                await _playwrightPage.WaitForLoadStateAsync(LoadState.Load, options);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -578,6 +591,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     value = value.Replace(":", "\\:");
                     locator = _currentFrame.Locator($"xpath=//*[@data-automation-id=\"{value}\"]");
                     break;
+                case eLocateBy.ByClassName:
+                    locator = _currentFrame.Locator($"css=.{value}");
+                    break;
+                case eLocateBy.ByCSSSelector:
+                    locator = _currentFrame.Locator($"css={value}");
+                    break;
+                case eLocateBy.ByLinkText:
+                    locator = _currentFrame.Locator($"text={value}");
+                    break;
                 default:
                     throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");
             }
@@ -621,6 +643,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return;
             }
             _isClosed = true;
+
+            if (_playwrightPage.Video != null)
+            {                
+                string path = await _playwrightPage.Video.PathAsync();                
+                var pageURL = _playwrightPage.Url;                
+                //string videoFilePath = videoRecordingDire.Parent.FullName + "Action_" + DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                //await _playwrightPage.Video.SaveAsAsync(videoFilePath);
+
+                Reporter.ToLog(eLogLevel.INFO, $"Playwright Video recording file path for URL {pageURL}: {path}");
+            }
+
             //_playwrightPage.Dialog -= OnDialog;
             await _playwrightPage.CloseAsync();
             RemoveEventHandlers();
@@ -1046,6 +1079,293 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         public async Task StartListenDialogsAsync()
         {
             isDialogDismiss = false;
+        }
+
+        /// <summary>
+        /// Waits for the URL to match the specified pattern within the given timeout.
+        /// </summary>
+        public async Task<bool> WaitForUrlMatchAsync(string urlPattern, float timeout)
+        {
+            ThrowIfClosed();
+            try
+            {
+                await _playwrightPage.WaitForURLAsync(urlPattern, new PageWaitForURLOptions { Timeout = timeout });
+                return true;
+            }
+            catch (TimeoutException)
+            {
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new OperationCanceledException("An error occurred while waiting for the URL to match the pattern", ex);
+            }
+        }
+
+        /// <summary>
+        /// Waits for elements to become enabled within the specified timeout.
+        /// </summary>
+        public async Task<bool> WaitForElementsEnabledAsync(eLocateBy locateBy, string locateValue, float timeout)
+        {
+            return await WaitForElementsStateAsync(locateBy, locateValue, timeout, ElementState.Visible, ElementState.Enabled);
+        }
+
+        /// <summary>
+        /// Waits for elements to become visible within the specified timeout.
+        /// </summary>
+        public async Task<bool> WaitForElementsVisibleAsync(eLocateBy locateBy, string locateValue, float timeout)
+        {
+            return await WaitForElementsStateAsync(locateBy, locateValue, timeout, ElementState.Visible);
+        }
+
+        /// <summary>
+        /// Waits for elements to become invisible within the specified timeout.
+        /// </summary>
+        public async Task<bool> WaitForElementsInvisibleAsync(eLocateBy locateBy, string locateValue, float timeout)
+        {
+            return await WaitForElementsStateAsync(locateBy, locateValue, timeout, ElementState.Hidden);
+        }
+
+        /// <summary>
+        /// Waits for elements to become present within the specified timeout.
+        /// </summary>
+        public async Task<bool> WaitForElementsPresenceAsync(eLocateBy locateBy, string locateValue, float timeout)
+        {
+            return await WaitForElementsStateAsync(locateBy, locateValue, timeout, ElementState.Stable);
+        }
+
+        /// <summary>
+        /// Waits for elements to become checked within the specified timeout.
+        /// </summary>
+        public async Task<bool> WaitForElementsCheckedAsync(eLocateBy locateBy, string locateValue, float timeout)
+        {
+            ThrowIfClosed();
+            try
+            {
+                string selector = GetSelector(locateBy, locateValue);
+                var elements = await _playwrightPage.QuerySelectorAllAsync(selector);
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+
+                while (stopwatch.ElapsedMilliseconds < timeout)
+                {
+                    bool allChecked = true;
+                    foreach (var element in elements)
+                    {
+                        if (!await element.IsCheckedAsync())
+                        {
+                            allChecked = false;
+                            break;
+                        }
+                    }
+
+                    if (allChecked)
+                    {
+                        return true;
+                    }
+
+                    await Task.Delay(100);
+                }
+
+                throw new OperationCanceledException("Elements did not become checked within the specified time");
+            }
+            catch (Exception ex)
+            {
+                throw new OperationCanceledException("Elements did not become checked within the specified time", ex);
+            }
+        }
+
+        /// <summary>
+        /// Waits for elements to reach the specified state(s) within the given timeout.
+        /// </summary>
+        private async Task<bool> WaitForElementsStateAsync(eLocateBy locateBy, string locateValue, float timeout, params ElementState[] states)
+        {
+            ThrowIfClosed();
+            try
+            {
+                string selector = GetSelector(locateBy, locateValue);
+                var elements = await _playwrightPage.QuerySelectorAllAsync(selector);
+                foreach (var element in elements)
+                {
+                    foreach (var state in states)
+                    {
+                        await element.WaitForElementStateAsync(state, new ElementHandleWaitForElementStateOptions { Timeout = timeout });
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new OperationCanceledException($"Elements did not reach the desired state(s) within the specified time", ex);
+            }
+        }
+
+        /// <summary>
+        /// Gets the selector string based on the locator type and value.
+        /// </summary>
+        private string GetSelector(eLocateBy locateBy, string locateValue)
+        {
+            return locateBy switch
+            {
+                eLocateBy.ByID => $"#{locateValue}",
+                eLocateBy.ByClassName => $".{locateValue}",
+                eLocateBy.ByTagName => locateValue,
+                eLocateBy.ByName => $"[name='{locateValue}']",
+                eLocateBy.ByXPath => locateValue, // XPath is used as-is
+                eLocateBy.ByCSSSelector => locateValue, // CSS Selector is used as-is
+                eLocateBy.ByLinkText => $"a:contains('{locateValue}')",
+                eLocateBy.ByText => $"*:contains('{locateValue}')", // For elements containing text
+                _ => throw new ArgumentException("Invalid locator type")
+            };
+        }
+        TaskCompletionSource<bool> alertDetected = new TaskCompletionSource<bool>();
+        /// <summary>
+        /// Waits for an alert to appear within the specified timeout.
+        /// </summary>
+        public async Task<bool> WaitForAlertAsync(float timeout)
+        {
+            _playwrightPage.Dialog += _playwrightPage_Dialog;
+            var delayTask = Task.Delay((int)timeout);
+            var completedTask = await Task.WhenAny(alertDetected.Task, delayTask);
+
+            if (completedTask == delayTask)
+            {
+                _playwrightPage.Dialog -= _playwrightPage_Dialog;
+                throw new TimeoutException($"Alert did not appear within the specified {timeout}.");
+            }
+            _playwrightPage.Dialog -= _playwrightPage_Dialog;
+            return await alertDetected.Task;
+        }
+
+        /// <summary>
+        /// Handles the Playwright dialog event and sets the alertDetected TaskCompletionSource to true if the dialog is of type Alert.
+        /// </summary>
+        private void _playwrightPage_Dialog(object? sender, IDialog e)
+        {
+            if (e.Type == DialogType.Alert)
+            {
+                alertDetected.TrySetResult(true);
+            }
+        }
+
+        /// <summary>
+        /// Maximizes the browser window to the screen's width and height.
+        /// </summary>
+        public async Task MaximizeWindowAsync()
+        {
+            await MaximizeWindowInternalAsync();
+        }
+        /// <summary>
+        /// Internal implementation of window maximization.
+        /// </summary>
+        private async Task MaximizeWindowInternalAsync()
+        {
+            try
+            {
+                var screenWidth = await _playwrightPage.EvaluateAsync<int>("window.screen.width");
+                var screenHeight = await _playwrightPage.EvaluateAsync<int>("window.screen.height");
+                await _playwrightPage.SetViewportSizeAsync(screenWidth, screenHeight);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Sets the URLs to be blocked during the browser session.
+        /// </summary>
+        /// <param name="urls">Comma-separated list of URLs to be blocked.</param>
+        /// <returns>True if the URLs were successfully blocked, otherwise false.</returns>
+        public async Task<bool> SetBlockedURLAsync(string urls)
+        {
+            return await SetBlockedURLAsyncInternal(urls);
+        }
+        private async Task<bool> SetBlockedURLAsyncInternal(string urls)
+        {
+            try
+            {
+                var listURL = GetBlockedUrlsArray(urls);
+                foreach (var rawURL in listURL)
+                {
+                    var url = rawURL?.Trim();
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                        {
+                            url = "https://" + url;
+                        }
+                        await _playwrightPage.RouteAsync(url, async route => await route.AbortAsync());
+                    }
+                }
+                await _playwrightPage.ReloadAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Splits comma-separated URLs into an array.
+        /// </summary>
+        private string[] GetBlockedUrlsArray(string urlsToBlock)
+        {
+            string[] arrBlockedUrls = Array.Empty<string>();
+            if (!string.IsNullOrEmpty(urlsToBlock))
+            {
+                arrBlockedUrls = urlsToBlock.Trim(',').Split(',', StringSplitOptions.RemoveEmptyEntries);
+            }
+            return arrBlockedUrls;
+        }
+
+        /// <summary>
+        /// Unblocks all previously blocked URLs during the browser session.
+        /// </summary>
+        /// <returns>True if the URLs were successfully unblocked, otherwise false.</returns>
+        public async Task<bool> UnblockURLAsync()
+        {
+            return await UnblockURLInternalAsync();
+        }
+
+        /// <summary>
+        /// Internal implementation of URL unblocking.
+        /// </summary>
+        private async Task<bool> UnblockURLInternalAsync()
+        {
+            try
+            {
+                await _playwrightPage.UnrouteAllAsync();
+                await _playwrightPage.ReloadAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                throw;
+            }
+        }
+
+        /// </summary>
+        /// <param name="locateBy">The method to locate the element.</param>
+        /// <param name="value">The value used to locate the element.</param>
+        /// <returns>True if the context was successfully switched, otherwise false.</returns>
+        public async Task<bool> SwitchToShadowDomAsync()
+        {
+            return await Task.FromResult(true);
+        }
+
+
+        /// <summary>
+        /// Switches the context back to the default DOM.
+        /// </summary>
+        /// <returns>True if the context was successfully switched, otherwise false.</returns>
+        public async Task<bool> SwitchToDefaultDomAsync()
+        {
+            return await Task.FromResult(true);
         }
 
     }

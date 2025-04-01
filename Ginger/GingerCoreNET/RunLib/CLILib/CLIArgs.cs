@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -74,14 +74,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl)
             {
 
-                options.URL = solution.SourceControl.SourceControlURL;
-                options.User = solution.SourceControl.SourceControlUser;
+                options.URL = solution.SourceControl.URL;
+                options.User = solution.SourceControl.Username;
 
-                options.Pass = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
+                options.Pass = EncryptionHandler.EncryptwithKey(solution.SourceControl.Password);
 
                 options.PasswordEncrypted = true;
                 options.SCMType = solution.SourceControl.GetSourceControlType;
-                options.Branch = solution.SourceControl.SourceControlBranch;
+                options.Branch = solution.SourceControl.Branch;
             }
 
             if (runsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl)

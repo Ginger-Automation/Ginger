@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.UIElement;
 using System;
 using System.Text;
 
@@ -32,51 +33,69 @@ namespace Amdocs.Ginger.Common
         public abstract void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null);
 
 
-        private static bool prevOverwriteCurrentLine = false;
-
-        public void ToConsole(eLogLevel logLevel, string message, Boolean overwriteCurrentLine = false)
+        public void ToConsole(eLogLevel logLevel, string message, ProgressStatus progressStatus = null)
         {
-           
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append('[').Append(logLevel).Append(" | ").Append(DateTime.Now.ToString("HH:mm:ss:fff_dd-MMM")).Append("] ").Append(message).Append(Environment.NewLine);
 
-            switch (logLevel)
+            string logDetails = $"[{logLevel} | {DateTime.Now:HH:mm:ss:fff_dd-MMM}]";
+
+            try
             {
-                case eLogLevel.ERROR:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    break;
-                case eLogLevel.FATAL:
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    break;
-                case eLogLevel.DEBUG:
-                    Console.ForegroundColor = ConsoleColor.White;
-                    break;
-                case eLogLevel.INFO:
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    break;
-                case eLogLevel.WARN:
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    break;
+                switch (logLevel)
+                {
+                    case eLogLevel.ERROR:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        break;
+                    case eLogLevel.FATAL:
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        break;
+                    case eLogLevel.DEBUG:
+                        Console.ForegroundColor = ConsoleColor.White;
+                        break;
+                    case eLogLevel.INFO:
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        break;
+                    case eLogLevel.WARN:
+                        Console.ForegroundColor = ConsoleColor.DarkYellow;
+                        break;
+                }
+                
+                if (progressStatus == null)
+                {
+                    if (!Console.IsOutputRedirected && Console.CursorLeft != 0)
+                    {
+                        Console.WriteLine("\n\n");
+                    }
+
+                    logDetails += message + Environment.NewLine + Environment.NewLine;
+                    Console.WriteLine(logDetails);
+                    Console.ResetColor();
+                }
+                else
+                {
+                    if (Console.IsOutputRedirected)
+                    {
+                        return;
+                    }
+                    string progressBarPrefix = $" {progressStatus.ProgressMessage} ";
+                    int widthRequiredWithoutProgressBar = logDetails.Length + progressBarPrefix.Length+20;
+                    if (widthRequiredWithoutProgressBar >= Console.WindowWidth)
+                    {
+                        Console.WriteLine($"{logDetails} {progressStatus.ProgressMessage}\n");
+                        return;
+                    }
+                    int visibleTotalProgress = Console.WindowWidth - widthRequiredWithoutProgressBar;
+                    int totalSteps = progressStatus.TotalSteps > 0 ? progressStatus.TotalSteps : 1;
+                    int currentProgress = (int)(((double)progressStatus.ProgressStep / totalSteps) * visibleTotalProgress);
+                    string progressBar = progressBarPrefix + new string('█', currentProgress) + new string(' ', visibleTotalProgress - currentProgress);
+                    Console.Write($"\r{logDetails}{progressBar}");
+                }
             }
-            
-            if (overwriteCurrentLine)
+            catch (Exception ex)
             {
-                int cursorRow = prevOverwriteCurrentLine ? Console.CursorTop - 3 : Console.CursorTop;
-                Console.SetCursorPosition(0, cursorRow);
-                Console.Write(new string(' ', Console.WindowWidth));
-                Console.SetCursorPosition(0, cursorRow);
-                stringBuilder.Append(Environment.NewLine);
-                Console.WriteLine(stringBuilder.ToString());
-            }
-            else
-            {
-                stringBuilder.Append(Environment.NewLine);
-                Console.WriteLine(stringBuilder.ToString());
                 Console.ResetColor();
+                Console.WriteLine($"[ERROR | {DateTime.Now.ToString("HH:mm:ss:fff_dd-MMM")}] An error occurred: {ex.Message}");
             }
-            prevOverwriteCurrentLine = overwriteCurrentLine;
         }
-
         public abstract eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResualt);
 
         public abstract void ToStatus(eStatusMsgType messageType, string statusText);

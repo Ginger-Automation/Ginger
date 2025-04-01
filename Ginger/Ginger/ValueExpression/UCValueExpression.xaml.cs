@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -117,12 +117,22 @@ namespace Ginger.BusinessFlowWindows
                     }
                     break;
                 case eBrowserType.Folder:
+                    
+                    string initialDirectory = ValueTextBox.Text;
+                    if (ValueTextBox.Text != null && ValueTextBox.Text.StartsWith(@"~\"))
+                    {
+                        string solutionFolder = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.Folder;
+                        initialDirectory = ValueTextBox.Text.Replace(@"~\", solutionFolder, StringComparison.InvariantCultureIgnoreCase);
+                    }
+
                     var dlgf = new System.Windows.Forms.FolderBrowserDialog
                     {
                         Description = "Select folder",
                         RootFolder = Environment.SpecialFolder.MyComputer,
-                        ShowNewFolderButton = true
+                        ShowNewFolderButton = true,
+                        InitialDirectory = initialDirectory
                     };
+
                     System.Windows.Forms.DialogResult resultf = dlgf.ShowDialog();
                     if (resultf == System.Windows.Forms.DialogResult.OK)
                     {

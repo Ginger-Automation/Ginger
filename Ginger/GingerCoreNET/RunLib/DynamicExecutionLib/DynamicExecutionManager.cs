@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -69,19 +69,19 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 };
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.SVN)//added for supporting Jenkins way of config creation- need to improve it
                 {
-                    string modifiedURI = solution.SourceControl.SourceControlURL.TrimEnd(new char[] { '/' });
+                    string modifiedURI = solution.SourceControl.URL.TrimEnd('/');
                     int lastSlash = modifiedURI.LastIndexOf('/');
                     modifiedURI = (lastSlash > -1) ? modifiedURI[..lastSlash] : modifiedURI;
                     dynamicExecution.SolutionDetails.SourceControlDetails.Url = modifiedURI;
                 }
                 else
                 {
-                    dynamicExecution.SolutionDetails.SourceControlDetails.Url = solution.SourceControl.SourceControlURL.ToString();
+                    dynamicExecution.SolutionDetails.SourceControlDetails.Url = solution.SourceControl.URL.ToString();
                 }
-                if (solution.SourceControl.SourceControlUser != null && solution.SourceControl.SourceControlPass != null)
+                if (solution.SourceControl.Username != null && solution.SourceControl.Password != null)
                 {
-                    dynamicExecution.SolutionDetails.SourceControlDetails.User = solution.SourceControl.SourceControlUser;
-                    dynamicExecution.SolutionDetails.SourceControlDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
+                    dynamicExecution.SolutionDetails.SourceControlDetails.User = solution.SourceControl.Username;
+                    dynamicExecution.SolutionDetails.SourceControlDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.Password);
                     dynamicExecution.SolutionDetails.SourceControlDetails.PasswordEncrypted = "Y";
                 }
                 else
@@ -89,10 +89,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     dynamicExecution.SolutionDetails.SourceControlDetails.User = "N/A";
                     dynamicExecution.SolutionDetails.SourceControlDetails.Password = "N/A";
                 }
-                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.SourceControlProxyAddress != null && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
+                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.ProxyAddress != null && solution.SourceControl.ProxyAddress.ToLower().ToString() == "true")
                 {
-                    dynamicExecution.SolutionDetails.SourceControlDetails.ProxyServer = solution.SourceControl.SourceControlProxyAddress.ToString();
-                    dynamicExecution.SolutionDetails.SourceControlDetails.ProxyPort = solution.SourceControl.SourceControlProxyPort.ToString();
+                    dynamicExecution.SolutionDetails.SourceControlDetails.ProxyServer = solution.SourceControl.ProxyAddress.ToString();
+                    dynamicExecution.SolutionDetails.SourceControlDetails.ProxyPort = solution.SourceControl.ProxyPort.ToString();
                 }
             }
             dynamicExecution.SolutionDetails.Path = solution.Folder;
@@ -450,19 +450,19 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 };
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.SVN)//added for supporting Jenkins way of config creation- need to improve it
                 {
-                    string modifiedURI = solution.SourceControl.SourceControlURL.TrimEnd(new char[] { '/' });
+                    string modifiedURI = solution.SourceControl.URL.TrimEnd('/');
                     int lastSlash = modifiedURI.LastIndexOf('/');
                     modifiedURI = (lastSlash > -1) ? modifiedURI[..lastSlash] : modifiedURI;
                     executionConfig.SolutionScmDetails.SolutionRepositoryUrl = modifiedURI;
                 }
                 else
                 {
-                    executionConfig.SolutionScmDetails.SolutionRepositoryUrl = solution.SourceControl.SourceControlURL.ToString();
+                    executionConfig.SolutionScmDetails.SolutionRepositoryUrl = solution.SourceControl.URL.ToString();
                 }
-                if (solution.SourceControl.SourceControlUser != null && solution.SourceControl.SourceControlPass != null)
+                if (solution.SourceControl.Username != null && solution.SourceControl.Password != null)
                 {
-                    executionConfig.SolutionScmDetails.User = solution.SourceControl.SourceControlUser;
-                    executionConfig.SolutionScmDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
+                    executionConfig.SolutionScmDetails.User = solution.SourceControl.Username;
+                    executionConfig.SolutionScmDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.Password);
                     executionConfig.SolutionScmDetails.PasswordEncrypted = true;
                 }
                 else
@@ -470,13 +470,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     executionConfig.SolutionScmDetails.User = "N/A";
                     executionConfig.SolutionScmDetails.Password = "N/A";
                 }
-                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.SourceControlProxyAddress != null && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
+                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.ProxyAddress != null && solution.SourceControl.ProxyAddress.ToLower().ToString() == "true")
                 {
-                    executionConfig.SolutionScmDetails.ProxyServer = solution.SourceControl.SourceControlProxyAddress.ToString();
-                    executionConfig.SolutionScmDetails.ProxyPort = solution.SourceControl.SourceControlProxyPort.ToString();
+                    executionConfig.SolutionScmDetails.ProxyServer = solution.SourceControl.ProxyAddress.ToString();
+                    executionConfig.SolutionScmDetails.ProxyPort = solution.SourceControl.ProxyPort.ToString();
                 }
                 executionConfig.SolutionScmDetails.UndoSolutionLocalChanges = false;
-                executionConfig.SolutionScmDetails.Branch = solution.SourceControl.SourceControlBranch;
+                executionConfig.SolutionScmDetails.Branch = solution.SourceControl.Branch;
             }
             if (cliHelper.SetAlmConnectionDetails == true)
             {
@@ -587,6 +587,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 executionConfig.Environments = EnvironmentConfigOperations.ConvertToEnvironmentRunsetConfig(runsetExecutor.RunsetExecutionEnvironment, runsetExecutor.RunSetConfig.GingerRunners);
             }
 
+            if (cliHelper.SetAgentDetails && runsetExecutor.RunSetConfig.GingerRunners.Count > 0)
+            {
+                executionConfig.Agents = AgentConfigOperations.ConvertToAgentRunsetConfig(runsetExecutor.RunSetConfig.GingerRunners);
+            }
+
             RunsetExecConfig runset = new RunsetExecConfig
             {
                 Exist = true,
@@ -671,16 +676,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 {
                     runner.AppAgentMappings = [];
                 }
-                foreach (ApplicationAgent applicationAgent in gingerRunner.ApplicationAgents)
-                {
-                    ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
-                    applicationAgent.ApplicationAgentOperations = applicationAgentOperations;
-                    if (applicationAgent.Agent == null)
+                    foreach (ApplicationAgent applicationAgent in gingerRunner.ApplicationAgents)
                     {
-                        continue;//probably target app without platform or no such Agent
+                        ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
+                        applicationAgent.ApplicationAgentOperations = applicationAgentOperations;
+                        if (applicationAgent.Agent == null)
+                        {
+                            continue;//probably target app without platform or no such Agent
+                        }
+                        runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.AgentID, ApplicationName = applicationAgent.AppName, ApplicationID = applicationAgent.AppID });
                     }
-                    runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.AgentID, ApplicationName = applicationAgent.AppName, ApplicationID = applicationAgent.AppID });
-                }
 
                 //
                 runner.RunInSimulationMode = gingerRunner.RunInSimulationMode;
@@ -1100,6 +1105,26 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 EnvironmentConfigOperations.UpdateExistingEnvironmentDetails(ExistingEnvironments, AllEnvironmentsInGinger);
 
                 EnvironmentConfigOperations.AddNewEnvironmentDetails(NewlyAddedEnvironments, AllEnvironmentsInGinger);
+            }
+
+            if (gingerExecConfig.Agents?.Count > 0)
+            {
+                
+                AgentConfigOperations.CheckIfNameIsUnique<AgentConfig>(gingerExecConfig.Agents);
+                //list of existing agent list in json
+                var ExistingAgents = gingerExecConfig.Agents.Where((agent) => !agent.Exist.HasValue || agent.Exist.Value);
+
+                //list of virtual agent list in json
+                var NewlyAddedAgents = gingerExecConfig.Agents.Where((agent) => agent.Exist.HasValue && !agent.Exist.Value);
+
+                var AllAgentsInSolution = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+
+
+                //updating the existing agent configration from json
+                AgentConfigOperations.UpdateExistingAgentDetails(ExistingAgents, AllAgentsInSolution);
+
+                //creating the new Virtual agent from json
+                AgentConfigOperations.AddNewAgentDetails(NewlyAddedAgents, AllAgentsInSolution);
             }
 
             //Add or Update Runners
@@ -1742,6 +1767,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 runSetConfig.SelfHealingConfiguration.AutoFixAnalyzerIssue = dynamicRunsetConfigs.SelfHealingConfiguration.AutoFixAnalyzerIssue;
                 runSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel = dynamicRunsetConfigs.SelfHealingConfiguration.AutoUpdateApplicationModel;
+                runSetConfig.SelfHealingConfiguration.ForceUpdateApplicationModel = dynamicRunsetConfigs.SelfHealingConfiguration.ForceUpdateApplicationModel;
                 runSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl = dynamicRunsetConfigs.SelfHealingConfiguration.SaveChangesInSourceControl;
                 runSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators = dynamicRunsetConfigs.SelfHealingConfiguration.ReprioritizePOMLocators;
                 runSetConfig.SelfHealingConfiguration.AutoExecuteInSimulationMode = dynamicRunsetConfigs.SelfHealingConfiguration.AutoExecuteInSimulationMode;

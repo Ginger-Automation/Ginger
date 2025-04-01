@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -132,25 +132,6 @@ namespace Amdocs.Ginger.Repository
             {
                 return false;
             }
-        }
-
-        public static string FileContentProvider(string filename)
-        {
-
-            Uri url = new Uri(filename);
-
-
-            string orignaljson = "";
-            if (url.IsFile)
-            {
-                orignaljson = System.IO.File.ReadAllText(filename);
-            }
-            else
-            {
-                orignaljson = Common.GeneralLib.HttpUtilities.Download(url);
-
-            }
-            return orignaljson;
         }
 
         public static string ConvertYamlToJson(string originalYaml)

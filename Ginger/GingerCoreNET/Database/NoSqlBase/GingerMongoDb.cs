@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -194,7 +194,7 @@ namespace GingerCore.NoSqlBase
             var db = mMongoClient.GetDatabase(DbName);
             var collection = db.GetCollection<BsonDocument>(collectionName);
 
-            var result = collection.Find(new BsonDocument()).Project(Builders<BsonDocument>.Projection.Exclude("_id")).ToList();
+            var result = collection.Find(new BsonDocument()).ToList();
             foreach (var row in result)
             {
                 IEnumerable<string> columnNames = row.Elements.Select(x => x.Name);

@@ -18,19 +18,24 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.External.WireMock;
 using Amdocs.Ginger.Repository;
 using Ginger;
+using Ginger.ApplicationModelsLib.WireMockAPIModels;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
+using GingerWPF.TreeViewItemsLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -38,6 +43,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 {
     public partial class APIModelPage : GingerUIPage
     {
+        private WireMockMappingController wmController = new();
+
         ApplicationAPIModel mApplicationAPIModel;
         ModelParamsPage modelParamsPage;
         private bool saveWasDone = false;
@@ -61,11 +68,18 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             OutputTemplatePage outputTemplatePage = new OutputTemplatePage(mApplicationAPIModel, viewMode);
             xOutputTemplateFrame.ClearAndSetContent(outputTemplatePage);
 
+            WireMockTemplatePage wiremockTemplatePage = new WireMockTemplatePage(mApplicationAPIModel, viewMode);
+            xWireMockTemplateFrame.ClearAndSetContent(wiremockTemplatePage);
+            wiremockTemplatePage.GridUpdated += WireMockTemplatePage_GridUpdated;
+            TreeViewItemGenericBase.MappingCreated += OnMappingCreated;
+
+
             mApplicationAPIModel.AppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
             mApplicationAPIModel.GlobalAppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
             UpdateModelParametersTabHeader();
             mApplicationAPIModel.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
             UpdateOutputTemplateTabHeader();
+            _ = UpdateWireMockTemplateTabHeader();
 
             mPageViewMode = viewMode;
 
@@ -78,6 +92,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             {
                 HttpHeadersGrid.ShowPaste = Visibility.Visible;
             }
+        }
+
+        private async void OnMappingCreated(object sender, EventArgs e)
+        {
+            // Refresh the page
+            UpdateWireMockTemplateTabHeader();
         }
 
         void UpdatePageAsReadOnly()
@@ -147,8 +167,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             CookieMode.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.CookieMode), typeof(ApplicationAPIUtils.eCookieMode));
             RequestTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.RequestType), typeof(ApplicationAPIUtils.eRequestType));
             HttpVersioncombobox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.ReqHttpVersion), typeof(ApplicationAPIUtils.eHttpVersion));
-            ContentTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.ContentType), typeof(ApplicationAPIUtils.eContentType), ContentTypeChange);
-            ResponseTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.ResponseContentType), typeof(ApplicationAPIUtils.eContentType));
+            ContentTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.RequestContentType), typeof(ApplicationAPIUtils.eRequestContentType), ContentTypeChange);
+            ResponseTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.ResponseContentType), typeof(ApplicationAPIUtils.eResponseContentType));
             //Check maybe the binding of TemplateFileNameFileBrowser need to be different between soap and rest
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TemplateFileNameFileBrowser, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.TemplateFileNameFileBrowser));
 
@@ -188,6 +208,39 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             xOutputTemplateTab.Text = string.Format("Output Values Template ({0})", mApplicationAPIModel.ReturnValues.Count);
         }
 
+        private async Task UpdateWireMockTemplateTabHeader()
+        {
+            try
+            {
+                int count = await WireMockTemplateTabCount();
+                xWireMockTemplateTab.Text = string.Format("WireMock Mapping ({0})", count);
+            }
+            catch (Exception ex)
+            {
+
+                Reporter.ToLog(eLogLevel.ERROR, "error in getting wiremock mapping count", ex);
+            }
+        }
+
+        public async Task<int> WireMockTemplateTabCount()
+        {
+            try
+            {
+                var mappings = await wmController.DeserializeWireMockResponseAsync();
+
+                string ApiName = mApplicationAPIModel.Name;
+
+                // Filter the mappings based on the Name
+                int filteredMappings = mappings.Where(mapping => mapping.Name == ApiName).Count();
+                return filteredMappings;
+            }
+            catch (Exception ex)
+            {
+
+                Reporter.ToLog(eLogLevel.ERROR, "error in getting wiremock mappings count", ex);
+                return 0;
+            }
+        }
         private void FillTargetAppsComboBox()
         {
             //get key object 
@@ -251,6 +304,23 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(URLUserTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLUser));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(URLDomainTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLDomain));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(URLPasswordTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.URLPass));
+            xRealAPIRadioButton.SetBinding(RadioButton.IsCheckedProperty, new Binding
+            {
+                Source = mApplicationAPIModel,
+                Path = new PropertyPath(nameof(mApplicationAPIModel.UseLiveAPI)),
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                NotifyOnValidationError = true
+            });
+            xMockAPIRadioButton.SetBinding(RadioButton.IsCheckedProperty, new Binding
+            {
+                Source = mApplicationAPIModel,
+                Path = new PropertyPath(nameof(mApplicationAPIModel.UseLiveAPI)),
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                NotifyOnValidationError = true,
+                Converter = new BoolInverterConverter(),
+            });
 
             //Network Credential selection radio button:
             switch (mApplicationAPIModel.NetworkCredentials)
@@ -278,11 +348,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             //CertficiateRadioButtons :
             switch (mApplicationAPIModel.CertificateType)
             {
-                case ApplicationAPIUtils.eCretificateType.AllSSL:
+                case ApplicationAPIUtils.eCertificateType.AllSSL:
                     SSLCertificateTypeAllCertificatesRadioButton.IsChecked = true;
                     break;
-                case ApplicationAPIUtils.eCretificateType.Custom:
+                case ApplicationAPIUtils.eCertificateType.Custom:
                     SSLCertificateTypeCustomRadioButton.IsChecked = true;
+                    break;
+                case ApplicationAPIUtils.eCertificateType.Ignore:
+                    IgnoreSSLCertification.IsChecked = true;
                     break;
             }
 
@@ -321,21 +394,21 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void ContentTypeChange(object sender, RoutedEventArgs e)
         {
-            switch (mApplicationAPIModel.ContentType)
+            switch (mApplicationAPIModel.RequestContentType)
             {
-                case ApplicationAPIUtils.eContentType.JSon:
+                case ApplicationAPIUtils.eRequestContentType.JSon:
                     RequestBodyTypePanel.Visibility = Visibility.Visible;
                     CheckRequestBodySelection();
                     break;
-                case ApplicationAPIUtils.eContentType.TextPlain:
+                case ApplicationAPIUtils.eRequestContentType.TextPlain:
                     RequestBodyTypePanel.Visibility = System.Windows.Visibility.Visible;
                     CheckRequestBodySelection();
                     break;
-                case ApplicationAPIUtils.eContentType.XML:
+                case ApplicationAPIUtils.eRequestContentType.XML:
                     RequestBodyTypePanel.Visibility = System.Windows.Visibility.Visible;
                     CheckRequestBodySelection();
                     break;
-                case ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded:
+                case ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded:
                     BodyInputGridPannel.Visibility = System.Windows.Visibility.Collapsed;
                     FreeStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                     TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
@@ -343,7 +416,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     FormDataGridPanel.Visibility = System.Windows.Visibility.Visible;
                     RefreshRequestKeyValuesGrid();
                     break;
-                case ApplicationAPIUtils.eContentType.FormData:
+                case ApplicationAPIUtils.eRequestContentType.FormData:
                     BodyInputGridPannel.Visibility = System.Windows.Visibility.Collapsed;
                     FreeStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                     TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
@@ -361,12 +434,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 mApplicationAPIModel.APIModelBodyKeyValueHeaders.Clear();
             }
 
-            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.ContentType == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded)
+            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.RequestContentType == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded)
             {
                 //switch combobox   & browse button off 
                 FormDataGrid.ChangeGridView("UrlEncoded");
             }
-            else if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.ContentType == ApplicationAPIUtils.eContentType.FormData)
+            else if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.RequestContentType == ApplicationAPIUtils.eRequestContentType.FormData)
             {
                 //switch combobox  & browse button on
                 FormDataGrid.ChangeGridView("FormData");
@@ -439,14 +512,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void CheckRequestBodySelection()
         {
-            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.ContentType == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded)
+            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.RequestContentType == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded)
             {
                 FreeStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                 TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                 RequestBodyTypePanel.Visibility = System.Windows.Visibility.Collapsed;
                 FormDataGridPanel.Visibility = System.Windows.Visibility.Visible;
             }
-            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.ContentType == ApplicationAPIUtils.eContentType.FormData)
+            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.RequestContentType == ApplicationAPIUtils.eRequestContentType.FormData)
             {
                 FreeStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                 TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
@@ -474,7 +547,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void CheckCertificateSelection()
         {
-            if (mApplicationAPIModel.CertificateType == ApplicationAPIUtils.eCretificateType.Custom)
+            if (mApplicationAPIModel.CertificateType == ApplicationAPIUtils.eCertificateType.Custom)
             {
                 CertificateStackPanel.Visibility = System.Windows.Visibility.Visible;
             }
@@ -571,7 +644,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         break;
 
                     default:
-                        if (mApplicationAPIModel.ContentType is ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded or ApplicationAPIUtils.eContentType.FormData)
+                        if (mApplicationAPIModel.RequestContentType is ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded or ApplicationAPIUtils.eRequestContentType.FormData)
                         {
                             if (!String.IsNullOrEmpty(mApplicationAPIModel.TemplateFileNameFileBrowser))
                             {
@@ -665,13 +738,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void SetCertificatePanel()
         {
-            if (mApplicationAPIModel.CertificateType == ApplicationAPIUtils.eCretificateType.AllSSL)
+            if (mApplicationAPIModel.CertificateType == ApplicationAPIUtils.eCertificateType.Custom)
             {
-                CertificateStackPanel.Visibility = Visibility.Collapsed;
+                CertificateStackPanel.Visibility = Visibility.Visible;
             }
             else
             {
-                CertificateStackPanel.Visibility = Visibility.Visible;
+                CertificateStackPanel.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -688,10 +761,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 switch (rBtn.Name)
                 {
                     case "SSLCertificateTypeAllCertificatesRadioButton":
-                        mApplicationAPIModel.CertificateType = ApplicationAPIUtils.eCretificateType.AllSSL;
+                        mApplicationAPIModel.CertificateType = ApplicationAPIUtils.eCertificateType.AllSSL;
                         break;
                     case "SSLCertificateTypeCustomRadioButton":
-                        mApplicationAPIModel.CertificateType = ApplicationAPIUtils.eCretificateType.Custom;
+                        mApplicationAPIModel.CertificateType = ApplicationAPIUtils.eCertificateType.Custom;
+                        break;
+                    case "IgnoreSSLCertification":
+                        mApplicationAPIModel.CertificateType = ApplicationAPIUtils.eCertificateType.Ignore;
                         break;
                 }
                 SetCertificatePanel();
@@ -736,12 +812,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             FormDataGrid.btnAdd.RemoveHandler(Button.ClickEvent, new RoutedEventHandler(AddFormDataGridRow));
             FormDataGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddFormDataGridRow));
 
-            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.ContentType == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded)
+            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.RequestContentType == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded)
             {
                 //switch combobox   & browse button off 
                 FormDataGrid.ChangeGridView("UrlEncoded");
             }
-            else if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.ContentType == ApplicationAPIUtils.eContentType.FormData)
+            else if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.RequestContentType == ApplicationAPIUtils.eRequestContentType.FormData)
             {
                 //switch combobox  & browse button on
                 FormDataGrid.ChangeGridView("FormData");
@@ -986,6 +1062,51 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             Mouse.OverrideCursor = null;
 
             _pageGenericWin.Close();
+        }
+
+        public void xRealAPIRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mApplicationAPIModel.UseLiveAPI = true;
+            xRealAPIRadioButton.IsChecked = true;
+        }
+
+        public void xMockAPIRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mApplicationAPIModel.UseLiveAPI = false;
+            xMockAPIRadioButton.IsChecked = true;
+        }
+
+
+        private async void WireMockTemplatePage_GridUpdated(object sender, EventArgs e)
+        {
+            await UpdateWireMockTemplateTabHeader();
+        }
+
+        public class BoolInverterConverter : IValueConverter
+        {
+            #region IValueConverter Members
+
+            public object Convert(object value, Type targetType, object parameter,
+                System.Globalization.CultureInfo culture)
+            {
+                if (value is bool)
+                {
+                    return !(bool)value;
+                }
+                return value;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter,
+                System.Globalization.CultureInfo culture)
+            {
+                if (value is bool)
+                {
+                    return !(bool)value;
+                }
+                return value;
+            }
+
+            #endregion
         }
     }
 }

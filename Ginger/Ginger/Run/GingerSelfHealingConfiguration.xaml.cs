@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ namespace Ginger.Run
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoFixAnalyzerChkBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.AutomateTabSelfHealingConfiguration, nameof(SelfHealingConfig.AutoFixAnalyzerIssue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRePrioritizeChkBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.AutomateTabSelfHealingConfiguration, nameof(SelfHealingConfig.ReprioritizePOMLocators));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoUpdateModelChkBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.AutomateTabSelfHealingConfiguration, nameof(SelfHealingConfig.AutoUpdateApplicationModel));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xForceUpdateModelChkBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.AutomateTabSelfHealingConfiguration, nameof(SelfHealingConfig.ForceUpdateApplicationModel));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoExecuteInSimulationChkBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.AutomateTabSelfHealingConfiguration, nameof(SelfHealingConfig.AutoExecuteInSimulationMode));
 
             ShowHideConfigPanel();
@@ -56,6 +57,7 @@ namespace Ginger.Run
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoExecuteInSimulationChkBox, CheckBox.IsCheckedProperty, mRunSetConfig.SelfHealingConfiguration, nameof(SelfHealingConfig.AutoExecuteInSimulationMode));
 
             ShowHideConfigPanel();
+            mRunSetConfig.SelfHealingConfiguration.StartDirtyTracking();
         }
 
         public void ShowAsWindow()
@@ -97,10 +99,12 @@ namespace Ginger.Run
             if (xAutoUpdateModelChkBox.IsChecked ?? false)
             {
                 AutoUpdateModelNoteTextBlock.Visibility = Visibility.Visible;
+                xForceUpdateModelChkBox.Visibility = Visibility.Visible;
             }
             else
             {
                 AutoUpdateModelNoteTextBlock.Visibility = Visibility.Hidden;
+                xForceUpdateModelChkBox.Visibility = Visibility.Collapsed;
             }
         }
     }

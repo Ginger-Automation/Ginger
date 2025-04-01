@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -84,9 +84,12 @@ namespace GingerCoreNET.Application_Models
                 ((AgentOperations)Agent.AgentOperations).Driver.StopProcess = false;
                 POMElementsCopy.Clear();
                 DeltaViewElements.Clear();
-                var elementList = PlatformInfoBase.GetPlatformImpl(ePlatformType.Web).GetUIElementFilterList();
-                PomLearnUtils.AutoMapBasicElementTypesList = elementList["Basic"];
-                PomLearnUtils.AutoMapAdvanceElementTypesList = elementList["Advanced"];
+                if (PomLearnUtils.AutoMapBasicElementTypesList.Count == 0)
+                {
+                    var elementList = PlatformInfoBase.GetPlatformImpl(ePlatformType.Web).GetUIElementFilterList();
+                    PomLearnUtils.AutoMapBasicElementTypesList = elementList["Basic"];
+                    PomLearnUtils.AutoMapAdvanceElementTypesList = elementList["Advanced"];
+                }
                 PomLearnUtils.PrepareLearningConfigurations();
                 PomLearnUtils.LearnScreenShot();//this will set screen size to be same as in learning time
                 PrepareCurrentPOMElementsData();
@@ -130,7 +133,7 @@ namespace GingerCoreNET.Application_Models
         {
             var customRelXpathTemplateList = new List<string>();
 
-            foreach (var item in POM.RelativeXpathTemplateList)
+            foreach (var item in POM.PomSetting.RelativeXpathTemplateList)
             {
                 customRelXpathTemplateList.Add(item.Value);
             }
@@ -202,7 +205,7 @@ namespace GingerCoreNET.Application_Models
                     if (matchingOriginalElement == null)//New element
                     {
                         object groupToAddTo;
-                        if (PomLearnUtils.SelectedElementTypesList.Contains(latestElement.ElementTypeEnum))
+                        if (PomLearnUtils.SelectedElementTypesList.Any(x=>x.ElementType.Equals(latestElement.ElementTypeEnum)))
                         {
                             groupToAddTo = ApplicationPOMModel.eElementGroup.Mapped;
                         }
@@ -219,7 +222,7 @@ namespace GingerCoreNET.Application_Models
                     else if (matchingOriginalElement != null)
                     {
                         object groupToAddTo;
-                        if (PomLearnUtils.SelectedElementTypesList.Contains(latestElement.ElementTypeEnum))
+                        if (PomLearnUtils.SelectedElementTypesList.Any(x => x.ElementType.Equals(latestElement.ElementTypeEnum)))
                         {
                             groupToAddTo = ApplicationPOMModel.eElementGroup.Mapped;
                         }
@@ -392,7 +395,7 @@ namespace GingerCoreNET.Application_Models
 
         public void SetMatchingElementDeltaDetails(ElementInfo existingElement, ElementInfo latestElement, string matchDetails = "")
         {
-            ePomElementCategory? expectedCategory = latestElement.Properties.FirstOrDefault().Category.Value;
+            ePomElementCategory? expectedCategory = latestElement.Properties.FirstOrDefault()?.Category;
             DeltaElementInfo matchedDeltaElement = new DeltaElementInfo();
             //copy possible customized fields from original
             latestElement.Guid = existingElement.Guid;
@@ -558,7 +561,7 @@ namespace GingerCoreNET.Application_Models
                     {
                         latestLocator.Active = originalLocator.Active;
                         int originalIndex = existingElement.Locators.IndexOf(originalLocator);
-                        if (originalIndex <= latestElement.Locators.Count)
+                        if (originalIndex < latestElement.Locators.Count)
                         {
                             latestElement.Locators.Move(latestElement.Locators.IndexOf(latestLocator), originalIndex);
                             matchedDeltaElement.Locators.Move(matchedDeltaElement.Locators.IndexOf(matchedDeltaElement.Locators.First(x => x.ElementLocator == latestLocator)), originalIndex);

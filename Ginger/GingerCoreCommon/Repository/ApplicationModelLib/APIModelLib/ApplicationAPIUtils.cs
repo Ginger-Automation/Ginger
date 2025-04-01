@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -43,12 +43,14 @@ namespace Amdocs.Ginger.Repository
             TemplateFile
         }
 
-        public enum eCretificateType
+        public enum eCertificateType
         {
             [EnumValueDescription("All Certificates")]
             AllSSL,
             [EnumValueDescription("Custom")]
-            Custom
+            Custom,
+            [EnumValueDescription("Ignore")]
+            Ignore
         }
 
         public enum eSercurityType
@@ -97,13 +99,13 @@ namespace Amdocs.Ginger.Repository
             HTTPV11,
         }
 
-        public enum eContentType
+        public enum eRequestContentType
         {
-            [EnumValueDescription("application/json;charset=utf-8")]
+            [EnumValueDescription("application/json; charset=utf-8")]
             JSon,
             [EnumValueDescription("text/plain;charset=utf-8")]
             TextPlain,
-            [EnumValueDescription("xml")]
+            [EnumValueDescription("application/xml")]
             XML,
             [EnumValueDescription("application/x-www-form-urlencoded")]
             XwwwFormUrlEncoded,
@@ -111,6 +113,26 @@ namespace Amdocs.Ginger.Repository
             FormData,
             [EnumValueDescription("application/pdf")]
             PDF,
+            [EnumValueDescription("application/json")]
+            JSonWithoutCharset
+        }
+
+        public enum eResponseContentType
+        {
+            [EnumValueDescription("application/json; charset=utf-8")]
+            JSon,
+            [EnumValueDescription("text/plain")]
+            TextPlain,
+            [EnumValueDescription("application/xml")]
+            XML,
+            [EnumValueDescription("application/x-www-form-urlencoded")]
+            XwwwFormUrlEncoded,
+            [EnumValueDescription("multipart/form-data")]
+            FormData,
+            [EnumValueDescription("application/pdf")]
+            PDF,
+            [EnumValueDescription("*/*")]
+            Any,
             [EnumValueDescription("application/json")]
             JSonWithoutCharset
         }

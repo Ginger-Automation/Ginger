@@ -8,12 +8,12 @@ on:
           description: Year # The year of the release, e.g., 24 for 2024
           type: number 
           required: true
-          default: '24'
+          default: '25'
         minor:
           description: Release # The minor version of the release, e.g., 4 for the fourth release of the year
           type: number 
           required: true
-          default: '5'
+          default: '1'
         build:
           description: Beta # The build number, typically used for beta versions
           type: number 
@@ -34,12 +34,12 @@ on:
           - 'No'  # Do not add SSL certificate
 jobs:            
     Builder:
-        name: Ginger Builder
+        name: Build Solution
         uses: ./.github/workflows/Build.yml
         secrets: inherit
 
     Ginger_Unit-Test:
-        name: Ginger Unit-Test
+        name: Execute Unit Tests
         needs: Builder
         uses: ./.github/workflows/Test.yml
         secrets: inherit

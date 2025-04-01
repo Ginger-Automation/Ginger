@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -144,10 +144,10 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             ActWebAPIRest restAct = new ActWebAPIRest();
 
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "https://jsonplaceholder.typicode.com/posts/100");
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.POST.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eContentType.JSon.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eContentType.JSon.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, nameof(ApplicationAPIUtils.eCertificateType.AllSSL));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, nameof(ApplicationAPIUtils.eRequestType.POST));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, nameof(ApplicationAPIUtils.eRequestContentType.JSon));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, nameof(ApplicationAPIUtils.eResponseContentType.JSon));
 
             restAct.Active = true;
             restAct.EnableRetryMechanism = false;
@@ -462,10 +462,10 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             ActWebAPIRest restAct = new ActWebAPIRest();
 
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "https://jsonplaceholder.typicode.com/posts/100");
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.POST.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eContentType.JSon.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eContentType.JSon.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, nameof(ApplicationAPIUtils.eCertificateType.AllSSL));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, nameof(ApplicationAPIUtils.eRequestType.POST));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, nameof(ApplicationAPIUtils.eRequestContentType.JSon));
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, nameof(ApplicationAPIUtils.eResponseContentType.JSon));
 
             restAct.Active = true;
             restAct.EnableRetryMechanism = false;

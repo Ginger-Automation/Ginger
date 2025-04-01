@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -42,7 +42,10 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             mAct = act;
             var context = Context.GetAsContext(mAct.Context);
             ExecutedFrom = context.ExecutedFrom;
-            PomElementGUID = elementLocateValue.ToString().Split('_');
+            if (!string.IsNullOrEmpty(elementLocateValue))
+            {
+                PomElementGUID = elementLocateValue.ToString().Split('_');
+            }
 
         }
 
@@ -380,6 +383,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
                 pomDeltaUtils.LearnDelta().Wait();
                 mAct.ExInfo += DateTime.Now + " Self healing operation application model was updated";
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Add(this.GetCurrentPOM().Guid);
             }
             catch
             {

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -291,7 +291,16 @@ namespace GingerCore
                 }
                 else
                 {
-                    s = "NA";
+                    EnumValueDescriptionAttribute[] _attributes = (EnumValueDescriptionAttribute[])EnumType.GetField(EnumValue.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false);
+              
+                    if (_attributes.Length > 0)
+                    {
+                        s = _attributes[0].ValueDescription;
+                    }
+                    else
+                    {
+                        s = "NA";
+                    }
                 }
                 return s;
             }

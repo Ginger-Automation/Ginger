@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,13 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Repository;
 using System.ComponentModel;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
-    public class UIElementFilter : INotifyPropertyChanged
+    public class UIElementFilter : RepositoryItemBase //INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public UIElementFilter() { }
+
         public UIElementFilter(eElementType elementType, string elementExtraInfo, bool isSelected = false)
         {
             Selected = isSelected;
@@ -31,19 +33,40 @@ namespace Amdocs.Ginger.Common.UIElement
         }
 
         private bool mSelected = true;
-        // [IsSerializedForLocalRepository]
-        public bool Selected { get { return mSelected; } set { if (mSelected != value) { mSelected = value; OnPropertyChanged(nameof(Selected)); } } }
-
-        public eElementType ElementType { get; set; }
-        public string ElementExtraInfo { get; set; }
-
-        public void OnPropertyChanged(string name)
+        [IsSerializedForLocalRepository]
+        public bool Selected
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
+            get { return mSelected;
+            }
+            set
             {
-                handler(this, new PropertyChangedEventArgs(name));
+                if (mSelected != value)
+                {
+                    mSelected = value; OnPropertyChanged(nameof(Selected));
+                }
             }
         }
+
+        private eElementType mElementType;
+
+        [IsSerializedForLocalRepository]
+        public eElementType ElementType
+        {
+            get
+            {
+                return mElementType;
+            }
+            set
+            {
+                if (mElementType != value)
+                {
+                    mElementType = value;
+                    OnPropertyChanged(nameof(ElementType));
+                }
+            }
+        }
+        public string ElementExtraInfo { get; set; }
+        public override string ItemName { get; set; }
+
     }
 }

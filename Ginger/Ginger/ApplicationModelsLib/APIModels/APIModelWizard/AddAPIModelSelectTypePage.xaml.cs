@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             InitializeComponent();
             GingerCore.General.FillComboFromEnumType(APITypeComboBox, typeof(eAPIType), null);
             APITypeComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
-            APITypeComboBox.Text = eAPIType.WSDL.ToString();
+            APITypeComboBox.Text = GingerCore.General.GetEnumDescription(typeof(eAPIType), eAPIType.Swagger);
             XMLTemplatesGrid.SetTitleLightStyle = true;
             SetFieldsGrid();
         }
@@ -407,7 +407,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
         private void BrowseButtonClicked(object sender, RoutedEventArgs e)
         {
             AddAPIModelWizard.IsParsingWasDone = false;
-            if (APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString())
+            if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.WSDL))
             {
                 if (FileRadioButton.IsChecked == true)
                 {
@@ -433,14 +433,14 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                     ValidateFile();
                 }
             }
-            else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
+            else if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.Swagger))
             {
                 AddAPIModelWizard.APIType = eAPIType.Swagger;
                 if (FileRadioButton.IsChecked == true)
                 {
                     System.Windows.Forms.OpenFileDialog dlg2 = new System.Windows.Forms.OpenFileDialog
                     {
-                        Filter = "JSON Files (*.json)|*.json|YAML Files (*.yaml, *.yml)|*.yaml;*.yml|All Files (*.*)|*.*"
+                        Filter = "JSON or YAML Files (*.json;*.yaml;*.yml)|*.json;*.yaml;*.yml|All Files (*.*)|*.*"
                     };
 
                     System.Windows.Forms.DialogResult result = dlg2.ShowDialog();
@@ -500,21 +500,21 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             bool bIsFileValid = false;
             try
             {
-                if (APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString())
+                if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.WSDL))
                 {
                     fileName = xURLTextBox.Text;
                     bIsFileValid = LoadWSDLFileValidation();
                 }
-                else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
+                else if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.Swagger))
                 {
                     bIsFileValid = CheckForSwaggerParser(fileName);
                 }
-                else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.JsonTemplate.ToString())
+                else if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.JsonTemplate))
                 {
                     bIsFileValid = CheckForJsonParser(fileName);
 
                 }
-                else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.XMLTemplates.ToString())
+                else if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.XMLTemplates))
                 {
                     bIsFileValid = CheckForXmlParser(fileName);
                 }
@@ -581,7 +581,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 SwaggerParser swaggerParser = new SwaggerParser();
                 ObservableList<ApplicationAPIModel> swaggerList = [];
                 swaggerList = swaggerParser.ParseDocument(fileName, swaggerList);
-                AddAPIModelWizard.InfoTitle = swaggerParser.getInfoTitle();
+                AddAPIModelWizard.InfoTitle = swaggerParser.GetInfoTitle();
                 if (swaggerList == null || swaggerList.Count == 0)
                 {
                     return false;
@@ -707,12 +707,12 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
         private string GetRelevantFilter()
         {
-            if (APITypeComboBox.SelectedValue.ToString() == eAPIType.XMLTemplates.ToString())
+            if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.XMLTemplates))
             {
 
                 return "XML Files (*.xml)|*.xml" + "|WSDL Files (*.wsdl)|*.wsdl" + "|All Files (*.*)|*.*";
             }
-            else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.JsonTemplate.ToString())
+            else if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.JsonTemplate))
             {
                 return "JSON Files (*.json)|*.json" + "|TXT Files (*.txt)|*.txt" + "|All Files (*.*)|*.*";
             }

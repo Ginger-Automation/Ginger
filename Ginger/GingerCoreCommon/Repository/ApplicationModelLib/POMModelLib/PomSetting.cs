@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,25 +18,48 @@ limitations under the License.
 
 
 using System.Collections.Generic;
+using System.ComponentModel;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 
 namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib
 {
-    public class PomSetting
+    public class PomSetting : RepositoryItemBase
     {
-        public List<eElementType> filteredElementType { get; set; }
 
-        public ObservableList<ElementLocator> ElementLocatorsSettingsList { get; set; }
+        private ObservableList<UIElementFilter> mFilteredElementType;
+        [IsSerializedForLocalRepository]
+        public ObservableList<UIElementFilter> FilteredElementType { get { return mFilteredElementType; } set { if (mFilteredElementType != value) { mFilteredElementType = value; OnPropertyChanged(nameof(FilteredElementType)); } } }
 
-        public string SpecificFramePath { get; set; }
 
-        public List<string> relativeXpathTemplateList { get; set; }
+        private ObservableList<ElementLocator> mElementLocatorsSettingsList;
 
-        public bool LearnScreenshotsOfElements { get; set; }
+        [IsSerializedForLocalRepository]
+        public ObservableList<ElementLocator> ElementLocatorsSettingsList { get { return mElementLocatorsSettingsList; } set { if (mElementLocatorsSettingsList != value) { mElementLocatorsSettingsList = value; OnPropertyChanged(nameof(ElementLocatorsSettingsList)); } } }
 
-        public bool isPOMLearn { get; set; }
+        private string mSpecificFramePath;
+        [IsSerializedForLocalRepository]
+        public string SpecificFramePath { get { return mSpecificFramePath; } set { if (mSpecificFramePath != value) { mSpecificFramePath = value; OnPropertyChanged(nameof(SpecificFramePath)); } } }
 
-        public bool LearnShadowDomElements { get; set; }
+        private ObservableList<CustomRelativeXpathTemplate> mRelativeXpathTemplateList;
+        [IsSerializedForLocalRepository]
+        public ObservableList<CustomRelativeXpathTemplate> RelativeXpathTemplateList { get { return mRelativeXpathTemplateList; } set { if (mRelativeXpathTemplateList != value) { mRelativeXpathTemplateList = value; OnPropertyChanged(nameof(RelativeXpathTemplateList)); } } }
 
+        private bool mLearnScreenshotsOfElements;
+        [IsSerializedForLocalRepository]
+        public bool LearnScreenshotsOfElements { get { return mLearnScreenshotsOfElements; } set { if (mLearnScreenshotsOfElements != value) { mLearnScreenshotsOfElements = value; OnPropertyChanged(nameof(LearnScreenshotsOfElements)); } } }
+
+        private bool misPOMLearn;
+        [IsSerializedForLocalRepository]
+        public bool isPOMLearn { get { return misPOMLearn; } set { if (misPOMLearn != value) { misPOMLearn = value; OnPropertyChanged(nameof(isPOMLearn)); } } }
+
+        private bool mLearnShadowDomElements;
+        [IsSerializedForLocalRepository]
+        public bool LearnShadowDomElements { get { return mLearnShadowDomElements; } set { if (mLearnShadowDomElements != value) { mLearnShadowDomElements = value; OnPropertyChanged(nameof(LearnShadowDomElements)); } } }
+        public override string ItemName
+        {
+            get;
+            set;
+        }
     }
 }

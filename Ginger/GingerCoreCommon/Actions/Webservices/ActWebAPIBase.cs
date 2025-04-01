@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,11 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Xml;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
@@ -31,6 +26,11 @@ using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml;
 
 namespace GingerCore.Actions.WebServices
 {
@@ -90,10 +90,11 @@ namespace GingerCore.Actions.WebServices
             public static string NetworkCredentialsRadioButton = "NetworkCredentialsRadioButton";
             public static string ImportRequestFile = "ImportRequestFile";
             public static string ImportCetificateFile = "ImportCetificateFile";
-
             public static string UseLegacyJSONParsing = "UseLegacyJSONParsing";
-
         }
+
+        [IsSerializedForLocalRepository]
+        public bool UseLiveAPI { get; set; } = true;
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> DynamicElements = [];
@@ -139,8 +140,6 @@ namespace GingerCore.Actions.WebServices
                 }
             }
         }
-
-        private string ReqBody = String.Empty;
 
         public bool mUseTemplateFile = true;
 
@@ -221,7 +220,7 @@ namespace GingerCore.Actions.WebServices
                 string ResponseContentType = mAct.GetInputParamCalculatedValue(ActWebAPIRest.Fields.ResponseContentType);
                 bool jsonParsinFailed = false;
 
-                if (ResponseContentType == ApplicationAPIUtils.eContentType.JSon.ToString())
+                if (ResponseContentType == ApplicationAPIUtils.eResponseContentType.JSon.ToString() || ResponseContentType == ApplicationAPIUtils.eResponseContentType.JSonWithoutCharset.ToString())
                 {
                     if (!ParseJsonNodesToReturnParams(mAct, ResponseMessage))
                     {
@@ -234,7 +233,7 @@ namespace GingerCore.Actions.WebServices
                 }
 
                 if (XMLResponseCanBeParsed && (
-                   (mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType) == ApplicationAPIUtils.eContentType.XML.ToString()) || jsonParsinFailed))
+                   (mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType) == ApplicationAPIUtils.eResponseContentType.XML.ToString()) || jsonParsinFailed))
                 {
                     return ParseXMLNodesToReturnParams(mAct, ResponseMessage);
                 }

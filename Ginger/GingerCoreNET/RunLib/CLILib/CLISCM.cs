@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -84,10 +84,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public void Download(SCMOptions scmOptions)
         {
-            WorkSpace.Instance.UserProfile.SourceControlURL = scmOptions.URL;
-
-            // TODO: need to update all other options but the download below use userprofile... TBD
-            // SourceControlIntegration.DownloadSolution(scmOptions.Solution);
 
             Reporter.ToLog(eLogLevel.ERROR, "SCM options are not implemented yet");
         }

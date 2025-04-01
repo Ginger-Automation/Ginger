@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -256,7 +256,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
             if (act is ActWebAPISoap or ActWebAPIRest)
             {
-                if (WebAPI.RequestContstructor((ActWebAPIBase)act, WebServicesProxy, UseServerProxySettings))
+                if (WebAPI.RequestConstructor((ActWebAPIBase)act, WebServicesProxy, UseServerProxySettings))
                 {
                     WebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
 
@@ -288,7 +288,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     throw new Exception("The Action from type '" + act.GetType().ToString() + "' is unknown/Not Implemented by the Driver - " + this.GetType().ToString());
                 }
 
-                if (WebAPI.RequestContstructor(actWebAPI, WebServicesProxy, UseServerProxySettings))
+                if (WebAPI.RequestConstructor(actWebAPI, WebServicesProxy, UseServerProxySettings))
                 {
                     WebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
                 }
@@ -494,12 +494,12 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             mWebAPI = new HttpWebClientUtils();
 
             //Call for Request Construction
-            if (mWebAPI.RequestContstructor(act, WebServicesProxy, UseServerProxySettings))
+            if (mWebAPI.RequestConstructor(act, WebServicesProxy, UseServerProxySettings))
             {
 
                 mWebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
                 mRawRequest = mWebAPI.RequestFileContent;
-                Reporter.ToLog(eLogLevel.DEBUG, "RequestContstructor passed successfully");
+                Reporter.ToLog(eLogLevel.DEBUG, "RequestConstructor passed successfully");
 
                 if (mWebAPI.SendRequest())
                 {

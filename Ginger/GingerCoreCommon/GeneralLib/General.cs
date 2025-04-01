@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -503,6 +503,54 @@ namespace Amdocs.Ginger.Common.GeneralLib
                     JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
                 return dictionary;
             }
+        }
+
+        
+        public static string FileContentProvider(string filename)
+        {
+            Uri url = new Uri(filename);
+            string originalJson;
+            if (url.IsFile)
+            {
+                try
+                {
+                    if (!File.Exists(filename))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "File not found: " + filename);
+                        throw new FileNotFoundException("Cannot find file", filename);
+                    }
+                    originalJson = File.ReadAllText(filename);
+                    if (string.IsNullOrEmpty(originalJson))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "File is empty: " + filename);
+                        throw new Exception("File is empty: " + filename);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while reading {filename}", ex);
+                    throw;
+                }
+            }
+            else
+            {
+                try
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Downloading {filename}");
+                    originalJson = Common.GeneralLib.HttpUtilities.Download(url);
+                    if (string.IsNullOrEmpty(originalJson))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Downloaded content is empty: " + filename);
+                        throw new Exception("Downloaded content is empty: " + filename);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while downloading {filename}", ex);
+                    throw;
+                }
+            }
+            return originalJson;
         }
 
         /// <summary>

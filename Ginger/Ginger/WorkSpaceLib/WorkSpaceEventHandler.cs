@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -51,24 +51,11 @@ namespace GingerWPF.WorkSpaceLib
                 solution.SourceControl = new SVNSourceControl();
             }
         }
-
+ 
         public void ShowBusinessFlows()
         {
             throw new System.NotImplementedException();
         }
-
-        //public void OpenContainingFolder(string folderPath)
-        //{
-        //    string FullPath = WorkSpace.Instance.SolutionRepository.GetFolderFullPath(folderPath);
-        //    if (string.IsNullOrEmpty(FullPath))
-        //        return;
-
-        //    if (!Directory.Exists(FullPath))
-        //    {
-        //        Directory.CreateDirectory(FullPath);
-        //    }
-        //    Process.Start(FullPath);
-        //}
 
 
 

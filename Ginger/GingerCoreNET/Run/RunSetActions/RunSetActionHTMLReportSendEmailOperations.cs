@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. 
@@ -29,6 +29,7 @@ using Ginger.Reports.GingerExecutionReport;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -72,6 +73,26 @@ namespace Ginger.Run.RunSetActions
         {
             try
             {
+                if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Any(htmlRC => htmlRC.IsDefault))
+                {
+                    if (RunSetActionHTMLReportSendEmail.HTMLReportTemplate == RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Invalid Body Content type, No Default HTML Report template available to generate report. Please set a default template in Configurations -> Reports -> Reports Template.");
+                        RunSetActionHTMLReportSendEmail.Errors = "Invalid Body Content type, No Default HTML Report template available to generate report. Please set a default template in Configurations -> Reports -> Reports Template.";
+                        Reporter.HideStatusMessage();
+                        RunSetActionHTMLReportSendEmail.Status = eRunSetActionStatus.Failed;
+                        return;
+                    }
+                    if (RunSetActionHTMLReportSendEmail.EmailAttachments.Any(att => att.AttachmentType == EmailAttachment.eAttachmentType.Report))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Invalid Attachment type, No Default HTML Report template available to generate report. Please set a default template in Configurations -> Reports -> Reports Template.");
+                        RunSetActionHTMLReportSendEmail.Errors = "Invalid Attachment type, No Default HTML Report template available to generate report. Please set a default template in Configurations -> Reports -> Reports Template.";
+                        Reporter.HideStatusMessage();
+                        RunSetActionHTMLReportSendEmail.Status = eRunSetActionStatus.Failed;
+                        return;
+                    }
+                }
+
                 EmailOperations emailOperations = new EmailOperations(RunSetActionHTMLReportSendEmail.Email);
                 RunSetActionHTMLReportSendEmail.Email.EmailOperations = emailOperations;
 
@@ -108,8 +129,11 @@ namespace Ginger.Run.RunSetActions
                     {
                         reportsResultFolder = reportsResultFolder.Replace(DateTimeStamp, DateTime.UtcNow.ToString("yyyymmddhhmmssfff") + "_" + ++numberOfRetry);
                     }
-                    WebReportGenerator webReporterRunner = new WebReportGenerator();
-                    liteDbRunSet = webReporterRunner.RunNewHtmlReport(reportsResultFolder, null, null, false);
+                    if (RunSetActionHTMLReportSendEmail.HTMLReportTemplate == RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport)
+                    {
+                        WebReportGenerator webReporterRunner = new WebReportGenerator();
+                        liteDbRunSet = webReporterRunner.RunNewHtmlReport(reportsResultFolder, null, null, false);
+                    }
                 }
 
                 tempFolder = WorkSpace.Instance.ReportsInfo.EmailReportTempFolder;
@@ -1846,12 +1870,8 @@ namespace Ginger.Run.RunSetActions
             }
             try
             {
-                System.Drawing.Image img = System.Drawing.Image.FromFile(path);
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                    arr = ms.ToArray();
-                }
+                arr = ConvertImageToByteArray(path);
+
             }
             catch (Exception ex)
             {
@@ -1859,6 +1879,21 @@ namespace Ginger.Run.RunSetActions
             }
             return arr;
         }
+
+        byte[] ConvertImageToByteArray(string path)
+        {
+            using (SKBitmap bitmap = SKBitmap.Decode(path)) // Load image
+            {
+                using (SKImage image = SKImage.FromBitmap(bitmap))
+                {
+                    using (SKData data = image.Encode(SKEncodedImageFormat.Png, 100)) // Encode as PNG
+                    {
+                        return data.ToArray(); // Convert to byte array
+                    }
+                }
+            }
+        }
+
         //TODO: Move the Zipit function to Email.Addattach function
         void AddAttachmentToEmail(Email e, string FileName, bool ZipIt, EmailAttachment.eAttachmentType AttachmentType)
         {

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -111,11 +111,34 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         private PlaywrightBrowser.Options BuildPlaywrightBrowserOptions()
         {
+            string recordVideoDir = null;
+            RecordVideoSize? recordVideoSize = null;
+
+            if (WorkSpace.Instance.IsRunningFromRunsetOrCLI() && EnableVideoRecording)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Execution happening through CLI/Runset");
+
+                recordVideoDir = RecordVideoDir;
+                if (recordVideoDir != null && recordVideoDir.StartsWith(@"~\"))
+                {
+                    string solutionFolder = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.Folder;
+                    recordVideoDir = recordVideoDir.Replace(@"~\", solutionFolder, StringComparison.InvariantCultureIgnoreCase);
+                }
+
+                if (VideoHeight > 0 && VideoWidth > 0)
+                {
+                    recordVideoSize = new RecordVideoSize { Height = VideoHeight, Width = VideoWidth };
+                }
+            }
+
             PlaywrightBrowser.Options options = new()
             {
                 Args = new[] { "--start-maximized" },
                 Headless = HeadlessBrowserMode,
                 Timeout = DriverLoadWaitingTime * 1000, //convert to milliseconds
+                EnableVideoRecording = EnableVideoRecording,
+                RecordVideoDir = recordVideoDir,
+                RecordVideoSize = recordVideoSize
             };
 
             if (!string.IsNullOrEmpty(Proxy))
@@ -282,6 +305,47 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                             browserOptions.Timeout = driverDefaultTimeout;
                         }
                         break;
+                    case ActWebSmartSync actWebSmartSync:
+                        ActWebSmartSyncHandler actWebSmartSyncHandler = new(
+                            actWebSmartSync,
+                            _browser.CurrentWindow.CurrentTab,
+                            new BrowserElementLocator(
+                                _browser.CurrentWindow.CurrentTab,
+                                new()
+                                {
+                                    BusinessFlow = BusinessFlow,
+                                    Environment = Environment,
+                                    POMExecutionUtils = new POMExecutionUtils(actWebSmartSync, actWebSmartSync.ElementLocateValue),
+                                    Agent = BusinessFlow.CurrentActivity.CurrentAgent,
+                                }));
+                        float? driverDefaultTimeout1 = browserOptions.Timeout;
+                        float waitUntilTime;
+                        if (act.Timeout > 0)
+                        {
+                            waitUntilTime = act.Timeout.GetValueOrDefault();
+                        }
+                        else if(browserOptions.Timeout>0)
+                        {
+                            waitUntilTime = browserOptions.Timeout.Value;
+                        }
+                        else
+                        {
+                            waitUntilTime = 5;
+                        }
+                        browserOptions.Timeout = waitUntilTime;
+                        try
+                        {                          
+                            actWebSmartSyncHandler.HandleAsync(act, waitUntilTime*1000).Wait();
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Error = ex.Message;
+                        }
+                        finally
+                        {
+                            browserOptions.Timeout = driverDefaultTimeout1;
+                        }
+                        break;
                     default:
                         act.Error = $"This Action is not supported for Playwright driver";
                         break;
@@ -293,7 +357,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             message = string.Empty;
 
-            if (act is ActWithoutDriver or ActScreenShot or ActGotoURL or ActAccessibilityTesting or ActSmartSync)
+            if (act is ActWithoutDriver or ActScreenShot or ActGotoURL or ActAccessibilityTesting or ActSmartSync or ActWebSmartSync or ActBrowserElement)
             {
                 return true;
             }
@@ -595,6 +659,26 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return new Bitmap(memoryStream);
         }
 
+        [UserConfigured]
+        [UserConfiguredDefault(@"~\\Documents\VideoRecordings")]
+        [UserConfiguredDescription("Set directory path for storing the recorded video of browser actions being performed in ongoing session.")]
+        public string? RecordVideoDir { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Set \"true\" to enable video recording.")]
+        public bool EnableVideoRecording { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("The height in pixels of video recording")]
+        public int VideoHeight { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("The width in pixels of video recording")]
+        public int VideoWidth { get; set; }
+
         private protected override IBrowser GetBrowser()
         {
             ThrowIfClosed();
@@ -688,7 +772,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 IBrowserElement? browserElement = null;
                 try
                 {
-                    browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
+                    bool hadException = false;
+                    try
+                    {
+                        browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.DeepestElementFromPoint();");
+                    }
+                    catch 
+                    {
+                        hadException = true;
+                    }
+
+                    if (hadException || browserElement == null)
+                    {
+                        browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -1881,7 +1978,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ActUIElement.eElementAction.GetCustomAttribute,
             ActUIElement.eElementAction.GetFont,
             ActUIElement.eElementAction.MousePressRelease,
-            ActUIElement.eElementAction.MouseClick,
+            ActUIElement.eElementAction.GetValidValues,
+            ActUIElement.eElementAction.GetTextLength,
+            ActUIElement.eElementAction.GetSelectedValue,
+            ActUIElement.eElementAction.DragDrop,
+            ActUIElement.eElementAction.MultiSetValue,
+            ActUIElement.eElementAction.DrawObject,
         ];
 
 

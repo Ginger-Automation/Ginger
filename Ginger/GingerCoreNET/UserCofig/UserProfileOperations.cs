@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -285,23 +284,18 @@ namespace Ginger
 
         public UserProfile LoadPasswords(UserProfile userProfile)
         {
-            //Get sourcecontrol password
-            if (!string.IsNullOrEmpty(userProfile.EncryptedSourceControlPass))
+            if (WorkSpace.Instance.Solution != null)
             {
-                userProfile.SourceControlPass = EncryptionHandler.DecryptwithKey(userProfile.EncryptedSourceControlPass);
-            }
-            else if (userProfile.SourceControlType != SourceControlBase.eSourceControlType.None)
-            {
-                userProfile.SourceControlPass = WinCredentialUtil.GetCredential("Ginger_SourceControl_" + userProfile.SourceControlType);
-            }
+                var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
 
-            if (!string.IsNullOrEmpty(userProfile.EncryptedSolutionSourceControlPass))
-            {
-                userProfile.SolutionSourceControlPass = EncryptionHandler.DecryptwithKey(userProfile.EncryptedSolutionSourceControlPass);
-            }
-            else
-            {
-                userProfile.SolutionSourceControlPass = WinCredentialUtil.GetCredential("Ginger_SolutionSourceControl");
+                if (!string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.EncryptedPassword))
+                {
+                    GingerSolutionSourceControl.SourceControlInfo.Password = EncryptionHandler.DecryptwithKey(GingerSolutionSourceControl.SourceControlInfo.EncryptedPassword);
+                }
+                else
+                {
+                    GingerSolutionSourceControl.SourceControlInfo.Password = WinCredentialUtil.GetCredential($"Ginger_Sol_Git_{WorkSpace.Instance.Solution.Guid}");
+                }
             }
 
 
@@ -323,22 +317,30 @@ namespace Ginger
 
         public void SavePasswords()
         {
-            //Save source control password
-            if (!string.IsNullOrEmpty(UserProfile.SourceControlPass))
+            if (WorkSpace.Instance.Solution != null)
             {
-                WinCredentialUtil.SetCredentials("Ginger_SourceControl_" + UserProfile.SourceControlType, UserProfile.SourceControlUser, UserProfile.SourceControlPass);
-            }
-            if (!string.IsNullOrEmpty(UserProfile.SolutionSourceControlPass))
-            {
-                WinCredentialUtil.SetCredentials("Ginger_SolutionSourceControl", UserProfile.SolutionSourceControlUser, UserProfile.SolutionSourceControlPass);
-            }
+                var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
 
+                if (!string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.Password) && !string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.Username))
+                {
+                    WinCredentialUtil.SetCredentials($"Ginger_Sol_Git_{WorkSpace.Instance.Solution.Guid}", GingerSolutionSourceControl.SourceControlInfo.Username, GingerSolutionSourceControl.SourceControlInfo.Password);
+                }
+            }
             //Save ALM passwords on windows credential manager
             foreach (GingerCoreNET.ALMLib.ALMUserConfig almConfig in UserProfile.ALMUserConfigs.Where(f => !string.IsNullOrEmpty(f.ALMPassword)))
             {
                 WinCredentialUtil.SetCredentials("Ginger_ALM_" + almConfig.AlmType, almConfig.ALMUserName, almConfig.ALMPassword);
             }
         }
+
+        public void RefreshSourceControlCredentials(Guid solutionGuid)
+        {
+            var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(solutionGuid);
+            UserPass userPassObj = WinCredentialUtil.ReadCredential($"Ginger_Sol_Git_{solutionGuid}");
+            GingerSolutionSourceControl.SourceControlInfo.Password = userPassObj.Password;
+            GingerSolutionSourceControl.SourceControlInfo.Username = userPassObj.Username;
+        }
+
 
         public void LoadDefaults()
         {
@@ -351,13 +353,7 @@ namespace Ginger
 
         public bool SourceControlIgnoreCertificate { get; set; }
 
-        public void RefreshSourceControlCredentials(SourceControlBase.eSourceControlType argsSourceControlType)
-        {
-            UserProfile.SourceControlType = argsSourceControlType;
-            UserPass userPassObj = WinCredentialUtil.ReadCredential("Ginger_SourceControl_" + argsSourceControlType.ToString());
-            UserProfile.SourceControlPass = userPassObj.Password;
-            UserProfile.SourceControlUser = userPassObj.Username;
-        }
+
 
     }
 }

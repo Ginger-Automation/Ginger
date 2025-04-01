@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -5281,53 +5281,112 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        public int GetRowNumFromCollection(UIAuto.AutomationElement[] AECollection, ActTableElement.eRunColPropertyValue propVal, ActTableElement.eRunColOperator WhereOperator, string value)
+        public int GetMatchingRowNumFromCollection(UIAuto.AutomationElement[] AECollection, ActTableElement actGrid)
         {
-            UIAuto.AutomationElement targetElement;
-            string controlValue = "";
-            if (ActTableElement.eRunColOperator.Equals == WhereOperator)
-            {
-                for (int i = 0; i < AECollection.Length; i++)
-                {
-                    targetElement = AECollection[i];
-                    if (propVal == ActTableElement.eRunColPropertyValue.Text)
-                    {
-                        controlValue = GetControlText(targetElement);
-                    }
-                    else if (propVal == ActTableElement.eRunColPropertyValue.Value)
-                    {
-                        controlValue = GetControlValue(targetElement);
-                    }
+            string colValue = actGrid.GetInputParamCalculatedValue(ActTableElement.Fields.WhereColumnValue);
 
-                    if (value.Equals(controlValue))
+            switch (actGrid.WhereOperator)
+            {
+                case ActTableElement.eRunColOperator.Equals:
+                    
+                    for (int i = 0; i < AECollection.Length; i++)
                     {
-                        return i;
+                        if (colValue.Equals(GetControlValueForComparision(actGrid, AECollection[i])))
+                        {
+                            return i;
+                        }
                     }
-                }
+                    break;
+
+                case ActTableElement.eRunColOperator.NotEquals:
+                    for (int i = 0; i < AECollection.Length; i++)
+                    {
+                        if (!colValue.Equals(GetControlValueForComparision(actGrid, AECollection[i])))
+                        {
+                            return i;
+                        }
+                    }
+                    break;
+
+                case ActTableElement.eRunColOperator.Contains:
+                    for (int i = 0; i < AECollection.Length; i++)
+                    {
+                        if (colValue.Contains(GetControlValueForComparision(actGrid, AECollection[i])))
+                        {
+                            return i;
+                        }
+                    }
+                    break;
+
+                case ActTableElement.eRunColOperator.NotContains:
+                    for (int i = 0; i < AECollection.Length; i++)
+                    {
+                        if (!colValue.Contains(GetControlValueForComparision(actGrid, AECollection[i])))
+                        {
+                            return i;
+                        }
+                    }
+                    break;
+
+                case ActTableElement.eRunColOperator.StartsWith:
+                    for (int i = 0; i < AECollection.Length; i++)
+                    {
+                        if (colValue.StartsWith(GetControlValueForComparision(actGrid, AECollection[i])))
+                        {
+                            return i;
+                        }
+                    }
+                    break;
+
+                case ActTableElement.eRunColOperator.NotStartsWith:
+                    for (int i = 0; i < AECollection.Length; i++)
+                    {
+                        if (!colValue.StartsWith(GetControlValueForComparision(actGrid, AECollection[i])))
+                        {
+                            return i;
+                        }
+                    }
+                    break;
+
+                case ActTableElement.eRunColOperator.EndsWith:
+                    for (int i = 0; i < AECollection.Length; i++)
+                    {
+                        if (colValue.EndsWith(GetControlValueForComparision(actGrid, AECollection[i])))
+                        {
+                            return i;
+                        }
+                    }
+                    break;
+
+                case ActTableElement.eRunColOperator.NotEndsWith:
+                    for (int i = 0; i < AECollection.Length; i++)
+                    {
+                        if (!colValue.EndsWith(GetControlValueForComparision(actGrid, AECollection[i])))
+                        {
+                            return i;
+                        }
+                    }
+                    break;
+
+                default:
+                    throw new NotImplementedException("Selected operator " + actGrid.WhereOperator + " not implemented.");
             }
 
-            if (ActTableElement.eRunColOperator.Contains == WhereOperator)
-            {
-                for (int i = 0; i < AECollection.Length; i++)
-                {
-                    targetElement = AECollection[i];
-                    if (propVal == ActTableElement.eRunColPropertyValue.Text)
-                    {
-                        controlValue = GetControlText(targetElement);
-                    }
-                    else if (propVal == ActTableElement.eRunColPropertyValue.Value)
-                    {
-                        controlValue = GetControlValue(targetElement);
-                    }
+            throw new Exception("Grid Cell matching to given condition not present.");
+        }
 
-                    if (controlValue.Contains(value))
-                    {
-                        return i;
-                    }
-                }
+        private string GetControlValueForComparision(ActTableElement actGrid, UIAuto.AutomationElement targetElement)
+        {
+            if (actGrid.WhereProperty == ActTableElement.eRunColPropertyValue.Text)
+            {
+                return GetControlText(targetElement);
+            }
+            else if (actGrid.WhereProperty == ActTableElement.eRunColPropertyValue.Value)
+            {
+                return GetControlValue(targetElement);
             }
 
-            throw new Exception("Given Row Value " + value + " is not present in Grid");
+            return string.Empty;
         }
 
         public Dictionary<string, UIAuto.AutomationElement[]> GetUpdateDictionary(UIAuto.AutomationElement AE, ref bool isElementsFromPoints)
@@ -5465,7 +5524,7 @@ namespace GingerCore.Drivers
                             if (!isElementsFromPoints)
                             {
                                 AEWhereColl = GetColumnCollection(actGrid.WhereColSelector, actGrid.WhereColumnTitle, AE);
-                                RowNumber = GetRowNumFromCollection(AEWhereColl, actGrid.WhereProperty, actGrid.WhereOperator, actGrid.GetInputParamCalculatedValue(ActTableElement.Fields.WhereColumnValue));
+                                RowNumber = GetMatchingRowNumFromCollection(AEWhereColl, actGrid);
                             }
                             else
                             {
