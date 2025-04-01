@@ -1114,11 +1114,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 var ExistingAgents = gingerExecConfig.Agents.Where((agent) => !agent.Exist.HasValue || agent.Exist.Value);
                 var NewlyAddedAgents = gingerExecConfig.Agents.Where((agent) => agent.Exist.HasValue && !agent.Exist.Value);
 
-                var AllEnvironmentsInGinger = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+                var AllAgentsInSolution = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
 
-                AgentConfigOperations.UpdateExistingAgentDetails(ExistingAgents, AllEnvironmentsInGinger);
+                AgentConfigOperations.UpdateExistingAgentDetails(ExistingAgents, AllAgentsInSolution);
 
-                AgentConfigOperations.AddNewAgentDetails(NewlyAddedAgents, AllEnvironmentsInGinger);
+                AgentConfigOperations.AddNewAgentDetails(NewlyAddedAgents, AllAgentsInSolution);
             }
 
             //Add or Update Runners
