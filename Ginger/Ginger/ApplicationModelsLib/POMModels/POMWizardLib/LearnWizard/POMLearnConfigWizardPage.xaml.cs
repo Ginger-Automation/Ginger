@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
@@ -26,6 +27,7 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerTest.WizardLib;
 using GingerWPF.WizardLib;
 using System;
 using System.ComponentModel;
@@ -91,11 +93,24 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (xCustomRelativeXpathTemplateFrame.xCustomRelativeXpathCofigChkBox.IsChecked == true
                 && (mAppPlatform.Equals(ePlatformType.Web) || mAppPlatform.Equals(ePlatformType.Mobile)))
             {
-                mWizard.mPomLearnUtils.POM.PomSetting.RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>(xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList.Where(x => x.Status == CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed));
+                if (mWizard.mPomLearnUtils.POM.PomSetting != null)
+                { 
+                    mWizard.mPomLearnUtils.POM.PomSetting.RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>(xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList.Where(x => x.Status == CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed));
+                }
+                else
+                {
+                    PomSetting pomSetting = new PomSetting();
+                    pomSetting.RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>(xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList.Where(x => x.Status == CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed));
+                    mWizard.mPomLearnUtils.POM.PomSetting = pomSetting;
+                }
             }
             else
             {
-                mWizard.mPomLearnUtils.POM.PomSetting.RelativeXpathTemplateList.Clear();
+                if(mWizard.mPomLearnUtils.POM.PomSetting != null)
+                {
+                    mWizard.mPomLearnUtils.POM.PomSetting.RelativeXpathTemplateList.Clear();
+                }
+                    
             }
         }
 

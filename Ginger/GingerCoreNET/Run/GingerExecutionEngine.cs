@@ -514,7 +514,6 @@ namespace Ginger.Run
                 {
                     NotifyRunnerRunstart();
                 }
-
                 //Init 
                 mGingerRunner.Status = eRunStatus.Started;
                 IsRunning = true;
@@ -537,7 +536,6 @@ namespace Ginger.Run
                 {
                     UpdateApplicationAgents();
                 }
-
                 //Start execution
                 Status = eRunStatus.Running;
 

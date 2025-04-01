@@ -62,7 +62,7 @@
 
   <ItemGroup>
     <Reference Include="Ginger.ExecuterService.Contracts">
-      <HintPath>..\..\..\ginger-execution-services\GingerExecuterService\bin\Debug\net8.0\Ginger.ExecuterService.Contracts.dll</HintPath>
+      <HintPath>..\GingerCoreNET\DLLS\Ginger.ExecuterService.Contracts.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
