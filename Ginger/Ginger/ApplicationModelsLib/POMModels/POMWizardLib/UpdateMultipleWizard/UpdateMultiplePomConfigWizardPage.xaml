@@ -20,14 +20,6 @@
                     <Label x:Name="xTAlabel" Style="{StaticResource @LabelStyle}"/>
                     <ComboBox x:Name="xTargetApplicationComboBox"  AutomationProperties.AutomationId="TargetApplication AID" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" SelectionChanged="XTargetApplicationComboBox_SelectionChanged" />
                 </StackPanel>
-
-                <!--<StackPanel Orientation="Horizontal" Margin="5,10,0,0">
-                    <Label Grid.Column="0" VerticalAlignment="Center" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Content="Page Elements Setup Method:" />
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                        <RadioButton x:Name="xAutomaticElementConfigurationRadioButton" GroupName="ElementConfigRadioButtonsGroup"  Style="{StaticResource $InputRadioButtonStyle}" IsChecked="True" Checked="xAutomaticElementConfigurationRadioButton_Checked" Content="Automatic Learning" FontWeight="Bold"></RadioButton>
-                        <RadioButton x:Name="xManualElementConfigurationRadioButton" GroupName="ElementConfigRadioButtonsGroup" Style="{StaticResource $InputRadioButtonStyle}" IsChecked="False" Checked="xAutomaticElementConfigurationRadioButton_Checked" Margin="10,0,0,0"  Content="Manual" FontWeight="Bold"></RadioButton>
-                    </StackPanel>
-                </StackPanel>-->
             </StackPanel>
 
             <StackPanel  Grid.Row="1">

@@ -105,6 +105,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                 new GridColView() { Field = nameof(ApplicationPOMModel.Selected), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox },
                 new GridColView() { Field = nameof(ApplicationPOMModel.Name), Header = "POM Name", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true },
                 new GridColView() { Field = nameof(ApplicationPOMModel.PageURL), Header = "Page URL", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true }
+                
             ]
             };
 

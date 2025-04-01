@@ -25,12 +25,12 @@ namespace GingerCoreNET.Application_Models
         /// The RunSet configuration associated with this mapping
         /// </summary>
         
-        public RunSetConfig runSetConfig { get; set; }
+        public RunSetConfig RunSetConfig { get; set; }
 
         /// <summary>
         /// Name of the associated RunSet
         /// </summary>
-        public string runsetName { get; set; }
+        public string RunsetName { get; set; }
 
         /// <summary>
         /// List of Application POM Models associated with this mapping
@@ -45,7 +45,7 @@ namespace GingerCoreNET.Application_Models
         /// <summary>
         /// Status of POM update operations
         /// </summary>
-        public string POMUpdateStatus { get; set; }
+        public string PomUpdateStatus { get; set; } = string.Empty;
 
         public override string ItemName { get; set; }
 

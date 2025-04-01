@@ -16,17 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.External.WireMock;
 using Amdocs.Ginger.Repository;
-using Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib;
 using Ginger.Repository;
 using GingerCore;
 using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
-using GingerWPF.WizardLib;
 using Microsoft.VisualStudio.Services.WebApi;
 using System;
 using System.Collections.Generic;
@@ -68,7 +65,7 @@ namespace GingerWPF.TreeViewItemsLib
         public enum eFolderNodePastOperations { None, Copy, Cut, CopyItems, CutItems }
         public static eFolderNodePastOperations mCurrentFolderNodePastOperations = eFolderNodePastOperations.None;
 
-        public void AddItemNodeBasicManipulationsOptions(ContextMenu CM, bool allowSave = true, bool allowCopy = true, bool allowCut = true, bool allowDuplicate = true, bool allowDelete = true, bool allowViewXML = true, bool allowOpenContainingFolder = true, bool allowEdit = false, bool allowWireMockMapping = false,bool allowMultiPomUpdate = false)
+        public void AddItemNodeBasicManipulationsOptions(ContextMenu CM, bool allowSave = true, bool allowCopy = true, bool allowCut = true, bool allowDuplicate = true, bool allowDelete = true, bool allowViewXML = true, bool allowOpenContainingFolder = true, bool allowEdit = false, bool allowWireMockMapping = false)
         {
             if (allowSave)
             {

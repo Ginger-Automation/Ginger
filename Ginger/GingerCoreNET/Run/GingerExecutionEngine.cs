@@ -514,14 +514,9 @@ namespace Ginger.Run
                 {
                     NotifyRunnerRunstart();
                 }
-                if (!IsUpdatePOM)
-                {
-                    //Init 
-                    mGingerRunner.Status = eRunStatus.Started;
-                    IsRunning = true;
-                }
-                
-                
+                //Init 
+                mGingerRunner.Status = eRunStatus.Started;
+                IsRunning = true;
                 mStopRun = false;
                 if (doContinueRun == false)
                 {
@@ -541,11 +536,8 @@ namespace Ginger.Run
                 {
                     UpdateApplicationAgents();
                 }
-                if (!IsUpdatePOM)
-                {
-                    //Start execution
-                    Status = eRunStatus.Running;
-                }
+                //Start execution
+                Status = eRunStatus.Running;
 
                 int startingBfIndx = 0;
                 if (doContinueRun == false)
