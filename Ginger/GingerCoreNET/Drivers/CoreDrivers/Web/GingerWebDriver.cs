@@ -316,7 +316,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         private string EvaluateValueExpression(string value)
         {
-            GingerCore.ValueExpression valueExpression = new(Environment, BusinessFlow);
+            GingerCore.ValueExpression valueExpression = new(GetCurrentProjectEnvironment(), BusinessFlow);
             return valueExpression.Calculate(value);
         }
 
