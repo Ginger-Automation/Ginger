@@ -490,7 +490,7 @@ namespace Ginger.Run
 
 
 
-        public void RunRunner(bool doContinueRun = false,bool IsUpdatePOM = false)
+        public void RunRunner(bool doContinueRun = false)
         {
             bool runnerExecutionSkipped = false;
 

@@ -439,7 +439,7 @@ namespace Ginger.Run
             return result;
         }
 
-        public async Task RunRunset(bool doContinueRun = false,bool IsUpdatePOM = false)
+        public async Task RunRunset(bool doContinueRun = false)
         {
             try
             {
@@ -539,7 +539,7 @@ namespace Ginger.Run
                         {
                             if (!doContinueRun)
                             {
-                                GR.Executor.RunRunner(IsUpdatePOM : IsUpdatePOM);
+                                GR.Executor.RunRunner();
                             }
                             else if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
                             {

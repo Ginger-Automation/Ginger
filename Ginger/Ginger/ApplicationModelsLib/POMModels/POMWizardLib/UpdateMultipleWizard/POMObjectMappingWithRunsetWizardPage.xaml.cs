@@ -129,7 +129,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
 
                         multiPomRunSetMappingsList.Add(multiPomRunSetMappingItem);
                     }
-
+                    // Select the item with the largest intersection of applicationPOMModels.
+                    // The rationale is that a larger intersection indicates greater relevance or compatibility
+                    // with the given set, ensuring the best possible match.
                     foreach (var item in multiPomRunSetMappingsList)
                     {
                         var itemWithLargestApplicationPOMModels = multiPomRunSetMappingsList
@@ -148,6 +150,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                     break;
                 case EventType.Cancel:
                     break;
+                default: break;
             }
         }
 
@@ -290,18 +293,17 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
         {
             runsetExecutor.RunSetConfig = runSetConfig;
             
-            bool FailedToLoadRunset = false;
-            bool PrepareRunsetForExecution = false;
-
 
             if (!mCLIHelper.LoadRunset(runsetExecutor))
             {
-                FailedToLoadRunset = false;
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load Runset ");
+                return;
             }
 
             if (!mCLIHelper.PrepareRunsetForExecution())
             {
-                PrepareRunsetForExecution = false;
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Prepare Runset for execution");
+                return;
             }
 
         }

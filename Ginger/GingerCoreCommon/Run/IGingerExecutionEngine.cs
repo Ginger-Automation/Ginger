@@ -90,7 +90,7 @@ namespace Ginger.Run
         Task<int> RunActivityAsync(Activity activity, bool Continue = false, bool standaloneExecution = false, bool resetErrorHandlerExecutedFlag = false);
         void RunBusinessFlow(BusinessFlow businessFlow, bool standaloneExecution = false, bool doContinueRun = false, bool doResetErrorHandlerExecutedFlag = false);
         Task<int> RunBusinessFlowAsync(BusinessFlow businessFlow, bool standaloneBfExecution = false, bool doContinueRun = false);
-        void RunRunner(bool doContinueRun = false,bool IsUpdatePOM = false);
+        void RunRunner(bool doContinueRun = false);
         Task<int> RunRunnerAsync();
         //void SetActivityGroupsExecutionStatus(BusinessFlow automateTab = null, bool offlineMode = false, ExecutionLoggerManager ExecutionLoggerManager = null);
         //bool SetBFOfflineData(BusinessFlow BF, IExecutionLoggerManager executionLoggerManager, string logFolderPath);

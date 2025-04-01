@@ -72,8 +72,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                     SetPomSelectionGridView();
                     break;
                 case EventType.LeavingForNextPage:
-                    //UpdateCustomTemplateList();
                     break;
+                default: break;
             }
         }
 
@@ -132,12 +132,5 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                 }
             }
         }
-
-        //private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        //{
-        //    ApplicationPOMModel solutionItem = (ApplicationPOMModel)sender;
-        //    bool valuetoSet = !solutionItem.Selected;
-        //    solutionItem.Selected = valuetoSet;
-        //}
     }
 }

@@ -42,9 +42,9 @@ namespace GingerCoreNET.Application_Models
         public ApplicationPOMModel POM = null;
         public PomLearnUtils PomLearnUtils = null;
         public Agent Agent = null;
-        public ObservableList<ApplicationPOMModel> mPOMModels;
+        public ObservableList<ApplicationPOMModel> mPOMModels = new ObservableList<ApplicationPOMModel>();
 
-        public ObservableList<MultiPomRunSetMapping> MultiPomRunSetMappingList;
+        public ObservableList<MultiPomRunSetMapping> MultiPomRunSetMappingList = new ObservableList<MultiPomRunSetMapping>();
 
         public MultiPomDeltaUtils(ApplicationPOMModel pom, Agent agent = null, RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
         {

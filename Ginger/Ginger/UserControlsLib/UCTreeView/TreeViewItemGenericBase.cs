@@ -25,7 +25,6 @@ using Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib;
 using Ginger.Repository;
 using GingerCore;
 using GingerCore.GeneralLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using Microsoft.VisualStudio.Services.WebApi;
