@@ -252,7 +252,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                             // Add "Not Updated" after each element in FailedPomUpdateList
                             FailedPomUpdate = string.Join(", ", FailedPomUpdateList.Select(item => $"{item} Not Updated"));
 
-                            elem.PomUpdateStatus = $"{PassedPomUpdate},{FailedPomUpdate}";
+                            elem.PomUpdateStatus = $"{PassedPomUpdate}{Environment.NewLine}{FailedPomUpdate}";
                         }
                     }
                     SetPomWithRunsetSelectionSection();

@@ -4285,8 +4285,8 @@ namespace GingerCore.Drivers
                         // Add the GUID of the updated POM to the list of auto-updated POMs in the runset configuration
                         if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SelfHealingConfiguration.ForceUpdateApplicationModel)
                         {
-                            Reporter.ToLog(eLogLevel.INFO, $"Forcefully updating the application model based on the self-healing configuration");
-                            act.ExInfo += "Forcefully updating the application model based on the self-healing configuration";
+                            Reporter.ToLog(eLogLevel.INFO, $"Forcefully updating the application model based on the self-healing configuration before Execution");
+                            act.ExInfo += "Forcefully updating the application model based on the self-healing configuration before Execution";
                             pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent);
                             WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Add(currentPOM.Guid);
                             
