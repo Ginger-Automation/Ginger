@@ -143,6 +143,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        bool mAgentDetails;
+        public bool SetAgentDetails
+        {
+            get
+            {
+                return mAgentDetails;
+            }
+            set
+            {
+                mAgentDetails = value;
+                OnPropertyChanged(nameof(SetAgentDetails));
+            }
+        }
+
         bool mSetAlmConnectionDetails;
         public bool SetAlmConnectionDetails
         {
