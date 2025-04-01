@@ -44,6 +44,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public async Task RunAsync(DoOptions opts)
         {
             mOpts = opts;
+            if (opts.UseTempSolutionFolder)
+            {
+                mOpts.Solution = SetSolutionPathToTempFolder(opts.URL);
+            }
             switch (opts.Operation)
             {
                 case DoOptions.DoOperation.analyze:
@@ -402,5 +406,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        private string SetSolutionPathToTempFolder(string sourceControlUrl)
+        {
+            return mCLIHelper.GetTempFolderPathForRepo(sourceControlUrl);
+        }
     }
 }

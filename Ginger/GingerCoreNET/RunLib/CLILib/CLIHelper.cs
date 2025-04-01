@@ -36,6 +36,7 @@ using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -1016,5 +1017,29 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        /// <summary>
+        /// Constructs a temporary folder path by appending the repository name (extracted from the source control URL) 
+        /// to the system's temporary directory.
+        /// </summary>
+        /// <param name="sourceControlUrl"> The source control URL used to extract the repository name. If null, the instance's SourceControlURL property will be used. </param>
+        /// <returns>
+        /// A string representing the path to a temporary folder, combining the system's temp directory 
+        /// with the repository name extracted from the source control URL.
+        /// </returns>
+        public string GetTempFolderPathForRepo(string sourceControlUrl = null)
+        {
+            string urlToUse = sourceControlUrl ?? SourceControlURL;
+            string repoName = string.Empty;
+
+            if (!string.IsNullOrEmpty(urlToUse))
+            {
+                // Remove trailing slash if present
+                urlToUse = urlToUse.TrimEnd('/');
+
+                repoName = Path.GetFileNameWithoutExtension(urlToUse.Split('/').Last());
+            }
+
+            return Path.Combine(Path.GetTempPath(), repoName);
+        }
     }
 }
