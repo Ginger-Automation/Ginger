@@ -82,6 +82,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             IPlaywrightBrowserContext browserContext;
             try
             {
+                if (_options.EnableVideoRecording)
+                {
+                    try
+                    {
+                        ExecutePlaywrightInstallation("ffmpeg");
+                    }
+                    catch (PlaywrightException ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Unable to install Playwright ffmpeg dependency, so disabling Video Recording.", ex);
+                        _options.EnableVideoRecording = false;
+                    }
+                }
+
                 browserContext = await LaunchBrowserContextAsync();
             }
             catch (PlaywrightException ex)
@@ -115,6 +128,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return null;
             }
 
+            RecordVideoSize recordVideoSize = new RecordVideoSize { Height = -1, Width = -1 };
+            var recordVideoDir = string.Empty;
+
+            if (_options != null && _options.EnableVideoRecording)
+            {
+                recordVideoSize = _options.RecordVideoSize;
+                recordVideoDir = _options.RecordVideoDir;
+            }
+
             BrowserTypeLaunchPersistentContextOptions launchOptions = new()
             {
                 Args = _options.Args,
@@ -123,6 +145,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 Proxy = _options.Proxy,
                 ViewportSize = ViewportSize.NoViewport,
                 BypassCSP = true,
+                RecordVideoDir = recordVideoDir,
+                RecordVideoSize = recordVideoSize
             };
 
             if (_browserType == WebBrowserType.Chrome)
