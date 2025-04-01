@@ -585,6 +585,11 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+        public bool IsRunningFromRunsetOrCLI()
+        {
+            return WorkSpace.Instance.RunningInExecutionMode == true
+                || (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID != null);
+        }
 
         private static void HandleSolutionLoadSourceControl(Solution solution)
         {
