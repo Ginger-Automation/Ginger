@@ -111,19 +111,26 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         private PlaywrightBrowser.Options BuildPlaywrightBrowserOptions()
         {
-            string recordVideoDir = RecordVideoDir;
-            if (recordVideoDir != null && recordVideoDir.StartsWith(@"~\"))
+            string recordVideoDir = null;
+            RecordVideoSize? recordVideoSize = null;
+
+            if (WorkSpace.Instance.IsRunningFromRunsetOrCLI() && EnableVideoRecording)
             {
-                string solutionFolder = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.Folder;
-                recordVideoDir = recordVideoDir.Replace(@"~\", solutionFolder, StringComparison.InvariantCultureIgnoreCase);
+                Reporter.ToLog(eLogLevel.DEBUG, "Execution happening through CLI/Runset");
+
+                recordVideoDir = RecordVideoDir;
+                if (recordVideoDir != null && recordVideoDir.StartsWith(@"~\"))
+                {
+                    string solutionFolder = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.Folder;
+                    recordVideoDir = recordVideoDir.Replace(@"~\", solutionFolder, StringComparison.InvariantCultureIgnoreCase);
+                }
+
+                if (VideoHeight > 0 && VideoWidth > 0)
+                {
+                    recordVideoSize = new RecordVideoSize { Height = VideoHeight, Width = VideoWidth };
+                }
             }
 
-            RecordVideoSize? recordVideoSize = null;
-            if (VideoHeight > 0 && VideoWidth > 0)
-            {
-                recordVideoSize = new RecordVideoSize { Height = VideoHeight, Width = VideoWidth };
-            }
-            
             PlaywrightBrowser.Options options = new()
             {
                 Args = new[] { "--start-maximized" },
@@ -653,7 +660,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         }
 
         [UserConfigured]
-        [UserConfiguredDefault(@"~\Documents\VideoRecordings")]
+        [UserConfiguredDefault(@"~\\Documents\VideoRecordings")]
         [UserConfiguredDescription("Set directory path for storing the recorded video of browser actions being performed in ongoing session.")]
         public string? RecordVideoDir { get; set; }
 
