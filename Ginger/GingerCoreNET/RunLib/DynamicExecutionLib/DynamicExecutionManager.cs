@@ -587,6 +587,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 executionConfig.Environments = EnvironmentConfigOperations.ConvertToEnvironmentRunsetConfig(runsetExecutor.RunsetExecutionEnvironment, runsetExecutor.RunSetConfig.GingerRunners);
             }
 
+            if (cliHelper.SetAgentDetails && runsetExecutor.RunSetConfig.GingerRunners.Count > 0)
+            {
+                executionConfig.Agents = AgentConfigOperations.ConvertToAgentRunsetConfig(runsetExecutor.RunSetConfig.GingerRunners);
+            }
+
             RunsetExecConfig runset = new RunsetExecConfig
             {
                 Exist = true,
@@ -671,16 +676,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 {
                     runner.AppAgentMappings = [];
                 }
-                foreach (ApplicationAgent applicationAgent in gingerRunner.ApplicationAgents)
-                {
-                    ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
-                    applicationAgent.ApplicationAgentOperations = applicationAgentOperations;
-                    if (applicationAgent.Agent == null)
+                    foreach (ApplicationAgent applicationAgent in gingerRunner.ApplicationAgents)
                     {
-                        continue;//probably target app without platform or no such Agent
+                        ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
+                        applicationAgent.ApplicationAgentOperations = applicationAgentOperations;
+                        if (applicationAgent.Agent == null)
+                        {
+                            continue;//probably target app without platform or no such Agent
+                        }
+                        runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.AgentID, ApplicationName = applicationAgent.AppName, ApplicationID = applicationAgent.AppID });
                     }
-                    runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.AgentID, ApplicationName = applicationAgent.AppName, ApplicationID = applicationAgent.AppID });
-                }
 
                 //
                 runner.RunInSimulationMode = gingerRunner.RunInSimulationMode;
@@ -1100,6 +1105,26 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 EnvironmentConfigOperations.UpdateExistingEnvironmentDetails(ExistingEnvironments, AllEnvironmentsInGinger);
 
                 EnvironmentConfigOperations.AddNewEnvironmentDetails(NewlyAddedEnvironments, AllEnvironmentsInGinger);
+            }
+
+            if (gingerExecConfig.Agents?.Count > 0)
+            {
+                
+                AgentConfigOperations.CheckIfNameIsUnique<AgentConfig>(gingerExecConfig.Agents);
+                //list of existing agent list in json
+                var ExistingAgents = gingerExecConfig.Agents.Where((agent) => !agent.Exist.HasValue || agent.Exist.Value);
+
+                //list of virtual agent list in json
+                var NewlyAddedAgents = gingerExecConfig.Agents.Where((agent) => agent.Exist.HasValue && !agent.Exist.Value);
+
+                var AllAgentsInSolution = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+
+
+                //updating the existing agent configration from json
+                AgentConfigOperations.UpdateExistingAgentDetails(ExistingAgents, AllAgentsInSolution);
+
+                //creating the new Virtual agent from json
+                AgentConfigOperations.AddNewAgentDetails(NewlyAddedAgents, AllAgentsInSolution);
             }
 
             //Add or Update Runners
