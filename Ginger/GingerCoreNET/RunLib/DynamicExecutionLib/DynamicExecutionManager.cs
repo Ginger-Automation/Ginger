@@ -1109,15 +1109,21 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
             if (gingerExecConfig.Agents?.Count > 0)
             {
+                
                 AgentConfigOperations.CheckIfNameIsUnique<AgentConfig>(gingerExecConfig.Agents);
-
+                //list of existing agent list in json
                 var ExistingAgents = gingerExecConfig.Agents.Where((agent) => !agent.Exist.HasValue || agent.Exist.Value);
+
+                //list of virtual agent list in json
                 var NewlyAddedAgents = gingerExecConfig.Agents.Where((agent) => agent.Exist.HasValue && !agent.Exist.Value);
 
                 var AllAgentsInSolution = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
 
+
+                //updating the existing agent configration from json
                 AgentConfigOperations.UpdateExistingAgentDetails(ExistingAgents, AllAgentsInSolution);
 
+                //creating the new Virtual agent from json
                 AgentConfigOperations.AddNewAgentDetails(NewlyAddedAgents, AllAgentsInSolution);
             }
 
