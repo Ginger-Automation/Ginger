@@ -81,68 +81,80 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                     break;
 
                 case EventType.Active:
-                    runsetConfigMapping = new Dictionary<RunSetConfig, List<ApplicationPOMModel>>();
-                    ObservableList<RunSetConfig> RunSetConfigList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-                    ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                    
-                    var selectedPOMModels = mWizard.mMultiPomDeltaUtils.mPOMModels.Where(x => x.Selected);
-
-                    foreach (var applicationPOMModel in selectedPOMModels)
+                    try
                     {
-                        var matchingRunSetConfigs = RunSetConfigList
-                            .Where(runsetConfig => runsetConfig.GingerRunners
-                                .Any(gingerRunner => businessFlows
-                                    .Where(businessFlow => gingerRunner.BusinessFlowsRunList
-                                        .Select(y => y.BusinessFlowGuid)
-                                        .Contains(businessFlow.Guid))
-                                    .Any(businessFlow => businessFlow.Activities
-                                        .Any(activity => activity.Acts
-                                            .Any(act =>
-                                                    (act is ActUIElement actUIElement && actUIElement.ElementLocateBy == eLocateBy.POMElement &&
-                                                        actUIElement.ElementLocateValue.Split("_")[0] == applicationPOMModel.Guid.ToString()) ||
-                                                    (act is ActBrowserElement actBrowserElement && actBrowserElement.LocateBy == eLocateBy.POMElement &&
-                                                        actBrowserElement.LocateValue.Split("_")[0] == applicationPOMModel.Guid.ToString()))))));
+                        runsetConfigMapping = new Dictionary<RunSetConfig, List<ApplicationPOMModel>>();
+                        ObservableList<RunSetConfig> RunSetConfigList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                        ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
-                        foreach (var runsetConfig in matchingRunSetConfigs)
+                        var selectedPOMModels = mWizard.mMultiPomDeltaUtils.mPOMModels.Where(x => x.Selected);
+
+                        foreach (var applicationPOMModel in selectedPOMModels)
                         {
-                            if (!runsetConfigMapping.ContainsKey(runsetConfig))
+                            var matchingRunSetConfigs = RunSetConfigList
+                                .Where(runsetConfig => runsetConfig.GingerRunners
+                                    .Any(gingerRunner => businessFlows
+                                        .Where(businessFlow => gingerRunner.BusinessFlowsRunList
+                                            .Select(y => y.BusinessFlowGuid)
+                                            .Contains(businessFlow.Guid))
+                                        .Any(businessFlow => businessFlow.Activities
+                                            .Any(activity => activity.Acts
+                                                .Any(act =>
+                                                        (act is ActUIElement actUIElement && actUIElement.ElementLocateBy == eLocateBy.POMElement &&
+                                                            actUIElement.ElementLocateValue.Split("_")[0] == applicationPOMModel.Guid.ToString()) ||
+                                                        (act is ActBrowserElement actBrowserElement && actBrowserElement.LocateBy == eLocateBy.POMElement &&
+                                                            actBrowserElement.LocateValue.Split("_")[0] == applicationPOMModel.Guid.ToString()))))));
+
+                            foreach (var runsetConfig in matchingRunSetConfigs)
                             {
-                                runsetConfigMapping[runsetConfig] = new List<ApplicationPOMModel>();
+                                if (!runsetConfigMapping.ContainsKey(runsetConfig))
+                                {
+                                    runsetConfigMapping[runsetConfig] = new List<ApplicationPOMModel>();
+                                }
+                                runsetConfigMapping[runsetConfig].Add(applicationPOMModel);
                             }
-                            runsetConfigMapping[runsetConfig].Add(applicationPOMModel);
                         }
+
+
+                        ObservableList<MultiPomRunSetMapping> multiPomRunSetMappingsList = new ObservableList<MultiPomRunSetMapping>();
+
+                        foreach (var kvp in runsetConfigMapping)
+                        {
+                            MultiPomRunSetMapping multiPomRunSetMappingItem = new MultiPomRunSetMapping();
+                            multiPomRunSetMappingItem.RunSetConfig = kvp.Key;
+                            multiPomRunSetMappingItem.RunsetName = multiPomRunSetMappingItem.RunSetConfig.Name;
+                            multiPomRunSetMappingItem.applicationPOMModels = kvp.Value;
+                            multiPomRunSetMappingItem.RunSetStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+
+
+                            multiPomRunSetMappingItem.commaSeparatedApplicationPOMModels = string.Join(", ", multiPomRunSetMappingItem.applicationPOMModels.Select(apm => apm.ToString()));
+
+                            multiPomRunSetMappingsList.Add(multiPomRunSetMappingItem);
+                        }
+                        // Select the item with the largest intersection of applicationPOMModels.
+                        // The rationale is that a larger intersection indicates greater relevance or compatibility
+                        // with the given set, ensuring the best possible match.
+                        foreach (var item in multiPomRunSetMappingsList)
+                        {
+                            var itemWithLargestApplicationPOMModels = multiPomRunSetMappingsList
+                            .Where(mapping => item.applicationPOMModels.Any(model => selectedPOMModels.Contains(model)))
+                            .OrderByDescending(mapping => mapping.applicationPOMModels.Count)
+                            .FirstOrDefault();
+                            itemWithLargestApplicationPOMModels.Selected = true;
+                        }
+
+                        mWizard.mMultiPomDeltaUtils.MultiPomRunSetMappingList = multiPomRunSetMappingsList;
                     }
-
-
-                    ObservableList<MultiPomRunSetMapping> multiPomRunSetMappingsList = new ObservableList<MultiPomRunSetMapping>();
-
-                    foreach (var kvp in runsetConfigMapping)
+                    catch (Exception ex)
                     {
-                        MultiPomRunSetMapping multiPomRunSetMappingItem = new MultiPomRunSetMapping();
-                        multiPomRunSetMappingItem.RunSetConfig = kvp.Key;
-                        multiPomRunSetMappingItem.RunsetName = multiPomRunSetMappingItem.RunSetConfig.Name;
-                        multiPomRunSetMappingItem.applicationPOMModels = kvp.Value;
-                        multiPomRunSetMappingItem.RunSetStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
-
-
-                        multiPomRunSetMappingItem.commaSeparatedApplicationPOMModels = string.Join(", ", multiPomRunSetMappingItem.applicationPOMModels.Select(apm => apm.ToString()));
-
-                        multiPomRunSetMappingsList.Add(multiPomRunSetMappingItem);
+                        Reporter.ToLog(eLogLevel.ERROR,$"Failed to auto select runset { ex.ToString()}");
                     }
-                    // Select the item with the largest intersection of applicationPOMModels.
-                    // The rationale is that a larger intersection indicates greater relevance or compatibility
-                    // with the given set, ensuring the best possible match.
-                    foreach (var item in multiPomRunSetMappingsList)
+                    finally
                     {
-                        var itemWithLargestApplicationPOMModels = multiPomRunSetMappingsList
-                        .Where(mapping => item.applicationPOMModels.Any(model => selectedPOMModels.Contains(model)))
-                        .OrderByDescending(mapping => mapping.applicationPOMModels.Count)
-                        .FirstOrDefault();
-                        itemWithLargestApplicationPOMModels.Selected = true;
+                        SetPomWithRunsetSelectionSection();
                     }
 
-                    mWizard.mMultiPomDeltaUtils.MultiPomRunSetMappingList = multiPomRunSetMappingsList;
-                    SetPomWithRunsetSelectionSection();
+                    
                     break;
 
                 case EventType.LeavingForNextPage:
