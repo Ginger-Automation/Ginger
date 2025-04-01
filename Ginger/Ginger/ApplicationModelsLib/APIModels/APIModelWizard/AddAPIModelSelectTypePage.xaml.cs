@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
+using GingerAutoPilot.APIModelLib.Postman;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard;
 using GingerWPF.WizardLib;
@@ -179,6 +180,17 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                             }
                         }
                         break;
+                    case eAPIType.PostmanCollection:
+                        AddAPIModelWizard.APIType = eAPIType.PostmanCollection;
+                        WizardEventArgs.CancelEvent = true;
+                        if (!string.IsNullOrWhiteSpace(xURLTextBox.Text))
+                        {
+                            if (ValidateFile(xURLTextBox.Text))
+                            {
+                                WizardEventArgs.CancelEvent = false;
+                            }
+                        }
+                        break;
                     default:
                         throw new Exception("Selected API Type not found.");
                         break;
@@ -236,7 +248,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void APIType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString() || APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
+            if (APITypeComboBox.SelectedValue.ToString() is nameof(eAPIType.WSDL) or nameof(eAPIType.Swagger) or nameof(eAPIType.PostmanCollection))
             {
                 SecondRow.Height = new GridLength(30);
                 ThirdRow.Height = new GridLength(40);
@@ -245,7 +257,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
                 xURLTextBox.Text = string.Empty;
 
-                if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
+                if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.Swagger))
                 {
                     SupportNote.Visibility = Visibility.Visible;
                 }
@@ -256,11 +268,11 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
                 if (URLRadioButton.IsChecked == true)
                 {
-                    if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString() || (string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString()))
+                    if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.Swagger) || (string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.WSDL)))
                     {
                         xBrowseLoadButton.Visibility = Visibility.Collapsed;
                     }
-                    else if ((!string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString()))
+                    else if ((!string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.WSDL)))
                     {
                         xBrowseLoadButton.Visibility = Visibility.Visible;
                     }
@@ -273,7 +285,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 XMLTemplatesLable.Visibility = Visibility.Collapsed;
 
             }
-            else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.XMLTemplates.ToString() || APITypeComboBox.SelectedValue.ToString() == eAPIType.JsonTemplate.ToString())
+            else if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.XMLTemplates) || APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.JsonTemplate))
             {
                 SecondRow.Height = new GridLength(0);
                 ThirdRow.Height = new GridLength(0);
@@ -382,7 +394,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
             if (URLRadioButton.IsChecked == true)
             {
-                if (!string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() != eAPIType.Swagger.ToString())
+                if (!string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() != nameof(eAPIType.Swagger))
                 {
                     xBrowseLoadButton.Visibility = Visibility.Visible;
                 }
@@ -393,7 +405,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             }
             else if (FileRadioButton.IsChecked == true)
             {
-                if (!string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString())
+                if (!string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.WSDL))
                 {
                     xBrowseLoadButton.ButtonText = "Load";
                 }
@@ -465,7 +477,38 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                     }
                 }
             }
+            else if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.PostmanCollection))
+            {
+                AddAPIModelWizard.APIType = eAPIType.PostmanCollection;
+                if (FileRadioButton.IsChecked == true)
+                {
+                    System.Windows.Forms.OpenFileDialog dlg2 = new System.Windows.Forms.OpenFileDialog
+                    {
+                        Filter = "JSON Files (*.json)|*.json;|All Files (*.*)|*.*"
+                    };
 
+                    System.Windows.Forms.DialogResult result = dlg2.ShowDialog();
+
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+                        if (ValidateFile(dlg2.FileName))
+                        {
+                            xURLTextBox.Text = dlg2.FileName;
+                            AddAPIModelWizard.XTFList.Add(new TemplateFile() { FilePath = dlg2.FileName });
+                        }
+                    }
+                }
+                else
+                {
+                    string tempfile = System.IO.Path.GetTempFileName();
+                    string filecontent = Amdocs.Ginger.Common.GeneralLib.HttpUtilities.Download(new System.Uri(xURLTextBox.Text));
+                    System.IO.File.WriteAllText(tempfile, filecontent);
+                    if (ValidateFile(tempfile))
+                    {
+                        AddAPIModelWizard.XTFList.Add(new TemplateFile() { FilePath = tempfile });
+                    }
+                }
+            }
             else
             {
                 BrowseForTemplateFiles();
@@ -500,24 +543,15 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             bool bIsFileValid = false;
             try
             {
-                if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.WSDL))
+                bIsFileValid = APITypeComboBox.SelectedValue.ToString() switch
                 {
-                    fileName = xURLTextBox.Text;
-                    bIsFileValid = LoadWSDLFileValidation();
-                }
-                else if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.Swagger))
-                {
-                    bIsFileValid = CheckForSwaggerParser(fileName);
-                }
-                else if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.JsonTemplate))
-                {
-                    bIsFileValid = CheckForJsonParser(fileName);
-
-                }
-                else if (APITypeComboBox.SelectedValue.ToString() == nameof(eAPIType.XMLTemplates))
-                {
-                    bIsFileValid = CheckForXmlParser(fileName);
-                }
+                    nameof(eAPIType.WSDL) => LoadWSDLFileValidation(),
+                    nameof(eAPIType.Swagger) => CheckForSwaggerParser(fileName),
+                    nameof(eAPIType.JsonTemplate) => CheckForJsonParser(fileName),
+                    nameof(eAPIType.XMLTemplates) => CheckForXmlParser(fileName),
+                    nameof(eAPIType.PostmanCollection) => CheckForPostmanCollection(fileName),
+                    _ => throw new Exception("Selected API Type not found.")
+                };
             }
             catch (Exception ex)
             {
@@ -532,6 +566,27 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 }
             }
             return bIsFileValid;
+        }
+
+        private bool CheckForPostmanCollection(string fileName)
+        {
+            try
+            {
+                PostmanCollectionParser postmanCollectionParser = new();
+                ObservableList<ApplicationAPIModel> applicationAPIModels = [];
+                applicationAPIModels = postmanCollectionParser.ParseDocument(fileName, applicationAPIModels);
+                AddAPIModelWizard.InfoTitle = postmanCollectionParser.GetInfoTitle();
+                if (applicationAPIModels?.Count == 0)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, ex.Message, ex);
+                return false;
+            }
         }
 
         private void CheckForValidParser(string fileName = "")

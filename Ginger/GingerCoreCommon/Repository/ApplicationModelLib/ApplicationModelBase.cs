@@ -230,7 +230,7 @@ namespace Amdocs.Ginger.Repository
                 {
                     try
                     {
-                        string valueString = (string)PI.GetValue(item);
+                        string valueString = (string)PI?.GetValue(item);
                         foreach (string palceHolder in placeHoldersToReplace)
                         {
                             bool notifyPropertyChanged = false;

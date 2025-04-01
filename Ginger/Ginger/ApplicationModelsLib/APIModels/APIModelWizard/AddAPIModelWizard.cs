@@ -28,6 +28,10 @@ using Ginger.WizardLib;
 using GingerCore;
 using GingerCoreNET.Application_Models;
 using GingerWPF.WizardLib;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.VisualStudio.Services.Common;
+using OctaneRepositoryStd.BLL;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -46,7 +50,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             [EnumValueDescription("JSON Templates")]
             JsonTemplate,
             [EnumValueDescription("Swagger(Open API) Document")]
-            Swagger
+            Swagger,
+            [EnumValueDescription("Postman Collection")]
+            PostmanCollection
         }
 
         public eAPIType APIType { get; set; }
@@ -98,7 +104,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         public override void Finish()
         {
-            //ExportAPIFiles(SelectedAAMList);
             if (DeltaModelsList != null && DeltaModelsList.Count > 0)
             {
                 foreach (DeltaAPIModel deltaAPI in DeltaModelsList.Where(d => d.SelectedOperationEnum is DeltaAPIModel.eHandlingOperations.MergeChanges or DeltaAPIModel.eHandlingOperations.ReplaceExisting).GroupBy(d => d.matchingAPIModel).Select(d => d.First()))     // (DeltaAPIModel.matchingAPIModel)))          //.Where(d => d.IsSelected))
@@ -124,7 +129,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 CreateWireMockMappingsAsync(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected).ToList()));
             }
 
-            ImportAPIModels(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected == true).ToList()));
+            if (APIType == eAPIType.PostmanCollection)
+            {
+                ImportAPIModelsFromPostmanCollection(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected == true).ToList()));
+            }
+            else
+            {
+                ImportAPIModels(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected == true).ToList()));
+            }
         }
         private GlobalAppModelParameter AddGlobalParam(string customurl, string placehold)
         {
@@ -133,6 +145,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 PlaceHolder = "{" + placehold + "}"
             };
             var GlobalParams = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
+
             var existingMatchingParam = GlobalParams.FirstOrDefault(g => !string.IsNullOrEmpty(g.PlaceHolder)
             && g.PlaceHolder.Equals(newModelGlobalParam.PlaceHolder, System.StringComparison.InvariantCultureIgnoreCase)
             && g.OptionalValuesList.Any(f => !string.IsNullOrEmpty(f.Value)
@@ -154,11 +167,192 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             return newModelGlobalParam;
         }
 
+        private GlobalAppModelParameter AddGlobalAppModelParameterIfNotExist(GlobalAppModelParameter globalAppModelParameter)
+        {
+            var GlobalParams = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
+            var existingMatchingParam = GlobalParams.FirstOrDefault(g => !string.IsNullOrEmpty(g.PlaceHolder)
+            && g.PlaceHolder.Equals(globalAppModelParameter.PlaceHolder, System.StringComparison.InvariantCultureIgnoreCase)
+            && g.OptionalValuesList.Any(f => f.Value != null
+                 && f.Value.Equals(globalAppModelParameter.OptionalValuesList.FirstOrDefault().Value, System.StringComparison.InvariantCultureIgnoreCase)
+                 && f.IsDefault));
+
+            if (existingMatchingParam != null)
+            {
+                globalAppModelParameter.Guid = existingMatchingParam.Guid;
+                return existingMatchingParam;
+            }
+            if (GlobalParams.Any(x => x.PlaceHolder.Equals(globalAppModelParameter.PlaceHolder)))
+            {
+                globalAppModelParameter.PlaceHolder = "{{" + (!string.IsNullOrEmpty(globalAppModelParameter.PlaceHolder) ? globalAppModelParameter.PlaceHolder.Replace("{{", "").Replace("}}", "") : globalAppModelParameter.PlaceHolder) + "_Copy}}";
+            }
+            ModelParamUtils.SetUniquePlaceHolderName(globalAppModelParameter);
+            var globalAppModelToAdd = new GlobalAppModelParameter()
+            {
+                PlaceHolder = globalAppModelParameter.PlaceHolder,
+                Guid = globalAppModelParameter.Guid,
+                OptionalValuesList = [.. globalAppModelParameter.OptionalValuesList]
+            };
+            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(globalAppModelToAdd);
+            return globalAppModelToAdd;
+        }
+
         private async Task CreateWireMockMappingsAsync(ObservableList<ApplicationAPIModel> SelectedAAMList)
         {
             foreach (ApplicationAPIModel appmodel in SelectedAAMList)
             {
                 WireMockMappingGenerator.CreateWireMockMapping(appmodel);
+            }
+        }
+
+        public static string ExtractUrlDomain(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                return string.Empty;
+            }
+
+            // Check for template variables first  
+            if (url.StartsWith("{{") && url.Contains("}}"))
+            {
+                int startIndex = url.IndexOf("{{");
+                int endIndex = url.IndexOf("}}");
+                return url.Substring(startIndex, endIndex - startIndex + 2);
+            }
+
+            try
+            {
+                // Handle relative URLs without scheme  
+                if (url.StartsWith('/'))
+                {
+                    return string.Empty;
+                }
+
+                // Ensure URL has a scheme if not present  
+                if (!url.Contains("://"))
+                {
+                    url = "http://" + url;
+                }
+
+                Uri uri = new Uri(url);
+                if (uri.Port != 0)
+                {
+                    return $"{uri.Scheme}://{uri.Host}:{uri.Port}";
+                }
+                else
+                {
+                    return $"{uri.Scheme}://{uri.Host}";
+                }
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        private void ImportAPIModelsFromPostmanCollection(ObservableList<ApplicationAPIModel> SelectedAAMList)
+        {
+            GlobalAppModelParameter globalAppModelParameterForUrl = null;
+
+            GetOrAddRootFolder();
+
+            foreach (ApplicationAPIModel apiModel in SelectedAAMList)
+            {
+                var customUrl = ExtractUrlDomain(apiModel.EndpointURL);
+                if (!string.IsNullOrEmpty(customUrl) && customUrl.StartsWith("{{") && customUrl.EndsWith("}}"))
+                {
+                    if (!apiModel.GlobalAppModelParameters.Any(f => f.PlaceHolder.Equals(customUrl, StringComparison.CurrentCultureIgnoreCase)))
+                    {
+                        var domainParam = new GlobalAppModelParameter()
+                        {
+                            PlaceHolder = customUrl,
+                            OptionalValuesList = [new OptionalValue { Value = "", IsDefault = true }]
+                        };
+                        apiModel.GlobalAppModelParameters.Add(domainParam);
+                    }
+                }
+                else
+                {
+                    if (!apiModel.GlobalAppModelParameters.Any(f => f.PlaceHolder.Equals(customUrl, StringComparison.CurrentCultureIgnoreCase)))
+                    {
+                        var placeHolder = "{{" + this.InfoTitle + "}}";
+                        var domainParam = new GlobalAppModelParameter()
+                        {
+                            PlaceHolder = placeHolder,
+                            OptionalValuesList = [new OptionalValue { Value = customUrl, IsDefault = true }]
+                        };
+                        apiModel.GlobalAppModelParameters.Add(domainParam);
+
+                        apiModel.EndpointURL = apiModel.EndpointURL.Replace(customUrl, placeHolder);
+                    }
+
+                }
+
+                foreach (GlobalAppModelParameter globalAppModelParameter in apiModel.GlobalAppModelParameters)
+                {
+                    var globalParamAdded = AddGlobalAppModelParameterIfNotExist(globalAppModelParameter);
+
+                    if (globalAppModelParameter.PlaceHolder.Equals(globalParamAdded.PlaceHolder))
+                    {
+                        apiModel.UpdateParamsPlaceholder(apiModel, [globalAppModelParameter.PlaceHolder], globalParamAdded.PlaceHolder);
+                        globalAppModelParameter.PlaceHolder = globalParamAdded.PlaceHolder;
+                    }
+                }
+
+                Dictionary<System.Tuple<string, string>, List<string>> OptionalValuesPerParameterDict = [];
+
+                ImportOptionalValuesForParameters ImportOptionalValues = new ImportOptionalValuesForParameters();
+                ImportOptionalValues.GetAllOptionalValuesFromExamplesFiles(apiModel, OptionalValuesPerParameterDict);
+                ImportOptionalValues.PopulateOptionalValuesForAPIParameters(apiModel, OptionalValuesPerParameterDict);
+
+                if (!string.IsNullOrEmpty(apiModel.RelativeFilePath))
+                {
+                    apiModel.ContainingFolder = APIModelFolder?.FolderFullPath;
+                    try
+                    {
+                        var paths = apiModel.RelativeFilePath.Split('/');
+                        if (paths.Length > 2)
+                        {
+                            RepositoryFolderBase repositoryFolderBase = APIModelFolder;
+                            foreach (string item in paths[1..^1])
+                            {
+                                var apiModelPath = Path.Combine(repositoryFolderBase.FolderFullPath, item);
+                                if (amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(apiModelPath) == null)
+                                {
+                                    repositoryFolderBase = repositoryFolderBase?.AddSubFolder(item);
+                                }
+
+                                apiModel.ContainingFolder = apiModelPath;
+                            }
+                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Error while creating folder according to the paths in postman collection", ex);
+                    }
+                }
+
+                if (apiModel.TargetApplicationKey == null && TargetApplicationKey != null)
+                {
+                    apiModel.TargetApplicationKey = TargetApplicationKey;
+                }
+
+                if (apiModel.TagsKeys != null && TagsKeys != null)
+                {
+                    foreach (RepositoryItemKey tagKey in TagsKeys)
+                    {
+                        apiModel.TagsKeys.Add(tagKey);
+                    }
+                }
+
+                if (APIModelFolder?.FolderFullPath == apiModel.ContainingFolder)
+                {
+                    APIModelFolder?.AddRepositoryItem(apiModel);
+                }
+                else
+                {
+                    RepositoryFolderBase rfFolderBase = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(apiModel.ContainingFolder);
+                    rfFolderBase.AddRepositoryItem(apiModel);
+                }
             }
         }
 
@@ -184,12 +378,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                         {
                             Guid = globalAppModelParameterForUrl.Guid,
                             PlaceHolder = globalAppModelParameterForUrl.PlaceHolder,
-                            OptionalValuesList = [                                
+                            OptionalValuesList = [
                                 new OptionalValue
                                 {
                                     Value = customUrl,
                                     IsDefault = true
-                                }                                
+                                }
                             ]
                         }
                     ];
