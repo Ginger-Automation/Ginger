@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using CommandLine;
@@ -316,33 +317,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             try
             {
                 SetVerboseLevel(verboseLevel);
-                Reporter.ToLog(eLogLevel.INFO, "Running with URL = '" + url + "'");
+                Reporter.ToLog(eLogLevel.INFO, "Running 'dynamic' and fetching Ginger Execution Configurations from = '" + url + "'");
 
                 mCLIHandler = new CLIDynamicFile(CLIDynamicFile.eFileType.JSON);
 
-                var httpClientHandler = new HttpClientHandler
-                {
-                    Proxy = WebRequest.GetSystemWebProxy(),
-                    UseProxy = true
-                };
+                var (responseContent, statusCode) = await HttpUtilities.GetAsync(url);
 
-                using (HttpClient client = new HttpClient(httpClientHandler))
+                if (string.IsNullOrEmpty(responseContent))
                 {
-                    HttpResponseMessage response = await client.GetAsync(url);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        // API call was successful
-                        string responseContent = await response.Content.ReadAsStringAsync();
-                        return await ProcessExecConfigsAndExecute("dynamic", responseContent);
-                    }
-                    else
-                    {
-                        // API call failed
-                        Reporter.ToLog(eLogLevel.ERROR, "URL call failed with status code: " + response.StatusCode);
-                        Environment.ExitCode = 1; // failure
-                    }
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to fetch Execution Configurations from URL: {url}");
+                    Environment.ExitCode = 1;
+                    return Environment.ExitCode;
                 }
+
+                return await ProcessExecConfigsAndExecute("dynamic", responseContent);
             }
             catch (Exception ex)
             {
