@@ -4421,7 +4421,7 @@ namespace GingerCore.Drivers
                         if (!FLocator.IsAutoLearned)
                         {
                             ElementLocator evaluatedLocator = FLocator.CreateInstance() as ElementLocator;
-                            ValueExpression VE = new(this.Environment, this.BusinessFlow);
+                            ValueExpression VE = new(GetCurrentProjectEnvironment(), this.BusinessFlow);
                             FLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
                         }
 
@@ -8423,7 +8423,7 @@ namespace GingerCore.Drivers
                                 ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(parsedPOMGuid);
                                 if (SelectedPOM != null)
                                 {
-                                    url = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);
+                                    url = ValueExpression.Calculate(GetCurrentProjectEnvironment(), this.BusinessFlow, SelectedPOM.PageURL, null);
                                 }
                                 else
                                 {
@@ -8471,7 +8471,7 @@ namespace GingerCore.Drivers
                                 ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(parsedPOMGuid);
                                 if (SelectedPOM != null)
                                 {
-                                    gotoUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);
+                                    gotoUrl = ValueExpression.Calculate(GetCurrentProjectEnvironment(), this.BusinessFlow, SelectedPOM.PageURL, null);
                                 }
                                 else
                                 {
@@ -10457,7 +10457,7 @@ namespace GingerCore.Drivers
                             if (!FLocator.IsAutoLearned)
                             {
                                 ElementLocator evaluatedLocator = FLocator.CreateInstance() as ElementLocator;
-                                ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+                                ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), this.BusinessFlow);
                                 FLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
                             }
 
@@ -10546,7 +10546,7 @@ namespace GingerCore.Drivers
         private IWebElement LocateElementIfNotAutoLeared(ElementLocator el, ISearchContext parentContext, List<FriendlyLocatorElement> friendlyLocatorElements = null)
         {
             ElementLocator evaluatedLocator = el.CreateInstance() as ElementLocator;
-            ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+            ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), this.BusinessFlow);
             evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
             return LocateElementByLocator(evaluatedLocator, parentContext, friendlyLocatorElements, true);
         }
@@ -10967,9 +10967,8 @@ namespace GingerCore.Drivers
                 networkResponseLogList = [];
                 interceptor = webDriver.Manage().Network;
 
-                ProjEnvironment projEnv = GetCurrentProjectEnvironment();
 
-                ValueExpression VE = new ValueExpression(projEnv, BusinessFlow);
+                ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), BusinessFlow);
 
                 foreach (ActInputValue item in mAct.UpdateOperationInputValues)
                 {
@@ -10988,20 +10987,7 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-
-        private ProjEnvironment GetCurrentProjectEnvironment()
-        {
-            foreach (ProjEnvironment env in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
-            {
-                if (env.Name.Equals(BusinessFlow.Environment))
-                {
-                    return env;
-                }
-            }
-
-            return null;
-        }
-
+        
         public async Task StopMonitoringNetworkLog(ActBrowserElement act)
         {
             try
