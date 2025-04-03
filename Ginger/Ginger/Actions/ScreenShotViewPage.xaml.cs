@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using PdfSharpCore.Drawing;
 using System;
 using System.Drawing;
 using System.IO;
@@ -36,6 +37,9 @@ namespace Ginger.Actions.UserControls
         BitmapImage mBitmapImage;
         BitmapSource mBitmapSource;
         string mName;
+        // Set the maximum dimensions based on your needs  
+        int maxWidth = 9999;  // Example max width  
+        int maxHeight = 9999;  // Example max height  
 
         public Action<object, MouseclickonScrenshot> MouseClickOnScreenshot { get; set; }
 
@@ -75,7 +79,7 @@ namespace Ginger.Actions.UserControls
             xHighLighterRectangle.Visibility = Visibility.Collapsed;
         }
 
-        public ScreenShotViewPage(string Name, BitmapSource bitmapSource, bool IsDisplayName = true)
+        public ScreenShotViewPage(string Name, BitmapSource bitmapSource, bool IsDisplayName = true, int ImageMaxHeight =-1, int ImageMaxWidth = -1)
         {
             InitializeComponent();
 
@@ -92,10 +96,12 @@ namespace Ginger.Actions.UserControls
             if (bitmapSource != null)
             {
                 xNameLabel.Content = string.Format("{0} ({1})", xNameLabel.Content.ToString(), bitmapSource.PixelHeight + "x" + bitmapSource.PixelWidth);
-
-                //Change the canvas to match bmp size
-                xMainCanvas.Width = bitmapSource.PixelWidth;
-                xMainCanvas.Height = bitmapSource.PixelHeight;
+                if (ImageMaxHeight != -1 && ImageMaxWidth != -1)
+                {
+                    maxHeight = ImageMaxHeight;
+                    maxWidth = ImageMaxWidth;
+                }
+                SetDimensions(height: bitmapSource.PixelHeight, width: bitmapSource.PixelWidth);
                 xMainImage.Source = bitmapSource;
             }
             if (IsDisplayName)
@@ -202,14 +208,36 @@ namespace Ginger.Actions.UserControls
                 xNameLabel.Content = string.Format("{0} ({1})", xNameLabel.Content.ToString(), mBitmapImage.PixelHeight + "x" + mBitmapImage.PixelWidth);
 
                 //Change the canvas to match bmp size
-                xMainCanvas.Width = mBitmapImage.PixelWidth;
-                xMainCanvas.Height = mBitmapImage.PixelHeight;
+                SetDimensions(height: mBitmapImage.PixelHeight, width: mBitmapImage.PixelWidth);
                 xMainImage.Source = mBitmapImage;
             }
             else
             {
                 ShowError("No Bitmap");
             }
+        }
+
+
+        private void SetDimensions(int height, int width)
+        {
+            // Adjusting Viewbox to match the image size within the max limits  
+
+            if (width > maxWidth)
+            {
+                width = maxWidth;
+            }
+
+            if (height > maxHeight)
+            {
+                height = maxHeight;
+            }
+
+            //Change the canvas to match bmp size
+            xMainCanvas.Width = width;
+            xMainCanvas.Height = height;
+
+            xMainImage.Width = width;
+            xMainImage.Height = height;
         }
 
         //TODO: move to general class
@@ -281,8 +309,8 @@ namespace Ginger.Actions.UserControls
 
             // Set the Canvas scale based on ZoomSlider value
             ScaleTransform ST = new ScaleTransform(e.NewValue, e.NewValue);
+            this.xMainImage.LayoutTransform = ST;
             this.xMainCanvas.LayoutTransform = ST;
-
             xZoomPercentLabel.Content = (int)(e.NewValue * 100) + "%";
         }
 
