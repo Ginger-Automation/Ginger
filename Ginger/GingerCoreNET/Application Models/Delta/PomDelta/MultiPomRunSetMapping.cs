@@ -35,7 +35,7 @@ namespace GingerCoreNET.Application_Models
         /// <summary>
         /// List of Application POM Models associated with this mapping
         /// </summary>
-        public List<ApplicationPOMModel> applicationPOMModels { get; set; } = new List<ApplicationPOMModel>();
+        public List<ApplicationPOMModel> ApplicationPOMModels { get; set; } = new List<ApplicationPOMModel>();
 
 
         /// <summary>
