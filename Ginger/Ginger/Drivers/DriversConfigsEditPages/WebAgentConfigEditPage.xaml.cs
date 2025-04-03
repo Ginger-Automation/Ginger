@@ -78,7 +78,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             if (string.IsNullOrEmpty(xRecordVideoDirVE.ValueTextBox.Text))
             {
-                xRecordVideoDirVE.ValueTextBox.Text = @"~\Documents\VideoRecordings";
+                xRecordVideoDirVE.ValueTextBox.Text = @"~\\Documents\VideoRecordings";
                 return;
             }
 
