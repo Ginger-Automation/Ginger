@@ -383,6 +383,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
                 pomDeltaUtils.LearnDelta().Wait();
                 mAct.ExInfo += DateTime.Now + " Self healing operation application model was updated";
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Add(this.GetCurrentPOM().Guid);
             }
             catch
             {

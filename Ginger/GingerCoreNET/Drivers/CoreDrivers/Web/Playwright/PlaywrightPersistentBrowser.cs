@@ -128,8 +128,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return null;
             }
 
-            RecordVideoSize recordVideoSize = new RecordVideoSize { Height = -1, Width = -1 };
-            var recordVideoDir = string.Empty;
+            RecordVideoSize recordVideoSize = null;
+            string recordVideoDir = null;
 
             if (_options != null && _options.EnableVideoRecording)
             {
