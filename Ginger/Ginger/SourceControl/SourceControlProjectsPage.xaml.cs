@@ -29,6 +29,7 @@ using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -556,6 +557,10 @@ namespace Ginger.SourceControl
                     try
                     {
                         var branches = SourceControlIntegration.GetBranches(mSourceControl);
+                        if (branches == null || !branches.Any())
+                        {
+                            throw new Exception("No branches found.");
+                        }
                         Dispatcher.Invoke(() =>
                         {
                             foreach (string branch in branches)

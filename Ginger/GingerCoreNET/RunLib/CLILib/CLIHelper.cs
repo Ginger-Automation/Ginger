@@ -308,6 +308,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             SetSourceControlParaOnUserProfile.SourceControlInfo.Url = WorkSpace.Instance.UserProfile.URL;
             SetSourceControlParaOnUserProfile.SourceControlInfo.Username = WorkSpace.Instance.UserProfile.Username;
             SetSourceControlParaOnUserProfile.SourceControlInfo.Password = WorkSpace.Instance.UserProfile.Password;
+            SetSourceControlParaOnUserProfile.SourceControlInfo.Branch = WorkSpace.Instance.UserProfile.Branch;
             if (Solution.Contains(".git", StringComparison.OrdinalIgnoreCase))
             {
 

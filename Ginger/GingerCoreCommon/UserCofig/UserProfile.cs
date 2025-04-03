@@ -815,6 +815,8 @@ namespace Ginger
                 mSourceControl.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
                 mSourceControl.LocalFolder = GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath;
                 mSourceControl.Branch = GingerSolutionSourceControl.SourceControlInfo.Branch;
+                mSourceControl.AuthorName = GingerSolutionSourceControl.SourceControlInfo.AuthorName;
+                mSourceControl.AuthorEmail= GingerSolutionSourceControl.SourceControlInfo.AuthorEmail;
                 mSourceControl.IsProxyConfigured = GingerSolutionSourceControl.SourceControlInfo.IsProxyConfigured;
                 mSourceControl.ProxyAddress = GingerSolutionSourceControl.SourceControlInfo.ProxyAddress;
                 mSourceControl.ProxyPort = GingerSolutionSourceControl.SourceControlInfo.ProxyPort;
