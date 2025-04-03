@@ -36,9 +36,11 @@ namespace Ginger.Actions.UserControls
         BitmapImage mBitmapImage;
         BitmapSource mBitmapSource;
         string mName;
-        // Set the maximum dimensions based on your needs  
-        int maxWidth = 9999;  // Example max width  
-        int maxHeight = 9999;  // Example max height  
+        // Default maximum dimensions for image display
+        private const int DEFAULT_MAX_WIDTH = 9999;
+        private const int DEFAULT_MAX_HEIGHT = 9999;
+        private int maxWidth = DEFAULT_MAX_WIDTH;
+        private int maxHeight = DEFAULT_MAX_HEIGHT;
 
         public Action<object, MouseclickonScrenshot> MouseClickOnScreenshot { get; set; }
 
@@ -78,7 +80,7 @@ namespace Ginger.Actions.UserControls
             xHighLighterRectangle.Visibility = Visibility.Collapsed;
         }
 
-        public ScreenShotViewPage(string Name, BitmapSource bitmapSource, bool IsDisplayName = true, int ImageMaxHeight =-1, int ImageMaxWidth = -1)
+        public ScreenShotViewPage(string Name, BitmapSource bitmapSource, bool IsDisplayName = true, int ImageMaxHeight = DEFAULT_MAX_HEIGHT, int ImageMaxWidth = DEFAULT_MAX_WIDTH)
         {
             InitializeComponent();
 
@@ -95,9 +97,13 @@ namespace Ginger.Actions.UserControls
             if (bitmapSource != null)
             {
                 xNameLabel.Content = string.Format("{0} ({1})", xNameLabel.Content.ToString(), bitmapSource.PixelHeight + "x" + bitmapSource.PixelWidth);
-                if (ImageMaxHeight != -1 && ImageMaxWidth != -1)
+                // Set maximum dimensions if provided
+                if (ImageMaxHeight != DEFAULT_MAX_HEIGHT)
                 {
                     maxHeight = ImageMaxHeight;
+                }
+                if (ImageMaxWidth != DEFAULT_MAX_WIDTH)
+                {
                     maxWidth = ImageMaxWidth;
                 }
                 SetDimensions(height: bitmapSource.PixelHeight, width: bitmapSource.PixelWidth);
@@ -220,21 +226,26 @@ namespace Ginger.Actions.UserControls
         private void SetDimensions(int height, int width)
         {
             // Adjusting Viewbox to match the image size within the max limits  
-
+            double aspectRatio = (double)width / height;
+ 
+            // Check if width exceeds maximum and adjust both dimensions proportionally
             if (width > maxWidth)
             {
                 width = maxWidth;
+                height = (int)(width / aspectRatio);
             }
-
+ 
+            // After width adjustment, check if height still exceeds maximum
             if (height > maxHeight)
             {
                 height = maxHeight;
+                width = (int)(height * aspectRatio);
             }
-
+ 
             //Change the canvas to match bmp size
             xMainCanvas.Width = width;
             xMainCanvas.Height = height;
-
+ 
             xMainImage.Width = width;
             xMainImage.Height = height;
         }
