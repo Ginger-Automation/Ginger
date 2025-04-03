@@ -225,29 +225,36 @@ namespace Ginger.Actions.UserControls
 
         private void SetDimensions(int height, int width)
         {
-            // Adjusting Viewbox to match the image size within the max limits  
-            double aspectRatio = (double)width / height;
- 
-            // Check if width exceeds maximum and adjust both dimensions proportionally
-            if (width > maxWidth)
+            try
             {
-                width = maxWidth;
-                height = (int)(width / aspectRatio);
+                // Adjusting Viewbox to match the image size within the max limits  
+                double aspectRatio = (double)width / height;
+
+                // Check if width exceeds maximum and adjust both dimensions proportionally
+                if (width > maxWidth)
+                {
+                    width = maxWidth;
+                    height = (int)(width / aspectRatio);
+                }
+
+                // After width adjustment, check if height still exceeds maximum
+                if (height > maxHeight)
+                {
+                    height = maxHeight;
+                    width = (int)(height * aspectRatio);
+                }
+
+                //Change the canvas to match bmp size
+                xMainCanvas.Width = width;
+                xMainCanvas.Height = height;
+
+                xMainImage.Width = width;
+                xMainImage.Height = height;
             }
- 
-            // After width adjustment, check if height still exceeds maximum
-            if (height > maxHeight)
+            catch (Exception ex)
             {
-                height = maxHeight;
-                width = (int)(height * aspectRatio);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error while setting dimensions for Screenshot Viewer", ex);                
             }
- 
-            //Change the canvas to match bmp size
-            xMainCanvas.Width = width;
-            xMainCanvas.Height = height;
- 
-            xMainImage.Width = width;
-            xMainImage.Height = height;
         }
 
         //TODO: move to general class
