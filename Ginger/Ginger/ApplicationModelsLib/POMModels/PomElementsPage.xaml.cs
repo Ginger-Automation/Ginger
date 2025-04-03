@@ -631,8 +631,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private List<ComboEnumItem> GetPossibleCategories()
         {
             ePlatformType mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
-            List<ePomElementCategory> categoriesList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetPlatformPOMElementCategories();
-
+            List<ePomElementCategory> categoriesList = PlatformInfoBase.GetPlatformImpl(mAppPlatform)?.GetPlatformPOMElementCategories();
+            if (categoriesList == null)
+            {
+                return [];
+            }
             List<ComboEnumItem> elementStatus = [];
             foreach (ePomElementCategory category in categoriesList)
             {
@@ -644,7 +647,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private List<string> GetPossibleCategoriesAsString()
         {
             ePlatformType mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
-            List<ePomElementCategory> categoriesList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetPlatformPOMElementCategories();
+            List<ePomElementCategory> categoriesList = PlatformInfoBase.GetPlatformImpl(mAppPlatform)?.GetPlatformPOMElementCategories();
+            if (categoriesList == null)
+            {
+                return [];
+            }
 
             List<string> categories = [];
             foreach (ePomElementCategory category in categoriesList)
