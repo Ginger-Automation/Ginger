@@ -124,7 +124,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         public PomLearnUtils(ApplicationPOMModel pom, Agent agent = null, RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
         {
             POM = pom;
-            if (POM.PomSetting != null && POM.PomSetting.FilteredElementType.Count > 0)
+            if (POM.PomSetting != null && POM.PomSetting.FilteredElementType != null && POM.PomSetting.FilteredElementType.Count > 0)
             {
                 var elementList = PlatformInfoBase.GetPlatformImpl(ePlatformType.Web).GetUIElementFilterList();
                 AutoMapBasicElementTypesList = elementList["Basic"];
