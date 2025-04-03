@@ -11,8 +11,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>Amdocs.Ginger.Common</RootNamespace>
 
-    <AssemblyVersion>25.1.0.0</AssemblyVersion>
-    <FileVersion>25.1.0.0</FileVersion>
+    <AssemblyVersion>25.2.1.0</AssemblyVersion>
+    <FileVersion>25.2.1.0</FileVersion>
 
     <PackageId>Ginger.Core.Common</PackageId>
     <Authors>Amdocs</Authors>
