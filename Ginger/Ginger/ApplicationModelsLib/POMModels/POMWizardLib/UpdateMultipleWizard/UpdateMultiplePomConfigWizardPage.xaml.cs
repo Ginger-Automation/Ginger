@@ -92,6 +92,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                     mAppPlatform = selectedplatform.Platform;
                 }
             }
+            SetPomSelectionExpanderSection();
         }
 
         private void SetPomSelectionGridView()
