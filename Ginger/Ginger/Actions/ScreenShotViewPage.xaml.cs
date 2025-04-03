@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using PdfSharpCore.Drawing;
 using System;
 using System.Drawing;
 using System.IO;

@@ -162,12 +162,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             SetIconImageType();
         }
-        private void xScreenShotFrame_Loaded(object sender, RoutedEventArgs e)
-        {
-            double width = xScreenShotFrame.ActualWidth;
-            double height = xScreenShotFrame.ActualHeight;
-            // Use `width` and `height` as needed  
-        }
+
         private void SetDefaultPage()
         {
             if (mPOM.PageLoadFlow == ApplicationPOMModel.ePageLoadFlowType.PageURL)
