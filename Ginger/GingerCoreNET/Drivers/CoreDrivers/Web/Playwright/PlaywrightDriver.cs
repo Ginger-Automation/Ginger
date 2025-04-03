@@ -660,7 +660,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         }
 
         [UserConfigured]
-        [UserConfiguredDefault(@"~\\Documents\VideoRecordings")]
+        [UserConfiguredDefault(@"~\\ExecutionResults\VideoRecordings")]
         [UserConfiguredDescription("Set directory path for storing the recorded video of browser actions being performed in ongoing session.")]
         public string? RecordVideoDir { get; set; }
 
