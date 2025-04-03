@@ -39,6 +39,10 @@
                 </DataTemplate.Triggers>
             </DataTemplate>
 
+            <DataTemplate x:Key="xComboBoxTemplate">
+                <ComboBox x:Name="xRunSetComboBox" Grid.Column="1" Margin="20,10,0,0" Style="{StaticResource $FlatInputComboBoxStyle}" HorizontalAlignment="Stretch" SelectionChanged="RunSetComboBox_SelectionChanged" Width="auto"/>
+            </DataTemplate>
+
         </Grid.Resources>
 
         <Grid.ColumnDefinitions>
