@@ -1,11 +1,11 @@
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.PortableExecutable;
 using System.Text.Json;
-using YamlDotNet.Core.Tokens;
+using System.Xml;
 
 namespace GingerAutoPilot.APIModelLib.Postman;
 public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
@@ -47,9 +47,10 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
         return true;
     }
 
-    public static bool IsCollectionVersion2_1(string json)
+    public static bool IsCollectionVersion2_1(string FileName)
     {
-        var jsonObject = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
+        string fileContent = Amdocs.Ginger.Common.GeneralLib.General.FileContentProvider(FileName);
+        var jsonObject = JsonSerializer.Deserialize<Dictionary<string, object>>(fileContent);
 
         if (jsonObject != null && jsonObject.ContainsKey("info"))
         {
@@ -78,13 +79,13 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
     {
         try
         {
-            string fileContent = Amdocs.Ginger.Common.GeneralLib.General.FileContentProvider(FileName);
-            if (!IsCollectionVersion2_1(fileContent))
+            if (!IsCollectionVersion2_1(FileName))
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"The provided Postman collection JSON is not valid schema. Note: Only Postman Collection v2.1 are supported at this time.");
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, $"The provided Postman collection JSON is not valid schema. Note: Only Postman Collection v2.1 are supported at this time.");
                 return [];
             }
+            string fileContent = Amdocs.Ginger.Common.GeneralLib.General.FileContentProvider(FileName);
             PostmanCollection = JsonSerializer.Deserialize<PostmanCollection>(fileContent);
             AAMSList = ConvertToAPIModels(PostmanCollection, AAMSList);
             return AAMSList;
@@ -137,7 +138,7 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
                 {
                     PlaceHolder = "{{" + item.Key + "}}",
                     OptionalValuesList = [new OptionalValue { Value = item.Value, IsDefault = true }]
-                  
+
                 };
 
                 applicationModel.GlobalAppModelParameters.Add(domainParam);
@@ -198,7 +199,140 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
         ProcessHeaders(postmanRequest.Header, applicationAPIModel);
         ProcessBody(postmanRequest.Body, applicationAPIModel);
 
+        AddMissingModelParameterFromBody(applicationAPIModel);
+
     }
+
+    private static void AddMissingModelParameterFromBody(ApplicationAPIModel applicationAPIModel)
+    {
+        if (string.IsNullOrEmpty(applicationAPIModel.RequestBody))
+        {
+            return;
+        }
+
+        try
+        {
+            // Check if the request body is JSON
+            if (IsValidJson(applicationAPIModel.RequestBody))
+            {
+                using var doc = JsonDocument.Parse(applicationAPIModel.RequestBody);
+                var root = doc.RootElement;
+                ExtractAndAddParametersFromJson(root, applicationAPIModel);
+            }
+            // Check if the request body is XML
+            else if (IsValidXml(applicationAPIModel.RequestBody))
+            {
+                var doc = new XmlDocument();
+                doc.LoadXml(applicationAPIModel.RequestBody);
+                ExtractAndAddParametersFromXml(doc.DocumentElement, applicationAPIModel);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Reporter.ToLog(eLogLevel.ERROR, "Error occurred while parsing the request body", ex);
+        }
+    }
+
+    private static void ExtractAndAddParametersFromJson(JsonElement element, ApplicationAPIModel applicationAPIModel)
+    {
+        if (element.ValueKind == JsonValueKind.Object)
+        {
+            foreach (var property in element.EnumerateObject())
+            {
+                if (property.Value.ValueKind == JsonValueKind.String && property.Value.GetString().StartsWith("{{") && property.Value.GetString().EndsWith("}}"))
+                {
+                    string placeholder = property.Value.GetString();
+                    AddModelParameter(applicationAPIModel, property.Name, placeholder);
+                }
+                else
+                {
+                    ExtractAndAddParametersFromJson(property.Value, applicationAPIModel);
+                }
+            }
+        }
+        else if (element.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in element.EnumerateArray())
+            {
+                ExtractAndAddParametersFromJson(item, applicationAPIModel);
+            }
+        }
+    }
+
+    private static void ExtractAndAddParametersFromXml(XmlNode node, ApplicationAPIModel applicationAPIModel)
+    {
+        if (node == null)
+        {
+            return;
+        }
+
+        foreach (XmlNode childNode in node.ChildNodes)
+        {
+            if (childNode.NodeType == XmlNodeType.Element && childNode.InnerText.StartsWith("{{") && childNode.InnerText.EndsWith("}}"))
+            {
+                string placeholder = childNode.InnerText;
+                AddModelParameter(applicationAPIModel, childNode.Name, placeholder);
+            }
+            else
+            {
+                ExtractAndAddParametersFromXml(childNode, applicationAPIModel);
+            }
+        }
+    }
+
+    private static bool IsValidJson(string strInput)
+    {
+        strInput = strInput.Trim();
+        if ((strInput.StartsWith("{") && strInput.EndsWith("}")) || //For object
+            (strInput.StartsWith("[") && strInput.EndsWith("]"))) //For array
+        {
+            try
+            {
+                var obj = JsonDocument.Parse(strInput);
+                return true;
+            }
+            catch (JsonException) //Not valid JSON
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private static bool IsValidXml(string strInput)
+    {
+        try
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml(strInput);
+            return true;
+        }
+        catch (XmlException) //Not valid XML
+        {
+            return false;
+        }
+    }
+
+    private static void AddModelParameter(ApplicationAPIModel applicationAPIModel, string key, string value)
+    {
+        string placeholder = value;
+        if (!applicationAPIModel.AppModelParameters.Any(p => p.PlaceHolder.Equals(placeholder, StringComparison.CurrentCultureIgnoreCase)))
+        {
+            var newParam = new AppModelParameter
+            {
+                PlaceHolder = placeholder,
+                Description = key,
+            };
+
+            applicationAPIModel.AppModelParameters.Add(newParam);
+        }
+    }
+
+
 
     private static void ProcessUrl(Url url, ApplicationAPIModel applicationAPIModel)
     {
@@ -222,17 +356,18 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
                 }
             }
         }
-
+        // In few cases, the url has not any query present therefore endpoint urls coming double as copy copy, need to discuss that in these kinds of cases what could be done
         if (string.IsNullOrEmpty(applicationAPIModel.EndpointURL))
         {
             applicationAPIModel.EndpointURL = url.Raw;
         }
     }
 
+
     private static string AddModelParameter(ApplicationAPIModel applicationAPIModel, string Key, string Value, string Description = null)
     {
         string placeholder = "{{" + Key + "}}";
-        if (Value.StartsWith("{{") && Value.EndsWith("}}"))
+        if (!string.IsNullOrEmpty(Value) && Value.StartsWith("{{") && Value.EndsWith("}}"))
         {
             //Check if param already exists in global parameter, Add if not present
             if (!applicationAPIModel.GlobalAppModelParameters.Any(f => f.PlaceHolder.Equals(Value, StringComparison.CurrentCultureIgnoreCase)))
@@ -244,7 +379,7 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
                     {
                         PlaceHolder = placeholder,
                         Description = Description,
-                        OptionalValuesList = [new OptionalValue { Value = Value , IsDefault = true }]
+                        OptionalValuesList = [new OptionalValue { Value = Value, IsDefault = true }]
                     };
 
                     applicationAPIModel.GlobalAppModelParameters.Add(domainParam);
@@ -279,7 +414,7 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
             return;
         }
 
-        switch (body.Mode)
+        switch (body.Mode.ToLower())
         {
             case "raw":
                 ProcessRawBody(body, applicationAPIModel);
@@ -413,7 +548,7 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
                 ItemName = header.Key,
                 Param = header.Key,
                 Value = modelParamName,
-            };        
+            };
 
             // Add the header to the application's HTTP headers
             applicationAPIModel.HttpHeaders.Add(modelKeyValue);
@@ -429,8 +564,8 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
 
         var rawBody = body.Raw;
         foreach (var param in body.Formdata ?? Enumerable.Empty<Formdata>())
-        {        
-            string placeholder = AddModelParameter(applicationAPIModel, param.Key, param.Value);
+        {
+            string placeholder = AddModelParameter(applicationAPIModel, param.Key, param.Value, Description: null);
 
             if (!param.Value.StartsWith("{{") && !param.Value.EndsWith("}}"))
             {
@@ -474,6 +609,6 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
                 Param = param.Key,
                 Value = ModelParameterName,
             });
-        }        
+        }
     }
 }
