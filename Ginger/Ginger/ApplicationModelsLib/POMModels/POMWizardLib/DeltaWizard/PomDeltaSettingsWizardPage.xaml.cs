@@ -90,7 +90,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 }
                 else
                 {
-                    mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList.Clear();
+                   if(mWizard.mPomDeltaUtils.POM.PomSetting != null && mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList!= null)
+                    {
+                        mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList.Clear();
+                    }
+                        
                 }
             }
         }
