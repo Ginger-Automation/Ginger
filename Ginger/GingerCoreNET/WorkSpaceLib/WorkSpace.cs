@@ -599,12 +599,14 @@ namespace amdocs.ginger.GingerCoreNET
             if (solution.SourceControl != null && WorkSpace.Instance.UserProfile != null)
             {
                 WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfile(solution.SourceControl, solution.Guid);
-
-
                 string error = string.Empty;
                 solution.SourceControl.SolutionFolder = solution.Folder;
                 solution.SourceControl.RepositoryRootFolder = repositoryRootFolder;
-                solution.SourceControl.URL = solution.SourceControl.GetRepositoryURL(ref error);
+                if (string.IsNullOrEmpty(solution.SourceControl.URL))
+                {
+                    solution.SourceControl.URL = solution.SourceControl.GetRepositoryURL(ref error);
+                    WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfileUsingURL(solution.SourceControl, solution.Guid);
+                }
                 solution.SourceControl.LocalFolder = repositoryRootFolder;
 
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
