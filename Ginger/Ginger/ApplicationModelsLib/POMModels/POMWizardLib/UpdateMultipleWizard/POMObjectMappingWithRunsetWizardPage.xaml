@@ -53,14 +53,8 @@
             <RowDefinition Height="40*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel x:Name="xRunSetLoadingPnl" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" >
-            <UserControls:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
-            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Black}">
-                <Label.Content>
-                    <GingerCore:ucTextDicResource Text="Loading [RunSet]..."/>
-                </Label.Content>
-            </Label>
-        </StackPanel>
+        <Label HorizontalAlignment="Left" FontSize="12" Foreground="Red" Margin="-5,0,0,0" Style="{StaticResource $LabelStyle}">Note: If you start the Runset from the page below, Ginger will wait until it finishes. All selected RunSet business flows and post-execution actions will be executed.</Label>
+        
 
         <StackPanel Grid.Row="1" >
             <Ginger:ucGrid x:Name="xPomWithRunsetSelectionGrid" Title="RunSet POM Selection:" AutomationProperties.AutomationId="AutoMapPomSelectionGrid AID" IsEnabled="True" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowTitle="Visible"/>
