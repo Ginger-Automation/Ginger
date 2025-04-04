@@ -572,15 +572,8 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
         {
             try
             {
-                PostmanCollectionParser postmanCollectionParser = new();
-                ObservableList<ApplicationAPIModel> applicationAPIModels = [];
-                applicationAPIModels = postmanCollectionParser.ParseDocument(fileName, applicationAPIModels);
-                AddAPIModelWizard.InfoTitle = postmanCollectionParser.GetInfoTitle();
-                if (applicationAPIModels?.Count == 0)
-                {
-                    return false;
-                }
-                return true;
+                return PostmanCollectionParser.IsCollectionVersion2_1(fileName);
+
             }
             catch (Exception ex)
             {

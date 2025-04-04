@@ -278,7 +278,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
             featureTracker.Metadata.Add("APIType", "PostmanCollection");
             featureTracker.Metadata.Add("FileType", "JSON");
-           
+
 
             AddAPIModelWizard.ProcessStarted();
             bool parseSuccess = true;
@@ -292,8 +292,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     try
                     {
+                        postmanCollectionParser.globalAppModelParameters = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
                         postmanCollectionParser.ParseDocument(AddAPIModelWizard.URL, AddAPIModelWizard.LearnedAPIModelsList);
-
+                        AddAPIModelWizard.InfoTitle = postmanCollectionParser.GetInfoTitle();
                     }
                     catch (Exception ex)
                     {
@@ -513,7 +514,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void MarkUnMarkAllActions(bool ActiveStatus)
         {
-            if (xApisSelectionGrid.DataSourceList==null || xApisSelectionGrid.DataSourceList.Count <= 0)
+            if (xApisSelectionGrid.DataSourceList == null || xApisSelectionGrid.DataSourceList.Count <= 0)
             {
                 return;
             }

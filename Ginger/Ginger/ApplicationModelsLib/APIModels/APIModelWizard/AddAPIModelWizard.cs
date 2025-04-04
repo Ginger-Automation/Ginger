@@ -28,9 +28,6 @@ using Ginger.WizardLib;
 using GingerCore;
 using GingerCoreNET.Application_Models;
 using GingerWPF.WizardLib;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.VisualStudio.Services.Common;
-using OctaneRepositoryStd.BLL;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -291,11 +288,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     var globalParamAdded = AddGlobalAppModelParameterIfNotExist(globalAppModelParameter);
 
-                    if (globalAppModelParameter.PlaceHolder.Equals(globalParamAdded.PlaceHolder))
-                    {
-                        apiModel.UpdateParamsPlaceholder(apiModel, [globalAppModelParameter.PlaceHolder], globalParamAdded.PlaceHolder);
-                        globalAppModelParameter.PlaceHolder = globalParamAdded.PlaceHolder;
-                    }
+                    //if (globalAppModelParameter.PlaceHolder.Equals(globalParamAdded.PlaceHolder))
+                    //{
+                    //    apiModel.UpdateParamsPlaceholder(apiModel, [globalAppModelParameter.PlaceHolder], globalParamAdded.PlaceHolder);
+                    //    globalAppModelParameter.PlaceHolder = globalParamAdded.PlaceHolder;
+                    //}
                 }
 
                 Dictionary<System.Tuple<string, string>, List<string>> OptionalValuesPerParameterDict = [];
