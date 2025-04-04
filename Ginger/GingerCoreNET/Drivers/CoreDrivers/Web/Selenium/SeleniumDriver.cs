@@ -4283,7 +4283,7 @@ namespace GingerCore.Drivers
                         // Check if the application model needs to be forcefully updated based on the self-healing configuration
                         // Automatically update the current Page Object Model (POM) for the current agent in the current activity
                         // Add the GUID of the updated POM to the list of auto-updated POMs in the runset configuration
-                        if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SelfHealingConfiguration.ForceUpdateApplicationModel)
+                        if (WorkSpace.Instance.IsRunningFromRunsetOrCLI() && WorkSpace.Instance.RunsetExecutor.RunSetConfig.SelfHealingConfiguration.ForceUpdateApplicationModel)
                         {
                             Reporter.ToLog(eLogLevel.INFO, $"Forcefully updating the application model based on the self-healing configuration before Execution");
                             act.ExInfo += "Forcefully updating the application model based on the self-healing configuration before Execution";
