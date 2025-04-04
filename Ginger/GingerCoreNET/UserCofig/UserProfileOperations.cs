@@ -341,6 +341,13 @@ namespace Ginger
             GingerSolutionSourceControl.SourceControlInfo.Username = userPassObj.Username;
         }
 
+        public void ReadOldSourceControlCredentials(GingerCoreNET.SourceControl.SourceControlBase mSourceControl)
+        {
+            UserPass userPassObj = WinCredentialUtil.ReadCredential($"Ginger_SourceControl_GIT");
+            mSourceControl.Username = userPassObj.Username;
+            mSourceControl.Password = userPassObj.Password;
+        }
+
 
         public void LoadDefaults()
         {
