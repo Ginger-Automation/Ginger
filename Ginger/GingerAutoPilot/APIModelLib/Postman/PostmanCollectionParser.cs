@@ -133,6 +133,7 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
         {
             foreach (var item in postmanCollection.Variable)
             {
+                item.Key = item.Key.StartsWith("{{") && item.Key.EndsWith("}}") ? item.Key.Replace("{{", "").Replace("}}", "") : item.Key;
                 //Handle global parameters(e.g., domain)
                 var domainParam = new GlobalAppModelParameter()
                 {
@@ -320,15 +321,16 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
     private static void AddModelParameter(ApplicationAPIModel applicationAPIModel, string key, string value)
     {
         string placeholder = value;
-        if (!applicationAPIModel.AppModelParameters.Any(p => p.PlaceHolder.Equals(placeholder, StringComparison.CurrentCultureIgnoreCase)))
+        if (!applicationAPIModel.AppModelParameters.Any(p => p.PlaceHolder.Equals(placeholder, StringComparison.CurrentCultureIgnoreCase)) &&
+            !applicationAPIModel.GlobalAppModelParameters.Any(p => p.PlaceHolder.Equals(placeholder, StringComparison.CurrentCultureIgnoreCase)))
         {
-            var newParam = new AppModelParameter
+            var newParam = new GlobalAppModelParameter
             {
                 PlaceHolder = placeholder,
                 Description = key,
             };
 
-            applicationAPIModel.AppModelParameters.Add(newParam);
+            applicationAPIModel.GlobalAppModelParameters.Add(newParam);
         }
     }
 
@@ -565,7 +567,7 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
         var rawBody = body.Raw;
         foreach (var param in body.Formdata ?? Enumerable.Empty<Formdata>())
         {
-            string placeholder = AddModelParameter(applicationAPIModel, param.Key, param.Value, Description: null);
+            string placeholder = AddModelParameter(applicationAPIModel, param.Key, param.Value, Description: param.Description.Content);
 
             if (!param.Value.StartsWith("{{") && !param.Value.EndsWith("}}"))
             {

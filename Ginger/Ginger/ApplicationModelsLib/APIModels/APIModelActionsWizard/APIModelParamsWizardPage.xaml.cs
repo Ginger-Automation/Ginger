@@ -130,10 +130,13 @@ namespace Ginger.ApiModelsFolder
                                 }
                             }
 
-                            //if (!string.IsNullOrEmpty(EAIV.Description) && !EAIV.Description.Contains(AMDP?.Description))
-                            //{
-                            //    EAIV.Description += " | " + AMDP.Description;
-                            //}
+                            if (string.IsNullOrEmpty(AMDP.Description))
+                            {
+                                if (!string.IsNullOrEmpty(EAIV.Description) && !EAIV.Description.Contains(AMDP?.Description))
+                                {
+                                    EAIV.Description += " | " + AMDP.Description;
+                                }
+                            }
                         }
                         else
                         {

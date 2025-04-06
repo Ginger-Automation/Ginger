@@ -166,11 +166,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private GlobalAppModelParameter AddGlobalAppModelParameterIfNotExist(GlobalAppModelParameter globalAppModelParameter)
         {
+
             var GlobalParams = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
             var existingMatchingParam = GlobalParams.FirstOrDefault(g => !string.IsNullOrEmpty(g.PlaceHolder)
             && g.PlaceHolder.Equals(globalAppModelParameter.PlaceHolder, System.StringComparison.InvariantCultureIgnoreCase)
             && g.OptionalValuesList.Any(f => f.Value != null
-                 && f.Value.Equals(globalAppModelParameter.OptionalValuesList.FirstOrDefault().Value, System.StringComparison.InvariantCultureIgnoreCase)
+                 && f.Value.Equals(globalAppModelParameter.OptionalValuesList?.FirstOrDefault().Value, System.StringComparison.InvariantCultureIgnoreCase)
                  && f.IsDefault));
 
             if (existingMatchingParam != null)
@@ -182,7 +183,20 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 globalAppModelParameter.PlaceHolder = "{{" + (!string.IsNullOrEmpty(globalAppModelParameter.PlaceHolder) ? globalAppModelParameter.PlaceHolder.Replace("{{", "").Replace("}}", "") : globalAppModelParameter.PlaceHolder) + "_Copy}}";
             }
-            ModelParamUtils.SetUniquePlaceHolderName(globalAppModelParameter);
+
+            var IsAlreadyExist = GlobalParams.FirstOrDefault(g => !string.IsNullOrEmpty(g.PlaceHolder)
+           && g.PlaceHolder.Equals(globalAppModelParameter.PlaceHolder, System.StringComparison.InvariantCultureIgnoreCase)
+           && g.OptionalValuesList.Any(f => f.Value != null
+                && f.Value.Equals(globalAppModelParameter.OptionalValuesList?.FirstOrDefault().Value, System.StringComparison.InvariantCultureIgnoreCase)
+                && f.IsDefault));
+
+            if (IsAlreadyExist != null)
+            {
+                // do not add in list
+                return new GlobalAppModelParameter();
+            }
+
+
             var globalAppModelToAdd = new GlobalAppModelParameter()
             {
                 PlaceHolder = globalAppModelParameter.PlaceHolder,
@@ -288,11 +302,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     var globalParamAdded = AddGlobalAppModelParameterIfNotExist(globalAppModelParameter);
 
-                    //if (globalAppModelParameter.PlaceHolder.Equals(globalParamAdded.PlaceHolder))
-                    //{
-                    //    apiModel.UpdateParamsPlaceholder(apiModel, [globalAppModelParameter.PlaceHolder], globalParamAdded.PlaceHolder);
-                    //    globalAppModelParameter.PlaceHolder = globalParamAdded.PlaceHolder;
-                    //}
+
                 }
 
                 Dictionary<System.Tuple<string, string>, List<string>> OptionalValuesPerParameterDict = [];

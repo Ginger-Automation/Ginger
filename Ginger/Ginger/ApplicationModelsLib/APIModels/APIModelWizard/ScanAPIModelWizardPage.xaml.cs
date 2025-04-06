@@ -292,7 +292,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     try
                     {
-                        postmanCollectionParser.globalAppModelParameters = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
                         postmanCollectionParser.ParseDocument(AddAPIModelWizard.URL, AddAPIModelWizard.LearnedAPIModelsList);
                         AddAPIModelWizard.InfoTitle = postmanCollectionParser.GetInfoTitle();
                     }

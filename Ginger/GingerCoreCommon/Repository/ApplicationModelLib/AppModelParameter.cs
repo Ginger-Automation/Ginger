@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
+using System.Linq;
 
 namespace Amdocs.Ginger.Repository
 {
