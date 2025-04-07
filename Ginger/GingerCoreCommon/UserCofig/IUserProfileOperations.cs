@@ -35,7 +35,7 @@ namespace Ginger
         void SaveRecentAppAgentsMapping();
         void SaveUserProfile();
         public void RefreshSourceControlCredentials(Guid guid);
-
+        public void ReadOldSourceControlCredentials(GingerCoreNET.SourceControl.SourceControlBase mSourceControl);
         bool IsSharedUserProfile { get; }
     }
 }

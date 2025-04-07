@@ -18,12 +18,8 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
-using Ginger.Run.RunSetActions;
 using Ginger.UserControls;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
