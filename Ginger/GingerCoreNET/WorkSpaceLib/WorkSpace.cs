@@ -591,6 +591,11 @@ namespace amdocs.ginger.GingerCoreNET
                 || (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID != null);
         }
 
+        public ProjEnvironment? GetRecentEnvironment()
+        {
+            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault((mEnv) => mEnv.Guid == WorkSpace.Instance.UserProfile.RecentEnvironment);
+        }
+
         private static void HandleSolutionLoadSourceControl(Solution solution)
         {
             string repositoryRootFolder = string.Empty;

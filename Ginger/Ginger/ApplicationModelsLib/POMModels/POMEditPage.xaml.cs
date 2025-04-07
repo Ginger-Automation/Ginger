@@ -29,6 +29,7 @@ using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -378,8 +379,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-            string calculatedValue = ValueExpression.Calculate(null, null, mPOM.PageURL, null);
-            GoToPage(calculatedValue);
+            var VE = new ValueExpression(WorkSpace.Instance.GetRecentEnvironment(), new Context(), null);
+            GoToPage(VE.Calculate(mPOM.PageURL));
         }
 
         private void GoToPage(string calculatedValue)
