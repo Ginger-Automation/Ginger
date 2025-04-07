@@ -29,7 +29,6 @@ using Amdocs.Ginger.Repository;
 using Ginger.UserConfig;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
-using Microsoft.CodeAnalysis;
 using Newtonsoft.Json.Linq;
 
 namespace Ginger
@@ -792,7 +791,15 @@ namespace Ginger
                 {
                     if (mSourceControl.LocalFolder.EndsWith(".git"))
                     {
-                        GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath = mSourceControl.LocalFolder.Substring(0, mSourceControl.LocalFolder.LastIndexOf('\\'));
+                        int slashIndex = mSourceControl.LocalFolder.LastIndexOf('\\');
+                        if (slashIndex >= 0)
+                        {
+                            GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath = mSourceControl.LocalFolder.Substring(0, slashIndex);
+                        }
+                        else
+                        {
+                            GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath = mSourceControl.LocalFolder;
+                        }
                     }
                     else
                     {
@@ -899,7 +906,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the old source control configration", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the old source control configuration", ex);
             }
         }
 
