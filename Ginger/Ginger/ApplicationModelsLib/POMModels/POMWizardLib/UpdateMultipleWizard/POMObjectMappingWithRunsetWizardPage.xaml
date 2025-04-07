@@ -49,12 +49,15 @@
             <ColumnDefinition Width="300*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="80"/>
             <RowDefinition Height="40*"/>
         </Grid.RowDefinitions>
 
-        <Label HorizontalAlignment="Left" FontSize="12" Foreground="Red" Margin="-5,0,0,0" Style="{StaticResource $LabelStyle}">Note: If you start the Runset from the page below, Ginger will wait until it finishes. All selected RunSet business flows and post-execution actions will be executed.</Label>
-        
+        <Label Grid.Row="0" HorizontalAlignment="Left" FontSize="12" Margin="-5,0,0,0" Style="{StaticResource $LabelStyle}">
+            <TextBlock TextWrapping="Wrap" Width="650">
+        Note: If you start the Runset from the page below, Ginger will wait until it finishes. Also, all the POMs used in that runset will get updated. All selected RunSet business flows and post-execution actions will be executed.
+            </TextBlock>
+        </Label>
 
         <StackPanel Grid.Row="1" >
             <Ginger:ucGrid x:Name="xPomWithRunsetSelectionGrid" Title="RunSet POM Selection:" AutomationProperties.AutomationId="AutoMapPomSelectionGrid AID" IsEnabled="True" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowTitle="Visible"/>

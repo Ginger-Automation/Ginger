@@ -228,33 +228,40 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
             mWizard.mWizardWindow.SetPrevButtonEnabled(false);
             if (mSelectedPomWithRunset != null)
             {
-                if(mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration != null)
+                if(mSelectedPomWithRunset.SelectedRunset != null)
                 {
-                    if(mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.EnableSelfHealing)
+                    mSelectedPomWithRunset.SelectedRunset.AutoUpdatedPOMList = new();
+                    if (mSelectedPomWithRunset.SelectedRunset?.SelfHealingConfiguration != null)
                     {
-                        if(mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.AutoUpdateApplicationModel)
+                        if (mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.EnableSelfHealing)
                         {
-                            if(!mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.ForceUpdateApplicationModel)
+                            if (mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.AutoUpdateApplicationModel)
                             {
+                                if (!mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.ForceUpdateApplicationModel)
+                                {
+                                    mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.ForceUpdateApplicationModel = true;
+                                }
+                            }
+                            else
+                            {
+                                mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.AutoUpdateApplicationModel = true;
                                 mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.ForceUpdateApplicationModel = true;
                             }
                         }
                         else
                         {
+                            mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.EnableSelfHealing = true;
                             mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.AutoUpdateApplicationModel = true;
                             mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.ForceUpdateApplicationModel = true;
                         }
                     }
-                    else
-                    {
-                        mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.EnableSelfHealing = true;
-                        mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.AutoUpdateApplicationModel = true;
-                        mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.ForceUpdateApplicationModel = true;
-                    }
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.NoItemWasSelected, "RunSet");
+                    return;
                 }
 
-
-                mSelectedPomWithRunset.SelectedRunset.AutoUpdatedPOMList = new();
                 WorkSpace.Instance.RunningInExecutionMode = true;
                 LoadRunsetConfigToRunsetExecutor(runsetExecutor: WorkSpace.Instance.RunsetExecutor, runSetConfig: mSelectedPomWithRunset.SelectedRunset, mCLIHelper: mCLIHelper);
                 try
@@ -262,7 +269,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                     await ExecuteRunSet();
                     foreach (MultiPomRunSetMapping elem in mWizard.mMultiPomDeltaUtils.MultiPomRunSetMappingList)
                     {
-                        if (mSelectedPomWithRunset.SelectedRunset.Guid.Equals(elem.SelectedRunset.Guid))
+                        if (mSelectedPomWithRunset.SelectedRunset.Guid.Equals(elem.SelectedRunset?.Guid))
                         {
                             if (mSelectedPomWithRunset.SelectedRunset.AutoUpdatedPOMList.Contains(elem.ApplicationAPIModel.Guid))
                             {

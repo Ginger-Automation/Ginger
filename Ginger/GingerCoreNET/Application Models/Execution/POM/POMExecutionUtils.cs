@@ -223,7 +223,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             return false;
         }
 
-        private bool IsSelfHealingConfiguredForAutoUpdateCurrentPOM()
+        private bool IsSelfHealingConfiguredForAutoUpdateCurrentPOM(bool checkForceUpdate=false)
         {
             if (ExecutedFrom == eExecutedFrom.Run)
             {
@@ -234,7 +234,10 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 {
                     if (runSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel)
                     {
-                        return true;
+                        if(runSetConfig.SelfHealingConfiguration.ForceUpdateApplicationModel)
+                        {
+                            return true;
+                        }
                     }
                 }
             }
@@ -246,7 +249,10 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 {
                     if (selfHealingConfigAutomateTab.AutoUpdateApplicationModel)
                     {
-                        return true;
+                        if (selfHealingConfigAutomateTab.ForceUpdateApplicationModel)
+                        {
+                            return true;
+                        }
                     }
                 }
             }
@@ -255,9 +261,9 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             return false;
         }
 
-        public ElementInfo AutoUpdateCurrentPOM(Common.InterfacesLib.IAgent currentAgent)
+        public ElementInfo AutoUpdateCurrentPOM(Common.InterfacesLib.IAgent currentAgent,bool CheckForForceUpdate = false)
         {
-            if (!IsSelfHealingConfiguredForAutoUpdateCurrentPOM())
+            if (!IsSelfHealingConfiguredForAutoUpdateCurrentPOM(CheckForForceUpdate))
             {
                 return null;
             }
@@ -279,7 +285,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 }
             }
 
-            var deltaElementInfos = GetUpdatedVirtulPOM(currentAgent);
+            var deltaElementInfos = GetUpdatedVirtulPOM(currentAgent,CheckForForceUpdate);
 
             if (deltaElementInfos.Count > 0)
             {
@@ -346,7 +352,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             }
         }
 
-        private ObservableList<DeltaElementInfo> GetUpdatedVirtulPOM(Common.InterfacesLib.IAgent currentAgent)
+        private ObservableList<DeltaElementInfo> GetUpdatedVirtulPOM(Common.InterfacesLib.IAgent currentAgent, bool CheckForForceUpdate = false)
         {
             var waitToCompleteLearnProcess = false;
             while (this.GetCurrentPOM().IsLearning)
@@ -383,14 +389,20 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
                 pomDeltaUtils.LearnDelta().Wait();
                 mAct.ExInfo += DateTime.Now + " Self healing operation application model was updated";
-                if(WorkSpace.Instance.IsRunningFromRunsetOrCLI())
+                if(CheckForForceUpdate)
                 {
-                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Add(this.GetCurrentPOM().Guid);
+                    if(WorkSpace.Instance.RunsetExecutor.RunSetConfig?.AutoUpdatedPOMList != null)
+                    {
+                        WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Add(this.GetCurrentPOM().Guid);
+                    }
+                    
                 }
                 
             }
-            catch
+            catch(Exception ex)
             {
+                mAct.ExInfo += DateTime.Now + " Self healing operation failed to auto update application model";
+                Reporter.ToLog(eLogLevel.DEBUG, "Self healing operation failed to auto update application model", ex);
             }
             finally
             {
@@ -398,6 +410,24 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             }
 
             return pomDeltaUtils.DeltaViewElements;
+        }
+
+        public ElementInfo AutoForceUpdateCurrentPOM(Common.InterfacesLib.IAgent currentAgent,Act act)
+        {
+            try
+            {
+                Reporter.ToLog(eLogLevel.INFO, $"Forcefully updating the application model based on the self-healing configuration before Execution");
+                act.ExInfo += "Forcefully updating the application model based on the self-healing configuration before Execution";
+
+                return AutoUpdateCurrentPOM(currentAgent, true);
+            }
+            catch (Exception ex)
+            {
+                mAct.ExInfo += DateTime.Now + " Auto force update POM operation failed to auto update application model";
+                Reporter.ToLog(eLogLevel.DEBUG, "Auto force update POM operation failed to auto update application model", ex);
+                return null;
+            }
+            
         }
     }
 }
