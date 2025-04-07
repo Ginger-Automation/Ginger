@@ -27,6 +27,7 @@ using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.ApplicationModelsLib.APIModels.APIModelWizard;
 using Ginger.UserControls;
+using GingerAutoPilot.APIModelLib.Postman;
 using GingerCoreNET.Application_Models;
 using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -118,6 +119,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     WSDLP.mStopParsing = true;
                 }
 
+                PrevURL = AddAPIModelWizard.URL;
             }
             else if (WizardEventArgs.EventType == EventType.Cancel)
             {
@@ -220,7 +222,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 if (AddAPIModelWizard.DeltaModelsList != null)
                 {
                     xApisSelectionGrid.DataSourceList = AddAPIModelWizard.LearnedAPIModelsList;
-                    xApisSelectionGrid.ChangeGridView(eAddAPIWizardViewStyle.Add.ToString());
+                    xApisSelectionGrid.ChangeGridView(nameof(eAddAPIWizardViewStyle.Add));
                     xApisSelectionGrid.btnMarkAll.Visibility = Visibility.Visible;
                 }
                 bool parseSuccess = false;
@@ -261,10 +263,56 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     parseSuccess = await ShowSwaggerOperations();
                 }
+                else if (AddAPIModelWizard.APIType == AddAPIModelWizard.eAPIType.PostmanCollection)
+                {
+                    parseSuccess = await ShowPostmanCollectionParserOperations();
+                }
 
                 AddAPIModelWizard.IsParsingWasDone = parseSuccess;
                 xCompareBtnRow.Height = new GridLength(50);
             }
+        }
+
+        private async Task<bool> ShowPostmanCollectionParserOperations()
+        {
+            using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
+            featureTracker.Metadata.Add("APIType", "PostmanCollection");
+            featureTracker.Metadata.Add("FileType", "JSON");
+
+
+            AddAPIModelWizard.ProcessStarted();
+            bool parseSuccess = true;
+            PostmanCollectionParser postmanCollectionParser = new();
+            AddAPIModelWizard.LearnedAPIModelsList = [];
+            xApisSelectionGrid.DataSourceList = AddAPIModelWizard.LearnedAPIModelsList;
+
+            try
+            {
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        postmanCollectionParser.ParseDocument(AddAPIModelWizard.URL, AddAPIModelWizard.LearnedAPIModelsList);
+                        AddAPIModelWizard.InfoTitle = postmanCollectionParser.GetInfoTitle();
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error Details: {ex.Message} Failed to Parse the Postman Collection file {AddAPIModelWizard.URL}");
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToUser(eUserMsgKey.ParsingError, "Failed to Parse the Postman Collection  File" + AddAPIModelWizard.URL);
+                Reporter.ToLog(eLogLevel.ERROR, "Error Details: " + ex.Message + " Failed to Parse the Postman Collection  file " + AddAPIModelWizard.URL);
+                parseSuccess = false;
+            }
+            finally
+            {
+                AddAPIModelWizard.ProcessEnded();
+            }
+
+            return parseSuccess;
         }
 
         private async Task<bool> ShowSwaggerOperations()
@@ -465,12 +513,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void MarkUnMarkAllActions(bool ActiveStatus)
         {
-            if (xApisSelectionGrid.DataSourceList.Count <= 0)
+            if (xApisSelectionGrid.DataSourceList == null || xApisSelectionGrid.DataSourceList.Count <= 0)
             {
                 return;
             }
 
-            if (xApisSelectionGrid.DataSourceList.Count > 0)
+            if (xApisSelectionGrid.DataSourceList?.Count > 0)
             {
                 ObservableList<ApplicationAPIModel> lstMarkUnMarkAPI = (ObservableList<ApplicationAPIModel>)xApisSelectionGrid.DataSourceList;
                 foreach (ApplicationAPIModel AAMB in lstMarkUnMarkAPI)
