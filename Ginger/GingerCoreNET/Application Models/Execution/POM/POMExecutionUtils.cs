@@ -284,11 +284,61 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             return false;
         }
 
+        private bool IsSelfHealingConfiguredForForceAutoUpdateCurrentPOM()
+        {
+            if (ExecutedFrom == eExecutedFrom.Run)
+            {
+                //when executing from runset
+                var runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
+
+                if (runSetConfig.SelfHealingConfiguration.ForceUpdateApplicationModel)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else if (ExecutedFrom == eExecutedFrom.Automation)
+            {
+                //when running from automate tab
+                var selfHealingConfigAutomateTab = WorkSpace.Instance.AutomateTabSelfHealingConfiguration;
+
+                if (selfHealingConfigAutomateTab.ForceUpdateApplicationModel)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+                        
+            }
+
+
+            return false;
+        }
+
         public ElementInfo AutoUpdateCurrentPOM(Common.InterfacesLib.IAgent currentAgent,bool CheckForForceUpdate = false)
         {
-            if (!IsSelfHealingConfiguredForAutoUpdateCurrentPOM(CheckForForceUpdate))
+            if (!IsSelfHealingConfiguredForAutoUpdateCurrentPOM())
             {
                 return null;
+            }
+
+            if (CheckForForceUpdate)
+            {
+                if (!IsSelfHealingConfiguredForForceAutoUpdateCurrentPOM())
+                {
+                    return null;
+                }
+
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Any(x => x.Equals(this.GetCurrentPOM().Guid)))
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Self healing operation skipped as the POM was already updated during the run{this.GetCurrentPOM().Guid.ToString()} {this.GetCurrentPOMElementInfo().ElementName}");
+                    return null;
+                }
             }
 
             var passedLocator = GetCurrentPOMElementInfo().Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed);
@@ -416,7 +466,11 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 {
                     if(WorkSpace.Instance.RunsetExecutor.RunSetConfig?.AutoUpdatedPOMList != null)
                     {
-                        WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Add(this.GetCurrentPOM().Guid);
+                        if(!WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Any(x=>x.Equals(this.GetCurrentPOM().Guid)))
+                        {
+                            WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Add(this.GetCurrentPOM().Guid);
+                        }
+                        
                     }
                     
                 }
