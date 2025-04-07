@@ -364,36 +364,45 @@ namespace GingerCore.NoSqlBase
                     case Actions.ActDBValidation.eDBValidationType.SimpleSQLOneValue:
                         string col = Act.Column;
                         string where = Act.Where;
-                        string filter = "";
-                        var isNumeric = double.TryParse(where, out double n);
+                        FilterDefinition<BsonDocument> filter;
 
-                        //Simply matches on specific column type int
-                        //For ex where contains any int value
-                        if (isNumeric)
+                        if (col == "_id")
                         {
-                            filter = "{" + col + ":" + where + "}";
+                            // Handle _id field as ObjectId
+                            filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(where.Trim()));
                         }
                         else
                         {
-                            //Equality matches on the whole embedded document require an exact match of the specified <value> document, including the field order
-                            //For ex where contains value = {field1:_value1,field2:_value2,field3:"_value3",...}
-                            if (where.Contains(","))
+                            var isNumeric = double.TryParse(where, out double n);
+
+                            // Simply matches on specific column type int
+                            // For ex where contains any int value
+                            if (isNumeric)
                             {
-                                filter = "{" + col + ":" + where + "}";
+                                filter = Builders<BsonDocument>.Filter.Eq(col, n);
                             }
-                            //Simply matches on specific column
-                            //For ex where contains any string value
                             else
                             {
-                                filter = "{" + col + ":\"" + where + "\"}";
+                                // Equality matches on the whole embedded document require an exact match of the specified <value> document, including the field order
+                                // For ex where contains value = {field1:_value1,field2:_value2,field3:"_value3",...}
+                                if (where.Contains(","))
+                                {
+                                    filter = Builders<BsonDocument>.Filter.Eq(col, where);
+                                }
+                                // Simply matches on specific column
+                                // For ex where contains any string value
+                                else
+                                {
+                                    filter = Builders<BsonDocument>.Filter.Eq(col, where);
+                                }
                             }
-
                         }
 
-                        var resultSimpleSQLOne = collection.Find(filter).Project(Builders<BsonDocument>.Projection.Exclude("_id")).ToList();
+                        var resultSimpleSQLOne = collection.Find(filter).ToList();
 
                         AddValuesFromResult(resultSimpleSQLOne);
                         break;
+
                     default:
                         Act.Error += "Operation Type " + Action + " is not yet supported for Mongo DB";
                         break;

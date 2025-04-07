@@ -657,7 +657,7 @@ namespace GingerCore.Environments
                 }
                 finally
                 {
-                    reader.Close();
+                    reader?.Close();
 
                 }
             }
