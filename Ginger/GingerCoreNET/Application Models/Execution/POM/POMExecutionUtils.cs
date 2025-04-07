@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
+using Ginger.Run;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCoreNET.Application_Models;
@@ -234,7 +235,18 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 {
                     if (runSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel)
                     {
-                        if(runSetConfig.SelfHealingConfiguration.ForceUpdateApplicationModel)
+                        if (checkForceUpdate)
+                        {
+                            if (runSetConfig.SelfHealingConfiguration.ForceUpdateApplicationModel)
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+                        else
                         {
                             return true;
                         }
@@ -249,7 +261,18 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 {
                     if (selfHealingConfigAutomateTab.AutoUpdateApplicationModel)
                     {
-                        if (selfHealingConfigAutomateTab.ForceUpdateApplicationModel)
+                        if (checkForceUpdate)
+                        {
+                            if (selfHealingConfigAutomateTab.ForceUpdateApplicationModel)
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+                        else
                         {
                             return true;
                         }
