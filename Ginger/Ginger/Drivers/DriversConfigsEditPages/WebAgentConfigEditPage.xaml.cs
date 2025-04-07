@@ -320,7 +320,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             #region VideoRecordingConfigurations
             
-            DriverConfigParam enableVideoRecording = mAgent.GetOrCreateParam(nameof(PlaywrightDriver.EnableVideoRecording));
+            DriverConfigParam enableVideoRecording = mAgent.GetOrCreateParam(nameof(PlaywrightDriver.EnableVideoRecording), "false");
             BindingHandler.ObjFieldBinding(xEnableVideoRecordingCheckBox, CheckBox.IsCheckedProperty, enableVideoRecording, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xEnableVideoRecordingCheckBox, CheckBox.ToolTipProperty, enableVideoRecording, nameof(DriverConfigParam.Description));
 

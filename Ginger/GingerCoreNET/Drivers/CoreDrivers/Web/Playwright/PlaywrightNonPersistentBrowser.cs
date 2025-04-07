@@ -87,7 +87,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     }
                 }
                 browser = await LaunchBrowserAsync();
-            }
+            }            
             catch (PlaywrightException ex)
             {
                 if (ex.Message.Contains(BrowserExecutableNotFoundErrorMessage))
@@ -142,7 +142,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ThrowIfClosed();
 
             RecordVideoSize recordVideoSize = null;
-            var recordVideoDir = string.Empty;
+            string recordVideoDir = null;
 
             if (_options != null && _options.EnableVideoRecording)
             {
