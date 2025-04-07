@@ -353,7 +353,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 runsetReport.StartTimeStamp = (DateTime)executionStartTime;
             }
             RunsetFromReportLoader _runsetFromReportLoader = new RunsetFromReportLoader();
-            RunSetConfig? runset = await _runsetFromReportLoader.LoadAsync(runsetReport);
+            RunSetConfig? runset = await _runsetFromReportLoader.LoadAsync(runsetReport, mOpts.ExecutionConfigurationSourceUrl);
             if (runset != null)
             {
                 WorkSpace.Instance.UserProfile.RecentRunset = runset.Guid;

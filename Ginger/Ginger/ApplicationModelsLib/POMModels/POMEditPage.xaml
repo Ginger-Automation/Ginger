@@ -10,13 +10,12 @@
       xmlns:UserControl="clr-namespace:Ginger.BusinessFlowWindows"
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       xmlns:local="clr-namespace:Ginger.Actions.ActionConversion"
-      mc:Ignorable="d" 
-      d:DesignHeight="1000" d:DesignWidth="1000"
+      mc:Ignorable="d"
       Title="POMEditPage">
 
     <Grid Background="{DynamicResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
-            <RowDefinition Name="FirstRow" Height="100"/>
+            <RowDefinition Name="FirstRow" Height="70"/>
             <RowDefinition Name="SecondRow" Height="100*"/>
         </Grid.RowDefinitions>
 
@@ -26,16 +25,18 @@
                 <ColumnDefinition Width="20*"></ColumnDefinition>
                 <ColumnDefinition Width="20*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <UserControls:ImageMakerControl x:Name="xIconImage" Grid.Column="0" Margin="0,0,0,30" DataContext="{Binding RelativeSource={RelativeSource Self}}" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"/>
-            <TextBlock x:Name="xFirstLabel" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,25" Text="POM Name" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $TextBlockStyle}" FontSize="18" FontWeight="Bold" />
-            <DockPanel x:Name="xOperationsPnl" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right">
-                <agents:ucAgentControl x:Name="xAgentControlUC" Width="Auto" AgentStartedUCEvent="AgentStartedHandler" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" ></agents:ucAgentControl>
+            <UserControls:ImageMakerControl x:Name="xIconImage" Grid.Column="0" Margin="0,0,0,25" DataContext="{Binding RelativeSource={RelativeSource Self}}" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"/>
+            
+            <TextBlock x:Name="xFirstLabel" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,25" Text="POM Name" VerticalAlignment="Center" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" />
+
+            <DockPanel x:Name="xOperationsPnl" Grid.Column="2" MinWidth="500" VerticalAlignment="Center" HorizontalAlignment="Right">
+                <agents:ucAgentControl x:Name="xAgentControlUC" Width="Auto" AgentStartedUCEvent="AgentStartedHandler" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,0,0,0" ></agents:ucAgentControl>
             </DockPanel>
         </Grid>
-        <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows" Height="5" Width="Auto" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $PrimaryColor_Black}" BorderThickness="1" />
-        
+
+
         <TabControl x:Name="xPomTabs" Margin="0,5,0,0" Grid.Row="1" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="xPomTabs_SelectionChanged">
-                <TabItem Style="{StaticResource $RoundedTab}">
+            <TabItem Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl ImageType="Image"  SetAsFontImageWithSize="20"  Width="20" Height="20" />
@@ -45,70 +46,68 @@
                 <ScrollViewer>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="500" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <StackPanel Orientation="Vertical" Grid.Column="0">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="300" />
-                                    <ColumnDefinition Width="200*" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition  Height="*"/>
-                                    <RowDefinition  Height="*"/>
-                                    <RowDefinition  Height="*"/>
-                                    <RowDefinition  Height="*"/>
-                                    <RowDefinition  Height="*"/>
-                                    <RowDefinition  Height="*"/>
-                                </Grid.RowDefinitions>
-                                
-                                <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Margin="20,20,0,0">
+                        <StackPanel Orientation="Vertical" Grid.Column="0" Margin="15,20,20,0">
+                            <DockPanel>
+                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                                     <Label Style="{StaticResource $LabelStyle}" Content="Name:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                     <UserControlsLib:ucShowItemID x:Name="xShowIDUC" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,0"/>
                                 </StackPanel>
-                                <TextBox x:Name="xNameTextBox" Grid.Column="1" Grid.Row="0"  Margin="-20,20,100,0" Style="{StaticResource $TextBoxStyle}" FontSize="14" FontWeight="SemiBold" Height="20"/>
+                                <TextBox x:Name="xNameTextBox" Style="{StaticResource $TextBoxStyle}" FontSize="14" FontWeight="SemiBold" Height="20"/>
+                            </DockPanel>
 
+                            <Label Style="{StaticResource $LabelStyle}" Margin="0,10,0,0" Content="Description:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-                                <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1" Margin="20,20,0,0" >
-                                    <Label Style="{StaticResource $LabelStyle}" Content="Description:" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-5,0,0,0"/>
-                                    <Ginger:ucTagsViewer x:Name="xTagsViewer" Margin="0,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                                </StackPanel>
-                                <TextBox x:Name="xDescriptionTextBox" Grid.Column="1" Grid.Row="1" Margin="-20,20,100,0" TextWrapping="WrapWithOverflow" Height="35" Style="{StaticResource $MultiRowsTextBoxStyle}" Foreground="{StaticResource $BackgroundColor_DarkGray}"/>
+                            <TextBox x:Name="xDescriptionTextBox" TextWrapping="WrapWithOverflow" Height="35" Style="{StaticResource $MultiRowsTextBoxStyle}" Foreground="{StaticResource $BackgroundColor_DarkGray}"/>
 
+                            <Ginger:ucTagsViewer x:Name="xTagsViewer" Margin="0,10,0,0"/>
 
-                                <Label Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="2" x:Name="xTAlabel" Content="" Margin="15,20,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                <ComboBox x:Name="xTargetApplicationComboBox" Grid.Column="1" Grid.Row="2"  Margin="-20,20,0,0" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="xTargetApplicationComboBox_SelectionChanged" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center"></ComboBox>
+                            <Label Style="{StaticResource $LabelStyle}" x:Name="xTAlabel" Content="Target Application:" Margin="0,5,0,0"/>
+                            <ComboBox x:Name="xTargetApplicationComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="xTargetApplicationComboBox_SelectionChanged" Width="250" HorizontalAlignment="Left"></ComboBox>
 
-                                <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="3" Margin="20,20,0,0">
-                                    <Label Style="{StaticResource $LabelStyle}" Content="Page Loading Option:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                                <Label Style="{StaticResource $LabelStyle}" Content="Page Loading Option:" VerticalAlignment="Center"/>
+                                <RadioButton x:Name="xPageUrlRadioBtn"  Content="URL"  Tag="radPageURL" Checked="xRadioBtn_Checked" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                <RadioButton x:Name="xBusinessFlowRadioBtn" Tag="radPageURL" HorizontalAlignment="Left" VerticalAlignment="Center" Checked="xRadioBtn_Checked" Margin="10,0,0,0">
+                                    <RadioButton.Content>
+                                        <GingerCore:ucTextDicResource Text="[BusinessFlow]"/>
+                                    </RadioButton.Content>
+                                </RadioButton>
+                            </StackPanel>
+
+                            <StackPanel x:Name="xPageUrlStackPanel" Orientation="Horizontal" Margin="0,10,0,0">
+                                <UserControl:UCValueExpression x:Name="xPageURLTextBox" HorizontalAlignment="Left"
+                                                               VerticalAlignment="Center" Width="440"/>
                                 
-                                <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3" Margin="-20,20,0,0">
-                                    <RadioButton x:Name="xPageUrlRadioBtn"  Content="URL"  Tag="radPageURL" Checked="xRadioBtn_Checked" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                    <RadioButton x:Name="xBusinessFlowRadioBtn" Tag="radPageURL" HorizontalAlignment="Left" VerticalAlignment="Center" Checked="xRadioBtn_Checked"  Margin="10,0,0,0" >
-                                            <RadioButton.Content>
-                                                <GingerCore:ucTextDicResource Text="[BusinessFlow]"/>
-                                            </RadioButton.Content>
-                                        </RadioButton>
-                                </StackPanel>
+                                <UserControls:ucButton x:Name="xPageURLBtn" ButtonType="ImageButton" HorizontalAlignment="Center" 
+                                                       VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" 
+                                                       ButtonImageHeight="16" ButtonImageType="GoNext" Click="xPageURLBtn_Click"
+                                                       ToolTip="Go to Page" Margin="0,0,0,0"/>
+                           
+                            </StackPanel>
 
-                                <StackPanel Margin="-20,0,0,0" Grid.Column="1" Grid.Row="4">
-                                    <StackPanel x:Name="xPageUrlStackPanel" Orientation="Horizontal" >
-                                        <UserControl:UCValueExpression x:Name="xPageURLTextBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250"/>
-                                        <UserControls:ucButton x:Name="xPageURLBtn" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoNext" Click="xPageURLBtn_Click" ToolTip="Go to Page" Margin="0,0,0,0"/>
-                                        <Frame VerticalAlignment="Top" Margin="0,0,0,0" x:Name="xFrameBusinessFlowControl" NavigationUIVisibility="Hidden" HorizontalAlignment="Left" BorderBrush="Transparent"/>
-                                    </StackPanel>
-                                </StackPanel>
-                            </Grid>
+                            <Frame x:Name="xFrameBusinessFlowControl" NavigationUIVisibility="Hidden" 
+                                       BorderBrush="Transparent" HorizontalAlignment="Left"/>
                         </StackPanel>
-                        <StackPanel Orientation="Vertical" Grid.Column="1" >
-                            <StackPanel x:Name="xScreenshotOperationBtns" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+
+                        <Grid  Grid.Column="1" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40"></RowDefinition>
+                                <RowDefinition Height="500*"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <StackPanel x:Name="xScreenshotOperationBtns" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                                 <UserControls:ucButton x:Name="xBrowseImageLoadButton"  ButtonType="RoundTextAndImageButton"  ButtonText="Browse Image" ButtonImageType="Folder" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="BrowseImageButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
                                 <UserControls:ucButton x:Name="xTakeScreenShotLoadButton"  ButtonType="RoundTextAndImageButton" ButtonText="Take Screenshot" ButtonImageType="Camera" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TakeScreenShotButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
                             </StackPanel>
-                            <Frame x:Name="xScreenShotFrame" Margin="0,0,0,0" MaxHeight="600" Width="780" VerticalAlignment="Center" HorizontalAlignment="Left"></Frame>
-                        </StackPanel>
+
+                            <Frame x:Name="xScreenShotFrame" Grid.Row="1"
+                                   VerticalAlignment="Stretch"  
+                                   HorizontalAlignment="Stretch">
+                            </Frame>
+                        </Grid>
+
                     </Grid>
                 </ScrollViewer>
             </TabItem>
@@ -123,6 +122,8 @@
                 <Frame x:Name="xUIElementsFrame"></Frame>
             </TabItem>
         </TabControl>
-            
+
     </Grid>
 </UserControlsLib:GingerUIPage>
+
+    

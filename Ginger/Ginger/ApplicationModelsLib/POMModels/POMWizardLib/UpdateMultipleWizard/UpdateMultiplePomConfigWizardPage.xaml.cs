@@ -30,6 +30,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTest.WizardLib;
 using GingerWPF.WizardLib;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -46,6 +47,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
         private ePlatformType mAppPlatform;
         public bool isEnableFriendlyLocator = false;
         ObservableList<ApplicationPOMModel> POMModels;
+        public static readonly List<ePlatformType> PomSupportedPlatformsForMultiPOM = [ePlatformType.Web, ePlatformType.Mobile];
         public UpdateMultiplePomConfigWizardPage()
         {
             InitializeComponent();
@@ -58,8 +60,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
             {
                 case EventType.Init:
                     mWizard = (UpdateMultiplePomWizard)WizardEventArgs.Wizard;
-
-                    ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList(WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList());
+                    ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList(WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => PomSupportedPlatformsForMultiPOM.Contains(x.Platform)).ToList());
                     xTargetApplicationComboBox.BindControl<ApplicationPlatform>(mWizard.mMultiPomDeltaUtils.POM, nameof(ApplicationPOMModel.TargetApplicationKey), TargetApplications, nameof(ApplicationPlatform.AppName), nameof(ApplicationPlatform.Key));
                     xTargetApplicationComboBox.AddValidationRule(new POMTAValidationRule());
 
@@ -92,6 +93,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                     mAppPlatform = selectedplatform.Platform;
                 }
             }
+            SetPomSelectionExpanderSection();
         }
 
         private void SetPomSelectionGridView()

@@ -406,7 +406,7 @@ namespace Ginger
 
                 StartGingerUI();
 
-                if (doOptions != null && !string.IsNullOrWhiteSpace(doOptions.Solution))
+                if (doOptions != null && (!string.IsNullOrWhiteSpace(doOptions.Solution) || doOptions.UseTempSolutionFolder))
                 {
                     await LoadGingerSolutionAsync(doOptions);
                 }

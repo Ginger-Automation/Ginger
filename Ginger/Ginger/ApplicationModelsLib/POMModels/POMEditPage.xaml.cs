@@ -114,7 +114,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xFrameBusinessFlowControl.Content = mBusinessFlowControl;
 
             xShowIDUC.Init(mPOM);
-            xFirstLabel.Text = string.Format("'{0}'", mPOM.Name);
+            xFirstLabel.Text = mPOM.Name;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
             if (!ignoreValidationRules)
             {
@@ -147,7 +147,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mPOM.ScreenShotImage.ToString()));
             }
-            mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
+            mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source, ImageMaxHeight: 550, ImageMaxWidth: 750);
             xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
 
             UIElementTabTextBlockUpdate();

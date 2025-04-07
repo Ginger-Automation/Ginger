@@ -90,7 +90,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 }
                 else
                 {
-                    mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList.Clear();
+                   if(mWizard.mPomDeltaUtils.POM.PomSetting != null && mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList!= null)
+                    {
+                        mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList.Clear();
+                    }
+                        
                 }
             }
         }
@@ -151,7 +155,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         private void SetElementLocatorsSettingsData()
         {
-            if (mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.ElementLocatorsSettingsList.Count == 0)
+            if(mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting != null)
             {
                 mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.ElementLocatorsSettingsList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetLearningLocators();
             }

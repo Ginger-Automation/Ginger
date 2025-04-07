@@ -54,6 +54,7 @@ namespace Ginger.Run
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoFixAnalyzerChkBox, CheckBox.IsCheckedProperty, mRunSetConfig.SelfHealingConfiguration, nameof(SelfHealingConfig.AutoFixAnalyzerIssue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRePrioritizeChkBox, CheckBox.IsCheckedProperty, mRunSetConfig.SelfHealingConfiguration, nameof(SelfHealingConfig.ReprioritizePOMLocators));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoUpdateModelChkBox, CheckBox.IsCheckedProperty, mRunSetConfig.SelfHealingConfiguration, nameof(SelfHealingConfig.AutoUpdateApplicationModel));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xForceUpdateModelChkBox, CheckBox.IsCheckedProperty, mRunSetConfig.SelfHealingConfiguration, nameof(SelfHealingConfig.ForceUpdateApplicationModel));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoExecuteInSimulationChkBox, CheckBox.IsCheckedProperty, mRunSetConfig.SelfHealingConfiguration, nameof(SelfHealingConfig.AutoExecuteInSimulationMode));
 
             ShowHideConfigPanel();
