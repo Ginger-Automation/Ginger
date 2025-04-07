@@ -626,6 +626,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 AutoFixAnalyzerIssue = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoFixAnalyzerIssue,
                 ReprioritizePOMLocators = runsetExecutor.RunSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators,
                 AutoUpdateApplicationModel = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel,
+                ForceUpdateApplicationModel= runsetExecutor.RunSetConfig.SelfHealingConfiguration.ForceUpdateApplicationModel,
                 SaveChangesInSourceControl = runsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl,
                 AutoExecuteInSimulationMode = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoExecuteInSimulationMode
             };

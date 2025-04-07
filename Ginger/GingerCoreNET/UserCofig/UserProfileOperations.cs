@@ -341,11 +341,22 @@ namespace Ginger
             GingerSolutionSourceControl.SourceControlInfo.Username = userPassObj.Username;
         }
 
+        /// <summary>
+        /// Reads old source control credentials from the Windows Credential Manager.
+        /// </summary>
+        /// <param name="mSourceControl">The source control object to populate with credentials.</param>
         public void ReadOldSourceControlCredentials(GingerCoreNET.SourceControl.SourceControlBase mSourceControl)
         {
-            UserPass userPassObj = WinCredentialUtil.ReadCredential($"Ginger_SourceControl_GIT");
-            mSourceControl.Username = userPassObj.Username;
-            mSourceControl.Password = userPassObj.Password;
+            try
+            {
+                UserPass userPassObj = WinCredentialUtil.ReadCredential($"Ginger_SourceControl_GIT");
+                mSourceControl.Username = userPassObj.Username;
+                mSourceControl.Password = userPassObj.Password;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
+            }
         }
 
 

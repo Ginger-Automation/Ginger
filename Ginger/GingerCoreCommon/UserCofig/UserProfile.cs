@@ -871,6 +871,11 @@ namespace Ginger
             }
         }
 
+        /// <summary>
+        /// Retrieves source control properties from the user profile using the provided URL.
+        /// </summary>
+        /// <param name="mSourceControl">The source control object to populate with properties.</param>
+        /// <param name="solutionGuid">The GUID of the solution.</param>
         public void GetSourceControlPropertyFromUserProfileUsingURL(SourceControlBase mSourceControl, Guid solutionGuid)
         {
             try
@@ -894,7 +899,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the old source control configration", ex);
             }
         }
 
