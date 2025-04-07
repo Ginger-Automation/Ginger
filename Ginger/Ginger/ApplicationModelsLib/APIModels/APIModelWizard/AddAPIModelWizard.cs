@@ -179,22 +179,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 globalAppModelParameter.Guid = existingMatchingParam.Guid;
                 return existingMatchingParam;
             }
-            if (GlobalParams.Any(x => x.PlaceHolder.Equals(globalAppModelParameter.PlaceHolder)))
-            {
-                globalAppModelParameter.PlaceHolder = "{{" + (!string.IsNullOrEmpty(globalAppModelParameter.PlaceHolder) ? globalAppModelParameter.PlaceHolder.Replace("{{", "").Replace("}}", "") : globalAppModelParameter.PlaceHolder) + "_Copy}}";
-            }
-
-            var IsAlreadyExist = GlobalParams.FirstOrDefault(g => !string.IsNullOrEmpty(g.PlaceHolder)
-           && g.PlaceHolder.Equals(globalAppModelParameter.PlaceHolder, System.StringComparison.InvariantCultureIgnoreCase)
-           && g.OptionalValuesList.Any(f => f.Value != null
-                && f.Value.Equals(globalAppModelParameter.OptionalValuesList?.FirstOrDefault().Value, System.StringComparison.InvariantCultureIgnoreCase)
-                && f.IsDefault));
-
-            if (IsAlreadyExist != null)
-            {
-                // do not add in list
-                return new GlobalAppModelParameter();
-            }
 
 
             var globalAppModelToAdd = new GlobalAppModelParameter()
