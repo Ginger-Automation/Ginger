@@ -470,16 +470,13 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                         {
                             WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Add(this.GetCurrentPOM().Guid);
                         }
-                        
                     }
-                    
                 }
-                
             }
             catch(Exception ex)
             {
-                mAct.ExInfo += DateTime.Now + " Self healing operation failed to auto update application model";
-                Reporter.ToLog(eLogLevel.DEBUG, "Self healing operation failed to auto update application model", ex);
+                mAct.ExInfo += DateTime.Now + $"Self healing operation failed to auto update application model{this.GetCurrentPOM().Guid}";
+                Reporter.ToLog(eLogLevel.DEBUG, $"Self healing operation failed to auto update application model{this.GetCurrentPOM().Guid}", ex);
             }
             finally
             {

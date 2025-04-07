@@ -55,7 +55,7 @@
 
         <Label Grid.Row="0" HorizontalAlignment="Left" FontSize="12" Margin="-5,0,0,0" Style="{StaticResource $LabelStyle}">
             <TextBlock TextWrapping="Wrap" Width="650">
-        Note: If you start the Runset from the page below, Ginger will wait until it finishes. Also, all the POMs used in that runset will get updated. All selected RunSet business flows and post-execution actions will be executed.
+        Introduction : If you start the RunSet from the page below, Ginger will wait until it finishes. Also, all the POMs used in that runset will get updated. All selected RunSet business flows and post-execution actions will be executed.
             </TextBlock>
         </Label>
 
