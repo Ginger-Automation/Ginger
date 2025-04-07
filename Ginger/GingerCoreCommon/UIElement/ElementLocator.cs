@@ -27,7 +27,21 @@ namespace Amdocs.Ginger.Common.UIElement
         private bool mActive { get; set; }
 
         [IsSerializedForLocalRepository]
-        public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
+        public bool Active 
+        { 
+            get 
+            { 
+                return mActive; 
+            } 
+            set 
+            { 
+                if (mActive != value) 
+                { 
+                    mActive = value; 
+                    OnPropertyChanged(nameof(Active)); 
+                } 
+            } 
+        }
 
         private ePosition mPosition { get; set; }
         /// <summary>
