@@ -108,11 +108,13 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 string modal = "<" + Match.ToString().ToUpper() + ">";
                 path = path.Replace(Match.ToString(), modal);
                 AAM.AppModelParameters.Add(new AppModelParameter(modal, $"{Match} in url. " +
-                    $"{Operation.Parameters.FirstOrDefault(g=>g.Name.Equals(Match.ToString().TrimStart('{').TrimEnd('}'), StringComparison.InvariantCultureIgnoreCase))?.Description}", "", "", new ObservableList<OptionalValue>()));
+                    $"{Operation.Parameters.FirstOrDefault(g => g.Name.Equals(Match.ToString().TrimStart('{').TrimEnd('}'), StringComparison.InvariantCultureIgnoreCase))?.Description}", "", "", new ObservableList<OptionalValue>()));
             }
+
             AAM.EndpointURL = path;
             AAM.APIType = ApplicationAPIUtils.eWebApiType.REST;
             AAM.Name = Operation.Summary;
+
             if (string.IsNullOrWhiteSpace(AAM.Name))
             {
                 AAM.Name = Operation.OperationId;
@@ -200,7 +202,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                         Value = modelName
                     };
                     ObservableList<OptionalValue> listOptions = GetListOfParamEnums(parameter);
-                    AAM.AppModelParameters.Add(new AppModelParameter(modelName,$"{parameter.Name} in headers. {parameter.Description}", "", "", listOptions));
+                    AAM.AppModelParameters.Add(new AppModelParameter(modelName, $"{parameter.Name} in headers. {parameter.Description}", "", "", listOptions));
                     AAM.HttpHeaders.Add(header);
                 }
                 else if (parameter.Kind == SwaggerParameterKind.Query)
@@ -224,8 +226,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
             string SampleBody = JsonSchemaTools.JsonSchemaFaker(operation, null, true);
             string XMlName = operation.HasReference ? XMlName = operation.Reference.Xml.Name : XMlName = operation.Xml?.Name;
-            
-            if(string.IsNullOrWhiteSpace(XMlName))
+
+            if (string.IsNullOrWhiteSpace(XMlName))
             {
                 return [];
             }
