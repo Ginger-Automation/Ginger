@@ -110,9 +110,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 AAM.AppModelParameters.Add(new AppModelParameter(modal, $"{Match} in url. " +
                     $"{Operation.Parameters.FirstOrDefault(g=>g.Name.Equals(Match.ToString().TrimStart('{').TrimEnd('}'), StringComparison.InvariantCultureIgnoreCase))?.Description}", "", "", new ObservableList<OptionalValue>()));
             }
-            AAM.EndpointURL = path;
-            AAM.APIType = ApplicationAPIUtils.eWebApiType.REST;
-            AAM.Name = Operation.Summary;
+ 
             if (string.IsNullOrWhiteSpace(AAM.Name))
             {
                 AAM.Name = Operation.OperationId;
