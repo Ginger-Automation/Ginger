@@ -217,7 +217,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         public void PrepareLearningConfigurations()
         {
-            pomSetting = new PomSetting();
+            
             ObservableList<UIElementFilter> uIElementList = new ObservableList<UIElementFilter>();
 
             // Adding items from AutoMapBasicElementTypesList
@@ -234,16 +234,18 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 mElementLocatorsList = POM.PomSetting.ElementLocatorsSettingsList != null ? POM.PomSetting.ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList(): ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();
 
-                pomSetting.FilteredElementType = SelectedElementTypesList;
-                pomSetting.ElementLocatorsSettingsList = POM.PomSetting.ElementLocatorsSettingsList != null ? POM.PomSetting.ElementLocatorsSettingsList : ElementLocatorsSettingsList;
-                pomSetting.isPOMLearn = true;
-                pomSetting.RelativeXpathTemplateList = POM.PomSetting.RelativeXpathTemplateList != null ? POM.PomSetting.RelativeXpathTemplateList : GetRelativeXpathTemplateList();
-                pomSetting.SpecificFramePath = POM.PomSetting.SpecificFramePath != null ? POM.PomSetting.SpecificFramePath : SpecificFramePath;
-                pomSetting.LearnScreenshotsOfElements = POM.PomSetting.LearnScreenshotsOfElements;
-                pomSetting.LearnShadowDomElements = POM.PomSetting.LearnShadowDomElements;
+                POM.PomSetting.FilteredElementType = SelectedElementTypesList;
+                POM.PomSetting.ElementLocatorsSettingsList = POM.PomSetting.ElementLocatorsSettingsList != null ? POM.PomSetting.ElementLocatorsSettingsList : ElementLocatorsSettingsList;
+                POM.PomSetting.isPOMLearn = true;
+                POM.PomSetting.RelativeXpathTemplateList = POM.PomSetting.RelativeXpathTemplateList != null ? POM.PomSetting.RelativeXpathTemplateList : GetRelativeXpathTemplateList();
+                POM.PomSetting.SpecificFramePath = POM.PomSetting.SpecificFramePath != null ? POM.PomSetting.SpecificFramePath : SpecificFramePath;
+                POM.PomSetting.LearnScreenshotsOfElements = POM.PomSetting.LearnScreenshotsOfElements ? POM.PomSetting.LearnScreenshotsOfElements : LearnScreenshotsOfElements;
+                POM.PomSetting.LearnShadowDomElements = POM.PomSetting.LearnShadowDomElements ? POM.PomSetting.LearnShadowDomElements : LearnShadowDomElements;
             }
             else
             {
+
+                pomSetting = new PomSetting(); 
                 mElementLocatorsList = ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();
 
                 pomSetting.FilteredElementType = SelectedElementTypesList;
@@ -253,9 +255,10 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 pomSetting.SpecificFramePath = SpecificFramePath;
                 pomSetting.LearnScreenshotsOfElements = LearnScreenshotsOfElements;
                 pomSetting.LearnShadowDomElements = LearnShadowDomElements;
+                POM.PomSetting = pomSetting;
             }
 
-            POM.PomSetting = pomSetting;
+            
         }
 
         public void LearnScreenShot()
