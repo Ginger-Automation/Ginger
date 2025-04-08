@@ -227,6 +227,8 @@ namespace Ginger.Actions.UserControls
         {
             try
             {
+                // Reset the custom dimensions flag
+                IsCustomDimensions = false;
                 // Adjusting Viewbox to match the image size within the max limits  
                 double aspectRatio = (double)width / height;
                 
@@ -331,6 +333,8 @@ namespace Ginger.Actions.UserControls
 
             // Set the Canvas scale based on ZoomSlider value
             ScaleTransform ST = new ScaleTransform(e.NewValue, e.NewValue);
+            // Only apply transform to the image when custom dimensions are set to prevent 
+            // unnecessary transformations on images displayed at original size
             if (IsCustomDimensions)
             {
                 this.xMainImage.LayoutTransform = ST;
