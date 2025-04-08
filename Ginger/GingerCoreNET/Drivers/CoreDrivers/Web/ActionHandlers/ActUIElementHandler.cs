@@ -319,14 +319,22 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         private async Task GetTextLengthAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
-            string textLenth = await element.AttributeValueAsync(name: "value");
-            if (!string.IsNullOrEmpty(textLenth))
+            string text = await element.TextContentAsync();
+            if (string.IsNullOrEmpty(text))
             {
-                _act.AddOrUpdateReturnParamActual("Actual", textLenth.Length.ToString());
+                text = await element.InnerTextAsync();
+            }
+            if (string.IsNullOrEmpty(text))
+            {
+                text = await element.InputValueAsync();
+            }
+            if (!string.IsNullOrEmpty(text))
+            {
+                _act.AddOrUpdateReturnParamActual("Actual", text.Length.ToString());
             }
             else
             {
-                throw new InvalidActionConfigurationException("Text not found.");
+                throw new InvalidActionConfigurationException("Text value not found.");
             }
         }
 
