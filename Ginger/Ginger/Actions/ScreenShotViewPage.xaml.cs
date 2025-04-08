@@ -251,7 +251,7 @@ namespace Ginger.Actions.UserControls
                 //Change the canvas to match bmp size
                 xMainCanvas.Width = width;
                 xMainCanvas.Height = height;
-                if(IsCustomDimensions)
+                if (IsCustomDimensions)
                 {
                     xMainImage.Width = width;
                     xMainImage.Height = height;
