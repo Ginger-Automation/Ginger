@@ -538,6 +538,12 @@ namespace amdocs.ginger.GingerCoreNET
                 BusinessFlow.SolutionVariables = solution.Variables;
                 solution.SolutionOperations.SetReportsConfigurations();
                 Solution = solution;
+
+                if (solution.SourceControl != null)
+                {
+                    WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfileUsingURL(solution.SourceControl, solution.Guid);
+                }
+
                 UserProfile.UserProfileOperations.LoadRecentAppAgentMapping();
 
                 if (!RunningInExecutionMode)
@@ -605,7 +611,10 @@ namespace amdocs.ginger.GingerCoreNET
                 if (string.IsNullOrEmpty(solution.SourceControl.URL))
                 {
                     solution.SourceControl.URL = solution.SourceControl.GetRepositoryURL(ref error);
-                    WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfileUsingURL(solution.SourceControl, solution.Guid);
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, error);
+                    }
                 }
                 solution.SourceControl.LocalFolder = repositoryRootFolder;
 

@@ -888,7 +888,7 @@ namespace Ginger
             try
             {
                 //old git info stored on 0 node 
-                GingerSolution item = GingerSolutions.Count > 1 ? GingerSolutions[0] : null;
+                GingerSolution item = GingerSolutions.Count >= 1 ? GingerSolutions[0] : null;
                 if (item == null)
                 {
                     return;
@@ -900,7 +900,8 @@ namespace Ginger
                     mSourceControl.AuthorEmail = item.SourceControlInfo.AuthorEmail;
                     mSourceControl.Branch = item.SourceControlInfo.Branch;
                     GingerSolutions.RemoveAt(0);
-                    SetSourceControlPropertyOnUserProfile(mSourceControl, solutionGuid);
+                    RecentDownloadedSolutionGuid = solutionGuid;
+                    SetSourceControlPropertyOnUserProfile(mSourceControl, solutionGuid);                   
                 }
 
             }

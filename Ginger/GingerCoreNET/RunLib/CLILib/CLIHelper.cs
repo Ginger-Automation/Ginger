@@ -281,9 +281,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution...");
                 await DownloadSolutionFromSourceControl();
+                var DoNotSaveCredentialsOnUserProfile = WorkSpace.Instance.UserProfile.DoNotSaveCredentialsOnUserProfile;
+                if (WorkSpace.Instance.UserProfile.DoNotSaveCredentialsOnUserProfile)
+                {
+                    WorkSpace.Instance.UserProfile.DoNotSaveCredentialsOnUserProfile = false;                    
+                }
                 var result = OpenSolution();
                 //if result is true // SaveOnUserProfile
-                if (result)
+                if (result && !DoNotSaveCredentialsOnUserProfile)
                 {
                     SetSourceControlParaOnUserProfile();
                 }
@@ -298,10 +303,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         void SetSourceControlParaOnUserProfile()
         {
-            if (WorkSpace.Instance.UserProfile.DoNotSaveCredentialsOnUserProfile)
-            {
-                return;
-            }
+           
             WorkSpace.Instance.UserProfile.RecentDownloadedSolutionGuid = WorkSpace.Instance.Solution.Guid;
             var SetSourceControlParaOnUserProfile = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             SetSourceControlParaOnUserProfile.SourceControlInfo.Type = WorkSpace.Instance.UserProfile.Type;
