@@ -222,7 +222,7 @@ namespace Ginger.Actions.UserControls
             }
         }
 
-        bool IsCustomDimensions = false;
+        private bool IsCustomDimensions = false;
         private void SetDimensions(int height, int width)
         {
             try
