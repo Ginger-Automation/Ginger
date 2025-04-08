@@ -349,7 +349,7 @@ namespace Ginger
         {
             try
             {
-                UserPass userPassObj = WinCredentialUtil.ReadCredential($"Ginger_SourceControl_GIT");
+                UserPass userPassObj = WinCredentialUtil.ReadCredential($"Ginger_SolutionSourceControl");
                 mSourceControl.Username = userPassObj.Username;
                 mSourceControl.Password = userPassObj.Password;
             }
