@@ -222,19 +222,22 @@ namespace Ginger.Actions.UserControls
             }
         }
 
-
+        private bool IsCustomDimensions = false;
         private void SetDimensions(int height, int width)
         {
             try
             {
+                // Reset the custom dimensions flag
+                IsCustomDimensions = false;
                 // Adjusting Viewbox to match the image size within the max limits  
                 double aspectRatio = (double)width / height;
-
+                
                 // Check if width exceeds maximum and adjust both dimensions proportionally
                 if (width > maxWidth)
                 {
                     width = maxWidth;
                     height = (int)(width / aspectRatio);
+                    IsCustomDimensions = true;
                 }
 
                 // After width adjustment, check if height still exceeds maximum
@@ -242,14 +245,18 @@ namespace Ginger.Actions.UserControls
                 {
                     height = maxHeight;
                     width = (int)(height * aspectRatio);
+                    IsCustomDimensions = true;
                 }
 
                 //Change the canvas to match bmp size
                 xMainCanvas.Width = width;
                 xMainCanvas.Height = height;
+                if (IsCustomDimensions)
+                {
+                    xMainImage.Width = width;
+                    xMainImage.Height = height;
+                }
 
-                xMainImage.Width = width;
-                xMainImage.Height = height;
             }
             catch (Exception ex)
             {
@@ -326,7 +333,12 @@ namespace Ginger.Actions.UserControls
 
             // Set the Canvas scale based on ZoomSlider value
             ScaleTransform ST = new ScaleTransform(e.NewValue, e.NewValue);
-            this.xMainImage.LayoutTransform = ST;
+            // Only apply transform to the image when custom dimensions are set to prevent 
+            // unnecessary transformations on images displayed at original size
+            if (IsCustomDimensions)
+            {
+                this.xMainImage.LayoutTransform = ST;
+            }
             this.xMainCanvas.LayoutTransform = ST;
             xZoomPercentLabel.Content = (int)(e.NewValue * 100) + "%";
         }
