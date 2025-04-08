@@ -374,27 +374,20 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
             //Check if param already exists in global parameter, Add if not present
             if (!applicationAPIModel.GlobalAppModelParameters.Any(f => f.PlaceHolder.Equals(Value, StringComparison.CurrentCultureIgnoreCase)))
             {
-                if (!applicationAPIModel.GlobalAppModelParameters.Any(f => f.PlaceHolder.Equals(placeholder, StringComparison.CurrentCultureIgnoreCase)))
-                {
-                    //Handle global parameters(e.g., domain)
-                    var domainParam = new GlobalAppModelParameter()
-                    {
-                        PlaceHolder = placeholder,
-                        Description = Description,
-                        OptionalValuesList = [new OptionalValue { Value = Value, IsDefault = true }]
-                    };
 
-                    applicationAPIModel.GlobalAppModelParameters.Add(domainParam);
-                }
-                else
+                //Handle global parameters(e.g., domain)
+                var domainParam = new GlobalAppModelParameter()
                 {
-                    return placeholder;
-                }
+                    PlaceHolder = Value,
+                    Description = Description,
+                    OptionalValuesList = [new OptionalValue { Value = String.Empty, IsDefault = true }]
+                };
+
+                applicationAPIModel.GlobalAppModelParameters.Add(domainParam);
+
+
             }
-            else
-            {
-                return "{{" + Value + "}}";
-            }
+            return Value;
         }
         else
         {
