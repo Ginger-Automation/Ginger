@@ -888,7 +888,7 @@ namespace Ginger
             try
             {
                 //old git info stored on 0 node 
-                GingerSolution item = GingerSolutions.Count >= 1 ? GingerSolutions[0] : null;
+                GingerSolution item = GingerSolutions.Count > 0 ? GingerSolutions[0] : null;
                 if (item == null)
                 {
                     return;

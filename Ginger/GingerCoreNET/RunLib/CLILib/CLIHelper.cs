@@ -287,7 +287,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     WorkSpace.Instance.UserProfile.DoNotSaveCredentialsOnUserProfile = false;                    
                 }
                 var result = OpenSolution();
-                //if result is true // SaveOnUserProfile
                 if (result && !DoNotSaveCredentialsOnUserProfile)
                 {
                     SetSourceControlParaOnUserProfile();
