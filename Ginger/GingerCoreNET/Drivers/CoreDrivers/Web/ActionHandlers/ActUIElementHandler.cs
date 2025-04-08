@@ -318,7 +318,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         /// </summary>
         private async Task GetTextLengthAsync()
         {
-           IBrowserElement element = await GetFirstMatchingElementAsync();
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             string text = await element.TextContentAsync();
             if (string.IsNullOrEmpty(text))
             {
@@ -328,11 +328,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             {
                 text = await element.InputValueAsync();
             }
-            if (text == null)
+            if (!string.IsNullOrEmpty(text))
             {
-                text = string.Empty;
+                _act.AddOrUpdateReturnParamActual("Actual", text.Length.ToString());
             }
-            _act.AddOrUpdateReturnParamActual("Actual", text.Length.ToString());
+            else
+            {
+                throw new InvalidActionConfigurationException("Text value not found.");
+            }
         }
 
         /// <summary>
