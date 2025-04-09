@@ -135,10 +135,15 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
             {
                 item.Key = item.Key.StartsWith("{{") && item.Key.EndsWith("}}") ? item.Key.Replace("{{", "").Replace("}}", "") : item.Key;
                 //Handle global parameters(e.g., domain)
+                string value = item.Value;
+                if (string.IsNullOrEmpty(value))
+                {
+                    value = "{Current Value}";
+                }
                 var domainParam = new GlobalAppModelParameter()
                 {
                     PlaceHolder = "{{" + item.Key + "}}",
-                    OptionalValuesList = [new OptionalValue { Value = item.Value, IsDefault = true }]
+                    OptionalValuesList = [new OptionalValue { Value = value, IsDefault = true }]
 
                 };
 
@@ -380,7 +385,7 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
                 {
                     PlaceHolder = Value,
                     Description = Description,
-                    OptionalValuesList = [new OptionalValue { Value = String.Empty, IsDefault = true }]
+                    OptionalValuesList = [new OptionalValue { Value = "{Current Value}", IsDefault = true }]
                 };
 
                 applicationAPIModel.GlobalAppModelParameters.Add(domainParam);

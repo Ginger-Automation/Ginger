@@ -199,7 +199,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             if (ExecutedFrom == eExecutedFrom.Run)
             {
                 //when executing from runset
-                var runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
+                var runSetConfig = WorkSpace.Instance?.RunsetExecutor?.RunSetConfig;
 
                 if (runSetConfig != null && runSetConfig.SelfHealingConfiguration.EnableSelfHealing)
                 {
@@ -229,7 +229,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             if (ExecutedFrom == eExecutedFrom.Run)
             {
                 //when executing from runset
-                var runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
+                var runSetConfig = WorkSpace.Instance?.RunsetExecutor?.RunSetConfig;
 
                 if (runSetConfig != null && runSetConfig.SelfHealingConfiguration.EnableSelfHealing)
                 {
