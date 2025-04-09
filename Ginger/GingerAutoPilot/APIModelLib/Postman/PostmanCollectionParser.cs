@@ -333,6 +333,7 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
             {
                 PlaceHolder = placeholder,
                 Description = key,
+                OptionalValuesList = [new OptionalValue { Value = "{Current Value}", IsDefault = true }]
             };
 
             applicationAPIModel.GlobalAppModelParameters.Add(newParam);
@@ -389,8 +390,6 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
                 };
 
                 applicationAPIModel.GlobalAppModelParameters.Add(domainParam);
-
-
             }
             return Value;
         }

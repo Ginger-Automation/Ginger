@@ -181,8 +181,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                         && f.IsDefault) ?? false)
             );
 
-
-
             if (existingMatchingParam != null)
             {
                 globalAppModelParameter.Guid = existingMatchingParam.Guid;
@@ -274,7 +272,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                         var domainParam = new GlobalAppModelParameter()
                         {
                             PlaceHolder = customUrl,
-                            OptionalValuesList = [new OptionalValue { Value = "", IsDefault = true }]
+                            OptionalValuesList = [new OptionalValue { Value = "{Current Value}", IsDefault = true }]
                         };
                         apiModel.GlobalAppModelParameters.Add(domainParam);
                     }
