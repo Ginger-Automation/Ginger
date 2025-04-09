@@ -18,8 +18,8 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
@@ -229,7 +229,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
             mWizard.mWizardWindow.SetPrevButtonEnabled(false);
             if (mSelectedPomWithRunset != null)
             {
-                if(mSelectedPomWithRunset.SelectedRunset != null)
+                if (mSelectedPomWithRunset.SelectedRunset != null)
                 {
                     mSelectedPomWithRunset.SelectedRunset.AutoUpdatedPOMList = new();
                     if (mSelectedPomWithRunset.SelectedRunset?.SelfHealingConfiguration != null)
@@ -275,6 +275,15 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                             if (mSelectedPomWithRunset.SelectedRunset.AutoUpdatedPOMList.Contains(elem.ApplicationAPIModel.Guid))
                             {
                                 elem.PomUpdateStatus = $"{elem.ApplicationAPIModel.Name} Updated";
+                                var aPOMModified = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().First(aPOM => aPOM.Guid == elem.ApplicationAPIModel.Guid);
+                                if (aPOMModified != null)
+                                {
+                                    SaveHandler.Save(aPOMModified);
+                                }
+                                else
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, $"Cannot find POM with GUID '{elem.ApplicationAPIModel.Guid}' to save");
+                                }
                             }
                             else
                             {
@@ -338,7 +347,20 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
             Reporter.ToLog(eLogLevel.INFO, string.Format("Executing {0}... ", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             try
             {
-                await Execute(WorkSpace.Instance.RunsetExecutor);
+
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        Execute(WorkSpace.Instance.RunsetExecutor);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Handle the exception
+                        Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while Execute RunSet", ex);
+                    }
+                });
+
             }
             catch (Exception ex)
             {
