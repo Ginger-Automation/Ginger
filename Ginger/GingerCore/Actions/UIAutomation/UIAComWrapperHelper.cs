@@ -5291,7 +5291,8 @@ namespace GingerCore.Drivers
                     
                     for (int i = 0; i < AECollection.Length; i++)
                     {
-                        if (colValue.Equals(GetControlValueForComparision(actGrid, AECollection[i])))
+                        var value = GetControlValueForComparision(actGrid, AECollection[i]);
+                        if (value.Equals(colValue))
                         {
                             return i;
                         }
@@ -5301,7 +5302,8 @@ namespace GingerCore.Drivers
                 case ActTableElement.eRunColOperator.NotEquals:
                     for (int i = 0; i < AECollection.Length; i++)
                     {
-                        if (!colValue.Equals(GetControlValueForComparision(actGrid, AECollection[i])))
+                        var value = GetControlValueForComparision(actGrid, AECollection[i]);
+                        if (!value.Equals(colValue))
                         {
                             return i;
                         }
@@ -5311,7 +5313,8 @@ namespace GingerCore.Drivers
                 case ActTableElement.eRunColOperator.Contains:
                     for (int i = 0; i < AECollection.Length; i++)
                     {
-                        if (colValue.Contains(GetControlValueForComparision(actGrid, AECollection[i])))
+                        var value = GetControlValueForComparision(actGrid, AECollection[i]);
+                        if (value.Contains(colValue))
                         {
                             return i;
                         }
@@ -5321,7 +5324,8 @@ namespace GingerCore.Drivers
                 case ActTableElement.eRunColOperator.NotContains:
                     for (int i = 0; i < AECollection.Length; i++)
                     {
-                        if (!colValue.Contains(GetControlValueForComparision(actGrid, AECollection[i])))
+                        var value = GetControlValueForComparision(actGrid, AECollection[i]);
+                        if (!value.Contains(colValue))
                         {
                             return i;
                         }
@@ -5331,7 +5335,8 @@ namespace GingerCore.Drivers
                 case ActTableElement.eRunColOperator.StartsWith:
                     for (int i = 0; i < AECollection.Length; i++)
                     {
-                        if (colValue.StartsWith(GetControlValueForComparision(actGrid, AECollection[i])))
+                        var value = GetControlValueForComparision(actGrid, AECollection[i]);
+                        if (value.StartsWith(colValue))
                         {
                             return i;
                         }
@@ -5341,7 +5346,8 @@ namespace GingerCore.Drivers
                 case ActTableElement.eRunColOperator.NotStartsWith:
                     for (int i = 0; i < AECollection.Length; i++)
                     {
-                        if (!colValue.StartsWith(GetControlValueForComparision(actGrid, AECollection[i])))
+                        var value = GetControlValueForComparision(actGrid, AECollection[i]);
+                        if (!value.StartsWith(colValue))
                         {
                             return i;
                         }
@@ -5351,7 +5357,8 @@ namespace GingerCore.Drivers
                 case ActTableElement.eRunColOperator.EndsWith:
                     for (int i = 0; i < AECollection.Length; i++)
                     {
-                        if (colValue.EndsWith(GetControlValueForComparision(actGrid, AECollection[i])))
+                        var value = GetControlValueForComparision(actGrid, AECollection[i]);
+                        if (value.EndsWith(colValue))
                         {
                             return i;
                         }
@@ -5361,7 +5368,8 @@ namespace GingerCore.Drivers
                 case ActTableElement.eRunColOperator.NotEndsWith:
                     for (int i = 0; i < AECollection.Length; i++)
                     {
-                        if (!colValue.EndsWith(GetControlValueForComparision(actGrid, AECollection[i])))
+                        var value = GetControlValueForComparision(actGrid, AECollection[i]);
+                        if (!value.EndsWith(colValue))
                         {
                             return i;
                         }
