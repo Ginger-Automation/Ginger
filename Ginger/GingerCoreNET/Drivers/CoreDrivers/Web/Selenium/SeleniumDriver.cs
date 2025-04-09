@@ -10899,7 +10899,7 @@ namespace GingerCore.Drivers
                 try
                 {
                     //DevTool Session 
-                    devToolsSession = devTools.GetDevToolsSession(133);
+                    devToolsSession = devTools.GetDevToolsSession(127);
                     devToolsDomains = devToolsSession.GetVersionSpecificDomains<DevToolsDomains>();
                     devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V127.Network.EnableCommandSettings());
                     blockOrUnblockUrls();
