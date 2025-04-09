@@ -5286,23 +5286,9 @@ namespace GingerCore.Drivers
                         if (elementInfo.FriendlyLocators.Count == 0 && elementInfo.Locators.Count > 1)
                         {
                             var tagLocator = elementInfo.Locators.FirstOrDefault(f => f.LocateBy == eLocateBy.ByTagName);
-                            Thread currentThread = Thread.CurrentThread;
-                            ApartmentState state = currentThread.GetApartmentState();
-
-                            if (state == ApartmentState.STA)
+                            if (tagLocator != null)
                             {
-                                if (tagLocator != null)
-                                {
-                                    tagLocator.Active = false;
-                                }
-                            }
-                            else
-                            {
-                                //need to add with dispatcher 
-                                //if (tagLocator != null)
-                                //{
-                                //    tagLocator.Active = false;
-                                //}
+                                tagLocator.Active = false;
                             }
                         }
                     }

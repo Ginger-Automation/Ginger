@@ -30,6 +30,7 @@ using GingerCore.Actions.Common;
 using GingerCoreNET.Application_Models;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
+using OfficeOpenXml.Drawing.Slicer.Style;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -276,7 +277,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                             {
                                 elem.PomUpdateStatus = $"{elem.ApplicationAPIModel.Name} Updated";
                                 var aPOMModified = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().First(aPOM => aPOM.Guid == elem.ApplicationAPIModel.Guid);
-                                SaveHandler.Save(aPOMModified);
+                                if(aPOMModified != null)
+                                {
+                                    SaveHandler.Save(aPOMModified);
+                                }
+                                else
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, $"Cannot find POM with GUID '{elem.ApplicationAPIModel.Guid}' to save");
+                                }
                             }
                             else
                             {
