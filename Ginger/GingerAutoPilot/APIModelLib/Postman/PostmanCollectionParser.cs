@@ -352,6 +352,20 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
         if (url.Query != null && url.Query.Count != 0)
         {
             applicationAPIModel.EndpointURL = $"{url.Host.FirstOrDefault()}/{string.Join("/", url.Path)}";
+
+            // Process path parameters that are formatted as placeholders
+            if (url.Path?.Count > 0)
+            {
+                foreach (var item in url.Path)
+                {
+                    if (item.StartsWith("{{") && item.EndsWith("}}"))
+                    {
+                        AddModelParameter(applicationAPIModel, string.Empty, item);
+                        continue;
+                    }
+                }
+            }
+
             foreach (Query param in url.Query)
             {
                 if (!param.Disabled.Value)
@@ -362,6 +376,7 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
 
                     AddModelParameter(applicationAPIModel, param.Key, param.Value, $"{param.Key} in query");
                 }
+
             }
         }
         // In few cases, the url has not any query present therefore endpoint urls coming double as copy copy, need to discuss that in these kinds of cases what could be done
