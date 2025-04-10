@@ -642,7 +642,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             try
             {
-                if (! await mCLIHelper.LoadSolutionAsync())
+                if (! await mCLIHelper.LoadSolutionAsync(true))
                 {
                     return false; // failed to load Solution;
                 }
