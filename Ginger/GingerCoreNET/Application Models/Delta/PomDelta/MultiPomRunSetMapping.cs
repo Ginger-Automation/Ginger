@@ -81,6 +81,7 @@ namespace GingerCoreNET.Application_Models
                     Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed => eImageType.Passed,
                     Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed => eImageType.Failed,
                     Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending => eImageType.Pending,
+                    Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running => eImageType.Running,
                     _ => eImageType.Unknown,
                 };
             }
