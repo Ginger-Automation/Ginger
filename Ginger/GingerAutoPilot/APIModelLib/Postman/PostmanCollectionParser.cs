@@ -353,6 +353,7 @@ public class PostmanCollectionParser : APIConfigurationsDocumentParserBase
         {
             applicationAPIModel.EndpointURL = $"{url.Host.FirstOrDefault()}/{string.Join("/", url.Path)}";
 
+            // Process path parameters that are formatted as placeholders
             if (url.Path?.Count > 0)
             {
                 foreach (var item in url.Path)
