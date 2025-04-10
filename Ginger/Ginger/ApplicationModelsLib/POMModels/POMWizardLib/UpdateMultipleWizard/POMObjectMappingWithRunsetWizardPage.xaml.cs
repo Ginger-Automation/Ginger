@@ -227,6 +227,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
             mWizard.DisableBackBtnOnLastPage = true;
             mWizard.mWizardWindow.SetFinishButtonEnabled(false);
             mWizard.mWizardWindow.SetPrevButtonEnabled(false);
+            xPomWithRunsetSelectionGrid.DisableGridColoumns();
             if (mSelectedPomWithRunset != null)
             {
                 if (mSelectedPomWithRunset.SelectedRunset != null)
@@ -267,6 +268,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                 LoadRunsetConfigToRunsetExecutor(runsetExecutor: WorkSpace.Instance.RunsetExecutor, runSetConfig: mSelectedPomWithRunset.SelectedRunset, mCLIHelper: mCLIHelper);
                 try
                 {
+                    mSelectedPomWithRunset.RunSetStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
                     await ExecuteRunSet();
                     foreach (MultiPomRunSetMapping elem in mWizard.mMultiPomDeltaUtils.MultiPomRunSetMappingList)
                     {
@@ -316,6 +318,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
             mWizard.DisableBackBtnOnLastPage = false;
             mWizard.mWizardWindow.SetFinishButtonEnabled(true);
             mWizard.mWizardWindow.SetPrevButtonEnabled(true);
+            xPomWithRunsetSelectionGrid.EnableGridColumns();
             mWizard.ProcessEnded();
         }
         private void TestAllRunSet(object sender, RoutedEventArgs e)
