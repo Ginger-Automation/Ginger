@@ -400,7 +400,25 @@ namespace Amdocs.Ginger.Common.Enums
         SelfHealing,
         #endregion
 
+        #region Http Methods
 
+        GET,
+        POST, 
+        PUT, 
+        DELETE, 
+        PATCH, 
+        HEAD, 
+        OPTIONS,
+        TRACE, 
+        CONNECT,
+        PURGE, 
+        LINK, 
+        UNLINK, 
+        COPY,
+        LOCK, 
+        UNLOCK
+
+        #endregion
     }
 }
 

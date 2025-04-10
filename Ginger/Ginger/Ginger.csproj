@@ -611,6 +611,8 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerSplashImageNew.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\hbase.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\hbase.svg" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\HTTPMethodsSVG\post.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\HTTPMethodsSVG\Post.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\ios.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\iosOutline.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\iosWhite.png" />
@@ -2459,7 +2461,7 @@
     </Resource>
     <Resource Include="TestLib\WizardLib\Intro.md" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\AIBrain.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
      <Resource Include="UserControlsLib\ImageMakerLib\Images\android.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
@@ -2505,6 +2507,12 @@
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerSplashImageNew.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\HTTPMethodsSVG\post.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\HTTPMethodsSVG\Post.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\ios.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

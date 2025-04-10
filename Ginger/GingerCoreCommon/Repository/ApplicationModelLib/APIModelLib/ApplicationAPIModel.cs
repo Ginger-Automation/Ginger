@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -176,7 +177,23 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                return eImageType.APIModel;
+                return RequestType switch
+                {
+                    ApplicationAPIUtils.eRequestType.GET => eImageType.GET,
+                    ApplicationAPIUtils.eRequestType.POST => eImageType.POST,
+                    ApplicationAPIUtils.eRequestType.PUT => eImageType.PUT,
+                    ApplicationAPIUtils.eRequestType.DELETE => eImageType.DELETE,
+                    ApplicationAPIUtils.eRequestType.PATCH => eImageType.PATCH,
+                    ApplicationAPIUtils.eRequestType.Head => eImageType.HEAD,
+                    ApplicationAPIUtils.eRequestType.Options => eImageType.OPTIONS,
+                    ApplicationAPIUtils.eRequestType.Purge => eImageType.PURGE,
+                    ApplicationAPIUtils.eRequestType.Link => eImageType.LINK,
+                    ApplicationAPIUtils.eRequestType.Unlink => eImageType.UNLINK,
+                    ApplicationAPIUtils.eRequestType.Copy => eImageType.COPY,
+                    ApplicationAPIUtils.eRequestType.Lock => eImageType.LOCK,
+                    ApplicationAPIUtils.eRequestType.Unlock => eImageType.UNLOCK,
+                    _ => eImageType.APIModel,
+                };
             }
         }
 

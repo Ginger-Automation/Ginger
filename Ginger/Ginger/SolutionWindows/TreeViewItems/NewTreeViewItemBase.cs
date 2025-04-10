@@ -636,8 +636,16 @@ namespace GingerWPF.TreeViewItemsLib
                 NodeImageType.ImageType = imageType;
             }
 
-            NodeImageType.Width = 16;
-            NodeImageType.Height = 16;
+            if (repoItem is ApplicationAPIModel)
+            {
+                NodeImageType.Width = 30;
+                NodeImageType.Height = 20;
+            }
+            else
+            {
+                NodeImageType.Width = 16;
+                NodeImageType.Height = 16;
+            }
             stack.Children.Add(NodeImageType);
 
             // Add Item header text 

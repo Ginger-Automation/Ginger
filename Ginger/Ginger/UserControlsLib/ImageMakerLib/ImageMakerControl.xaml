@@ -23,6 +23,14 @@
               Width="4" Height="4"
               Fill="LightBlue" />
             </Viewbox>
+
+            <TextBlock x:Name="xLabel" Text="Get"   
+                       FontSize="16"   
+                       HorizontalAlignment="Center"   
+                       VerticalAlignment="Center"   
+                       Margin="0,5,0,0"   
+                       Foreground="White"   
+                       Visibility="Collapsed" />
         </Grid>
     </Border>
 </UserControl>

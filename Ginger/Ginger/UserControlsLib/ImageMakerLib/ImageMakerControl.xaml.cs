@@ -1155,6 +1155,38 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 #endregion
 
+
+                #region Http Methods
+
+                case eImageType.GET:
+                case eImageType.POST:
+
+                case eImageType.PUT:
+                case eImageType.DELETE:
+                case eImageType.PATCH:
+
+                case eImageType.HEAD:
+
+                case eImageType.OPTIONS:
+
+                case eImageType.TRACE:
+
+                case eImageType.CONNECT:
+                case eImageType.PURGE:
+
+                case eImageType.LINK:
+
+                case eImageType.UNLINK:
+                case eImageType.COPY:
+
+                case eImageType.LOCK:
+
+                case eImageType.UNLOCK:
+                    SetAsStaticImage(@"HTTPMethodsSVG/POST.png"); // Blue  
+                    break;
+
+                #endregion
+
                 case eImageType.VerticalBars:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Bars, rotation: 90);
                     break;
@@ -1177,6 +1209,7 @@ namespace Amdocs.Ginger.UserControls
             xFAFont.Rotation = 0;
             xStaticImage.Visibility = Visibility.Collapsed;
             xViewBox.Visibility = Visibility.Collapsed;
+            xLabel.Visibility = Visibility.Collapsed;
             this.Background = null;
         }
 
@@ -1278,6 +1311,13 @@ namespace Amdocs.Ginger.UserControls
                 return IM.xStaticImage.Source;
             }
             return null;
+        }
+
+        private void SetLabelAndBackground(string methodName, Color backgroundColor)
+        {
+            xLabel.Visibility = Visibility.Visible;
+            xLabel.Text = methodName;
+            ImageMakerBorder.Background = new SolidColorBrush(backgroundColor);
         }
 
         private void SetAsStaticImage(string imageName = "", BitmapImage imageBitMap = null, double Width = 0, double Height = 0)
