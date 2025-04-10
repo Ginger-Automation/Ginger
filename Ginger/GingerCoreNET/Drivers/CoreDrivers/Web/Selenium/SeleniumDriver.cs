@@ -72,7 +72,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using static GingerCoreNET.GeneralLib.General;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V133.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V127.DevToolsSessionDomains;
 
 
 
@@ -4283,14 +4283,7 @@ namespace GingerCore.Drivers
                         // Check if the application model needs to be forcefully updated based on the self-healing configuration
                         // Automatically update the current Page Object Model (POM) for the current agent in the current activity
                         // Add the GUID of the updated POM to the list of auto-updated POMs in the runset configuration
-                        if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SelfHealingConfiguration.ForceUpdateApplicationModel)
-                        {
-                            Reporter.ToLog(eLogLevel.INFO, $"Forcefully updating the application model based on the self-healing configuration before Execution");
-                            act.ExInfo += "Forcefully updating the application model based on the self-healing configuration before Execution";
-                            pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent);
-                            WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Add(currentPOM.Guid);
-                            
-                        }
+                        pomExcutionUtil.AutoForceUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent,act);
 
                         elem = LocateElementByLocators(currentPOMElementInfo, currentPOM.MappedUIElements, false, pomExcutionUtil);
 
@@ -4421,7 +4414,7 @@ namespace GingerCore.Drivers
                         if (!FLocator.IsAutoLearned)
                         {
                             ElementLocator evaluatedLocator = FLocator.CreateInstance() as ElementLocator;
-                            ValueExpression VE = new(this.Environment, this.BusinessFlow);
+                            ValueExpression VE = new(GetCurrentProjectEnvironment(), this.BusinessFlow);
                             FLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
                         }
 
@@ -8423,7 +8416,7 @@ namespace GingerCore.Drivers
                                 ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(parsedPOMGuid);
                                 if (SelectedPOM != null)
                                 {
-                                    url = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);
+                                    url = ValueExpression.Calculate(GetCurrentProjectEnvironment(), this.BusinessFlow, SelectedPOM.PageURL, null);
                                 }
                                 else
                                 {
@@ -8471,7 +8464,7 @@ namespace GingerCore.Drivers
                                 ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(parsedPOMGuid);
                                 if (SelectedPOM != null)
                                 {
-                                    gotoUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);
+                                    gotoUrl = ValueExpression.Calculate(GetCurrentProjectEnvironment(), this.BusinessFlow, SelectedPOM.PageURL, null);
                                 }
                                 else
                                 {
@@ -10457,7 +10450,7 @@ namespace GingerCore.Drivers
                             if (!FLocator.IsAutoLearned)
                             {
                                 ElementLocator evaluatedLocator = FLocator.CreateInstance() as ElementLocator;
-                                ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+                                ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), this.BusinessFlow);
                                 FLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
                             }
 
@@ -10546,7 +10539,7 @@ namespace GingerCore.Drivers
         private IWebElement LocateElementIfNotAutoLeared(ElementLocator el, ISearchContext parentContext, List<FriendlyLocatorElement> friendlyLocatorElements = null)
         {
             ElementLocator evaluatedLocator = el.CreateInstance() as ElementLocator;
-            ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+            ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), this.BusinessFlow);
             evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
             return LocateElementByLocator(evaluatedLocator, parentContext, friendlyLocatorElements, true);
         }
@@ -10892,9 +10885,9 @@ namespace GingerCore.Drivers
                 try
                 {
                     //DevTool Session 
-                    devToolsSession = devTools.GetDevToolsSession(133);
+                    devToolsSession = devTools.GetDevToolsSession(127);
                     devToolsDomains = devToolsSession.GetVersionSpecificDomains<DevToolsDomains>();
-                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V133.Network.EnableCommandSettings());
+                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V127.Network.EnableCommandSettings());
                     blockOrUnblockUrls();
                 }
                 catch (Exception ex)
@@ -10920,11 +10913,11 @@ namespace GingerCore.Drivers
             {
                 if (mAct.ControlAction == ActBrowserElement.eControlAction.SetBlockedUrls)
                 {
-                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V133.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V127.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
                 }
                 else if (mAct.ControlAction == ActBrowserElement.eControlAction.UnblockeUrls)
                 {
-                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V133.Network.SetBlockedURLsCommandSettings() { Urls = [] });
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V127.Network.SetBlockedURLsCommandSettings() { Urls = [] });
                 }
                 Thread.Sleep(300);
             }
@@ -10967,9 +10960,8 @@ namespace GingerCore.Drivers
                 networkResponseLogList = [];
                 interceptor = webDriver.Manage().Network;
 
-                ProjEnvironment projEnv = GetCurrentProjectEnvironment();
 
-                ValueExpression VE = new ValueExpression(projEnv, BusinessFlow);
+                ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), BusinessFlow);
 
                 foreach (ActInputValue item in mAct.UpdateOperationInputValues)
                 {
@@ -10988,20 +10980,7 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-
-        private ProjEnvironment GetCurrentProjectEnvironment()
-        {
-            foreach (ProjEnvironment env in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
-            {
-                if (env.Name.Equals(BusinessFlow.Environment))
-                {
-                    return env;
-                }
-            }
-
-            return null;
-        }
-
+        
         public async Task StopMonitoringNetworkLog(ActBrowserElement act)
         {
             try
@@ -11026,7 +11005,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
                     }
 
-                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V133.Network.DisableCommandSettings());
+                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V127.Network.DisableCommandSettings());
                     devToolsSession.Dispose();
                     devTools.CloseDevToolsSession();
 

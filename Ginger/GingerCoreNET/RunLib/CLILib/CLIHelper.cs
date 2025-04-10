@@ -271,23 +271,32 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             WorkSpace.Instance.UserProfile.EncryptedPassword = runOptions.Pass;
             WorkSpace.Instance.UserProfile.Password = runOptions.Pass;
         }
+
+
         /// <summary>
-        /// Loads the solution.
+        /// Loads the solution asynchronously, optionally preventing the saving of CLI Git credentials.
         /// </summary>
-        /// <returns>True if the solution is loaded successfully, otherwise false.</returns>
-        public async Task<bool> LoadSolutionAsync()
+        /// <param name="doNotSaveCLIGitCredentials">If set to true, prevents saving CLI Git credentials.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a boolean indicating success or failure.</returns>
+        public async Task<bool> LoadSolutionAsync(bool doNotSaveCLIGitCredentials = false)
         {
             try
             {
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution...");
                 await DownloadSolutionFromSourceControl();
-                var result = OpenSolution();
-                //if result is true // SaveOnUserProfile
-                if (result)
+                //this workspace flag is used to prevent to store credentials on user profile which comes form deeplink
+                var doNotSaveDeeplinkCredentials = WorkSpace.Instance.UserProfile.DoNotSaveCredentialsOnUserProfile;
+                //if this flag is true we setting it as false, so while opening solution existing credentials will be loaded.
+                if (WorkSpace.Instance.UserProfile.DoNotSaveCredentialsOnUserProfile)
+                {
+                    WorkSpace.Instance.UserProfile.DoNotSaveCredentialsOnUserProfile = false;
+                }
+                var isSolutionOpened = OpenSolution();
+                if (isSolutionOpened && !doNotSaveDeeplinkCredentials && !doNotSaveCLIGitCredentials)
                 {
                     SetSourceControlParaOnUserProfile();
                 }
-                return result;
+                return isSolutionOpened;
             }
             catch (Exception ex)
             {
@@ -298,16 +307,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         void SetSourceControlParaOnUserProfile()
         {
-            if (WorkSpace.Instance.UserProfile.DoNotSaveCredentialsOnUserProfile)
-            {
-                return;
-            }
+           
             WorkSpace.Instance.UserProfile.RecentDownloadedSolutionGuid = WorkSpace.Instance.Solution.Guid;
             var SetSourceControlParaOnUserProfile = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             SetSourceControlParaOnUserProfile.SourceControlInfo.Type = WorkSpace.Instance.UserProfile.Type;
             SetSourceControlParaOnUserProfile.SourceControlInfo.Url = WorkSpace.Instance.UserProfile.URL;
             SetSourceControlParaOnUserProfile.SourceControlInfo.Username = WorkSpace.Instance.UserProfile.Username;
             SetSourceControlParaOnUserProfile.SourceControlInfo.Password = WorkSpace.Instance.UserProfile.Password;
+            SetSourceControlParaOnUserProfile.SourceControlInfo.Branch = WorkSpace.Instance.UserProfile.Branch;
             if (Solution.Contains(".git", StringComparison.OrdinalIgnoreCase))
             {
 

@@ -98,11 +98,11 @@ namespace GingerCoreNET.Application_Models
                 {
                     List<eElementType> selectedElementList = GetSelectedElementList();
 
-                    await mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.pomSetting, POMLatestElements, PomMetaData);
+                    await mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.POM.PomSetting, POMLatestElements, PomMetaData);
                 }
                 else
                 {
-                    await mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.pomSetting, POMLatestElements);
+                    await mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.POM.PomSetting, POMLatestElements);
                 }
                 SetUnidentifiedElementsDeltaDetails();
                 DoEndOfRelearnElementsSorting();

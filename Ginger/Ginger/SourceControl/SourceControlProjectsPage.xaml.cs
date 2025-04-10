@@ -18,17 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
-using Ginger.Run.RunSetActions;
 using Ginger.UserControls;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -556,6 +553,10 @@ namespace Ginger.SourceControl
                     try
                     {
                         var branches = SourceControlIntegration.GetBranches(mSourceControl);
+                        if (branches == null || !branches.Any())
+                        {
+                            throw new Exception("No branches found.");
+                        }
                         Dispatcher.Invoke(() =>
                         {
                             foreach (string branch in branches)

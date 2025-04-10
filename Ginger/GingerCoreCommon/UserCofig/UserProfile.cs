@@ -762,7 +762,6 @@ namespace Ginger
             return solutionSourceControlInfo;
         }
 
-
         public void SetSourceControlPropertyOnUserProfile(SourceControlBase mSourceControl, Guid solutionGuid)
         {
             try
@@ -772,25 +771,70 @@ namespace Ginger
                     return;
                 }
                 var GingerSolutionSourceControl = GetSolutionSourceControlInfo(solutionGuid);
+
+
                 GingerSolutionSourceControl.SourceControlInfo.Type = mSourceControl.GetSourceControlType;
-                GingerSolutionSourceControl.SourceControlInfo.Url = mSourceControl.URL;
-                GingerSolutionSourceControl.SourceControlInfo.Username = mSourceControl.Username;
-                GingerSolutionSourceControl.SourceControlInfo.Password = mSourceControl.Password;
-                if (mSourceControl.LocalFolder.EndsWith(".git"))
+
+                if (!string.IsNullOrEmpty(mSourceControl.URL))
                 {
-                    GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath = mSourceControl.LocalFolder.Substring(0, mSourceControl.LocalFolder.LastIndexOf('\\'));
+                    GingerSolutionSourceControl.SourceControlInfo.Url = mSourceControl.URL;
                 }
-                else
+                if (!string.IsNullOrEmpty(mSourceControl.Username))
                 {
-                    GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath = mSourceControl.LocalFolder;
+                    GingerSolutionSourceControl.SourceControlInfo.Username = mSourceControl.Username;
                 }
-                GingerSolutionSourceControl.SourceControlInfo.Branch = mSourceControl.Branch;
-                GingerSolutionSourceControl.SourceControlInfo.AuthorName = mSourceControl.AuthorName;
-                GingerSolutionSourceControl.SourceControlInfo.AuthorEmail = mSourceControl.AuthorEmail;
-                GingerSolutionSourceControl.SourceControlInfo.Timeout = mSourceControl.Timeout;
-                GingerSolutionSourceControl.SourceControlInfo.IsProxyConfigured = mSourceControl.IsProxyConfigured;
-                GingerSolutionSourceControl.SourceControlInfo.ProxyAddress = mSourceControl.ProxyAddress;
-                GingerSolutionSourceControl.SourceControlInfo.ProxyPort = mSourceControl.ProxyPort;
+                if (!string.IsNullOrEmpty(mSourceControl.Password))
+                {
+                    GingerSolutionSourceControl.SourceControlInfo.Password = mSourceControl.Password;
+                }
+                if (!string.IsNullOrEmpty(mSourceControl.LocalFolder))
+                {
+                    if (mSourceControl.LocalFolder.EndsWith(".git"))
+                    {
+                        int slashIndex = mSourceControl.LocalFolder.LastIndexOf('\\');
+                        if (slashIndex >= 0)
+                        {
+                            GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath = mSourceControl.LocalFolder.Substring(0, slashIndex);
+                        }
+                        else
+                        {
+                            GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath = mSourceControl.LocalFolder;
+                        }
+                    }
+                    else
+                    {
+                        GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath = mSourceControl.LocalFolder;
+                    }
+                }
+                if (!string.IsNullOrEmpty(mSourceControl.Branch))
+                {
+                    GingerSolutionSourceControl.SourceControlInfo.Branch = mSourceControl.Branch;
+                }
+                if (!string.IsNullOrEmpty(mSourceControl.AuthorName))
+                {
+                    GingerSolutionSourceControl.SourceControlInfo.AuthorName = mSourceControl.AuthorName;
+                }
+                if (!string.IsNullOrEmpty(mSourceControl.AuthorEmail))
+                {
+                    GingerSolutionSourceControl.SourceControlInfo.AuthorEmail = mSourceControl.AuthorEmail;
+                }
+                if (mSourceControl.Timeout != 0)
+                {
+                    GingerSolutionSourceControl.SourceControlInfo.Timeout = mSourceControl.Timeout;
+                }
+                if (mSourceControl.IsProxyConfigured)
+                {
+                    GingerSolutionSourceControl.SourceControlInfo.IsProxyConfigured = mSourceControl.IsProxyConfigured;
+                }
+                if (!string.IsNullOrEmpty(mSourceControl.ProxyAddress))
+                {
+                    GingerSolutionSourceControl.SourceControlInfo.ProxyAddress = mSourceControl.ProxyAddress;
+                }
+                if (mSourceControl.ProxyPort != null)
+                {
+                    GingerSolutionSourceControl.SourceControlInfo.ProxyPort = mSourceControl.ProxyPort;
+                }
+
                 UserProfileOperations.SaveUserProfile();
             }
             catch (Exception ex)
@@ -798,6 +842,7 @@ namespace Ginger
                 Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
             }
         }
+
 
 
         public void GetSourceControlPropertyFromUserProfile(SourceControlBase mSourceControl, Guid solutionGuid)
@@ -815,6 +860,8 @@ namespace Ginger
                 mSourceControl.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
                 mSourceControl.LocalFolder = GingerSolutionSourceControl.SourceControlInfo.LocalFolderPath;
                 mSourceControl.Branch = GingerSolutionSourceControl.SourceControlInfo.Branch;
+                mSourceControl.AuthorName = GingerSolutionSourceControl.SourceControlInfo.AuthorName;
+                mSourceControl.AuthorEmail = GingerSolutionSourceControl.SourceControlInfo.AuthorEmail;
                 mSourceControl.IsProxyConfigured = GingerSolutionSourceControl.SourceControlInfo.IsProxyConfigured;
                 mSourceControl.ProxyAddress = GingerSolutionSourceControl.SourceControlInfo.ProxyAddress;
                 mSourceControl.ProxyPort = GingerSolutionSourceControl.SourceControlInfo.ProxyPort;
@@ -831,7 +878,38 @@ namespace Ginger
             }
         }
 
+        /// <summary>
+        /// Retrieves source control properties from the user profile using the provided URL.
+        /// </summary>
+        /// <param name="mSourceControl">The source control object to populate with properties.</param>
+        /// <param name="solutionGuid">The GUID of the solution.</param>
+        public void GetSourceControlPropertyFromUserProfileUsingURL(SourceControlBase mSourceControl, Guid solutionGuid)
+        {
+            try
+            {
+                //old git info stored on 0 node 
+                GingerSolution item = GingerSolutions.Count > 0 ? GingerSolutions[0] : null;
+                if (item == null)
+                {
+                    return;
+                }
+                if (item.SourceControlInfo.Url == mSourceControl.URL && item.SolutionGuid == Guid.Empty)
+                {
+                    UserProfileOperations.ReadOldSourceControlCredentials(mSourceControl);
+                    mSourceControl.AuthorName = item.SourceControlInfo.AuthorName;
+                    mSourceControl.AuthorEmail = item.SourceControlInfo.AuthorEmail;
+                    mSourceControl.Branch = item.SourceControlInfo.Branch;
+                    GingerSolutions.RemoveAt(0);
+                    RecentDownloadedSolutionGuid = solutionGuid;
+                    SetSourceControlPropertyOnUserProfile(mSourceControl, solutionGuid);                   
+                }
 
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the old source control configuration", ex);
+            }
+        }
 
 
 
@@ -865,7 +943,7 @@ namespace Ginger
                 {
                     return false;
                 }
-                
+
             }
             else if (name.Contains("sourcecontrol"))
             {

@@ -35,17 +35,22 @@ namespace GingerCoreNET.Application_Models
         /// <summary>
         /// List of Application POM Models associated with this mapping
         /// </summary>
-        public List<ApplicationPOMModel> applicationPOMModels { get; set; } = new List<ApplicationPOMModel>();
+        public List<ApplicationPOMModel> ApplicationPOMModels { get; set; } = new List<ApplicationPOMModel>();
 
-        /// <summary>
-        /// Comma-separated string representation of application POM models
-        /// </summary>
-        public string commaSeparatedApplicationPOMModels { get; set; } = string.Empty;
 
         /// <summary>
         /// Status of POM update operations
         /// </summary>
         public string PomUpdateStatus { get; set; } = string.Empty;
+
+        public ApplicationPOMModel ApplicationAPIModel { get; set; }
+
+        public string ApplicationAPIModelName { get; set; }
+
+        public List<RunSetConfig> RunSetConfigList { get; set; } = new List<RunSetConfig>();
+
+        public RunSetConfig? SelectedRunset { get; set; }
+
 
         public override string ItemName { get; set; }
 
@@ -76,6 +81,7 @@ namespace GingerCoreNET.Application_Models
                     Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed => eImageType.Passed,
                     Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed => eImageType.Failed,
                     Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending => eImageType.Pending,
+                    Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running => eImageType.Running,
                     _ => eImageType.Unknown,
                 };
             }

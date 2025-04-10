@@ -115,7 +115,14 @@ namespace Ginger.SourceControl
                     {
                         SourceControlClassTextBox.Text = nameof(GingerSolutionSourceControl.SourceControlInfo.Type);
                     }
-                    xSourceControlBranchTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Branch;
+                    if (string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.Branch))
+                    {
+                        xSourceControlBranchTextBox.Text = SourceControlIntegration.GetCurrentBranchForSolution(WorkSpace.Instance.Solution.SourceControl);
+                    }
+                    else
+                    {
+                        xSourceControlBranchTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Branch;
+                    }
                     SourceControlUserTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Username;
                     SourceControlPassTextBox.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
                     SourceControlUserAuthorNameTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.AuthorName;
@@ -127,7 +134,7 @@ namespace Ginger.SourceControl
                     }
                     else
                     {
-                        xTextSourceControlConnectionTimeout.Text =GingerSolutionSourceControl.SourceControlInfo.Timeout.ToString();
+                        xTextSourceControlConnectionTimeout.Text = GingerSolutionSourceControl.SourceControlInfo.Timeout.ToString();
                     }
                 }
             }

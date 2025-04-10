@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.OS;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.CoreNET.Repository;
@@ -538,6 +537,12 @@ namespace amdocs.ginger.GingerCoreNET
                 BusinessFlow.SolutionVariables = solution.Variables;
                 solution.SolutionOperations.SetReportsConfigurations();
                 Solution = solution;
+
+                if (solution.SourceControl != null)
+                {
+                    WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfileUsingURL(solution.SourceControl, solution.Guid);
+                }
+
                 UserProfile.UserProfileOperations.LoadRecentAppAgentMapping();
 
                 if (!RunningInExecutionMode)
@@ -591,6 +596,11 @@ namespace amdocs.ginger.GingerCoreNET
                 || (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID != null);
         }
 
+        public ProjEnvironment? GetRecentEnvironment()
+        {
+            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault((mEnv) => mEnv.Guid == WorkSpace.Instance.UserProfile.RecentEnvironment);
+        }
+
         private static void HandleSolutionLoadSourceControl(Solution solution)
         {
             string repositoryRootFolder = string.Empty;
@@ -599,12 +609,17 @@ namespace amdocs.ginger.GingerCoreNET
             if (solution.SourceControl != null && WorkSpace.Instance.UserProfile != null)
             {
                 WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfile(solution.SourceControl, solution.Guid);
-
-
                 string error = string.Empty;
                 solution.SourceControl.SolutionFolder = solution.Folder;
                 solution.SourceControl.RepositoryRootFolder = repositoryRootFolder;
-                solution.SourceControl.URL = solution.SourceControl.GetRepositoryURL(ref error);
+                if (string.IsNullOrEmpty(solution.SourceControl.URL))
+                {
+                    solution.SourceControl.URL = solution.SourceControl.GetRepositoryURL(ref error);
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, error);
+                    }
+                }
                 solution.SourceControl.LocalFolder = repositoryRootFolder;
 
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
@@ -829,8 +844,12 @@ namespace amdocs.ginger.GingerCoreNET
                         //Save current default
                         if (apiGlobalParamInstance.OptionalValuesList.Count > 0)
                         {
-                            currentDefaultOVGuid = apiGlobalParamInstance.OptionalValuesList.FirstOrDefault(x => x.IsDefault == true).Guid;
-                            recoverSavedOV = true;
+                            var defaultOptionalValue = apiGlobalParamInstance.OptionalValuesList.FirstOrDefault(x => x.IsDefault == true);
+                            if (defaultOptionalValue != null)
+                            {
+                                currentDefaultOVGuid = defaultOptionalValue.Guid;
+                                recoverSavedOV = true;
+                            }
                         }
 
                         string newDefaultOV = null;

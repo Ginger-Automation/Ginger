@@ -29,6 +29,7 @@ using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -113,7 +114,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xFrameBusinessFlowControl.Content = mBusinessFlowControl;
 
             xShowIDUC.Init(mPOM);
-            xFirstLabel.Text = string.Format("'{0}'", mPOM.Name);
+            xFirstLabel.Text = mPOM.Name;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
             if (!ignoreValidationRules)
             {
@@ -146,7 +147,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mPOM.ScreenShotImage.ToString()));
             }
-            mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
+            mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source, ImageMaxHeight: 550, ImageMaxWidth: 750);
             xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
 
             UIElementTabTextBlockUpdate();
@@ -378,8 +379,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-            string calculatedValue = ValueExpression.Calculate(null, null, mPOM.PageURL, null);
-            GoToPage(calculatedValue);
+            var VE = new ValueExpression(WorkSpace.Instance.GetRecentEnvironment(), new Context(), null);
+            GoToPage(VE.Calculate(mPOM.PageURL));
         }
 
         private void GoToPage(string calculatedValue)
