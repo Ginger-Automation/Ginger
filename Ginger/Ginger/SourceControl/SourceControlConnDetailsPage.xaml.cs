@@ -24,6 +24,8 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Ginger.SourceControl
 {
@@ -47,6 +49,80 @@ namespace Ginger.SourceControl
         }
 
 
+        private void CopyMouseDown(object sender, string txtToCopy)
+        {
+            CopyToClipBoard(txtToCopy);
+
+            if (sender is Control control)
+            {
+                control.Foreground = new SolidColorBrush(Colors.Orange);
+                ShowToolTip(control, "Copied to clipboard");
+            }
+        }
+
+        public void CopyToClipBoard(string txtToCopy)
+        {
+            GingerCore.General.SetClipboardText(txtToCopy);
+        }
+
+        private void ShowToolTip(Control control, string message)
+        {
+            ToolTip toolTip = new ToolTip
+            {
+                Content = message,
+                IsOpen = true,
+                StaysOpen = false,
+                PlacementTarget = control,
+                Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse
+            };
+
+
+            var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+            timer.Tick += (s, args) =>
+            {
+                toolTip.IsOpen = false;
+                control.Foreground = new SolidColorBrush(Colors.Black);
+                timer.Stop();
+            };
+            timer.Start();
+
+        }
+
+        // Event handlers
+        private void CopyMouseDownURL(object sender, MouseButtonEventArgs e)
+        {
+            CopyMouseDown(sender, SourceControlURLTextBox.Text);
+        }
+
+        private void CopyMouseDownBranch(object sender, MouseButtonEventArgs e)
+        {
+            CopyMouseDown(sender, xSourceControlBranchTextBox.Text);
+        }
+        private void CopyMouseDownUserID(object sender, MouseButtonEventArgs e)
+        {
+            CopyMouseDown(sender, SourceControlUserTextBox.Text);
+        }
+        private void CopyMouseDownPassword(object sender, MouseButtonEventArgs e)
+        {
+            CopyMouseDown(sender, SourceControlPassTextBox.Password);
+        }
+        private void CopyMouseDownAuthorName(object sender, MouseButtonEventArgs e)
+        {
+            CopyMouseDown(sender, SourceControlUserAuthorNameTextBox.Text);
+        }
+        private void CopyMouseDownAuthorMail(object sender, MouseButtonEventArgs e)
+        {
+            CopyMouseDown(sender, SourceControlAuthorEmailTextBox.Text);
+        }
+        private void CopyMouseDownTimeOut(object sender, MouseButtonEventArgs e)
+        {
+            CopyMouseDown(sender, xTextSourceControlConnectionTimeout.Text);
+        }
+        private void CopyMouseDownGitType(object sender, MouseButtonEventArgs e)
+        {
+            CopyMouseDown(sender, SourceControlClassTextBox.Text);
+        }
+
         private void Bind()
         {
 
@@ -55,15 +131,9 @@ namespace Ginger.SourceControl
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSourceControlBranchTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.Branch));
 
-            if (SourceControlClassTextBox.Text == SourceControlBase.eSourceControlType.GIT.ToString())
-            {
-                xTimeoutRow.Height = new GridLength(0);
-            }
-            else
-            {
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTextSourceControlConnectionTimeout, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.Timeout));
-                xBranchRow.Height = new GridLength(0);
-            }
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTextSourceControlConnectionTimeout, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.Timeout));
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserAuthorNameTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.AuthorName));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlAuthorEmailTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.AuthorEmail));
 
@@ -86,6 +156,7 @@ namespace Ginger.SourceControl
                 WorkSpace.Instance.Solution.SourceControl.AuthorName = WorkSpace.Instance.Solution.SourceControl.Username;
             }
             SetSourceControlDetailsFromUserProfile();
+
         }
 
         private void SetSourceControlDetailsFromUserProfile()
@@ -236,6 +307,11 @@ namespace Ginger.SourceControl
             {
                 Reporter.ToLog(eLogLevel.ERROR, EX.ToString());
             }
+        }
+
+        private void ImageMakerControl_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+
         }
     }
 }
