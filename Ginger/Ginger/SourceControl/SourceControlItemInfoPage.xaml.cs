@@ -18,7 +18,11 @@ limitations under the License.
 
 using GingerCore.Helpers;
 using GingerCoreNET.SourceControl;
+using System;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Ginger.SourceControl
 {
@@ -29,14 +33,61 @@ namespace Ginger.SourceControl
     {
         SourceControlItemInfoDetails mSCIInfoDetails;
         GenericWindow _GenWin;
+        TextBlockHelper TBH;
 
         public SourceControlItemInfoPage(SourceControlItemInfoDetails SCIInfoDetails)
         {
             InitializeComponent();
-            TextBlockHelper TBH = new TextBlockHelper(ItemInfoTextBlock);
+            TBH = new TextBlockHelper(ItemInfoTextBlock);
             mSCIInfoDetails = SCIInfoDetails;
             Init(TBH);
         }
+
+
+        private void CopyMouseDownSourceControlInfo(object sender, MouseButtonEventArgs e)
+        {
+            CopyMouseDown(sender, TBH.GetText());
+        }
+
+        private void CopyMouseDown(object sender, string txtToCopy)
+        {
+            CopyToClipBoard(txtToCopy);
+
+            if (sender is Control control)
+            {
+                control.Foreground = new SolidColorBrush(Colors.Orange);
+                ShowToolTip(control, "Copied to clipboard");
+            }
+        }
+
+        public void CopyToClipBoard(string txtToCopy)
+        {
+            GingerCore.General.SetClipboardText(txtToCopy);
+        }
+
+        private void ShowToolTip(Control control, string message)
+        {
+            ToolTip toolTip = new ToolTip
+            {
+                Content = message,
+                IsOpen = true,
+                StaysOpen = false,
+                PlacementTarget = control,
+                Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse
+            };
+
+
+            var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+            timer.Tick += (s, args) =>
+            {
+                toolTip.IsOpen = false;
+                control.Foreground = new SolidColorBrush(Colors.Black);
+                timer.Stop();
+            };
+            timer.Start();
+
+        }
+
 
         private void Init(TextBlockHelper TBH)
         {
