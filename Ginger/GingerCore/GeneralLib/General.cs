@@ -1317,6 +1317,40 @@ namespace GingerCore
             return false;
         }
 
+        public static void CopyMouseDown(object sender, string txtToCopy)
+        {
+            SetClipboardText(txtToCopy);
+
+            if (sender is Control control)
+            {
+                control.Foreground = new SolidColorBrush(Colors.Orange);
+                ShowToolTip(control, "Copied to clipboard");
+            }
+        }
+            
+
+        private static void ShowToolTip(Control control, string message)
+        {
+            ToolTip toolTip = new ToolTip
+            {
+                Content = message,
+                IsOpen = true,
+                StaysOpen = false,
+                PlacementTarget = control,
+                Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse
+            };
+            var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(0.5) };
+            timer.Tick += (_, _) =>
+            {
+                toolTip.IsOpen = false;
+                control.Foreground = new SolidColorBrush(Colors.Black);
+                timer.Stop();
+            };
+            timer.Start();
+
+        }
+
+
         public static string GetClipboardText()
         {
             return ClipboardService.GetText();

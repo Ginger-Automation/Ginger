@@ -46,48 +46,8 @@ namespace Ginger.SourceControl
 
         private void CopyMouseDownSourceControlInfo(object sender, MouseButtonEventArgs e)
         {
-            CopyMouseDown(sender, TBH.GetText());
+            GingerCore.General.CopyMouseDown(sender, TBH.GetText());
         }
-
-        private void CopyMouseDown(object sender, string txtToCopy)
-        {
-            CopyToClipBoard(txtToCopy);
-
-            if (sender is Control control)
-            {
-                control.Foreground = new SolidColorBrush(Colors.Orange);
-                ShowToolTip(control, "Copied to clipboard");
-            }
-        }
-
-        public void CopyToClipBoard(string txtToCopy)
-        {
-            GingerCore.General.SetClipboardText(txtToCopy);
-        }
-
-        private void ShowToolTip(Control control, string message)
-        {
-            ToolTip toolTip = new ToolTip
-            {
-                Content = message,
-                IsOpen = true,
-                StaysOpen = false,
-                PlacementTarget = control,
-                Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse
-            };
-
-
-            var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(0.5) };
-            timer.Tick += (_, _) =>
-            {
-                toolTip.IsOpen = false;
-                control.Foreground = new SolidColorBrush(Colors.Black);
-                timer.Stop();
-            };
-            timer.Start();
-
-        }
-
 
         private void Init(TextBlockHelper TBH)
         {
