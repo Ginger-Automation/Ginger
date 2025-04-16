@@ -77,7 +77,7 @@ namespace Ginger.SourceControl
             };
 
 
-            var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+            var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(0.5) };
             timer.Tick += (_, _) =>
             {
                 toolTip.IsOpen = false;
