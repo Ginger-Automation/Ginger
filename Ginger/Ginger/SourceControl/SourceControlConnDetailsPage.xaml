@@ -3,53 +3,63 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib" xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
-     Height="315" Width="500" MinHeight="155"
+     Height="350" Width="600" MinHeight="155"
 	  Title="Source Control Connection Details">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Background="{StaticResource $BackgroundColor_White}" >
+        <Grid Background="{StaticResource $BackgroundColor_White}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="35"></RowDefinition>
-                <RowDefinition Height="35"></RowDefinition>
-                <RowDefinition Height="35" Name="xBranchRow"></RowDefinition>
-                <RowDefinition Height="35"></RowDefinition>
-                <RowDefinition Height="35"></RowDefinition>
-                <RowDefinition Height="35"></RowDefinition>
-                <RowDefinition Height="35"></RowDefinition>
-                <RowDefinition Height="35" Name="xTimeoutRow"></RowDefinition>
-                <RowDefinition Height="35"></RowDefinition>
-          
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50*"/>
+                <ColumnDefinition Width="70*"/>
                 <ColumnDefinition Width="150*"/>
+                <ColumnDefinition Width="15*"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Source Control Type:" Margin="5,5,5,4" Height="40" Style="{StaticResource @InputFieldLabelStyle}"  Grid.Row="0" Grid.Column="0"/>
+
+            <Label Content="Source Control Type:" Margin="5,5,5,4" Height="40" Style="{StaticResource @InputFieldLabelStyle}" Grid.Row="0" Grid.Column="0"/>
             <TextBox x:Name="SourceControlClassTextBox" Margin="5,5,5,5" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" Grid.Row="0" Grid.Column="1"/>
-            <Label Content="Source Control URL:" Margin="5,5,5,5" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="0" />
+            <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="Copy" ToolTip="Copy To Clipboard"  Foreground="{StaticResource $BackgroundColor_Black}"  PreviewMouseDown="CopyMouseDown" Tag="{Binding ElementName=SourceControlClassTextBox}" HorizontalAlignment="Left" Grid.Row="0" Grid.Column="2" />
+
+            <Label Content="Source Control URL:" Margin="5,5,5,5" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="0"/>
             <TextBox x:Name="SourceControlURLTextBox" Margin="5,5,5,5" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" TextChanged="SourceControlUserDetails_TextChanged" Grid.Row="1" Grid.Column="1"/>
-                <!--<StackPanel x:Name="xBranchPanel" Visibility="Visible">-->
-            <Label x:Name="xLabelBranch" Margin="5,5,5,5" Content="Source Control Branch:" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="0"/>
-            <TextBox x:Name="xSourceControlBranchTextBox" Margin="5,5,5,5" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" IsReadOnly="True" IsEnabled="False" Grid.Row="2" Grid.Column="1"></TextBox>
-                <!--</StackPanel>-->
+            <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="Copy" ToolTip="Copy To Clipboard"  Foreground="{StaticResource $BackgroundColor_Black}"  PreviewMouseDown="CopyMouseDown" Tag="{Binding ElementName=SourceControlURLTextBox}" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="2" />
+
+            <Label x:Name="xLabelBranch" Content="Source Control Branch:" Margin="5,5,5,5" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="0" Visibility="Visible"/>
+            <TextBox x:Name="xSourceControlBranchTextBox" Margin="5,5,5,5" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" IsReadOnly="True" Grid.Row="2" Grid.Column="1" Visibility="Visible" IsEnabled="False"/>
+            <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="Copy" ToolTip="Copy To Clipboard"  Foreground="{StaticResource $BackgroundColor_Black}"  PreviewMouseDown="CopyMouseDown" Tag="{Binding ElementName=xSourceControlBranchTextBox}" HorizontalAlignment="Left" Grid.Row="2" Grid.Column="2" />
+
             <Label Content="User ID:" Margin="5,5,5,5" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Grid.Row="3" Grid.Column="0"/>
             <TextBox x:Name="SourceControlUserTextBox" Margin="5,5,5,5" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" TextChanged="SourceControlUserDetails_TextChanged" Grid.Row="3" Grid.Column="1"/>
-            <Label  Content="Password:" Margin="5,5,5,5" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Grid.Row="4" Grid.Column="0"/>
+            <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="Copy" ToolTip="Copy To Clipboard"  Foreground="{StaticResource $BackgroundColor_Black}"  PreviewMouseDown="CopyMouseDown" Tag="{Binding ElementName=SourceControlUserTextBox}" HorizontalAlignment="Left" Grid.Row="3" Grid.Column="2" />
+
+            <Label Content="Password:" Margin="5,5,5,5" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Grid.Row="4" Grid.Column="0"/>
             <PasswordBox x:Name="SourceControlPassTextBox" Margin="5,5,5,5" Style="{StaticResource @PasswordBoxStyle}" HorizontalAlignment="Stretch" Grid.Row="4" Grid.Column="1"/>
+            <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="Copy" ToolTip="Copy To Clipboard"  Foreground="{StaticResource $BackgroundColor_Black}"  PreviewMouseDown="CopyMouseDown" Tag="{Binding ElementName=SourceControlPassTextBox}" HorizontalAlignment="Left" Grid.Row="4" Grid.Column="2" />
 
             <Label Content="Author Name:" Margin="5,5,5,5" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Grid.Row="5" Grid.Column="0"/>
             <TextBox x:Name="SourceControlUserAuthorNameTextBox" Margin="5,5,5,5" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" TextChanged="SourceControlUserDetails_TextChanged" Grid.Row="5" Grid.Column="1"/>
+            <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="Copy" ToolTip="Copy To Clipboard"  Foreground="{StaticResource $BackgroundColor_Black}"  PreviewMouseDown="CopyMouseDown" Tag="{Binding ElementName=SourceControlUserAuthorNameTextBox}" HorizontalAlignment="Left" Grid.Row="5" Grid.Column="2" />
+
             <Label Content="Author Email:" Margin="5,5,5,5" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Grid.Row="6" Grid.Column="0"/>
             <TextBox x:Name="SourceControlAuthorEmailTextBox" Margin="5,5,5,5" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" TextChanged="SourceControlUserDetails_TextChanged" Grid.Row="6" Grid.Column="1"/>
-                
-                <!--<StackPanel x:Name="xTimeoutPanel" Visibility="Visible">-->
-            <Label x:Name="xLabelConnectionTimeout" Margin="5,5,5,5" Content="Connection Timeout:" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Visibility="Visible" Grid.Row="7" Grid.Column="0"/>
-            <TextBox x:Name="xTextSourceControlConnectionTimeout" Margin="5,5,5,5" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Visibility="Visible" Text="" HorizontalAlignment="Stretch" TextChanged="txtSourceControlConnectionTimeout_TextChanged" Grid.Row="7" Grid.Column="1"></TextBox>
-                <!--</StackPanel>-->
-            <CheckBox x:Name="ShowIndicationkForLockedItems"  Content="Show indication for locked items" Margin="5,5,5,5" ToolTip="If checked Ginger will update files icon with Locker icon" Visibility="Collapsed"  HorizontalAlignment="Left" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2"/>
+            <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="Copy" ToolTip="Copy To Clipboard"  Foreground="{StaticResource $BackgroundColor_Black}"  PreviewMouseDown="CopyMouseDown" Tag="{Binding ElementName=SourceControlAuthorEmailTextBox}" HorizontalAlignment="Left" Grid.Row="6" Grid.Column="2" />
 
+            <Label x:Name="xLabelConnectionTimeout" Content="Connection Timeout:" Margin="5,5,5,5" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Visibility="Visible" Grid.Row="7" Grid.Column="0"/>
+            <TextBox x:Name="xTextSourceControlConnectionTimeout" Margin="5,5,5,5" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Visibility="Visible" Text="" HorizontalAlignment="Stretch" TextChanged="txtSourceControlConnectionTimeout_TextChanged" Grid.Row="7" Grid.Column="1"/>
+            <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="Copy" ToolTip="Copy To Clipboard"  Foreground="{StaticResource $BackgroundColor_Black}"  PreviewMouseDown="CopyMouseDown" Tag="{Binding ElementName=xTextSourceControlConnectionTimeout}" HorizontalAlignment="Left" Grid.Row="7" Grid.Column="2" />
+
+            <CheckBox x:Name="ShowIndicationkForLockedItems" Content="Show indication for locked items" Margin="5,5,5,5" ToolTip="If checked Ginger will update files icon with Locker icon" Visibility="Collapsed" HorizontalAlignment="Left" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2"/>
         </Grid>
     </ScrollViewer>
 </Page>
