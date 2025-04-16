@@ -78,7 +78,7 @@ namespace Ginger.SourceControl
 
 
             var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-            timer.Tick += (s, args) =>
+            timer.Tick += (s, _) =>
             {
                 toolTip.IsOpen = false;
                 control.Foreground = new SolidColorBrush(Colors.Black);
@@ -307,11 +307,6 @@ namespace Ginger.SourceControl
             {
                 Reporter.ToLog(eLogLevel.ERROR, EX.ToString());
             }
-        }
-
-        private void ImageMakerControl_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-
         }
     }
 }

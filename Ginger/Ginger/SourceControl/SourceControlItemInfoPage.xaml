@@ -13,7 +13,8 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid Background="{StaticResource $BackgroundColor_White}">
             <TextBlock x:Name="ItemInfoTextBlock"></TextBlock>
-            <usercontrols:ImageMakerControl SetAsFontImageWithSize="20" ImageType="Copy" ToolTip="Copy To Clipboard"  Foreground="{StaticResource $BackgroundColor_Black}"  PreviewMouseDown="CopyMouseDownSourceControlInfo" HorizontalAlignment="Left" />
+            <usercontrols:ImageMakerControl SetAsFontImageWithSize="20" ImageType="Copy" ToolTip="Copy To Clipboard"  Foreground="{StaticResource $BackgroundColor_Black}"  PreviewMouseDown="CopyMouseDownSourceControlInfo" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,5,0" />
+
         </Grid>
     </ScrollViewer>
 </Page>
