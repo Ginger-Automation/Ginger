@@ -49,44 +49,21 @@ namespace Ginger.SourceControl
         }
 
 
-        private void CopyMouseDown(object sender, string txtToCopy)
-        {
-            GingerCore.General.CopyMouseDown(sender, txtToCopy);
-        }
+      
 
-        // Event handlers
-        private void CopyMouseDownURL(object sender, MouseButtonEventArgs e)
+        private void CopyMouseDown(object sender, MouseButtonEventArgs e)
         {
-            CopyMouseDown(sender, SourceControlURLTextBox.Text);
-        }
+            if (sender is FrameworkElement element && element.Tag is Control sourceControl)
+            {
+                string textToCopy = sourceControl switch
+                {
+                    TextBox textBox => textBox.Text,
+                    PasswordBox passwordBox => passwordBox.Password,
+                    _ => string.Empty
+                };
 
-        private void CopyMouseDownBranch(object sender, MouseButtonEventArgs e)
-        {
-            CopyMouseDown(sender, xSourceControlBranchTextBox.Text);
-        }
-        private void CopyMouseDownUserID(object sender, MouseButtonEventArgs e)
-        {
-            CopyMouseDown(sender, SourceControlUserTextBox.Text);
-        }
-        private void CopyMouseDownPassword(object sender, MouseButtonEventArgs e)
-        {
-            CopyMouseDown(sender, SourceControlPassTextBox.Password);
-        }
-        private void CopyMouseDownAuthorName(object sender, MouseButtonEventArgs e)
-        {
-            CopyMouseDown(sender, SourceControlUserAuthorNameTextBox.Text);
-        }
-        private void CopyMouseDownAuthorMail(object sender, MouseButtonEventArgs e)
-        {
-            CopyMouseDown(sender, SourceControlAuthorEmailTextBox.Text);
-        }
-        private void CopyMouseDownTimeOut(object sender, MouseButtonEventArgs e)
-        {
-            CopyMouseDown(sender, xTextSourceControlConnectionTimeout.Text);
-        }
-        private void CopyMouseDownGitType(object sender, MouseButtonEventArgs e)
-        {
-            CopyMouseDown(sender, SourceControlClassTextBox.Text);
+                GingerCore.General.CopyMouseDown(sender, textToCopy);
+            }
         }
 
         private void Bind()
