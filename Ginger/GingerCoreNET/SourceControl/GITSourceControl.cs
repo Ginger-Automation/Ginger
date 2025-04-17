@@ -1135,23 +1135,23 @@ namespace GingerCore.SourceControl
         }
 
 
-        public override bool CreateBranch(string newBranchName)
+        public override bool CreateBranch(string newBranchName, ref string error)
         {
             try
             {
                 using (var repo = new Repository(LocalFolder))
                 {
+                    // Check for uncommitted changes or conflicts
+                    var status = repo.RetrieveStatus();
+                    if (status.IsDirty || repo.Index.Conflicts.Any())
+                    {
+                        error="There are uncommitted changes or conflicts in the existing branch.\n Please resolve them before creating a new branch.";
+                        return false;
+                    }
+
                     // Checkout the existing branch
                     Branch existingBranch = repo.Branches[Branch];
                     Commands.Checkout(repo, existingBranch);
-
-                    // Stage all changes
-                    Commands.Stage(repo, "*");
-
-                    // Commit the changes
-                    Signature author = new Signature(AuthorName, AuthorEmail, DateTime.Now);
-                    Signature committer = author;
-                    repo.Commit("Committing changes before creating new branch", author, committer);
 
                     // Create the new branch based on the existing branch
                     Branch newBranch = repo.Branches.Add(newBranchName, existingBranch.Tip);
@@ -1171,11 +1171,10 @@ namespace GingerCore.SourceControl
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred: {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"An error occurred: {ex.Message}");
                 return false;
             }
         }
-
 
         public override List<string> GetLocalBranches()
         {

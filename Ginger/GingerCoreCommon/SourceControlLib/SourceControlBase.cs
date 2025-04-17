@@ -139,7 +139,7 @@ namespace GingerCoreNET.SourceControl
         public abstract List<string> GetBranches();
         public abstract bool IsRepositoryPublic();
 
-        public abstract bool CreateBranch( string newBranchName);
+        public abstract bool CreateBranch( string newBranchName, ref string error);
 
         public abstract List<string> GetLocalBranches();
         public abstract string GetCurrentWorkingBranch();

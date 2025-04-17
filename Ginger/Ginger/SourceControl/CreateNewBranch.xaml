@@ -25,7 +25,8 @@
                     <RowDefinition  Height="35"/>
                     <RowDefinition  Height="35"/>
                     <RowDefinition  Height="35"/>
-                    <RowDefinition  Height="35"/>
+                    <RowDefinition  Height="30"/>
+                    <RowDefinition  Height="40"/>
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
@@ -46,8 +47,9 @@
                 <TextBox x:Name="xCurrentWorkingBranch" Grid.Column="1" Grid.Row="3" Margin="0,5,0,7" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" IsEnabled="False"/>                
 
                 <Label Content="Branch Name:" Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" Grid.Row="4" Margin="10,5,0,0"/>
-                <TextBox x:Name="SourceControlBranchTextBox" Grid.Column="1" Grid.Row="5" Margin="0,5,0,7" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch"/>
-                
+                <TextBox x:Name="SourceControlBranchTextBox" KeyUp="SourceControlBranchTextBox_KeyUp" Grid.Column="1" Grid.Row="4" Margin="0,5,0,0" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch"/>
+                <Label x:Name="xErrorMsg" Content="" Visibility="Collapsed" VerticalAlignment="Top" FontSize="10" HorizontalAlignment="Stretch" IsEnabled="False" Style="{StaticResource @InputFieldLabelStyle}" Foreground="Red" Grid.Column="1" Grid.Row="5" Margin="0,0,0,0"/>
+
             </Grid>
         </StackPanel>
 

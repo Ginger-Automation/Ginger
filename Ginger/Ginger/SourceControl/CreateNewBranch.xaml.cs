@@ -56,7 +56,6 @@ namespace Ginger.SourceControl
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserTextBox, TextBox.TextProperty, mSourceControl, nameof(GITSourceControl.Username));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPassTextBox, PasswordBox.PasswordCharProperty, mSourceControl, nameof(GITSourceControl.Password));
             xPassTextBox.Password = mSourceControl.Password;
-
             ShowExistingBranch();
         }
         List<string> AllLocalBranchNames = [];
@@ -121,14 +120,14 @@ namespace Ginger.SourceControl
 
                 if (string.IsNullOrEmpty(mSourceControl.AuthorEmail) && string.IsNullOrEmpty(mSourceControl.AuthorName))
                 {
-                    Reporter.ToLog(eLogLevel.ERROR,"Author name or Author email not found.");
+                    Reporter.ToLog(eLogLevel.ERROR, "Author name or Author email not found.");
                     return;
                 }
 
-                    await Task.Run(() =>
-                    {
-                        CreateNewSourceControlBranch(sender, e);
-                    });
+                await Task.Run(() =>
+                {
+                    CreateNewSourceControlBranch(sender, e);
+                });
 
                 loaderElement.Visibility = Visibility.Collapsed;
             }
@@ -138,7 +137,6 @@ namespace Ginger.SourceControl
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
             }
         }
-
 
         ImageMakerControl loaderElement;
 
@@ -159,10 +157,20 @@ namespace Ginger.SourceControl
                 });
                 bool result = false;
                 string newBranchName = string.Empty;
+                string error = string.Empty;
 
-                if (!string.IsNullOrEmpty(TextBoxBranch) && !AllLocalBranchNames.Any(branch => branch.Equals(TextBoxBranch, StringComparison.OrdinalIgnoreCase)))
+                if (!string.IsNullOrEmpty(TextBoxBranch))
                 {
-                    result = mSourceControl.CreateBranch(TextBoxBranch);
+                    result = mSourceControl.CreateBranch(TextBoxBranch, ref error);
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        ShowErrorMsg(error);
+                        return;
+                    }
+                    else
+                    {
+                        xErrorMsg.Visibility = Visibility.Collapsed;
+                    }
                     newBranchName = TextBoxBranch;
                 }
                 else
@@ -197,8 +205,26 @@ namespace Ginger.SourceControl
 
         }
 
+        private void SourceControlBranchTextBox_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            var result = AllLocalBranchNames.Any(branch => branch.Equals(SourceControlBranchTextBox.Text, StringComparison.OrdinalIgnoreCase));
+            if (result)
+            {
+                ShowErrorMsg("This branch is already exists.");
+            }
+            else
+            {
+                xErrorMsg.Visibility = Visibility.Collapsed;
+            }
+        }
 
-
-
+        private void ShowErrorMsg(string message)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xErrorMsg.Visibility = Visibility.Visible;
+                xErrorMsg.Content = message;
+            });
+        }
     }
 }

@@ -258,7 +258,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
             throw new NotImplementedException();
         }
 
-        public override bool CreateBranch( string newBranchName)
+        public override bool CreateBranch( string newBranchName, ref string error  )
         {
             throw new NotImplementedException();
         }
