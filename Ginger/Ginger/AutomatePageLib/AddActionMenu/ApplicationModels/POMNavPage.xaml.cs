@@ -33,6 +33,7 @@ using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -43,7 +44,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// <summary>
     /// Interaction logic for POMNavAction.xaml
     /// </summary>
-    public partial class POMNavPage : Page, INavPanelPage
+    public partial class POMNavPage : Page, INavPanelPage, ITreeViewItem
     {
         public PomElementsPage mappedUIElementsPage;
         ApplicationPOMModel mPOM;
@@ -53,6 +54,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         ElementInfoListViewHelper mPOMListHelper;
         ActivitiesRepositoryPage mActivitiesRepositoryViewPage;
         private Agent mAgent;
+        private POMEditPage mPOMEditPage;
+
 
         IWindowExplorer mWinExplorer
         {
@@ -94,8 +97,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEventAsync;
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEventAsync;
-
-
             mContext = context;
 
             xPomElementsListView.ListTitleVisibility = Visibility.Hidden;
@@ -143,6 +144,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
         }
 
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
+        {
+            if (mPOMEditPage == null)
+            {
+                mPOMEditPage = new POMEditPage(mPOM, General.eRIPageViewMode.Standalone);
+            }
+            return mPOMEditPage;
+        }
+
         private void UpdatePOMTree()
         {
             if (mContext.Activity != null)
@@ -164,7 +174,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     }
                     mPOM.StartDirtyTracking();
                     xPOMDetails.Height = xPOMItems.Height;
-                    xPomElementsListView.DataSourceList = mPOM.MappedUIElements;
+
+                    //Creating a copy of the mapped elements
+                    ObservableList<ElementInfo> clonedMappedElements = [.. mPOM.MappedUIElements];
+
+                    xPomElementsListView.DataSourceList = clonedMappedElements;
                     xPomElementsListView.Visibility = Visibility.Visible;
                     xPOMSplitter.IsEnabled = true;
 
@@ -254,6 +268,37 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 return false;
             }
+        }
+
+        public StackPanel Header()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<ITreeViewItem> Childrens()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsExpandable()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ContextMenu Menu()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetTools(ITreeView TV)
+        {
+            throw new NotImplementedException();
+        }
+        public ITreeView TreeView { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public object NodeObject()
+        {
+            throw new NotImplementedException();
         }
     }
 }
