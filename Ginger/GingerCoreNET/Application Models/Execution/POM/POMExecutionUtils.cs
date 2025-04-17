@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
-using Ginger.Run;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCoreNET.Application_Models;
@@ -224,7 +223,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             return false;
         }
 
-        private bool IsSelfHealingConfiguredForAutoUpdateCurrentPOM(bool checkForceUpdate=false)
+        private bool IsSelfHealingConfiguredForAutoUpdateCurrentPOM(bool checkForceUpdate = false)
         {
             if (ExecutedFrom == eExecutedFrom.Run)
             {
@@ -313,14 +312,14 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 {
                     return false;
                 }
-                        
+
             }
 
 
             return false;
         }
 
-        public ElementInfo AutoUpdateCurrentPOM(Common.InterfacesLib.IAgent currentAgent,bool CheckForForceUpdate = false)
+        public ElementInfo AutoUpdateCurrentPOM(Common.InterfacesLib.IAgent currentAgent, bool CheckForForceUpdate = false)
         {
             if (!IsSelfHealingConfiguredForAutoUpdateCurrentPOM())
             {
@@ -334,10 +333,13 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                     return null;
                 }
 
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Any(x => x.Equals(this.GetCurrentPOM().Guid)))
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, $"Self healing operation skipped as the POM was already updated during the run{this.GetCurrentPOM().Guid.ToString()} {this.GetCurrentPOMElementInfo().ElementName}");
-                    return null;
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Any(x => x.Equals(this.GetCurrentPOM().Guid)))
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Self healing operation skipped as the POM was already updated during the run{this.GetCurrentPOM().Guid.ToString()} {this.GetCurrentPOMElementInfo().ElementName}");
+                        return null;
+                    }
                 }
             }
 
@@ -358,7 +360,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 }
             }
 
-            var deltaElementInfos = GetUpdatedVirtulPOM(currentAgent,CheckForForceUpdate);
+            var deltaElementInfos = GetUpdatedVirtulPOM(currentAgent, CheckForForceUpdate);
 
             if (deltaElementInfos.Count > 0)
             {
@@ -462,18 +464,18 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
                 pomDeltaUtils.LearnDelta().Wait();
                 mAct.ExInfo += DateTime.Now + " Self healing operation application model was updated";
-                if(CheckForForceUpdate)
+                if (CheckForForceUpdate)
                 {
-                    if(WorkSpace.Instance.RunsetExecutor.RunSetConfig?.AutoUpdatedPOMList != null)
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig?.AutoUpdatedPOMList != null)
                     {
-                        if(!WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Any(x=>x.Equals(this.GetCurrentPOM().Guid)))
+                        if (!WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Any(x => x.Equals(this.GetCurrentPOM().Guid)))
                         {
                             WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Add(this.GetCurrentPOM().Guid);
                         }
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 mAct.ExInfo += DateTime.Now + $"Self healing operation failed to auto update application model{this.GetCurrentPOM().Guid}";
                 Reporter.ToLog(eLogLevel.DEBUG, $"Self healing operation failed to auto update application model{this.GetCurrentPOM().Guid}", ex);
@@ -486,7 +488,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             return pomDeltaUtils.DeltaViewElements;
         }
 
-        public ElementInfo AutoForceUpdateCurrentPOM(Common.InterfacesLib.IAgent currentAgent,Act act)
+        public ElementInfo AutoForceUpdateCurrentPOM(Common.InterfacesLib.IAgent currentAgent, Act act)
         {
             try
             {
@@ -501,7 +503,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 Reporter.ToLog(eLogLevel.DEBUG, "Auto force update POM operation failed to auto update application model", ex);
                 return null;
             }
-            
+
         }
     }
 }
