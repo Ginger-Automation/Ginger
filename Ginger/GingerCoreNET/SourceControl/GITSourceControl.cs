@@ -33,7 +33,7 @@ using System.Threading.Tasks;
 namespace GingerCore.SourceControl
 {
 
-    public class GITSourceControl : SourceControlBase 
+    public class GITSourceControl : SourceControlBase
     {
         private const string XMLFileExtension = ".xml";
         private const string IgnoreFileExtension = ".ignore";
@@ -1134,6 +1134,76 @@ namespace GingerCore.SourceControl
             return wasConnectedSuccessfully;
         }
 
+
+        public override bool CreateBranch(string newBranchName)
+        {
+            try
+            {
+                using (var repo = new Repository(LocalFolder))
+                {
+                    // Checkout the existing branch
+                    Branch existingBranch = repo.Branches[Branch];
+                    Commands.Checkout(repo, existingBranch);
+
+                    // Stage all changes
+                    Commands.Stage(repo, "*");
+
+                    // Commit the changes
+                    Signature author = new Signature(AuthorName, AuthorEmail, DateTime.Now);
+                    Signature committer = author;
+                    repo.Commit("Committing changes before creating new branch", author, committer);
+
+                    // Create the new branch based on the existing branch
+                    Branch newBranch = repo.Branches.Add(newBranchName, existingBranch.Tip);
+
+                    // Set the upstream branch for the new branch
+                    repo.Branches.Update(newBranch, b => b.TrackedBranch = existingBranch.CanonicalName);
+
+                    // Checkout the new branch 
+                    Commands.Checkout(repo, newBranch);
+
+                    // Set the upstream remote for the new branch
+                    var remote = repo.Network.Remotes["origin"];
+                    repo.Branches.Update(newBranch, b => b.Remote = remote.Name, b => b.UpstreamBranch = newBranch.CanonicalName);
+
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                return false;
+            }
+        }
+
+
+        public override List<string> GetLocalBranches()
+        {
+            List<string> branchNames = new List<string>();
+
+            try
+            {
+                using (var repo = new Repository(LocalFolder))
+                {
+                    foreach (Branch branch in repo.Branches)
+                    {
+                        if (!branch.IsRemote)
+                        {
+                            branchNames.Add(branch.FriendlyName);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+
+            return branchNames;
+
+        }
+
+
         public override bool InitializeRepository(string remoteURL)
         {
             try
@@ -1244,7 +1314,7 @@ namespace GingerCore.SourceControl
                     {
                         FailOnConflict = true,
                     },
-                    FetchOptions=new FetchOptions()
+                    FetchOptions = new FetchOptions()
 
                 };
                 GetFetchOptions(pullOption?.FetchOptions);
@@ -1775,9 +1845,9 @@ namespace GingerCore.SourceControl
             return true;
         }
 
-        public override string GetCurrentBranchForSolution()
+        public override string GetCurrentWorkingBranch()
         {
-            using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+            using (var repo = new LibGit2Sharp.Repository(LocalFolder))
             {
                 return repo.Head.FriendlyName;
             }
