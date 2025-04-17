@@ -216,11 +216,15 @@ namespace Ginger.UserControlsLib.UCListView
                         {
                             xListView.SelectedIndex = 0;
                             xListView.SelectedItem = value[0];
-                            // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
-                            if (mObjList.SyncCurrentItemWithViewSelectedItem && mObjList.Count > 0)
+                            if (mObjList != null)
                             {
-                                mObjList.CurrentItem = value[0];
+                                // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
+                                if (mObjList.SyncCurrentItemWithViewSelectedItem && mObjList.Count > 0)
+                                {
+                                    mObjList.CurrentItem = value[0];
+                                }
                             }
+
                         }
 
                         //show items as collapsed
