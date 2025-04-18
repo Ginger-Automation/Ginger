@@ -1150,12 +1150,12 @@ namespace GingerCore.SourceControl
                     }
 
                     // Checkout the existing branch
-                    Branch existingBranch = repo.Branches[Branch];
-                    if (existingBranch == null)
+                    if (string.IsNullOrEmpty(Branch) || repo.Branches[Branch] == null)
                     {
-                        error = "The existing branch does not exist.";
+                        error = "The source branch is not specified or does not exist.";
                         return false;
                     }
+                    Branch existingBranch = repo.Branches[Branch];
                     Commands.Checkout(repo, existingBranch);
 
                     // Create the new branch based on the existing branch
@@ -1191,8 +1191,8 @@ namespace GingerCore.SourceControl
             }
             catch (Exception ex)
             {
-                error = $"An error occurred: {ex.Message}";
-                Reporter.ToLog(eLogLevel.ERROR, error);
+                error = $"Failed to create branch '{newBranchName}': {ex.Message}";
+                Reporter.ToLog(eLogLevel.ERROR, error, ex);
                 return false;
             }
         }
