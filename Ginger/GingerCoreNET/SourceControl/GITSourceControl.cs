@@ -1217,7 +1217,7 @@ namespace GingerCore.SourceControl
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred: {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to retrieve local branches", ex);
             }
 
             return branchNames;

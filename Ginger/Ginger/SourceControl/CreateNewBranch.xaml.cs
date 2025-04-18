@@ -31,7 +31,7 @@ using System.Windows.Controls;
 namespace Ginger.SourceControl
 {
     /// <summary>
-    /// Interaction logic for CheckInWindow.xaml
+    /// Interaction logic for CreateNewBranch.xaml
     /// </summary>
     public partial class CreateNewBranch : Page
     {
@@ -177,7 +177,7 @@ namespace Ginger.SourceControl
                     Reporter.ToUser(eUserMsgKey.SourceControlBranchEmptyOrAlreadyExists);
                     return;
                 }
-                if (result == true && !string.IsNullOrEmpty(newBranchName))
+                if (result && !string.IsNullOrEmpty(newBranchName))
                 {
                     mSourceControl.Branch = newBranchName;
                     UpdateSourceControlDetails();
