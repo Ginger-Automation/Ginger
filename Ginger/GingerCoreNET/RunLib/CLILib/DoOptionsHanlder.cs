@@ -19,16 +19,21 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Reports;
+using Amdocs.Ginger.Repository;
 using Ginger.AnalyzerLib;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
 using GraphQLClient.Clients;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GingerCoreNET;
+using Amdocs.Ginger;
+using GingerCoreNET.Application_Models;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -61,6 +66,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     break;
                 case DoOptions.DoOperation.open:
                     await DoOpenAsync();
+                    break;
+                case DoOptions.DoOperation.MultiPOMUpdate:
+                    await DoMultiPOMUpdate();
                     break;
             }
         }
@@ -409,6 +417,197 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         private string SetSolutionPathToTempFolder(string sourceControlUrl)
         {
             return mCLIHelper.GetTempFolderPathForRepo(sourceControlUrl);
+        }
+
+        /// <summary>
+        /// Update MultiPOM Update.
+        /// </summary>
+        /// <param name="solutionFolder">The folder path of the solution to open.</param>
+        /// <param name="encryptionKey">The encryption key for the solution, if any.</param>
+        private async Task DoMultiPOMUpdate()
+        {
+            string solutionFolder = mOpts.Solution;
+            string encryptionKey = mOpts.EncryptionKey;
+            try
+            {
+                // Check if solutionFolder is null or empty
+                if (string.IsNullOrWhiteSpace(solutionFolder))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "The provided solution folder path is null or empty.");
+                    return;
+                }
+                // Check if the folder path contains the solution file name
+                if (solutionFolder.Contains("Ginger.Solution.xml"))
+                {
+                    solutionFolder = Path.GetDirectoryName(solutionFolder)?.Trim() ?? string.Empty;
+
+                    if (string.IsNullOrEmpty(solutionFolder))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Invalid solution folder path derived from the solution file.");
+                        return;
+                    }
+                }
+
+                // Attempt to open the solution
+                mCLIHelper.AddCLIGitProperties(mOpts);
+                mCLIHelper.SetWorkSpaceGitProperties(mOpts);
+                mCLIHelper.SetEncryptionKey(encryptionKey);
+                if (mOpts.PasswordEncrypted)
+                {
+                    mCLIHelper.PasswordEncrypted(mOpts.PasswordEncrypted.ToString());
+                }
+                mCLIHelper.Solution = mOpts.Solution;
+                if (!await mCLIHelper.LoadSolutionAsync())
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                    LoadSourceControlDownloadPage?.Invoke(null, EventArgs.Empty);
+                    return;
+                }
+
+                if(mOpts.MultiPOMRun)
+                {
+                    await UpdateMultiPOMData(mOpts.MutliPOM, mOpts.MultiPOMrunset);
+                }
+
+                if (!string.IsNullOrWhiteSpace(mOpts.ExecutionId))
+                {
+                    if (await OpenRunSetByExecutionId())
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Runset not found by given Execution ID:{mOpts.ExecutionId}");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(mOpts.RunSetId))
+                {
+                    if (LoadCLIRunSetByID())
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Runset not found by given ID:{mOpts.RunSetId}");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(mOpts.RunSetName))
+                {
+                    if (OpenCLIRunSetByName())
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Runset not found by given Name:{mOpts.RunSetName}");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(mOpts.BusinessFlowId))
+                {
+                    var businessFlow = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(Guid.Parse(mOpts.BusinessFlowId));
+                    if (businessFlow != null)
+                    {
+                        AutomateBusinessFlowEvent?.Invoke(null, businessFlow);
+                        return;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Businessflow not found by given ID:{mOpts.BusinessFlowId}");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(mOpts.BusinessFlowName))
+                {
+                    var businessFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()
+                        .FirstOrDefault(bf => bf.Name.Equals(mOpts.BusinessFlowName, StringComparison.OrdinalIgnoreCase));
+                    if (businessFlow != null)
+                    {
+                        AutomateBusinessFlowEvent?.Invoke(null, businessFlow);
+                        return;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Businessflow not found by given Name:{mOpts.BusinessFlowName}");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(mOpts.SharedActivityId))
+                {
+                    var sharedActivity = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(Guid.Parse(mOpts.SharedActivityId));
+                    if (sharedActivity != null)
+                    {
+                        LoadSharedRepoEvent?.Invoke(null, sharedActivity);
+                        return;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Shared Activity not found by given id:{mOpts.SharedActivityId}");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(mOpts.SharedActivityName))
+                {
+                    var sharedActivity = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().FirstOrDefault(sa => sa.ActivityName.Equals(mOpts.SharedActivityName, StringComparison.OrdinalIgnoreCase));
+                    if (sharedActivity != null)
+                    {
+                        LoadSharedRepoEvent?.Invoke(null, sharedActivity);
+                        return;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Shared Activity not found by given Name:{mOpts.SharedActivityName}");
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"An unexpected error occurred while opening the solution in folder '{solutionFolder}'. Error: {ex.Message}");
+            }
+        }
+
+        private async Task UpdateMultiPOMData(string UpdateMultiPOM = null,string UpdateMultiPOMRunset = null)
+        {
+            List<Guid> UpdateMultiPOMList = new List<Guid>();
+            List<Guid> UpdateMultiRunSetList = new List<Guid>();
+            if (!string.IsNullOrEmpty(UpdateMultiPOM))
+            {
+                UpdateMultiPOMList = UpdateMultiPOM.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(g => Guid.Parse(g.Trim()))
+                    .ToList();
+
+                if (!string.IsNullOrEmpty(UpdateMultiPOMRunset))
+                {
+                    UpdateMultiRunSetList = UpdateMultiPOMRunset.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(g => Guid.Parse(g.Trim()))
+                    .ToList();
+                }
+                else
+                {
+
+                }
+            }
+            else if(string.IsNullOrEmpty(UpdateMultiPOM) && string.IsNullOrEmpty(UpdateMultiPOMRunset))
+            {
+                Dictionary<ApplicationPOMModel, List<RunSetConfig>> ApplicationPOMModelrunsetConfigMapping = new Dictionary<ApplicationPOMModel, List<RunSetConfig>>();
+                ObservableList<ApplicationPOMModel> mPOMModels = new ObservableList<ApplicationPOMModel>();
+                mPOMModels = GingerCoreNET.GeneralLib.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where WorkSpace.Instance.Solution.GetTargetApplicationPlatform(x.TargetApplicationKey) == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web select x).ToList());//Add logic for mobile platform also 
+                ObservableList<RunSetConfig> RunSetConfigList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                ObservableList<GingerCore.BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.BusinessFlow>();
+                ObservableList<MultiPomRunSetMapping> multiPomRunSetMappingsList = GingerCoreNET.GeneralLib.General.GetSelectedRunsetList(RunSetConfigList, businessFlows, mPOMModels, ApplicationPOMModelrunsetConfigMapping);
+                // Iterate through each item in the MultiPomRunSetMappingList
+                foreach (MultiPomRunSetMapping item in multiPomRunSetMappingsList)
+                {
+                    //await RunSelectedRunset(item);
+                }
+            }
+            else
+            {
+
+            }
         }
     }
 }

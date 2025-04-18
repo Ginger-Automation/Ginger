@@ -33,7 +33,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             analyze,
             info,
             clean,
-            open
+            open,
+            MultiPOMUpdate
         }
 
         [Option('o', "operation", Required = true, HelpText = "Select operation to run on solution")]
@@ -104,6 +105,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
             return true;
         }
+
+        [Option("MultiPOMRun", Required = false, HelpText = "Set MultiPOMRun Configuration Enable")]
+        public bool MultiPOMRun { get; set; }
+
+        [Option("MutliPOM", Required = false, HelpText = "MultiPOM Comma Separated GUID list")]
+        public string MutliPOM { get; set; }
+
+        [Option("MultiPOMrunset", Required = false, HelpText = "MultiPOMrunset Comma Separated GUID list")]
+        public string MultiPOMrunset { get; set; }
     }
 
 }

@@ -20,14 +20,18 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.Repository.SolutionCategories;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Configurations;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.ALM.RQM;
 using GingerCore.DataSource;
 using GingerCore.Environments;
+using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections;
@@ -932,6 +936,89 @@ namespace GingerCoreNET.GeneralLib
             decryptedPassword = EncryptionHandler.IsStringEncrypted(evaluatedValue) ? EncryptionHandler.DecryptwithKey(evaluatedValue) : evaluatedValue;
 
             return decryptedPassword;
+        }
+
+        public static ObservableList<MultiPomRunSetMapping> GetSelectedRunsetList(ObservableList<RunSetConfig> RunSetConfigList, ObservableList<BusinessFlow> businessFlows, IEnumerable<ApplicationPOMModel> selectedPOMModels, Dictionary<ApplicationPOMModel, List<RunSetConfig>> ApplicationPOMModelrunsetConfigMapping)
+        {
+            foreach (var applicationPOMModel in selectedPOMModels)
+            {
+                var matchingRunSetConfigs = RunSetConfigList
+                    .Where(runsetConfig => runsetConfig.GingerRunners
+                        .Any(gingerRunner => businessFlows
+                            .Where(businessFlow => gingerRunner.BusinessFlowsRunList
+                                .Select(y => y.BusinessFlowGuid)
+                                .Contains(businessFlow.Guid))
+                            .Any(businessFlow => businessFlow.Activities
+                                .Any(activity => activity.Acts
+                                    .Any(act =>
+                                            (act is ActUIElement actUIElement && actUIElement.ElementLocateBy == eLocateBy.POMElement &&
+                                                actUIElement.ElementLocateValue.Split("_")[0] == applicationPOMModel.Guid.ToString()) ||
+                                            (act is ActBrowserElement actBrowserElement && actBrowserElement.LocateBy == eLocateBy.POMElement &&
+                                                actBrowserElement.LocateValue.Split("_")[0] == applicationPOMModel.Guid.ToString()))))));
+
+                foreach (var runsetConfig in matchingRunSetConfigs)
+                {
+                    if (!ApplicationPOMModelrunsetConfigMapping.ContainsKey(applicationPOMModel))
+                    {
+                        ApplicationPOMModelrunsetConfigMapping[applicationPOMModel] = new List<RunSetConfig>();
+                    }
+                    ApplicationPOMModelrunsetConfigMapping[applicationPOMModel].Add(runsetConfig);
+                }
+            }
+
+
+            ObservableList<MultiPomRunSetMapping> multiPomRunSetMappingsList = new ObservableList<MultiPomRunSetMapping>();
+
+            foreach (var kvp in ApplicationPOMModelrunsetConfigMapping)
+            {
+                MultiPomRunSetMapping multiPomRunSetMappingItem = new MultiPomRunSetMapping();
+                multiPomRunSetMappingItem.ApplicationAPIModel = kvp.Key;
+                multiPomRunSetMappingItem.ApplicationAPIModelName = multiPomRunSetMappingItem.ApplicationAPIModel.Name;
+                multiPomRunSetMappingItem.RunSetConfigList = kvp.Value;
+                multiPomRunSetMappingItem.RunSetStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+
+                multiPomRunSetMappingsList.Add(multiPomRunSetMappingItem);
+            }
+
+            // Set the most common RunSetConfig for each item, but retain the unique RunSetConfig if it differs
+            foreach (MultiPomRunSetMapping item in multiPomRunSetMappingsList)
+            {
+                if (item.RunSetConfigList != null && item.RunSetConfigList.Any())
+                {
+                    //Find the most common RunSetConfig across all items in multiPomRunSetMappingsList
+                    var mostCommonRunSetConfig = multiPomRunSetMappingsList
+                        .SelectMany(item => item.RunSetConfigList)
+                        .GroupBy(runsetConfig => runsetConfig)
+                        .OrderByDescending(group => group.Count())
+                        .FirstOrDefault()?.Key;
+
+                    // Check if the most common RunSetConfig is present in the current item's RunSetConfigList
+                    if (item.RunSetConfigList.Contains(mostCommonRunSetConfig))
+                    {
+                        item.SelectedRunset = mostCommonRunSetConfig;
+                        item.RunsetName = mostCommonRunSetConfig?.Name;
+                    }
+                    else
+                    {
+                        var uniqueRunSetConfig = item.RunSetConfigList
+                            .GroupBy(runsetConfig => runsetConfig)
+                            .OrderByDescending(group => group.Count())
+                            .FirstOrDefault()?.Key;
+
+                        item.SelectedRunset = uniqueRunSetConfig;
+                        item.RunsetName = uniqueRunSetConfig?.Name;
+                    }
+                }
+                else
+                {
+                    // Handle case where RunSetConfigList is empty or null
+                    item.SelectedRunset = null;
+                    item.RunsetName = string.Empty;
+                    item.PomUpdateStatus = $"No Runset found";
+                }
+            }
+
+            return multiPomRunSetMappingsList;
         }
     }
 
