@@ -949,6 +949,10 @@ namespace Ginger
 
             App.CheckIn(WorkSpace.Instance.Solution.Folder);
         }
+        private void btnSourceControlCreateBranch_Click(object sender, RoutedEventArgs e)
+        {
+            App.CreateNewBranch();
+        }
         ProgressNotifier progressNotifier = null;
         /// <summary>
         /// Handles the event to get the latest changes from the source control.

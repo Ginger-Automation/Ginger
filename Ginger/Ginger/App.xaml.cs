@@ -214,6 +214,12 @@ namespace Ginger
             CIW.ShowAsWindow();
         }
 
+        internal static void CreateNewBranch()
+        {
+            CreateNewBranch CIW = new CreateNewBranch();
+            CIW.ShowAsWindow();
+        }
+
         public Dispatcher GetMainWindowDispatcher()
         {
             return MainWindow.Dispatcher;

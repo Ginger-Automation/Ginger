@@ -154,11 +154,21 @@
                                         <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="GetLatest" Margin="5,0,-5,0"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
+
+                                <MenuItem Header="Create Branch" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlCreateBranch_Click" ToolTip="Create new Branch for current solution.">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Add" Margin="5,0,-5,0"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
                                 <MenuItem Header="View And Check In Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlCheckIn_Click" ToolTip="Review recent changes and check in your modifications.">
                                     <MenuItem.Icon>
                                         <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="CheckIn" Margin="5,0,-5,0"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
+
+                                
+
                                 <MenuItem Header="View Repository Details" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlRepositoryDetails_Click" ToolTip="Display information about the current source control repository.">
                                     <MenuItem.Icon>
                                         <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="View" Margin="5,0,-5,0"/>

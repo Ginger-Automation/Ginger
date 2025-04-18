@@ -166,7 +166,8 @@ namespace Amdocs.Ginger.Common
         UploadSolutionInfo,
         UploadSolutionToSourceControl,
         UploadSolutionFailed,
-        SourceControlBranchNameEmpty, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace,
+        SourceControlBranchNameEmpty,SourceControlBranchEmptyOrAlreadyExists, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace,
+        SourceControlBranchCreated,
         DeleteRecoverFolderWarn,
         EnvParamNameExists,
         GingerOpsConnectionFail,
@@ -353,6 +354,11 @@ namespace Amdocs.Ginger.Common
                 { eUserMsgKey.UploadSolutionToSourceControl, new UserMsg(eUserMsgType.QUESTION, "Upload Solution", "The solution was created and loaded successfully.\nPlease make a note of the encryption key provided from solution details page." + Environment.NewLine + "Do you want to upload the Solution: '{0}' to Source Control?", eUserMsgOption.YesNo, eUserMsgSelection.No) },
                 { eUserMsgKey.UploadSolutionFailed, new UserMsg(eUserMsgType.ERROR, "Upload Solution", "Failed to Upload Solution to Source Control" + Environment.NewLine + "'{0}'", eUserMsgOption.OK, eUserMsgSelection.None) },
                 { eUserMsgKey.SourceControlBranchNameEmpty, new UserMsg(eUserMsgType.ERROR, "Upload Solution", "Branch name cannot be empty.", eUserMsgOption.OK, eUserMsgSelection.None) },
+
+                 { eUserMsgKey.SourceControlBranchCreated, new UserMsg(eUserMsgType.INFO, "Create New Branch", "Branch created successfully.", eUserMsgOption.OK, eUserMsgSelection.None) },
+
+                { eUserMsgKey.SourceControlBranchEmptyOrAlreadyExists, new UserMsg(eUserMsgType.ERROR, "Create New Branch", "Branch Name is already exists or empty.", eUserMsgOption.OK, eUserMsgSelection.None) },
+
                 { eUserMsgKey.HandleConflictsBeforeMovingForward, new UserMsg(eUserMsgType.ERROR, "Unhandled Conflicts", "You have {0} unhandled conflicts, please handle them before moving forward.", eUserMsgOption.OK, eUserMsgSelection.OK) },
                 { eUserMsgKey.HasUnhandledConflicts, new UserMsg(eUserMsgType.ERROR, "Unhandled Conflicts", "Cannot merge since you have {0} unhandled conflicts.", eUserMsgOption.OK, eUserMsgSelection.OK) },
                 { eUserMsgKey.HasUnhandledMandatoryIssues, new UserMsg(eUserMsgType.ERROR, "Unhandled Issues", "Cannot merge since you have {0} unhandled High/Critical issues.", eUserMsgOption.OK, eUserMsgSelection.OK) },
