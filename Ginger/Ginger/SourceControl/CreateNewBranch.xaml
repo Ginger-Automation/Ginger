@@ -8,7 +8,7 @@
       xmlns:fa="http://schemas.fontawesome.io/icons/"
       mc:Ignorable="d"
       Height="300" Width="500"
-	  Title="Upload Solution To Source Control">
+	  Title="Create New Branch">
 
     <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
@@ -35,7 +35,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Content="Source Control URL:" Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}"  Margin="10,5,0,0"/>
-                <TextBox x:Name="xURLTextBox" Grid.Column="1" Grid.Row="0" ToolTip="Please create a new git repository or uses an existing empty repository only." Margin="0,5,0,7"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   HorizontalAlignment="Stretch" Text="" IsEnabled="False"   />
+                <TextBox x:Name="xURLTextBox" Grid.Column="1" Grid.Row="0" Margin="0,5,0,7"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   HorizontalAlignment="Stretch" Text="" IsEnabled="False"   />
 
                 <Label Content="User Name:" Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" Grid.Row="1" Margin="10,5,0,0"/>
                 <TextBox x:Name="xUserTextBox" Grid.Column="1" Grid.Row="1" Margin="0,5,0,7" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" IsEnabled="False"/>

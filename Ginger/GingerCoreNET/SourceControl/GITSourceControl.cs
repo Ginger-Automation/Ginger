@@ -1145,16 +1145,26 @@ namespace GingerCore.SourceControl
                     var status = repo.RetrieveStatus();
                     if (status.IsDirty || repo.Index.Conflicts.Any())
                     {
-                        error="There are uncommitted changes or conflicts in the existing branch.\n Please resolve them before creating a new branch.";
+                        error = "There are uncommitted changes or conflicts in the existing branch.\nPlease resolve them before creating a new branch.";
                         return false;
                     }
 
                     // Checkout the existing branch
                     Branch existingBranch = repo.Branches[Branch];
+                    if (existingBranch == null)
+                    {
+                        error = "The existing branch does not exist.";
+                        return false;
+                    }
                     Commands.Checkout(repo, existingBranch);
 
                     // Create the new branch based on the existing branch
                     Branch newBranch = repo.Branches.Add(newBranchName, existingBranch.Tip);
+                    if (newBranch == null)
+                    {
+                        error = "Failed to create the new branch.";
+                        return false;
+                    }
 
                     // Set the upstream branch for the new branch
                     repo.Branches.Update(newBranch, b => b.TrackedBranch = existingBranch.CanonicalName);
@@ -1164,17 +1174,29 @@ namespace GingerCore.SourceControl
 
                     // Set the upstream remote for the new branch
                     var remote = repo.Network.Remotes["origin"];
-                    repo.Branches.Update(newBranch, b => b.Remote = remote.Name, b => b.UpstreamBranch = newBranch.CanonicalName);
+                    if (remote != null)
+                    {
+                        repo.Branches.Update(newBranch,
+                        b => b.Remote = remote.Name,
+                        b => b.UpstreamBranch = $"refs/heads/{newBranch.FriendlyName}");
+                    }
+                    else
+                    {
+                        error = "Remote 'origin' does not exist.";
+                        return false;
+                    }
 
                     return true;
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"An error occurred: {ex.Message}");
+                error = $"An error occurred: {ex.Message}";
+                Reporter.ToLog(eLogLevel.ERROR, error);
                 return false;
             }
         }
+
 
         public override List<string> GetLocalBranches()
         {

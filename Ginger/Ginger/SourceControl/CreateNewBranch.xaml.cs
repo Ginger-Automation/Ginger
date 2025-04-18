@@ -23,7 +23,6 @@ using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -37,7 +36,8 @@ namespace Ginger.SourceControl
     public partial class CreateNewBranch : Page
     {
         GenericWindow genWin = null;
-
+        ImageMakerControl loaderElement;
+        private SourceControlBase mSourceControl = null;
         public CreateNewBranch()
         {
             InitializeComponent();
@@ -95,7 +95,7 @@ namespace Ginger.SourceControl
                 Visibility = Visibility.Collapsed
             };
 
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Create New Branch", this, windowBtnsList, true, "Close", new RoutedEventHandler(Close_Click), false, loaderElement);
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, windowBtnsList, true, "Close", new RoutedEventHandler(Close_Click), false, loaderElement);
         }
         private void CloseWindow(object sender, EventArgs e)
         {
@@ -137,10 +137,6 @@ namespace Ginger.SourceControl
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
             }
         }
-
-        ImageMakerControl loaderElement;
-
-        public static SourceControlBase mSourceControl;
         private void PopProcessIsBusyMsg()
         {
             Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
@@ -169,13 +165,16 @@ namespace Ginger.SourceControl
                     }
                     else
                     {
-                        xErrorMsg.Visibility = Visibility.Collapsed;
+                        Dispatcher.Invoke(() =>
+                        {
+                            xErrorMsg.Visibility = Visibility.Collapsed;
+                        });
                     }
                     newBranchName = TextBoxBranch;
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKey.SourceControlBranchEmptyorAlreadyExists);
+                    Reporter.ToUser(eUserMsgKey.SourceControlBranchEmptyOrAlreadyExists);
                     return;
                 }
                 if (result == true && !string.IsNullOrEmpty(newBranchName))

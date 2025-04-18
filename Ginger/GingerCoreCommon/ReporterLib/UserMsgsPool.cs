@@ -166,7 +166,7 @@ namespace Amdocs.Ginger.Common
         UploadSolutionInfo,
         UploadSolutionToSourceControl,
         UploadSolutionFailed,
-        SourceControlBranchNameEmpty,SourceControlBranchEmptyorAlreadyExists, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace,
+        SourceControlBranchNameEmpty,SourceControlBranchEmptyOrAlreadyExists, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace,
         SourceControlBranchCreated,
         DeleteRecoverFolderWarn,
         EnvParamNameExists,
@@ -357,7 +357,7 @@ namespace Amdocs.Ginger.Common
 
                  { eUserMsgKey.SourceControlBranchCreated, new UserMsg(eUserMsgType.INFO, "Create New Branch", "Branch created successfully.", eUserMsgOption.OK, eUserMsgSelection.None) },
 
-                { eUserMsgKey.SourceControlBranchEmptyorAlreadyExists, new UserMsg(eUserMsgType.ERROR, "Create New Branch", "Branch Name is already exists or empty.", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.SourceControlBranchEmptyOrAlreadyExists, new UserMsg(eUserMsgType.ERROR, "Create New Branch", "Branch Name is already exists or empty.", eUserMsgOption.OK, eUserMsgSelection.None) },
 
                 { eUserMsgKey.HandleConflictsBeforeMovingForward, new UserMsg(eUserMsgType.ERROR, "Unhandled Conflicts", "You have {0} unhandled conflicts, please handle them before moving forward.", eUserMsgOption.OK, eUserMsgSelection.OK) },
                 { eUserMsgKey.HasUnhandledConflicts, new UserMsg(eUserMsgType.ERROR, "Unhandled Conflicts", "Cannot merge since you have {0} unhandled conflicts.", eUserMsgOption.OK, eUserMsgSelection.OK) },
