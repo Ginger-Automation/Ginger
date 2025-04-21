@@ -38,6 +38,7 @@ namespace Ginger.SourceControl
         GenericWindow genWin = null;
         ImageMakerControl loaderElement;
         private SourceControlBase mSourceControl = null;
+        private Button createBranch = null;
         public CreateNewBranch()
         {
             InitializeComponent();
@@ -61,25 +62,27 @@ namespace Ginger.SourceControl
         List<string> AllLocalBranchNames = [];
         private void ShowExistingBranch()
         {
-            try
+
+            Dispatcher.Invoke(() =>
             {
-                Dispatcher.Invoke(() =>
+                try
                 {
                     AllLocalBranchNames = mSourceControl.GetLocalBranches();
                     xCurrentWorkingBranch.Text = mSourceControl.GetCurrentWorkingBranch();
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
+                }
 
-                });
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
-            }
+            });
+
         }
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
             ObservableList<Button> windowBtnsList = [];
 
-            Button createBranch = new Button
+            createBranch = new Button
             {
                 Content = "Create Branch"
             };
@@ -99,13 +102,10 @@ namespace Ginger.SourceControl
         }
         private void CloseWindow(object sender, EventArgs e)
         {
-            CloseWindow();
+            Close_Click(null, null);
         }
 
-        private void CloseWindow()
-        {
-            genWin.Close();
-        }
+
         private async void CreateNewBranch_ClickAsync(object sender, RoutedEventArgs e)
         {
             try
@@ -149,13 +149,20 @@ namespace Ginger.SourceControl
                 string TextBoxBranch = string.Empty;
                 Dispatcher.Invoke(() =>
                 {
-                    TextBoxBranch = SourceControlBranchTextBox.Text;
+                    try
+                    {
+                        TextBoxBranch = SourceControlBranchTextBox.Text;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
+                    }
                 });
                 bool result = false;
                 string newBranchName = string.Empty;
                 string error = string.Empty;
 
-                if (!string.IsNullOrEmpty(TextBoxBranch))
+                if (!string.IsNullOrEmpty(TextBoxBranch) && !AllLocalBranchNames.Any(branch => branch.Equals(TextBoxBranch, StringComparison.OrdinalIgnoreCase)))
                 {
                     result = mSourceControl.CreateBranch(TextBoxBranch, ref error);
                     if (!string.IsNullOrEmpty(error))
@@ -199,21 +206,39 @@ namespace Ginger.SourceControl
         {
             Dispatcher.Invoke(() =>
             {
-                genWin.Close();
+                try
+                {
+                    createBranch.Click -= CreateNewBranch_ClickAsync;
+                    genWin.Close();
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
+                }
             });
 
         }
 
         private void SourceControlBranchTextBox_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            var result = AllLocalBranchNames.Any(branch => branch.Equals(SourceControlBranchTextBox.Text, StringComparison.OrdinalIgnoreCase));
-            if (result)
+            try
             {
-                ShowErrorMsg("This branch is already exists.");
+
+                var result = AllLocalBranchNames.Any(branch => branch.Equals(SourceControlBranchTextBox.Text, StringComparison.OrdinalIgnoreCase));
+                if (result)
+                {
+                    ShowErrorMsg("This branch is already exists.");
+                    createBranch.IsEnabled = false;
+                }
+                else
+                {
+                    createBranch.IsEnabled = true;
+                    xErrorMsg.Visibility = Visibility.Collapsed;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                xErrorMsg.Visibility = Visibility.Collapsed;
+                Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
             }
         }
 
@@ -221,8 +246,15 @@ namespace Ginger.SourceControl
         {
             Dispatcher.Invoke(() =>
             {
-                xErrorMsg.Visibility = Visibility.Visible;
-                xErrorMsg.Content = message;
+                try
+                {
+                    xErrorMsg.Visibility = Visibility.Visible;
+                    xErrorMsg.Content = message;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
+                }
             });
         }
     }

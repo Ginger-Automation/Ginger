@@ -155,7 +155,7 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
 
-                                <MenuItem Header="Create Branch" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlCreateBranch_Click" ToolTip="Create new Branch for current solution.">
+                                <MenuItem Header="Create New Branch" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlCreateBranch_Click" ToolTip="Create new Branch for current solution.">
                                     <MenuItem.Icon>
                                         <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Add" Margin="5,0,-5,0"/>
                                     </MenuItem.Icon>
