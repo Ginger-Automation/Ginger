@@ -162,7 +162,7 @@ namespace Ginger.SourceControl
                 string newBranchName = string.Empty;
                 string error = string.Empty;
 
-                if (!string.IsNullOrEmpty(TextBoxBranch) && !AllLocalBranchNames.Any(branch => branch.Equals(TextBoxBranch, StringComparison.OrdinalIgnoreCase)))
+                if (!string.IsNullOrEmpty(TextBoxBranch))
                 {
                     result = mSourceControl.CreateBranch(TextBoxBranch, ref error);
                     if (!string.IsNullOrEmpty(error))
