@@ -175,10 +175,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     mPOM.StartDirtyTracking();
                     xPOMDetails.Height = xPOMItems.Height;
 
-                    //Creating a copy of the mapped elements
-                    ObservableList<ElementInfo> clonedMappedElements = [.. mPOM.MappedUIElements];
-
-                    xPomElementsListView.DataSourceList = clonedMappedElements;
+                    //Creating a copy of sorted mapped elements 
+                    var sortedElementList = mPOM.MappedUIElements.OrderBy(e => e.ElementName).ToList();
+                    xPomElementsListView.DataSourceList = new ObservableList<ElementInfo>(sortedElementList);
                     xPomElementsListView.Visibility = Visibility.Visible;
                     xPOMSplitter.IsEnabled = true;
 
