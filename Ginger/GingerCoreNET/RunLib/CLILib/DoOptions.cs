@@ -123,6 +123,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option("sourceApplicationUser", Required = false, HelpText = "Set Source Application username")]
         public string SourceApplicationUser { get; set; }
 
+        [Option('r', "runset", Required = true, HelpText = "Set runset name")]
+        public string Runset { get; set; }
+
+        [Option('e', "env", Required = false, Default = "Default", HelpText = "Set environment name")]
+        public string Environment { get; set; }
+
     }
 
 }

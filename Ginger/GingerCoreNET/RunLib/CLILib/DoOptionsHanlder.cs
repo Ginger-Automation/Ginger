@@ -133,11 +133,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     LoadSourceControlDownloadPage?.Invoke(null, EventArgs.Empty);
                     return;
                 }
-                          
+
 
                 if (!string.IsNullOrWhiteSpace(mOpts.ExecutionId))
                 {
-                    if (await OpenRunSetByExecutionId()) 
+                    if (await OpenRunSetByExecutionId())
                     {
                         return;
                     }
@@ -455,6 +455,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 mCLIHelper.SetEncryptionKey(encryptionKey);
                 mCLIHelper.SourceApplication = mOpts.SourceApplication;
                 mCLIHelper.SourceApplicationUser = mOpts.SourceApplicationUser;
+                mCLIHelper.Runset = mOpts.Runset;
+                mCLIHelper.Env = mOpts.Environment;
                 if (mOpts.PasswordEncrypted)
                 {
                     mCLIHelper.PasswordEncrypted(mOpts.PasswordEncrypted.ToString());
@@ -467,12 +469,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     return;
                 }
 
-                if(mOpts.UpdateAllPOMsInRunsets)
+                if (mOpts.UpdateAllPOMsInRunsets)
                 {
                     await UpdateMultiPOMData(mOpts.GuidListPOM, mOpts.RunsetGuidList);
                 }
 
-                
+
 
             }
             catch (Exception ex)
@@ -481,7 +483,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        private async Task UpdateMultiPOMData(string POMGuids,string RunsetGuids)
+        private async Task UpdateMultiPOMData(string POMGuids, string RunsetGuids)
         {
             List<Guid> POMGuidsList = new List<Guid>();
             List<Guid> RunsetGuidsList = new List<Guid>();
@@ -495,11 +497,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 RunsetGuidsList = RunsetGuids.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(g => Guid.Parse(g.Trim())).ToList();
             }
 
+            Dictionary<ApplicationPOMModel, List<RunSetConfig>> ApplicationPOMModelrunsetConfigMapping = new Dictionary<ApplicationPOMModel, List<RunSetConfig>>();
+            ObservableList<ApplicationPOMModel> mPOMModels = new ObservableList<ApplicationPOMModel>();
 
-            if(!POMGuidsList.Any() && !RunsetGuidsList.Any())
+            if (!POMGuidsList.Any() && !RunsetGuidsList.Any())
             {
-                Dictionary<ApplicationPOMModel, List<RunSetConfig>> ApplicationPOMModelrunsetConfigMapping = new Dictionary<ApplicationPOMModel, List<RunSetConfig>>();
-                ObservableList<ApplicationPOMModel> mPOMModels = new ObservableList<ApplicationPOMModel>();
                 mPOMModels = GingerCoreNET.GeneralLib.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where WorkSpace.Instance.Solution.GetTargetApplicationPlatform(x.TargetApplicationKey) == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web select x).ToList());//Add logic for mobile platform also 
                 ObservableList<RunSetConfig> RunSetConfigList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
                 ObservableList<GingerCore.BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.BusinessFlow>();
@@ -512,7 +514,27 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
             else
             {
+                List<ApplicationPOMModel> applicationPOMModels = new List<ApplicationPOMModel>();
+                ObservableList<RunSetConfig> RunSetConfigList = new ObservableList<RunSetConfig>();
+                foreach (var pomGuid in POMGuidsList)
+                {
 
+                    applicationPOMModels.Add(WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(pomGuid));
+                }
+                foreach (var runsetGuid in RunsetGuidsList)
+                {
+                    RunSetConfigList.Add(WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<RunSetConfig>(runsetGuid));
+                }
+
+                mPOMModels = GingerCoreNET.GeneralLib.General.ConvertListToObservableList((from x in applicationPOMModels where WorkSpace.Instance.Solution.GetTargetApplicationPlatform(x.TargetApplicationKey) == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web select x).ToList());//Add logic for mobile platform also 
+
+                ObservableList<GingerCore.BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.BusinessFlow>();
+                ObservableList<MultiPomRunSetMapping> multiPomRunSetMappingsList = GingerCoreNET.GeneralLib.General.GetSelectedRunsetList(RunSetConfigList, businessFlows, mPOMModels, ApplicationPOMModelrunsetConfigMapping);
+                // Iterate through each item in the MultiPomRunSetMappingList
+                foreach (MultiPomRunSetMapping item in multiPomRunSetMappingsList)
+                {
+                    await GingerCoreNET.GeneralLib.General.RunSelectedRunset(item, multiPomRunSetMappingsList, mCLIHelper);
+                }
             }
         }
     }
