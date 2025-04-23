@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
@@ -32,6 +33,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -84,7 +86,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                     }
                     finally
                     {
-                        SetPomWithRunsetSelectionSection();
+                        RefreshGridDataSourceList();
                     }
 
 
@@ -201,54 +203,58 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
 
             xPomWithRunsetSelectionGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
             //// TODO: For next release
-            //xPomWithRunsetSelectionGrid.AddToolbarTool(eImageType.Run, "Run All Run Set", new RoutedEventHandler(TestAllRunSet));
+            xPomWithRunsetSelectionGrid.AddToolbarTool(eImageType.Run, "Run All Run Set", new RoutedEventHandler(TestAllRunSet));
         }
 
-        private void SetPomWithRunsetSelectionSection()
+        private void RefreshGridDataSourceList()
         {
             xPomWithRunsetSelectionGrid.DataSourceList = mWizard.mMultiPomDeltaUtils.MultiPomRunSetMappingList;
         }
 
 
-        MultiPomRunSetMapping mSelectedPomWithRunset
-        {
-            get
-            {
-                if (xPomWithRunsetSelectionGrid.Grid.SelectedItem != null)
-                {
-                    return (MultiPomRunSetMapping)xPomWithRunsetSelectionGrid.Grid.SelectedItem;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
+
+        MultiPomRunSetMapping mSelectedPomWithRunset { get; set; }
+
+
 
         private async void TestElementButtonClicked(object sender, RoutedEventArgs e)
         {
+            // Get the button that was clicked
+            var button = sender as Button;
+            if (button != null)
+            {
+                // Get the row object from the button's DataContext
+                mSelectedPomWithRunset = button.DataContext as MultiPomRunSetMapping;
 
-            mWizard.ProcessStarted();
-            mWizard.DisableBackBtnOnLastPage = true;
-            mWizard.mWizardWindow.SetFinishButtonEnabled(false);
-            mWizard.mWizardWindow.SetPrevButtonEnabled(false);
-            xPomWithRunsetSelectionGrid.DisableGridColoumns();
-            if (mSelectedPomWithRunset != null)
-            {
-                await RunSelectedRunset(mSelectedPomWithRunset);
+                if (mSelectedPomWithRunset != null)
+                {
+                    mWizard.ProcessStarted();
+                    mWizard.DisableBackBtnOnLastPage = true;
+                    mWizard.mWizardWindow.SetFinishButtonEnabled(false);
+                    mWizard.mWizardWindow.SetPrevButtonEnabled(false);
+                    xPomWithRunsetSelectionGrid.DisableGridColoumns();
+
+                    await RunSelectedRunset(mSelectedPomWithRunset);
+
+                    mWizard.DisableBackBtnOnLastPage = false;
+                    mWizard.mWizardWindow.SetFinishButtonEnabled(true);
+                    mWizard.mWizardWindow.SetPrevButtonEnabled(true);
+                    xPomWithRunsetSelectionGrid.EnableGridColumns();
+                    mWizard.ProcessEnded();
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+                }
             }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
-            }
-            mWizard.DisableBackBtnOnLastPage = false;
-            mWizard.mWizardWindow.SetFinishButtonEnabled(true);
-            mWizard.mWizardWindow.SetPrevButtonEnabled(true);
-            xPomWithRunsetSelectionGrid.EnableGridColumns();
-            mWizard.ProcessEnded();
         }
 
         private async Task RunSelectedRunset(MultiPomRunSetMapping mSelectedPomWithRunset)
+        {
+            await GingerCoreNET.GeneralLib.General.RunSelectedRunset(mSelectedPomWithRunset, mWizard.mMultiPomDeltaUtils.MultiPomRunSetMappingList,mCLIHelper);
+            RefreshGridDataSourceList();
+        }
+        private async Task RunSelectedRunset1(MultiPomRunSetMapping mSelectedPomWithRunset)
         {
             if (mSelectedPomWithRunset.SelectedRunset != null)
             {
@@ -320,7 +326,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
 
                     }
                 }
-                SetPomWithRunsetSelectionSection();
+                RefreshGridDataSourceList();
             }
             catch (Exception ex)
             {
@@ -341,7 +347,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
             }
             // Refresh the UI or perform any necessary updates after all RunSets have been executed
             // Update the PomWithRunsetSelectionSection
-            SetPomWithRunsetSelectionSection();
+            RefreshGridDataSourceList();
         }
 
         public void LoadRunsetConfigToRunsetExecutor(RunSetConfig runSetConfig, RunsetExecutor runsetExecutor, CLIHelper mCLIHelper)

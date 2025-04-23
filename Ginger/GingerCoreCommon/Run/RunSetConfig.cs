@@ -521,7 +521,9 @@ namespace Ginger.Run
         public string SourceApplication { get; set; }
         public string SourceApplicationUser { get; set; }
 
-        public List<Guid> AutoUpdatedPOMList { get; set; }
+        public List<Guid> AutoUpdatedPOMList { 
+            get; 
+            set; }
 
     }
 }

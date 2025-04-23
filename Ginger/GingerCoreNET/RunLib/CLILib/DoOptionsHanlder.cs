@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 using GingerCoreNET;
 using Amdocs.Ginger;
 using GingerCoreNET.Application_Models;
+using Microsoft.TeamFoundation.Common;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -452,6 +453,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 mCLIHelper.AddCLIGitProperties(mOpts);
                 mCLIHelper.SetWorkSpaceGitProperties(mOpts);
                 mCLIHelper.SetEncryptionKey(encryptionKey);
+                mCLIHelper.SourceApplication = mOpts.SourceApplication;
+                mCLIHelper.SourceApplicationUser = mOpts.SourceApplicationUser;
                 if (mOpts.PasswordEncrypted)
                 {
                     mCLIHelper.PasswordEncrypted(mOpts.PasswordEncrypted.ToString());
@@ -464,103 +467,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     return;
                 }
 
-                if(mOpts.MultiPOMRun)
+                if(mOpts.UpdateAllPOMsInRunsets)
                 {
-                    await UpdateMultiPOMData(mOpts.MutliPOM, mOpts.MultiPOMrunset);
+                    await UpdateMultiPOMData(mOpts.GuidListPOM, mOpts.RunsetGuidList);
                 }
 
-                if (!string.IsNullOrWhiteSpace(mOpts.ExecutionId))
-                {
-                    if (await OpenRunSetByExecutionId())
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Runset not found by given Execution ID:{mOpts.ExecutionId}");
-                    }
-                }
-
-                if (!string.IsNullOrWhiteSpace(mOpts.RunSetId))
-                {
-                    if (LoadCLIRunSetByID())
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Runset not found by given ID:{mOpts.RunSetId}");
-                    }
-                }
-
-                if (!string.IsNullOrWhiteSpace(mOpts.RunSetName))
-                {
-                    if (OpenCLIRunSetByName())
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Runset not found by given Name:{mOpts.RunSetName}");
-                    }
-                }
-
-                if (!string.IsNullOrWhiteSpace(mOpts.BusinessFlowId))
-                {
-                    var businessFlow = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(Guid.Parse(mOpts.BusinessFlowId));
-                    if (businessFlow != null)
-                    {
-                        AutomateBusinessFlowEvent?.Invoke(null, businessFlow);
-                        return;
-                    }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Businessflow not found by given ID:{mOpts.BusinessFlowId}");
-                    }
-                }
-
-                if (!string.IsNullOrWhiteSpace(mOpts.BusinessFlowName))
-                {
-                    var businessFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()
-                        .FirstOrDefault(bf => bf.Name.Equals(mOpts.BusinessFlowName, StringComparison.OrdinalIgnoreCase));
-                    if (businessFlow != null)
-                    {
-                        AutomateBusinessFlowEvent?.Invoke(null, businessFlow);
-                        return;
-                    }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Businessflow not found by given Name:{mOpts.BusinessFlowName}");
-                    }
-                }
-
-                if (!string.IsNullOrWhiteSpace(mOpts.SharedActivityId))
-                {
-                    var sharedActivity = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(Guid.Parse(mOpts.SharedActivityId));
-                    if (sharedActivity != null)
-                    {
-                        LoadSharedRepoEvent?.Invoke(null, sharedActivity);
-                        return;
-                    }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Shared Activity not found by given id:{mOpts.SharedActivityId}");
-                    }
-                }
-
-                if (!string.IsNullOrWhiteSpace(mOpts.SharedActivityName))
-                {
-                    var sharedActivity = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().FirstOrDefault(sa => sa.ActivityName.Equals(mOpts.SharedActivityName, StringComparison.OrdinalIgnoreCase));
-                    if (sharedActivity != null)
-                    {
-                        LoadSharedRepoEvent?.Invoke(null, sharedActivity);
-                        return;
-                    }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Shared Activity not found by given Name:{mOpts.SharedActivityName}");
-                    }
-                }
+                
 
             }
             catch (Exception ex)
@@ -569,28 +481,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        private async Task UpdateMultiPOMData(string UpdateMultiPOM = null,string UpdateMultiPOMRunset = null)
+        private async Task UpdateMultiPOMData(string POMGuids,string RunsetGuids)
         {
-            List<Guid> UpdateMultiPOMList = new List<Guid>();
-            List<Guid> UpdateMultiRunSetList = new List<Guid>();
-            if (!string.IsNullOrEmpty(UpdateMultiPOM))
+            List<Guid> POMGuidsList = new List<Guid>();
+            List<Guid> RunsetGuidsList = new List<Guid>();
+            if (!string.IsNullOrEmpty(POMGuids))
             {
-                UpdateMultiPOMList = UpdateMultiPOM.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(g => Guid.Parse(g.Trim()))
-                    .ToList();
-
-                if (!string.IsNullOrEmpty(UpdateMultiPOMRunset))
-                {
-                    UpdateMultiRunSetList = UpdateMultiPOMRunset.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(g => Guid.Parse(g.Trim()))
-                    .ToList();
-                }
-                else
-                {
-
-                }
+                POMGuidsList = POMGuids.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(g => Guid.Parse(g.Trim())).ToList();
             }
-            else if(string.IsNullOrEmpty(UpdateMultiPOM) && string.IsNullOrEmpty(UpdateMultiPOMRunset))
+
+            if (!string.IsNullOrEmpty(RunsetGuids))
+            {
+                RunsetGuidsList = RunsetGuids.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(g => Guid.Parse(g.Trim())).ToList();
+            }
+
+
+            if(!POMGuidsList.Any() && !RunsetGuidsList.Any())
             {
                 Dictionary<ApplicationPOMModel, List<RunSetConfig>> ApplicationPOMModelrunsetConfigMapping = new Dictionary<ApplicationPOMModel, List<RunSetConfig>>();
                 ObservableList<ApplicationPOMModel> mPOMModels = new ObservableList<ApplicationPOMModel>();
@@ -601,7 +507,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 // Iterate through each item in the MultiPomRunSetMappingList
                 foreach (MultiPomRunSetMapping item in multiPomRunSetMappingsList)
                 {
-                    //await RunSelectedRunset(item);
+                    await GingerCoreNET.GeneralLib.General.RunSelectedRunset(item, multiPomRunSetMappingsList, mCLIHelper);
                 }
             }
             else
