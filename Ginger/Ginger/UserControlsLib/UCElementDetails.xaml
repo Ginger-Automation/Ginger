@@ -42,7 +42,7 @@
             </DataTemplate>
             
             <DataTemplate x:Key="xCopyPropertyValueButtonTemplate">
-                <Button x:Name="xCopyPropertyButton" Click="xCopyPropertyButton_Click" ToolTip="Copy Element Locator" Style="{StaticResource @InputImageGridCellButtonStyle}">
+                <Button x:Name="xCopyPropertyButton" Click="xCopyPropertyButton_Click" ToolTip="Copy Element Property" Style="{StaticResource @InputImageGridCellButtonStyle}">
                     <UserControls:ImageMakerControl ImageType="Copy" SetAsFontImageWithSize="16"  Width="16" Height="16" />
                 </Button>
             </DataTemplate>
