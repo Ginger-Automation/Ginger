@@ -968,7 +968,7 @@ namespace Ginger.Actions
                 viewCols.Add(new GridColView() { Field = ".....", Header = "  ...", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["SimulatedlValueExpressionButton"] });
                 viewCols.Add(new GridColView() { Field = "<<", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["AddActualToSimulButton"] });
                 viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Actual, Header = "Actual Value", WidthWeight = 180, BindingMode = BindingMode.OneWay });
-                viewCols.Add(new GridColView() { Field = ".......", Header = "...", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["ShowActualValueButton"] });                
+                viewCols.Add(new GridColView() { Field = ".......", Header = "...", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["ShowActualValueButton"] });
                 viewCols.Add(new GridColView() { Field = ">>", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["AddActualToExpectButton"] });
                 viewCols.Add(new GridColView() { Field = nameof(ActReturnValue.Operator), Header = "Operator", WidthWeight = 130, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = OperatorList });
                 // viewCols.Add(new GridColView() { Field = ">>", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["AddActualToExpectButton"] });
@@ -1159,6 +1159,7 @@ namespace Ginger.Actions
 
                     case "Actual Value":
                         customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.Actual, Visible = node.IsSelected, WidthWeight = 180 });
+                        customDynamicView.GridColsView.Add(new GridColView() { Field = ".......", Header = " ...", Visible = node.IsSelected });
                         customDynamicView.GridColsView.Add(new GridColView() { Field = ">>", Visible = node.IsSelected });
                         columnCount = node.IsSelected ? columnCount + 1 : columnCount;
                         columnPreferences += node.IsSelected ? "ActualValue," : "";
