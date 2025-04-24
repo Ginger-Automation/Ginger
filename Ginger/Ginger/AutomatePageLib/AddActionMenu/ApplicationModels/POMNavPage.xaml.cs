@@ -217,8 +217,17 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         // Method to update the sorted list and refresh the ListView
         private void UpdateSortedElementList()
         {
-            var sortedElementList = mPOM.MappedUIElements.OrderBy(elem => elem.ElementName).ToList();
-            xPomElementsListView.DataSourceList = new ObservableList<ElementInfo>(sortedElementList);
+            if (xPomElementsListView.DataSourceList is ObservableList<ElementInfo> view)
+            {
+                view.Clear();
+                foreach (var el in mPOM.MappedUIElements.OrderBy(e => e.ElementName))
+                    view.Add(el);
+            }
+            else
+            {
+                xPomElementsListView.DataSourceList =
+                new ObservableList<ElementInfo>(mPOM.MappedUIElements.OrderBy(e => e.ElementName));
+            }
         }
 
         public void RefreshTreeItems(object sender, RoutedEventArgs e)
