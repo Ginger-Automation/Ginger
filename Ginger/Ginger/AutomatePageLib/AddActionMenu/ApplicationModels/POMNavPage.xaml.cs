@@ -146,7 +146,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
-            if (mPOMEditPage == null)
+            if (mPOMEditPage == null || !ReferenceEquals(mPOMEditPage.DataContext, mContext))
             {
                 mPOMEditPage = new POMEditPage(mPOM, General.eRIPageViewMode.Standalone);
             }
@@ -175,9 +175,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     mPOM.StartDirtyTracking();
                     xPOMDetails.Height = xPOMItems.Height;
 
-                    //Creating a copy of sorted mapped elements 
-                    var sortedElementList = mPOM.MappedUIElements.OrderBy(e => e.ElementName).ToList();
-                    xPomElementsListView.DataSourceList = new ObservableList<ElementInfo>(sortedElementList);
+                    // Attaching CollectionChanged event handler to reflect changes on resources to automate tab
+                    mPOM.MappedUIElements.CollectionChanged -= MappedUIElements_CollectionChanged;
+                    mPOM.MappedUIElements.CollectionChanged += MappedUIElements_CollectionChanged;
+
+                    UpdateSortedElementList();
                     xPomElementsListView.Visibility = Visibility.Visible;
                     xPOMSplitter.IsEnabled = true;
 
@@ -203,6 +205,20 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 xPomElementsListView.Visibility = Visibility.Hidden;
                 xPOMSplitter.IsEnabled = false;
             }
+        }
+
+        // Event handler for MappedUIElements changes
+        private void MappedUIElements_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            // Update the sorted list and refresh the UI
+            UpdateSortedElementList();
+        }
+
+        // Method to update the sorted list and refresh the ListView
+        private void UpdateSortedElementList()
+        {
+            var sortedElementList = mPOM.MappedUIElements.OrderBy(elem => elem.ElementName).ToList();
+            xPomElementsListView.DataSourceList = new ObservableList<ElementInfo>(sortedElementList);
         }
 
         public void RefreshTreeItems(object sender, RoutedEventArgs e)

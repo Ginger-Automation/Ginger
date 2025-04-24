@@ -66,6 +66,11 @@ namespace GingerWPF.TreeViewItemsLib
 
         public void AddItemNodeBasicManipulationsOptions(ContextMenu CM, bool allowSave = true, bool allowCopy = true, bool allowCut = true, bool allowDuplicate = true, bool allowDelete = true, bool allowViewXML = true, bool allowOpenContainingFolder = true, bool allowEdit = false, bool allowWireMockMapping = false, bool allowEditPOM = false)
         {
+            if (allowEditPOM)
+            {
+                TreeViewUtils.AddMenuItem(CM, "Edit POM", EditPOMHandler, null, eImageType.Edit);
+                mTreeView.AddToolbarTool(eImageType.Edit, "Edit POM", EditPOMHandler);
+            }
             if (allowSave)
             {
                 TreeViewUtils.AddMenuItem(CM, "Save", SaveTreeItemHandler, null, "@Save_16x16.png");
@@ -110,11 +115,6 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 TreeViewUtils.AddMenuItem(CM, "Create WireMock Mapping", CreateWireMockMappingHandler, null, "WireMockLogo16x16.png");
                 mTreeView.AddToolbarTool("WireMockLogo16x16.png", "Create WireMock Mapping", CreateWireMockMappingHandler);
-            }
-            if (allowEditPOM)
-            {
-                TreeViewUtils.AddMenuItem(CM, "Edit POM", EditPOMHandler, null, eImageType.Edit);
-                mTreeView.AddToolbarTool(eImageType.Edit, "Edit POM", EditPOMHandler);
             }
         }
 
