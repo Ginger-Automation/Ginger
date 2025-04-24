@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using CommandLine;
@@ -28,6 +29,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -93,7 +96,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     async (RunOptions opts) => await HandleRunOptions(opts),
                     async (GridOptions opts) => await HandleGridOption(opts),
                     async (ConfigFileOptions opts) => await HandleFileOptions("config", opts.FileName, opts.VerboseLevel),
-                    async (DynamicOptions opts) => await HandleFileOptions("dynamic", opts.FileName, opts.VerboseLevel),
+                    async (DynamicOptions opts) => await HandleDynamicOptions(opts),
                     async (ScriptOptions opts) => await HandleFileOptions("script", opts.FileName, opts.VerboseLevel),
                     async (VersionOptions opts) => await HandleVersionOptions(opts),
                     async (ExampleOptions opts) => await HandleExampleOptions(opts),
@@ -111,6 +114,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private async Task<int> HandleDoOptions(DoOptions opts)
         {
+            if (!opts.Validate())
+            {
+                await HandleCLIParseError(new List<Error>());
+                Environment.ExitCode = 1;
+                return Environment.ExitCode;
+            }
+
             return await Task.Run(() =>
              {
                  try
@@ -279,6 +289,58 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         }
 
+        private async Task<int> HandleDynamicOptions(DynamicOptions dynamicOptions)
+        {
+            if (!dynamicOptions.Validate())
+            {
+                await HandleCLIParseError(new List<Error>());
+                Environment.ExitCode = 1;
+                return Environment.ExitCode;
+            }
+            if (!string.IsNullOrEmpty(dynamicOptions.FileName))
+            {
+                return await HandleFileOptions("dynamic", dynamicOptions.FileName, dynamicOptions.VerboseLevel);
+            }
+
+            if (dynamicOptions.Url != null)
+            {
+                return await HandleUrlOptions(dynamicOptions.Url, dynamicOptions.VerboseLevel);
+            }
+
+            Environment.ExitCode = 1;
+            return Environment.ExitCode;
+        }
+
+        private async Task<int> HandleUrlOptions(Uri url, eVerboseLevel verboseLevel)
+        {
+            WorkSpace.Instance.GingerCLIMode = eGingerCLIMode.dynamic;
+            try
+            {
+                SetVerboseLevel(verboseLevel);
+                Reporter.ToLog(eLogLevel.INFO, "Running 'dynamic' and fetching Ginger Execution Configurations from = '" + url + "'");
+
+                mCLIHandler = new CLIDynamicFile(CLIDynamicFile.eFileType.JSON);
+
+                var (responseContent, statusCode) = await HttpUtilities.GetAsync(url);
+
+                if (string.IsNullOrEmpty(responseContent))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to fetch Execution Configurations from URL: {url}");
+                    Environment.ExitCode = 1;
+                    return Environment.ExitCode;
+                }
+
+                return await ProcessExecConfigsAndExecute("dynamic", responseContent);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while running URL call", ex);
+                Environment.ExitCode = 1; // failure
+            }
+
+            return Environment.ExitCode;
+        }
+
         private async Task<int> HandleFileOptions(string fileType, string fileName, eVerboseLevel verboseLevel)
         {
             WorkSpace.Instance.GingerCLIMode = eGingerCLIMode.script;
@@ -316,21 +378,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 }
 
                 string fileContent = ReadFile(fileName);
-                mCLIHandler.LoadGeneralConfigurations(fileContent, mCLIHelper);
-
-                if (fileType is "config" or "dynamic")  // not needed for script
-                {
-                    if (!await CLILoadAndPrepare(runsetConfigs: fileContent))
-                    {
-                        Reporter.ToLog(eLogLevel.WARN, "Issue occurred while doing CLI Load and Prepare so aborting execution");
-                        Environment.ExitCode = 1;
-                        return Environment.ExitCode;
-                    }
-                }
-
-                await ExecuteRunSet();
-
-                return Environment.ExitCode;
+                return await ProcessExecConfigsAndExecute(fileType, fileContent);
             }
             catch (Exception ex)
             {
@@ -340,6 +388,24 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
         }
 
+        private async Task<int> ProcessExecConfigsAndExecute(string argType, string execConfigsContent)
+        {
+            mCLIHandler.LoadGeneralConfigurations(execConfigsContent, mCLIHelper);
+
+            if (argType is "config" or "dynamic")  // not needed for script
+            {
+                if (!await CLILoadAndPrepare(runsetConfigs: execConfigsContent))
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Issue occurred while doing CLI Load and Prepare so aborting execution");
+                    Environment.ExitCode = 1;
+                    return Environment.ExitCode;
+                }
+            }
+
+            await ExecuteRunSet();
+
+            return Environment.ExitCode;
+        }
 
         private async Task<int> HandleGridOption(GridOptions gridOptions)
         {
@@ -576,7 +642,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             try
             {
-                if (! await mCLIHelper.LoadSolutionAsync())
+                if (! await mCLIHelper.LoadSolutionAsync(true))
                 {
                     return false; // failed to load Solution;
                 }
@@ -670,13 +736,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private static string ReadFile(string fileName)
         {
-            if (!File.Exists(fileName))
-            {
-                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, "File not found: " + fileName);
-                throw new FileNotFoundException("Cannot find file", fileName);
-            }
-            string txt = File.ReadAllText(fileName);
-            return txt;
+            return Ginger.Common.GeneralLib.General.FileContentProvider(fileName);           
         }
     }
 }

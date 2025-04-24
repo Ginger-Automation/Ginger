@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -44,6 +44,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public async Task RunAsync(DoOptions opts)
         {
             mOpts = opts;
+            if (opts.UseTempSolutionFolder)
+            {
+                mOpts.Solution = SetSolutionPathToTempFolder(opts.URL);
+            }
             switch (opts.Operation)
             {
                 case DoOptions.DoOperation.analyze:
@@ -349,7 +353,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 runsetReport.StartTimeStamp = (DateTime)executionStartTime;
             }
             RunsetFromReportLoader _runsetFromReportLoader = new RunsetFromReportLoader();
-            RunSetConfig? runset = await _runsetFromReportLoader.LoadAsync(runsetReport);
+            RunSetConfig? runset = await _runsetFromReportLoader.LoadAsync(runsetReport, mOpts.ExecutionConfigurationSourceUrl);
             if (runset != null)
             {
                 WorkSpace.Instance.UserProfile.RecentRunset = runset.Guid;
@@ -402,5 +406,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        private string SetSolutionPathToTempFolder(string sourceControlUrl)
+        {
+            return mCLIHelper.GetTempFolderPathForRepo(sourceControlUrl);
+        }
     }
 }

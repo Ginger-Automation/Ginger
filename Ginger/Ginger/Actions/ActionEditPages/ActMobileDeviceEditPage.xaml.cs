@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -329,6 +329,7 @@ namespace Ginger.Actions
                     xFilePathTextBox.Visibility = Visibility.Collapsed;
                     xFolderPathLbl.Content = "Save to Folder\\File:";
                     xFileTransferPnl.Visibility = Visibility.Visible;
+                    xFolderPathTxtBox.Visibility = Visibility.Visible;
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.PushFileToDevice:

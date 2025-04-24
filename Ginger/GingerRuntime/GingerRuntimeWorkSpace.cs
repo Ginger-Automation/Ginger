@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -44,10 +44,11 @@ namespace Amdocs.Ginger.GingerRuntime
 
         public void SetSolutionSourceControl(Solution solution, ref string repositoryRootFolder)
         {
-            SourceControlBase.eSourceControlType type = SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref repositoryRootFolder);
+            SourceControlBase.eSourceControlType type = SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref repositoryRootFolder);            
+
             if (type == SourceControlBase.eSourceControlType.GIT)
             {
-                if ((WorkSpace.Instance != null && WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.SourceControlUseShellClient) || !RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                if ((WorkSpace.Instance != null && WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlUseShellClient) || !RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     solution.SourceControl = new GitSourceControlShellWrapper();
                 }

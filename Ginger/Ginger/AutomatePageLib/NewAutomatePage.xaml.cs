@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1059,17 +1059,24 @@ namespace GingerWPF.BusinessFlowsLib
 
                 if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
-                    foreach (Activity activity in mBusinessFlow.Activities)
+                    try
                     {
-                        if (activity == activityToExecute)
+                        foreach (Activity activity in mBusinessFlow.Activities)
                         {
-                            break;
+                            if (activity == activityToExecute)
+                            {
+                                break;
+                            }
+                            foreach (Act action in activity.Acts.Cast<Act>())
+                            {
+                                mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                            }
+                            mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
                         }
-                        foreach (Act action in activity.Acts.Cast<Act>())
-                        {
-                            mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
-                        }
-                        mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error while logging execution data to LiteDB", ex);
                     }
                 }
 
@@ -1086,22 +1093,29 @@ namespace GingerWPF.BusinessFlowsLib
 
                 if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
-                    bool reachedCurrentActivity = false;
-                    foreach (Activity activity in mBusinessFlow.Activities)
+                    try
                     {
-                        reachedCurrentActivity = activity == activityToExecute || reachedCurrentActivity;
-                        if (!reachedCurrentActivity || activity == activityToExecute)
+                        bool reachedCurrentActivity = false;
+                        foreach (Activity activity in mBusinessFlow.Activities)
                         {
-                            continue;
+                            reachedCurrentActivity = activity == activityToExecute || reachedCurrentActivity;
+                            if (!reachedCurrentActivity || activity == activityToExecute)
+                            {
+                                continue;
+                            }
+                            foreach (Act action in activity.Acts.Cast<Act>())
+                            {
+                                mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                            }
+                            mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
                         }
-                        foreach (Act action in activity.Acts.Cast<Act>())
-                        {
-                            mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
-                        }
-                        mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
+                        mExecutionEngine.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
+                        ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mExecutionEngine);
                     }
-                    mExecutionEngine.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
-                    ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mExecutionEngine);
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error while logging execution data to LiteDB", ex);
+                    }
                 }
             }
             finally
@@ -1186,23 +1200,30 @@ namespace GingerWPF.BusinessFlowsLib
 
                 if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
-                    bool reachedCurrentAction = false;
-                    foreach (Activity activity in mBusinessFlow.Activities)
+                    try
                     {
-                        foreach (Act action in activity.Acts.Cast<Act>())
+                        bool reachedCurrentAction = false;
+                        foreach (Activity activity in mBusinessFlow.Activities)
                         {
-                            if (activity == parentActivity && action == actionToExecute)
+                            foreach (Act action in activity.Acts.Cast<Act>())
                             {
-                                reachedCurrentAction = true;
+                                if (activity == parentActivity && action == actionToExecute)
+                                {
+                                    reachedCurrentAction = true;
+                                    break;
+                                }
+                                mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                            }
+                            if (reachedCurrentAction)
+                            {
                                 break;
                             }
-                            mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                            mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
                         }
-                        if (reachedCurrentAction)
-                        {
-                            break;
-                        }
-                        mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error while logging execution data to LiteDB", ex);
                     }
                 }
 
@@ -1210,28 +1231,35 @@ namespace GingerWPF.BusinessFlowsLib
 
                 if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
-                    bool reachedCurrentActivity = false;
-                    bool reachedCurrentAction = false;
-                    foreach (Activity activity in mBusinessFlow.Activities)
+                    try
                     {
-                        reachedCurrentActivity = activity == parentActivity || reachedCurrentActivity;
-                        if (!reachedCurrentActivity)
+                        bool reachedCurrentActivity = false;
+                        bool reachedCurrentAction = false;
+                        foreach (Activity activity in mBusinessFlow.Activities)
                         {
-                            continue;
-                        }
-                        foreach (Act action in activity.Acts.Cast<Act>())
-                        {
-                            reachedCurrentAction = action == actionToExecute || reachedCurrentAction;
-                            if (!reachedCurrentAction || action == actionToExecute)
+                            reachedCurrentActivity = activity == parentActivity || reachedCurrentActivity;
+                            if (!reachedCurrentActivity)
                             {
                                 continue;
                             }
-                            mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                            foreach (Act action in activity.Acts.Cast<Act>())
+                            {
+                                reachedCurrentAction = action == actionToExecute || reachedCurrentAction;
+                                if (!reachedCurrentAction || action == actionToExecute)
+                                {
+                                    continue;
+                                }
+                                mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                            }
+                            mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
                         }
-                        mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
+                        mExecutionEngine.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
+                        ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mExecutionEngine);
                     }
-                    mExecutionEngine.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
-                    ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mExecutionEngine);
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error while logging execution data to LiteDB", ex);
+                    }
                 }
 
             }
@@ -1834,6 +1862,11 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void GenerateReport()
         {
+            if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Any(htmlRC => htmlRC.IsDefault))
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "No Default HTML Report template available to generate report. Please set a default template in Configurations -> Reports -> Reports Template.");
+                return;
+            }
             if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 CreateLiteDBReport();

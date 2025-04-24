@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -113,7 +114,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xFrameBusinessFlowControl.Content = mBusinessFlowControl;
 
             xShowIDUC.Init(mPOM);
-            xFirstRowExpanderLabel.Content = string.Format("'{0}' Details", mPOM.Name);
+            xFirstLabel.Text = mPOM.Name;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
             if (!ignoreValidationRules)
             {
@@ -146,25 +147,21 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mPOM.ScreenShotImage.ToString()));
             }
-            mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
+            mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source, ImageMaxHeight: 550, ImageMaxWidth: 750);
             xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
 
             UIElementTabTextBlockUpdate();
-
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEditPageExpander, Expander.IsExpandedProperty, mPOM, nameof(mPOM.IsCollapseDetailsExapander));
-
             SetDefaultPage();
 
             if (mEditMode is eRIPageViewMode.View or eRIPageViewMode.ViewAndExecute)
             {
-                xDetailsStackPanel.IsEnabled = false;
                 xScreenshotOperationBtns.IsEnabled = false;
             }
             else
             {
-                xDetailsStackPanel.IsEnabled = true;
-                xScreenshotOperationBtns.IsEnabled = true;
+               xScreenshotOperationBtns.IsEnabled = true;
             }
+            SetIconImageType();
         }
 
         private void SetDefaultPage()
@@ -382,8 +379,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-            string calculatedValue = ValueExpression.Calculate(null, null, mPOM.PageURL, null);
-            GoToPage(calculatedValue);
+            var VE = new ValueExpression(WorkSpace.Instance.GetRecentEnvironment(), new Context(), null);
+            GoToPage(VE.Calculate(mPOM.PageURL));
         }
 
         private void GoToPage(string calculatedValue)
@@ -537,6 +534,18 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void xEditPageExpander_Collapsed(object sender, RoutedEventArgs e)
         {
             FirstRow.Height = new GridLength(6, GridUnitType.Star);
+        }
+
+        /// <summary>
+        /// Sets the icon image type based on the POM model's item image type.
+        /// Ensures the update happens on the UI thread using the dispatcher.
+        /// </summary>
+        private void SetIconImageType()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xIconImage.ImageType = mPOM.ItemImageType;
+            });
         }
     }
 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -71,6 +71,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     BindingHandler.ObjFieldBinding(xSealightsConfigCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.SetSealightsSettings));
                     BindingHandler.ObjFieldBinding(xGlobalVariableConfigCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.GlobalVariableConfiguration));
                     BindingHandler.ObjFieldBinding(xEnivonrmentDetailsCheckbox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.SetEnvironmentDetails));
+                    BindingHandler.ObjFieldBinding(xAgentDetailCheckbox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.SetAgentDetails));
 
 
                     // Disable the xSealightsConfigCheckBox if Sealights is not anable in Configuration's setting

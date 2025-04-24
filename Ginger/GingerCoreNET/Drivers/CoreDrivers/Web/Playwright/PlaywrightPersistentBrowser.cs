@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -82,6 +82,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             IPlaywrightBrowserContext browserContext;
             try
             {
+                if (_options.EnableVideoRecording)
+                {
+                    try
+                    {
+                        ExecutePlaywrightInstallation("ffmpeg");
+                    }
+                    catch (PlaywrightException ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Unable to install Playwright ffmpeg dependency, so disabling Video Recording.", ex);
+                        _options.EnableVideoRecording = false;
+                    }
+                }
+
                 browserContext = await LaunchBrowserContextAsync();
             }
             catch (PlaywrightException ex)
@@ -115,6 +128,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return null;
             }
 
+            RecordVideoSize recordVideoSize = null;
+            string recordVideoDir = null;
+
+            if (_options != null && _options.EnableVideoRecording)
+            {
+                recordVideoSize = _options.RecordVideoSize;
+                recordVideoDir = _options.RecordVideoDir;
+            }
+
             BrowserTypeLaunchPersistentContextOptions launchOptions = new()
             {
                 Args = _options.Args,
@@ -122,6 +144,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 Timeout = _options.Timeout,
                 Proxy = _options.Proxy,
                 ViewportSize = ViewportSize.NoViewport,
+                BypassCSP = true,
+                RecordVideoDir = recordVideoDir,
+                RecordVideoSize = recordVideoSize
             };
 
             if (_browserType == WebBrowserType.Chrome)

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ limitations under the License.
 
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -2319,7 +2319,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             if (AppType == eAppType.Web)
             {
-                mSeleniumDriver.ExtraLocatorsRequired = !(pomSetting.relativeXpathTemplateList == null || pomSetting.relativeXpathTemplateList.Count == 0);
+                mSeleniumDriver.ExtraLocatorsRequired = !(pomSetting.RelativeXpathTemplateList == null || pomSetting.RelativeXpathTemplateList.Count == 0);
 
                 return await Task.Run(() => ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(pomSetting, foundElementsList));
             }
@@ -2362,18 +2362,18 @@ namespace Amdocs.Ginger.CoreNET
                     ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
                     EI.IsAutoLearned = true;
 
-                    if (pomSetting.relativeXpathTemplateList != null && pomSetting.relativeXpathTemplateList.Count > 0)
+                    if (pomSetting.RelativeXpathTemplateList != null && pomSetting.RelativeXpathTemplateList.Count > 0)
                     {
-                        foreach (var template in pomSetting.relativeXpathTemplateList)
+                        foreach (var template in pomSetting.RelativeXpathTemplateList)
                         {
                             eLocateBy CustomLocLocateBy = eLocateBy.ByRelXPath;
 
-                            if (template.Contains('{'))
+                            if (template.Value.Contains('{'))
                             {
                                 CustomLocLocateBy = eLocateBy.iOSPredicateString;
                             }
 
-                            var customLocator = GetUserDefinedCustomLocatorFromTemplates(template, CustomLocLocateBy, EI.Properties.ToList());
+                            var customLocator = GetUserDefinedCustomLocatorFromTemplates(template.Value, CustomLocLocateBy, EI.Properties.ToList());
 
                             if (customLocator != null)
                             {
@@ -2386,8 +2386,8 @@ namespace Amdocs.Ginger.CoreNET
                     //set the POM category
                     EI.SetLocatorsAndPropertiesCategory(this.PomCategory);
 
-                    if (pomSetting.filteredElementType == null ||
-                        (pomSetting.filteredElementType != null && pomSetting.filteredElementType.Contains(EI.ElementTypeEnum)))
+                    if (pomSetting.FilteredElementType == null ||
+                        (pomSetting.FilteredElementType != null && pomSetting.FilteredElementType.Any(x=>x.ElementType.Equals(EI.ElementTypeEnum))))
                     {
                         foundElementsList.Add(EI);
                     }
@@ -4461,44 +4461,24 @@ namespace Amdocs.Ginger.CoreNET
 
         public void GetSpecificPerformanceData(string appPackage, string specificData, ActMobileDevice act)
         {
-            // Validate inputs
-            if (string.IsNullOrEmpty(appPackage))
-                throw new ArgumentException("App package cannot be null or empty", nameof(appPackage));
-
-            if (string.IsNullOrEmpty(specificData))
-                throw new ArgumentException("Specific data type cannot be null or empty", nameof(specificData));
-
-            if (act == null)
-                throw new ArgumentException("ActMobileDevice cannot be null", nameof(act));
-            try
+            IList<object> perfData = ((AndroidDriver)Driver).GetPerformanceData(appPackage, specificData, 5);
+            var dict = new Dictionary<string, object>();
+            var keys = (IList<object>)perfData[0]; // keys data
+            var values = (IList<object>)perfData[1]; // values data
+            for (int i = 0; i < keys.Count; i++)
             {
-                // Verify this is an Android driver
-                if (!(Driver is AndroidDriver androidDriver))
-                    throw new InvalidOperationException("This operation is only supported on Android devices");
-
-                IList<object> perfData = ((AndroidDriver)Driver).GetPerformanceData(appPackage, specificData, 5);
-                    var dict = new Dictionary<string, object>();
-                    var keys = (IList<object>)perfData[0]; // keys data
-                    var values = (IList<object>)perfData[1]; // values data
-                    for (int i = 0; i < keys.Count; i++)
-                    {
-                        string key = keys[i].ToString();
-                        object value = values[i];
-                        dict[key] = value;
-                    }
-                    foreach (var entry in dict)
-                    {
-                        if (entry.Key != null)
-                        {
-                            string valueStr = entry.Value?.ToString() ?? string.Empty; // Convert null value to empty string
-                            act.AddOrUpdateReturnParamActual(entry.Key.ToString(), valueStr);
-                        }
-                    }   
-            }
-            catch (Exception ex)
+                string key = keys[i].ToString();
+                object value = values[i];
+                dict[key] = value;
+            }            
+            foreach (var entry in dict)
             {
-                throw new InvalidOperationException("Unsupported driver type" + ex.Message);
-            }                          
+                if(entry.Key!=null)
+                {
+                    string valueStr = entry.Value?.ToString() ?? string.Empty; // Convert null value to empty string
+                    act.AddOrUpdateReturnParamActual(entry.Key.ToString(), valueStr);                                                       
+                }                      
+            } 
         }
 
         public string GetDeviceLogs(string path)

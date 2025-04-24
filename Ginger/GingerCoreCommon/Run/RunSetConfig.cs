@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,10 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
@@ -31,6 +27,10 @@ using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Ginger.Run
 {
@@ -442,7 +442,7 @@ namespace Ginger.Run
         public ObservableList<SolutionCategoryDefinition> CategoriesDefinitions = [];
 
         [IsSerializedForLocalRepository]
-        public SelfHealingConfig SelfHealingConfiguration = new SelfHealingConfig();
+        public SelfHealingConfig SelfHealingConfiguration { get; set; } = new SelfHealingConfig();
 
         public override void PostDeserialization()
         {
@@ -520,5 +520,8 @@ namespace Ginger.Run
         //adding source app and user field for account level report 
         public string SourceApplication { get; set; }
         public string SourceApplicationUser { get; set; }
+
+        public List<Guid> AutoUpdatedPOMList { get; set; }
+
     }
 }

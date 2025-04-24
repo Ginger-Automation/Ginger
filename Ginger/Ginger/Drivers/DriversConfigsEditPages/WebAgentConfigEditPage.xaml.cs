@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright;
 using GingerCore;
 using GingerCore.Drivers;
 using GingerCore.GeneralLib;
@@ -46,7 +47,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         public WebAgentConfigEditPage(Agent mAgent)
         {
             this.mAgent = mAgent;
-            InitializeComponent();
+            InitializeComponent();            
 
             BindElement();
 
@@ -62,6 +63,43 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             AllBrowserNotBravePnl(browserType);
             ProxyPnlVisbility();
             PlaywightDriverParamVisibility();
+        }
+
+        private void RecordVideoDirTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            ReplaceSolutionDirPathInVideoDirPath();
+        }
+        private void ReplaceSolutionDirPathInVideoDirPath()
+        {
+            if (xRecordVideoDirVE.ValueTextBox.Text.StartsWith(@"~\"))
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(xRecordVideoDirVE.ValueTextBox.Text))
+            {
+                xRecordVideoDirVE.ValueTextBox.Text = @"~\\ExecutionResults\VideoRecordings";
+                return;
+            }
+
+            string solutionFolder = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.Folder;
+            string directoryPath = xRecordVideoDirVE.ValueTextBox.Text;
+            if (directoryPath.Contains(solutionFolder))
+            {
+                directoryPath = directoryPath.Replace(solutionFolder, @"~\", StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            xRecordVideoDirVE.ValueTextBox.Text = directoryPath;
+        }
+
+        private void RecordVideoDirTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var textChange = e.Changes.FirstOrDefault();
+            
+            if (textChange != null && (textChange.AddedLength > 1 || textChange.RemovedLength > 1))
+            {
+                ReplaceSolutionDirPathInVideoDirPath();
+            }
         }
 
         /// <summary>
@@ -280,7 +318,24 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xAutoFrameShiftForPOMCB, CheckBox.IsCheckedProperty, handleIFrameShiftAuto, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xAutoFrameShiftForPOMCB, CheckBox.ToolTipProperty, handleIFrameShiftAuto, nameof(DriverConfigParam.Description));
 
+            #region VideoRecordingConfigurations
+            
+            DriverConfigParam enableVideoRecording = mAgent.GetOrCreateParam(nameof(PlaywrightDriver.EnableVideoRecording), "false");
+            BindingHandler.ObjFieldBinding(xEnableVideoRecordingCheckBox, CheckBox.IsCheckedProperty, enableVideoRecording, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xEnableVideoRecordingCheckBox, CheckBox.ToolTipProperty, enableVideoRecording, nameof(DriverConfigParam.Description));
 
+            DriverConfigParam recordVideoDir = mAgent.GetOrCreateParam(nameof(PlaywrightDriver.RecordVideoDir));            
+            xRecordVideoDirVE.Init(null, recordVideoDir, nameof(DriverConfigParam.Value), true, true, Ginger.BusinessFlowWindows.UCValueExpression.eBrowserType.Folder, "*.*", null);
+            BindingHandler.ObjFieldBinding(xRecordVideoDirVE, TextBox.ToolTipProperty, recordVideoDir, nameof(DriverConfigParam.Description));
+            
+            DriverConfigParam vidoeHeight = mAgent.GetOrCreateParam(nameof(PlaywrightDriver.VideoHeight));
+            xVideoHeight.Init(null, vidoeHeight, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xVideoHeight, TextBox.ToolTipProperty, vidoeHeight, nameof(DriverConfigParam.Description));
+
+            DriverConfigParam videoWidth = mAgent.GetOrCreateParam(nameof(PlaywrightDriver.VideoWidth));
+            xVideoWidth.Init(null, videoWidth, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xVideoWidth, TextBox.ToolTipProperty, videoWidth, nameof(DriverConfigParam.Description));
+            #endregion
 
             #endregion
 
@@ -329,8 +384,9 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 xDriverLoadWaitingTimePanel.Visibility = Visibility.Visible;
 
                 // Advanced Settings
-                xAdvanceSetting.Visibility = Visibility.Collapsed;
+                xAdvanceSetting.Visibility = Visibility.Visible;
                 xSeleniumUserArgumentsPanel.Visibility = Visibility.Collapsed;
+                xRemoteWebDriverUrlPanel.Visibility = Visibility.Collapsed;
                 xStartBMPCBPanel.Visibility = Visibility.Collapsed;
                 xHideConsoleWindowPanel.Visibility = Visibility.Collapsed;
                 xDebugAddressPanel.Visibility = Visibility.Collapsed;
@@ -339,6 +395,15 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 xStartBMPPortPanel.Visibility = Visibility.Collapsed;
                 xUnhandledPromptBehaviorComboBoxPanel.Visibility = Visibility.Collapsed;
                 xBrowserLogLevelComboBoxPanel.Visibility = Visibility.Collapsed;
+                xVideoRecordingPnl.Visibility = Visibility.Visible;
+
+                xRecordVideoDirVE.ValueTextBox.TextChanged += RecordVideoDirTextBox_TextChanged;
+                xRecordVideoDirVE.ValueTextBox.LostFocus += RecordVideoDirTextBox_LostFocus;
+                xVideoRecordingControlsPnl.IsEnabled = (bool)xEnableVideoRecordingCheckBox.IsChecked;
+            }
+            else
+            {
+                xVideoRecordingPnl.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -462,6 +527,11 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         {
             ProxyPnlVisbility();
             xProxyVE.ValueTextBox.Text = "";
+        }
+
+        private void xEnableVideoRecordingCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            xVideoRecordingControlsPnl.IsEnabled = (bool)xEnableVideoRecordingCheckBox.IsChecked;
         }
     }
 }

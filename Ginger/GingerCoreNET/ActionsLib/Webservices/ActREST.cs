@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at 
@@ -872,21 +872,21 @@ namespace GingerCore.Actions.REST
             convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ContentType, Convert.ToString(this.ContentType));
             convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ReqHttpVersion, Convert.ToString(this.ReqHttpVersion));
 
-            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.AuthorizationType, nameof(ApplicationAPIUtils.eAuthType.NoAuthentication));
 
             if (this.UseTemplateFile)
             {
                 //Note:Don't confuse with field names. Use Template file is binded to Free text radio button in old Rest Action. 
-                convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+                convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, nameof(ApplicationAPIUtils.eRequestBodyType.FreeText));
                 convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBody, this.RequestBody.Value);
             }
             else if (this.UseRequestBody)
             {
-                convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.TemplateFile.ToString());
+                convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, nameof(ApplicationAPIUtils.eRequestBodyType.TemplateFile));
                 convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser, this.TemplateFile.Value);
             }
-            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
-            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, ApplicationAPIUtils.eNetworkCredentials.Default.ToString());
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, nameof(ApplicationAPIUtils.eCertificateType.AllSSL));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, nameof(ApplicationAPIUtils.eNetworkCredentials.Default));
 
             convertedActWebAPIRest.DynamicElements = this.DynamicElements;
             convertedActWebAPIRest.HttpHeaders = this.HttpHeaders;

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using Newtonsoft.Json;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
@@ -122,6 +123,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     }
                     cliHelper.SetSourceControlBranch(exeConfiguration.SolutionScmDetails.Branch);
 
+                }
+                if (exeConfiguration.UseTempFolder)
+                {
+                    exeConfiguration.SolutionLocalPath = cliHelper.GetTempFolderPathForRepo();
                 }
                 if (!string.IsNullOrEmpty(exeConfiguration.SolutionLocalPath))
                 {

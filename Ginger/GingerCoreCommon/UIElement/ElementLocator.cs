@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,7 +27,21 @@ namespace Amdocs.Ginger.Common.UIElement
         private bool mActive { get; set; }
 
         [IsSerializedForLocalRepository]
-        public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
+        public bool Active 
+        { 
+            get 
+            { 
+                return mActive; 
+            } 
+            set 
+            { 
+                if (mActive != value) 
+                { 
+                    mActive = value; 
+                    OnPropertyChanged(nameof(Active)); 
+                } 
+            } 
+        }
 
         private ePosition mPosition { get; set; }
         /// <summary>

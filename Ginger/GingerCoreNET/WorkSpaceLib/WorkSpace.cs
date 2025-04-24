@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -537,6 +537,12 @@ namespace amdocs.ginger.GingerCoreNET
                 BusinessFlow.SolutionVariables = solution.Variables;
                 solution.SolutionOperations.SetReportsConfigurations();
                 Solution = solution;
+
+                if (solution.SourceControl != null)
+                {
+                    WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfileUsingURL(solution.SourceControl, solution.Guid);
+                }
+
                 UserProfile.UserProfileOperations.LoadRecentAppAgentMapping();
 
                 if (!RunningInExecutionMode)
@@ -584,6 +590,17 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+        public bool IsRunningFromRunsetOrCLI()
+        {
+            return WorkSpace.Instance.RunningInExecutionMode == true
+                || (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID != null);
+        }
+
+        public ProjEnvironment? GetRecentEnvironment()
+        {
+            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault((mEnv) => mEnv.Guid == WorkSpace.Instance.UserProfile.RecentEnvironment);
+        }
+
         private static void HandleSolutionLoadSourceControl(Solution solution)
         {
             string repositoryRootFolder = string.Empty;
@@ -591,38 +608,23 @@ namespace amdocs.ginger.GingerCoreNET
 
             if (solution.SourceControl != null && WorkSpace.Instance.UserProfile != null)
             {
-                if (string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlPass) ||
-                    solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
-                {
-                    if (WorkSpace.Instance.UserProfile.SourceControlUser != null && WorkSpace.Instance.UserProfile.SourceControlPass != null)
-                    {
-                        solution.SourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
-                        solution.SourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
-                        solution.SourceControl.SolutionSourceControlAuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
-                        solution.SourceControl.SolutionSourceControlAuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
-                    }
-                }
-                else
-                {
-                    solution.SourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SolutionSourceControlUser;
-                    solution.SourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SolutionSourceControlPass;
-                    solution.SourceControl.SolutionSourceControlAuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
-                    solution.SourceControl.SolutionSourceControlAuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
-                }
-
+                WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfile(solution.SourceControl, solution.Guid);
                 string error = string.Empty;
-
                 solution.SourceControl.SolutionFolder = solution.Folder;
                 solution.SourceControl.RepositoryRootFolder = repositoryRootFolder;
-                solution.SourceControl.SourceControlURL = solution.SourceControl.GetRepositoryURL(ref error);
-                solution.SourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
-                solution.SourceControl.SourceControlProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
-                solution.SourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
-                solution.SourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
+                if (string.IsNullOrEmpty(solution.SourceControl.URL))
+                {
+                    solution.SourceControl.URL = solution.SourceControl.GetRepositoryURL(ref error);
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, error);
+                    }
+                }
+                solution.SourceControl.LocalFolder = repositoryRootFolder;
 
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
-                    solution.SourceControl.SourceControlBranch = Ginger.SourceControl.SourceControlIntegration.GetCurrentBranchForSolution(solution.SourceControl);
+                    solution.SourceControl.Branch = Ginger.SourceControl.SourceControlIntegration.GetCurrentBranchForSolution(solution.SourceControl);
                 }
 
                 WorkSpace.Instance.SourceControl = solution.SourceControl;
@@ -842,8 +844,12 @@ namespace amdocs.ginger.GingerCoreNET
                         //Save current default
                         if (apiGlobalParamInstance.OptionalValuesList.Count > 0)
                         {
-                            currentDefaultOVGuid = apiGlobalParamInstance.OptionalValuesList.FirstOrDefault(x => x.IsDefault == true).Guid;
-                            recoverSavedOV = true;
+                            var defaultOptionalValue = apiGlobalParamInstance.OptionalValuesList.FirstOrDefault(x => x.IsDefault == true);
+                            if (defaultOptionalValue != null)
+                            {
+                                currentDefaultOVGuid = defaultOptionalValue.Guid;
+                                recoverSavedOV = true;
+                            }
                         }
 
                         string newDefaultOV = null;

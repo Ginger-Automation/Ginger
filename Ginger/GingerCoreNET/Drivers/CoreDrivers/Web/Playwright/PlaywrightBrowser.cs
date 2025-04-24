@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at 
@@ -24,6 +24,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
     internal abstract class PlaywrightBrowser : IBrowser
     {
         private protected readonly string BrowserExecutableNotFoundErrorMessage = "Executable doesn't exist at";
+        private protected readonly string FailedToInstallComponentErrorMessage = "Error occurred while executing playwright installation command for component";
 
         internal sealed class Options
         {
@@ -34,6 +35,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             internal float? Timeout { get; set; }
 
             internal Proxy? Proxy { get; set; }
+
+            public bool EnableVideoRecording { get; set; }
+            internal string? RecordVideoDir { get; set; }
+            internal RecordVideoSize RecordVideoSize { get; set; }
         }
 
         public IEnumerable<IBrowserWindow> Windows => _windows;
@@ -69,10 +74,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 WebBrowserType.FireFox => BrowserType.Firefox,
                 _ => throw new ArgumentException($"Unknown browser type '{browserType}'"),
             };
-            int exitCode = Program.Main(new[] { "install", browserTypeString });
+            ExecutePlaywrightInstallation(browserTypeString);
+        }
+
+        private protected static void ExecutePlaywrightInstallation(string componentToInstall)
+        {
+            int exitCode = Microsoft.Playwright.Program.Main(new[] { "install", componentToInstall });
             if (exitCode != 0)
             {
-                throw new Exception($"Error occurred while executing playwright installation command, exited with code {exitCode}");
+                throw new PlaywrightException($"Error occurred while executing playwright installation command for component {componentToInstall}, exited with code {exitCode}");
             }
         }
     }

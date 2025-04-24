@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.Run.RemoteExecution;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Amdocs.Ginger.Repository;
@@ -45,12 +46,12 @@ namespace Amdocs.Ginger.CoreNET.Reports
             _executionHandlerAPIClient = new ExecutionHandlerAPIClient();
         }
 
-        public async Task<RunSetConfig?> LoadAsync(RunSetReport runsetReport)
+        public async Task<RunSetConfig?> LoadAsync(RunSetReport runsetReport, Uri? executionConfigurationSourceUrl = null)
         {
             string executionId = runsetReport.GUID;
             RunSetConfig? runset = null;
             Guid runsetId = Guid.Empty;
-            if (runsetReport.RunSetGuid != null)
+            if (runsetReport.RunSetGuid != Guid.Empty)
             {
                 runsetId = runsetReport.RunSetGuid;
                 runset = GetRunsetFromSolutionRepository(runsetId);
@@ -58,7 +59,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
 
             if (runset == null)
             {
-                runset = await GetRunsetFromExecutionHandler(executionId);
+                runset = await GetRunsetFromSourceAsync(executionId, executionConfigurationSourceUrl);
             }
 
             if (runset != null && runset.IsVirtual)
@@ -83,18 +84,45 @@ namespace Amdocs.Ginger.CoreNET.Reports
                 .GetRepositoryItemByGuid<RunSetConfig>(runsetId);
         }
 
-        private async Task<RunSetConfig?> GetRunsetFromExecutionHandler(string executionId)
+        private async Task<RunSetConfig?> GetRunsetFromSourceAsync(string executionId, Uri? executionConfigSourceUrl)
         {
-            GingerExecConfig? executionConfig = await GetExecutionConfigurationAsync(executionId);
+            GingerExecConfig? executionConfig = executionConfigSourceUrl != null
+                ? await GetExecutionConfigurationFromUrlAsync(executionConfigSourceUrl)
+                : await GetExecutionConfigurationFromExecutionHandlerAsync(executionId);
+
             if (executionConfig == null)
             {
                 return null;
             }
-            RunSetConfig runset = CreateVirtualRunset(executionConfig);
-            return runset;
+
+            return CreateVirtualRunset(executionConfig);
         }
 
-        private async Task<GingerExecConfig?> GetExecutionConfigurationAsync(string executionId)
+        private async Task<GingerExecConfig?> GetExecutionConfigurationFromUrlAsync(Uri execConfigSourceUrl)
+        {
+            try
+            {
+                var (responseContent, statusCode) = await HttpUtilities.GetAsync(execConfigSourceUrl);
+
+                if (string.IsNullOrEmpty(responseContent))
+                {
+                    return null;
+                }
+
+                return JsonSerializer.Deserialize<GingerExecConfig>(responseContent, new JsonSerializerOptions
+                {
+                    Converters = { new JsonStringEnumConverter() },
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Error retrieving execution configuration from {execConfigSourceUrl}");
+            }
+        }
+
+        private async Task<GingerExecConfig?> GetExecutionConfigurationFromExecutionHandlerAsync(string executionId)
         {
             string handlerAPIUrl = WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL;
             if (string.IsNullOrEmpty(handlerAPIUrl))

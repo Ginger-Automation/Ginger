@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,7 +18,11 @@ limitations under the License.
 
 using GingerCore.Helpers;
 using GingerCoreNET.SourceControl;
+using System;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Ginger.SourceControl
 {
@@ -29,13 +33,20 @@ namespace Ginger.SourceControl
     {
         SourceControlItemInfoDetails mSCIInfoDetails;
         GenericWindow _GenWin;
+        TextBlockHelper TBH;
 
         public SourceControlItemInfoPage(SourceControlItemInfoDetails SCIInfoDetails)
         {
             InitializeComponent();
-            TextBlockHelper TBH = new TextBlockHelper(ItemInfoTextBlock);
+            TBH = new TextBlockHelper(ItemInfoTextBlock);
             mSCIInfoDetails = SCIInfoDetails;
             Init(TBH);
+        }
+
+
+        private void CopyMouseDownSourceControlInfo(object sender, MouseButtonEventArgs e)
+        {
+            GingerCore.General.CopyMouseDown(sender, TBH.GetText());
         }
 
         private void Init(TextBlockHelper TBH)

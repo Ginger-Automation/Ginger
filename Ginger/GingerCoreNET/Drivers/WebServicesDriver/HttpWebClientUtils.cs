@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET.Platform;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.WebServices;
@@ -42,7 +44,7 @@ namespace GingerCore.Actions.WebAPI
     {
         HttpClient Client = null;
         HttpClientHandler Handler = null;
-
+        private WireMockConfiguration mockConfiguration;
         //Task _Task = null; //thread for sending events
         HttpRequestMessage RequestMessage = null;
         ActWebAPIBase mAct;
@@ -57,7 +59,7 @@ namespace GingerCore.Actions.WebAPI
         public string ResponseFileContent = null;
 
         public bool RequestConstructor(ActWebAPIBase act, string ProxySettings, bool useProxyServerSettings)
-         {
+        {
             mAct = act;
             Handler = new HttpClientHandler();
 
@@ -238,61 +240,73 @@ namespace GingerCore.Actions.WebAPI
 
         private bool SetCertificates(HttpClientHandler handler)
         {
-            string CertificateTypeRadioButton = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificateTypeRadioButton);
-
-            if (CertificateTypeRadioButton == ApplicationAPIUtils.eCretificateType.AllSSL.ToString())
+            try
             {
-                ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
-                handler.ServerCertificateCustomValidationCallback += (_, _, _, _) => { return true; };
-            }
-            else if (CertificateTypeRadioButton == ApplicationAPIUtils.eCretificateType.Custom.ToString())
-            {
-                //Use Custom Certificate:
-                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                string path = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath));
+                string CertificateTypeRadioButton = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificateTypeRadioButton);
 
-                if (!string.IsNullOrEmpty(path))
+                if (CertificateTypeRadioButton == nameof(ApplicationAPIUtils.eCertificateType.AllSSL))
                 {
-                    string certificateKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
+                    ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
+                    handler.ServerCertificateCustomValidationCallback += (_, _, _, _) => { return true; };
+                }
+                else if (CertificateTypeRadioButton == nameof(ApplicationAPIUtils.eCertificateType.Custom))
+                {
+                    //Use Custom Certificate:
+                    handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+                    string path = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath));
 
-                    certificateKey = General.DecryptPassword(certificateKey, ValueExpression.IsThisAValueExpression(certificateKey), mAct);
                     if (!string.IsNullOrEmpty(path))
                     {
-                        if (string.IsNullOrEmpty(certificateKey))
+                        string certificateKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
+
+                        certificateKey = General.DecryptPassword(certificateKey, ValueExpression.IsThisAValueExpression(certificateKey), mAct);
+                        if (!string.IsNullOrEmpty(path))
                         {
-                            handler.ClientCertificates.Add(new X509Certificate2(path));
+                            if (string.IsNullOrEmpty(certificateKey))
+                            {
+                                handler.ClientCertificates.Add(new X509Certificate2(path));
+                            }
+                            else
+                            {
+                                handler.ClientCertificates.Add(new X509Certificate2(path, certificateKey));
+                            }
+
+                            ServicePointManager.ServerCertificateValidationCallback += delegate (object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+                            {
+                                if (sslPolicyErrors == SslPolicyErrors.None)
+                                {
+                                    return true;
+                                }
+
+                                mAct.Error = GetCertificateChainErrorStatusInfo(chain);
+                                mAct.ExInfo = "Server side certificate not valid.";
+                                return false;
+                            };
                         }
                         else
                         {
-                            handler.ClientCertificates.Add(new X509Certificate2(path, certificateKey));
-                        }
-
-                        ServicePointManager.ServerCertificateValidationCallback += delegate (object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-                        {
-                            if (sslPolicyErrors == SslPolicyErrors.None)
-                            {
-                                return true;
-                            }
-
-                            mAct.Error = GetCertificateChainErrorStatusInfo(chain);
-                            mAct.ExInfo = "Server side certificate not valid.";
+                            mAct.Error = "Request setup Failed because of missing/wrong input";
                             return false;
-                        };
+                        }
                     }
                     else
                     {
                         mAct.Error = "Request setup Failed because of missing/wrong input";
+                        mAct.ExInfo = "Certificate path is missing";
                         return false;
                     }
                 }
-                else
+                else if (CertificateTypeRadioButton == nameof(ApplicationAPIUtils.eCertificateType.Ignore))
                 {
-                    mAct.Error = "Request setup Failed because of missing/wrong input";
-                    mAct.ExInfo = "Certificate path is missing";
-                    return false;
+                    handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
                 }
+                return true;
             }
-            return true;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "SSL Error: " + ex.Message);
+                return false;
+            }
         }
 
         private static string GetCertificateChainErrorStatusInfo(X509Chain chain)
@@ -348,7 +362,33 @@ namespace GingerCore.Actions.WebAPI
         private bool SetEndPointURL()
         {
             string url = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.EndPointURL);
-            if (!string.IsNullOrEmpty(url))
+
+            if (!mAct.UseLiveAPI && !string.IsNullOrEmpty(url))
+            {
+                using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.Wiremock))
+                {
+                    featureTracker.Metadata.Add("operation", "execute");
+                    mockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
+                    string mockUrl = ValueExpression.PasswordCalculation(mockConfiguration.WireMockUrl);
+                    if (mockUrl != null)
+                    {
+                        try
+                        {
+                            Uri uri = new Uri(url);
+                            string path = uri.PathAndQuery;
+                            string newUrl = mockUrl.Replace("/__admin", string.Empty);
+                            newUrl = newUrl.EndsWith("/") ? newUrl.TrimEnd('/') : newUrl;
+                            Client.BaseAddress = new Uri(newUrl + path);
+                        }
+                        catch (UriFormatException)
+                        {
+                            string newUrl = mockUrl.Replace("/__admin", string.Empty);
+                            Client.BaseAddress = new Uri(newUrl + url);
+                        }
+                    }
+                }
+            }
+            else if (!string.IsNullOrEmpty(url) && mAct.UseLiveAPI)
             {
                 Client.BaseAddress = new Uri(url);
             }
@@ -836,19 +876,19 @@ namespace GingerCore.Actions.WebAPI
 
                 case ApplicationAPIUtils.eRequestContentType.FormData:
                     return "multipart/form-data"; //update to correct value
-             
+
                 case ApplicationAPIUtils.eRequestContentType.TextPlain:
                     return "text/plain; charset=utf-8";
-            
+
                 case ApplicationAPIUtils.eRequestContentType.XML:
                     return "application/xml";
-    
+
                 case ApplicationAPIUtils.eRequestContentType.JSonWithoutCharset:
                     return "application/json";
-   
+
                 case ApplicationAPIUtils.eRequestContentType.PDF:
                     return "application/pdf";
-   
+
                 default:
                     throw new InvalidOperationException($"Unsupported RequestBodyType: {eContentType}");
             }

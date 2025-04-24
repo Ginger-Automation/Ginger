@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -406,7 +406,7 @@ namespace Ginger
 
                 StartGingerUI();
 
-                if (doOptions != null && !string.IsNullOrWhiteSpace(doOptions.Solution))
+                if (doOptions != null && (!string.IsNullOrWhiteSpace(doOptions.Solution) || doOptions.UseTempSolutionFolder))
                 {
                     await LoadGingerSolutionAsync(doOptions);
                 }
@@ -435,14 +435,9 @@ namespace Ginger
                 MainWindow.ShowStatus(eStatusMsgType.PROCESS, "Loading Ginger Solution via deeplink...");
                 Reporter.ToLog(eLogLevel.INFO, "Loading Ginger Solution via deeplink...");
 
-                if (doOptions.SaveCredentials)
-                {
-                    await new DoOptionsHandler().RunAsync(doOptions);
-                }
-                else
-                {
-                    await LoadSolutionWithoutSavingCredentialsAsync(doOptions);
-                }
+               WorkSpace.Instance.UserProfile.DoNotSaveCredentialsOnUserProfile = doOptions.DoNotSaveCredentials;
+               await new DoOptionsHandler().RunAsync(doOptions);
+              
             }
             catch (Exception ex)
             {
@@ -462,37 +457,6 @@ namespace Ginger
             }
         }
 
-        /// <summary>
-        /// Loads the solution without saving credentials asynchronously.
-        /// </summary>
-        /// <param name="doOptions">The options for loading the solution.</param>
-        private async Task LoadSolutionWithoutSavingCredentialsAsync(DoOptions doOptions)
-        {
-            if (WorkSpace.Instance?.UserProfile == null)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "User Profile is not found.");                
-            }
-
-            var gitUserName = WorkSpace.Instance?.UserProfile?.SourceControlUser;
-            var gitUserPassword = WorkSpace.Instance?.UserProfile?.SourceControlPass;
-
-            try
-            {
-                await new DoOptionsHandler().RunAsync(doOptions);
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while processing command-line arguments", ex);
-            }
-            finally
-            {
-                if (WorkSpace.Instance?.UserProfile != null)
-                {
-                    WorkSpace.Instance.UserProfile.SourceControlUser = gitUserName;
-                    WorkSpace.Instance.UserProfile.SourceControlPass = gitUserPassword;
-                }
-            }
-        }
         private void CLIHelper_GitProgresStatus(object? sender, string e)
         {
             this.Dispatcher.Invoke(() =>

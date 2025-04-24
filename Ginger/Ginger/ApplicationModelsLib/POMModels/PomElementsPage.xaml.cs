@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -631,8 +631,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private List<ComboEnumItem> GetPossibleCategories()
         {
             ePlatformType mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
-            List<ePomElementCategory> categoriesList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetPlatformPOMElementCategories();
-
+            List<ePomElementCategory> categoriesList = PlatformInfoBase.GetPlatformImpl(mAppPlatform)?.GetPlatformPOMElementCategories();
+            if (categoriesList == null)
+            {
+                return [];
+            }
             List<ComboEnumItem> elementStatus = [];
             foreach (ePomElementCategory category in categoriesList)
             {
@@ -644,7 +647,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private List<string> GetPossibleCategoriesAsString()
         {
             ePlatformType mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
-            List<ePomElementCategory> categoriesList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetPlatformPOMElementCategories();
+            List<ePomElementCategory> categoriesList = PlatformInfoBase.GetPlatformImpl(mAppPlatform)?.GetPlatformPOMElementCategories();
+            if (categoriesList == null)
+            {
+                return [];
+            }
 
             List<string> categories = [];
             foreach (ePomElementCategory category in categoriesList)
@@ -1032,7 +1039,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     {
                         Path = testElement.Path,
                         Locators = testElement.Locators,
-                        Properties = ((HTMLElementInfo)CurrentEI).Properties,
+                        Properties = CurrentEI.Properties,
                         FriendlyLocators = testElement.FriendlyLocators
                     };
                     testElement = htmlElementInfo;

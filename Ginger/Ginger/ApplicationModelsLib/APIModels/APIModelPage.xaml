@@ -50,7 +50,7 @@
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <Grid Name="APIConfigurationsTab" Background="{StaticResource $BackgroundColor_White}">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="400*"/>
+                                <RowDefinition Height="500*"/>
                                 <RowDefinition Height="350*"/>
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
@@ -59,6 +59,11 @@
                                 <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
                                     <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,10,0">API Type:</Label>
                                     <UserControlsLib:UCComboBox x:Name="xAPITypeComboBox" Width="120"></UserControlsLib:UCComboBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" >
+                                    <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,10,0">API Mode :</Label>
+                                    <RadioButton x:Name="xRealAPIRadioButton" Content="Live API" Margin="0,0,10,0" VerticalAlignment="Center" Style="{StaticResource @InputRadioButtonStyle}"/>
+                                    <RadioButton x:Name="xMockAPIRadioButton" Content="Mock API" VerticalAlignment="Center"  Style="{StaticResource @InputRadioButtonStyle}"/>
                                 </StackPanel>
                                 <StackPanel  VerticalAlignment="Top" Margin="0,0,0,0">
                                     <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,10,0">End Point URL:</Label>
@@ -198,6 +203,7 @@
                                                     <StackPanel Orientation="Horizontal" x:Name="CertificateSelection" VerticalAlignment="Center">
                                                         <RadioButton x:Name="SSLCertificateTypeAllCertificatesRadioButton" Content="All Certificates" Checked="CertificateSelection_Changed" GroupName="CertificatesSelectionRadioButtonGroup" Margin="0,0,10,0" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
                                                         <RadioButton x:Name="SSLCertificateTypeCustomRadioButton" Content="Custom" Checked="CertificateSelection_Changed" GroupName="CertificatesSelectionRadioButtonGroup" Margin="0,0,10,0" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
+                                                        <RadioButton x:Name="IgnoreSSLCertification" Content="Ignore" Checked="CertificateSelection_Changed" GroupName="CertificatesSelectionRadioButtonGroup" Margin="0,0,10,0" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
 
                                                     </StackPanel>
                                                 </StackPanel>
@@ -265,6 +271,15 @@
                         </StackPanel>
                     </TabItem.Header>
                     <Frame x:Name="xOutputTemplateFrame" HorizontalAlignment="Stretch"/>
+                </TabItem>
+                <TabItem Style="{StaticResource $RoundedTab}">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
+                            <Image Source="/Images/WireMock_Logo.png" Height="20" Width="20"/>
+                            <TextBlock x:Name="xWireMockTemplateTab" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <Frame x:Name="xWireMockTemplateFrame" HorizontalAlignment="Stretch"/>
                 </TabItem>
             </TabControl>
 

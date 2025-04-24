@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -231,6 +231,28 @@ namespace Ginger.SolutionWindows
                 {
                     activity.StartDirtyTracking();
                     activity.TargetApplication = app.AppName;
+                    numOfAfectedItems++;
+                }
+            }
+
+            foreach (ApplicationAPIModel applicationAPIModel in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>())
+            {
+                //update the shared repository activities 
+                if (applicationAPIModel.TargetApplicationKey?.ItemName == app.NameBeforeEdit)
+                {
+                    applicationAPIModel.StartDirtyTracking();
+                    applicationAPIModel.TargetApplicationKey.ItemName = app.AppName;
+                    numOfAfectedItems++;
+                }
+            }
+
+            foreach (ApplicationPOMModel applicationPOMModel in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>())
+            {
+                //update the shared repository activities 
+                if (applicationPOMModel.TargetApplicationKey?.ItemName == app.NameBeforeEdit)
+                {
+                    applicationPOMModel.StartDirtyTracking();
+                    applicationPOMModel.TargetApplicationKey.ItemName = app.AppName;
                     numOfAfectedItems++;
                 }
             }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -643,6 +643,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return;
             }
             _isClosed = true;
+
+            if (_playwrightPage.Video != null)
+            {                
+                string path = await _playwrightPage.Video.PathAsync();                
+                var pageURL = _playwrightPage.Url;                
+                //string videoFilePath = videoRecordingDire.Parent.FullName + "Action_" + DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                //await _playwrightPage.Video.SaveAsAsync(videoFilePath);
+
+                Reporter.ToLog(eLogLevel.INFO, $"Playwright Video recording file path for URL {pageURL}: {path}");
+            }
+
             //_playwrightPage.Dialog -= OnDialog;
             await _playwrightPage.CloseAsync();
             RemoveEventHandlers();

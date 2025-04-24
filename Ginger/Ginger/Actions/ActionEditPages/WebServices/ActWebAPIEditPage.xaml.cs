@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -128,7 +128,7 @@ namespace Ginger.Actions.WebServices
             RequestBodyTypeRadioButton.Init(typeof(ApplicationAPIUtils.eRequestBodyType), BodySelection, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, nameof(ApplicationAPIUtils.eRequestBodyType.FreeText)), RequestBodyType_Selection);
 
             //CertficiateRadioButtons :
-            CertificateTypeRadioButton.Init(typeof(ApplicationAPIUtils.eCretificateType), CertificateSelection, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.CertificateTypeRadioButton, nameof(ApplicationAPIUtils.eCretificateType.AllSSL)), CertificateSelection_Changed);
+            CertificateTypeRadioButton.Init(typeof(ApplicationAPIUtils.eCertificateType), CertificateSelection, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.CertificateTypeRadioButton, nameof(ApplicationAPIUtils.eCertificateType.AllSSL)), CertificateSelection_Changed);
 
             //Response validation checkbox: 
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotFailActionOnBadRespose, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, "False"));
@@ -227,7 +227,7 @@ namespace Ginger.Actions.WebServices
 
         private void CheckCertificateSelection()
         {
-            if (mAct.GetInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton) == ApplicationAPIUtils.eCretificateType.Custom.ToString())
+            if (mAct.GetInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton) == nameof(ApplicationAPIUtils.eCertificateType.Custom))
             {
                 CertificateStackPanel.Visibility = System.Windows.Visibility.Visible;
             }
@@ -438,13 +438,13 @@ namespace Ginger.Actions.WebServices
         private void CertificateSelection_Changed(object sender, RoutedEventArgs e)
         {
             mAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, (((RadioButton)sender).Tag).ToString());
-            if ((mAct.GetInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton)) == ApplicationAPIUtils.eCretificateType.AllSSL.ToString())
-            {
-                CertificateStackPanel.Visibility = Visibility.Collapsed;
-            }
-            else if ((mAct.GetInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton)) == ApplicationAPIUtils.eCretificateType.Custom.ToString())
+            if ((mAct.GetInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton)) == nameof(ApplicationAPIUtils.eCertificateType.Custom))
             {
                 CertificateStackPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                CertificateStackPanel.Visibility = Visibility.Collapsed;
             }
         }
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -55,9 +55,9 @@ namespace UnitTests.NonUITests
             {
                 SourceControl = new GITSourceControl();
             }
-            SourceControl.SourceControlURL = SourceControlURL;
-            SourceControl.SourceControlUser = SourceControlUser;
-            SourceControl.SourceControlPass = SourceControlPass;
+            SourceControl.URL = SourceControlURL;
+            SourceControl.Username = SourceControlUser;
+            SourceControl.Password = SourceControlPass;
         }
 
         [TestMethod]

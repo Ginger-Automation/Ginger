@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib.Interfaces;
 using CommandLine;
 using System;
 using System.IO;
@@ -24,7 +26,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
 
     [Verb("do", HelpText = "Solution Operations like: open, analyze, info and more 'ginger help solution")]
-    public class DoOptions : SourceControlOptions  // 'ginger do --operation analyze' run analyzer on solution
+    public class DoOptions : SourceControlOptions, IOptionValidation  // 'ginger do --operation analyze' run analyzer on solution
     {
         public enum DoOperation
         {
@@ -39,7 +41,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         private string _solution;
 
-        [Option('s', "solution", Required = true, HelpText = "Provide solution folder path")]
+        [Option('s', "solution", Group = "solution path", HelpText = "Provide solution folder path")]
         public string Solution
         {
             get => _solution;
@@ -62,8 +64,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option("encryptionKey", Required = false, HelpText = "(Optional) Encryption key of your solution.")]
         public string EncryptionKey { get; set; }
 
-        [Option("savecredentials", Required = false, Default = false, HelpText = "(Optional) To save the Credentials")]
-        public bool SaveCredentials { get; set; }
+        [Option("doNotSaveCredentials", Required = false, Default = false, HelpText = "(Optional)  Do not save the credentials")]
+        public bool DoNotSaveCredentials { get; set; }
 
         [Option("executionId", Required = false, HelpText = "(Optional) Id of a RunSet execution.")]
         public string ExecutionId { get; set; }
@@ -86,6 +88,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option("sharedActivityId", Required = false, HelpText = "(Optional) Id of the Shared Repository Activity to be opened.")]
         public string SharedActivityId { get; set; }
 
+        [Option("useTempSolutionFolder", Group = "solution path", HelpText = "(Optional) Use the Temp folder as the solution folder path.")]
+        public bool UseTempSolutionFolder { get; set; }
+
+        [Option("execConfigSourceUrl", Required = false, HelpText = "(Optional) URL to fetch the execution configurations from.")]
+        public Uri ExecutionConfigurationSourceUrl { get; set; }
+
+        public bool Validate()
+        {
+            if (UseTempSolutionFolder && !string.IsNullOrEmpty(Solution))
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"'solution' & 'useTempSolutionFolder' are mutually exclusive.");
+                return false;
+            }
+
+            return true;
+        }
     }
 
 }

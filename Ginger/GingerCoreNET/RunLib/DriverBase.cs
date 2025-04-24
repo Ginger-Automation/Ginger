@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,12 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -378,6 +380,22 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.DEBUG, "Error occurred during POM learining while learning Custom Locators", ex);
                 return null;
             }
+        }
+
+        protected ProjEnvironment GetCurrentProjectEnvironment()
+        {
+            if (Environment == null)
+            {
+                foreach (ProjEnvironment env in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
+                {
+                    if (env.Name.Equals(BusinessFlow.Environment))
+                    {
+                        return env;
+                    }
+                }
+            }
+
+            return Environment;
         }
 
         public static int GetMaxTimeout(ActSmartSync act)

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -43,27 +43,20 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 {
                     SwaggerOperation Operation = so.Value;
 
-
                     bool supportBody = true;
                     if (Operation.RequestBody == null)
                     {
-
                         ApplicationAPIModel basicModal = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key, opendoc);
                         SetOptionalValue(basicModal.AppModelParameters, reqBodyNullExampleList, enumValuesListAMP);
                         SwaggerModels.Add(basicModal);
                         GenerateResponse(Operation, basicModal);
                     }
 
-
                     else if (Operation.RequestBody.Content.Any())
                     {
-
                         foreach (var body in Operation.RequestBody.Content)
                         {
-
                             ApplicationAPIModel AAM = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key, opendoc);
-
-
 
                             if (supportBody)
                             {
