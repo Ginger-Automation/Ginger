@@ -72,7 +72,7 @@ namespace Ginger.SourceControl
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
+                    Reporter.ToLog(eLogLevel.ERROR, "Error while fetching existing branches.", ex);
                 }
 
             });
@@ -155,7 +155,7 @@ namespace Ginger.SourceControl
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
+                        Reporter.ToLog(eLogLevel.ERROR, "Error while creating new Branch.", ex);
                     }
                 });
                 bool result = false;
@@ -174,7 +174,14 @@ namespace Ginger.SourceControl
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            xErrorMsg.Visibility = Visibility.Collapsed;
+                            try
+                            {
+                                xErrorMsg.Visibility = Visibility.Collapsed;
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, "Error while creating new Branch.", ex);
+                            }
                         });
                     }
                     newBranchName = TextBoxBranch;
@@ -213,7 +220,7 @@ namespace Ginger.SourceControl
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
+                    Reporter.ToLog(eLogLevel.ERROR, "Error while closing window.", ex);
                 }
             });
 
@@ -253,7 +260,7 @@ namespace Ginger.SourceControl
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
+                    Reporter.ToLog(eLogLevel.ERROR, "Error while showing error message on UI", ex);
                 }
             });
         }
