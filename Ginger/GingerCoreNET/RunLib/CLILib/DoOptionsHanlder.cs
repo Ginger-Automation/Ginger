@@ -427,6 +427,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         /// <param name="encryptionKey">The encryption key for the solution, if any.</param>
         private async Task DoMultiPOMUpdate()
         {
+
+            WorkSpace.Instance.GingerCLIMode = eGingerCLIMode.run;
             string solutionFolder = mOpts.Solution;
             string encryptionKey = mOpts.EncryptionKey;
             try
@@ -453,10 +455,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 mCLIHelper.AddCLIGitProperties(mOpts);
                 mCLIHelper.SetWorkSpaceGitProperties(mOpts);
                 mCLIHelper.SetEncryptionKey(encryptionKey);
-                mCLIHelper.SourceApplication = mOpts.SourceApplication;
-                mCLIHelper.SourceApplicationUser = mOpts.SourceApplicationUser;
-                mCLIHelper.Runset = mOpts.Runset;
-                mCLIHelper.Env = mOpts.Environment;
                 if (mOpts.PasswordEncrypted)
                 {
                     mCLIHelper.PasswordEncrypted(mOpts.PasswordEncrypted.ToString());
@@ -469,10 +467,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     return;
                 }
 
-                if (mOpts.UpdateAllPOMsInRunsets)
+                if (string.IsNullOrEmpty(mOpts.TargetApplication))
                 {
-                    await UpdateMultiPOMData(mOpts.GuidListPOM, mOpts.RunsetGuidList);
+                    await UpdateMultiPOMData(mOpts.ApplicationModels, mOpts.RunSets);
                 }
+                else { }
+
 
 
 

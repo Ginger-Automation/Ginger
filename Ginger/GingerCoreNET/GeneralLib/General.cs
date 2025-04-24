@@ -1026,6 +1026,8 @@ namespace GingerCoreNET.GeneralLib
         {
             if (mSelectedPomWithRunset.SelectedRunset != null)
             {
+                mSelectedPomWithRunset.SelectedRunset.SourceApplication = mCLIHelper.SourceApplication;
+                mSelectedPomWithRunset.SelectedRunset.SourceApplicationUser = mCLIHelper.SourceApplicationUser;
                 mSelectedPomWithRunset.SelectedRunset.AutoUpdatedPOMList = new();
                 if (mSelectedPomWithRunset.SelectedRunset?.SelfHealingConfiguration != null)
                 {
@@ -1070,8 +1072,8 @@ namespace GingerCoreNET.GeneralLib
                     {
                         if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Contains(elem.ApplicationAPIModel.Guid))
                         {
-                            elem.PomUpdateStatus = $"{elem.ApplicationAPIModel.Name} Updated";
-                            var aPOMModified = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().First(aPOM => aPOM.Guid == elem.ApplicationAPIModel.Guid);
+                            elem.PomUpdateStatus = $"{elem.ApplicationAPIModel.Name} Updated";                           
+                            var aPOMModified = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().First(aPOM => aPOM.Guid == elem.ApplicationAPIModel.Guid);                         
                             if (aPOMModified != null)
                             {
                                 SaveHandler.Save(aPOMModified);
@@ -1127,19 +1129,26 @@ namespace GingerCoreNET.GeneralLib
             Reporter.ToLog(eLogLevel.INFO, string.Format("Executing {0}... ", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             try
             {
-
-                await Task.Run(async () =>
+                if (WorkSpace.Instance.GingerCLIMode == eGingerCLIMode.run)
                 {
-                    try
+                   await Execute(WorkSpace.Instance.RunsetExecutor);
+                }
+                else
+                {
+                    await Task.Run(async () =>
                     {
-                        await Execute(WorkSpace.Instance.RunsetExecutor);
-                    }
-                    catch (Exception ex)
-                    {
-                        // Handle the exception
-                        Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while Execute RunSet", ex);
-                    }
-                });
+
+                        try
+                        {
+                            await Execute(WorkSpace.Instance.RunsetExecutor);
+                        }
+                        catch (Exception ex)
+                        {
+                            // Handle the exception
+                            Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while Execute RunSet", ex);
+                        }
+                    });
+                }
 
             }
             catch (Exception ex)

@@ -121,6 +121,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
         {
             mWizard.mMultiPomDeltaUtils.mPOMModels = [];
             mWizard.mMultiPomDeltaUtils.mPOMModels = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where WorkSpace.Instance.Solution.GetTargetApplicationPlatform(x.TargetApplicationKey) == mAppPlatform select x).ToList());
+            foreach (var pom in mWizard.mMultiPomDeltaUtils.mPOMModels)
+            {
+                pom.Selected = false;
+            }
             xPomSelectionGrid.DataSourceList = mWizard.mMultiPomDeltaUtils.mPOMModels;
         }
 

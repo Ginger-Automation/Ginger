@@ -107,27 +107,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
 
 
-        [Option("updateAllPOMsInRunsets", Required = false, Default = false, HelpText = "(Optional) After passing this flag, all POMs used in Runsets will be updated.")]
-        public bool UpdateAllPOMsInRunsets { get; set; }
+        [Option("targetApplication", Required = false, Default = false, HelpText = "(Optional) After passing this flag, all POMs used in Runsets will be updated.")]
+        public string TargetApplication { get; set; }
 
-        [Option("guidListPOM", Required = false, HelpText = "(Optional) Pass the semicolon-separated values of POM GUIDs to update the specified POMs used in Runsets.")]
-        public string GuidListPOM { get; set; }
+        [Option("applicationModels", Required = false, HelpText = "(Optional) Pass the semicolon-separated values of POM GUIDs to update the specified POMs used in Runsets.")]
+        public string ApplicationModels { get; set; }
 
-        [Option("runsetGuidList", Required = false, HelpText = "(Optional) Pass the semicolon-separated values of Runset GUIDs to update the POMs used in Runsets.")]
-        public string RunsetGuidList { get; set; }
-
-
-        [Option("sourceApplication", Required = false, HelpText = "Set Source Application name")]
-        public string SourceApplication { get; set; }
-
-        [Option("sourceApplicationUser", Required = false, HelpText = "Set Source Application username")]
-        public string SourceApplicationUser { get; set; }
-
-        [Option('r', "runset", Required = true, HelpText = "Set runset name")]
-        public string Runset { get; set; }
-
-        [Option('e', "env", Required = false, Default = "Default", HelpText = "Set environment name")]
-        public string Environment { get; set; }
+        [Option("runSets", Required = false, HelpText = "(Optional) Pass the semicolon-separated values of Runset GUIDs to update the POMs used in Runsets.")]
+        public string RunSets { get; set; }
 
     }
 
