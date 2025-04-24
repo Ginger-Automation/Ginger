@@ -626,7 +626,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 AutoFixAnalyzerIssue = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoFixAnalyzerIssue,
                 ReprioritizePOMLocators = runsetExecutor.RunSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators,
                 AutoUpdateApplicationModel = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel,
-                ForceUpdateApplicationModel= runsetExecutor.RunSetConfig.SelfHealingConfiguration.ForceUpdateApplicationModel,
+                ForceUpdateApplicationModel = runsetExecutor.RunSetConfig.SelfHealingConfiguration.ForceUpdateApplicationModel,
                 SaveChangesInSourceControl = runsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl,
                 AutoExecuteInSimulationMode = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoExecuteInSimulationMode
             };
@@ -677,16 +677,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 {
                     runner.AppAgentMappings = [];
                 }
-                    foreach (ApplicationAgent applicationAgent in gingerRunner.ApplicationAgents)
+                foreach (ApplicationAgent applicationAgent in gingerRunner.ApplicationAgents)
+                {
+                    ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
+                    applicationAgent.ApplicationAgentOperations = applicationAgentOperations;
+                    if (applicationAgent.Agent == null)
                     {
-                        ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
-                        applicationAgent.ApplicationAgentOperations = applicationAgentOperations;
-                        if (applicationAgent.Agent == null)
-                        {
-                            continue;//probably target app without platform or no such Agent
-                        }
-                        runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.AgentID, ApplicationName = applicationAgent.AppName, ApplicationID = applicationAgent.AppID });
+                        continue;//probably target app without platform or no such Agent
                     }
+                    runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.AgentID, ApplicationName = applicationAgent.AppName, ApplicationID = applicationAgent.AppID });
+                }
 
                 //
                 runner.RunInSimulationMode = gingerRunner.RunInSimulationMode;
@@ -860,7 +860,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             mailReportConfig.AttachmentReportTemplateID = reportAttachment.SelectedHTMLReportTemplateID;
                             if (reportAttachment.IsAccountReportLinkEnabled)
                             {
-                                mailReportConfig.AttachmentReportAttachType = MailReportOperationExecConfig.ReportAttachType.Link;
+                                mailReportConfig.AttachmentReportAttachType = MailReportOperationExecConfig.ReportAttachType.ReportUrlLink;
                             }
                             else if (reportAttachment.IsLinkEnabled)
                             {
@@ -877,10 +877,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         }
                         else
                         {
-                            if (mailReportConfig.FilesPathToAttach == null)
-                            {
-                                mailReportConfig.FilesPathToAttach = [];
-                            }
+                            mailReportConfig.FilesPathToAttach ??= [];
                             mailReportConfig.FilesPathToAttach.Add(mailAttachment.Name);
                         }
                     }
@@ -1019,7 +1016,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             /// Dynamic/Virtual Runset Execution Request
             else
             {
-               
+
                 //## Creating new Runset
                 runSetConfig = new RunSetConfig();
                 if (gingerExecConfig.ExecutionID != null)
@@ -1110,7 +1107,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
             if (gingerExecConfig.Agents?.Count > 0)
             {
-                
+
                 AgentConfigOperations.CheckIfNameIsUnique<AgentConfig>(gingerExecConfig.Agents);
                 //list of existing agent list in json
                 var ExistingAgents = gingerExecConfig.Agents.Where((agent) => !agent.Exist.HasValue || agent.Exist.Value);
@@ -1580,10 +1577,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                 case MailReportOperationExecConfig.ReportAttachType.Zip:
                                     ((EmailHtmlReportAttachment)reportAttachment).ZipIt = true;
                                     ((EmailHtmlReportAttachment)reportAttachment).IsLinkEnabled = false;
+                                    ((EmailHtmlReportAttachment)reportAttachment).IsAccountReportLinkEnabled = false;
                                     break;
                                 case MailReportOperationExecConfig.ReportAttachType.Link:
                                     ((EmailHtmlReportAttachment)reportAttachment).ZipIt = false;
                                     ((EmailHtmlReportAttachment)reportAttachment).IsLinkEnabled = true;
+                                    ((EmailHtmlReportAttachment)reportAttachment).IsAccountReportLinkEnabled = false;
+                                    break;
+                                case MailReportOperationExecConfig.ReportAttachType.ReportUrlLink:
+                                    ((EmailHtmlReportAttachment)reportAttachment).ZipIt = false;
+                                    ((EmailHtmlReportAttachment)reportAttachment).IsLinkEnabled = false;
+                                    ((EmailHtmlReportAttachment)reportAttachment).IsAccountReportLinkEnabled = true;
                                     break;
                             }
                         }
