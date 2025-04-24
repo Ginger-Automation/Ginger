@@ -71,8 +71,6 @@ namespace Ginger.Run
         }
         public bool mStopRun;
 
-        private string _currentRunSetLogFolder = string.Empty;
-        private string _currentHTMLReportFolder = string.Empty;
         ObservableList<DefectSuggestion> mDefectSuggestionsList = [];
         private List<BusinessFlowRun> AllPreviousBusinessFlowRuns = [];
         RunSetConfig mRunSetConfig = null;

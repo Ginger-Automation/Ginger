@@ -36,6 +36,7 @@ using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -142,6 +143,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        bool mAgentDetails;
+        public bool SetAgentDetails
+        {
+            get
+            {
+                return mAgentDetails;
+            }
+            set
+            {
+                mAgentDetails = value;
+                OnPropertyChanged(nameof(SetAgentDetails));
+            }
+        }
+
         bool mSetAlmConnectionDetails;
         public bool SetAlmConnectionDetails
         {
@@ -235,6 +250,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             SourceControlProxyPort(runOptions.SourceControlProxyPort);
         }
 
+
         /// <summary>
         /// Sets the workspace Git properties from the provided SourceControlOptions.
         /// </summary>
@@ -247,25 +263,40 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 UserProfileOperations userProfileOperations = new UserProfileOperations(WorkSpace.Instance.UserProfile);
                 WorkSpace.Instance.UserProfile.UserProfileOperations = userProfileOperations;
             }
-            WorkSpace.Instance.UserProfile.SourceControlURL = runOptions.URL;
-            WorkSpace.Instance.UserProfile.SourceControlUser = runOptions.User;
-            WorkSpace.Instance.UserProfile.SourceControlType = runOptions.SCMType;
+            WorkSpace.Instance.UserProfile.URL = runOptions.URL;
+            WorkSpace.Instance.UserProfile.Username = runOptions.User;
+            WorkSpace.Instance.UserProfile.Type = runOptions.SCMType;
             WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlIgnoreCertificate = runOptions.ignoreCertificate;
             WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlUseShellClient = runOptions.useScmShell;
-            WorkSpace.Instance.UserProfile.EncryptedSourceControlPass = runOptions.Pass;
-            WorkSpace.Instance.UserProfile.SourceControlPass = runOptions.Pass;
+            WorkSpace.Instance.UserProfile.EncryptedPassword = runOptions.Pass;
+            WorkSpace.Instance.UserProfile.Password = runOptions.Pass;
         }
+
+
         /// <summary>
-        /// Loads the solution.
+        /// Loads the solution asynchronously, optionally preventing the saving of CLI Git credentials.
         /// </summary>
-        /// <returns>True if the solution is loaded successfully, otherwise false.</returns>
-        public async Task<bool> LoadSolutionAsync()
+        /// <param name="doNotSaveCLIGitCredentials">If set to true, prevents saving CLI Git credentials.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a boolean indicating success or failure.</returns>
+        public async Task<bool> LoadSolutionAsync(bool doNotSaveCLIGitCredentials = false)
         {
             try
             {
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution...");
                 await DownloadSolutionFromSourceControl();
-                return OpenSolution();
+                //this workspace flag is used to prevent to store credentials on user profile which comes form deeplink
+                var doNotSaveDeeplinkCredentials = WorkSpace.Instance.UserProfile.DoNotSaveCredentialsOnUserProfile;
+                //if this flag is true we setting it as false, so while opening solution existing credentials will be loaded.
+                if (WorkSpace.Instance.UserProfile.DoNotSaveCredentialsOnUserProfile)
+                {
+                    WorkSpace.Instance.UserProfile.DoNotSaveCredentialsOnUserProfile = false;
+                }
+                var isSolutionOpened = OpenSolution();
+                if (isSolutionOpened && !doNotSaveDeeplinkCredentials && !doNotSaveCLIGitCredentials)
+                {
+                    SetSourceControlParaOnUserProfile();
+                }
+                return isSolutionOpened;
             }
             catch (Exception ex)
             {
@@ -273,6 +304,30 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 return false;
             }
         }
+
+        void SetSourceControlParaOnUserProfile()
+        {
+           
+            WorkSpace.Instance.UserProfile.RecentDownloadedSolutionGuid = WorkSpace.Instance.Solution.Guid;
+            var SetSourceControlParaOnUserProfile = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
+            SetSourceControlParaOnUserProfile.SourceControlInfo.Type = WorkSpace.Instance.UserProfile.Type;
+            SetSourceControlParaOnUserProfile.SourceControlInfo.Url = WorkSpace.Instance.UserProfile.URL;
+            SetSourceControlParaOnUserProfile.SourceControlInfo.Username = WorkSpace.Instance.UserProfile.Username;
+            SetSourceControlParaOnUserProfile.SourceControlInfo.Password = WorkSpace.Instance.UserProfile.Password;
+            SetSourceControlParaOnUserProfile.SourceControlInfo.Branch = WorkSpace.Instance.UserProfile.Branch;
+            if (Solution.Contains(".git", StringComparison.OrdinalIgnoreCase))
+            {
+
+                SetSourceControlParaOnUserProfile.SourceControlInfo.LocalFolderPath = Solution.Substring(0, Solution.LastIndexOf('\\'));
+            }
+            else
+            {
+                SetSourceControlParaOnUserProfile.SourceControlInfo.LocalFolderPath = Solution;
+            }
+            WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
+        }
+
+
 
         public bool LoadRunset(RunsetExecutor runsetExecutor)
         {
@@ -579,9 +634,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
                 Reporter.ToLog(eLogLevel.INFO, "Solution downloaded/updated successfully");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
             }
             finally
             {
@@ -590,7 +645,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-       
+
         /// <summary>
         /// Updates the progress of the download and logs the progress percentage.
         /// </summary>
@@ -601,7 +656,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             try
             {
                 double progress = Math.Round(((double)e.CompletedSteps / e.TotalSteps) * 100, 2);
-                if (e.CompletedSteps > 0 && e.TotalSteps > 0 && e.CompletedSteps <= e.TotalSteps )
+                if (e.CompletedSteps > 0 && e.TotalSteps > 0 && e.CompletedSteps <= e.TotalSteps)
                 {
                     const double epsilon = 0.0001;
                     if (progressStatus == null || Math.Abs(progress) < epsilon)
@@ -613,7 +668,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     progressStatus.ProgressStep = e.CompletedSteps;
                     progressStatus.TotalSteps = e.TotalSteps;
                     Reporter.ToLog(eLogLevel.INFO, null, progressInformer: progressStatus);
-                    GitProgresStatus?.Invoke(this, gitProgress);               
+                    GitProgresStatus?.Invoke(this, gitProgress);
                 }
                 else
                 {
@@ -628,7 +683,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         internal void SetSourceControlBranch(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlBranch: '{value}'");
-            WorkSpace.Instance.UserProfile.SolutionSourceControlBranch = value;
+            WorkSpace.Instance.UserProfile.Branch = value;
         }
 
         public bool SetSealights()
@@ -702,8 +757,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void SetSourceControlPassword(string value)
         {
-            //Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlPassword: '" + value + "'");//we should not show the password in log
-            WorkSpace.Instance.UserProfile.SourceControlPass = value;
+            WorkSpace.Instance.UserProfile.Password = value;
             sourceControlPass = value;
         }
 
@@ -715,22 +769,21 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         internal void PasswordEncrypted(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, $"PasswordEncrypted: '{value}'");
-            string pswd = WorkSpace.Instance.UserProfile.SourceControlPass;
+            var pswd = WorkSpace.Instance.UserProfile.Password;
             if (value is "Y" or "true" or "True")
             {
                 try
                 {
-                    pswd = EncryptionHandler.DecryptwithKey(WorkSpace.Instance.UserProfile.SourceControlPass, EncryptionKey);
+                    pswd = EncryptionHandler.DecryptwithKey(pswd, EncryptionKey);
                 }
                 catch (Exception ex)
                 {
-                    string mess = ex.Message; //To avoid warning of ex not used
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to decrypt the source control password");//not showing ex details for not showing the password by mistake in log
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to decrypt the source control password" + ex.Message);//not showing ex details for not showing the password by mistake in log
                 }
             }
 
 
-            WorkSpace.Instance.UserProfile.SourceControlPass = pswd;
+            WorkSpace.Instance.UserProfile.Password = pswd;
             sourceControlPass = pswd;
         }
 
@@ -738,52 +791,55 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             if (string.IsNullOrEmpty(value))
             {
-                WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = false;
+                WorkSpace.Instance.UserProfile.IsProxyConfigured = false;
             }
             else
             {
-                WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
+                WorkSpace.Instance.UserProfile.IsProxyConfigured = true;
             }
 
             Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlProxyPort: '{value}'");
-            WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort = value;
+            WorkSpace.Instance.UserProfile.ProxyPort = value;
         }
 
         internal void SourceControlProxyServer(string value)
         {
+
             Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlProxyServer: '{value}'");
             if (string.IsNullOrEmpty(value))
             {
-                WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = false;
+                WorkSpace.Instance.UserProfile.IsProxyConfigured = false;
+
             }
             else
             {
-                WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
+                WorkSpace.Instance.UserProfile.IsProxyConfigured = true;
                 if (!value.StartsWith("HTTP://", StringComparison.CurrentCultureIgnoreCase))
                 {
                     value = "http://" + value;
                 }
             }
 
-            WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress = value;
+            WorkSpace.Instance.UserProfile.ProxyAddress = value;
         }
 
         internal void SetSourceControlUser(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlUser: '{value}'");
-            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
+            if (WorkSpace.Instance.UserProfile.Type == SourceControlBase.eSourceControlType.GIT && value == "")
             {
                 value = "Test";
             }
 
-            WorkSpace.Instance.UserProfile.SourceControlUser = value;
+            WorkSpace.Instance.UserProfile.Username = value;
             SourcecontrolUser = value;
         }
 
         internal void SetSourceControlURL(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlUrl: '{value}'");
-            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+
+            if (WorkSpace.Instance.UserProfile.Type == SourceControlBase.eSourceControlType.SVN)
             {
                 if (!value.ToUpper().Contains("/SVN") && !value.ToUpper().Contains("/SVN/"))
                 {
@@ -794,24 +850,25 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     value = $"{value}/";
                 }
             }
-            WorkSpace.Instance.UserProfile.SourceControlURL = value;
+            WorkSpace.Instance.UserProfile.URL = value;
             SourceControlURL = value;
         }
 
         internal void SetSourceControlType(string value)
         {
+
             Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlType: '{value}'");
             if (value.Equals("GIT"))
             {
-                WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
+                WorkSpace.Instance.UserProfile.Type = SourceControlBase.eSourceControlType.GIT;
             }
             else if (value.Equals("SVN"))
             {
-                WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
+                WorkSpace.Instance.UserProfile.Type = SourceControlBase.eSourceControlType.SVN;
             }
             else
             {
-                WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.None;
+                WorkSpace.Instance.UserProfile.Type = SourceControlBase.eSourceControlType.None;
             }
         }
 
@@ -981,5 +1038,29 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        /// <summary>
+        /// Constructs a temporary folder path by appending the repository name (extracted from the source control URL) 
+        /// to the system's temporary directory.
+        /// </summary>
+        /// <param name="sourceControlUrl"> The source control URL used to extract the repository name. If null, the instance's SourceControlURL property will be used. </param>
+        /// <returns>
+        /// A string representing the path to a temporary folder, combining the system's temp directory 
+        /// with the repository name extracted from the source control URL.
+        /// </returns>
+        public string GetTempFolderPathForRepo(string sourceControlUrl = null)
+        {
+            string urlToUse = sourceControlUrl ?? SourceControlURL;
+            string repoName = string.Empty;
+
+            if (!string.IsNullOrEmpty(urlToUse))
+            {
+                // Remove trailing slash if present
+                urlToUse = urlToUse.TrimEnd('/');
+
+                repoName = Path.GetFileNameWithoutExtension(urlToUse.Split('/').Last());
+            }
+
+            return Path.Combine(Path.GetTempPath(), repoName);
+        }
     }
 }

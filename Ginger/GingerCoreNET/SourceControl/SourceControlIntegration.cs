@@ -102,10 +102,6 @@ namespace Ginger.SourceControl
             return OL;
         }
 
-        public static string GetSourceControlType(SourceControlBase SourceControl)
-        {
-            return SourceControl.GetSourceControlType.ToString();
-        }
 
         public static string GetRepositoryURL(SourceControlBase SourceControl)
         {
@@ -531,11 +527,12 @@ namespace Ginger.SourceControl
         {
             try
             {
+
                 SourceControlBase mSourceControl;
-                if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
+                if (WorkSpace.Instance.UserProfile.Type == SourceControlBase.eSourceControlType.GIT)
                 {
 
-                    if (WorkSpace.Instance != null && WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.SourceControlUseShellClient)
+                    if (WorkSpace.Instance != null && WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlUseShellClient)
                     {
                         mSourceControl = new GitSourceControlShellWrapper();
                     }
@@ -554,10 +551,10 @@ namespace Ginger.SourceControl
 
 
                 }
-                else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+                else if (WorkSpace.Instance.UserProfile.Type == SourceControlBase.eSourceControlType.SVN)
                 {
 
-                    if (WorkSpace.Instance != null && WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.SourceControlUseShellClient)
+                    if (WorkSpace.Instance != null && WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlUseShellClient)
                     {
                         mSourceControl = new SVNSourceControlShellWrapper();
                     }
@@ -574,25 +571,24 @@ namespace Ginger.SourceControl
 
                 if (mSourceControl != null)
                 {
-                    WorkSpace.Instance.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
-                    mSourceControl.SourceControlURL = WorkSpace.Instance.UserProfile.SourceControlURL;
-                    mSourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
-                    mSourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
-                    mSourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
-                    mSourceControl.IgnoreCertificate = WorkSpace.Instance.UserProfile.SourceControlIgnoreCertificate;
+                    mSourceControl.URL = WorkSpace.Instance.UserProfile.URL;
+                    mSourceControl.Username = WorkSpace.Instance.UserProfile.Username;
+                    mSourceControl.Password = WorkSpace.Instance.UserProfile.Password;
+                    mSourceControl.LocalFolder = WorkSpace.Instance.UserProfile.LocalFolderPath;
+                    mSourceControl.IgnoreCertificate = WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlIgnoreCertificate;
 
                     mSourceControl.SolutionFolder = SolutionFolder;
 
-                    mSourceControl.SourceControlConfigureProxy = WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy;
-                    mSourceControl.SourceControlProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
-                    mSourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
-                    mSourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
+                    mSourceControl.IsProxyConfigured = WorkSpace.Instance.UserProfile.IsProxyConfigured;
+                    mSourceControl.ProxyAddress = WorkSpace.Instance.UserProfile.ProxyAddress;
+                    mSourceControl.ProxyPort = WorkSpace.Instance.UserProfile.ProxyPort;
+                    mSourceControl.Timeout = WorkSpace.Instance.UserProfile.Timeout;
                     mSourceControl.supressMessage = true;
 
-                    mSourceControl.SourceControlBranch = WorkSpace.Instance.UserProfile.SolutionSourceControlBranch;
+                    mSourceControl.Branch = WorkSpace.Instance.UserProfile.Branch;
                 }
 
-                if (WorkSpace.Instance.UserProfile.SourceControlLocalFolder == string.Empty)
+                if (WorkSpace.Instance.UserProfile.LocalFolderPath == string.Empty)
                 {
                     Reporter.ToUser(eUserMsgKey.SourceControlConnMissingLocalFolderInput);
                 }
@@ -605,11 +601,11 @@ namespace Ginger.SourceControl
                 {
                     LocalFolder = SolutionFolder
                 };
-                if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + Path.DirectorySeparatorChar + @".svn")))
+                if (WorkSpace.Instance.UserProfile.Type == SourceControlBase.eSourceControlType.SVN && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + Path.DirectorySeparatorChar + @".svn")))
                 {
                     sol.ExistInLocaly = true;
                 }
-                else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + Path.DirectorySeparatorChar + @".git")))
+                else if (WorkSpace.Instance.UserProfile.Type == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + Path.DirectorySeparatorChar + @".git")))
                 {
                     sol.ExistInLocaly = true;
                 }
@@ -627,22 +623,22 @@ namespace Ginger.SourceControl
                 }
 
                 string ProjectURI = string.Empty;
-                if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN && mSourceControl is not SVNSourceControlShellWrapper)
+                if (WorkSpace.Instance.UserProfile.Type == SourceControlBase.eSourceControlType.SVN && mSourceControl is not SVNSourceControlShellWrapper)
                 {
 
-                    if (WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase))
+                    if (WorkSpace.Instance.UserProfile.URL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase))
                     {
                         ProjectURI = sol.SourceControlLocation;
                     }
                     else
                     {
-                        if (WorkSpace.Instance.UserProfile.SourceControlURL.ToUpper().Contains(sol.SourceControlLocation.ToUpper()))
+                        if (WorkSpace.Instance.UserProfile.URL.ToUpper().Contains(sol.SourceControlLocation.ToUpper()))
                         {
-                            ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL;
+                            ProjectURI = WorkSpace.Instance.UserProfile.URL;
                         }
                         else
                         {
-                            ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL;
+                            ProjectURI = WorkSpace.Instance.UserProfile.URL;
                             if (!ProjectURI.ToUpper().Contains("/SVN") && !ProjectURI.ToUpper().Contains("/SVN/"))
                             {
                                 if (!ProjectURI.ToUpper().EndsWith("/"))
@@ -663,7 +659,7 @@ namespace Ginger.SourceControl
                 }
                 else
                 {
-                    ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL;
+                    ProjectURI = WorkSpace.Instance.UserProfile.URL;
                 }
                 bool getProjectResult = true;
                 getProjectResult = SourceControlIntegration.CreateConfigFile(mSourceControl);

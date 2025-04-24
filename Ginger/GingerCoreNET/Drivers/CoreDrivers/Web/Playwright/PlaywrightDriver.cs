@@ -111,11 +111,34 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         private PlaywrightBrowser.Options BuildPlaywrightBrowserOptions()
         {
+            string recordVideoDir = null;
+            RecordVideoSize? recordVideoSize = null;
+
+            if (WorkSpace.Instance.IsRunningFromRunsetOrCLI() && EnableVideoRecording)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Execution happening through CLI/Runset");
+
+                recordVideoDir = RecordVideoDir;
+                if (recordVideoDir != null && recordVideoDir.StartsWith(@"~\"))
+                {
+                    string solutionFolder = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.Folder;
+                    recordVideoDir = recordVideoDir.Replace(@"~\", solutionFolder, StringComparison.InvariantCultureIgnoreCase);
+                }
+
+                if (VideoHeight > 0 && VideoWidth > 0)
+                {
+                    recordVideoSize = new RecordVideoSize { Height = VideoHeight, Width = VideoWidth };
+                }
+            }
+
             PlaywrightBrowser.Options options = new()
             {
                 Args = new[] { "--start-maximized" },
                 Headless = HeadlessBrowserMode,
                 Timeout = DriverLoadWaitingTime * 1000, //convert to milliseconds
+                EnableVideoRecording = EnableVideoRecording,
+                RecordVideoDir = recordVideoDir,
+                RecordVideoSize = recordVideoSize
             };
 
             if (!string.IsNullOrEmpty(Proxy))
@@ -635,6 +658,26 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             using MemoryStream memoryStream = new(bytes);
             return new Bitmap(memoryStream);
         }
+
+        [UserConfigured]
+        [UserConfiguredDefault(@"~\\ExecutionResults\VideoRecordings")]
+        [UserConfiguredDescription("Set directory path for storing the recorded video of browser actions being performed in ongoing session.")]
+        public string? RecordVideoDir { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Set \"true\" to enable video recording.")]
+        public bool EnableVideoRecording { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("The height in pixels of video recording")]
+        public int VideoHeight { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("The width in pixels of video recording")]
+        public int VideoWidth { get; set; }
 
         private protected override IBrowser GetBrowser()
         {

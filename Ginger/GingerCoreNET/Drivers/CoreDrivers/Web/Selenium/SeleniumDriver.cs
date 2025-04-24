@@ -72,7 +72,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using static GingerCoreNET.GeneralLib.General;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V127.DevToolsSessionDomains; //.V125.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V127.DevToolsSessionDomains;
 
 
 
@@ -680,7 +680,19 @@ namespace GingerCore.Drivers
                             profile.SetPreference("general.useragent.override", BrowserUserAgent.Trim());
                             FirefoxOption.Profile = profile;
                         }
-
+                        if (SeleniumUserArgs != null)
+                        {
+                            foreach (string arg in SeleniumUserArgs)
+                            {
+                                FirefoxOption.AddArgument(arg);
+                            }
+                        }
+                        if (BrowserPrivateMode)
+                        {
+                            // This is correct way of setting private mode in Firefox, it doesn't preserve history of ongoing session
+                            FirefoxOption.SetPreference("browser.privatebrowsing.autostart", true);
+                        }
+                        
                         driverService = FirefoxDriverService.CreateDefaultService();
                         AddCustomDriverPath(driverService);
                         driverService.HideCommandPromptWindow = HideConsoleWindow;
@@ -821,6 +833,10 @@ namespace GingerCore.Drivers
                             else
                             {
                                 SetProxy(EDOpts);
+                            }
+                            if (BrowserPrivateMode)
+                            {
+                                EDOpts.AddArgument("-inprivate");
                             }
 
                             if (SeleniumUserArgs != null)
@@ -4264,6 +4280,11 @@ namespace GingerCore.Drivers
                         {
                             SwitchFrame(currentPOMElementInfo);
                         }
+                        // Check if the application model needs to be forcefully updated based on the self-healing configuration
+                        // Automatically update the current Page Object Model (POM) for the current agent in the current activity
+                        // Add the GUID of the updated POM to the list of auto-updated POMs in the runset configuration
+                        pomExcutionUtil.AutoForceUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent,act);
+
                         elem = LocateElementByLocators(currentPOMElementInfo, currentPOM.MappedUIElements, false, pomExcutionUtil);
 
                         if (elem == null && pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent) != null)
@@ -4393,7 +4414,7 @@ namespace GingerCore.Drivers
                         if (!FLocator.IsAutoLearned)
                         {
                             ElementLocator evaluatedLocator = FLocator.CreateInstance() as ElementLocator;
-                            ValueExpression VE = new(this.Environment, this.BusinessFlow);
+                            ValueExpression VE = new(GetCurrentProjectEnvironment(), this.BusinessFlow);
                             FLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
                         }
 
@@ -5380,12 +5401,12 @@ namespace GingerCore.Drivers
         // Method to determine if the element should be learned
         private bool ShouldLearnElement(PomSetting pomSetting, eElementType elementType)
         {
-            if (pomSetting == null || pomSetting.filteredElementType == null)
+            if (pomSetting == null || pomSetting.FilteredElementType == null)
             {
                 return true; // Learn all elements if no filtering is specified
             }
 
-            return pomSetting.filteredElementType.Contains(elementType);
+            return pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(elementType));
         }
 
         // Method to retrieve the web element corresponding to the HTML node
@@ -5445,17 +5466,17 @@ namespace GingerCore.Drivers
             {
                 GetRelativeXpathElementLocators(foundElementInfo);
 
-                if (pomSetting != null && pomSetting.relativeXpathTemplateList != null && pomSetting.relativeXpathTemplateList.Count > 0)
+                if (pomSetting != null && pomSetting.RelativeXpathTemplateList != null && pomSetting.RelativeXpathTemplateList.Count > 0)
                 {
-                    foreach (var template in pomSetting.relativeXpathTemplateList)
+                    foreach (var template in pomSetting.RelativeXpathTemplateList)
                     {
-                        CreateXpathFromUserTemplate(template, foundElementInfo);
+                        CreateXpathFromUserTemplate(template.Value, foundElementInfo);
                     }
                 }
             }
 
             // Element Screenshot only mapped elements
-            if (pomSetting.LearnScreenshotsOfElements && pomSetting.filteredElementType.Contains(elementTypeEnum))
+            if (pomSetting.LearnScreenshotsOfElements && pomSetting.FilteredElementType.Any(x=>x.ElementType.Equals(elementTypeEnum)))
             {
                 foundElementInfo.ScreenShotImage = TakeElementScreenShot(webElement);
             }
@@ -7030,10 +7051,11 @@ namespace GingerCore.Drivers
             bool learnElement = true;
 
             //filter element if needed, in case we need to learn only the MappedElements .i.e., LearnMappedElementsOnly is checked
-            if (pomSetting?.filteredElementType != null)
+            if (pomSetting?.FilteredElementType != null)
             {
                 //Case Learn Only Mapped Element : set learnElement to false in case element doesn't exist in the filteredElementType List AND element is not frame element
-                if (!pomSetting.filteredElementType.Contains(elementTypeEnum.Item2))
+                //if (!pomSetting.FilteredElementType.Contains(elementTypeEnum.Item2))
+                if (!pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(elementTypeEnum.Item2)))
                 {
                     learnElement = false;
                 }
@@ -8394,7 +8416,7 @@ namespace GingerCore.Drivers
                                 ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(parsedPOMGuid);
                                 if (SelectedPOM != null)
                                 {
-                                    url = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);
+                                    url = ValueExpression.Calculate(GetCurrentProjectEnvironment(), this.BusinessFlow, SelectedPOM.PageURL, null);
                                 }
                                 else
                                 {
@@ -8442,7 +8464,7 @@ namespace GingerCore.Drivers
                                 ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(parsedPOMGuid);
                                 if (SelectedPOM != null)
                                 {
-                                    gotoUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);
+                                    gotoUrl = ValueExpression.Calculate(GetCurrentProjectEnvironment(), this.BusinessFlow, SelectedPOM.PageURL, null);
                                 }
                                 else
                                 {
@@ -10428,7 +10450,7 @@ namespace GingerCore.Drivers
                             if (!FLocator.IsAutoLearned)
                             {
                                 ElementLocator evaluatedLocator = FLocator.CreateInstance() as ElementLocator;
-                                ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+                                ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), this.BusinessFlow);
                                 FLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
                             }
 
@@ -10517,7 +10539,7 @@ namespace GingerCore.Drivers
         private IWebElement LocateElementIfNotAutoLeared(ElementLocator el, ISearchContext parentContext, List<FriendlyLocatorElement> friendlyLocatorElements = null)
         {
             ElementLocator evaluatedLocator = el.CreateInstance() as ElementLocator;
-            ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+            ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), this.BusinessFlow);
             evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
             return LocateElementByLocator(evaluatedLocator, parentContext, friendlyLocatorElements, true);
         }
@@ -10938,9 +10960,8 @@ namespace GingerCore.Drivers
                 networkResponseLogList = [];
                 interceptor = webDriver.Manage().Network;
 
-                ProjEnvironment projEnv = GetCurrentProjectEnvironment();
 
-                ValueExpression VE = new ValueExpression(projEnv, BusinessFlow);
+                ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), BusinessFlow);
 
                 foreach (ActInputValue item in mAct.UpdateOperationInputValues)
                 {
@@ -10959,20 +10980,7 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-
-        private ProjEnvironment GetCurrentProjectEnvironment()
-        {
-            foreach (ProjEnvironment env in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
-            {
-                if (env.Name.Equals(BusinessFlow.Environment))
-                {
-                    return env;
-                }
-            }
-
-            return null;
-        }
-
+        
         public async Task StopMonitoringNetworkLog(ActBrowserElement act)
         {
             try

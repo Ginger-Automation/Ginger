@@ -740,9 +740,9 @@ namespace GingerWPF.TreeViewItemsLib
 
                     if (node.NodeObject() != null)
                     {
-                        if (node.NodeObject() is RepositoryFolderBase)
+                        if (node.NodeObject() is RepositoryFolderBase folderBase)
                         {
-                            WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)node.NodeObject());
+                            WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder(folderBase);
                         }
                         else if (node.NodeObject() is RepositoryItemBase)
                         {
