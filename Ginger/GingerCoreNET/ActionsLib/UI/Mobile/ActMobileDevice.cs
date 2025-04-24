@@ -141,8 +141,8 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(MobilePressKey));
             }
         }
-     
-      
+
+
         public ActInputValue FilePathInput
         {
             get
@@ -153,6 +153,18 @@ namespace GingerCore.Actions
             {
                 AddOrUpdateInputParamValue(nameof(FilePathInput), value.ToString());
                 OnPropertyChanged(nameof(FilePathInput));
+            }
+        }
+        public ActInputValue LocalFolderPathInput
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(LocalFolderPathInput));
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(LocalFolderPathInput), value.ToString());
+                OnPropertyChanged(nameof(LocalFolderPathInput));
             }
         }
 
@@ -510,6 +522,55 @@ namespace GingerCore.Actions
             GetClipboardText,
             [EnumValueDescription("Perform Multi Touch")]
             PerformMultiTouch,
+            [EnumValueDescription("Grant App Permission")]
+            GrantAppPermission,
+            [EnumValueDescription("Type Using keyboard")]
+            TypeUsingIOSkeyboard,
+            [EnumValueDescription("Clear App Data")]
+            ClearAppdata,
+            [EnumValueDescription("Get Screen Size")]
+            ScreenSize,
+            [EnumValueDescription("Open Notifications Panel")]
+            OpenNotificationsPanel,
+            [EnumValueDescription("Get Device Time")]
+            GetDeviceTime,
+            [EnumValueDescription("Get Orientation")]
+            GetOrientation,
+            [EnumValueDescription("Get App Package")]
+            GetAppPackage,
+            [EnumValueDescription("Get Current Activity Details")]
+            GetCurrentActivityDetails,
+            [EnumValueDescription("Lock For Time Duration")]
+            LockForDuration,
+            [EnumValueDescription("Get Settings")]
+            GetSettings,
+            [EnumValueDescription("Push Folder to Device")]
+            PushFolder,
+            [EnumValueDescription("Toggle Location Services")]
+            ToggleLocationServices,
+            [EnumValueDescription("Toggle Data")]
+            ToggleData,
+            [EnumValueDescription("Toggle Airplane Mode")]
+            ToggleAirplaneMode,
+            [EnumValueDescription("Toggle Wifi")] 
+            ToggleWifi,
+            [EnumValueDescription("Is IME Active")] 
+            IsIMEActive,
+            [EnumValueDescription("Get IME Active Engine")]
+            GetIMEActiveEngine,
+            [EnumValueDescription("Start Activity")] 
+            StartActivity,
+            [EnumValueDescription("Get GeoLocation")] 
+            GetGeoLocation,
+            [EnumValueDescription("Send App to Background")] 
+            SendAppToBackground,
+            [EnumValueDescription("Set Network Connection")]
+            SetNetworkConnection,
+            [EnumValueDescription("Get Device OS Type")]
+            GetDeviceOSType,
+
+
+
         }
 
         public enum ePressKey

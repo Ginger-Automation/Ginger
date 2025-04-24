@@ -51,6 +51,7 @@ using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NUglify.Html;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
@@ -69,6 +70,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using AppiumInteractions = OpenQA.Selenium.Appium.Interactions;
@@ -169,7 +171,7 @@ namespace Amdocs.Ginger.CoreNET
         public ObservableList<DriverConfigParam> AppiumCapabilities { get; set; }
 
         protected IWebDriver webDriver;
- 
+
 
         bool mIsDeviceConnected = false;
         string mDefaultURL = null;
@@ -744,7 +746,7 @@ namespace Amdocs.Ginger.CoreNET
                 act.Error = ex.Message;
             }
         }
-        
+
         private bool PullXandYofElement(ActUIElement act)
         {
             IWebElement e = null;
@@ -1163,7 +1165,7 @@ namespace Amdocs.Ginger.CoreNET
                             if (!string.IsNullOrEmpty(appPackage))
                             {
                                 Driver.ActivateApp(appPackage);
-                            }                            
+                            }
                         }
                         else
                         {
@@ -1178,7 +1180,7 @@ namespace Amdocs.Ginger.CoreNET
                             if (!string.IsNullOrEmpty(appPackage))
                             {
                                 Driver.TerminateApp(appPackage);
-                            }                            
+                            }
                         }
                         else
                         {
@@ -1349,7 +1351,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.StopRecordingScreen:
-                        string pathRecording = StopRecordingScreen(act.FilePathInput.ValueForDriver).ToString();
+                        string pathRecording = StopRecordingScreen(act.FolderPathInput.ValueForDriver).ToString();
                         act.AddOrUpdateReturnParamActual("ScreenRecordingFilePath", pathRecording);
                         Act.AddArtifactToAction(Path.GetFileName(pathRecording), act, pathRecording);
                         break;
@@ -1415,8 +1417,77 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         break;
 
-                    case ActMobileDevice.eMobileDeviceAction.PerformMultiTouch:         
+                    case ActMobileDevice.eMobileDeviceAction.PerformMultiTouch:
                         PerformMultiTouch(act.MobileTouchOperations);
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.TypeUsingIOSkeyboard:
+                        TypeUsingIOSkeyboard(act.ActionInput.ValueForDriver);
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.ClearAppdata:
+                        ClearAppdata(act.ActionAppPackage.ValueForDriver);
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.GrantAppPermission:                       
+                        GrantAppPermission(act.ActionAppPackage.ValueForDriver, act.ActionInput.ValueForDriver);
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.ScreenSize:
+                        ScreenSize(act);
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.OpenNotificationsPanel:
+                        OpenNotificationsPanel();
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.GetDeviceTime:
+                        act.AddOrUpdateReturnParamActual("Device Time", GetDeviceTime());
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.GetOrientation:
+                        act.AddOrUpdateReturnParamActual("Orientation", GetOrientation().ToString());
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.GetAppPackage:
+                        GetAppId(act);
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.GetCurrentActivityDetails:
+                        act.AddOrUpdateReturnParamActual("Current Activity", GetCurrentActivityDetails());
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.LockForDuration:
+                        LockForDuration(act.ActionInput.ValueForDriver);
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.GetSettings:
+                        GetSettings(act);
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.PushFolder:
+                        PushFolder(act.FolderPathInput.ValueForDriver, act.LocalFolderPathInput.ValueForDriver);
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.ToggleLocationServices:
+                        ToggleLocationServices();
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.ToggleData:
+                        ToggleData();
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.ToggleAirplaneMode:
+                        ToggleAirplaneMode();
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.ToggleWifi:
+                        ToggleWifi();
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.IsIMEActive:
+                        act.AddOrUpdateReturnParamActual("IsIMEActive", IsIMEActive().ToString());
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.GetIMEActiveEngine:
+                        act.AddOrUpdateReturnParamActual("IME Active Engine", GetIMEActiveEngine().ToString());
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.StartActivity:
+                        StartActivity(act.ActionAppPackage.ValueForDriver, act.ActionInput.ValueForDriver);
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.GetGeoLocation:
+                        GetGeoLocation(act);
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.SendAppToBackground:
+                        SendAppToBackground(act.ActionInput.ValueForDriver);
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.SetNetworkConnection:
+                        SetNetworkConnection();
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.GetDeviceOSType:
+                        act.AddOrUpdateReturnParamActual("Os Type", GetDeviceOSType());
                         break;
 
                     default:
@@ -1720,7 +1791,7 @@ namespace Amdocs.Ginger.CoreNET
             actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageStartX, pageStartY, TimeSpan.Zero));
             actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
             actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageEndX, pageEndY, swipeDuration));
-            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));          
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
             Driver.PerformActions(actionBuilder.ToActionSequenceList());
         }
 
@@ -1728,7 +1799,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
             ActionBuilder actionBuilder = new ActionBuilder();
-            foreach (MobileTouchOperation operation in operations) 
+            foreach (MobileTouchOperation operation in operations)
             {
                 int xCoordinate = 0;
                 int yCoordinate = 0;
@@ -1736,7 +1807,7 @@ namespace Amdocs.Ginger.CoreNET
                 if (operation.OperationDuration != null)
                 {
                     duration = TimeSpan.FromMilliseconds(int.Parse(operation.OperationDuration.ToString()));
-                }        
+                }
                 if (operation.MoveXcoordinate != null)
                 {
                     xCoordinate = int.Parse(operation.MoveXcoordinate.ToString());
@@ -1763,7 +1834,7 @@ namespace Amdocs.Ginger.CoreNET
                     case MobileTouchOperation.eFingerOperationType.Cancel:
                         actionBuilder.AddAction(finger.CreatePointerCancel());
                         break;
-                }    
+                }
             }
             Driver.PerformActions(actionBuilder.ToActionSequenceList());
         }
@@ -2027,12 +2098,13 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     currentPackage = string.Format("{0}", ((AndroidDriver)Driver).CurrentPackage);
                 }
-                else 
+                else
                 {
-                    currentPackage = Driver.ExecuteScript("mobile: activeAppInfo")
-                                    .ToString()
-                                    .Split(':')[1]
-                                    .Trim();
+                    currentPackage = string.Format("{0}", ((Dictionary<string, object>)Driver.ExecuteScript("mobile: activeAppInfo"))["bundleId"]);
+                    //currentPackage = Driver.ExecuteScript("mobile: activeAppInfo")
+                    //                .ToString()
+                    //                .Split(':')[1]
+                    //                .Trim();
                 }
 
                 return currentPackage;
@@ -2054,11 +2126,11 @@ namespace Amdocs.Ginger.CoreNET
                         ((AndroidDriver)Driver).CurrentActivity.Split('.').Last());
                 }
                 else if (DevicePlatformType == eDevicePlatformType.iOS)
-                {
+                {                    
                     var detail = ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier");
                     if (detail != null)
-                    {
-                        return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                    {                      
+                        return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString()); 
                     }
                     else
                     {
@@ -2747,7 +2819,7 @@ namespace Amdocs.Ginger.CoreNET
         }
 
 
-       
+
 
         public event RecordingEventHandler RecordingEvent;
 
@@ -3236,9 +3308,9 @@ namespace Amdocs.Ginger.CoreNET
                 RecordingOperations(mobDevAction);
             }
         }
-       
+
         public void SwitchToLandscape()
-        {         
+        {
             try
             {
                 Driver.Orientation = ScreenOrientation.Landscape;
@@ -3253,7 +3325,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                Driver.Orientation = ScreenOrientation.Portrait;              
+                Driver.Orientation = ScreenOrientation.Portrait;
             }
             finally
             {
@@ -3871,7 +3943,7 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        private async Task<string> GetDeviceMetricOverAPI(string dataType, string AppPackage= "")
+        private async Task<string> GetDeviceMetricOverAPI(string dataType, string AppPackage = "")
         {
             string url = this.AppiumServer + "/session/" + Driver.SessionId + "/appium/getPerformanceData";
             if (string.IsNullOrEmpty(AppPackage))
@@ -3945,7 +4017,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             return dict;
         }
-       
+
         public Dictionary<string, string> GetDeviceActivityAndPackage()
         {
             if (DevicePlatformType == eDevicePlatformType.Android)
@@ -3960,12 +4032,12 @@ namespace Amdocs.Ginger.CoreNET
             else
             {
                 Dictionary<string, string> dict2 = new Dictionary<string, string>
-                {                   
-                    { "Bundle ID", (string)((IOSDriver)Driver).ExecuteScript("mobile: currentApp") }            
+                {
+                    { "Bundle ID", (string)((IOSDriver)Driver).ExecuteScript("mobile: currentApp") }
                 };
                 return dict2;
             }
-        } 
+        }
 
         public async Task<bool> IsRealDeviceAsync()
         {
@@ -4029,78 +4101,194 @@ namespace Amdocs.Ginger.CoreNET
 
         public string GetAppPackageNameByOs()
         {
-            return Driver is AndroidDriver ? "package" : "bundleId"; 
+            try
+            {
+                if (Driver is AndroidDriver)
+                {
+                    return "package";
+                }
+                else if (Driver is IOSDriver)
+                {
+                    return "bundleId";
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Unsupported driver type: {Driver.GetType().Name}");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new($"Failed to get app identifier attribute name: {ex.Message}");
+            }   
         }
 
         public string SetFilePath(string FileType, string FilePath, string FileName)
-        {            
-            string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
-            string fileName = Path.GetFileName(FilePath); 
-            string targetFile = string.IsNullOrEmpty(fileName) ? Path.Combine(FilePath, $"{FileName}_{timestamp}.{FileType}") : $"{FilePath}.{FileType}";
-            return targetFile;
+        {
+            if (!string.IsNullOrEmpty(FilePath) && Directory.Exists(FilePath))
+            {
+                string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                string fileName = Path.GetFileName(FilePath);
+                string targetFile = string.IsNullOrEmpty(fileName) ? Path.Combine(FilePath, $"{FileName}_{timestamp}.{FileType}") : $"{FilePath}.{FileType}";
+                return targetFile;
+            }
+            else
+            {
+                throw new($"An error occurred while running script: Got invalid Directory or empty folder");
+            }
         }
-
         public object OpenDeeplink(string appLink, string appPackage, string osType)
         {
+            // Validate inputs
+            if (string.IsNullOrEmpty(appLink))
+                throw new ArgumentException("Deeplink URL cannot be null or empty", nameof(appLink));
+
+            if (string.IsNullOrEmpty(appPackage))
+                throw new ArgumentException("App package/bundle identifier cannot be null or empty", nameof(appPackage));
+
+            if (string.IsNullOrEmpty(osType))
+                throw new ArgumentException("OS type cannot be null or empty", nameof(osType));
+            try
+            {
+
+          
             var args = new Dictionary<string, string>
                 {
                     { "url", appLink }, { osType, appPackage }
                 };
             return Driver is AndroidDriver ? ((AndroidDriver)Driver).ExecuteScript("mobile:deepLink", args) : ((IOSDriver)Driver).ExecuteScript("mobile:deepLink", args);
 
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to open deeplink '{appLink}': {ex.Message}", ex);
+            }
         }
 
         public bool IsDeviceKeyboardVisible()
         {
-            return Driver.IsKeyboardShown();
+            try
+            {
+                return Driver?.IsKeyboardShown() ?? throw new InvalidOperationException("Driver is not initialized");
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to check keyboard visibility: {ex.Message}", ex);
+            }
         }
 
         public bool IsDeviceLocked()
         {
-            return (bool)Driver.ExecuteScript("mobile:isLocked");
+            try
+            {
+                return Driver != null
+                    ? (bool)Driver.ExecuteScript("mobile:isLocked")
+                    : throw new InvalidOperationException("Driver is not initialized");
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to check device lock state: {ex.Message}", ex);
+            }
         }
 
         public bool IsDeviceAppInstalled(string appPackage)
         {
-            return Driver.IsAppInstalled(appPackage);
+            if (string.IsNullOrEmpty(appPackage))
+                throw new ArgumentException("App package cannot be null or empty", nameof(appPackage));
+
+            try
+            {
+                return Driver?.IsAppInstalled(appPackage) ?? throw new InvalidOperationException("Driver is not initialized");
+            }
+            catch (Exception ex) 
+            {
+                throw new InvalidOperationException($"Failed to check if app '{appPackage}' is installed: {ex.Message}", ex);
+            }
         }
 
         public void RemoveDeviceApp(string appPackage)
         {
-            Driver.RemoveApp(appPackage);
+            if (string.IsNullOrEmpty(appPackage))
+                throw new ArgumentException("App package cannot be null or empty", nameof(appPackage));
+
+            try 
+            {
+                if (Driver == null)
+                    throw new InvalidOperationException("Driver is not initialized");
+
+                Driver.RemoveApp(appPackage);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to remove app '{appPackage}': {ex.Message}", ex);
+            }
         }
 
         public AppState QueryAppState(string appId)
         {
-            return Driver is AndroidDriver ? ((AndroidDriver)Driver).GetAppState(appId): ((IOSDriver)Driver).GetAppState(appId);
+            if (string.IsNullOrEmpty(appId))
+                throw new ArgumentException("App ID cannot be null or empty", nameof(appId));
+        
+            try
+            {
+                if (Driver == null)
+                    throw new InvalidOperationException("Driver is not initialized");
+            
+                return Driver is AndroidDriver  
+                ? ((AndroidDriver)Driver).GetAppState(appId) 
+                : Driver is IOSDriver  
+                    ? ((IOSDriver)Driver).GetAppState(appId)
+                    : throw new InvalidOperationException($"Unsupported driver type: {Driver.GetType().Name}");
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to query app state for '{appId}': {ex.Message}", ex);
+            }
         }
 
-        public void RotateSimulation(string state)
+        public void RotateSimulation(string orientation)
         {
-            if(state is "Landscape")
+            if (string.IsNullOrEmpty(orientation))
+                throw new ArgumentException("Orientation cannot be null or empty", nameof(orientation));
+            try
             {
-                SwitchToLandscape();
+                switch (orientation.ToLowerInvariant())
+                {
+                    case "landscape":
+                        SwitchToLandscape();
+                        break;
+                    case "portrait":
+                        SwitchToPortrait();
+                        break;
+                    default:
+                        throw new ArgumentException($"Invalid orientation: '{orientation}'. Expected 'Landscape' or 'Portrait'", nameof(orientation));
+                }
             }
-            else
+            catch (Exception ex) when (!(ex is ArgumentException))
             {
-                SwitchToPortrait();
-            }         
+                throw new InvalidOperationException($"Failed to rotate device to {orientation}: {ex.Message}", ex);
+            }
         }
 
         public void RunScriptOnDevice(string script)
         {
+            if (string.IsNullOrEmpty(script))
+                throw new ArgumentException("Script cannot be null or empty", nameof(script));
+
             try
             {
+                if (Driver == null)
+                    throw new InvalidOperationException("Driver is not initialized");
+
                 Driver.ExecuteScript(script);
             }
             catch (Exception ex)
             {
-                throw new($"An error occurred while running script: {ex.Message}");
+                throw new InvalidOperationException($"Failed to execute script: {ex.Message}", ex);
             }
         }
 
         public void StartDeviceScreenRecording()
-        {          
+        {
             try
             {
                 if (Driver is AndroidDriver)
@@ -4110,35 +4298,46 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else if (Driver is IOSDriver)
                 {
-                    var iosOptions = new IOSStartScreenRecordingOptions()
+                    {
+                        var iosOptions = new IOSStartScreenRecordingOptions()
                             .WithTimeLimit(TimeSpan.FromSeconds(1800)) // Set the same time limit
                             .WithVideoType("h264") // Use "h264" for efficient compression
                             .WithVideoQuality(IOSStartScreenRecordingOptions.VideoQuality.HIGH) // High quality for better resolution
                             .WithVideoScale("720:1280"); // Scale the video to match Android's resolution
-                    ((IOSDriver)Driver).StartRecordingScreen(iosOptions);
+                        ((IOSDriver)Driver).StartRecordingScreen(iosOptions);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                throw new($"An error occurred while recording screen: {ex.Message}");
+                throw new($"An error occurred while starting recording screen: {ex.Message}");
             }
         }
 
         public string StopRecordingScreen(string path)
         {
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentException("Local file path cannot be null or empty", nameof(path));
+            try
+            {          
             string targetFile = SetFilePath("mp4", path, "Mobile_Recording");
             string videoBase64 = string.Empty;
             if (Driver is AndroidDriver)
             {
-                 videoBase64 = ((AndroidDriver)Driver).StopRecordingScreen();
+                videoBase64 = ((AndroidDriver)Driver).StopRecordingScreen();
             }
             else
             {
-                 videoBase64 = ((IOSDriver)Driver).StopRecordingScreen();
+                videoBase64 = ((IOSDriver)Driver).StopRecordingScreen();
             }
             byte[] videoBytes = Convert.FromBase64String(videoBase64);
             File.WriteAllBytes(targetFile, videoBytes); //"format mp4"
             return targetFile;
+            }
+            catch (Exception ex)
+            {
+                throw new($"An error occurred while stop recording screen: {ex.Message}");
+            }
         }
 
         public void HideKeyboard()
@@ -4152,114 +4351,374 @@ namespace Amdocs.Ginger.CoreNET
                 else if (Driver is IOSDriver)
                 {
                     ((IOSDriver)Driver).HideKeyboard();
+                    // ((IOSDriver)Driver).FindElement(By.Name("Cancel")).Click();
+                    //((IOSDriver)Driver).FindElement(By.Name("Done")).Click();
+                    //((IOSDriver)Driver).FindElement(By.Name("Next:")).Click();
+                    //((IOSDriver)Driver).FindElement(By.Name("id.ui.browse.back.button")).Click();
+                    //var outsideElement = Driver.FindElement(By.XPath("//XCUIElementTypeButton"));
+                    //outsideElement.Click();
+                    //var size = Driver.Manage().Window.Size;
+                    //int centerX = size.Width / 2;
+                    //int centerY = size.Height / 2;
+
+                    //var touchAction = new OpenQA.Selenium.Interactions.Actions(Driver);
+                    //touchAction.MoveToLocation(centerX, centerY).Click().Perform();
+                }
+                else
+                {
+                    throw new NotSupportedException($"Driver type '{Driver.GetType().Name}' is not supported for keyboard operations");
                 }
             }
             catch (Exception ex)
             {
-                throw new($"Failed to hide the keyboard: {ex.Message}");
+                throw new InvalidOperationException($"Failed to hide the keyboard: {ex.Message}", ex);
             }
         }
 
         public void PushFileToDevice(string LocalFilePath, string DeviceTargerFolder)
         {
-            byte[] fileContent = System.IO.File.ReadAllBytes(LocalFilePath);
-            string fileName = Path.GetFileName(LocalFilePath);
-            if (Driver is IOSDriver)
+            if (string.IsNullOrEmpty(LocalFilePath))
+                throw new ArgumentException("Local file path cannot be null or empty", nameof(LocalFilePath));
+
+            if (string.IsNullOrEmpty(DeviceTargerFolder))
+                throw new ArgumentException("Device target folder cannot be null or empty", nameof(DeviceTargerFolder));
+
+            if (!File.Exists(LocalFilePath))
+                throw new ArgumentException($"Local file not found: {LocalFilePath}", nameof(LocalFilePath));
+            try
             {
-                ((IOSDriver)Driver).PushFile($"{DeviceTargerFolder}/{fileName}", fileContent);
+                byte[] fileContent = System.IO.File.ReadAllBytes(LocalFilePath);
+                string fileName = Path.GetFileName(LocalFilePath);
+                if (Driver is IOSDriver)
+                {
+                    ((IOSDriver)Driver).PushFile($"{DeviceTargerFolder}/{fileName}", fileContent);
+                }
+                else
+                {
+                    ((AndroidDriver)Driver).PushFile($"{DeviceTargerFolder}/{fileName}", fileContent);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                ((AndroidDriver)Driver).PushFile($"{DeviceTargerFolder}/{fileName}", fileContent);
+                throw new InvalidOperationException($"Failed to push file to device: {ex.Message}", ex);
             }
         }
 
         public void PullFileFromDevice(string DeviceFilePath, string LocalFolderPath)
         {
-            byte[] fileContent;
-            string fileName = Path.GetFileName(DeviceFilePath);
-            if (Driver is IOSDriver)
-            {
-                fileContent = ((IOSDriver)Driver).PullFile($"{DeviceFilePath}");
+            if (string.IsNullOrEmpty(DeviceFilePath))
+                throw new ArgumentException("Device file path cannot be null or empty", nameof(DeviceFilePath));
+
+            if (string.IsNullOrEmpty(LocalFolderPath))
+                throw new ArgumentException("Local folder path cannot be null or empty", nameof(LocalFolderPath));
+            try
+            {    
+                byte[] fileContent;
+                string fileName = Path.GetFileName(DeviceFilePath);
+                if (Driver is IOSDriver)
+                {
+                    fileContent = ((IOSDriver)Driver).PullFile($"{DeviceFilePath}");
+                }
+                else
+                {
+                    fileContent = ((AndroidDriver)Driver).PullFile($"{DeviceFilePath}");
+                }
+                // Save the file content to the local file path
+                System.IO.File.WriteAllBytes($"{LocalFolderPath}{fileName}", fileContent);
             }
-            else 
+            catch (Exception ex)
             {
-                fileContent = ((AndroidDriver)Driver).PullFile($"{DeviceFilePath}");
+                throw new InvalidOperationException($"Failed to pull file from device: {ex.Message}", ex);
             }
-            // Save the file content to the local file path
-            System.IO.File.WriteAllBytes($"{LocalFolderPath}{fileName}", fileContent);
         }
 
         public void SetClipboardText(string text)
         {
-            if (Driver is IOSDriver)
+            if (string.IsNullOrEmpty(text))
             {
-                ((IOSDriver)Driver).SetClipboardText(text, "");
+                throw new ArgumentException("Text cannot be null or empty", nameof(text));
+            }
+            try
+            {   
+                if (Driver is IOSDriver)
+                {
+                    ((IOSDriver)Driver).SetClipboardText(text,"");
+                }
+                else if (Driver is AndroidDriver)
+                {
+                    ((AndroidDriver)Driver).SetClipboardText(text, "");
+                }
+                else
+                {
+                    throw new NotSupportedException($"Driver type '{Driver.GetType().Name}' is not supported for clipboard operations");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to set clipboard text: {ex.Message}", ex);
+            }
+        }
+
+        public void GetSpecificPerformanceData(string appPackage, string specificData, ActMobileDevice act)
+        {
+            // Validate inputs
+            if (string.IsNullOrEmpty(appPackage))
+                throw new ArgumentException("App package cannot be null or empty", nameof(appPackage));
+
+            if (string.IsNullOrEmpty(specificData))
+                throw new ArgumentException("Specific data type cannot be null or empty", nameof(specificData));
+
+            if (act == null)
+                throw new ArgumentException("ActMobileDevice cannot be null", nameof(act));
+            try
+            {
+                // Verify this is an Android driver
+                if (!(Driver is AndroidDriver androidDriver))
+                    throw new InvalidOperationException("This operation is only supported on Android devices");
+
+                IList<object> perfData = ((AndroidDriver)Driver).GetPerformanceData(appPackage, specificData, 5);
+                    var dict = new Dictionary<string, object>();
+                    var keys = (IList<object>)perfData[0]; // keys data
+                    var values = (IList<object>)perfData[1]; // values data
+                    for (int i = 0; i < keys.Count; i++)
+                    {
+                        string key = keys[i].ToString();
+                        object value = values[i];
+                        dict[key] = value;
+                    }
+                    foreach (var entry in dict)
+                    {
+                        if (entry.Key != null)
+                        {
+                            string valueStr = entry.Value?.ToString() ?? string.Empty; // Convert null value to empty string
+                            act.AddOrUpdateReturnParamActual(entry.Key.ToString(), valueStr);
+                        }
+                    }   
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Unsupported driver type" + ex.Message);
+            }                          
+        }
+
+        public string GetDeviceLogs(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentException("Device target folder cannot be null or empty", nameof(path)); 
+            try
+            {  
+                string targetFile = SetFilePath("txt", path, "DeviceLogs");
+                // Get device logs
+                var logEntries = Driver.Manage().Logs.GetLog("logcat").ToList();
+                // Create and write to the file
+                using (StreamWriter writer = new StreamWriter(targetFile, append: true))
+                {
+                    foreach (var logEntry in logEntries)
+                    {
+                        writer.WriteLine($"{logEntry.Timestamp}: {logEntry.Message}");
+                    }
+                }
+                return targetFile;
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions gracefully
+                throw new ApplicationException($"Failed to retrieve device logs: {ex.Message}", ex);
+            }
+        }
+        public void ChosenKey(string charToFind)
+        {
+            // Update XPath for numbers/symbols/Alpha/space
+            // Handle special cases for single quote and double quote
+            var specialChars = new Dictionary<string, string>
+            {
+                 { "\'", "\'" },        // Single quote
+                { "\"", "\"" },         // Double quote
+                { "&", "ampersand" },   // Ampersand
+                {" ", "space" },        // Space 
+            };
+
+            string searchValue;
+
+            if (specialChars.TryGetValue(charToFind, out searchValue))
+            {
+                // Use the mapped value for special characters
+                searchValue = specialChars[charToFind];
             }
             else
             {
-                ((AndroidDriver)Driver).SetClipboardText(text, "");
+                // For standard characters, use the character itself
+                searchValue = charToFind;
+            }
+
+            // Build XPath using the determined search value
+            string xpath = char.Parse(charToFind) == '\'' ? 
+                $"//*[@name=\"{searchValue}\" or @label=\"{searchValue}\" or @value=\"{searchValue}\" or @hint=\"{searchValue}\" or @content-desc=\"{searchValue}\"]"
+                :$"//*[@name='{searchValue}' or @label='{searchValue}' or @value='{searchValue}' or @hint='{searchValue}' or @content-desc='{searchValue}']";
+
+            ((IOSDriver)Driver).FindElements(By.XPath(xpath))[0].Click();
+        }
+        public void switchToNumbersOrSymbols()
+        {
+            var numbersKey = ((IOSDriver)Driver).FindElement(By.XPath("//XCUIElementTypeKey[@name='123' or @label='numbers']"));
+            bool isNumbersActive = numbersKey.GetAttribute("enabled") == "true";
+            if (isNumbersActive)
+            {
+                numbersKey.Click();
             }
         }
-
-        public void GetSpecificPerformanceData(string appPackage, string specificData, ActMobileDevice act) 
+        public void switchToLetters(char c)
         {
-            IList<object> perfData = ((AndroidDriver)Driver).GetPerformanceData(appPackage, specificData, 5);
-            var dict = new Dictionary<string, object>();
-            var keys = (IList<object>)perfData[0]; // keys data
-            var values = (IList<object>)perfData[1]; // values data
-            for (int i = 0; i < keys.Count; i++)
+            if (c != '\'')
             {
-                string key = keys[i].ToString();
-                object value = values[i];
-                dict[key] = value;
-            }            
-            foreach (var entry in dict)
-            {
-                if(entry.Key!=null)
-                {
-                    string valueStr = entry.Value?.ToString() ?? string.Empty; // Convert null value to empty string
-                    act.AddOrUpdateReturnParamActual(entry.Key.ToString(), valueStr);                                                       
-                }                      
-            } 
+                ((IOSDriver)Driver).FindElement(By.XPath("//XCUIElementTypeKey[@name='more' or @label='ABC']")).Click();
+            }
         }
-
-        public string GetDeviceLogs(string path) 
+        public void switchToSpecialKey()
         {
-            string targetFile = SetFilePath("txt", path, "DeviceLogs");
-            // Get device logs
-            var logEntries = Driver.Manage().Logs.GetLog("logcat").ToList();
-            // Create and write to the file
-            using (StreamWriter writer = new StreamWriter(targetFile, append: true))
+            var specialKey = ((IOSDriver)Driver).FindElement(By.XPath("//XCUIElementTypeButton[@name='shift' or @label='symbols']"));
+            bool isSpecialActive = specialKey.GetAttribute("enabled") == "true";
+            if (isSpecialActive)
             {
-                foreach (var logEntry in logEntries)
-                {
-                    writer.WriteLine($"{logEntry.Timestamp}: {logEntry.Message}");
+                specialKey.Click();
+            }
+        }
+        public void switchToCapitalLetter(char c)
+        {
+            var shiftKey = ((IOSDriver)Driver).FindElement(By.XPath("//*[contains(@label,'shift') or contains(@value,'shift')]"));
+            bool isShiftActive = shiftKey.GetAttribute("selected") == "true";
+            if ((c.IsAlphaUpper() && !isShiftActive) || (Char.IsLower(c) && isShiftActive))
+            {
+                shiftKey.Click();
+            }
+        }
+        public void SelectSubKeyboard(char c)
+        {
+            char[] FirstSpecialCharacters = ['-', '/', ':', ';', '(', ')', '$', '&', '@', '"', '\''];
+            char[] SecondSpecialCharacters = { '|', '~', '<', '>', '^', '+', '=', '¥', '£', '€' };
+
+
+            if (c == ' ')
+            {
+                ChosenKey(c.ToString());
+            }
+
+            // Handle numbers or special characters by switching keyboards if necessary
+            else if (char.IsDigit(c) || Array.Exists(FirstSpecialCharacters, element => element == c))
+            {
+                // Switch to numbers/symbols keyboard
+                switchToNumbersOrSymbols();
+                ChosenKey(c.ToString());
+                switchToLetters(c);
+            }
+
+            else if (char.IsPunctuation(c) || Array.Exists(SecondSpecialCharacters, element => element == c))
+            {
+                // Switch to numbers/symbols keyboard
+                switchToNumbersOrSymbols();
+
+                // Switch to secondary symbols keyboard (#+=)
+                switchToSpecialKey();
+                ChosenKey(c.ToString());
+                switchToLetters(c);
+            }
+
+            else if (Char.IsLetter(c))
+            {
+                // Switch to capital letters keyboard
+                switchToCapitalLetter(c);
+                ChosenKey(c.ToString());
+            }
+        }
+       
+        public void TypeUsingIOSkeyboard(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                throw new ArgumentException("Text cannot be null or empty", nameof(text));
+            }
+            try
+            {
+                if (Driver is IOSDriver)
+                {                
+                    foreach (char c in text)
+                    {
+                        SelectSubKeyboard(c);
+                    }
                 }
-            }             
-            return targetFile;
+                else if (Driver is AndroidDriver)
+                {
+                    //string escapedText = text.Replace("'", "\'").Replace("\"", "\"");
+                    ((AndroidDriver)Driver).ExecuteScript("mobile: type", new Dictionary<string, object>{{ "text", text }});
+                }
+                else
+                {
+                    throw new NotSupportedException($"Driver type '{Driver.GetType().Name}' is not supported for keyboard typing");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new($"An error occurred while typing text: {ex.Message}");
+            }
         }
+        public string GetDeviceOSType()
+        {
+             if (Driver is AndroidDriver)
+             {
+                 return "Android";
+             }
+             else if (Driver is IOSDriver)
+             {
+                 return "iOS";
+             }
+             else
+             {
+                throw new InvalidOperationException($"Failed to determine the device OS type: the driver type '{Driver.GetType().Name}' is not AndroidDriver or IOSDriver");
+             } 
+            
+        }
+        public void ClearAppdata(string appId)
+        {
+            if (string.IsNullOrWhiteSpace(appId))
+            {
+                throw new ArgumentException("App ID cannot be null or empty", nameof(appId));
+            }
 
-        //public void TypeUsingIOSkeyboard(string text)
-        //{
-        //    Driver.ExecuteScript("mobile: type", new Dictionary<string, object> { { "text", text } });
-        //}
-
-        //public void ClearAppdata(string appId)
-        //{
-        //    ((AndroidDriver)Driver).ExecuteScript("mobile: clearApp", new Dictionary<string, object> { { "appId", appId } });
-        //}
+            try
+            {
+                if (Driver is IOSDriver)
+                {
+                    // call ResetApp()
+                }
+                else if (Driver is AndroidDriver)
+                {
+                    ((AndroidDriver)Driver).ExecuteScript("mobile: clearApp", new Dictionary<string, object> { { "appId", appId } });
+                }
+                else
+                {
+                    throw new NotSupportedException($"Driver type '{Driver.GetType().Name}' is not supported for clearing app data");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to clear app data for '{appId}': {ex.Message}", ex);
+            }
+        }
 
         public string GetClipboardText()
-        {
-            if (Driver is IOSDriver)
-            {
-                return ((IOSDriver)Driver).GetClipboardText();
-            }
-            else
-            {
-                return ((AndroidDriver)Driver).GetClipboardText();
-            }
+        {           
+           if (Driver is IOSDriver)
+           {
+               return ((IOSDriver)Driver).GetClipboardText();
+           }
+           else if (Driver is AndroidDriver)
+           {
+               return ((AndroidDriver)Driver).GetClipboardText();
+           }
+           else
+           {
+               throw new InvalidOperationException("Unsupported driver type");
+           }     
         }
 
         public void InstallApp(string appPath)
@@ -4278,5 +4737,561 @@ namespace Amdocs.Ginger.CoreNET
             }
 
         }
+        public void EmulateIncomingCall(string phoneNumber)
+        {
+            try
+            {
+                ((AndroidDriver)Driver).MakeGsmCall(phoneNumber, GsmCallActions.Call);
+            }
+            catch (Exception ex)
+            {
+                throw new($"An error occurred while emulating the incoming call: {ex.Message}");
+            }
+
+        }
+        public void EmulateSMS(string phoneNumber, string message)
+        {
+            try
+            {
+                ((AndroidDriver)Driver).SendSms(phoneNumber, message);
+            }
+            catch (Exception ex)
+            {
+                throw new($"An error occurred while emulating the SMS: {ex.Message}");
+
+            }
+        }
+        //public void SetPasteboardContent(string text) 
+        //{
+        //    ((IOSDriver)Driver).ExecuteScript("mobile: setPasteboard", new Dictionary<string, object> { { "content", text }, { "encoding", "plaintext" } });
+
+        //}
+        //public string GetPasteboardContent()
+        //{
+
+        //    return ((IOSDriver)Driver).ExecuteScript("mobile: getPasteboard", new Dictionary<string, object> { { "encoding", "plaintext" } }) as string;
+
+        //}
+        public void GetAppId(ActMobileDevice act)
+        {
+            if (Driver is AndroidDriver)
+            {
+                try
+                {
+                    string appPackage = ((AndroidDriver)Driver).CurrentPackage;
+                    act.AddOrUpdateReturnParamActual("App Package", appPackage);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"An error occurred while retrieving the app package: {ex.Message}", ex);
+                }
+            }
+            else if (Driver is IOSDriver)
+            {
+                try
+                {
+                    var bundleId = ((Dictionary<string, object>)Driver.ExecuteScript("mobile: activeAppInfo"))["bundleId"].ToString();
+                    act.AddOrUpdateReturnParamActual("Bundle Id", bundleId);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"An error occurred while retrieving the bundle ID: {ex.Message}", ex);
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException("Unsupported driver type");
+            }
+        }
+        public void ScreenSize(ActMobileDevice act)
+        {
+            try
+            {
+                Size sizeWindow = Driver.Manage().Window.Size;
+                act.AddOrUpdateReturnParamActual("Width", sizeWindow.Width.ToString());
+                act.AddOrUpdateReturnParamActual("Height", sizeWindow.Height.ToString());
+            }
+            catch (Exception ex)
+            {
+                // Wrap and rethrow for better error context
+                throw new InvalidOperationException("Failed to retrieve or store screen dimensions.", ex);
+            }
+
+        }
+        public void OpenNotificationsPanel()
+        {
+            
+            if (Driver is AndroidDriver)
+            {
+                ((AndroidDriver)Driver).OpenNotifications();
+            }
+            else if (Driver is IOSDriver)
+            {
+                Dictionary<string, object> swipeArgs = new Dictionary<string, object>();
+                swipeArgs.Add("direction", "down");
+                Driver.ExecuteScript("mobile: swipe", swipeArgs);
+            }        
+            else
+            {
+                throw new InvalidOperationException("Unsupported driver type");
+            }
+        }
+        public string GetDeviceTime()
+        {
+            try
+            {
+                return (string)Driver.ExecuteScript("mobile: getDeviceTime");
+            }
+            catch (Exception ex)
+            {
+                // General error handling
+                throw new InvalidOperationException("An unexpected error occurred while fetching device time.", ex);
+            }
+        }
+
+        public void LockForDuration(string time)
+        {
+            if (string.IsNullOrWhiteSpace(time))
+            {
+                throw new ArgumentException("Time parameter cannot be null or empty.", nameof(time));
+            }
+
+            // Check if time contains only digits
+            if (!time.All(char.IsDigit))
+            {
+                throw new ArgumentException("Time must contain only numeric characters.", nameof(time));
+            }
+
+            if (!int.TryParse(time, out int seconds) || seconds < 0)
+            {
+                throw new ArgumentException("Time must be a non-negative integer (in seconds).", nameof(time));
+            }
+            
+            if (Driver is AndroidDriver)
+            {
+                ((AndroidDriver)Driver).Lock();
+                Thread.Sleep(1000 * int.Parse(time));
+                ((AndroidDriver)Driver).Unlock();
+            }
+            else if (Driver is IOSDriver)
+            {
+                 ((IOSDriver)Driver).Lock();
+                 Thread.Sleep(1000 * int.Parse(time));
+                 ((IOSDriver)Driver).Unlock();
+            }
+            else
+            {
+                throw new InvalidOperationException("Unsupported driver type");
+            }                         
+        }
+        public void GetSettings(ActMobileDevice act)
+        {
+            try
+            {
+                Dictionary<string, object> settings;
+
+                if (Driver is AndroidDriver)
+                {
+                    settings = ((AndroidDriver)Driver).Settings;
+                }
+                else
+                {
+                    settings = ((IOSDriver)Driver).Settings;
+                }
+                foreach (KeyValuePair<string, object> entry in settings)
+                {
+                    if (entry.Key != null)
+                    {
+                        string valueStr = entry.Value?.ToString() ?? string.Empty; // Convert null value to empty string
+                        act.AddOrUpdateReturnParamActual(entry.Key.ToString(), valueStr);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Failed to retrieve device settings.", ex);
+            }
+        }
+        public void GetDeviceSystemBars(ActMobileDevice act) //working only on android, extract key,value
+        {
+            Dictionary<string, object> systemBars;
+            
+                if (Driver is AndroidDriver)
+                {
+                    systemBars = ((AndroidDriver)Driver).ExecuteScript("mobile: getSystemBars") as Dictionary<string, object>;
+                    foreach (var bar in systemBars)
+                    {
+                        string barType = bar.Key;
+                        var barProperties = bar.Value as Dictionary<string, object>;
+                        act.AddOrUpdateReturnParamActual(barType.ToString(), "");
+                        foreach (var entry in barProperties)
+                        {
+                            if (entry.Key != null)
+                            {
+                                string valueStr = entry.Value?.ToString() ?? string.Empty; // Convert null value to empty string
+                                act.AddOrUpdateReturnParamActual(entry.Key.ToString(), valueStr);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    throw new("Failed to retrieve system bars information.");
+            }
+        }
+        public void StartNetworkCapture() // working on IOS, need to check the 'network' name with xcrun xctrace list templates run command via terminal
+        {
+            //    string startCaptureData = (string)((IOSDriver)Driver).ExecuteScript("mobile: startPerfRecord", new Dictionary<string, object> { { "profileName", "Network" } });
+            //    string something = "";
+            if(Driver is AndroidDriver)
+            {
+                ((AndroidDriver)Driver).ExecuteScript("mobile: startLogsBroadcast", new Dictionary<string, object> {
+                { "options", new Dictionary<string, object>{{ "logType", "logcat" } }}});
+                Thread.Sleep(1000*10);
+            }
+ 
+             else if (Driver is IOSDriver)
+            {
+                ((IOSDriver)Driver).ExecuteScript("mobile: startPerfRecord", new Dictionary<string, object>{
+                { "profileName", "Network" }});
+            }
+            else
+            {
+                throw new InvalidOperationException("Unsupported driver type");
+            }
+        }
+        public string StopNetworkCapture() // working on IOS, need to check the 'network' name with xcrun xctrace list templates run command via terminal
+        {
+            //    string captureData = (string)((IOSDriver)Driver).ExecuteScript("mobile: stopPerfRecord", new Dictionary<string, object> { { "profileName", "Network" } });
+            //    return captureData;
+            if (Driver is AndroidDriver )
+            {
+                string logNetwork = (string)((AndroidDriver)Driver).ExecuteScript("mobile: stopLogsBroadcast");
+                return logNetwork;
+            }
+            else if (Driver is IOSDriver)
+            {
+                 string logsNetwork = (string)((IOSDriver)Driver).ExecuteScript("mobile: stopPerfRecord", new Dictionary<string, object>{ 
+                { "profileName", "Network" }});
+                return logsNetwork;
+            }
+            else
+            {
+                throw new InvalidOperationException("Unsupported driver type");
+            }
+        }
+        public void PushFolder(string localFolderPath, string remoteFolderPath) // working for android, for ios need to see the files via itunes 
+        //Appium currently doesn't directly support pushing an entire folder in one go. Instead, you can push all the files and recreate the folder structure on the device programmatically.
+        {
+            if (!Directory.Exists(localFolderPath))
+            {
+                throw new DirectoryNotFoundException($"Local Folder not found: {localFolderPath}");
+            }
+            if (string.IsNullOrEmpty(remoteFolderPath))
+            {
+                throw new ArgumentException("Device Target Folder path cannot be null or empty", nameof(remoteFolderPath));
+            }
+            foreach (var filePath in Directory.GetFiles(localFolderPath))
+            {
+                var remoteFilePath = remoteFolderPath + Path.GetFileName(filePath);
+                try
+                {
+                    Driver.PushFile(remoteFilePath, new FileInfo(filePath));
+                }
+                catch (Exception ex)
+                {
+                    throw new($"Failed to push file {filePath}: {ex.Message}");
+                }
+            }
+        }
+        //public void StartDeviceLogs()
+        //{
+        //    try
+        //    {
+        //        if (Driver is AndroidDriver)
+        //        {
+        //            Driver.ExecuteScript("mobile: startLogsBroadcast");
+
+        //        }
+        //        else if (Driver is IOSDriver)
+        //        {
+        //            Driver.ExecuteScript("mobile: startPerfRecord", new Dictionary<string, object> { { "profileName", "Network" } });
+
+        //        }
+        //        else
+        //        {
+        //            throw new ArgumentException("Unsupported driver type");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new($"Error starting device logs: {ex.Message}");
+        //    }
+        //}
+
+        //public void StopDeviceLogs()
+        //{
+        //    try
+        //    {
+        //        if (Driver is AndroidDriver) 
+        //        { 
+        //            var logs = Driver.Manage().Logs.GetLog("logcat");
+        //        }
+        //        else if (Driver is IOSDriver)
+        //        {
+        //            var perfLogs = Driver.ExecuteScript("mobile: stopPerfRecord", new Dictionary<string, object> { { "profileName", "Network" } });                   
+        //        }
+        //        else
+        //        {
+        //            throw new ArgumentException("Unsupported driver type");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new($"Error stopping device logs: {ex.Message}");
+
+        //    }
+        //} 
+        public void ToggleLocationServices()
+        {
+            if (Driver is AndroidDriver)
+            {
+                ((AndroidDriver)Driver).ToggleLocationServices();
+            }
+            else if (Driver is IOSDriver)
+            {
+
+                throw new("Toggling location services is not directly supported on iOS");
+            }
+            else
+            {
+                throw new InvalidOperationException("Unsupported driver type");
+            }
+       
+        }
+        public void ToggleData() //not working, no SIM to the device
+        {
+            if (Driver is AndroidDriver)
+            {
+                ConnectionType currentConnection = ((AndroidDriver)Driver).ConnectionType;
+
+                if (currentConnection.HasFlag(ConnectionType.DataOnly))
+                {
+                    ((AndroidDriver)Driver).ConnectionType = ConnectionType.None;   // disable
+                }
+                else
+                {
+                    ((AndroidDriver)Driver).ConnectionType = ConnectionType.DataOnly; //enable
+                }
+            }
+            else if (Driver is IOSDriver)
+            {
+
+                throw new("Toggling data services is not directly supported on iOS");
+            }
+            else
+            {
+                throw new InvalidOperationException("Unsupported driver type");
+            }
+        }
+
+        public void ToggleAirplaneMode()
+        {
+            if (Driver is AndroidDriver)
+            {
+                ConnectionType currentConnection = ((AndroidDriver)Driver).ConnectionType;
+
+                if (currentConnection.HasFlag(ConnectionType.AirplaneMode))
+                {
+                    ((AndroidDriver)Driver).ConnectionType = ConnectionType.None;   // disable
+                }
+                else
+                {
+                    ((AndroidDriver)Driver).ConnectionType = ConnectionType.AirplaneMode; //enable
+                }
+            }
+            else if (Driver is IOSDriver)
+            {
+
+                throw new("Toggle Airplane Mode is not directly supported on iOS");
+            }
+            else
+            {
+                throw new InvalidOperationException("Unsupported driver type");
+            }
+        }
+        public void ToggleWifi()
+        {
+            if (Driver is AndroidDriver)
+            {
+                ConnectionType currentConnection = ((AndroidDriver)Driver).ConnectionType;
+
+                if (currentConnection.HasFlag(ConnectionType.WifiOnly))
+                {
+                    ((AndroidDriver)Driver).ConnectionType = ConnectionType.None;   // disable
+                }
+                else
+                {
+                    ((AndroidDriver)Driver).ConnectionType = ConnectionType.WifiOnly; //enable
+                }
+            }
+            else if (Driver is IOSDriver)
+            {
+                throw new("Toggle Wifi is not directly supported on iOS");
+            }
+            else
+            {
+                throw new InvalidOperationException("Unsupported driver type");
+            }
+        }
+        public bool IsIMEActive()
+        {
+            if (Driver is AndroidDriver)
+            {
+                return Driver.IsIMEActive();
+            }
+            else if (Driver is IOSDriver)
+            {
+                throw new("IME Active is not supported on iOS"); 
+            }
+            else
+            {
+                throw new InvalidOperationException("Unsupported driver type");
+            }
+        }
+        public string GetIMEActiveEngine()
+        {
+            if (Driver is AndroidDriver)
+            {
+                return Driver.GetIMEActiveEngine();
+            }
+            else if (Driver is IOSDriver)
+            {
+                throw new("IME Active Engine is not supported on iOS");
+            }
+            else
+            {
+                throw new InvalidOperationException("Unsupported driver type");
+            }        
+        }
+        public void StartActivity(string appPackage, string appActivity)// working on android   com.facebook.katana // com.facebook.katana.LoginActivity(required automatically details login)
+        {
+            // com.google.android.youtube // .HomeActivity
+
+            if (Driver is AndroidDriver)
+            {
+                ((AndroidDriver)Driver).StartActivity(appPackage, appActivity);
+
+            }
+            else if (Driver is IOSDriver)
+            {
+                throw new NotSupportedException("Start Activity is not supported on iOS");
+            }
+            else
+            {
+                throw new InvalidOperationException("Unsupported driver type");
+            }          
+        }
+        public void GetGeoLocation(ActMobileDevice act) // working only on android(required connecting to WIFI) , for ios need to find "WebDriverAgentRunner" in location services screen and set its location access to "Always."
+        {
+            try { 
+            Location location = Driver switch
+            {
+                AndroidDriver  => ((AndroidDriver)Driver).Location,
+                IOSDriver  => ((IOSDriver)Driver).Location,
+                _ => throw new InvalidOperationException("Unsupported driver type")
+            };
+            //else if (Driver is IOSDriver)
+            //{
+            //    // Enable location services for WebDriverAgentRunner 
+            //    //    ((IOSDriver)Driver).ExecuteScript("mobile: configureLocalization", new Dictionary<string, object>
+            //    //{{ "bundleId", "com.apple.WebDriverAgentRunner" },{ "locationServicesEnabled", true },{ "locationServicesAuthorization", 3 }  }); // 3 means "Always"
+            //    location = ((IOSDriver)Driver).Location;
+            //}                       
+            act.AddOrUpdateReturnParamActual("Latitude", location.Latitude.ToString());
+            act.AddOrUpdateReturnParamActual("longitude", location.Longitude.ToString());
+            act.AddOrUpdateReturnParamActual("Altitude", location.Altitude.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Failed to retrieve or store geolocation data.", ex);
+            }
+        }
+
+        public void GrantAppPermission(string appPackage, string permission, bool grant = true)
+        {
+            if (string.IsNullOrEmpty(appPackage) || appPackage == "default")
+            {
+                throw new ArgumentException("Invalid app package name", nameof(appPackage));
+            }
+            if (string.IsNullOrEmpty(permission) || string.IsNullOrEmpty(appPackage))
+            {
+                throw new ArgumentException("Permission cannot be null or empty", nameof(permission));
+            }
+                               
+            if (Driver is AndroidDriver)
+            {
+                if (permission.Contains("android.permission."))
+                {                  
+                    ((AndroidDriver)Driver).ExecuteScript("mobile: changePermissions", new Dictionary<string, object>{ { "action", grant ? "grant" : "revoke" },{ "appPackage", appPackage },
+                    { "permissions", new[] { permission } }});
+                }
+                
+                else
+                {
+                    throw new InvalidOperationException($"Failed to {(grant ? "grant" : "revoke")} permission to '{appPackage}' with command '{permission}'");
+                }
+            }
+            else if (Driver is IOSDriver)
+            {
+                //((IOSDriver)Driver).ExecuteScript("mobile: changePermissions", new Dictionary<string, object>{{ "action", grant ? "grant" : "revoke" },{ "bundleId", appPackage },
+                //{ "permissions", new[] { permission } } });
+                throw new("Grant App Permission services are not directly supported on iOS");
+            }                              
+        }
+        public void SendAppToBackground(string time)
+        {
+            if (string.IsNullOrWhiteSpace(time))
+            {
+                throw new ArgumentException("Time parameter cannot be null or empty.", nameof(time));
+            }
+            if (!time.All(char.IsDigit))
+            {
+                throw new ArgumentException("Time must contain only numeric characters.", nameof(time));
+            }
+            if (!int.TryParse(time, out int seconds) || seconds < 0)
+            {
+                throw new ArgumentException("Time must be a non-negative integer (in seconds).", nameof(time));
+            }
+            try
+            {
+                Driver.BackgroundApp(TimeSpan.FromSeconds(int.Parse(time)));
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Failed to send the app to the background.", ex);
+            }
+            
+        }
+        public void SetNetworkConnection()
+        {
+            if (Driver is AndroidDriver)
+            {
+                //Driver.ExecuteScript("mobile: setNetworkConnection", new Dictionary<string, object> { { "type", connectionType } });
+                ToggleWifi();
+                ToggleAirplaneMode();
+                ToggleData();
+                ToggleLocationServices();             
+            }
+            else if (Driver is IOSDriver)
+            {
+                throw new("Set Connection for Wifi/Airplane Mode/Data/Location services are not directly supported on iOS");
+            }
+            else
+            {
+                throw new InvalidOperationException("Unsupported driver type");
+            }
+        }
     }
+     
 }

@@ -25,7 +25,9 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
+using System.Drawing.Drawing2D;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -81,7 +83,9 @@ namespace Ginger.Actions
 
             xFilePathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.FilePathInput, nameof(ActInputValue.Value), true, true, UCValueExpression.eBrowserType.File, "*");
 
-            xFolderPathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.FolderPathInput, nameof(ActMobileDevice.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");            
+            xFolderPathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.FolderPathInput, nameof(ActMobileDevice.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");
+
+            xFolderPathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.LocalFolderPathInput, nameof(ActMobileDevice.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");
 
             xAppPackageVE.Init(Context.GetAsContext(mAct.Context), mAct.ActionAppPackage, nameof(ActInputValue.Value));
 
@@ -232,8 +236,8 @@ namespace Ginger.Actions
             xFileTransferPnl.Visibility = Visibility.Collapsed;
             xSpecificPerformanceDataPnl.Visibility = Visibility.Collapsed;
             xDeviceRotationPnl.Visibility = Visibility.Collapsed;
-          
             xMultiTouchGrid.Visibility = Visibility.Collapsed;
+            xFolderTransferPnl.Visibility = Visibility.Collapsed;
 
             switch (mAct.MobileDeviceAction)
             {
@@ -285,8 +289,9 @@ namespace Ginger.Actions
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.OpenDeeplink:
-                    xAppPnl.Visibility = Visibility.Visible; 
+                    xAppPnl.Visibility = Visibility.Visible;
                     xInputLabelVE.Content = "Link:";
+                    xInputTextBlock.Text = "";
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
 
@@ -295,21 +300,25 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.IsAppInstalled:
                 case ActMobileDevice.eMobileDeviceAction.RemoveApp:
                 case ActMobileDevice.eMobileDeviceAction.QueryAppState:
+                case ActMobileDevice.eMobileDeviceAction.ClearAppdata:
                     xAppPnl.Visibility = Visibility.Visible;
                     break;
                     
                 case ActMobileDevice.eMobileDeviceAction.SetContext:
                     xInputLabelVE.Content = "Context to Set:";
+                    xInputTextBlock.Text = "";
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.RunScript:
                     xInputLabelVE.Content = "Script:";
+                    xInputTextBlock.Text = "";
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.StartRecordingScreen:
-                    xInputLabelVE.Content = "Note: Max duration recording: 30 min.";
+                    xInputLabelVE.Content = "Note: Max duration recording: 30 min."; 
+                    xInputTextBlock.Text = "";
                     xInputVE.Visibility = Visibility.Collapsed;
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
@@ -342,7 +351,13 @@ namespace Ginger.Actions
 
                 case ActMobileDevice.eMobileDeviceAction.SetClipboardText:
                     xInputLabelVE.Content = "Text:";
+                    xInputTextBlock.Text = "";
                     xInputPnl.Visibility = Visibility.Visible;
+                    break;
+                case ActMobileDevice.eMobileDeviceAction.TypeUsingIOSkeyboard:
+                    xInputLabelVE.Content = "Text:";
+                    xInputTextBlock.Text = "Note: For Android, Cannot Combine Between (') and (\") at The Same Text.";
+                    xInputPnl.Visibility = Visibility.Visible;               
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.GetSpecificPerformanceData:
@@ -353,10 +368,39 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.RotateSimulation:
                     xDeviceRotationPnl.Visibility = Visibility.Visible;
                     break;
-               
+                case ActMobileDevice.eMobileDeviceAction.LockForDuration:
+                    xInputLabelVE.Content = "Set a Time Duration for Lock(Seconds):";
+                    xInputTextBlock.Text = "";
+                    xInputPnl.Visibility = Visibility.Visible;
+                    break;
 
                 case ActMobileDevice.eMobileDeviceAction.PerformMultiTouch:
                     xMultiTouchGrid.Visibility = Visibility.Visible;
+                    break;
+                case ActMobileDevice.eMobileDeviceAction.GrantAppPermission:
+                    xAppPnl.Visibility = Visibility.Visible;
+                    xInputLabelVE.Content = "Permission:";
+                    xInputTextBlock.Text = ""; 
+                    xInputPnl.Visibility = Visibility.Visible;
+                    break;
+                case ActMobileDevice.eMobileDeviceAction.PushFolder:                  
+                    xFolderPathLbl.Content = "Local Folder to Push:";
+                    xFolderTransferPnl.Visibility = Visibility.Visible;
+                    xFileTransferPnl.Visibility = Visibility.Visible;
+                    xFilePathTextBox.Visibility = Visibility.Collapsed;
+                    xFilePathLbl.Visibility = Visibility.Collapsed;
+                    break;
+
+                case ActMobileDevice.eMobileDeviceAction.SendAppToBackground:
+                    xInputLabelVE.Content = "Set a Time Duration for Backgroud(Seconds):";
+                    xInputTextBlock.Text = "";
+                    xInputPnl.Visibility = Visibility.Visible; 
+                    break;
+                case ActMobileDevice.eMobileDeviceAction.StartActivity:
+                    xAppPnl.Visibility = Visibility.Visible;
+                    xInputLabelVE.Content = "Activity:";
+                    xInputTextBlock.Text = "";
+                    xInputPnl.Visibility = Visibility.Visible;
                     break;
             }
         }
