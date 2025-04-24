@@ -28,6 +28,7 @@ using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
+using Ginger.UserControlsLib.TextEditor;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.Drivers.Common;
@@ -1226,6 +1227,17 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You can not edit Locator which was auto learned, please duplicate it and create customized Locator.");
                     disabeledLocatorsMsgShown = true;
+                }
+
+
+                if (!string.IsNullOrEmpty(selectedVarb.ToString()))
+                {
+                    string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(selectedVarb.ToString());
+
+                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
+                    docPage.ShowAsWindow("Locator Value");
+
+                    GingerCoreNET.GeneralLib.General.DeleteTempTextFile(tempFilePath);
                 }
             }
             else
