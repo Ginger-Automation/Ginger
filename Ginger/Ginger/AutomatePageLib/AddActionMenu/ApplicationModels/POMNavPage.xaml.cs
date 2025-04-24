@@ -221,7 +221,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 view.Clear();
                 foreach (var el in mPOM.MappedUIElements.OrderBy(e => e.ElementName))
+                {
                     view.Add(el);
+                }
             }
             else
             {
