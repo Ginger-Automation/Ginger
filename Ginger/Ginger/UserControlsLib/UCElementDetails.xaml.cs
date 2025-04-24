@@ -244,6 +244,7 @@ namespace Ginger
             [
                 new GridColView() { Field = "Name", WidthWeight = 3, ReadOnly = true },
                 new GridColView() { Field = "Value", WidthWeight = 5, ReadOnly = true },
+                new GridColView() { Field = "", WidthWeight = 1, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedElementSectionGrid.Resources["xCopyPropertyValueButtonTemplate"] },
                 new GridColView() { Field = nameof(ControlProperty.Category), WidthWeight = 2, ReadOnly = true, BindingMode = BindingMode.TwoWay },
             ]
             };
@@ -1154,10 +1155,19 @@ namespace Ginger
             }
         }
 
+
         bool FriendlyLocatorChanged = false;
         private void xFriendlyLocatorsGrid_RowChangedEvent(object sender, EventArgs e)
         {
             FriendlyLocatorChanged = true;
+        }
+
+        private void xCopyPropertyButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is ControlProperty property && !string.IsNullOrEmpty(property.Value))
+            {
+                GingerCore.General.SetClipboardText(property.Value);
+            }
         }
     }
 }
