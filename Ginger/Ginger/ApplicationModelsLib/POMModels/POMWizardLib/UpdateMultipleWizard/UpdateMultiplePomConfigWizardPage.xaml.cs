@@ -68,7 +68,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                     {
                         xTargetApplicationComboBox.SelectedIndex = 0;
                     }
-                    
+
                     SetPomSelectionExpanderSection();
                     SetPomSelectionGridView();
                     break;
@@ -87,7 +87,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
             }
             else
             {
-
                 if (xTargetApplicationComboBox.SelectedItem is ApplicationPlatform selectedplatform)
                 {
                     mAppPlatform = selectedplatform.Platform;
@@ -107,7 +106,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                 new GridColView() { Field = nameof(ApplicationPOMModel.Selected), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox },
                 new GridColView() { Field = nameof(ApplicationPOMModel.Name), Header = "POM Name", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true },
                 new GridColView() { Field = nameof(ApplicationPOMModel.PageURL), Header = "Page URL", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true }
-                
+
             ]
             };
 
@@ -120,7 +119,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
         private void SetPomSelectionExpanderSection()
         {
             mWizard.mMultiPomDeltaUtils.mPOMModels = [];
-            mWizard.mMultiPomDeltaUtils.mPOMModels = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where WorkSpace.Instance.Solution.GetTargetApplicationPlatform(x.TargetApplicationKey) == mAppPlatform select x).ToList());
+            mWizard.mMultiPomDeltaUtils.mPOMModels = GingerCore.General.ConvertListToObservableList(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>()
+                       .Where(model => model.TargetApplicationKey.Guid == mWizard.mMultiPomDeltaUtils.POM.TargetApplicationKey.Guid)
+                       .ToList());
             foreach (var pom in mWizard.mMultiPomDeltaUtils.mPOMModels)
             {
                 pom.Selected = false;

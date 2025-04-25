@@ -1072,7 +1072,7 @@ namespace GingerCoreNET.GeneralLib
                     {
                         if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Contains(elem.ApplicationAPIModel.Guid))
                         {
-                            elem.PomUpdateStatus = $"{elem.ApplicationAPIModel.Name} Updated";                           
+                            elem.PomUpdateStatus = $"'{elem.ApplicationAPIModel.Name}' Updated";                           
                             var aPOMModified = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().First(aPOM => aPOM.Guid == elem.ApplicationAPIModel.Guid);                         
                             if (aPOMModified != null)
                             {
@@ -1085,13 +1085,13 @@ namespace GingerCoreNET.GeneralLib
                         }
                         else
                         {
-                            elem.PomUpdateStatus = $"{elem.ApplicationAPIModel.Name} Not Updated";
+                            elem.PomUpdateStatus = $"'{elem.ApplicationAPIModel.Name}' Not Updated";
                         }
 
                         elem.RunSetStatus = mSelectedPomWithRunset.SelectedRunset.RunSetExecutionStatus;
                         if (elem.RunSetStatus.Equals(Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed))
                         {
-                            elem.PomUpdateStatus = $"{elem.PomUpdateStatus} and Runset status Failed";
+                            elem.PomUpdateStatus = $"'{elem.PomUpdateStatus}' and Runset status Failed";
                         }
 
                     }
