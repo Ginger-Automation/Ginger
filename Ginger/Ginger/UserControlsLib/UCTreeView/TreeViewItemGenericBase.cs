@@ -253,10 +253,10 @@ namespace GingerWPF.TreeViewItemsLib
             try
             {
                 object item = ((ITreeViewItem)this).NodeObject();
-                if (item is ApplicationPOMModel pOMModel)
+                if (item is ApplicationPOMModel pomModel)
                 {
-                    POMEditPage mPOMEditPage = new POMEditPage((ApplicationPOMModel)item, Ginger.General.eRIPageViewMode.Standalone);
-                    mPOMEditPage.ShowAsWindow(eWindowShowStyle.Dialog);
+                    var editPage = new POMEditPage(pomModel, Ginger.General.eRIPageViewMode.Standalone);
+                    editPage.ShowAsWindow(eWindowShowStyle.Dialog);
                 }
 
             }
