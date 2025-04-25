@@ -92,7 +92,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             mContextMenu = new ContextMenu();
             TreeViewItem.Unselected -= TreeViewItem_Unselected;
             TreeViewItem.Unselected += TreeViewItem_Unselected;
-            AddItemNodeBasicManipulationsOptions(mContextMenu);
+            AddItemNodeBasicManipulationsOptions(mContextMenu, allowEditPOM: true);
 
             AddSourceControlOptions(mContextMenu);
         }
