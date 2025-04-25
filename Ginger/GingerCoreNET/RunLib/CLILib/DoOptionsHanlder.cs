@@ -531,7 +531,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 : new List<Guid>();
 
             var ApplicationPOMModelrunsetConfigMapping = new Dictionary<ApplicationPOMModel, List<RunSetConfig>>();
-            var mPOMModels = new ObservableList<ApplicationPOMModel>();
 
             if (POMGuidsList.Any() && RunsetGuidsList.Any())
             {
@@ -543,7 +542,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     RunsetGuidsList.Select(runsetGuid => WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<RunSetConfig>(runsetGuid))
                 );
 
-                mPOMModels = GingerCoreNET.GeneralLib.General.ConvertListToObservableList(
+               var mPOMModels = GingerCoreNET.GeneralLib.General.ConvertListToObservableList(
                     applicationPOMModels
                         .Where(x => WorkSpace.Instance.Solution.GetTargetApplicationPlatform(x.TargetApplicationKey) == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
                         .ToList()
@@ -554,17 +553,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     runSetConfigList, businessFlows, mPOMModels, ApplicationPOMModelrunsetConfigMapping
                 );
 
-                var updatePOMNames = string.Empty;
                 foreach (var item in multiPomRunSetMappingsList)
                 {
                     await GingerCoreNET.GeneralLib.General.RunSelectedRunset(item, multiPomRunSetMappingsList, mCLIHelper);
-                    updatePOMNames += $"{item.PomUpdateStatus},";
                 }
-
-                if (!string.IsNullOrEmpty(updatePOMNames))
-                {
-                    Reporter.ToLog(eLogLevel.INFO, $"POM Status: {updatePOMNames}");
-                }
+                var statuses = multiPomRunSetMappingsList.Select(m => m.PomUpdateStatus);
+                Reporter.ToLog(eLogLevel.INFO, $"POM Status: {string.Join(", ", statuses)}");
             }
             else
             {
