@@ -111,14 +111,18 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
 
         private void SetPomSelectionExpanderSection()
         {
-            mWizard.mMultiPomDeltaUtils.mPOMModels = [];
-            mWizard.mMultiPomDeltaUtils.mPOMModels = GingerCore.General.ConvertListToObservableList(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>()
-                       .Where(model => model.TargetApplicationKey.Guid == mWizard.mMultiPomDeltaUtils.POM.TargetApplicationKey.Guid)
-                       .ToList());
-            foreach (var pom in mWizard.mMultiPomDeltaUtils.mPOMModels)
-            {
-                pom.Selected = false;
-            }
+            mWizard.mMultiPomDeltaUtils.mPOMModels = new();
+            mWizard.mMultiPomDeltaUtils.mPOMModels = GingerCore.General.ConvertListToObservableList(
+            WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(model =>
+            model.TargetApplicationKey != null &&
+            mWizard.mMultiPomDeltaUtils.POM.TargetApplicationKey != null &&
+            model.TargetApplicationKey.Guid == mWizard.mMultiPomDeltaUtils.POM.TargetApplicationKey.Guid)
+                       .Select(pom =>
+                       {
+                           pom.Selected = false;
+                           return pom;
+                       })
+                     .ToList());
             xPomSelectionGrid.DataSourceList = mWizard.mMultiPomDeltaUtils.mPOMModels;
         }
 

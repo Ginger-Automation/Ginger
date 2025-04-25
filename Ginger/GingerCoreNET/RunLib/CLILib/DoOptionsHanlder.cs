@@ -506,18 +506,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         runSetConfigList, businessFlows, applicationPOMModels, ApplicationPOMModelrunsetConfigMapping
                     );
 
-                    // Run selected runsets and log updated POM names
-                    var updatePOMNames = string.Empty;
                     foreach (var item in multiPomRunSetMappingsList)
                     {
                         await GingerCoreNET.GeneralLib.General.RunSelectedRunset(item, multiPomRunSetMappingsList, mCLIHelper);
-                        updatePOMNames += $"{item.PomUpdateStatus},";
                     }
-
-                    if (!string.IsNullOrEmpty(updatePOMNames))
-                    {
-                        Reporter.ToLog(eLogLevel.INFO, $"POM Status: {updatePOMNames}");
-                    }
+                    var statuses = multiPomRunSetMappingsList.Select(m => m.PomUpdateStatus);
+                    Reporter.ToLog(eLogLevel.INFO, $"POM Status: {string.Join(", ", statuses)}");
                 }
             }
             catch (Exception ex)

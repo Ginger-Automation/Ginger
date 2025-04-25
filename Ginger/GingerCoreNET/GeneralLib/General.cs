@@ -1073,7 +1073,7 @@ namespace GingerCoreNET.GeneralLib
                         if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Contains(elem.ApplicationAPIModel.Guid))
                         {
                             elem.PomUpdateStatus = $"'{elem.ApplicationAPIModel.Name}' Updated";                           
-                            var aPOMModified = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().First(aPOM => aPOM.Guid == elem.ApplicationAPIModel.Guid);                         
+                            var aPOMModified = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().FirstOrDefault(aPOM => aPOM.Guid == elem.ApplicationAPIModel.Guid);
                             if (aPOMModified != null)
                             {
                                 SaveHandler.Save(aPOMModified);

@@ -107,8 +107,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
 
 
-        [Option("targetApplication", Required = false, Default = false, HelpText = "(Optional) After passing this flag, all POMs used in Runsets will be updated.")]
-        public string TargetApplication { get; set; }
+        [Option("targetApplication", Required = false, HelpText = "(Optional) Target application name or GUID whose POMs should be updated.")]
+        public string TargetApplication { get; set; } = string.Empty;
 
         [Option("applicationModels", Required = false, HelpText = "(Optional) Pass the semicolon-separated values of POM GUIDs to update the specified POMs used in Runsets.")]
         public string ApplicationModels { get; set; }
