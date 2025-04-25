@@ -47,7 +47,7 @@ namespace GingerCore.SourceControl
 
         public override bool IsSupportingGetLatestForIndividualFiles { get { return true; } }
 
- 
+
 
         public override eSourceControlType GetSourceControlType { get { return eSourceControlType.SVN; } }
         public override List<string> GetSourceControlmConflict { get { return mConflictsPaths; } }
@@ -1192,7 +1192,7 @@ namespace GingerCore.SourceControl
             throw new NotImplementedException();
         }
 
-        public override string GetCurrentBranchForSolution()
+        public override string GetCurrentWorkingBranch()
         {
             throw new NotImplementedException();
         }
@@ -1218,6 +1218,14 @@ namespace GingerCore.SourceControl
         }
 
         public override bool GetProjectWithProgress(string Path, string URI, ref string error, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+        public override bool CreateBranch( string newBranchName, ref string error)
+        {
+            throw new NotImplementedException();
+        }
+        public override List<string> GetLocalBranches()
         {
             throw new NotImplementedException();
         }
