@@ -18,20 +18,13 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
-using Ginger.Agents;
 using Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib;
 using Ginger.UserControls;
 using GingerCore;
-using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerTest.WizardLib;
 using GingerWPF.WizardLib;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
