@@ -77,7 +77,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                         ObservableList<GingerCore.BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.BusinessFlow>();
 
                         var selectedPOMModels = mWizard.mMultiPomDeltaUtils.mPOMModels.Where(x => x.Selected);
-                  
+
                         mWizard.mMultiPomDeltaUtils.MultiPomRunSetMappingList = GingerCoreNET.GeneralLib.General.GetSelectedRunsetList(RunSetConfigList, businessFlows, selectedPOMModels, ApplicationPOMModelrunsetConfigMapping);
                     }
                     catch (Exception ex)
@@ -128,7 +128,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
         {
             foreach (MultiPomRunSetMapping pom in mWizard.mMultiPomDeltaUtils.MultiPomRunSetMappingList)
             {
-                pom.LastUpdatedTime = DateTime.ParseExact(pom.ApplicationAPIModel.RepositoryItemHeader.LastUpdate.ToString(), "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd HH:mm:ss");
+                pom.LastUpdatedTime = pom.ApplicationAPIModel.RepositoryItemHeader.LastUpdate.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
             }
             xPomWithRunsetSelectionGrid.DataSourceList = mWizard.mMultiPomDeltaUtils.MultiPomRunSetMappingList;
         }

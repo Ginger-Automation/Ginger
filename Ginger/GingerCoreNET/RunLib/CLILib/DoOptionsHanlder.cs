@@ -469,12 +469,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     return;
                 }
 
-                // Update POM data based on target application
-                if (string.IsNullOrEmpty(mOpts.TargetApplication))
-                {
-                    await UpdateMultiPOMData(mOpts.ApplicationModels, mOpts.RunSets);
-                }
-                else
+                if (!string.IsNullOrEmpty(mOpts.TargetApplication))
                 {
                     string targetApplication = mOpts.TargetApplication;
                     ApplicationPlatform? targetApp = null;
@@ -495,16 +490,35 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         return;
                     }
 
-                    var applicationPOMModels = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>()
-                        .Where(model => model.TargetApplicationKey.Guid == targetApp.Guid)
-                        .ToList();
+                    var POMGuidsList = !string.IsNullOrEmpty(mOpts.ApplicationModels) ? mOpts.ApplicationModels.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(g => Guid.TryParse(g.Trim(), out var id) ? id : Guid.Empty).Where(id => id != Guid.Empty).ToList() : new List<Guid>();
+
+                    var RunsetGuidsList = !string.IsNullOrEmpty(mOpts.RunSets) ? mOpts.RunSets.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(g => Guid.TryParse(g.Trim(), out var id) ? id : Guid.Empty).Where(id => id != Guid.Empty).ToList() : new List<Guid>();
 
                     var ApplicationPOMModelrunsetConfigMapping = new Dictionary<ApplicationPOMModel, List<RunSetConfig>>();
-                    var runSetConfigList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
                     var businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.BusinessFlow>();
-                    var multiPomRunSetMappingsList = GingerCoreNET.GeneralLib.General.GetSelectedRunsetList(
-                        runSetConfigList, businessFlows, applicationPOMModels, ApplicationPOMModelrunsetConfigMapping
-                    );
+                    ObservableList<RunSetConfig> runSetConfigList;
+                    List<ApplicationPOMModel> applicationPOMModels;
+
+                    if (POMGuidsList.Any() && RunsetGuidsList.Any())
+                    {
+                        applicationPOMModels = POMGuidsList.Select(pomGuid => WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(pomGuid)).Where(model => model.TargetApplicationKey.Guid == targetApp.Guid).ToList();
+
+                        runSetConfigList = new ObservableList<RunSetConfig>(RunsetGuidsList.Select(runsetGuid => WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<RunSetConfig>(runsetGuid)));
+
+                    }
+                    else if (POMGuidsList.Any())
+                    {
+                        applicationPOMModels = POMGuidsList.Select(pomGuid => WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(pomGuid)).Where(model => model.TargetApplicationKey.Guid == targetApp.Guid).ToList();
+
+                        runSetConfigList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                    }
+                    else
+                    {
+                        applicationPOMModels = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(model => model.TargetApplicationKey.Guid == targetApp.Guid).ToList();
+
+                        runSetConfigList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                    }
+                    var multiPomRunSetMappingsList = GingerCoreNET.GeneralLib.General.GetSelectedRunsetList(runSetConfigList, businessFlows, applicationPOMModels, ApplicationPOMModelrunsetConfigMapping);
 
                     foreach (var item in multiPomRunSetMappingsList)
                     {
@@ -513,59 +527,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     var statuses = multiPomRunSetMappingsList.Select(m => m.PomUpdateStatus);
                     Reporter.ToLog(eLogLevel.INFO, $"POM Status: {string.Join(", ", statuses)}");
                 }
+
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Target application is empty or null.");
+                    return;
+
+                }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"An unexpected error occurred while updating POM. Error:",ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"An unexpected error occurred while updating POM. Error:", ex);
             }
         }
 
-        private async Task UpdateMultiPOMData(string POMGuids, string RunsetGuids)
-        {
-            var POMGuidsList = !string.IsNullOrEmpty(POMGuids)
-                ? POMGuids.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(g => Guid.Parse(g.Trim())).ToList()
-                : new List<Guid>();
-
-            var RunsetGuidsList = !string.IsNullOrEmpty(RunsetGuids)
-                ? RunsetGuids.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(g => Guid.Parse(g.Trim())).ToList()
-                : new List<Guid>();
-
-            var ApplicationPOMModelrunsetConfigMapping = new Dictionary<ApplicationPOMModel, List<RunSetConfig>>();
-
-            if (POMGuidsList.Any() && RunsetGuidsList.Any())
-            {
-                var applicationPOMModels = POMGuidsList
-                     .Select(pomGuid => WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(pomGuid))
-                     .ToList();
-
-                var runSetConfigList = new ObservableList<RunSetConfig>(
-                    RunsetGuidsList.Select(runsetGuid => WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<RunSetConfig>(runsetGuid))
-                );
-
-               var mPOMModels = GingerCoreNET.GeneralLib.General.ConvertListToObservableList(
-                    applicationPOMModels
-                        .Where(x => WorkSpace.Instance.Solution.GetTargetApplicationPlatform(x.TargetApplicationKey) == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
-                        .ToList()
-                );
-
-                var businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.BusinessFlow>();
-                var multiPomRunSetMappingsList = GingerCoreNET.GeneralLib.General.GetSelectedRunsetList(
-                    runSetConfigList, businessFlows, mPOMModels, ApplicationPOMModelrunsetConfigMapping
-                );
-
-                foreach (var item in multiPomRunSetMappingsList)
-                {
-                    await GingerCoreNET.GeneralLib.General.RunSelectedRunset(item, multiPomRunSetMappingsList, mCLIHelper);
-                }
-                var statuses = multiPomRunSetMappingsList.Select(m => m.PomUpdateStatus);
-                Reporter.ToLog(eLogLevel.INFO, $"POM Status: {string.Join(", ", statuses)}");
-            }
-            else
-            {
-                Reporter.ToLog(eLogLevel.ERROR, $"With given info POMs or Runsets not found.");
-                return;
-            }
-        }
 
     }
 }

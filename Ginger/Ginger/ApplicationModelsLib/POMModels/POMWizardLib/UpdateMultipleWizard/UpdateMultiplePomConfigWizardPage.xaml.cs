@@ -111,7 +111,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
 
         private void SetPomSelectionExpanderSection()
         {
-            mWizard.mMultiPomDeltaUtils.mPOMModels = new();
             mWizard.mMultiPomDeltaUtils.mPOMModels = GingerCore.General.ConvertListToObservableList(
             WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(model =>
             model.TargetApplicationKey != null &&
