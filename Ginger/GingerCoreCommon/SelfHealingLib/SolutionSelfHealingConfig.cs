@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using Amdocs.Ginger.Repository;
+using System;
 
 namespace Amdocs.Ginger.Common.SelfHealingLib
 {

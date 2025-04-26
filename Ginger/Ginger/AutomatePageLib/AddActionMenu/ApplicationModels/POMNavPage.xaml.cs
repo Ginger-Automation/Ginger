@@ -33,6 +33,7 @@ using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -43,7 +44,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// <summary>
     /// Interaction logic for POMNavAction.xaml
     /// </summary>
-    public partial class POMNavPage : Page, INavPanelPage
+    public partial class POMNavPage : Page, INavPanelPage, ITreeViewItem
     {
         public PomElementsPage mappedUIElementsPage;
         ApplicationPOMModel mPOM;
@@ -53,6 +54,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         ElementInfoListViewHelper mPOMListHelper;
         ActivitiesRepositoryPage mActivitiesRepositoryViewPage;
         private Agent mAgent;
+        private POMEditPage mPOMEditPage;
+
 
         IWindowExplorer mWinExplorer
         {
@@ -94,8 +97,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEventAsync;
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEventAsync;
-
-
             mContext = context;
 
             xPomElementsListView.ListTitleVisibility = Visibility.Hidden;
@@ -143,6 +144,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
         }
 
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
+        {
+            if (mPOMEditPage == null || !ReferenceEquals(mPOMEditPage.DataContext, mContext))
+            {
+                mPOMEditPage = new POMEditPage(mPOM, General.eRIPageViewMode.Standalone);
+            }
+            return mPOMEditPage;
+        }
+
         private void UpdatePOMTree()
         {
             if (mContext.Activity != null)
@@ -164,7 +174,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     }
                     mPOM.StartDirtyTracking();
                     xPOMDetails.Height = xPOMItems.Height;
-                    xPomElementsListView.DataSourceList = mPOM.MappedUIElements;
+
+                    // Attaching CollectionChanged event handler to reflect changes on resources to automate tab
+                    mPOM.MappedUIElements.CollectionChanged -= MappedUIElements_CollectionChanged;
+                    mPOM.MappedUIElements.CollectionChanged += MappedUIElements_CollectionChanged;
+
+                    UpdateSortedElementList();
                     xPomElementsListView.Visibility = Visibility.Visible;
                     xPOMSplitter.IsEnabled = true;
 
@@ -189,6 +204,31 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 xPomElementsListView.DataSourceList = null;
                 xPomElementsListView.Visibility = Visibility.Hidden;
                 xPOMSplitter.IsEnabled = false;
+            }
+        }
+
+        // Event handler for MappedUIElements changes
+        private void MappedUIElements_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            // Update the sorted list and refresh the UI
+            UpdateSortedElementList();
+        }
+
+        // Method to update the sorted list and refresh the ListView
+        private void UpdateSortedElementList()
+        {
+            if (xPomElementsListView.DataSourceList is ObservableList<ElementInfo> view)
+            {
+                view.Clear();
+                foreach (var el in mPOM.MappedUIElements.OrderBy(e => e.ElementName))
+                {
+                    view.Add(el);
+                }
+            }
+            else
+            {
+                xPomElementsListView.DataSourceList =
+                new ObservableList<ElementInfo>(mPOM.MappedUIElements.OrderBy(e => e.ElementName));
             }
         }
 
@@ -254,6 +294,37 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 return false;
             }
+        }
+
+        public StackPanel Header()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<ITreeViewItem> Childrens()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsExpandable()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ContextMenu Menu()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetTools(ITreeView TV)
+        {
+            throw new NotImplementedException();
+        }
+        public ITreeView TreeView { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public object NodeObject()
+        {
+            throw new NotImplementedException();
         }
     }
 }
