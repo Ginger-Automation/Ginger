@@ -706,7 +706,7 @@ namespace Ginger.SourceControl
         {
             try
             {
-                return SourceControl.GetCurrentBranchForSolution();
+                return SourceControl.GetCurrentWorkingBranch();
             }
             catch (Exception ex)
             {
