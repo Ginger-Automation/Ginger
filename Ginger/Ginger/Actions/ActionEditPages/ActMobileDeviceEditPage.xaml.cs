@@ -238,6 +238,7 @@ namespace Ginger.Actions
             xDeviceRotationPnl.Visibility = Visibility.Collapsed;
             xMultiTouchGrid.Visibility = Visibility.Collapsed;
             xFolderTransferPnl.Visibility = Visibility.Collapsed;
+            
 
             switch (mAct.MobileDeviceAction)
             {
@@ -339,15 +340,17 @@ namespace Ginger.Actions
                     xFilePathTextBox.Visibility = Visibility.Visible;
                     xFolderPathLbl.Visibility = Visibility.Visible;
                     xFolderPathTxtBox.Visibility = Visibility.Visible;
-                    xFileTransferPnl.Visibility = Visibility.Visible;
+                    xFileTransferPnl.Visibility = Visibility.Visible;          
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.PullFileFromDevice:
+                    xFolderPathLbl.Content = "Device File to Pull:";
+                    xFilePathLbl.Content = "Local Target to Push:";
                     xFilePathLbl.Visibility = Visibility.Visible;
                     xFilePathTextBox.Visibility = Visibility.Visible;
                     xFolderPathLbl.Visibility = Visibility.Visible;
                     xFolderPathTxtBox.Visibility = Visibility.Visible;
-                    xFileTransferPnl.Visibility = Visibility.Visible;
+                    xFileTransferPnl.Visibility = Visibility.Visible;              
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.SetClipboardText:
@@ -357,7 +360,7 @@ namespace Ginger.Actions
                     break;
                 case ActMobileDevice.eMobileDeviceAction.TypeUsingIOSkeyboard:
                     xInputLabelVE.Content = "Text:";
-                    xInputTextBlock.Text = "Note: For Android, Cannot Combine Between (') and (\") at The Same Text.";
+                    xInputTextBlock.Text = "Note: For IOS, Keyboard Should be Open.";
                     xInputPnl.Visibility = Visibility.Visible;               
                     break;
 
@@ -384,13 +387,14 @@ namespace Ginger.Actions
                     xInputTextBlock.Text = ""; 
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
-                case ActMobileDevice.eMobileDeviceAction.PushFolder:                  
-                    xFolderPathLbl.Content = "Local Folder to Push:";
-                    xFolderTransferPnl.Visibility = Visibility.Visible;
-                    xFileTransferPnl.Visibility = Visibility.Visible;
-                    xFilePathTextBox.Visibility = Visibility.Collapsed;
-                    xFilePathLbl.Visibility = Visibility.Collapsed;
-                    break;
+                //case ActMobileDevice.eMobileDeviceAction.PushFolder:                  
+                //    xFolderPathLbl.Content = "Local Folder to Push:";
+                //    xFolderTransferPnl.Visibility = Visibility.Visible;
+                //    xFileTransferPnl.Visibility = Visibility.Visible;
+                //    xFilePathTextBox.Visibility = Visibility.Collapsed;
+                //    xFilePathLbl.Visibility = Visibility.Collapsed;
+                //    xFolderTextBlock.Text = "";
+                //    break;
 
                 case ActMobileDevice.eMobileDeviceAction.SendAppToBackground:
                     xInputLabelVE.Content = "Set a Time Duration for Backgroud(Seconds):";

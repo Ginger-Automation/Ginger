@@ -43,6 +43,7 @@ using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
+using Cassandra;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
@@ -1453,9 +1454,9 @@ namespace Amdocs.Ginger.CoreNET
                     case ActMobileDevice.eMobileDeviceAction.GetSettings:
                         GetSettings(act);
                         break;
-                    case ActMobileDevice.eMobileDeviceAction.PushFolder:
-                        PushFolder(act.FolderPathInput.ValueForDriver, act.LocalFolderPathInput.ValueForDriver);
-                        break;
+                    //case ActMobileDevice.eMobileDeviceAction.PushFolder:
+                    //    PushFolder(act.FolderPathInput.ValueForDriver, act.LocalFolderPathInput.ValueForDriver);
+                    //    break;
                     case ActMobileDevice.eMobileDeviceAction.ToggleLocationServices:
                         ToggleLocationServices();
                         break;
@@ -4383,24 +4384,38 @@ namespace Amdocs.Ginger.CoreNET
             if (string.IsNullOrEmpty(DeviceTargerFolder))
                 throw new ArgumentException("Device target folder cannot be null or empty", nameof(DeviceTargerFolder));
 
-            if (!File.Exists(LocalFilePath))
-                throw new ArgumentException($"Local file not found: {LocalFilePath}", nameof(LocalFilePath));
-            try
+            //if (!File.Exists(LocalFilePath))
+            //    throw new ArgumentException($"Local file not found: {LocalFilePath}", nameof(LocalFilePath));
+            bool isDirectory = Directory.Exists(LocalFilePath);
+            bool isFile = File.Exists(LocalFilePath);
+            if (!isDirectory && !isFile)
+                throw new ArgumentException($"Path not found: {LocalFilePath}", nameof(LocalFilePath));
+
+            if (isDirectory)
             {
-                byte[] fileContent = System.IO.File.ReadAllBytes(LocalFilePath);
-                string fileName = Path.GetFileName(LocalFilePath);
-                if (Driver is IOSDriver)
-                {
-                    ((IOSDriver)Driver).PushFile($"{DeviceTargerFolder}/{fileName}", fileContent);
-                }
-                else
-                {
-                    ((AndroidDriver)Driver).PushFile($"{DeviceTargerFolder}/{fileName}", fileContent);
-                }
+                // Handle directory
+                PushFolder(LocalFilePath, DeviceTargerFolder);
             }
-            catch (Exception ex)
+
+            else
             {
-                throw new InvalidOperationException($"Failed to push file to device: {ex.Message}", ex);
+                try
+                {
+                    byte[] fileContent = System.IO.File.ReadAllBytes(LocalFilePath);
+                    string fileName = Path.GetFileName(LocalFilePath);
+                    if (Driver is IOSDriver)
+                    {
+                        ((IOSDriver)Driver).PushFile($"{DeviceTargerFolder}/{fileName}", fileContent);
+                    }
+                    else
+                    {
+                        ((AndroidDriver)Driver).PushFile($"{DeviceTargerFolder}/{fileName}", fileContent);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException($"Failed to push file to device: {ex.Message}", ex);
+                }
             }
         }
 
@@ -4944,14 +4959,14 @@ namespace Amdocs.Ginger.CoreNET
         {
             //    string captureData = (string)((IOSDriver)Driver).ExecuteScript("mobile: stopPerfRecord", new Dictionary<string, object> { { "profileName", "Network" } });
             //    return captureData;
-            if (Driver is AndroidDriver )
+            if (Driver is AndroidDriver)
             {
                 string logNetwork = (string)((AndroidDriver)Driver).ExecuteScript("mobile: stopLogsBroadcast");
                 return logNetwork;
             }
             else if (Driver is IOSDriver)
             {
-                 string logsNetwork = (string)((IOSDriver)Driver).ExecuteScript("mobile: stopPerfRecord", new Dictionary<string, object>{ 
+                string logsNetwork = (string)((IOSDriver)Driver).ExecuteScript("mobile: stopPerfRecord", new Dictionary<string, object>{
                 { "profileName", "Network" }});
                 return logsNetwork;
             }
@@ -4960,6 +4975,7 @@ namespace Amdocs.Ginger.CoreNET
                 throw new InvalidOperationException("Unsupported driver type");
             }
         }
+        
         public void PushFolder(string localFolderPath, string remoteFolderPath) // working for android, for ios need to see the files via itunes 
         //Appium currently doesn't directly support pushing an entire folder in one go. Instead, you can push all the files and recreate the folder structure on the device programmatically.
         {

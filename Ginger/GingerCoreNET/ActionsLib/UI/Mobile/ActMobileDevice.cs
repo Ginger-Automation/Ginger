@@ -540,12 +540,12 @@ namespace GingerCore.Actions
             GetAppPackage,
             [EnumValueDescription("Get Current Activity Details")]
             GetCurrentActivityDetails,
-            [EnumValueDescription("Lock For Time Duration")]
+            [EnumValueDescription("Lock for Duration")]
             LockForDuration,
             [EnumValueDescription("Get Settings")]
             GetSettings,
-            [EnumValueDescription("Push Folder to Device")]
-            PushFolder,
+            //[EnumValueDescription("Push Folder to Device")]
+            //PushFolder,
             [EnumValueDescription("Toggle Location Services")]
             ToggleLocationServices,
             [EnumValueDescription("Toggle Data")]
