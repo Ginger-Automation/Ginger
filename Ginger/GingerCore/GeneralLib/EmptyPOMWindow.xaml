@@ -1,0 +1,57 @@
+﻿<Window x:Class="GingerCore.GeneralLib.EmptyPOMWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GingerCore.GeneralLib"
+        mc:Ignorable="d"
+        Topmost="True"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        BorderThickness="1"
+        BorderBrush="{DynamicResource $PrimaryColor_Black}"
+        Title="EmptyPOMWindow" Height="250" Width="500">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40*"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <StackPanel Grid.Row="0" Background="{StaticResource $PrimaryColor_Black}">
+            <Label x:Name="xwinTitle" Content="Page Object Model Creation" 
+            Foreground="{DynamicResource $SelectionColor_Pink}" 
+            FontWeight="Bold" FontSize="14" FontFamily="Open Sans" 
+            VerticalAlignment="Center" HorizontalAlignment="Left" 
+            Margin="10,0,0,0"/>
+        </StackPanel>
+
+        <!-- POM Name Input -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10,5,10,59">
+            <TextBlock Text="Page Object Model Name :" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <TextBox x:Name="xPOMNameText" Width="250" Height="28"/>
+        </StackPanel>
+
+        <!-- Target Application Dropdown -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10,64,10,34">
+            <TextBlock Text="Select Target Application :" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <ComboBox x:Name="xTargetApplicationComboBox" SelectionChanged="xTargetApplicationComboBox_SelectionChanged" Style="{DynamicResource $FlatEditInputComboBoxStyle}" Width="255" Margin="8,0,0,0" Height="28"/>
+        </StackPanel>
+
+        <!-- Message (Optional) -->
+        <TextBlock x:Name="MessageLabel" Grid.Row="3" Text="Message" 
+            HorizontalAlignment="Stretch" Margin="10,10,10,10" 
+            VerticalAlignment="Center" Visibility="Collapsed"/>
+
+        <!-- Buttons -->
+        <DockPanel Background="{StaticResource $BackgroundColor_White}" Grid.Row="4">
+            <Button Name="xOKButton" Content="Ok" DockPanel.Dock="Right" 
+             HorizontalAlignment="Right" Margin="0,0,10,0" 
+             Click="xOKButton_Click" Style="{StaticResource @WindowButtonStyle}" IsDefault="true"/>
+            <Button Name="xCancelButton" Content="Cancel" DockPanel.Dock="Right" 
+             HorizontalAlignment="Right" Margin="0,0,10,0" 
+             Click="xCancelButton_Click" Style="{StaticResource @WindowButtonStyle}" IsCancel="True"/>
+        </DockPanel>
+    </Grid>
+</Window>

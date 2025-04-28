@@ -126,7 +126,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             TreeViewUtils.AddSubMenuItem(addMenu, "Empty POM", AddEmptyPOM, null, eImageType.ApplicationPOMModel);
             if (mPOMModelFolder.IsRootFolder)
             {
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true,allowMultiPomUpdate:true);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true, allowMultiPomUpdate: true);
             }
             else
             {
@@ -162,23 +162,32 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         internal void AddEmptyPOM(object sender, RoutedEventArgs e)
         {
-            string NewPOMName = string.Empty;
-            ApplicationPOMModel emptyPOM = new ApplicationPOMModel() { Name = NewPOMName };
-            if (GingerCore.General.GetInputWithValidation("Add Page Object Model", "Page Object Model Name:", ref NewPOMName, null, false, emptyPOM))
+
+            ApplicationPOMModel emptyPOM = new ApplicationPOMModel() { };
+            emptyPOM = GingerCore.General.GetInputWithValidation(emptyPOM, targetApps: GetPossibleApplicationPlatformAsString());
+
+            if (emptyPOM is null)
             {
-                ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList(WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList());
-                if (_applicationPlatform != null)
-                {
-                    emptyPOM.TargetApplicationKey = _applicationPlatform.Key;
-                }
-                else if (TargetApplications != null && TargetApplications.Count > 0)
-                {
-                    emptyPOM.TargetApplicationKey = TargetApplications[0].Key;
-                }
-                emptyPOM.Name = NewPOMName;
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(emptyPOM.Name))
+            {
                 var PomLearnUtils = new Amdocs.Ginger.CoreNET.Application_Models.PomLearnUtils(emptyPOM, pomModelsFolder: mPOMModelFolder);
                 PomLearnUtils.SaveLearnedPOM();
             }
+
+        }
+
+        private ObservableList<ApplicationPlatform> GetPossibleApplicationPlatformAsString()
+        {
+            ObservableList<ApplicationPlatform> targetApplicationsList = GingerCore.General.ConvertListToObservableList(WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList());
+            if (targetApplicationsList == null)
+            {
+                return [];
+            }
+
+            return targetApplicationsList;
         }
 
         internal void UpdateMultiplePOM(object sender, RoutedEventArgs e)

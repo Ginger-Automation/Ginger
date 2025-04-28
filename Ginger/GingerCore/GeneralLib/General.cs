@@ -27,6 +27,7 @@ using GingerCore.ALM;
 using GingerCore.Environments;
 using GingerCore.GeneralFunctions;
 using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using System;
@@ -292,7 +293,7 @@ namespace GingerCore
                 else
                 {
                     EnumValueDescriptionAttribute[] _attributes = (EnumValueDescriptionAttribute[])EnumType.GetField(EnumValue.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false);
-              
+
                     if (_attributes.Length > 0)
                     {
                         s = _attributes[0].ValueDescription;
@@ -422,6 +423,36 @@ namespace GingerCore
             }
             return returnWindow;
         }
+
+        /// <summary>
+        /// Only for adding the empty POM
+        /// </summary>
+        /// <param name="repositoryItem"></param>
+        /// <param name="resultValue"></param>
+        /// <returns></returns>
+        /// 
+        public static ApplicationPOMModel GetInputWithValidation(ApplicationPOMModel emptyPOM, ObservableList<ApplicationPlatform> targetApps, bool isMultiline = false)
+        {
+            emptyPOM = GingerCore.GeneralLib.EmptyPOMWindow.OpenDialog(emptyPOM, targetApps, isMultiline);
+
+            if (emptyPOM is null || string.IsNullOrEmpty(emptyPOM.Name.Trim()))
+            {
+                return null;
+            }
+
+            if (!string.IsNullOrEmpty(emptyPOM.Name))
+            {
+                emptyPOM.Name = emptyPOM.Name.Trim();
+
+                if (emptyPOM != null && IsNameAlreadyexists(emptyPOM, emptyPOM.Name.Trim()))
+                {
+                    return GetInputWithValidation(emptyPOM, targetApps, isMultiline);
+                }
+
+            }
+            return emptyPOM;
+        }
+
         public static bool IsNameAlreadyexists(RepositoryItemBase repositoryItem, string resultValue)
         {
 
@@ -1327,7 +1358,7 @@ namespace GingerCore
                 ShowToolTip(control, "Copied to clipboard");
             }
         }
-            
+
 
         private static void ShowToolTip(Control control, string message)
         {

@@ -170,6 +170,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="GeneralLib\EmptyPOMWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="GeneralLib\GenericWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -277,6 +280,7 @@
     <Compile Include="GeneralLib\ComboEnumItem.cs" />
     <Compile Include="GeneralLib\ComboGroupedEnumItem.cs" />
     <Compile Include="GeneralLib\ComboItem.cs" />
+    <Compile Include="GeneralLib\EmptyPOMWindow.xaml.cs" />
     <Compile Include="GeneralLib\FrameControlExtensions.cs" />
     <Compile Include="Extensions\Screenshot.cs" />
     <Compile Include="DataSource\AccessDataSource.cs" />
@@ -606,6 +610,9 @@
     <Compile Remove="Drivers\Common\ElementLocator.cs" />
     <Compile Remove="Drivers\Common\IWindowExplorer.cs" />
     <Compile Remove="GeneralLib\Email.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="GeneralLib\EmptyPOMWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
