@@ -747,6 +747,15 @@ namespace Ginger.Actions
                 //for CLI Orchestration need to show by default
                 minimumInputValuesToHideGrid = -1;
             }
+            if (a.GetType() == typeof(ActPublishArtifacts))
+            {
+                minimumInputValuesToHideGrid = -1;
+                xInputValuesGrid.Title = "File Path of Artifacts to be Published.";
+            }
+            else
+            {
+                xInputValuesGrid.Title = "Input Value(s)";
+            }
 
             if (a.GetType() != typeof(ActDBValidation) && a.GetType() != typeof(ActTableElement) &&
                 a.GetType() != typeof(ActLaunchJavaWSApplication) && a.GetType() != typeof(ActJavaEXE) &&
@@ -907,7 +916,11 @@ namespace Ginger.Actions
 
         private void AddInputValue(object sender, RoutedEventArgs e)
         {
-            mAction.InputValues.Add(new ActInputValue() { Param = "p" + mAction.InputValues.Count });
+            mAction.InputValues.Add(new ActInputValue()
+            {
+                Param = mAction.GetType() == typeof(ActPublishArtifacts) ? ((mAction.InputValues.Count == 0) ? 0 : mAction.InputValues.Select(inputValue => int.Parse(inputValue.Param)).Max() + 1).ToString()
+                : "p" + ((mAction.InputValues.Count == 0) ? 0 : mAction.InputValues.Select(inputValue => int.Parse(inputValue.Param.Substring(1))).Max() + 1)
+            });
         }
 
         private void SetActDataSourceConfigGrid()
@@ -1262,32 +1275,56 @@ namespace Ginger.Actions
         {
             //Show/hide if needed
             xInputValuesGrid.SetTitleLightStyle = true;
-            xInputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddInputValue));//?? going to be hide in next line code
+            xInputValuesGrid.btnAdd.RemoveHandler(Button.ClickEvent, new RoutedEventHandler(AddInputValue));
+            xInputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddInputValue));
 
             xInputValuesGrid.ClearTools();
             xInputValuesGrid.ShowDelete = System.Windows.Visibility.Visible;
-            if (mAction.GetType() == typeof(ActCLIOrchestration))
+            if (mAction.GetType() == typeof(ActCLIOrchestration) || mAction.GetType() == typeof(ActPublishArtifacts))
             {
                 xInputValuesGrid.ShowAdd = System.Windows.Visibility.Visible;
                 xInputValuesGrid.ShowClearAll = System.Windows.Visibility.Visible;
             }
 
-            //List<GridColView> view = new List<GridColView>();
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            GridViewDef view;
+            if (mAction.GetType() == typeof(ActPublishArtifacts))
             {
-                GridColsView =
-            [
-                new GridColView() { Field = nameof(ActInputValue.Param), WidthWeight = 40 },
-                new GridColView() { Field = nameof(ActInputValue.Value), WidthWeight = 55 },
-                new GridColView() { Field = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["InputValueExpressionButton"] },
-            ]
-            };
+                view = GetGridViewForSrNoValueInputValues();
+            }
+            else
+            { 
+                view = GetGridViewForParamValueInputValues(); 
+            }
             //view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Value ForDriver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
 
             xInputValuesGrid.SetAllColumnsDefaultView(view);
             xInputValuesGrid.InitViewItems();
 
             xInputValuesGrid.DataSourceList = mAction.InputValues;
+        }
+
+        private GridViewDef GetGridViewForParamValueInputValues()
+        {
+            return new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = [
+                    new GridColView() { Field = nameof(ActInputValue.Param), WidthWeight = 10 },
+                    new GridColView() { Field = nameof(ActInputValue.Value), WidthWeight = 55 },
+                    new GridColView() { Field = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["InputValueExpressionButton"] }
+                    ]
+            };
+        }
+
+        private GridViewDef GetGridViewForSrNoValueInputValues()
+        {
+            return new GridViewDef("OnlyValues")
+            {
+                GridColsView = [
+                    new GridColView() { Field = nameof(ActInputValue.Param), Header = "Sr No.", WidthWeight = 10 },
+                    new GridColView() { Field = nameof(ActInputValue.Value), WidthWeight = 55 },
+                    new GridColView() { Field = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["InputValueExpressionButton"] }
+                    ]
+            };
         }
 
         private void LoadOperationSettingsEditPage(Act a)
@@ -1302,7 +1339,14 @@ namespace Ginger.Actions
                 {
                     // Load the page
                     xActionPrivateConfigsFrame.SetContent(actEditPage);
-                    xActionPrivateConfigsFrame.Visibility = System.Windows.Visibility.Visible;
+                    if (actEditPage is ActPublishArtifactsEditPage)
+                    {
+                        xActionPrivateConfigsFrame.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        xActionPrivateConfigsFrame.Visibility = System.Windows.Visibility.Visible;
+                    }
                 }
             }
             else
