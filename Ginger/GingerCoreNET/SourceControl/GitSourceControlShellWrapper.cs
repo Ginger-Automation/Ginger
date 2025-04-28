@@ -95,7 +95,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
             return [];
         }
 
-        public override string GetCurrentBranchForSolution()
+        public override string GetCurrentWorkingBranch()
         {
             return "master";
         }
@@ -270,5 +270,16 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
         {
             throw new NotImplementedException();
         }
+
+        public override bool CreateBranch( string newBranchName, ref string error)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<string> GetLocalBranches()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }
