@@ -332,6 +332,11 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 {
                     return null;
                 }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.INFO, $"Forcefully updating the application model based on the self-healing configuration before Execution");
+                    mAct.ExInfo += "Forcefully updating the application model based on the self-healing configuration before Execution";
+                }
 
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null)
                 {
@@ -492,9 +497,6 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
         {
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, $"Forcefully updating the application model based on the self-healing configuration before Execution");
-                act.ExInfo += "Forcefully updating the application model based on the self-healing configuration before Execution";
-
                 return AutoUpdateCurrentPOM(currentAgent, true);
             }
             catch (Exception ex)
