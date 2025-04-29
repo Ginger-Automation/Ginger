@@ -233,7 +233,6 @@ namespace Ginger.Actions
             xSpecificPerformanceDataPnl.Visibility = Visibility.Collapsed;
             xDeviceRotationPnl.Visibility = Visibility.Collapsed;
             xMultiTouchGrid.Visibility = Visibility.Collapsed;
-            
 
             switch (mAct.MobileDeviceAction)
             {
