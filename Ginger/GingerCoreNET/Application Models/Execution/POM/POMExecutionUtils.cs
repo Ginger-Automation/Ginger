@@ -332,11 +332,6 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 {
                     return null;
                 }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.INFO, $"Forcefully updating the application model based on the self-healing configuration before Execution");
-                    mAct.ExInfo += "Forcefully updating the application model based on the self-healing configuration before Execution";
-                }
 
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null)
                 {
@@ -466,6 +461,12 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
                 mAct.ExInfo += DateTime.Now.ToString() + " Self healing operation attempting to auto update application model";
                 this.GetCurrentPOM().StartDirtyTracking();
+
+                if(CheckForForceUpdate)
+                {
+                    Reporter.ToLog(eLogLevel.INFO, $"Forcefully updating the application model based on the self-healing configuration before Execution");
+                    mAct.ExInfo += "Forcefully updating the application model based on the self-healing configuration before Execution";
+                }
 
                 pomDeltaUtils.LearnDelta().Wait();
                 mAct.ExInfo += DateTime.Now + " Self healing operation application model was updated";
