@@ -23,6 +23,7 @@ using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib;
 using Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizard;
 using Ginger.External.Katalon;
+using Ginger.GeneralLib;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.TreeViewItemsLib;
@@ -126,7 +127,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             TreeViewUtils.AddSubMenuItem(addMenu, "Empty POM", AddEmptyPOM, null, eImageType.ApplicationPOMModel);
             if (mPOMModelFolder.IsRootFolder)
             {
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true,allowMultiPomUpdate:true);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true, allowMultiPomUpdate: true);
             }
             else
             {
@@ -162,22 +163,42 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         internal void AddEmptyPOM(object sender, RoutedEventArgs e)
         {
-            string NewPOMName = string.Empty;
-            ApplicationPOMModel emptyPOM = new ApplicationPOMModel() { Name = NewPOMName };
-            if (GingerCore.General.GetInputWithValidation("Add Page Object Model", "Page Object Model Name:", ref NewPOMName, null, false, emptyPOM))
+            try
             {
-                ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList(WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList());
-                if (_applicationPlatform != null)
+                ApplicationPOMModel emptyPOM = new();
+
+                ObservableList<ApplicationPlatform> TargetApplications = null;
+                var applicationPlatforms = WorkSpace.Instance.Solution.ApplicationPlatforms;
+
+                if (applicationPlatforms != null)
                 {
-                    emptyPOM.TargetApplicationKey = _applicationPlatform.Key;
+                    TargetApplications = new ObservableList<ApplicationPlatform>(applicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)));
                 }
-                else if (TargetApplications != null && TargetApplications.Count > 0)
+
+                if (TargetApplications == null || TargetApplications.Count == 0)
                 {
-                    emptyPOM.TargetApplicationKey = TargetApplications[0].Key;
+                    Reporter.ToUser(eUserMsgKey.MissingTargetApplication, $"Please Add at-least one {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} that supports POM to continue adding Page Object Models");
+                    return;
                 }
-                emptyPOM.Name = NewPOMName;
-                var PomLearnUtils = new Amdocs.Ginger.CoreNET.Application_Models.PomLearnUtils(emptyPOM, pomModelsFolder: mPOMModelFolder);
-                PomLearnUtils.SaveLearnedPOM();
+
+                EmptyPOMPage emptyPOMPage = new EmptyPOMPage(emptyPOM, TargetApplications, "Create POM");
+                emptyPOMPage.ShowAsWindow();
+
+                if (emptyPOMPage.targetApplicationValue != null && !string.IsNullOrEmpty(emptyPOMPage.pomNameValue))
+                {
+                    var PomLearnUtils = new Amdocs.Ginger.CoreNET.Application_Models.PomLearnUtils(emptyPOM, pomModelsFolder: mPOMModelFolder);
+                    PomLearnUtils.SaveLearnedPOM();
+                }
+                else
+                {
+                    return;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error creating Empty POM", ex);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to create Empty POM");
             }
         }
 
