@@ -4409,7 +4409,7 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        public void PullFileFromDevice(string DeviceFilePath, string LocalFolderPath)
+        public void PullFileFromDevice(string DeviceFilePath,string LocalFolderPath)
         {
             if (string.IsNullOrEmpty(DeviceFilePath))
                 throw new ArgumentException("Device file path cannot be null or empty", nameof(DeviceFilePath));

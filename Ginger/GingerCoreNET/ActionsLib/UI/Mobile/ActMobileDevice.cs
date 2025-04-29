@@ -542,7 +542,7 @@ namespace GingerCore.Actions
             GetCurrentActivityDetails,
             [EnumValueDescription("Lock for Duration")]
             LockForDuration,
-            [EnumValueDescription("Get Settings")]
+            [EnumValueDescription("Get Device Settings")]
             GetSettings,
             [EnumValueDescription("Toggle Location Services")]
             ToggleLocationServices,

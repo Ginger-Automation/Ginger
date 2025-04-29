@@ -339,9 +339,10 @@ namespace Ginger.Actions
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.PullFileFromDevice:
-                    xFolderPathLbl.Content = "Device File to Pull:";
-                    xFilePathLbl.Content = "Local Target to Push:";
-                    xFileTextBlock.Text = "";
+                    xFolderPathLbl.Content = "Local Target to Push:";
+                    xFilePathLbl.Content = "Device File to Pull:";  
+                    xFileTextBlock.Text = "Target Folders Path:\nDocuments: /storage/emulated/0/Documents/\nPictures: /storage/emulated/0/Pictures/\nDownloads: /storage/emulated/0/Download/";
+                    xFolderTextBlock.Text = "Select Folder";
                     xFilePathLbl.Visibility = Visibility.Visible;
                     xFilePathTextBox.Visibility = Visibility.Visible;
                     xFolderPathLbl.Visibility = Visibility.Visible;
