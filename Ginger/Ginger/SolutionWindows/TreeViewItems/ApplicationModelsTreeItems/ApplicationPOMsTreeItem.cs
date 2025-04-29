@@ -165,14 +165,14 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         {
             try
             {
-                ApplicationPOMModel emptyPOM = new ApplicationPOMModel() { };
+                ApplicationPOMModel emptyPOM = new();
 
                 ObservableList<ApplicationPlatform> TargetApplications = null;
                 var applicationPlatforms = WorkSpace.Instance.Solution.ApplicationPlatforms;
 
                 if (applicationPlatforms != null)
                 {
-                    TargetApplications = GingerCore.General.ConvertListToObservableList(applicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList());
+                    TargetApplications = new ObservableList<ApplicationPlatform>(applicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)));
                 }
 
                 if (TargetApplications == null || TargetApplications.Count == 0)
@@ -184,7 +184,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
                 EmptyPOMPage emptyPOMPage = new EmptyPOMPage(emptyPOM, TargetApplications, "Create POM");
                 emptyPOMPage.ShowAsWindow();
 
-                if (emptyPOMPage.TargetApplicationvalue != null && !string.IsNullOrEmpty(emptyPOMPage.pomNameValue))
+                if (emptyPOMPage.targetApplicationValue != null && !string.IsNullOrEmpty(emptyPOMPage.pomNameValue))
                 {
                     var PomLearnUtils = new Amdocs.Ginger.CoreNET.Application_Models.PomLearnUtils(emptyPOM, pomModelsFolder: mPOMModelFolder);
                     PomLearnUtils.SaveLearnedPOM();
@@ -198,6 +198,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error creating Empty POM", ex);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to create Empty POM");
             }
         }
 

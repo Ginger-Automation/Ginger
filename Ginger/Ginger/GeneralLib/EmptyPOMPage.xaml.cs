@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -36,7 +37,7 @@ namespace Ginger.GeneralLib
         GenericWindow _pageGenericWin = null;
         bool okClicked = false;
         public string pomNameValue;
-        public ApplicationPlatform TargetApplicationvalue = null;
+        public ApplicationPlatform targetApplicationValue = null;
         public EmptyPOMPage(ApplicationPOMModel emptyPOM, ObservableList<ApplicationPlatform> targetApps, string title = "")
         {
             InitializeComponent();
@@ -59,13 +60,18 @@ namespace Ginger.GeneralLib
             {
                 if (xTargetApplicationComboBox.SelectedItem != null)
                 {
-                    TargetApplicationvalue = (ApplicationPlatform)xTargetApplicationComboBox.SelectedValue;
-                    Reporter.ToLog(eLogLevel.INFO, $"Target application selected: {TargetApplicationvalue}");
+                    targetApplicationValue = (ApplicationPlatform)xTargetApplicationComboBox.SelectedValue;
+                    Reporter.ToLog(eLogLevel.INFO, $"Target application selected: {targetApplicationValue}");
                 }
+            }
+            catch (InvalidCastException ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Invalid cast error in selecting TargetApplication " + ex);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error in selecting TargetApplication");
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in selecting TargetApplication " + ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Unexpected error in selecting TargetApplication " + ex);
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error in selecting TargetApplication");
             }
         }
@@ -75,7 +81,7 @@ namespace Ginger.GeneralLib
             if (!string.IsNullOrEmpty(xPOMName.Text))
             {
                 pomNameValue = xPOMName.Text;
-                emptyPOM.TargetApplicationKey = TargetApplicationvalue.Key;
+                emptyPOM.TargetApplicationKey = targetApplicationValue.Key;
                 okClicked = true;
                 _pageGenericWin.Close();
             }
