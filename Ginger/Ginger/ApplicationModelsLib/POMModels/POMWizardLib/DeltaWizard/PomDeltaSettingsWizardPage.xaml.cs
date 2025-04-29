@@ -210,9 +210,26 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             if (mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList.Count > 0)
             {
                 bool valueToSet = !mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList.All(elem => elem.Selected);
+
+                if (mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType == null)
+                {
+                    mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType = [];
+                }
+
                 foreach (UIElementFilter elem in mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList)
                 {
                     elem.Selected = valueToSet;
+                    if (elem.Selected)
+                    {
+                        if (!mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Any(x => x.ElementType.Equals(elem.ElementType)))
+                        {
+                            mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Add(elem);
+                        }
+                    }
+                    else
+                    {
+                        mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Remove(elem);
+                    }
                 }
             }
         }
@@ -222,9 +239,26 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             if (mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList.Count > 0)
             {
                 bool valueToSet = !mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList.All(elem => elem.Selected);
+
+                if (mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType == null)
+                {
+                    mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType = [];
+                }
+
                 foreach (UIElementFilter elem in mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList)
                 {
                     elem.Selected = valueToSet;
+                    if (elem.Selected)
+                    {
+                        if (!mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Any(x => x.ElementType.Equals(elem.ElementType)))
+                        {
+                            mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Add(elem);
+                        }
+                    }
+                    else
+                    {
+                        mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Remove(elem);
+                    }
                 }
 
             }
