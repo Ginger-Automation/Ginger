@@ -1223,22 +1223,30 @@ namespace Ginger.ApplicationModelsLib.POMModels
             ElementLocator selectedVarb = (ElementLocator)xElementDetails.xLocatorsGrid.CurrentItem;
             if (selectedVarb.IsAutoLearned)
             {
-                if (!disabeledLocatorsMsgShown)
-                {
-                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You can not edit Locator which was auto learned, please duplicate it and create customized Locator.");
-                    disabeledLocatorsMsgShown = true;
-                }
-
-
                 if (!string.IsNullOrEmpty(selectedVarb.ToString()))
                 {
-                    string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(selectedVarb.ToString());
 
-                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
-                    docPage.ShowAsWindow("Locator Value");
+                    try
+                    {
+                        string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(selectedVarb.ToString());
+                        try
+                        {
+                            DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: "Note : You can not edit Locator which was auto learned");
+                            docPage.ShowAsWindow("Locator Value");
+                        }
+                        finally
+                        {
+                            GingerCoreNET.GeneralLib.General.DeleteTempTextFile(tempFilePath);
 
-                    GingerCoreNET.GeneralLib.General.DeleteTempTextFile(tempFilePath);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error displaying locator value", ex);
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to display locator value: " + ex.Message);
+                    }
                 }
+
             }
             else
             {
