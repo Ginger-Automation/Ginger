@@ -96,6 +96,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         [Option("sourceApplicationUser", Required = false, HelpText = "Set Source Application username")]
         public string SourceApplicationUser { get; set; }
+
+       
     }
 
 }
