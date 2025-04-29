@@ -98,7 +98,6 @@
             <Actions:UCValueExpression x:Name="xFolderPathTxtBox" Width="335" />
             <TextBlock x:Name="xFolderTextBlock" Style="{StaticResource $TextBlockStyle}" FontSize="10" TextWrapping="Wrap" Width="330" Text="Target Folders Path:&#10;Documents: /storage/emulated/0/Documents/&#10;Pictures: /storage/emulated/0/Pictures/&#10;Downloads: /storage/emulated/0/Download/"/>
         </StackPanel>
-ss
         <StackPanel x:Name="xSpecificPerformanceDataPnl" HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="0,2,0,0" Visibility="Collapsed">
             <Label Style="{StaticResource $LabelStyle}" Content="Data Type:" Margin="0,0,0,0"/>
             <UserControlsLib1:UCComboBox x:Name="xDataTypeComboBox" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="4,-6,0,0" Width="250"/>
