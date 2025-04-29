@@ -18,7 +18,7 @@
             <RowDefinition Height="35"/>
         </Grid.RowDefinitions>
         <Label Content="Name :" Grid.Row="0" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" Margin="0,8,0,27" Grid.RowSpan="2"/>
-        <TextBox Height="24" x:Name="xPOMName" Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" ToolTip="Data Source Name" Style="{StaticResource @TextBoxStyle}" Margin="25,8,-25,0" />
+        <TextBox Height="24" x:Name="xPOMName" Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" ToolTip="POM Name" Style="{StaticResource @TextBoxStyle}" Margin="25,8,-25,0" />
         <Label  Grid.Row="1" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" Margin="0,15,250,-15" Grid.ColumnSpan="2">Target Application :</Label>
         <ComboBox Height="24" x:Name="xTargetApplicationComboBox" SelectionChanged="xTargetApplicationComboBox_SelectionChanged" Grid.Row="1" Grid.Column="1" Style="{DynamicResource $FlatEditInputComboBoxStyle}" Margin="25,18,-25,-7"/>
     </Grid>
