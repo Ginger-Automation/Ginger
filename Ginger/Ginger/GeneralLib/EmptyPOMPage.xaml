@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:Ginger.GeneralLib"
       mc:Ignorable="d" 
       Height="120" Width="480" MinHeight="120"
-      Title="Create New POM">
+      Title="{Binding PageTitle}">
 
     <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>

@@ -181,7 +181,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
                     return;
                 }
 
-                EmptyPOMPage emptyPOMPage = new EmptyPOMPage(emptyPOM, TargetApplications);
+                EmptyPOMPage emptyPOMPage = new EmptyPOMPage(emptyPOM, TargetApplications, "Create POM");
                 emptyPOMPage.ShowAsWindow();
 
                 if (emptyPOMPage.TargetApplicationvalue != null && !string.IsNullOrEmpty(emptyPOMPage.pomNameValue))

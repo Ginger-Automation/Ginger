@@ -30,36 +30,43 @@ namespace Ginger.GeneralLib
     /// </summary>
     public partial class EmptyPOMPage : Page
     {
+        public string PageTitle { get; set; }
+
         public ApplicationPOMModel emptyPOM;
         GenericWindow _pageGenericWin = null;
         bool okClicked = false;
         public string pomNameValue;
         public ApplicationPlatform TargetApplicationvalue = null;
-        public EmptyPOMPage(ApplicationPOMModel emptyPOM, ObservableList<ApplicationPlatform> targetApps)
+        public EmptyPOMPage(ApplicationPOMModel emptyPOM, ObservableList<ApplicationPlatform> targetApps, string title = "")
         {
             InitializeComponent();
+            PageTitle = title;
+            this.Title = PageTitle;
+            DataContext = this;
             this.emptyPOM = emptyPOM;
 
             xTargetApplicationComboBox.SelectionChanged += xTargetApplicationComboBox_SelectionChanged;
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPOMName, TextBox.TextProperty, emptyPOM, nameof(ApplicationPOMModel.Name));
             xPOMName.AddValidationRule(new POMNameValidationRule());
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, emptyPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
             xTargetApplicationComboBox.ItemsSource = targetApps;
             xTargetApplicationComboBox.SelectedIndex = 0;
-            xTargetApplicationComboBox.Focus();
         }
 
         private void xTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (xTargetApplicationComboBox.SelectedItem != null)
+            try
             {
-                TargetApplicationvalue = (ApplicationPlatform)xTargetApplicationComboBox.SelectedValue;
-                Reporter.ToLog(eLogLevel.INFO, $"Target application selected: {TargetApplicationvalue}");
+                if (xTargetApplicationComboBox.SelectedItem != null)
+                {
+                    TargetApplicationvalue = (ApplicationPlatform)xTargetApplicationComboBox.SelectedValue;
+                    Reporter.ToLog(eLogLevel.INFO, $"Target application selected: {TargetApplicationvalue}");
+                }
             }
-            else
+            catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.WARN, "No target application selected.");
+                Reporter.ToLog(eLogLevel.ERROR, "Error in selecting TargetApplication " + ex);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error in selecting TargetApplication");
             }
         }
 
@@ -76,8 +83,6 @@ namespace Ginger.GeneralLib
             {
                 Reporter.ToUser(eUserMsgKey.RequiredFieldsEmpty);
             }
-
-
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
