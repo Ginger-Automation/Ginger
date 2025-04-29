@@ -25,10 +25,13 @@ using Amdocs.Ginger.Repository;
 using Ginger.Agents;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTest.WizardLib;
 using GingerWPF.WizardLib;
+using OpenQA.Selenium;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -43,10 +46,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     public partial class POMLearnConfigWizardPage : Page, IWizardPage
     {
         private AddPOMWizard mWizard;
-        private ePlatformType mAppPlatform;
+        private AddPOMFromScreenshotWizard mScreenShotWizard;
+        private BasePOMWizard mBasePOMWizard;
+        public ePlatformType mAppPlatform;
         public bool isEnableFriendlyLocator = false;
-        public POMLearnConfigWizardPage()
+        public bool isCallFromScreenShotPage = false;
+        public POMLearnConfigWizardPage(bool isCallFromScreenshot = false)
         {
+            isCallFromScreenShotPage = isCallFromScreenshot;
             InitializeComponent();
             xTAlabel.Content = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}:";
         }
@@ -56,24 +63,38 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
 
                     ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList(WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList());
-                    xTargetApplicationComboBox.BindControl<ApplicationPlatform>(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.TargetApplicationKey), TargetApplications, nameof(ApplicationPlatform.AppName), nameof(ApplicationPlatform.Key));
+                    if (isCallFromScreenShotPage)
+                    {
+                        //mBasePOMWizard = (BasePOMWizard)WizardEventArgs.Wizard;
+                        //mBasePOMWizard.mPomLearnUtils = WizardEventArgs.Wizard.mWizardWindow.mPomLearnUtils;
+                        //mBasePOMWizard.BindControls(this, WizardEventArgs);
+                        mScreenShotWizard = (AddPOMFromScreenshotWizard)WizardEventArgs.Wizard;
+                        xTargetApplicationComboBox.BindControl<ApplicationPlatform>(mScreenShotWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.TargetApplicationKey), TargetApplications, nameof(ApplicationPlatform.AppName), nameof(ApplicationPlatform.Key));
+                        xLearnOnlyMappedElements.BindControl(mScreenShotWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
+                        xLearnScreenshotsOfElements.BindControl(mScreenShotWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnScreenshotsOfElements));
+                        xLearnShadowDOMElements.BindControl(mScreenShotWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnShadowDomElements));
+                    }
+                    else
+                    {
+                        mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
+                        xTargetApplicationComboBox.BindControl<ApplicationPlatform>(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.TargetApplicationKey), TargetApplications, nameof(ApplicationPlatform.AppName), nameof(ApplicationPlatform.Key));
+                        xLearnOnlyMappedElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
+                        xLearnScreenshotsOfElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnScreenshotsOfElements));
+                        xLearnShadowDOMElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnShadowDomElements));
+                    }
                     xTargetApplicationComboBox.AddValidationRule(new POMTAValidationRule());
 
                     if (xTargetApplicationComboBox.Items != null && xTargetApplicationComboBox.Items.Count > 0)
                     {
                         xTargetApplicationComboBox.SelectedIndex = 0;
                     }
-
                     AddValidations();
 
                     ClearAutoMapElementTypesSection();
                     SetAutoMapElementTypesGridView();
-                    xLearnOnlyMappedElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
-                    xLearnScreenshotsOfElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnScreenshotsOfElements));
-                    xLearnShadowDOMElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnShadowDomElements));
+                    
                     if (mAppPlatform == ePlatformType.Web)
                     {
                         isEnableFriendlyLocator = true;
@@ -90,28 +111,57 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void UpdateCustomTemplateList()
         {
-            if (xCustomRelativeXpathTemplateFrame.xCustomRelativeXpathCofigChkBox.IsChecked == true
-                && (mAppPlatform.Equals(ePlatformType.Web) || mAppPlatform.Equals(ePlatformType.Mobile)))
+            if(isCallFromScreenShotPage)
             {
-                if (mWizard.mPomLearnUtils.POM.PomSetting != null)
-                { 
-                    mWizard.mPomLearnUtils.POM.PomSetting.RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>(xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList.Where(x => x.Status == CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed));
+                if (xCustomRelativeXpathTemplateFrame.xCustomRelativeXpathCofigChkBox.IsChecked == true
+                && (mAppPlatform.Equals(ePlatformType.Web) || mAppPlatform.Equals(ePlatformType.Mobile)))
+                {
+                    if (mScreenShotWizard.mPomLearnUtils.POM.PomSetting != null)
+                    {
+                        mScreenShotWizard.mPomLearnUtils.POM.PomSetting.RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>(xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList.Where(x => x.Status == CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed));
+                    }
+                    else
+                    {
+                        PomSetting pomSetting = new PomSetting();
+                        pomSetting.RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>(xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList.Where(x => x.Status == CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed));
+                        mScreenShotWizard.mPomLearnUtils.POM.PomSetting = pomSetting;
+                    }
                 }
                 else
                 {
-                    PomSetting pomSetting = new PomSetting();
-                    pomSetting.RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>(xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList.Where(x => x.Status == CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed));
-                    mWizard.mPomLearnUtils.POM.PomSetting = pomSetting;
+                    if (mScreenShotWizard.mPomLearnUtils.POM.PomSetting != null)
+                    {
+                        mScreenShotWizard.mPomLearnUtils.POM.PomSetting.RelativeXpathTemplateList.Clear();
+                    }
+
                 }
             }
             else
             {
-                if(mWizard.mPomLearnUtils.POM.PomSetting != null)
+                if (xCustomRelativeXpathTemplateFrame.xCustomRelativeXpathCofigChkBox.IsChecked == true
+                && (mAppPlatform.Equals(ePlatformType.Web) || mAppPlatform.Equals(ePlatformType.Mobile)))
                 {
-                    mWizard.mPomLearnUtils.POM.PomSetting.RelativeXpathTemplateList.Clear();
+                    if (mWizard.mPomLearnUtils.POM.PomSetting != null)
+                    {
+                        mWizard.mPomLearnUtils.POM.PomSetting.RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>(xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList.Where(x => x.Status == CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed));
+                    }
+                    else
+                    {
+                        PomSetting pomSetting = new PomSetting();
+                        pomSetting.RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>(xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList.Where(x => x.Status == CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed));
+                        mWizard.mPomLearnUtils.POM.PomSetting = pomSetting;
+                    }
                 }
-                    
+                else
+                {
+                    if (mWizard.mPomLearnUtils.POM.PomSetting != null)
+                    {
+                        mWizard.mPomLearnUtils.POM.PomSetting.RelativeXpathTemplateList.Clear();
+                    }
+
+                }
             }
+            
         }
 
         private void PlatformSpecificUIManipulations()
@@ -141,47 +191,95 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         private void XTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 
         {
-            if (mWizard.mPomLearnUtils.POM.TargetApplicationKey != null)
+            if(isCallFromScreenShotPage)
             {
-                mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mWizard.mPomLearnUtils.POM.TargetApplicationKey);
+                if (mScreenShotWizard.mPomLearnUtils.POM.TargetApplicationKey != null)
+                {
+                    mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mScreenShotWizard.mPomLearnUtils.POM.TargetApplicationKey);
+                }
+                else
+                {
+
+                    if (xTargetApplicationComboBox.SelectedItem is ApplicationPlatform selectedplatform)
+                    {
+                        mAppPlatform = selectedplatform.Platform;
+                    }
+                }
+                if (mAppPlatform == ePlatformType.Web)
+                {
+                    xLearnScreenshotsOfElements.Visibility = Visibility.Visible;
+                    isEnableFriendlyLocator = true;
+                }
+                else
+                {
+                    xLearnScreenshotsOfElements.Visibility = Visibility.Collapsed;
+                    isEnableFriendlyLocator = false;
+                }
+                SetElementLocatorsSettingsGridView();
+                mScreenShotWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
+                foreach (Agent agent in mScreenShotWizard.OptionalAgentsList)
+                {
+                    if (agent.AgentOperations == null)
+                    {
+                        AgentOperations agentOperations = new AgentOperations(agent);
+                        agent.AgentOperations = agentOperations;
+                    }
+                    agent.Tag = string.Empty;
+                }
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mScreenShotWizard.mPomLearnUtils, nameof(mScreenShotWizard.mPomLearnUtils.Agent));
+                xAgentControlUC.Init(mScreenShotWizard.OptionalAgentsList);
+                string allProperties = string.Empty;
+                PropertyChangedEventManager.RemoveHandler(source: xAgentControlUC, handler: XAgentControlUC_PropertyChanged, propertyName: allProperties);
+                PropertyChangedEventManager.AddHandler(source: xAgentControlUC, handler: XAgentControlUC_PropertyChanged, propertyName: allProperties);
+
+                PlatformSpecificUIManipulations();
+                AddValidations();
             }
             else
             {
-
-                if (xTargetApplicationComboBox.SelectedItem is ApplicationPlatform selectedplatform)
+                if (mWizard.mPomLearnUtils.POM.TargetApplicationKey != null)
                 {
-                    mAppPlatform = selectedplatform.Platform;
+                    mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mWizard.mPomLearnUtils.POM.TargetApplicationKey);
                 }
-            }
-            if (mAppPlatform == ePlatformType.Web)
-            {
-                xLearnScreenshotsOfElements.Visibility = Visibility.Visible;
-                isEnableFriendlyLocator = true;
-            }
-            else
-            {
-                xLearnScreenshotsOfElements.Visibility = Visibility.Collapsed;
-                isEnableFriendlyLocator = false;
-            }
-            SetElementLocatorsSettingsGridView();
-            mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
-            foreach (Agent agent in mWizard.OptionalAgentsList)
-            {
-                if (agent.AgentOperations == null)
+                else
                 {
-                    AgentOperations agentOperations = new AgentOperations(agent);
-                    agent.AgentOperations = agentOperations;
-                }
-                agent.Tag = string.Empty;
-            }
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard.mPomLearnUtils, nameof(mWizard.mPomLearnUtils.Agent));
-            xAgentControlUC.Init(mWizard.OptionalAgentsList);
-            string allProperties = string.Empty;
-            PropertyChangedEventManager.RemoveHandler(source: xAgentControlUC, handler: XAgentControlUC_PropertyChanged, propertyName: allProperties);
-            PropertyChangedEventManager.AddHandler(source: xAgentControlUC, handler: XAgentControlUC_PropertyChanged, propertyName: allProperties);
 
-            PlatformSpecificUIManipulations();
-            AddValidations();
+                    if (xTargetApplicationComboBox.SelectedItem is ApplicationPlatform selectedplatform)
+                    {
+                        mAppPlatform = selectedplatform.Platform;
+                    }
+                }
+                if (mAppPlatform == ePlatformType.Web)
+                {
+                    xLearnScreenshotsOfElements.Visibility = Visibility.Visible;
+                    isEnableFriendlyLocator = true;
+                }
+                else
+                {
+                    xLearnScreenshotsOfElements.Visibility = Visibility.Collapsed;
+                    isEnableFriendlyLocator = false;
+                }
+                SetElementLocatorsSettingsGridView();
+                mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
+                foreach (Agent agent in mWizard.OptionalAgentsList)
+                {
+                    if (agent.AgentOperations == null)
+                    {
+                        AgentOperations agentOperations = new AgentOperations(agent);
+                        agent.AgentOperations = agentOperations;
+                    }
+                    agent.Tag = string.Empty;
+                }
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard.mPomLearnUtils, nameof(mWizard.mPomLearnUtils.Agent));
+                xAgentControlUC.Init(mWizard.OptionalAgentsList);
+                string allProperties = string.Empty;
+                PropertyChangedEventManager.RemoveHandler(source: xAgentControlUC, handler: XAgentControlUC_PropertyChanged, propertyName: allProperties);
+                PropertyChangedEventManager.AddHandler(source: xAgentControlUC, handler: XAgentControlUC_PropertyChanged, propertyName: allProperties);
+
+                PlatformSpecificUIManipulations();
+                AddValidations();
+            }
+            
         }
 
         private void AddValidations()
@@ -196,12 +294,25 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void SetAutoMapElementTypes()
         {
-            if (mWizard.mPomLearnUtils.AutoMapBasicElementTypesList.Count == 0 || mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList.Count == 0)
+            if(isCallFromScreenShotPage)
             {
-                var elementList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetUIElementFilterList();
-                mWizard.mPomLearnUtils.AutoMapBasicElementTypesList = elementList["Basic"];
-                mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList = elementList["Advanced"];
+                if (mScreenShotWizard.mPomLearnUtils.AutoMapBasicElementTypesList.Count == 0 || mScreenShotWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList.Count == 0)
+                {
+                    var elementList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetUIElementFilterList();
+                    mScreenShotWizard.mPomLearnUtils.AutoMapBasicElementTypesList = elementList["Basic"];
+                    mScreenShotWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList = elementList["Advanced"];
+                }
             }
+            else
+            {
+                if (mWizard.mPomLearnUtils.AutoMapBasicElementTypesList.Count == 0 || mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList.Count == 0)
+                {
+                    var elementList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetUIElementFilterList();
+                    mWizard.mPomLearnUtils.AutoMapBasicElementTypesList = elementList["Basic"];
+                    mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList = elementList["Advanced"];
+                }
+            }
+            
         }
 
 
@@ -231,26 +342,56 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void CheckUnCheckAllAdvancedElements(object sender, RoutedEventArgs e)
         {
-            if (mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList.Count > 0)
+            if(isCallFromScreenShotPage)
             {
-                bool valueToSet = !mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList[0].Selected;
-                foreach (UIElementFilter elem in mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList)
+                if (mScreenShotWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList.Count > 0)
                 {
-                    elem.Selected = valueToSet;
+                    bool valueToSet = !mScreenShotWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList[0].Selected;
+                    foreach (UIElementFilter elem in mScreenShotWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList)
+                    {
+                        elem.Selected = valueToSet;
+                    }
                 }
             }
+            else
+            {
+                if (mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList.Count > 0)
+                {
+                    bool valueToSet = !mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList[0].Selected;
+                    foreach (UIElementFilter elem in mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList)
+                    {
+                        elem.Selected = valueToSet;
+                    }
+                }
+            }
+            
         }
 
         private void CheckUnCheckAllBasicElements(object sender, RoutedEventArgs e)
         {
-            if (mWizard.mPomLearnUtils.AutoMapBasicElementTypesList.Count > 0)
+            if(isCallFromScreenShotPage)
             {
-                bool valueToSet = !mWizard.mPomLearnUtils.AutoMapBasicElementTypesList[0].Selected;
-                foreach (UIElementFilter elem in mWizard.mPomLearnUtils.AutoMapBasicElementTypesList)
+                if (mScreenShotWizard.mPomLearnUtils.AutoMapBasicElementTypesList.Count > 0)
                 {
-                    elem.Selected = valueToSet;
+                    bool valueToSet = !mScreenShotWizard.mPomLearnUtils.AutoMapBasicElementTypesList[0].Selected;
+                    foreach (UIElementFilter elem in mScreenShotWizard.mPomLearnUtils.AutoMapBasicElementTypesList)
+                    {
+                        elem.Selected = valueToSet;
+                    }
                 }
             }
+            else
+            {
+                if (mWizard.mPomLearnUtils.AutoMapBasicElementTypesList.Count > 0)
+                {
+                    bool valueToSet = !mWizard.mPomLearnUtils.AutoMapBasicElementTypesList[0].Selected;
+                    foreach (UIElementFilter elem in mWizard.mPomLearnUtils.AutoMapBasicElementTypesList)
+                    {
+                        elem.Selected = valueToSet;
+                    }
+                }
+            }
+            
         }
 
         private void SetElementLocatorsSettingsGridView()
@@ -272,11 +413,37 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xElementLocatorsSettingsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
         }
 
+        public Uri ValidateURL(String sURL)
+        {
+            Uri myurl;
+            if (Uri.TryCreate(sURL, UriKind.Absolute, out myurl))
+            {
+                return myurl;
+            }
+            return null;
+        }
+
         private void XAgentControlUC_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(ucAgentControl.AgentIsRunning))
+            if (isCallFromScreenShotPage)
             {
-                UpdateConfigsBasedOnAgentStatus();
+                var Agent = sender as ucAgentControl;
+                if (Agent.SelectedAgent != null)
+                {
+                    // Get the row object from the button's DataContext
+                    //Agent selectedAgent = 
+                    Uri uri = ValidateURL(mScreenShotWizard.HtmlFilePath);
+                    if (uri != null)
+                    {
+                        ((AgentOperations)Agent.SelectedAgent.AgentOperations).Driver.RunAction(new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL, ValueForDriver = uri.AbsoluteUri });
+                    }
+
+                    if (e.PropertyName == nameof(ucAgentControl.AgentIsRunning))
+                    {
+
+                        UpdateConfigsBasedOnAgentStatus();
+                    }
+                }
             }
         }
 
@@ -304,35 +471,72 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void ClearAutoMapElementTypesSection()
         {
-            mWizard.mPomLearnUtils.AutoMapBasicElementTypesList = [];
-            xAutoMapBasicElementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapBasicElementTypesList;
+            if(isCallFromScreenShotPage)
+            {
+                mScreenShotWizard.mPomLearnUtils.AutoMapBasicElementTypesList = [];
+                xAutoMapBasicElementTypesGrid.DataSourceList = mScreenShotWizard.mPomLearnUtils.AutoMapBasicElementTypesList;
 
-            mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList = [];
-            xAutoMapAdvancedlementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList;
+                mScreenShotWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList = [];
+                xAutoMapAdvancedlementTypesGrid.DataSourceList = mScreenShotWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList;
+            }
+            else
+            {
+                mWizard.mPomLearnUtils.AutoMapBasicElementTypesList = [];
+                xAutoMapBasicElementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapBasicElementTypesList;
+
+                mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList = [];
+                xAutoMapAdvancedlementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList;
+            }
         }
 
         private void SetAutoMapElementTypesSection()
         {
             xAgentControlUC.xAgentConfigsExpander.Visibility = Visibility.Visible;
-
             SetAutoMapElementTypes();
-            xAutoMapBasicElementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapBasicElementTypesList;
-            xAutoMapAdvancedlementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList;
+            if(isCallFromScreenShotPage)
+            {
+                xAutoMapBasicElementTypesGrid.DataSourceList = mScreenShotWizard.mPomLearnUtils.AutoMapBasicElementTypesList;
+                xAutoMapAdvancedlementTypesGrid.DataSourceList = mScreenShotWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList;
+            }
+            else
+            {
+                xAutoMapBasicElementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapBasicElementTypesList;
+                xAutoMapAdvancedlementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList;
+            }
+            
         }
 
         private void SetElementLocatorsSettingsSection()
         {
-            if (mWizard.mPomLearnUtils.ElementLocatorsSettingsList.Count == 0)
+            if(isCallFromScreenShotPage)
             {
-                mWizard.mPomLearnUtils.ElementLocatorsSettingsList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetLearningLocators();
+                if (mScreenShotWizard.mPomLearnUtils.ElementLocatorsSettingsList.Count == 0)
+                {
+                    mScreenShotWizard.mPomLearnUtils.ElementLocatorsSettingsList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetLearningLocators();
+                }
+                xElementLocatorsSettingsGrid.DataSourceList = mScreenShotWizard.mPomLearnUtils.ElementLocatorsSettingsList;
+                foreach (ElementLocator elementLocator in mScreenShotWizard.mPomLearnUtils.ElementLocatorsSettingsList)
+                {
+                    string allProperties = string.Empty;
+                    PropertyChangedEventManager.RemoveHandler(source: elementLocator, handler: Item_PropertyChanged, propertyName: allProperties);
+                    PropertyChangedEventManager.AddHandler(source: elementLocator, handler: Item_PropertyChanged, propertyName: allProperties);
+                }
             }
-            xElementLocatorsSettingsGrid.DataSourceList = mWizard.mPomLearnUtils.ElementLocatorsSettingsList;
-            foreach (ElementLocator elementLocator in mWizard.mPomLearnUtils.ElementLocatorsSettingsList)
+            else
             {
-                string allProperties = string.Empty;
-                PropertyChangedEventManager.RemoveHandler(source: elementLocator, handler: Item_PropertyChanged, propertyName: allProperties);
-                PropertyChangedEventManager.AddHandler(source: elementLocator, handler: Item_PropertyChanged, propertyName: allProperties);
+                if (mWizard.mPomLearnUtils.ElementLocatorsSettingsList.Count == 0)
+                {
+                    mWizard.mPomLearnUtils.ElementLocatorsSettingsList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetLearningLocators();
+                }
+                xElementLocatorsSettingsGrid.DataSourceList = mWizard.mPomLearnUtils.ElementLocatorsSettingsList;
+                foreach (ElementLocator elementLocator in mWizard.mPomLearnUtils.ElementLocatorsSettingsList)
+                {
+                    string allProperties = string.Empty;
+                    PropertyChangedEventManager.RemoveHandler(source: elementLocator, handler: Item_PropertyChanged, propertyName: allProperties);
+                    PropertyChangedEventManager.AddHandler(source: elementLocator, handler: Item_PropertyChanged, propertyName: allProperties);
+                }
             }
+            
         }
 
         private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -347,63 +551,124 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void xAutomaticElementConfigurationRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            if (mWizard != null)
+            if(isCallFromScreenShotPage)
             {
-                if ((bool)xManualElementConfigurationRadioButton.IsChecked)
+                if (mScreenShotWizard != null)
                 {
-                    mWizard.ManualElementConfiguration = true;
-                    RemoveValidations();
-                    //xAgentControlUC.Visibility = Visibility.Hidden;
-                    //xAutoMapElementTypesExpander.Visibility = Visibility.Hidden;
-                    //xElementLocatorsSettingsExpander.Visibility = Visibility.Collapsed;
-                    xLearningConfigsPnl.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    mWizard.ManualElementConfiguration = false;
-                    AddValidations();
-                    //xAgentControlUC.Visibility = Visibility.Visible;
-                    //xAutoMapElementTypesExpander.Visibility = Visibility.Visible;
-                    //xElementLocatorsSettingsExpander.Visibility = Visibility.Visible;
-                    xLearningConfigsPnl.Visibility = Visibility.Visible;
+                    if ((bool)xManualElementConfigurationRadioButton.IsChecked)
+                    {
+                        mScreenShotWizard.ManualElementConfiguration = true;
+                        RemoveValidations();
+                        xLearningConfigsPnl.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        mScreenShotWizard.ManualElementConfiguration = false;
+                        AddValidations();
+                        xLearningConfigsPnl.Visibility = Visibility.Visible;
+                    }
                 }
             }
+            else
+            {
+                if (mWizard != null)
+                {
+                    if ((bool)xManualElementConfigurationRadioButton.IsChecked)
+                    {
+                        mWizard.ManualElementConfiguration = true;
+                        RemoveValidations();
+                        xLearningConfigsPnl.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        mWizard.ManualElementConfiguration = false;
+                        AddValidations();
+                        xLearningConfigsPnl.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+            
         }
 
         private void xLearnSpecificFrameChkBox_Click(object sender, RoutedEventArgs e)
         {
-            if (Convert.ToBoolean(xLearnSpecificFrameChkBox.IsChecked))
+            if(isCallFromScreenShotPage)
             {
-                xFrameListGrid.Visibility = Visibility.Visible;
-                BindWindowFrameCombox();
+                if (Convert.ToBoolean(xLearnSpecificFrameChkBox.IsChecked))
+                {
+                    xFrameListGrid.Visibility = Visibility.Visible;
+                    BindWindowFrameCombox();
+                }
+                else
+                {
+                    xFrameListGrid.Visibility = Visibility.Collapsed;
+                    mScreenShotWizard.mPomLearnUtils.SpecificFramePath = null;
+                }
             }
             else
             {
-                xFrameListGrid.Visibility = Visibility.Collapsed;
-                mWizard.mPomLearnUtils.SpecificFramePath = null;
+                if (Convert.ToBoolean(xLearnSpecificFrameChkBox.IsChecked))
+                {
+                    xFrameListGrid.Visibility = Visibility.Visible;
+                    BindWindowFrameCombox();
+                }
+                else
+                {
+                    xFrameListGrid.Visibility = Visibility.Collapsed;
+                    mWizard.mPomLearnUtils.SpecificFramePath = null;
+                }
             }
+            
         }
 
         private void BindWindowFrameCombox()
         {
-            mWizard.mPomLearnUtils.SpecificFramePath = null;
-            if (mAppPlatform.Equals(ePlatformType.Java))
+            if(isCallFromScreenShotPage)
             {
-                var windowExplorerDriver = ((IWindowExplorer)(((AgentOperations)mWizard.mPomLearnUtils.Agent.AgentOperations).Driver));
+                mScreenShotWizard.mPomLearnUtils.SpecificFramePath = null;
+                if (mAppPlatform.Equals(ePlatformType.Java))
+                {
+                    var windowExplorerDriver = ((IWindowExplorer)(((AgentOperations)mScreenShotWizard.mPomLearnUtils.Agent.AgentOperations).Driver));
 
-                var list = windowExplorerDriver.GetWindowAllFrames();
-                xFrameListCmbBox.ItemsSource = list;
-                xFrameListCmbBox.DisplayMemberPath = nameof(AppWindow.Title);
+                    var list = windowExplorerDriver.GetWindowAllFrames();
+                    xFrameListCmbBox.ItemsSource = list;
+                    xFrameListCmbBox.DisplayMemberPath = nameof(AppWindow.Title);
+                }
             }
+            else
+            {
+                mWizard.mPomLearnUtils.SpecificFramePath = null;
+                if (mAppPlatform.Equals(ePlatformType.Java))
+                {
+                    var windowExplorerDriver = ((IWindowExplorer)(((AgentOperations)mWizard.mPomLearnUtils.Agent.AgentOperations).Driver));
+
+                    var list = windowExplorerDriver.GetWindowAllFrames();
+                    xFrameListCmbBox.ItemsSource = list;
+                    xFrameListCmbBox.DisplayMemberPath = nameof(AppWindow.Title);
+                }
+            }
+            
         }
 
         private void xFrameListCmbBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selectedItem = (AppWindow)xFrameListCmbBox.SelectedItem;
-            if (selectedItem != null)
+            if(isCallFromScreenShotPage)
             {
-                mWizard.mPomLearnUtils.SpecificFramePath = selectedItem.Path;
+                var selectedItem = (AppWindow)xFrameListCmbBox.SelectedItem;
+                if (selectedItem != null)
+                {
+                    mScreenShotWizard.mPomLearnUtils.SpecificFramePath = selectedItem.Path;
+                }
             }
+            else
+            {
+                var selectedItem = (AppWindow)xFrameListCmbBox.SelectedItem;
+                if (selectedItem != null)
+                {
+                    mWizard.mPomLearnUtils.SpecificFramePath = selectedItem.Path;
+                }
+            }
+            
         }
 
         private void xFrameRefreshBtn_Click(object sender, RoutedEventArgs e)

@@ -38,11 +38,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     public partial class POMGeneralDetailsWizardPage : Page, IWizardPage
     {
         AddPOMWizard mWizard;
+        AddPOMFromScreenshotWizard mScreenshotWizard;
         ScreenShotViewPage mScreenshotPage;
         ucBusinessFlowMap mBusinessFlowControl;
+        bool isCallFromScreenShotPage;
 
-        public POMGeneralDetailsWizardPage()
+        public POMGeneralDetailsWizardPage(bool isCallFromScreenshot=false)
         {
+            isCallFromScreenShotPage = isCallFromScreenshot;
             InitializeComponent();
         }
 
@@ -51,60 +54,131 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
-                    xNameTextBox.BindControl(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.Name));
-                    xNameTextBox.AddValidationRule(new POMNameValidationRule());
-                    xNameTextBox.Focus();
+                    if(isCallFromScreenShotPage)
+                    {
+                        mScreenshotWizard = (AddPOMFromScreenshotWizard)WizardEventArgs.Wizard;
+                        xNameTextBox.BindControl(mScreenshotWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.Name));
+                        xNameTextBox.AddValidationRule(new POMNameValidationRule());
+                        xNameTextBox.Focus();
 
-                    xURLTextBox.BindControl(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.PageURL));
+                        xURLTextBox.BindControl(mScreenshotWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.PageURL));
 
-                    xDescriptionTextBox.BindControl(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.Description));
-                    xTagsViewer.Init(mWizard.mPomLearnUtils.POM.TagsKeys);
+                        xDescriptionTextBox.BindControl(mScreenshotWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.Description));
+                        xTagsViewer.Init(mScreenshotWizard.mPomLearnUtils.POM.TagsKeys);
 
-                    mBusinessFlowControl = new ucBusinessFlowMap(mWizard.mPomLearnUtils.POM, nameof(mWizard.mPomLearnUtils.POM.MappedBusinessFlow), false);
-                    xFrameBusinessFlowControl.ClearAndSetContent(mBusinessFlowControl);
+                        mBusinessFlowControl = new ucBusinessFlowMap(mScreenshotWizard.mPomLearnUtils.POM, nameof(mScreenshotWizard.mPomLearnUtils.POM.MappedBusinessFlow), false);
+                        xFrameBusinessFlowControl.ClearAndSetContent(mBusinessFlowControl);
+                    }
+                    else
+                    {
+                        mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
+                        xNameTextBox.BindControl(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.Name));
+                        xNameTextBox.AddValidationRule(new POMNameValidationRule());
+                        xNameTextBox.Focus();
+
+                        xURLTextBox.BindControl(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.PageURL));
+
+                        xDescriptionTextBox.BindControl(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.Description));
+                        xTagsViewer.Init(mWizard.mPomLearnUtils.POM.TagsKeys);
+
+                        mBusinessFlowControl = new ucBusinessFlowMap(mWizard.mPomLearnUtils.POM, nameof(mWizard.mPomLearnUtils.POM.MappedBusinessFlow), false);
+                        xFrameBusinessFlowControl.ClearAndSetContent(mBusinessFlowControl);
+                    }
+                    
                     break;
                 case EventType.Active:
                     SetDefaultPage();
                     ShowScreenShot();
-                    if (mWizard.ManualElementConfiguration)
+                    if(isCallFromScreenShotPage)
                     {
-                        xTakeScreenShotLoadButton.Visibility = Visibility.Collapsed;
+                        if (mScreenshotWizard.ManualElementConfiguration)
+                        {
+                            xTakeScreenShotLoadButton.Visibility = Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            xTakeScreenShotLoadButton.Visibility = Visibility.Visible;
+                        }
                     }
                     else
                     {
-                        xTakeScreenShotLoadButton.Visibility = Visibility.Visible;
+                        if (mWizard.ManualElementConfiguration)
+                        {
+                            xTakeScreenShotLoadButton.Visibility = Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            xTakeScreenShotLoadButton.Visibility = Visibility.Visible;
+                        }
                     }
+                    
                     break;
             }
         }
 
         private void SetDefaultPage()
         {
-            xPageUrlRadioBtn.IsChecked = true;
-
-            mBusinessFlowControl.TargetApplication = mWizard.mPomLearnUtils.POM.TargetApplicationKey.ItemName;
-
-            ePlatformType mAppPlatform = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mWizard.mPomLearnUtils.POM.TargetApplicationKey);
-
-            PlatformInfoBase platformInfoBase = PlatformInfoBase.GetPlatformImpl(mAppPlatform);
-            if (platformInfoBase != null)
+            if(isCallFromScreenShotPage)
             {
-                xPageUrlRadioBtn.Content = platformInfoBase.GetPageUrlRadioLabelText();
+                xPageUrlRadioBtn.IsChecked = true;
+
+                mBusinessFlowControl.TargetApplication = mScreenshotWizard.mPomLearnUtils.POM.TargetApplicationKey.ItemName;
+
+                ePlatformType mAppPlatform = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mScreenshotWizard.mPomLearnUtils.POM.TargetApplicationKey);
+
+                PlatformInfoBase platformInfoBase = PlatformInfoBase.GetPlatformImpl(mAppPlatform);
+                if (platformInfoBase != null)
+                {
+                    xPageUrlRadioBtn.Content = platformInfoBase.GetPageUrlRadioLabelText();
+                }
             }
+            else
+            {
+                xPageUrlRadioBtn.IsChecked = true;
+
+                mBusinessFlowControl.TargetApplication = mWizard.mPomLearnUtils.POM.TargetApplicationKey.ItemName;
+
+                ePlatformType mAppPlatform = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mWizard.mPomLearnUtils.POM.TargetApplicationKey);
+
+                PlatformInfoBase platformInfoBase = PlatformInfoBase.GetPlatformImpl(mAppPlatform);
+                if (platformInfoBase != null)
+                {
+                    xPageUrlRadioBtn.Content = platformInfoBase.GetPageUrlRadioLabelText();
+                }
+            }
+            
         }
 
         public void ShowScreenShot()
         {
-            mScreenshotPage = new ScreenShotViewPage(mWizard.mPomLearnUtils.POM.Name, mWizard.mPomLearnUtils.ScreenShot);
-            mScreenshotPage.xZoomSlider.Value = 0.5;
-            xScreenShotFrame.ClearAndSetContent(mScreenshotPage);
+            if(isCallFromScreenShotPage)
+            {
+                mScreenshotPage = new ScreenShotViewPage(mScreenshotWizard.mPomLearnUtils.POM.Name, mScreenshotWizard.mPomLearnUtils.ScreenShot);
+                mScreenshotPage.xZoomSlider.Value = 0.5;
+                xScreenShotFrame.ClearAndSetContent(mScreenshotPage);
+            }
+            else
+            {
+                mScreenshotPage = new ScreenShotViewPage(mWizard.mPomLearnUtils.POM.Name, mWizard.mPomLearnUtils.ScreenShot);
+                mScreenshotPage.xZoomSlider.Value = 0.5;
+                xScreenShotFrame.ClearAndSetContent(mScreenshotPage);
+            }
+            
         }
 
         private void xTakeScreenShotLoadButton_Click(object sender, RoutedEventArgs e)
         {
-            mWizard.mPomLearnUtils.LearnScreenShot();
-            ShowScreenShot();
+            if(isCallFromScreenShotPage)
+            {
+                mScreenshotWizard.mPomLearnUtils.LearnScreenShot();
+                ShowScreenShot();
+            }
+            else
+            {
+                mWizard.mPomLearnUtils.LearnScreenShot();
+                ShowScreenShot();
+            }
+            
         }
 
         private void xBrowseImageLoadButton_Click(object sender, RoutedEventArgs e)
@@ -124,10 +198,21 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         using (var ms = new MemoryStream())
                         {
                             BitmapImage bi = new BitmapImage(new Uri(op.FileName));
-                            mWizard.mPomLearnUtils.ScreenShot = Ginger.General.BitmapImage2Bitmap(bi);
-                            mWizard.mPomLearnUtils.POM.ScreenShotImage = Ginger.General.BitmapToBase64(mWizard.mPomLearnUtils.ScreenShot);
-                            mScreenshotPage = new ScreenShotViewPage(mWizard.mPomLearnUtils.POM.Name, mWizard.mPomLearnUtils.ScreenShot);
-                            xScreenShotFrame.ClearAndSetContent(mScreenshotPage);
+                            if(isCallFromScreenShotPage)
+                            {
+                                mScreenshotWizard.mPomLearnUtils.ScreenShot = Ginger.General.BitmapImage2Bitmap(bi);
+                                mScreenshotWizard.mPomLearnUtils.POM.ScreenShotImage = Ginger.General.BitmapToBase64(mScreenshotWizard.mPomLearnUtils.ScreenShot);
+                                mScreenshotPage = new ScreenShotViewPage(mScreenshotWizard.mPomLearnUtils.POM.Name, mScreenshotWizard.mPomLearnUtils.ScreenShot);
+                                xScreenShotFrame.ClearAndSetContent(mScreenshotPage);
+                            }
+                            else
+                            {
+                                mWizard.mPomLearnUtils.ScreenShot = Ginger.General.BitmapImage2Bitmap(bi);
+                                mWizard.mPomLearnUtils.POM.ScreenShotImage = Ginger.General.BitmapToBase64(mWizard.mPomLearnUtils.ScreenShot);
+                                mScreenshotPage = new ScreenShotViewPage(mWizard.mPomLearnUtils.POM.Name, mWizard.mPomLearnUtils.ScreenShot);
+                                xScreenShotFrame.ClearAndSetContent(mScreenshotPage);
+                            }
+                            
                         }
                     }
                 }
@@ -140,18 +225,37 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void xRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
-            if (Convert.ToBoolean(xPageUrlRadioBtn.IsChecked))
+            if(isCallFromScreenShotPage)
             {
-                mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.PageURL;
-                xURLTextBox.Visibility = Visibility.Visible;
-                xFrameBusinessFlowControl.Visibility = Visibility.Collapsed;
+                if (Convert.ToBoolean(xPageUrlRadioBtn.IsChecked))
+                {
+                    mScreenshotWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.PageURL;
+                    xURLTextBox.Visibility = Visibility.Visible;
+                    xFrameBusinessFlowControl.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    mScreenshotWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.BusinessFlow;
+                    xFrameBusinessFlowControl.Visibility = Visibility.Visible;
+                    xURLTextBox.Visibility = Visibility.Collapsed;
+                }
             }
             else
             {
-                mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.BusinessFlow;
-                xFrameBusinessFlowControl.Visibility = Visibility.Visible;
-                xURLTextBox.Visibility = Visibility.Collapsed;
+                if (Convert.ToBoolean(xPageUrlRadioBtn.IsChecked))
+                {
+                    mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.PageURL;
+                    xURLTextBox.Visibility = Visibility.Visible;
+                    xFrameBusinessFlowControl.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.BusinessFlow;
+                    xFrameBusinessFlowControl.Visibility = Visibility.Visible;
+                    xURLTextBox.Visibility = Visibility.Collapsed;
+                }
             }
+            
         }
     }
 }

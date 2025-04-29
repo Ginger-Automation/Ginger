@@ -222,7 +222,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
 
         private async void TestElementButtonClicked(object sender, RoutedEventArgs e)
         {
-
             mWizard.ProcessStarted();
             mWizard.DisableBackBtnOnLastPage = true;
             mWizard.mWizardWindow.SetFinishButtonEnabled(false);

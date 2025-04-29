@@ -33,6 +33,7 @@ using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Application_Models
@@ -153,7 +154,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             }
         }
 
-        public void SaveLearnedPOM()
+        public void SaveLearnedPOM(bool isCallFromScreenshot = false)
         {
             StopLearningTime();
             if (ScreenShot != null)
@@ -167,6 +168,10 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             if (Agent != null)
             {
                 POM.LastUsedAgent = Agent.Guid;
+                if (isCallFromScreenshot)
+                {
+                    POM.AIGenerated = true;
+                }
             }
 
             if (mPomModelsFolder != null)
@@ -217,7 +222,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         public void PrepareLearningConfigurations()
         {
-            
+
             ObservableList<UIElementFilter> uIElementList = new ObservableList<UIElementFilter>();
 
             // Adding items from AutoMapBasicElementTypesList
@@ -232,7 +237,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
             if (POM.PomSetting != null)
             {
-                mElementLocatorsList = POM.PomSetting.ElementLocatorsSettingsList != null ? POM.PomSetting.ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList(): ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();
+                mElementLocatorsList = POM.PomSetting.ElementLocatorsSettingsList != null ? POM.PomSetting.ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList() : ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();
 
                 POM.PomSetting.FilteredElementType = SelectedElementTypesList;
                 POM.PomSetting.ElementLocatorsSettingsList = POM.PomSetting.ElementLocatorsSettingsList != null ? POM.PomSetting.ElementLocatorsSettingsList : ElementLocatorsSettingsList;
@@ -245,7 +250,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             else
             {
 
-                pomSetting = new PomSetting(); 
+                pomSetting = new PomSetting();
                 mElementLocatorsList = ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();
 
                 pomSetting.FilteredElementType = SelectedElementTypesList;
@@ -258,7 +263,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 POM.PomSetting = pomSetting;
             }
 
-            
+
         }
 
         public void LearnScreenShot()
@@ -312,7 +317,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         private ObservableList<CustomRelativeXpathTemplate> GetRelativeXpathTemplateList()
         {
             var customRelXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>();
-            if(POM.PomSetting != null && POM.PomSetting.RelativeXpathTemplateList != null)
+            if (POM.PomSetting != null && POM.PomSetting.RelativeXpathTemplateList != null)
             {
                 foreach (var item in POM.PomSetting.RelativeXpathTemplateList)
                 {
@@ -333,7 +338,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                     SetLearnedElementDetails(learnedElement);
                     learnedElement.ParentGuid = POM.Guid;
                     //add to relevent group
-                    if (SelectedElementTypesList.Any(x=>x.ElementType.Equals(learnedElement.ElementTypeEnum)))
+                    if (SelectedElementTypesList.Any(x => x.ElementType.Equals(learnedElement.ElementTypeEnum)))
                     {
                         POM.MappedUIElements.Add(learnedElement);
                     }
@@ -434,6 +439,19 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 Reporter.ToLog(eLogLevel.ERROR, "Error in Updating POM Element Name", ex);
             }
             return uname;
+        }
+
+        public ApiSettings LoadApiSettings()
+        {
+
+            // Get the directory of the current class
+            string directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
+            // Combine the directory with the file name
+            string filePath = Path.Combine(directory, "OpenAIappsetting.json");
+
+            string json = File.ReadAllText(filePath);
+            return JsonSerializer.Deserialize<ApiSettings>(json);
         }
 
     }
