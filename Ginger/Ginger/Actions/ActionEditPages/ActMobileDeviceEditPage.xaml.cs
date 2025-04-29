@@ -25,9 +25,7 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
-using System.Drawing.Drawing2D;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -84,8 +82,6 @@ namespace Ginger.Actions
             xFilePathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.FilePathInput, nameof(ActInputValue.Value), true, true, UCValueExpression.eBrowserType.File, "*");
 
             xFolderPathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.FolderPathInput, nameof(ActMobileDevice.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");
-
-            xFolderPathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.LocalFolderPathInput, nameof(ActMobileDevice.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");
 
             xAppPackageVE.Init(Context.GetAsContext(mAct.Context), mAct.ActionAppPackage, nameof(ActInputValue.Value));
 
@@ -237,7 +233,6 @@ namespace Ginger.Actions
             xSpecificPerformanceDataPnl.Visibility = Visibility.Collapsed;
             xDeviceRotationPnl.Visibility = Visibility.Collapsed;
             xMultiTouchGrid.Visibility = Visibility.Collapsed;
-            xFolderTransferPnl.Visibility = Visibility.Collapsed;
             
 
             switch (mAct.MobileDeviceAction)
@@ -301,7 +296,7 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.IsAppInstalled:
                 case ActMobileDevice.eMobileDeviceAction.RemoveApp:
                 case ActMobileDevice.eMobileDeviceAction.QueryAppState:
-                case ActMobileDevice.eMobileDeviceAction.ClearAppdata:
+                case ActMobileDevice.eMobileDeviceAction.ClearAppData:
                     xAppPnl.Visibility = Visibility.Visible;
                     break;
                     
@@ -336,6 +331,7 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.PushFileToDevice:
                     xFilePathLbl.Content = "Local File to Push:";
                     xFolderPathLbl.Content = "Device Target Folder:";
+                    xFileTextBlock.Text="For Multiple Files Select Folder";
                     xFilePathLbl.Visibility = Visibility.Visible;
                     xFilePathTextBox.Visibility = Visibility.Visible;
                     xFolderPathLbl.Visibility = Visibility.Visible;
@@ -346,6 +342,7 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.PullFileFromDevice:
                     xFolderPathLbl.Content = "Device File to Pull:";
                     xFilePathLbl.Content = "Local Target to Push:";
+                    xFileTextBlock.Text = "";
                     xFilePathLbl.Visibility = Visibility.Visible;
                     xFilePathTextBox.Visibility = Visibility.Visible;
                     xFolderPathLbl.Visibility = Visibility.Visible;
@@ -387,14 +384,6 @@ namespace Ginger.Actions
                     xInputTextBlock.Text = ""; 
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
-                //case ActMobileDevice.eMobileDeviceAction.PushFolder:                  
-                //    xFolderPathLbl.Content = "Local Folder to Push:";
-                //    xFolderTransferPnl.Visibility = Visibility.Visible;
-                //    xFileTransferPnl.Visibility = Visibility.Visible;
-                //    xFilePathTextBox.Visibility = Visibility.Collapsed;
-                //    xFilePathLbl.Visibility = Visibility.Collapsed;
-                //    xFolderTextBlock.Text = "";
-                //    break;
 
                 case ActMobileDevice.eMobileDeviceAction.SendAppToBackground:
                     xInputLabelVE.Content = "Set a Time Duration for Backgroud(Seconds):";

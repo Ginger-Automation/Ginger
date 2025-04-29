@@ -1424,8 +1424,8 @@ namespace Amdocs.Ginger.CoreNET
                     case ActMobileDevice.eMobileDeviceAction.TypeUsingIOSkeyboard:
                         TypeUsingIOSkeyboard(act.ActionInput.ValueForDriver);
                         break;
-                    case ActMobileDevice.eMobileDeviceAction.ClearAppdata:
-                        ClearAppdata(act.ActionAppPackage.ValueForDriver);
+                    case ActMobileDevice.eMobileDeviceAction.ClearAppData:
+                        ClearAppData(act.ActionAppPackage.ValueForDriver);
                         break;
                     case ActMobileDevice.eMobileDeviceAction.GrantAppPermission:                       
                         GrantAppPermission(act.ActionAppPackage.ValueForDriver, act.ActionInput.ValueForDriver);
@@ -1452,11 +1452,8 @@ namespace Amdocs.Ginger.CoreNET
                         LockForDuration(act.ActionInput.ValueForDriver);
                         break;
                     case ActMobileDevice.eMobileDeviceAction.GetSettings:
-                        GetSettings(act);
+                        GetSettings(act);                      
                         break;
-                    //case ActMobileDevice.eMobileDeviceAction.PushFolder:
-                    //    PushFolder(act.FolderPathInput.ValueForDriver, act.LocalFolderPathInput.ValueForDriver);
-                    //    break;
                     case ActMobileDevice.eMobileDeviceAction.ToggleLocationServices:
                         ToggleLocationServices();
                         break;
@@ -2102,10 +2099,6 @@ namespace Amdocs.Ginger.CoreNET
                 else
                 {
                     currentPackage = string.Format("{0}", ((Dictionary<string, object>)Driver.ExecuteScript("mobile: activeAppInfo"))["bundleId"]);
-                    //currentPackage = Driver.ExecuteScript("mobile: activeAppInfo")
-                    //                .ToString()
-                    //                .Split(':')[1]
-                    //                .Trim();
                 }
 
                 return currentPackage;
@@ -4114,7 +4107,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else
                 {
-                    throw new InvalidOperationException($"Unsupported driver type: {Driver.GetType().Name}");
+                    throw new InvalidOperationException($"Unsupported driver type");
                 }
             }
             catch (Exception ex)
@@ -4238,7 +4231,7 @@ namespace Amdocs.Ginger.CoreNET
                 ? ((AndroidDriver)Driver).GetAppState(appId) 
                 : Driver is IOSDriver  
                     ? ((IOSDriver)Driver).GetAppState(appId)
-                    : throw new InvalidOperationException($"Unsupported driver type: {Driver.GetType().Name}");
+                    : throw new InvalidOperationException($"Unsupported driver type");
             }
             catch (Exception ex)
             {
@@ -4352,22 +4345,10 @@ namespace Amdocs.Ginger.CoreNET
                 else if (Driver is IOSDriver)
                 {
                     ((IOSDriver)Driver).HideKeyboard();
-                    // ((IOSDriver)Driver).FindElement(By.Name("Cancel")).Click();
-                    //((IOSDriver)Driver).FindElement(By.Name("Done")).Click();
-                    //((IOSDriver)Driver).FindElement(By.Name("Next:")).Click();
-                    //((IOSDriver)Driver).FindElement(By.Name("id.ui.browse.back.button")).Click();
-                    //var outsideElement = Driver.FindElement(By.XPath("//XCUIElementTypeButton"));
-                    //outsideElement.Click();
-                    //var size = Driver.Manage().Window.Size;
-                    //int centerX = size.Width / 2;
-                    //int centerY = size.Height / 2;
-
-                    //var touchAction = new OpenQA.Selenium.Interactions.Actions(Driver);
-                    //touchAction.MoveToLocation(centerX, centerY).Click().Perform();
                 }
                 else
                 {
-                    throw new NotSupportedException($"Driver type '{Driver.GetType().Name}' is not supported for keyboard operations");
+                    throw new NotSupportedException($"Driver type is not supported for keyboard operations");
                 }
             }
             catch (Exception ex)
@@ -4384,17 +4365,27 @@ namespace Amdocs.Ginger.CoreNET
             if (string.IsNullOrEmpty(DeviceTargerFolder))
                 throw new ArgumentException("Device target folder cannot be null or empty", nameof(DeviceTargerFolder));
 
-            //if (!File.Exists(LocalFilePath))
-            //    throw new ArgumentException($"Local file not found: {LocalFilePath}", nameof(LocalFilePath));
             bool isDirectory = Directory.Exists(LocalFilePath);
             bool isFile = File.Exists(LocalFilePath);
+
             if (!isDirectory && !isFile)
                 throw new ArgumentException($"Path not found: {LocalFilePath}", nameof(LocalFilePath));
 
             if (isDirectory)
             {
                 // Handle directory
-                PushFolder(LocalFilePath, DeviceTargerFolder);
+                foreach (var filePath in Directory.GetFiles(LocalFilePath))
+                {
+                    var remoteFilePath = Path.Combine(DeviceTargerFolder, Path.GetFileName(filePath));
+                    try
+                    {
+                        Driver.PushFile(remoteFilePath, new FileInfo(filePath));
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new InvalidOperationException($"Failed to push file {filePath}: {ex.Message}", ex);
+                    }
+                }
             }
 
             else
@@ -4465,7 +4456,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else
                 {
-                    throw new NotSupportedException($"Driver type '{Driver.GetType().Name}' is not supported for clipboard operations");
+                    throw new NotSupportedException($"Driver type is not supported for clipboard operations");
                 }
             }
             catch (Exception ex)
@@ -4642,13 +4633,12 @@ namespace Amdocs.Ginger.CoreNET
                     }
                 }
                 else if (Driver is AndroidDriver)
-                {
-                    //string escapedText = text.Replace("'", "\'").Replace("\"", "\"");
+                {                    
                     ((AndroidDriver)Driver).ExecuteScript("mobile: type", new Dictionary<string, object>{{ "text", text }});
                 }
                 else
                 {
-                    throw new NotSupportedException($"Driver type '{Driver.GetType().Name}' is not supported for keyboard typing");
+                    throw new NotSupportedException($"Driver type is not supported for keyboard typing");
                 }
             }
             catch (Exception ex)
@@ -4668,11 +4658,11 @@ namespace Amdocs.Ginger.CoreNET
              }
              else
              {
-                throw new InvalidOperationException($"Failed to determine the device OS type: the driver type '{Driver.GetType().Name}' is not AndroidDriver or IOSDriver");
+                throw new InvalidOperationException($"Failed to determine the device OS type: the driver type is not AndroidDriver or IOSDriver");
              } 
             
         }
-        public void ClearAppdata(string appId)
+        public void ClearAppData(string appId)
         {
             if (string.IsNullOrWhiteSpace(appId))
             {
@@ -4691,7 +4681,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else
                 {
-                    throw new NotSupportedException($"Driver type '{Driver.GetType().Name}' is not supported for clearing app data");
+                    throw new NotSupportedException($"Driver type is not supported for clearing app data");
                 }
             }
             catch (Exception ex)
@@ -4732,41 +4722,6 @@ namespace Amdocs.Ginger.CoreNET
             }
 
         }
-        public void EmulateIncomingCall(string phoneNumber)
-        {
-            try
-            {
-                ((AndroidDriver)Driver).MakeGsmCall(phoneNumber, GsmCallActions.Call);
-            }
-            catch (Exception ex)
-            {
-                throw new($"An error occurred while emulating the incoming call: {ex.Message}");
-            }
-
-        }
-        public void EmulateSMS(string phoneNumber, string message)
-        {
-            try
-            {
-                ((AndroidDriver)Driver).SendSms(phoneNumber, message);
-            }
-            catch (Exception ex)
-            {
-                throw new($"An error occurred while emulating the SMS: {ex.Message}");
-
-            }
-        }
-        //public void SetPasteboardContent(string text) 
-        //{
-        //    ((IOSDriver)Driver).ExecuteScript("mobile: setPasteboard", new Dictionary<string, object> { { "content", text }, { "encoding", "plaintext" } });
-
-        //}
-        //public string GetPasteboardContent()
-        //{
-
-        //    return ((IOSDriver)Driver).ExecuteScript("mobile: getPasteboard", new Dictionary<string, object> { { "encoding", "plaintext" } }) as string;
-
-        //}
         public void GetAppId(ActMobileDevice act)
         {
             if (Driver is AndroidDriver)
@@ -4936,8 +4891,6 @@ namespace Amdocs.Ginger.CoreNET
         }
         public void StartNetworkCapture() // working on IOS, need to check the 'network' name with xcrun xctrace list templates run command via terminal
         {
-            //    string startCaptureData = (string)((IOSDriver)Driver).ExecuteScript("mobile: startPerfRecord", new Dictionary<string, object> { { "profileName", "Network" } });
-            //    string something = "";
             if(Driver is AndroidDriver)
             {
                 ((AndroidDriver)Driver).ExecuteScript("mobile: startLogsBroadcast", new Dictionary<string, object> {
@@ -4957,8 +4910,6 @@ namespace Amdocs.Ginger.CoreNET
         }
         public string StopNetworkCapture() // working on IOS, need to check the 'network' name with xcrun xctrace list templates run command via terminal
         {
-            //    string captureData = (string)((IOSDriver)Driver).ExecuteScript("mobile: stopPerfRecord", new Dictionary<string, object> { { "profileName", "Network" } });
-            //    return captureData;
             if (Driver is AndroidDriver)
             {
                 string logNetwork = (string)((AndroidDriver)Driver).ExecuteScript("mobile: stopLogsBroadcast");
@@ -4975,79 +4926,7 @@ namespace Amdocs.Ginger.CoreNET
                 throw new InvalidOperationException("Unsupported driver type");
             }
         }
-        
-        public void PushFolder(string localFolderPath, string remoteFolderPath) // working for android, for ios need to see the files via itunes 
-        //Appium currently doesn't directly support pushing an entire folder in one go. Instead, you can push all the files and recreate the folder structure on the device programmatically.
-        {
-            if (!Directory.Exists(localFolderPath))
-            {
-                throw new DirectoryNotFoundException($"Local Folder not found: {localFolderPath}");
-            }
-            if (string.IsNullOrEmpty(remoteFolderPath))
-            {
-                throw new ArgumentException("Device Target Folder path cannot be null or empty", nameof(remoteFolderPath));
-            }
-            foreach (var filePath in Directory.GetFiles(localFolderPath))
-            {
-                var remoteFilePath = remoteFolderPath + Path.GetFileName(filePath);
-                try
-                {
-                    Driver.PushFile(remoteFilePath, new FileInfo(filePath));
-                }
-                catch (Exception ex)
-                {
-                    throw new($"Failed to push file {filePath}: {ex.Message}");
-                }
-            }
-        }
-        //public void StartDeviceLogs()
-        //{
-        //    try
-        //    {
-        //        if (Driver is AndroidDriver)
-        //        {
-        //            Driver.ExecuteScript("mobile: startLogsBroadcast");
-
-        //        }
-        //        else if (Driver is IOSDriver)
-        //        {
-        //            Driver.ExecuteScript("mobile: startPerfRecord", new Dictionary<string, object> { { "profileName", "Network" } });
-
-        //        }
-        //        else
-        //        {
-        //            throw new ArgumentException("Unsupported driver type");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new($"Error starting device logs: {ex.Message}");
-        //    }
-        //}
-
-        //public void StopDeviceLogs()
-        //{
-        //    try
-        //    {
-        //        if (Driver is AndroidDriver) 
-        //        { 
-        //            var logs = Driver.Manage().Logs.GetLog("logcat");
-        //        }
-        //        else if (Driver is IOSDriver)
-        //        {
-        //            var perfLogs = Driver.ExecuteScript("mobile: stopPerfRecord", new Dictionary<string, object> { { "profileName", "Network" } });                   
-        //        }
-        //        else
-        //        {
-        //            throw new ArgumentException("Unsupported driver type");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new($"Error stopping device logs: {ex.Message}");
-
-        //    }
-        //} 
+       
         public void ToggleLocationServices()
         {
             if (Driver is AndroidDriver)
@@ -5190,23 +5069,17 @@ namespace Amdocs.Ginger.CoreNET
         }
         public void GetGeoLocation(ActMobileDevice act) // working only on android(required connecting to WIFI) , for ios need to find "WebDriverAgentRunner" in location services screen and set its location access to "Always."
         {
-            try { 
-            Location location = Driver switch
-            {
-                AndroidDriver  => ((AndroidDriver)Driver).Location,
-                IOSDriver  => ((IOSDriver)Driver).Location,
-                _ => throw new InvalidOperationException("Unsupported driver type")
-            };
-            //else if (Driver is IOSDriver)
-            //{
-            //    // Enable location services for WebDriverAgentRunner 
-            //    //    ((IOSDriver)Driver).ExecuteScript("mobile: configureLocalization", new Dictionary<string, object>
-            //    //{{ "bundleId", "com.apple.WebDriverAgentRunner" },{ "locationServicesEnabled", true },{ "locationServicesAuthorization", 3 }  }); // 3 means "Always"
-            //    location = ((IOSDriver)Driver).Location;
-            //}                       
-            act.AddOrUpdateReturnParamActual("Latitude", location.Latitude.ToString());
-            act.AddOrUpdateReturnParamActual("longitude", location.Longitude.ToString());
-            act.AddOrUpdateReturnParamActual("Altitude", location.Altitude.ToString());
+            try 
+            { 
+                Location location = Driver switch
+                {
+                    AndroidDriver  => ((AndroidDriver)Driver).Location,
+                    IOSDriver  => ((IOSDriver)Driver).Location,
+                    _=> throw new InvalidOperationException("Unsupported driver type")
+                };
+                act.AddOrUpdateReturnParamActual("Latitude", location.Latitude.ToString());
+                act.AddOrUpdateReturnParamActual("longitude", location.Longitude.ToString());
+                act.AddOrUpdateReturnParamActual("Altitude", location.Altitude.ToString());
             }
             catch (Exception ex)
             {
@@ -5240,8 +5113,6 @@ namespace Amdocs.Ginger.CoreNET
             }
             else if (Driver is IOSDriver)
             {
-                //((IOSDriver)Driver).ExecuteScript("mobile: changePermissions", new Dictionary<string, object>{{ "action", grant ? "grant" : "revoke" },{ "bundleId", appPackage },
-                //{ "permissions", new[] { permission } } });
                 throw new("Grant App Permission services are not directly supported on iOS");
             }                              
         }
@@ -5273,7 +5144,6 @@ namespace Amdocs.Ginger.CoreNET
         {
             if (Driver is AndroidDriver)
             {
-                //Driver.ExecuteScript("mobile: setNetworkConnection", new Dictionary<string, object> { { "type", connectionType } });
                 ToggleWifi();
                 ToggleAirplaneMode();
                 ToggleData();

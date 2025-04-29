@@ -155,7 +155,7 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(FilePathInput));
             }
         }
-        public ActInputValue LocalFolderPathInput
+        public ActInputValue LocalFolderPathInput // need to check
         {
             get
             {
@@ -527,7 +527,7 @@ namespace GingerCore.Actions
             [EnumValueDescription("Type Using keyboard")]
             TypeUsingIOSkeyboard,
             [EnumValueDescription("Clear App Data")]
-            ClearAppdata,
+            ClearAppData,
             [EnumValueDescription("Get Screen Size")]
             ScreenSize,
             [EnumValueDescription("Open Notifications Panel")]
@@ -544,15 +544,13 @@ namespace GingerCore.Actions
             LockForDuration,
             [EnumValueDescription("Get Settings")]
             GetSettings,
-            //[EnumValueDescription("Push Folder to Device")]
-            //PushFolder,
             [EnumValueDescription("Toggle Location Services")]
             ToggleLocationServices,
             [EnumValueDescription("Toggle Data")]
             ToggleData,
             [EnumValueDescription("Toggle Airplane Mode")]
             ToggleAirplaneMode,
-            [EnumValueDescription("Toggle Wifi")] 
+            [EnumValueDescription("Toggle WIFI")] 
             ToggleWifi,
             [EnumValueDescription("Is IME Active")] 
             IsIMEActive,
