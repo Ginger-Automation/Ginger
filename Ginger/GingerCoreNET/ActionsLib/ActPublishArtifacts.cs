@@ -27,6 +27,8 @@ namespace GingerCore.Actions
 {
     public class ActPublishArtifacts : ActWithoutDriver
     {
+        private const long MaxUploadSizeBytes = 5242879;  // 5MB = 5242880 bytes, but somewhere the calculation is referring it as 5242879 byte-s
+
         public override string ActionType
         {
             get
@@ -82,12 +84,21 @@ namespace GingerCore.Actions
                 {
                     if (!System.IO.File.Exists(item.ValueForDriver))
                     {
-                        Error += "Artifact File Path is invalid/doesn't exist/not enough permissions to access file: " + item.ValueForDriver;
+                        Error += $"Artifact File Path is invalid/doesn't exist/not enough permissions to access file: {item.ValueForDriver}";
                         continue;
                     }
-                    if (new System.IO.FileInfo(item.ValueForDriver).Length > 5242879) // 5MB = 5242880 bytes, but somewhere the calculation is referring it as 5242879 bytes
+                    try
                     {
-                        Error += "File size greater than 5MB cannot be uploaded: " + item.ValueForDriver;
+                        var fileSize = new System.IO.FileInfo(item.ValueForDriver).Length;
+                        if (fileSize > MaxUploadSizeBytes)
+                        {
+                            Error += $"File size greater than 5MB cannot be uploaded: {item.ValueForDriver}";
+                            continue;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Error += $"Failed to check file size for {item.ValueForDriver}: {ex.Message}";
                         continue;
                     }
 
@@ -96,7 +107,7 @@ namespace GingerCore.Actions
             }
             catch (Exception ex)
             {
-                Error += "Failed to upload artifacts: " + ex;
+                Error += $"Failed to upload artifacts: {ex.Message}";
                 return;
             }
         }
