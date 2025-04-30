@@ -129,7 +129,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
         {
             if (mWizard.mMultiPomDeltaUtils.mPOMModels.Count > 0)
             {
-                bool valueToSet = !mWizard.mMultiPomDeltaUtils.mPOMModels[0].Selected;
+                bool valueToSet = !mWizard.mMultiPomDeltaUtils.mPOMModels.All(elem => elem.Selected);
                 foreach (ApplicationPOMModel elemPom in mWizard.mMultiPomDeltaUtils.mPOMModels)
                 {
                     elemPom.Selected = valueToSet;

@@ -27,7 +27,6 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerTest.WizardLib;
 using GingerWPF.WizardLib;
 using System;
 using System.ComponentModel;
@@ -94,7 +93,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 && (mAppPlatform.Equals(ePlatformType.Web) || mAppPlatform.Equals(ePlatformType.Mobile)))
             {
                 if (mWizard.mPomLearnUtils.POM.PomSetting != null)
-                { 
+                {
                     mWizard.mPomLearnUtils.POM.PomSetting.RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>(xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList.Where(x => x.Status == CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed));
                 }
                 else
@@ -106,11 +105,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
             else
             {
-                if(mWizard.mPomLearnUtils.POM.PomSetting != null)
+                if (mWizard.mPomLearnUtils.POM.PomSetting != null)
                 {
                     mWizard.mPomLearnUtils.POM.PomSetting.RelativeXpathTemplateList.Clear();
                 }
-                    
+
             }
         }
 
@@ -233,7 +232,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList.Count > 0)
             {
-                bool valueToSet = !mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList[0].Selected;
+                bool valueToSet = !mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList.All(elem => elem.Selected);
                 foreach (UIElementFilter elem in mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList)
                 {
                     elem.Selected = valueToSet;
@@ -245,7 +244,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (mWizard.mPomLearnUtils.AutoMapBasicElementTypesList.Count > 0)
             {
-                bool valueToSet = !mWizard.mPomLearnUtils.AutoMapBasicElementTypesList[0].Selected;
+                bool valueToSet = !mWizard.mPomLearnUtils.AutoMapBasicElementTypesList.All(elem => elem.Selected);
                 foreach (UIElementFilter elem in mWizard.mPomLearnUtils.AutoMapBasicElementTypesList)
                 {
                     elem.Selected = valueToSet;
