@@ -8,7 +8,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public AddPOMFromScreenshotWizard(RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
         {
-
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Page Objects Model Introduction", Page: new WizardIntroPage("/ApplicationModelsLib/POMModels/POMWizardLib/LearnWizard/AddPOMIntro.md"));
 
             AddPage(Name: "Upload MockUp", Title: "Upload MockUp", SubTitle: "Upload MockUp Screen-shot for POM Generation", Page: new UploadMockUpWizardPage());
@@ -23,6 +22,5 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         }
 
         public override string Title { get { return "Add POM From Screen-shot Wizard"; } }
-
     }
 }

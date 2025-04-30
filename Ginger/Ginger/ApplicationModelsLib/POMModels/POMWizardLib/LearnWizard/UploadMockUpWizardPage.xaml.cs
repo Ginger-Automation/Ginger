@@ -32,10 +32,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 case EventType.Init:
                     mWizard = (AddPOMFromScreenshotWizard)WizardEventArgs.Wizard;
                     break;
-                case EventType.Active:
-                    break;
-                case EventType.LeavingForNextPage:
-                    break;
             }
         }
 

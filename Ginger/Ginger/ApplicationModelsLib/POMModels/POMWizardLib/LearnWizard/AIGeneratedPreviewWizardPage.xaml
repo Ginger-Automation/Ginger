@@ -35,7 +35,7 @@
             </Grid>
             
             <StackPanel x:Name="xGenerateAIPanel" Visibility="Collapsed"  Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Label x:Name="xGenerateAILabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12" Content="Generating Preview From AI Please wait... Processing your request..."/>
+                <Label x:Name="xGenerateAILabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12" Content="Generating AI preview. Please wait while processing your request..."/>
             </StackPanel>
             <wv2:WebView2 x:Name="MyWebView" Grid.Row="2" Visibility="Visible" />
 

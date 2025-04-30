@@ -46,7 +46,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     }
                     break;
                 case EventType.Active:
-                    if (string.IsNullOrEmpty(ApiSettings.ApiKey) || ApiSettings.ApiKey.Equals("YourAPIKey"))
+                    if (string.IsNullOrEmpty(ApiSettings.ApiKey) || ApiSettings.ApiKey.Equals("YourAPIKey",StringComparison.InvariantCultureIgnoreCase))
                     {
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "OpenAI setting are not valid.");
                         WizardEventArgs.Wizard.Cancel();   // or disable page
@@ -99,7 +99,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 mWizard.ProcessStarted();
                 string fileName = Path.GetFileName(mWizard.ScreenShotImagePath);
                 xGenerateAIPanel.Visibility = Visibility.Visible;
-                await GenerateResponseAsync(fileName: fileName, FilePath: mWizard.ScreenShotImagePath);
+                await GenerateResponseAsync(FilePath: mWizard.ScreenShotImagePath);
                 if (!string.IsNullOrEmpty(mWizard.HtmlFilePath))
                 {
                     MyWebView.Source = new Uri(mWizard.HtmlFilePath);
@@ -126,7 +126,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
         }
 
-        private async Task GenerateResponseAsync(string fileName, string FilePath = null)
+        private async Task GenerateResponseAsync(string FilePath = null)
         {
             // Extract filename with extension
             string fileNameWithExtension = Path.GetFileName(FilePath);
@@ -194,7 +194,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 string requestJson = System.Text.Json.JsonSerializer.Serialize(requestBody);
                 StringContent content = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
-                string requestUrl = $"{ApiSettings.endpoint}openai/deployments/{ApiSettings.deploymentName}/chat/completions?api-version={ApiSettings.apiVersion}";
+                string requestUrl = $"{ApiSettings.Endpoint}openai/deployments/{ApiSettings.DeploymentName}/chat/completions?api-version={ApiSettings.ApiVersion}";
                 try
                 {
                     HttpResponseMessage response = await client.PostAsync(requestUrl, content);
