@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
     /// <summary>
-    /// Interaction logic for POMScreenshotLearnConfigWizardPage.xaml
+    /// Interaction logic for UploadMockUpWizardPage.xaml
     /// </summary>
     public partial class UploadMockUpWizardPage : Page, IWizardPage
     {
