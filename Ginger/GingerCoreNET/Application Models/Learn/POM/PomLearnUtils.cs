@@ -48,6 +48,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         List<eLocateBy> mElementLocatorsList = [];
         public ObservableList<ElementInfo> mElementsList = [];
         public PomSetting pomSetting;
+        public bool IsGeneratedByAI { get; set; } = false;
 
         bool mLearnOnlyMappedElements = true;
         public bool LearnOnlyMappedElements
@@ -167,6 +168,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             if (Agent != null)
             {
                 POM.LastUsedAgent = Agent.Guid;
+                POM.AIGenerated = IsGeneratedByAI;
             }
 
             if (mPomModelsFolder != null)
@@ -217,7 +219,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         public void PrepareLearningConfigurations()
         {
-            
+
             ObservableList<UIElementFilter> uIElementList = new ObservableList<UIElementFilter>();
 
             // Adding items from AutoMapBasicElementTypesList
@@ -232,7 +234,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
             if (POM.PomSetting != null)
             {
-                mElementLocatorsList = POM.PomSetting.ElementLocatorsSettingsList != null ? POM.PomSetting.ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList(): ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();
+                mElementLocatorsList = POM.PomSetting.ElementLocatorsSettingsList != null ? POM.PomSetting.ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList() : ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();
 
                 POM.PomSetting.FilteredElementType = SelectedElementTypesList;
                 POM.PomSetting.ElementLocatorsSettingsList = POM.PomSetting.ElementLocatorsSettingsList != null ? POM.PomSetting.ElementLocatorsSettingsList : ElementLocatorsSettingsList;
@@ -245,7 +247,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             else
             {
 
-                pomSetting = new PomSetting(); 
+                pomSetting = new PomSetting();
                 mElementLocatorsList = ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();
 
                 pomSetting.FilteredElementType = SelectedElementTypesList;
@@ -258,7 +260,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 POM.PomSetting = pomSetting;
             }
 
-            
+
         }
 
         public void LearnScreenShot()
@@ -312,7 +314,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         private ObservableList<CustomRelativeXpathTemplate> GetRelativeXpathTemplateList()
         {
             var customRelXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>();
-            if(POM.PomSetting != null && POM.PomSetting.RelativeXpathTemplateList != null)
+            if (POM.PomSetting != null && POM.PomSetting.RelativeXpathTemplateList != null)
             {
                 foreach (var item in POM.PomSetting.RelativeXpathTemplateList)
                 {
@@ -333,7 +335,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                     SetLearnedElementDetails(learnedElement);
                     learnedElement.ParentGuid = POM.Guid;
                     //add to relevent group
-                    if (SelectedElementTypesList.Any(x=>x.ElementType.Equals(learnedElement.ElementTypeEnum)))
+                    if (SelectedElementTypesList.Any(x => x.ElementType.Equals(learnedElement.ElementTypeEnum)))
                     {
                         POM.MappedUIElements.Add(learnedElement);
                     }

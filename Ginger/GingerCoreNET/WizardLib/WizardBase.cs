@@ -264,5 +264,6 @@ namespace GingerWPF.WizardLib
             mWizardWindow = null;
             // GC.Collect();            
         }
+
     }
 }
