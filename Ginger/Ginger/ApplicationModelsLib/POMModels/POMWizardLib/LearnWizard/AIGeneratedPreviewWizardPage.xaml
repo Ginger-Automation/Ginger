@@ -12,8 +12,8 @@
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="40"></RowDefinition>
-                <RowDefinition Height="40"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="400*"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" VerticalAlignment="Center">

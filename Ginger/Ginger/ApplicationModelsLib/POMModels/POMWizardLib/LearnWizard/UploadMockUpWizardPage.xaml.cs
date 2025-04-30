@@ -68,10 +68,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
         }
 
-        private void URLTextBoxTextChange(object sender, TextChangedEventArgs e)
-        {
-
-        }
 
         private void BrowseImageButtonClicked(object sender, System.Windows.RoutedEventArgs e)
         {

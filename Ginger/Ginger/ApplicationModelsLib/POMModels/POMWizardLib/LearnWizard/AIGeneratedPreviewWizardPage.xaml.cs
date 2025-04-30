@@ -45,8 +45,20 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 case EventType.Init:
                     mWizard = (AddPOMFromScreenshotWizard)WizardEventArgs.Wizard;
                     ApiSettings = LoadApiSettings();
+                    if (ApiSettings == null)
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "OpenAI settings could not be loaded.");
+                        WizardEventArgs.Wizard.Cancel();   // or disable page
+                        return;
+                    }
                     break;
                 case EventType.Active:
+                    if(string.IsNullOrEmpty(ApiSettings.ApiKey) || ApiSettings.ApiKey.Equals("YouuAPiKey"))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "OpenAI setting are not valid.");
+                        WizardEventArgs.Wizard.Cancel();   // or disable page
+                        break;
+                    }
                     GenerateHtmlAsync();
                     break;
                 case EventType.LeavingForNextPage:
@@ -75,7 +87,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             catch (Exception ex)
             {
-                Console.WriteLine("Error: " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load OpenAI API settings", ex);
                 return null;
             }
         }
@@ -84,12 +96,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if(!string.IsNullOrEmpty(mWizard.HtmlFilePath))
             {
+                xGenerateAIPanel.Visibility = Visibility.Collapsed;
                 return;
             }
             mWizard.ProcessStarted();
             string fileName = Path.GetFileName(mWizard.ScreenShotImagePath);
             xGenerateAIPanel.Visibility = Visibility.Visible;
-            await GenrateResponseAsync(fileName: fileName, FilePath: mWizard.ScreenShotImagePath);
+            await GenerateResponseAsync(fileName: fileName, FilePath: mWizard.ScreenShotImagePath);
             if (!string.IsNullOrEmpty(mWizard.HtmlFilePath))
             {
                 MyWebView.Source = new Uri(mWizard.HtmlFilePath);
@@ -97,11 +110,17 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 MyWebView.Visibility = Visibility.Visible;
                 xViewGenerateHTMLButton.Visibility = Visibility.Visible;
             }
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load OpenAI API Response");
+                xGenerateAIPanel.Visibility = Visibility.Collapsed;
+                MyWebView.Visibility = Visibility.Collapsed;
+            }
             xReGenerateButton.Visibility = Visibility.Visible;
             mWizard.ProcessEnded();
         }
 
-        private async Task GenrateResponseAsync(string fileName, string FilePath = null)
+        private async Task GenerateResponseAsync(string fileName, string FilePath = null)
         {
             // Extract filename with extension
             string fileNameWithExtension = Path.GetFileName(FilePath);
@@ -109,7 +128,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             // Remove the extension
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileNameWithExtension);
 
-            string response = await GetChatGPTResponse2(FilePath);
+            string response = await GetChatGPTResponse(FilePath);
             if(!response.EndsWith("```"))
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Re-generate the Preview or faced same issue again contact to system administration");
@@ -119,23 +138,19 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(response);
-
-            IEnumerable<HtmlNode> htmlElements = htmlDoc.DocumentNode
-                    .Descendants()
-                    .Where(x => !x.Name.StartsWith('#') && !excludedElementNames.Contains(x.Name)
-                                && !x.XPath.Contains("/noscript", StringComparison.OrdinalIgnoreCase));
-
-            string filePath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Documents", $"{fileNameWithoutExtension}.html"); //$"C:\\Solution\\TestScreenshot\\Documents\\SwagLab\\{fileNameWithoutExtension}.html";
+            string SolutionFolder = WorkSpace.Instance.Solution.Folder;
+            string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\AIGeneratePreview");
+            if (!System.IO.Directory.Exists(targetPath))
+            {
+                System.IO.Directory.CreateDirectory(targetPath);
+            }
+            string filePath = Path.Combine(targetPath, $"{fileNameWithoutExtension}.html");
             File.WriteAllText(filePath, response);
             mWizard.HtmlFilePath = filePath;
         }
 
-        internal static HashSet<string> excludedElementNames = new(StringComparer.OrdinalIgnoreCase)
-        {
-            "noscript", "script", "style", "meta", "head", "link", "html", "body"
-        };
 
-        private async Task<string> GetChatGPTResponse2(string imagePath)
+        private async Task<string> GetChatGPTResponse(string imagePath)
         {
             using HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add("api-key", ApiSettings.ApiKey);
@@ -215,7 +230,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 DocumentEditorPage docPage = new DocumentEditorPage(mWizard.HtmlFilePath, enableEdit: false, UCTextEditorTitle: string.Empty)
                 {
-                    Width = 400,
+                    Width = 500,
                     Height = 600
                 };
                 docPage.ShowAsWindow("View source code");

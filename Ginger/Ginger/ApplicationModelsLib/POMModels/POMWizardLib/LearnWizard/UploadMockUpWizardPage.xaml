@@ -10,7 +10,7 @@
       xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="UploadMockUpWizardPage">
+      Title="Upload Mockup Screenshot for POM Generation">
 
     <Grid>
 
@@ -21,7 +21,7 @@
 
         <StackPanel x:Name="xScreenshotOperationBtns" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
             <Label Name="URLLable"  HorizontalAlignment="Left" Content="Image Path:" VerticalAlignment="Center"  />
-            <TextBox  Background="White"   x:Name="xURLTextBox" TextChanged="URLTextBoxTextChange" Text="" VerticalAlignment="Center" MinWidth="300" Margin="0,0,5,0"/>
+            <TextBox  Background="White"   x:Name="xURLTextBox" Text="" VerticalAlignment="Center" MinWidth="300" Margin="0,0,5,0"/>
             <usercontrols:ucButton x:Name="xBrowseImageLoadButton" ButtonType="RoundTextAndImageButton" ButtonText="Load Image" ButtonImageType="MoveDown" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="BrowseImageButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
         </StackPanel>
 

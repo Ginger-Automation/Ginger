@@ -1042,6 +1042,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Phone:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Phone);
                     break;
+                case eImageType.Microchip:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Microchip);
+                    break;
                 #endregion
 
                 #region ElementType Images
