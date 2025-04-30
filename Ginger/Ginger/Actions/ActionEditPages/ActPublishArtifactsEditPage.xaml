@@ -8,4 +8,8 @@
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" d:DesignWidth="773.206"
       Title="ActPublishArtifactsEditPage" Height="160">
+    <Grid>
+        <!-- This page intentionally left empty as the UI is handled by ActionEditPage -->
+        <!-- Any page-specific controls would go here -->
+    </Grid>
 </Page>

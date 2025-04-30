@@ -918,9 +918,13 @@ namespace Ginger.Actions
         {
             mAction.InputValues.Add(new ActInputValue()
             {
-                Param = mAction.GetType() == typeof(ActPublishArtifacts) ? ((mAction.InputValues.Count == 0) ? 0 : mAction.InputValues.Select(inputValue => int.Parse(inputValue.Param)).Max() + 1).ToString()
-                : "p" + ((mAction.InputValues.Count == 0) ? 0 : mAction.InputValues.Select(inputValue => int.Parse(inputValue.Param.Substring(1))).Max() + 1)
+                Param = GetUniqueParamName()
             });
+        }
+
+        private string GetUniqueParamName()
+        {
+            return "p" + (mAction.InputValues.Select(iv => int.TryParse(iv.Param?.TrimStart('p'), out var n) ? n : -1).DefaultIfEmpty(-1).Max() + 1);
         }
 
         private void SetActDataSourceConfigGrid()
@@ -1290,7 +1294,7 @@ namespace Ginger.Actions
             GridViewDef view;
             if (mAction.GetType() == typeof(ActPublishArtifacts))
             {
-                view = GetGridViewForSrNoValueInputValues();
+                view = GetGridViewForFilePathsInputValues();
             }
             else
             { 
@@ -1316,15 +1320,15 @@ namespace Ginger.Actions
             };
         }
 
-        private GridViewDef GetGridViewForSrNoValueInputValues()
+        private GridViewDef GetGridViewForFilePathsInputValues()
         {
-            return new GridViewDef("OnlyValues")
+            return new GridViewDef("OnlyFilePaths")
             {
                 GridColsView = [
                     new GridColView() { Field = nameof(ActInputValue.Param), Visible = false},
                     new GridColView() { Field = nameof(ActInputValue.Value), WidthWeight = 55 },
                     new GridColView() { Field = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["InputValueExpressionButton"]},
-                    new GridColView() { Field = "Browse", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["BrowseValueFilesButton"] }
+                    new GridColView() { Field = "Browse", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["GridInputValuesBrowseBtnTemplate"] }
                     ]
             };
         }

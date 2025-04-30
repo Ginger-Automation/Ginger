@@ -69,11 +69,17 @@ namespace GingerCore.Actions
 
         public override void Execute()
         {
-            foreach (ActInputValue item in this.ActInputValues)
+            if (ActInputValues == null || ActInputValues.Count == 0)
+            {
+                Error = "No artifact files provided.";
+                return;
+            }
+
+            foreach (ActInputValue item in ActInputValues)
             {
                 if (!System.IO.File.Exists(item.ValueForDriver))
                 {
-                    Error += "Artifact File Path is invalid or doesn't exist: " + item.ValueForDriver;
+                    Error += "Artifact File Path is invalid/doesn't exist/not enough permissions to access file: " + item.ValueForDriver;
                     continue;
                 }
 

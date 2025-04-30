@@ -42,6 +42,10 @@ namespace Ginger.Actions
         public ActPublishArtifactsEditPage(ActPublishArtifacts act)
         {
             InitializeComponent();
+            // Store the action for later use
+            _action = act;
         }
+
+        private ActPublishArtifacts _action;
     }
 }

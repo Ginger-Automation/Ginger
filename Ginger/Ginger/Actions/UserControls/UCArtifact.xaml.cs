@@ -186,8 +186,8 @@ namespace Ginger.Actions.UserControls
 
         public void IntiArtifact()
         {
-            string FileExtention = string.Empty;
-            FileExtention = System.IO.Path.GetExtension(ArtifactPath).ToLower().Remove(0, 1);
+            string FileExtention = System.IO.Path.GetExtension(ArtifactPath);
+            FileExtention = FileExtention.Length > 0 ? FileExtention.ToLower().Remove(0, 1) : FileExtention;
             eFileTypes fileType;
             Enum.TryParse(FileExtention, out fileType);
 
