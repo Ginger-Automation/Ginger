@@ -52,6 +52,9 @@
             <DataTemplate x:Key="ClearExpectedValueBtnTemplate">
                 <Button x:Name="ClearExpectedValueBtn" Content="X" Click="GridClearExpectedValueBtn_Click"  Style="{DynamicResource DataGridCellButtonStyle}" ToolTip="Clear Expected Value"/>
             </DataTemplate>
+            <DataTemplate x:Key="GridInputValuesBrowseBtnTemplate">
+                <Button x:Name="GridInputValuesBrowseBtn" Content="Browse" Click="GridInputValuesBrowseBtn_Click" Style="{DynamicResource DataGridCellButtonStyle}"  IsEnabled="{Binding IsBrowseNeeded,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"/>
+            </DataTemplate>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
