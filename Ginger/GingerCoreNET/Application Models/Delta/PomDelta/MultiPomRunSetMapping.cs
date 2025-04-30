@@ -47,6 +47,8 @@ namespace GingerCoreNET.Application_Models
 
         public string ApplicationAPIModelName { get; set; }
 
+        public string LastUpdatedTime { get; set; }
+
         public List<RunSetConfig> RunSetConfigList { get; set; } = new List<RunSetConfig>();
 
         public RunSetConfig? SelectedRunset { get; set; }

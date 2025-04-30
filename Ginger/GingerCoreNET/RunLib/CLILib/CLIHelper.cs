@@ -626,7 +626,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 if (!string.IsNullOrEmpty(SourceControlURL) && !string.IsNullOrEmpty(SourcecontrolUser) && !string.IsNullOrEmpty(sourceControlPass))
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
-                    bool solutionDownloadedSuccessfully = await Task.Run(() => SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier));
+                    bool solutionDownloadedSuccessfully = false;
+
+                    if (WorkSpace.Instance.GingerCLIMode == eGingerCLIMode.run)
+                    {
+                        solutionDownloadedSuccessfully=SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier);
+                    }
+                    else
+                    {
+                        solutionDownloadedSuccessfully = await Task.Run(() => SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier));
+                    }
+                    
                     if (!solutionDownloadedSuccessfully)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
