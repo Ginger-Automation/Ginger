@@ -8655,15 +8655,24 @@ namespace GingerCore.Drivers
                         break;
                     case ActBrowserElement.eControlAction.StartMonitoringNetworkLog:
                         mAct = act;
-                        _BrowserHelper = new BrowserHelper(mAct);
-                        SetUPDevTools(Driver);
-                        StartMonitoringNetworkLog(Driver).GetAwaiter().GetResult();
+                        if (ValidateBrowserCompatibility(Driver))
+                        {
+                            _BrowserHelper = new BrowserHelper(mAct);
+                            SetUPDevTools(Driver);
+                            StartMonitoringNetworkLog(Driver).GetAwaiter().GetResult();
+                        }
                         break;
                     case ActBrowserElement.eControlAction.GetNetworkLog:
-                        GetNetworkLogAsync(act).GetAwaiter().GetResult();
+                        if (ValidateBrowserCompatibility(Driver))
+                        {
+                            GetNetworkLogAsync(act).GetAwaiter().GetResult();
+                        }
                         break;
                     case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
-                        StopMonitoringNetworkLog(act).GetAwaiter().GetResult();
+                        if (ValidateBrowserCompatibility(Driver))
+                        {
+                            StopMonitoringNetworkLog(act).GetAwaiter().GetResult();
+                        }
                         break;
                     case ActBrowserElement.eControlAction.NavigateBack:
                         Driver.Navigate().Back();
@@ -10885,7 +10894,7 @@ namespace GingerCore.Drivers
                 try
                 {
                     //DevTool Session 
-                    devToolsSession = devTools.GetDevToolsSession(127);
+                    devToolsSession = devTools.GetDevToolsSession();
                     devToolsDomains = devToolsSession.GetVersionSpecificDomains<DevToolsDomains>();
                     devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V127.Network.EnableCommandSettings());
                     blockOrUnblockUrls();
@@ -10898,6 +10907,36 @@ namespace GingerCore.Drivers
             }
 
         }
+
+        /// <summary>
+        /// Validates the compatibility of the browser for the current operation.
+        /// </summary>
+        /// <param name="webDriver">The WebDriver instance representing the browser.</param>
+        /// <returns>
+        /// Returns true if the browser is compatible with the current operation; otherwise, false.
+        /// </returns>
+        private bool ValidateBrowserCompatibility(IWebDriver webDriver)
+        {
+
+            // Check if browser type is not Chrome or Edge
+            if (webDriver is not ChromiumDriver)
+            {
+                mAct.ExInfo = $"Action is Skipped, Selected browser operation: {mAct.ControlAction} is not supported for browser type: {mBrowserType}";
+                mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                return false;
+            }
+
+            // Check if browser type is Edge and launched in IE mode
+            if (mBrowserType == GingerCore.Drivers.SeleniumDriver.eBrowserType.Edge && OpenIEModeInEdge)
+            {
+                mAct.ExInfo = "Action is Skipped, Edge browser is launched in IE mode which is not supported for Network log operations.";
+                mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                return false;
+            }
+
+            return true;
+        }
+
         private string[] getBlockedUrlsArray(string sUrlsToBeBlocked)
         {
             string[] arrBlockedUrls = [];
@@ -10951,6 +10990,8 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
+
+
 
         public async Task StartMonitoringNetworkLog(IWebDriver webDriver)
         {

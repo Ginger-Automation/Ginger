@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
@@ -32,6 +33,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -76,85 +78,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
 
                         var selectedPOMModels = mWizard.mMultiPomDeltaUtils.mPOMModels.Where(x => x.Selected);
 
-                        foreach (var applicationPOMModel in selectedPOMModels)
-                        {
-                            var matchingRunSetConfigs = RunSetConfigList
-                                .Where(runsetConfig => runsetConfig.GingerRunners
-                                    .Any(gingerRunner => businessFlows
-                                        .Where(businessFlow => gingerRunner.BusinessFlowsRunList
-                                            .Select(y => y.BusinessFlowGuid)
-                                            .Contains(businessFlow.Guid))
-                                        .Any(businessFlow => businessFlow.Activities
-                                            .Any(activity => activity.Acts
-                                                .Any(act =>
-                                                        (act is ActUIElement actUIElement && actUIElement.ElementLocateBy == eLocateBy.POMElement &&
-                                                            actUIElement.ElementLocateValue.Split("_")[0] == applicationPOMModel.Guid.ToString()) ||
-                                                        (act is ActBrowserElement actBrowserElement && actBrowserElement.LocateBy == eLocateBy.POMElement &&
-                                                            actBrowserElement.LocateValue.Split("_")[0] == applicationPOMModel.Guid.ToString()))))));
-
-                            foreach (var runsetConfig in matchingRunSetConfigs)
-                            {
-                                if (!ApplicationPOMModelrunsetConfigMapping.ContainsKey(applicationPOMModel))
-                                {
-                                    ApplicationPOMModelrunsetConfigMapping[applicationPOMModel] = new List<RunSetConfig>();
-                                }
-                                ApplicationPOMModelrunsetConfigMapping[applicationPOMModel].Add(runsetConfig);
-                            }
-                        }
-
-
-                        ObservableList<MultiPomRunSetMapping> multiPomRunSetMappingsList = new ObservableList<MultiPomRunSetMapping>();
-
-                        foreach (var kvp in ApplicationPOMModelrunsetConfigMapping)
-                        {
-                            MultiPomRunSetMapping multiPomRunSetMappingItem = new MultiPomRunSetMapping();
-                            multiPomRunSetMappingItem.ApplicationAPIModel = kvp.Key;
-                            multiPomRunSetMappingItem.ApplicationAPIModelName = multiPomRunSetMappingItem.ApplicationAPIModel.Name;
-                            multiPomRunSetMappingItem.RunSetConfigList = kvp.Value;
-                            multiPomRunSetMappingItem.RunSetStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
-
-                            multiPomRunSetMappingsList.Add(multiPomRunSetMappingItem);
-                        }
-
-                        // Set the most common RunSetConfig for each item, but retain the unique RunSetConfig if it differs
-                        foreach (MultiPomRunSetMapping item in multiPomRunSetMappingsList)
-                        {
-                            if (item.RunSetConfigList != null && item.RunSetConfigList.Any())
-                            {
-                                //Find the most common RunSetConfig across all items in multiPomRunSetMappingsList
-                                var mostCommonRunSetConfig = multiPomRunSetMappingsList
-                                    .SelectMany(item => item.RunSetConfigList)
-                                    .GroupBy(runsetConfig => runsetConfig)
-                                    .OrderByDescending(group => group.Count())
-                                    .FirstOrDefault()?.Key;
-
-                                // Check if the most common RunSetConfig is present in the current item's RunSetConfigList
-                                if (item.RunSetConfigList.Contains(mostCommonRunSetConfig))
-                                {
-                                    item.SelectedRunset = mostCommonRunSetConfig;
-                                    item.RunsetName = mostCommonRunSetConfig?.Name;
-                                }
-                                else
-                                {
-                                    var uniqueRunSetConfig = item.RunSetConfigList
-                                        .GroupBy(runsetConfig => runsetConfig)
-                                        .OrderByDescending(group => group.Count())
-                                        .FirstOrDefault()?.Key;
-
-                                    item.SelectedRunset = uniqueRunSetConfig;
-                                    item.RunsetName = uniqueRunSetConfig?.Name;
-                                }
-                            }
-                            else
-                            {
-                                // Handle case where RunSetConfigList is empty or null
-                                item.SelectedRunset = null;
-                                item.RunsetName = string.Empty;
-                                item.PomUpdateStatus = $"No Runset found";
-                            }
-                        }
-
-                        mWizard.mMultiPomDeltaUtils.MultiPomRunSetMappingList = multiPomRunSetMappingsList;
+                        mWizard.mMultiPomDeltaUtils.MultiPomRunSetMappingList = GingerCoreNET.GeneralLib.General.GetSelectedRunsetList(RunSetConfigList, businessFlows, selectedPOMModels, ApplicationPOMModelrunsetConfigMapping);
                     }
                     catch (Exception ex)
                     {
@@ -162,7 +86,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                     }
                     finally
                     {
-                        SetPomWithRunsetSelectionSection();
+                        RefreshGridDataSourceList();
                     }
 
 
@@ -187,7 +111,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
                 new GridColView() { Field = nameof(MultiPomRunSetMapping.RunsetName), Header = "RunSet", WidthWeight = 50, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(MultiPomRunSetMapping.RunSetConfigList), nameof(MultiPomRunSetMapping.RunsetName), true,comboSelectionChangedHandler:RunSetComboBox_SelectionChanged) },
                 new GridColView() { Field = "Run", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedPOMObjectMappingWithRunsetGrid.Resources["xTestElementButtonTemplate"] },
                 new GridColView() { Field = nameof(MultiPomRunSetMapping.StatusIcon), Header = "RunSet Status", WidthWeight = 20, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedPOMObjectMappingWithRunsetGrid.Resources["xTestStatusIconTemplate"] },
-                new GridColView() { Field = nameof(MultiPomRunSetMapping.PomUpdateStatus), Header = "Comment", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true }
+                new GridColView() { Field = nameof(MultiPomRunSetMapping.PomUpdateStatus), Header = "Comment", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true },
+                new GridColView() { Field = nameof(MultiPomRunSetMapping.LastUpdatedTime), Header = "Last Updated", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true },
             ]
             };
 
@@ -196,185 +121,71 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
 
             xPomWithRunsetSelectionGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
             //// TODO: For next release
-            //xPomWithRunsetSelectionGrid.AddToolbarTool(eImageType.Run, "Run All Run Set", new RoutedEventHandler(TestAllRunSet));
+            xPomWithRunsetSelectionGrid.AddToolbarTool(eImageType.Run, "Run All Run Set", new RoutedEventHandler(TestAllRunSet));
         }
 
-        private void SetPomWithRunsetSelectionSection()
+        private void RefreshGridDataSourceList()
         {
+            foreach (MultiPomRunSetMapping pom in mWizard.mMultiPomDeltaUtils.MultiPomRunSetMappingList)
+            {
+                pom.LastUpdatedTime = pom.ApplicationAPIModel.RepositoryItemHeader.LastUpdate.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            }
             xPomWithRunsetSelectionGrid.DataSourceList = mWizard.mMultiPomDeltaUtils.MultiPomRunSetMappingList;
         }
+        MultiPomRunSetMapping mSelectedPomWithRunset { get; set; }
 
 
-        MultiPomRunSetMapping mSelectedPomWithRunset
-        {
-            get
-            {
-                if (xPomWithRunsetSelectionGrid.Grid.SelectedItem != null)
-                {
-                    return (MultiPomRunSetMapping)xPomWithRunsetSelectionGrid.Grid.SelectedItem;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
 
         private async void TestElementButtonClicked(object sender, RoutedEventArgs e)
         {
-            mWizard.ProcessStarted();
-            mWizard.DisableBackBtnOnLastPage = true;
-            mWizard.mWizardWindow.SetFinishButtonEnabled(false);
-            mWizard.mWizardWindow.SetPrevButtonEnabled(false);
-            xPomWithRunsetSelectionGrid.DisableGridColoumns();
-            if (mSelectedPomWithRunset != null)
+            // Get the button that was clicked
+            var button = sender as Button;
+            if (button != null)
             {
-                if (mSelectedPomWithRunset.SelectedRunset != null)
+                // Get the row object from the button's DataContext
+                mSelectedPomWithRunset = button.DataContext as MultiPomRunSetMapping;
+
+                if (mSelectedPomWithRunset != null)
                 {
-                    mSelectedPomWithRunset.SelectedRunset.AutoUpdatedPOMList = new();
-                    if (mSelectedPomWithRunset.SelectedRunset?.SelfHealingConfiguration != null)
-                    {
-                        if (mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.EnableSelfHealing)
-                        {
-                            if (mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.AutoUpdateApplicationModel)
-                            {
-                                if (!mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.ForceUpdateApplicationModel)
-                                {
-                                    mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.ForceUpdateApplicationModel = true;
-                                }
-                            }
-                            else
-                            {
-                                mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.AutoUpdateApplicationModel = true;
-                                mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.ForceUpdateApplicationModel = true;
-                            }
-                        }
-                        else
-                        {
-                            mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.EnableSelfHealing = true;
-                            mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.AutoUpdateApplicationModel = true;
-                            mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.ForceUpdateApplicationModel = true;
-                        }
-                    }
+                    mWizard.ProcessStarted();
+                    mWizard.DisableBackBtnOnLastPage = true;
+                    mWizard.mWizardWindow.SetFinishButtonEnabled(false);
+                    mWizard.mWizardWindow.SetPrevButtonEnabled(false);
+                    xPomWithRunsetSelectionGrid.DisableGridColoumns();
+
+                    await RunSelectedRunset(mSelectedPomWithRunset);
+
+                    mWizard.DisableBackBtnOnLastPage = false;
+                    mWizard.mWizardWindow.SetFinishButtonEnabled(true);
+                    mWizard.mWizardWindow.SetPrevButtonEnabled(true);
+                    xPomWithRunsetSelectionGrid.EnableGridColumns();
+                    mWizard.ProcessEnded();
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKey.NoItemWasSelected, "RunSet");
-                    return;
-                }
-
-                WorkSpace.Instance.RunningInExecutionMode = true;
-                LoadRunsetConfigToRunsetExecutor(runsetExecutor: WorkSpace.Instance.RunsetExecutor, runSetConfig: mSelectedPomWithRunset.SelectedRunset, mCLIHelper: mCLIHelper);
-                try
-                {
-                    mSelectedPomWithRunset.RunSetStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
-                    await ExecuteRunSet();
-                    foreach (MultiPomRunSetMapping elem in mWizard.mMultiPomDeltaUtils.MultiPomRunSetMappingList)
-                    {
-                        if (mSelectedPomWithRunset.SelectedRunset.Guid.Equals(elem.SelectedRunset?.Guid))
-                        {
-                            if (mSelectedPomWithRunset.SelectedRunset.AutoUpdatedPOMList.Contains(elem.ApplicationAPIModel.Guid))
-                            {
-                                elem.PomUpdateStatus = $"{elem.ApplicationAPIModel.Name} Updated";
-                                var aPOMModified = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().First(aPOM => aPOM.Guid == elem.ApplicationAPIModel.Guid);
-                                if (aPOMModified != null)
-                                {
-                                    SaveHandler.Save(aPOMModified);
-                                }
-                                else
-                                {
-                                    Reporter.ToLog(eLogLevel.ERROR, $"Cannot find POM with GUID '{elem.ApplicationAPIModel.Guid}' to save");
-                                }
-                            }
-                            else
-                            {
-                                elem.PomUpdateStatus = $"{elem.ApplicationAPIModel.Name} Not Updated";
-                            }
-
-                            elem.RunSetStatus = mSelectedPomWithRunset.SelectedRunset.RunSetExecutionStatus;
-                            if (elem.RunSetStatus.Equals(Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed))
-                            {
-                                elem.PomUpdateStatus = $"{elem.PomUpdateStatus} and Runset status Failed";
-                            }
-
-                        }
-                    }
-                    SetPomWithRunsetSelectionSection();
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while Execute RunSet", ex);
-                }
-                finally
-                {
-                    WorkSpace.Instance.RunningInExecutionMode = false;
+                    Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 }
             }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
-            }
-            mWizard.DisableBackBtnOnLastPage = false;
-            mWizard.mWizardWindow.SetFinishButtonEnabled(true);
-            mWizard.mWizardWindow.SetPrevButtonEnabled(true);
-            xPomWithRunsetSelectionGrid.EnableGridColumns();
-            mWizard.ProcessEnded();
         }
-        private void TestAllRunSet(object sender, RoutedEventArgs e)
+
+        private async Task RunSelectedRunset(MultiPomRunSetMapping mSelectedPomWithRunset)
         {
-            //To Do
+            await GingerCoreNET.GeneralLib.General.RunSelectedRunset(mSelectedPomWithRunset, mWizard.mMultiPomDeltaUtils.MultiPomRunSetMappingList, mCLIHelper);
+            RefreshGridDataSourceList();
         }
 
-        public void LoadRunsetConfigToRunsetExecutor(RunSetConfig runSetConfig, RunsetExecutor runsetExecutor, CLIHelper mCLIHelper)
+
+        private async void TestAllRunSet(object sender, RoutedEventArgs e)
         {
-            runsetExecutor.RunSetConfig = runSetConfig;
-
-
-            if (!mCLIHelper.LoadRunset(runsetExecutor))
+            // Iterate through each item in the MultiPomRunSetMappingList
+            foreach (MultiPomRunSetMapping item in mWizard.mMultiPomDeltaUtils.MultiPomRunSetMappingList)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to load Runset ");
-                return;
+                await RunSelectedRunset(item);
             }
-
-            if (!mCLIHelper.PrepareRunsetForExecution())
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to Prepare Runset for execution");
-                return;
-            }
-
+            // Refresh the UI or perform any necessary updates after all RunSets have been executed
+            // Update the PomWithRunsetSelectionSection
+            RefreshGridDataSourceList();
         }
-
-        public async Task ExecuteRunSet()
-        {
-            Reporter.ToLog(eLogLevel.INFO, string.Format("Executing {0}... ", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-            try
-            {
-
-                await Task.Run(() =>
-                {
-                    try
-                    {
-                        Execute(WorkSpace.Instance.RunsetExecutor);
-                    }
-                    catch (Exception ex)
-                    {
-                        // Handle the exception
-                        Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while Execute RunSet", ex);
-                    }
-                });
-
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while Execute RunSet", ex);
-            }
-        }
-
-        public async Task Execute(RunsetExecutor runsetExecutor)
-        {
-            await runsetExecutor.RunRunset();
-        }
-
         private void RunSetComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (mSelectedPomWithRunset != null)

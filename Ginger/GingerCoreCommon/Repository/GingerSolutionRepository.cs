@@ -68,9 +68,9 @@ namespace Amdocs.Ginger.CoreNET.Repository
 
             SR.AddItemInfo<RemoteServiceGrid>("*.Ginger.RemoteServiceGrid.xml", SolutionRepository.cSolutionRootFolderSign + "RemoteServiceGrid", true, "RemoteServiceGrid", PropertyNameForFileName: nameof(RemoteServiceGrid.Name));
 
-            SR.AddItemInfo<AccessibilityConfiguration>("*.Ginger.Configuration.xml", SolutionRepository.cSolutionRootFolderSign + "Configurations", true, "AccessibilityConfiguration", PropertyNameForFileName: nameof(AccessibilityConfiguration.Name));
-            SR.AddItemInfo<GingerOpsConfiguration>("*.Ginger.Configuration.xml", SolutionRepository.cSolutionRootFolderSign + "Configurations", true, $"{GingerDicser.GetTermResValue(eTermResKey.GingerOps)}Configuration", PropertyNameForFileName: nameof(GingerOpsConfiguration.Name));
-            SR.AddItemInfo<WireMockConfiguration>("*.Ginger.Configuration.xml", SolutionRepository.cSolutionRootFolderSign + "Configurations", true, "WireMock Configuration", PropertyNameForFileName: nameof(WireMockConfiguration.Name));
+            SR.AddItemInfo<AccessibilityConfiguration>("Accessibility.Ginger.Configuration.xml", SolutionRepository.cSolutionRootFolderSign + "Configurations", true, "AccessibilityConfiguration", PropertyNameForFileName: nameof(AccessibilityConfiguration.Name));
+            SR.AddItemInfo<GingerOpsConfiguration>("GingerOps.Ginger.Configuration.xml", SolutionRepository.cSolutionRootFolderSign + "Configurations", true, $"{GingerDicser.GetTermResValue(eTermResKey.GingerOps)}Configuration", PropertyNameForFileName: nameof(GingerOpsConfiguration.Name));
+            SR.AddItemInfo<WireMockConfiguration>("WireMockConfig.Ginger.Configuration.xml", SolutionRepository.cSolutionRootFolderSign + "Configurations", true, "WireMock Configuration", PropertyNameForFileName: nameof(WireMockConfiguration.Name));
 
             return SR;
         }
