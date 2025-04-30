@@ -1321,9 +1321,10 @@ namespace Ginger.Actions
             return new GridViewDef("OnlyValues")
             {
                 GridColsView = [
-                    new GridColView() { Field = nameof(ActInputValue.Param), Header = "Sr No.", WidthWeight = 10 },
+                    new GridColView() { Field = nameof(ActInputValue.Param), Visible = false},
                     new GridColView() { Field = nameof(ActInputValue.Value), WidthWeight = 55 },
-                    new GridColView() { Field = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["InputValueExpressionButton"] }
+                    new GridColView() { Field = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["InputValueExpressionButton"]},
+                    new GridColView() { Field = "Browse", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["BrowseValueFilesButton"] }
                     ]
             };
         }
@@ -2519,6 +2520,19 @@ namespace Ginger.Actions
 
         }
 
+        private void GridInputValuesBrowseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ActInputValue item = (ActInputValue)xInputValuesGrid.CurrentItem;
 
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
+            {
+                DefaultExt = "*.*",
+                Filter = "All files (All Files)|*.*"
+            }) is string fileName)
+            {
+                item.Value = fileName;
+                xInputValuesGrid.DataSourceList.CurrentItem = item;
+            }
+        }
     }
 }

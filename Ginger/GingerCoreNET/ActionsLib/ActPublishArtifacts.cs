@@ -17,13 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCore.Actions;
+using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace GingerCore.Actions
 {
@@ -70,11 +67,18 @@ namespace GingerCore.Actions
             TBH.AddText("Use this action for uploading of Artifacts for HTML Report usage.");
         }
 
-        // Keep in CoreNET
-
         public override void Execute()
         {
-            throw new NotImplementedException();
+            foreach (ActInputValue item in this.ActInputValues)
+            {
+                if (!System.IO.File.Exists(item.ValueForDriver))
+                {
+                    Error += "Artifact File Path is invalid or doesn't exist: " + item.ValueForDriver;
+                    continue;
+                }
+
+                Act.AddArtifactToAction(Path.GetFileName(item.ValueForDriver), this, item.ValueForDriver);
+            }
         }
     }
 }
