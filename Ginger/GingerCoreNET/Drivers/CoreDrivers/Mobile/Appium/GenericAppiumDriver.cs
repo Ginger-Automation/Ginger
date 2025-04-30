@@ -1420,7 +1420,7 @@ namespace Amdocs.Ginger.CoreNET
                     case ActMobileDevice.eMobileDeviceAction.PerformMultiTouch:
                         PerformMultiTouch(act.MobileTouchOperations);
                         break;
-                    case ActMobileDevice.eMobileDeviceAction.TypeUsingIOSkeyboard:
+                    case ActMobileDevice.eMobileDeviceAction.TypeUsingkeyboard:
                         TypeUsingIOSkeyboard(act.ActionInput.ValueForDriver);
                         break;
                     case ActMobileDevice.eMobileDeviceAction.ClearAppData:
@@ -4370,41 +4370,28 @@ namespace Amdocs.Ginger.CoreNET
             if (!isDirectory && !isFile)
                 throw new ArgumentException($"Path not found: {LocalFilePath}", nameof(LocalFilePath));
 
+            // Create array of strings to store file paths to be processed
+            string[] FilePathList;
+
             if (isDirectory)
             {
-                // Handle directory
-                foreach (var filePath in Directory.GetFiles(LocalFilePath))
-                {
-                    var remoteFilePath = Path.Combine(DeviceTargerFolder, Path.GetFileName(filePath));
-                    try
-                    {
-                        Driver.PushFile(remoteFilePath, new FileInfo(filePath));
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new InvalidOperationException($"Failed to push file {filePath}: {ex.Message}", ex);
-                    }
-                }
+                FilePathList = Directory.GetFiles(LocalFilePath);
             }
-
             else
             {
+                FilePathList = new string[] { LocalFilePath };
+            }
+
+            foreach (var filePath in FilePathList)
+            {
+                var remoteFilePath = Path.Combine(DeviceTargerFolder, Path.GetFileName(filePath));
                 try
                 {
-                    byte[] fileContent = System.IO.File.ReadAllBytes(LocalFilePath);
-                    string fileName = Path.GetFileName(LocalFilePath);
-                    if (Driver is IOSDriver)
-                    {
-                        ((IOSDriver)Driver).PushFile($"{DeviceTargerFolder}/{fileName}", fileContent);
-                    }
-                    else
-                    {
-                        ((AndroidDriver)Driver).PushFile($"{DeviceTargerFolder}/{fileName}", fileContent);
-                    }
+                    Driver.PushFile(remoteFilePath, new FileInfo(filePath));
                 }
                 catch (Exception ex)
                 {
-                    throw new InvalidOperationException($"Failed to push file to device: {ex.Message}", ex);
+                    throw new InvalidOperationException($"Failed to push file {filePath}: {ex.Message}", ex);
                 }
             }
         }
@@ -4416,25 +4403,20 @@ namespace Amdocs.Ginger.CoreNET
 
             if (string.IsNullOrEmpty(LocalFolderPath))
                 throw new ArgumentException("Local folder path cannot be null or empty", nameof(LocalFolderPath));
+          
+            var remoteFilePath = Path.Combine(LocalFolderPath, Path.GetFileName(DeviceFilePath));
+
             try
-            {    
-                byte[] fileContent;
-                string fileName = Path.GetFileName(DeviceFilePath);
-                if (Driver is IOSDriver)
-                {
-                    fileContent = ((IOSDriver)Driver).PullFile($"{DeviceFilePath}");
-                }
-                else
-                {
-                    fileContent = ((AndroidDriver)Driver).PullFile($"{DeviceFilePath}");
-                }
+            {
+                byte[] FileContent = Driver.PullFile(DeviceFilePath);
+
                 // Save the file content to the local file path
-                System.IO.File.WriteAllBytes($"{LocalFolderPath}{fileName}", fileContent);
+                System.IO.File.WriteAllBytes(remoteFilePath, FileContent);
             }
             catch (Exception ex)
             {
                 throw new InvalidOperationException($"Failed to pull file from device: {ex.Message}", ex);
-            }
+            }           
         }
 
         public void SetClipboardText(string text)

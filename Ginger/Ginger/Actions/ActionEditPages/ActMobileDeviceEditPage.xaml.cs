@@ -355,7 +355,7 @@ namespace Ginger.Actions
                     xInputTextBlock.Text = "";
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
-                case ActMobileDevice.eMobileDeviceAction.TypeUsingIOSkeyboard:
+                case ActMobileDevice.eMobileDeviceAction.TypeUsingkeyboard:
                     xInputLabelVE.Content = "Text:";
                     xInputTextBlock.Text = "Note: For IOS, Keyboard Should be Open.";
                     xInputPnl.Visibility = Visibility.Visible;               

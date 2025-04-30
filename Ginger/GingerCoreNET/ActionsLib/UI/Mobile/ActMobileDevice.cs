@@ -155,19 +155,7 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(FilePathInput));
             }
         }
-        public ActInputValue LocalFolderPathInput // need to check
-        {
-            get
-            {
-                return GetOrCreateInputParam(nameof(LocalFolderPathInput));
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(LocalFolderPathInput), value.ToString());
-                OnPropertyChanged(nameof(LocalFolderPathInput));
-            }
-        }
-
+       
         public ActInputValue FolderPathInput
         {
             get
@@ -525,7 +513,7 @@ namespace GingerCore.Actions
             [EnumValueDescription("Grant App Permission")]
             GrantAppPermission,
             [EnumValueDescription("Type Using keyboard")]
-            TypeUsingIOSkeyboard,
+            TypeUsingkeyboard,
             [EnumValueDescription("Clear App Data")]
             ClearAppData,
             [EnumValueDescription("Get Screen Size")]
