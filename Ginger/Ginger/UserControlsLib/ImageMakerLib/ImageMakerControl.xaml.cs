@@ -1043,7 +1043,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Phone);
                     break;
                 case eImageType.Microchip:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Microchip);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Microchip, toolTip: "Microchip");
                     break;
                 #endregion
 

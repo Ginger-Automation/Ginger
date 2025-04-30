@@ -33,7 +33,6 @@ using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Application_Models
@@ -49,6 +48,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         List<eLocateBy> mElementLocatorsList = [];
         public ObservableList<ElementInfo> mElementsList = [];
         public PomSetting pomSetting;
+        public bool IsGeneratedByAI { get; set; } = false;
 
         bool mLearnOnlyMappedElements = true;
         public bool LearnOnlyMappedElements
@@ -154,7 +154,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             }
         }
 
-        public void SaveLearnedPOM(bool isCallFromScreenshot = false)
+        public void SaveLearnedPOM()
         {
             StopLearningTime();
             if (ScreenShot != null)
@@ -168,10 +168,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             if (Agent != null)
             {
                 POM.LastUsedAgent = Agent.Guid;
-                if (isCallFromScreenshot)
-                {
-                    POM.AIGenerated = true;
-                }
+                POM.AIGenerated = IsGeneratedByAI;
             }
 
             if (mPomModelsFolder != null)
@@ -439,19 +436,6 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 Reporter.ToLog(eLogLevel.ERROR, "Error in Updating POM Element Name", ex);
             }
             return uname;
-        }
-
-        public ApiSettings LoadApiSettings()
-        {
-
-            // Get the directory of the current class
-            string directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-
-            // Combine the directory with the file name
-            string filePath = Path.Combine(directory, "OpenAIappsetting.json");
-
-            string json = File.ReadAllText(filePath);
-            return JsonSerializer.Deserialize<ApiSettings>(json);
         }
 
     }

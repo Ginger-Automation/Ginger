@@ -8,7 +8,15 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="AIGeneratedPreviewWizardPage">
-
+    <Page.Resources>
+        <Style x:Key="WizardActionButtonStyle" TargetType="UserControls:ucButton" BasedOn="{StaticResource $RoundTextAndImageButtonStyle}">
+            <Setter Property="ButtonType" Value="RoundTextAndImageButton" />
+            <Setter Property="ButtonFontImageSize" Value="15" />
+            <Setter Property="ButtonImageWidth" Value="15" />
+            <Setter Property="ButtonImageHeight" Value="15" />
+            <Setter Property="Visibility" Value="Visible" />
+        </Style>
+    </Page.Resources>
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
@@ -22,8 +30,8 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <UserControls:ucButton x:Name="xReGenerateButton"  Grid.Column="0" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Left" ButtonText="Re-Generate Preview" ButtonImageType="Reply" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="ReGenerateButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Visibility="Visible"/>
-                <UserControls:ucButton x:Name="xViewGenerateHTMLButton" Grid.Column="2" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right" ButtonText="View Source Code" ButtonImageType="File" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="ViewGenerateHTMLButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Visibility="Visible"/>
+                <UserControls:ucButton x:Name="xReGenerateButton"  Grid.Column="0" Style="{StaticResource WizardActionButtonStyle}" HorizontalAlignment="Left" ButtonText="Re-Generate Preview" ButtonImageType="Reply" Click="ReGenerateButtonClicked" Visibility="Collapsed"/>
+                <UserControls:ucButton x:Name="xViewGenerateHTMLButton" Grid.Column="2" Style="{StaticResource WizardActionButtonStyle}" HorizontalAlignment="Right" ButtonText="View Source Code" ButtonImageType="File" Click="ViewGenerateHTMLButtonClicked" Visibility="Collapsed"/>
             </Grid>
             
             <StackPanel x:Name="xGenerateAIPanel" Visibility="Collapsed"  Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">

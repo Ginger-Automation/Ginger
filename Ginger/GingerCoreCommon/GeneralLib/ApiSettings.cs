@@ -1,4 +1,4 @@
-﻿namespace Amdocs.Ginger.CoreNET.Application_Models
+﻿namespace Amdocs.Ginger.Common.GeneralLib
 {
     public class ApiSettings
     {
@@ -10,7 +10,7 @@
 
         public string Modelname { get; set; }
 
-        public string Prompt { get; set; }
+        public string SystemPrompt { get; set; }
 
         public string UserPrompt { get; set; }
 

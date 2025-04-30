@@ -1,14 +1,5 @@
-﻿using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.Application_Models;
-using Amdocs.Ginger.Repository;
+﻿using Amdocs.Ginger.Repository;
 using Ginger.WizardLib;
-using GingerCore;
-using GingerWPF.WizardLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
@@ -20,7 +11,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Page Objects Model Introduction", Page: new WizardIntroPage("/ApplicationModelsLib/POMModels/POMWizardLib/LearnWizard/AddPOMIntro.md"));
 
-            AddPage(Name: "Upload MockUp",Title: "Upload MockUp", SubTitle: "Upload MockUp Screen-shot for POM Generation", Page: new UploadMockUpWizardPage());
+            AddPage(Name: "Upload MockUp", Title: "Upload MockUp", SubTitle: "Upload MockUp Screen-shot for POM Generation", Page: new UploadMockUpWizardPage());
 
             AddPage(Name: "AI Generated Preview", Title: "AI Generated Preview", SubTitle: "AI Generated Preview", Page: new AIGeneratedPreviewWizardPage());
 

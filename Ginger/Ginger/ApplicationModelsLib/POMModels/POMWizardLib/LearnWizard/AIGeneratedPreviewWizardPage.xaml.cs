@@ -1,26 +1,19 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.Application_Models;
+using Amdocs.Ginger.Common.GeneralLib;
 using Ginger.UserControlsLib.TextEditor;
 using GingerWPF.WizardLib;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
@@ -53,7 +46,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     }
                     break;
                 case EventType.Active:
-                    if(string.IsNullOrEmpty(ApiSettings.ApiKey) || ApiSettings.ApiKey.Equals("YouuAPiKey"))
+                    if (string.IsNullOrEmpty(ApiSettings.ApiKey) || ApiSettings.ApiKey.Equals("YourAPIKey"))
                     {
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "OpenAI setting are not valid.");
                         WizardEventArgs.Wizard.Cancel();   // or disable page
@@ -71,7 +64,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             try
             {
                 // Get the directory of the current class
-                string directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                Assembly assembly = typeof(AIGeneratedPreviewWizardPage).Assembly;
+                string directory = Path.GetDirectoryName(assembly.Location);
 
                 // Combine the directory with the file name
                 string filePath = Path.Combine(directory, "OpenAIappsetting.json");
@@ -94,30 +88,42 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private async void GenerateHtmlAsync()
         {
-            if(!string.IsNullOrEmpty(mWizard.HtmlFilePath))
+            
+            try
             {
-                xGenerateAIPanel.Visibility = Visibility.Collapsed;
-                return;
+                if (!string.IsNullOrEmpty(mWizard.HtmlFilePath))
+                {
+                    xGenerateAIPanel.Visibility = Visibility.Collapsed;
+                    return;
+                }
+                mWizard.ProcessStarted();
+                string fileName = Path.GetFileName(mWizard.ScreenShotImagePath);
+                xGenerateAIPanel.Visibility = Visibility.Visible;
+                await GenerateResponseAsync(fileName: fileName, FilePath: mWizard.ScreenShotImagePath);
+                if (!string.IsNullOrEmpty(mWizard.HtmlFilePath))
+                {
+                    MyWebView.Source = new Uri(mWizard.HtmlFilePath);
+                    xGenerateAIPanel.Visibility = Visibility.Collapsed;
+                    MyWebView.Visibility = Visibility.Visible;
+                    xViewGenerateHTMLButton.Visibility = Visibility.Visible;
+                    mWizard.mPomLearnUtils.IsGeneratedByAI = true;
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to load OpenAI API Response");
+                    xGenerateAIPanel.Visibility = Visibility.Collapsed;
+                    MyWebView.Visibility = Visibility.Collapsed;
+                }
+                xReGenerateButton.Visibility = Visibility.Visible;
             }
-            mWizard.ProcessStarted();
-            string fileName = Path.GetFileName(mWizard.ScreenShotImagePath);
-            xGenerateAIPanel.Visibility = Visibility.Visible;
-            await GenerateResponseAsync(fileName: fileName, FilePath: mWizard.ScreenShotImagePath);
-            if (!string.IsNullOrEmpty(mWizard.HtmlFilePath))
+            catch (Exception ex)
             {
-                MyWebView.Source = new Uri(mWizard.HtmlFilePath);
-                xGenerateAIPanel.Visibility = Visibility.Collapsed;
-                MyWebView.Visibility = Visibility.Visible;
-                xViewGenerateHTMLButton.Visibility = Visibility.Visible;
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load OpenAI API Response", ex);
             }
-            else
+            finally
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to load OpenAI API Response");
-                xGenerateAIPanel.Visibility = Visibility.Collapsed;
-                MyWebView.Visibility = Visibility.Collapsed;
+                mWizard.ProcessEnded();
             }
-            xReGenerateButton.Visibility = Visibility.Visible;
-            mWizard.ProcessEnded();
         }
 
         private async Task GenerateResponseAsync(string fileName, string FilePath = null)
@@ -128,8 +134,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             // Remove the extension
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileNameWithExtension);
 
-            string response = await GetChatGPTResponse(FilePath);
-            if(!response.EndsWith("```"))
+            string response = await GetAzureOpenAIResponse(FilePath);
+            if (!response.EndsWith("```"))
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Re-generate the Preview or faced same issue again contact to system administration");
                 return;
@@ -138,8 +144,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(response);
-            string SolutionFolder = WorkSpace.Instance.Solution.Folder;
-            string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\AIGeneratePreview");
+            string targetPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, $"Documents{Path.DirectorySeparatorChar}AIGeneratePreview");
             if (!System.IO.Directory.Exists(targetPath))
             {
                 System.IO.Directory.CreateDirectory(targetPath);
@@ -150,24 +155,26 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         }
 
 
-        private async Task<string> GetChatGPTResponse(string imagePath)
+        private async Task<string> GetAzureOpenAIResponse(string imagePath)
         {
-            using HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Add("api-key", ApiSettings.ApiKey);
-
-            // Read the image file and convert it to a base64 string
-            byte[] imageBytes = File.ReadAllBytes(imagePath);
-            string base64Image = Convert.ToBase64String(imageBytes);
-            string imageUrl = $"data:image/jpeg;base64,{base64Image}";
-            string prompt = ApiSettings.Prompt;
-
-            string userprompt = ApiSettings.UserPrompt; //"Make sure you are generating HTML code only and every element should have id and name as per the element type";
-
-            var requestBody = new
+            try
             {
-                model = ApiSettings.Modelname, //"gpt-4o",
-                messages = new object[]
+                using HttpClient client = new HttpClient();
+                client.DefaultRequestHeaders.Add("api-key", ApiSettings.ApiKey);
+
+                // Read the image file and convert it to a base64 string
+                byte[] imageBytes = File.ReadAllBytes(imagePath);
+                string base64Image = Convert.ToBase64String(imageBytes);
+                string imageUrl = $"data:image/jpeg;base64,{base64Image}";
+                string prompt = ApiSettings.SystemPrompt;
+
+                string userprompt = ApiSettings.UserPrompt;
+
+                var requestBody = new
                 {
+                    model = ApiSettings.Modelname, //"gpt-4o",
+                    messages = new object[]
+                    {
             new { role = "system", content = prompt },
             new
             {
@@ -182,39 +189,43 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     }
                 }
             }
+                    }
+                };
+                string requestJson = System.Text.Json.JsonSerializer.Serialize(requestBody);
+                StringContent content = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                string requestUrl = $"{ApiSettings.endpoint}openai/deployments/{ApiSettings.deploymentName}/chat/completions?api-version={ApiSettings.apiVersion}";
+                try
+                {
+                    HttpResponseMessage response = await client.PostAsync(requestUrl, content);
+                    response.EnsureSuccessStatusCode();
+
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    using JsonDocument jsonDoc = JsonDocument.Parse(responseJson);
+                    return jsonDoc.RootElement
+                        .GetProperty("choices")[0]
+                        .GetProperty("message")
+                        .GetProperty("content")
+                        .GetString();
                 }
-            };
-            string requestJson = System.Text.Json.JsonSerializer.Serialize(requestBody);
-            StringContent content = new StringContent(requestJson, Encoding.UTF8, "application/json");
-
-            string requestUrl = $"{ApiSettings.endpoint}openai/deployments/{ApiSettings.deploymentName}/chat/completions?api-version={ApiSettings.apiVersion}";
-            try
-            {
-                HttpResponseMessage response = await client.PostAsync(requestUrl, content);
-                response.EnsureSuccessStatusCode();
-
-                string responseJson = await response.Content.ReadAsStringAsync();
-                using JsonDocument jsonDoc = JsonDocument.Parse(responseJson);
-                return jsonDoc.RootElement
-                    .GetProperty("choices")[0]
-                    .GetProperty("message")
-                    .GetProperty("content")
-                    .GetString();
+                catch (HttpRequestException ex)
+                {
+                    // Log and handle the error
+                    Reporter.ToLog(eLogLevel.ERROR, $"Request error: {ex.Message}", ex);
+                    return $"Error: {ex.Message}";
+                }
+                catch (Exception ex)
+                {
+                    // Handle other exceptions
+                    Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error: {ex.Message}", ex);
+                    return $"Error: {ex.Message}";
+                }
             }
-            catch (HttpRequestException e)
+            catch (Exception ex)
             {
-                // Log and handle the error
-                Reporter.ToLog(eLogLevel.ERROR, $"Request error: {e.Message}");
-                return $"Error: {e.Message}";
+                Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error: {ex.Message}", ex);
+                return $"Error: {ex.Message}";
             }
-            catch (Exception e)
-            {
-                // Handle other exceptions
-                Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error: {e.Message}");
-                return $"Error: {e.Message}";
-            }
-
-
         }
 
         private void ReGenerateButtonClicked(object sender, RoutedEventArgs e)
@@ -233,7 +244,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     Width = 500,
                     Height = 600
                 };
-                docPage.ShowAsWindow("View source code");
+                docPage.ShowAsWindow("Generated source code");
                 return;
             }
 

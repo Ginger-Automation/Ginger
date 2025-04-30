@@ -16,24 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
-using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
-using Ginger.Agents;
-using Ginger.UserControls;
 using GingerCore;
-using GingerCore.Platforms.PlatformsInfo;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerTest.WizardLib;
 using GingerWPF.WizardLib;
-using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
@@ -51,7 +38,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         /// List of optional agents that can be used for POM learning.
         /// </summary>
         public ObservableList<Agent> OptionalAgentsList = null;
-         /// <summary>
+        /// <summary>
         /// Indicates whether the learning process has been completed.
         /// </summary>
         public bool IsLearningWasDone { get; set; }
@@ -60,18 +47,27 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         /// </summary>
         private bool mManualElementConfiguration;
         public bool ManualElementConfiguration { get { return mManualElementConfiguration; } set { mManualElementConfiguration = value; } }
-
+        /// <summary>
+        /// Base64 encoded image of the screen-shot
+        /// </summary>
         public string ScreenShotImage { get; set; }
+        /// <summary>
+        /// Path to the screen-shot image file
+        /// </summary>
         public string ScreenShotImagePath { get; set; }
+        /// <summary>
+        /// Path to the generated HTML file
+        /// </summary>
         public string HtmlFilePath { get; set; }
 
-        public BasePOMWizard(RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
+        protected BasePOMWizard(RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
         {
             mPomLearnUtils = new PomLearnUtils(new ApplicationPOMModel(), pomModelsFolder: pomModelsFolder);
         }
 
         public override void Finish()
         {
+            // Ensure any pending operations are complete
             mPomLearnUtils.SaveLearnedPOM();
 
             //close all Agents raised in Wizard
@@ -98,7 +94,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         AgentOperations agentOperations = new AgentOperations(agent);
                         agent.AgentOperations = agentOperations;
                     }
-                    if (agent != null && ((AgentOperations)agent.AgentOperations).Status == Agent.eStatus.Running && agent.Tag != null && agent.Tag.ToString() == "Started with Agent Control" && !((AgentOperations)agent.AgentOperations).Driver.IsDriverBusy)
+                    if (ShouldCloseAgent(agent))
                     {
                         if (Reporter.ToUser(eUserMsgKey.AskIfToCloseAgent, agent.Name) == eUserMsgSelection.Yes)
                         {
@@ -107,6 +103,18 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Determines if an agent should be closed based on its status and properties
+        /// </summary>
+        private bool ShouldCloseAgent(Agent agent)
+        {
+            return agent != null &&
+                   ((AgentOperations)agent.AgentOperations).Status == Agent.eStatus.Running &&
+                   agent.Tag != null &&
+                   agent.Tag.ToString() == "Started with Agent Control" &&
+                   !((AgentOperations)agent.AgentOperations).Driver.IsDriverBusy;
         }
 
     }

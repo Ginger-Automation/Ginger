@@ -308,13 +308,20 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         }
         private async void NavigateAgentToHtml(Agent agent, Uri uri)
         {
-            await Task.Run(() =>
-                ((AgentOperations)agent.AgentOperations)
-                    .Driver.RunAction(new ActBrowserElement
-                    {
-                        ControlAction = ActBrowserElement.eControlAction.GotoURL,
-                        ValueForDriver = uri.AbsoluteUri
-                    }));
+            try
+            {
+                await Task.Run(() =>
+                        ((AgentOperations)agent.AgentOperations)
+                            .Driver.RunAction(new ActBrowserElement
+                            {
+                                ControlAction = ActBrowserElement.eControlAction.GotoURL,
+                                ValueForDriver = uri.AbsoluteUri
+                            }));
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error to load url: {ex.Message}", ex);
+            }
         }
 
 
