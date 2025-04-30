@@ -587,6 +587,7 @@
     <None Remove="Images\Workflow16x16.png" />
     <None Remove="Images\Workflow32x32.png" />
     <None Remove="Images\X16x16.png" />
+    <None Remove="OpenAIappsetting.json" />
     <None Remove="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
     <None Remove="Resources\GingerDataSource.mdb" />
     <None Remove="RunSetLib\CreateAutoRunWizardLib\AutoRunIntroduction.md" />
@@ -656,6 +657,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="OpenAIappsetting.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="StaticDrivers\selenium-server-standalone.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -728,9 +732,11 @@
     <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.7" />
     <PackageReference Include="log4net" Version="2.0.15" />
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.5.0" />
+    <PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="9.4.0-preview.1.25207.5" />
     <PackageReference Include="Microsoft.NETCore.App" Version="2.1.30" />
     <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
-    <PackageReference Include="Microsoft.VisualStudio.Services.MemberEntitlementManagement.WebApi" Version="16.205.1" />  
+    <PackageReference Include="Microsoft.VisualStudio.Services.MemberEntitlementManagement.WebApi" Version="16.205.1" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3179.45" />  
     <PackageReference Include="Mono.Posix" Version="7.1.0-final.1.21458.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NSwag.Core.Yaml" Version="12.0.9" />
