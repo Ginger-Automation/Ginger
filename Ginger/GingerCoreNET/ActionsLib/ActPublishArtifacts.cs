@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -69,21 +70,34 @@ namespace GingerCore.Actions
 
         public override void Execute()
         {
-            if (ActInputValues == null || ActInputValues.Count == 0)
+            try
             {
-                Error = "No artifact files provided.";
-                return;
-            }
-
-            foreach (ActInputValue item in ActInputValues)
-            {
-                if (!System.IO.File.Exists(item.ValueForDriver))
+                if (ActInputValues == null || ActInputValues.Count == 0)
                 {
-                    Error += "Artifact File Path is invalid/doesn't exist/not enough permissions to access file: " + item.ValueForDriver;
-                    continue;
+                    Error = "No artifact files provided.";
+                    return;
                 }
 
-                Act.AddArtifactToAction(Path.GetFileName(item.ValueForDriver), this, item.ValueForDriver);
+                foreach (ActInputValue item in ActInputValues)
+                {
+                    if (!System.IO.File.Exists(item.ValueForDriver))
+                    {
+                        Error += "Artifact File Path is invalid/doesn't exist/not enough permissions to access file: " + item.ValueForDriver;
+                        continue;
+                    }
+                    if (new System.IO.FileInfo(item.ValueForDriver).Length > 5242879) // 5MB = 5242880 bytes, but somewhere the calculation is referring it as 5242879 bytes
+                    {
+                        Error += "File size greater than 5MB cannot be uploaded: " + item.ValueForDriver;
+                        continue;
+                    }
+
+                    Act.AddArtifactToAction(Path.GetFileName(item.ValueForDriver), this, item.ValueForDriver);
+                }
+            }
+            catch (Exception ex)
+            {
+                Error += "Failed to upload artifacts: " + ex;
+                return;
             }
         }
     }
