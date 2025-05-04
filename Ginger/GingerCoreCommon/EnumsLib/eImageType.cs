@@ -337,6 +337,7 @@ namespace Amdocs.Ginger.Common.Enums
         IdCard,
         IdBadge,
         Phone,
+        Microchip,
         MoneyCheckDollar,
         #endregion
 

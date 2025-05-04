@@ -125,6 +125,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             MenuItem addMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Add Page Objects Model (POM)", eImageType.Add);
             TreeViewUtils.AddSubMenuItem(addMenu, "Learn POM from live page", AddPOM, null, eImageType.Screen);
             TreeViewUtils.AddSubMenuItem(addMenu, "Empty POM", AddEmptyPOM, null, eImageType.ApplicationPOMModel);
+            TreeViewUtils.AddSubMenuItem(addMenu, "Learn POM From MOCKUp", AddScreenshotPOM, null, eImageType.Microchip);
             if (mPOMModelFolder.IsRootFolder)
             {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true, allowMultiPomUpdate: true);
@@ -215,7 +216,22 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
                 Reporter.ToUser(eUserMsgKey.MissingTargetApplication, $"Please Add at-least one {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} that supports POM to continue adding Page Object Models");
             }
         }
-
+        /// <summary>
+        /// Opens the screenshot-based POM learning wizard after verifying that at least one POM-supported platform exists
+        /// </summary>
+        internal void AddScreenshotPOM(object sender, RoutedEventArgs e)
+        {
+            List<ApplicationPlatform> TargetApplications = WorkSpace.Instance.Solution.GetListOfPomSupportedPlatform();
+            if (TargetApplications.Count != 0)
+            {
+                mTreeView.Tree.ExpandTreeItem(this);
+                WizardWindow.ShowWizard(new AddPOMFromScreenshotWizard(mPOMModelFolder), 1200, 800, DoNotShowAsDialog: true);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.MissingTargetApplication, $"Please Add at-least one {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} that supports POM to continue adding Page Object Models");
+            }
+        }
 
     }
 }
