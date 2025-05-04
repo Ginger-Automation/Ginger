@@ -4111,7 +4111,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception ex)
             {
-                throw new($"Failed to get app identifier attribute name: {ex.Message}");
+                throw new InvalidOperationException($"Failed to get app identifier attribute name: {ex.Message}");
             }   
         }
 
@@ -4126,7 +4126,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             else
             {
-                throw new($"An error occurred while running script: Got invalid Directory or empty folder");
+                throw new InvalidOperationException($"An error occurred while running script: Got invalid Directory or empty folder");
             }
         }
         public object OpenDeeplink(string appLink, string appPackage, string osType)
@@ -4303,7 +4303,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception ex)
             {
-                throw new($"An error occurred while starting recording screen: {ex.Message}");
+                throw new InvalidOperationException($"An error occurred while starting recording screen: {ex.Message}");
             }
         }
 
@@ -4327,9 +4327,9 @@ namespace Amdocs.Ginger.CoreNET
             File.WriteAllBytes(targetFile, videoBytes); //"format mp4"
             return targetFile;
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
-                throw new($"An error occurred while stop recording screen: {ex.Message}");
+                throw new InvalidOperationException($"An error occurred while stop recording screen: {ex.Message}");
             }
         }
 
@@ -4448,24 +4448,52 @@ namespace Amdocs.Ginger.CoreNET
 
         public void GetSpecificPerformanceData(string appPackage, string specificData, ActMobileDevice act)
         {
-            IList<object> perfData = ((AndroidDriver)Driver).GetPerformanceData(appPackage, specificData, 5);
-            var dict = new Dictionary<string, object>();
-            var keys = (IList<object>)perfData[0]; // keys data
-            var values = (IList<object>)perfData[1]; // values data
-            for (int i = 0; i < keys.Count; i++)
+            if (string.IsNullOrEmpty(appPackage))
             {
-                string key = keys[i].ToString();
-                object value = values[i];
-                dict[key] = value;
-            }            
-            foreach (var entry in dict)
+                throw new ArgumentException("App package name cannot be null or empty", nameof(appPackage));
+            }
+
+            if (string.IsNullOrEmpty(specificData))
             {
-                if(entry.Key!=null)
+                throw new ArgumentException("Performance data type cannot be null or empty", nameof(specificData));
+            }
+
+            if (act == null)
+            {
+                throw new ArgumentNullException(nameof(act), "ActMobileDevice cannot be null");
+            }
+            try
+            {
+                if (Driver is AndroidDriver) 
                 {
-                    string valueStr = entry.Value?.ToString() ?? string.Empty; // Convert null value to empty string
-                    act.AddOrUpdateReturnParamActual(entry.Key.ToString(), valueStr);                                                       
-                }                      
-            } 
+                    IList<object> perfData = ((AndroidDriver)Driver).GetPerformanceData(appPackage, specificData, 5);
+                    var dict = new Dictionary<string, object>();
+                    var keys = (IList<object>)perfData[0]; // keys data
+                    var values = (IList<object>)perfData[1]; // values data
+                    for (int i = 0; i < keys.Count; i++)
+                    {
+                        string key = keys[i].ToString();
+                        object value = values[i];
+                        dict[key] = value;
+                    }
+                    foreach (var entry in dict)
+                    {
+                        if (entry.Key != null)
+                        {
+                            string valueStr = entry.Value?.ToString() ?? string.Empty; // Convert null value to empty string
+                            act.AddOrUpdateReturnParamActual(entry.Key.ToString(), valueStr);
+                        }
+                    }
+                }
+                else
+                {
+                    throw new InvalidOperationException("This method is only supported for Android devices"); 
+                } 
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to retrieve performance data: {ex.Message}", ex);
+            }
         }
 
         public string GetDeviceLogs(string path)
@@ -4624,7 +4652,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception ex)
             {
-                throw new($"An error occurred while typing text: {ex.Message}");
+                throw new InvalidOperationException($"An error occurred while typing text: {ex.Message}"); 
             }
         }
         public string GetDeviceOSType()
@@ -4653,17 +4681,14 @@ namespace Amdocs.Ginger.CoreNET
             try
             {
                 if (Driver is IOSDriver)
-                {
-                    // call ResetApp()
-                }
-                else if (Driver is AndroidDriver)
-                {
-                    ((AndroidDriver)Driver).ExecuteScript("mobile: clearApp", new Dictionary<string, object> { { "appId", appId } });
+                { 
+                    throw new NotSupportedException($"Driver type is not supported for clearing app data");
                 }
                 else
                 {
-                    throw new NotSupportedException($"Driver type is not supported for clearing app data");
+                    ((AndroidDriver)Driver).ExecuteScript("mobile: clearApp", new Dictionary<string, object> { { "appId", appId } });
                 }
+              
             }
             catch (Exception ex)
             {
@@ -4685,23 +4710,6 @@ namespace Amdocs.Ginger.CoreNET
            {
                throw new InvalidOperationException("Unsupported driver type");
            }     
-        }
-
-        public void InstallApp(string appPath)
-        {
-            if (Driver is AndroidDriver)
-            {
-                ((AndroidDriver)Driver).InstallApp(appPath);
-            }
-            else if (Driver is IOSDriver)
-            {
-                ((IOSDriver)Driver).InstallApp(appPath);
-            }
-            else
-            {
-                throw new InvalidOperationException("Unsupported driver type");
-            }
-
         }
         public void GetAppId(ActMobileDevice act)
         {
@@ -4867,7 +4875,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else
                 {
-                    throw new("Failed to retrieve system bars information.");
+                    throw new NotSupportedException("Failed to retrieve system bars information.");
             }
         }
         public void StartNetworkCapture() // working on IOS, need to check the 'network' name with xcrun xctrace list templates run command via terminal
@@ -4917,7 +4925,7 @@ namespace Amdocs.Ginger.CoreNET
             else if (Driver is IOSDriver)
             {
 
-                throw new("Toggling location services is not directly supported on iOS");
+                throw new NotSupportedException("Toggling location services is not directly supported on iOS");
             }
             else
             {
@@ -4943,12 +4951,12 @@ namespace Amdocs.Ginger.CoreNET
             else if (Driver is IOSDriver)
             {
 
-                throw new("Toggling data services is not directly supported on iOS");
+                throw new NotSupportedException("Toggling data services is not directly supported on iOS");
             }
             else
             {
                 throw new InvalidOperationException("Unsupported driver type");
-            }
+            } 
         }
 
         public void ToggleAirplaneMode()
@@ -4969,9 +4977,9 @@ namespace Amdocs.Ginger.CoreNET
             else if (Driver is IOSDriver)
             {
 
-                throw new("Toggle Airplane Mode is not directly supported on iOS");
+                throw new NotSupportedException("Toggle Airplane Mode is not directly supported on iOS");
             }
-            else
+            else 
             {
                 throw new InvalidOperationException("Unsupported driver type");
             }
@@ -4993,7 +5001,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             else if (Driver is IOSDriver)
             {
-                throw new("Toggle Wifi is not directly supported on iOS");
+                throw new NotSupportedException("Toggle Wifi is not directly supported on iOS");
             }
             else
             {
@@ -5008,7 +5016,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             else if (Driver is IOSDriver)
             {
-                throw new("IME Active is not supported on iOS"); 
+                throw new NotSupportedException("IME Active is not supported on iOS"); 
             }
             else
             {
@@ -5023,7 +5031,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             else if (Driver is IOSDriver)
             {
-                throw new("IME Active Engine is not supported on iOS");
+                throw new NotSupportedException("IME Active is not supported on iOS");
             }
             else
             {
@@ -5091,10 +5099,10 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     throw new InvalidOperationException($"Failed to {(grant ? "grant" : "revoke")} permission to '{appPackage}' with command '{permission}'");
                 }
-            }
+            } 
             else if (Driver is IOSDriver)
             {
-                throw new("Grant App Permission services are not directly supported on iOS");
+                throw new NotSupportedException("Grant App Permission services are not directly supported on iOS");
             }                              
         }
         public void SendAppToBackground(string time)
@@ -5120,7 +5128,7 @@ namespace Amdocs.Ginger.CoreNET
                 throw new InvalidOperationException("Failed to send the app to the background.", ex);
             }
             
-        }
+        } 
         public void SetNetworkConnection()
         {
             if (Driver is AndroidDriver)
@@ -5132,7 +5140,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             else if (Driver is IOSDriver)
             {
-                throw new("Set Connection for Wifi/Airplane Mode/Data/Location services are not directly supported on iOS");
+                throw new NotSupportedException("Set Connection for Wifi/Airplane Mode/Data/Location services are not directly supported on iOS");
             }
             else
             {

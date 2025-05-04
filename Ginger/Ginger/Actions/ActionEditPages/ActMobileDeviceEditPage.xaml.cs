@@ -386,9 +386,9 @@ namespace Ginger.Actions
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.SendAppToBackground:
-                    xInputLabelVE.Content = "Set a Time Duration for Backgroud(Seconds):";
+                    xInputLabelVE.Content = "Set a Time Duration for Background(Seconds):";
                     xInputTextBlock.Text = "";
-                    xInputPnl.Visibility = Visibility.Visible; 
+                    xInputPnl.Visibility = Visibility.Visible;                  
                     break;
                 case ActMobileDevice.eMobileDeviceAction.StartActivity:
                     xAppPnl.Visibility = Visibility.Visible;
