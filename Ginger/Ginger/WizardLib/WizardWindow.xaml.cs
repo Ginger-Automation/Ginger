@@ -437,5 +437,10 @@ namespace GingerWPF.WizardLib
             }
 
         }
+
+        void IWizardWindow.SetPrevButtonEnabled(bool isEnabled)
+        {
+            xPrevButton.IsEnabled = isEnabled;
+        }
     }
 }

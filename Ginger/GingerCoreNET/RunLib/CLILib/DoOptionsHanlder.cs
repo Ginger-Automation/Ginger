@@ -19,16 +19,19 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Reports;
+using Amdocs.Ginger.Repository;
 using Ginger.AnalyzerLib;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
 using GraphQLClient.Clients;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -44,6 +47,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public async Task RunAsync(DoOptions opts)
         {
             mOpts = opts;
+            if (opts.UseTempSolutionFolder)
+            {
+                mOpts.Solution = SetSolutionPathToTempFolder(opts.URL);
+            }
             switch (opts.Operation)
             {
                 case DoOptions.DoOperation.analyze:
@@ -57,6 +64,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     break;
                 case DoOptions.DoOperation.open:
                     await DoOpenAsync();
+                    break;
+                case DoOptions.DoOperation.MultiPOMUpdate:
+                    await DoMultiPOMUpdate();
                     break;
             }
         }
@@ -120,11 +130,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     LoadSourceControlDownloadPage?.Invoke(null, EventArgs.Empty);
                     return;
                 }
-                          
+
 
                 if (!string.IsNullOrWhiteSpace(mOpts.ExecutionId))
                 {
-                    if (await OpenRunSetByExecutionId()) 
+                    if (await OpenRunSetByExecutionId())
                     {
                         return;
                     }
@@ -349,7 +359,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 runsetReport.StartTimeStamp = (DateTime)executionStartTime;
             }
             RunsetFromReportLoader _runsetFromReportLoader = new RunsetFromReportLoader();
-            RunSetConfig? runset = await _runsetFromReportLoader.LoadAsync(runsetReport);
+            RunSetConfig? runset = await _runsetFromReportLoader.LoadAsync(runsetReport, mOpts.ExecutionConfigurationSourceUrl);
             if (runset != null)
             {
                 WorkSpace.Instance.UserProfile.RecentRunset = runset.Guid;
@@ -401,6 +411,136 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
             }
         }
+
+        private string SetSolutionPathToTempFolder(string sourceControlUrl)
+        {
+            return mCLIHelper.GetTempFolderPathForRepo(sourceControlUrl);
+        }
+
+        /// <summary>
+        /// Update MultiPOM Update.
+        /// </summary>
+        /// <param name="solutionFolder">The folder path of the solution to open.</param>
+        /// <param name="encryptionKey">The encryption key for the solution, if any.</param>
+        private async Task DoMultiPOMUpdate()
+        {
+            WorkSpace.Instance.GingerCLIMode = eGingerCLIMode.run;
+            string solutionFolder = mOpts.Solution;
+            string encryptionKey = mOpts.EncryptionKey;
+
+            try
+            {
+                // Validate solution folder path
+                if (string.IsNullOrWhiteSpace(solutionFolder))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "The provided solution folder path is null or empty.");
+                    return;
+                }
+
+                // Adjust solution folder path if it contains the solution file name
+                if (solutionFolder.Contains("Ginger.Solution.xml"))
+                {
+                    solutionFolder = Path.GetDirectoryName(solutionFolder)?.Trim() ?? string.Empty;
+
+                    if (string.IsNullOrEmpty(solutionFolder))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Invalid solution folder path derived from the solution file.");
+                        return;
+                    }
+                }
+
+                // Set up CLI helper properties
+                mCLIHelper.AddCLIGitProperties(mOpts);
+                mCLIHelper.SetWorkSpaceGitProperties(mOpts);
+                mCLIHelper.SetEncryptionKey(encryptionKey);
+
+                if (mOpts.PasswordEncrypted)
+                {
+                    mCLIHelper.PasswordEncrypted(mOpts.PasswordEncrypted.ToString());
+                }
+
+                mCLIHelper.Solution = mOpts.Solution;
+
+                // Load the solution
+                if (!await mCLIHelper.LoadSolutionAsync())
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                    LoadSourceControlDownloadPage?.Invoke(null, EventArgs.Empty);
+                    return;
+                }
+
+                if (!string.IsNullOrEmpty(mOpts.TargetApplication))
+                {
+                    string targetApplication = mOpts.TargetApplication;
+                    ApplicationPlatform? targetApp = null;
+
+                    if (Guid.TryParse(targetApplication, out Guid parsedGuid))
+                    {
+                        targetApp = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.Guid.Equals(parsedGuid));
+                    }
+                    else
+                    {
+                        targetApp = WorkSpace.Instance.Solution.ApplicationPlatforms
+                            .FirstOrDefault(ta => ta.AppName == targetApplication && (ta.Platform == ePlatformType.Web || ta.Platform == ePlatformType.Mobile));
+                    }
+
+                    if (targetApp == null)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Target application '{targetApplication}' not found.");
+                        return;
+                    }
+
+                    var POMGuidsList = !string.IsNullOrEmpty(mOpts.ApplicationModels) ? mOpts.ApplicationModels.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(g => Guid.TryParse(g.Trim(), out var id) ? id : Guid.Empty).Where(id => id != Guid.Empty).ToList() : new List<Guid>();
+
+                    var RunsetGuidsList = !string.IsNullOrEmpty(mOpts.RunSets) ? mOpts.RunSets.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(g => Guid.TryParse(g.Trim(), out var id) ? id : Guid.Empty).Where(id => id != Guid.Empty).ToList() : new List<Guid>();
+
+                    var ApplicationPOMModelrunsetConfigMapping = new Dictionary<ApplicationPOMModel, List<RunSetConfig>>();
+                    var businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.BusinessFlow>();
+                    ObservableList<RunSetConfig> runSetConfigList;
+                    List<ApplicationPOMModel> applicationPOMModels;
+
+                    if (POMGuidsList.Any() && RunsetGuidsList.Any())
+                    {
+                        applicationPOMModels = POMGuidsList.Select(pomGuid => WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(pomGuid)).Where(model => model.TargetApplicationKey.Guid == targetApp.Guid).ToList();
+
+                        runSetConfigList = new ObservableList<RunSetConfig>(RunsetGuidsList.Select(runsetGuid => WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<RunSetConfig>(runsetGuid)));
+
+                    }
+                    else if (POMGuidsList.Any())
+                    {
+                        applicationPOMModels = POMGuidsList.Select(pomGuid => WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(pomGuid)).Where(model => model.TargetApplicationKey.Guid == targetApp.Guid).ToList();
+
+                        runSetConfigList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                    }
+                    else
+                    {
+                        applicationPOMModels = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(model => model.TargetApplicationKey.Guid == targetApp.Guid).ToList();
+
+                        runSetConfigList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                    }
+                    var multiPomRunSetMappingsList = GingerCoreNET.GeneralLib.General.GetSelectedRunsetList(runSetConfigList, businessFlows, applicationPOMModels, ApplicationPOMModelrunsetConfigMapping);
+
+                    foreach (var item in multiPomRunSetMappingsList)
+                    {
+                        await GingerCoreNET.GeneralLib.General.RunSelectedRunset(item, multiPomRunSetMappingsList, mCLIHelper);
+                    }
+                    var statuses = multiPomRunSetMappingsList.Select(m => m.PomUpdateStatus);
+                    Reporter.ToLog(eLogLevel.INFO, $"POM Status: {string.Join(", ", statuses)}");
+                }
+
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Target application is empty or null.");
+                    return;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"An unexpected error occurred while updating POM. Error:", ex);
+            }
+        }
+
 
     }
 }

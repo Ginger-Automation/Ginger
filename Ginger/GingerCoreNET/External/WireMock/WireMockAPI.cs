@@ -64,7 +64,6 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.WireMockAPIError);
                 Reporter.ToLog(eLogLevel.ERROR, "Error in showing wiremock mapping", ex);
                 return null;
             }

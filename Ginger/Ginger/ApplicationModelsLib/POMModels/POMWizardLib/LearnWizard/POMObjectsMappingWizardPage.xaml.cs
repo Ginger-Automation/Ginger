@@ -31,7 +31,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     /// </summary>
     public partial class POMObjectsMappingWizardPage : Page, IWizardPage
     {
-        public AddPOMWizard mWizard;
+        public BasePOMWizard mBasePOMWizard;
         PomAllElementsPage mPomAllElementsPage = null;
 
         public POMObjectsMappingWizardPage()
@@ -44,50 +44,52 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
-                    if (!mWizard.ManualElementConfiguration)
-                    {
-                        InitilizePomElementsMappingPage();
-                    }
+                        mBasePOMWizard = (BasePOMWizard)WizardEventArgs.Wizard;
+                        if (!mBasePOMWizard.ManualElementConfiguration)
+                        {
+                            InitilizePomElementsMappingPage();
+                        }
                     break;
 
                 case EventType.Active:
-                    if (mPomAllElementsPage.mAgent == null)
-                    {
-                        mPomAllElementsPage.SetAgent(mWizard.mPomLearnUtils.Agent);
-                    }
+                        if (mPomAllElementsPage.mAgent == null)
+                        {
+                            mPomAllElementsPage.SetAgent(mBasePOMWizard.mPomLearnUtils.Agent);
+                        }
 
-                    if (mWizard.ManualElementConfiguration)
-                    {
-                        xReLearnButton.Visibility = Visibility.Hidden;
-                        mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Clear();
-                    }
-                    else
-                    {
-                        mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Clear();
-                        mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
+                        if (mBasePOMWizard.ManualElementConfiguration)
+                        {
+                            xReLearnButton.Visibility = Visibility.Hidden;
+                            mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Clear();
+                        }
+                        else
+                        {
+                            mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Clear();
+                            mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
 
-                        xReLearnButton.Visibility = Visibility.Visible;
-                        Learn();
+                            xReLearnButton.Visibility = Visibility.Visible;
+                            Learn();
 
-                    }
+                        }
+                    
                     break;
 
                 case EventType.LeavingForNextPage:
                 case EventType.Finish:
-                    mPomAllElementsPage.FinishEditInAllGrids();
-                    if (mPomAllElementsPage != null)
-                    {
-                        mPomAllElementsPage.StopSpy();
-                    }
-                    mWizard.mPomLearnUtils.ClearStopLearning();
+                        mPomAllElementsPage.FinishEditInAllGrids();
+                        if (mPomAllElementsPage != null)
+                        {
+                            mPomAllElementsPage.StopSpy();
+                        }
+                        mBasePOMWizard.mPomLearnUtils.ClearStopLearning();
+                    
                     break;
                 case EventType.Cancel:
-                    if (mPomAllElementsPage != null)
-                    {
-                        mPomAllElementsPage.StopSpy();
-                    }
-                    mWizard.mPomLearnUtils.ClearStopLearning();
+                        if (mPomAllElementsPage != null)
+                        {
+                            mPomAllElementsPage.StopSpy();
+                        }
+                        mBasePOMWizard.mPomLearnUtils.ClearStopLearning();
                     break;
             }
         }
@@ -160,37 +162,37 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private async void Learn()
         {
-            if (!mWizard.IsLearningWasDone)
+            if (!mBasePOMWizard.IsLearningWasDone)
             {
                 try
                 {
-                    mWizard.IsLearningWasDone = false;
-                    mWizard.ProcessStarted();
+                    mBasePOMWizard.IsLearningWasDone = false;
+                    mBasePOMWizard.ProcessStarted();
                     StartTimer();
                     xReLearnButton.Visibility = Visibility.Collapsed;
                     xStopLoadButton.ButtonText = "Stop";
                     xStopLoadButton.IsEnabled = true;
-                    mWizard.mPomLearnUtils.ClearStopLearning();
+                    mBasePOMWizard.mPomLearnUtils.ClearStopLearning();
                     xStopLoadButton.Visibility = Visibility.Visible;
 
-                    await mWizard.mPomLearnUtils.Learn();
+                    await mBasePOMWizard.mPomLearnUtils.Learn();
 
                     BringToFocus();
 
-                    mWizard.IsLearningWasDone = true;
+                    mBasePOMWizard.IsLearningWasDone = true;
                 }
                 catch (Exception ex)
                 {
                     Reporter.ToUser(eUserMsgKey.POMWizardFailedToLearnElement, ex.Message);
-                    mWizard.IsLearningWasDone = false;
+                    mBasePOMWizard.IsLearningWasDone = false;
                 }
                 finally
                 {
                     xStopLoadButton.Visibility = Visibility.Collapsed;
                     xReLearnButton.Visibility = Visibility.Visible;
-                    mWizard.ProcessEnded();
+                    mBasePOMWizard.ProcessEnded();
                     StopTimer();
-                    Reporter.ToLog(eLogLevel.INFO, $"Total time taken to learn '{mWizard.mPomLearnUtils.POM.Name}' POM is {(int)elapsedTime.TotalMinutes:00}:{elapsedTime.Seconds:00}");
+                    Reporter.ToLog(eLogLevel.INFO, $"Total time taken to learn '{mBasePOMWizard.mPomLearnUtils.POM.Name}' POM is {(int)elapsedTime.TotalMinutes:00}:{elapsedTime.Seconds:00}");
                 }
             }
         }
@@ -200,20 +202,21 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (mPomAllElementsPage == null)
             {
-                mPomAllElementsPage = new PomAllElementsPage(mWizard.mPomLearnUtils.POM, PomAllElementsPage.eAllElementsPageContext.AddPOMWizard, false)
+                mPomAllElementsPage = new PomAllElementsPage(mBasePOMWizard.mPomLearnUtils.POM, PomAllElementsPage.eAllElementsPageContext.AddPOMWizard, false)
                 {
                     ShowTestAllElementsButton = Visibility.Collapsed
                 };
                 mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
                 xPomElementsMappingPageFrame.ClearAndSetContent(mPomAllElementsPage);
             }
+            
         }
 
         private void StopButtonClicked(object sender, RoutedEventArgs e)
         {
             xStopLoadButton.ButtonText = "Stopping...";
             xStopLoadButton.IsEnabled = false;
-            mWizard.mPomLearnUtils.StopLearning();
+            mBasePOMWizard.mPomLearnUtils.StopLearning();
         }
 
 
@@ -221,7 +224,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (Reporter.ToUser(eUserMsgKey.POMWizardReLearnWillDeleteAllElements) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
-                mWizard.IsLearningWasDone = false;
+                mBasePOMWizard.IsLearningWasDone = false;
                 Learn();
             }
         }

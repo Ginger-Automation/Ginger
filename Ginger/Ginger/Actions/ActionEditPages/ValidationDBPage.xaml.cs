@@ -461,6 +461,10 @@ namespace Ginger.Actions
             }
             if (table != "")
             {
+                if (db.DatabaseOperations == null)
+                {
+                    db.DatabaseOperations = new DatabaseOperations(db);
+                }
 
                 await Task.Run(async () =>
                 {

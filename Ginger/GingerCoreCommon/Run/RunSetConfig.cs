@@ -520,5 +520,10 @@ namespace Ginger.Run
         //adding source app and user field for account level report 
         public string SourceApplication { get; set; }
         public string SourceApplicationUser { get; set; }
+
+        public List<Guid> AutoUpdatedPOMList { 
+            get; 
+            set; }
+
     }
 }

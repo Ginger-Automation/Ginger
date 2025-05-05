@@ -117,12 +117,22 @@ namespace Ginger.BusinessFlowWindows
                     }
                     break;
                 case eBrowserType.Folder:
+                    
+                    string initialDirectory = ValueTextBox.Text;
+                    if (ValueTextBox.Text != null && ValueTextBox.Text.StartsWith(@"~\"))
+                    {
+                        string solutionFolder = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.Folder;
+                        initialDirectory = ValueTextBox.Text.Replace(@"~\", solutionFolder, StringComparison.InvariantCultureIgnoreCase);
+                    }
+
                     var dlgf = new System.Windows.Forms.FolderBrowserDialog
                     {
                         Description = "Select folder",
                         RootFolder = Environment.SpecialFolder.MyComputer,
-                        ShowNewFolderButton = true
+                        ShowNewFolderButton = true,
+                        InitialDirectory = initialDirectory
                     };
+
                     System.Windows.Forms.DialogResult resultf = dlgf.ShowDialog();
                     if (resultf == System.Windows.Forms.DialogResult.OK)
                     {

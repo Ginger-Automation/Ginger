@@ -260,9 +260,10 @@ namespace GingerWPF.WizardLib
             // all went OK!            
             Finish();
             Pages.Clear();
-            mWizardWindow.Close();
+            mWizardWindow?.Close();
             mWizardWindow = null;
             // GC.Collect();            
         }
+
     }
 }

@@ -23,7 +23,7 @@ namespace Amdocs.Ginger.Common.UIElement
     public class ProgressNotifier
     {
         public event EventHandler<string> LabelHandler;
-        public event EventHandler<(string ProgressLabel,int CompletedSteps, int TotalSteps)> StatusUpdateHandler;
+        public event EventHandler<(string ProgressLabel, int CompletedSteps, int TotalSteps)> StatusUpdateHandler;
 
         /// <summary>
         /// Notifies subscribers with a detailed progress message.
@@ -43,5 +43,12 @@ namespace Amdocs.Ginger.Common.UIElement
         {
             StatusUpdateHandler?.Invoke(this, (progressLabel, completedSteps, totalSteps));
         }
+    }
+    public class ProgressStatus
+    {
+        public string ProgressMessage { get; set; }
+        public int ProgressStep { get; set; }
+        public int TotalSteps { get; set; }
+
     }
 }

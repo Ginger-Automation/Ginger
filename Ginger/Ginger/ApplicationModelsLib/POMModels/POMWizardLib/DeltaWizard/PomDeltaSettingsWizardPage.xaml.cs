@@ -26,6 +26,7 @@ using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -62,8 +63,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     SetAutoMapElementTypes();
                     SetAutoMapElementTypesGridView();
                     xLearnOnlyMappedElements.BindControl(mWizard.mPomDeltaUtils.PomLearnUtils, nameof(mWizard.mPomDeltaUtils.PomLearnUtils.LearnOnlyMappedElements));
-                    xLearnShadowDOMElements.BindControl(mWizard.mPomDeltaUtils.PomLearnUtils, nameof(mWizard.mPomDeltaUtils.PomLearnUtils.LearnShadowDomElements));
-                    xLearnScreenshotsOfElements.BindControl(mWizard.mPomDeltaUtils.PomLearnUtils, nameof(mWizard.mPomDeltaUtils.PomLearnUtils.LearnScreenshotsOfElements));
+                    xLearnShadowDOMElements.BindControl(mWizard.mPomDeltaUtils.PomLearnUtils, nameof(mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.LearnShadowDomElements));
+                    xLearnScreenshotsOfElements.BindControl(mWizard.mPomDeltaUtils.PomLearnUtils, nameof(mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.LearnScreenshotsOfElements));
                     ShowLearnScreenshotsOfElements();
                     SetElementLocatorsSettingsData();
                     SetElementLocatorsSettingsGridView();
@@ -85,11 +86,15 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             {
                 if (xCustomRelativeXpathTemplateFrame.xCustomRelativeXpathCofigChkBox.IsChecked == true)
                 {
-                    mWizard.mPomDeltaUtils.POM.RelativeXpathTemplateList = xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList;
+                    mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList = xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList;
                 }
                 else
                 {
-                    mWizard.mPomDeltaUtils.POM.RelativeXpathTemplateList.Clear();
+                    if (mWizard.mPomDeltaUtils.POM.PomSetting != null && mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList != null)
+                    {
+                        mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList.Clear();
+                    }
+
                 }
             }
         }
@@ -98,9 +103,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             if (mAppPlatform.Equals(ePlatformType.Web) || mAppPlatform.Equals(ePlatformType.Mobile))
             {
                 xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Visible;
-                if (mWizard.mPomDeltaUtils.POM.RelativeXpathTemplateList.Count > 0)
+                if (mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList != null && mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList.Count > 0)
                 {
-                    xCustomRelativeXpathTemplateFrame.UpdateCustomRelPathGridList(mWizard.mPomDeltaUtils.POM.RelativeXpathTemplateList);
+                    xCustomRelativeXpathTemplateFrame.UpdateCustomRelPathGridList(mWizard.mPomDeltaUtils.POM.PomSetting.RelativeXpathTemplateList);
                 }
             }
             else
@@ -150,11 +155,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         private void SetElementLocatorsSettingsData()
         {
-            if (mWizard.mPomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList.Count == 0)
+            if (mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting != null)
             {
-                mWizard.mPomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetLearningLocators();
+                mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.ElementLocatorsSettingsList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetLearningLocators();
             }
-            xElementLocatorsSettingsGrid.DataSourceList = mWizard.mPomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList;
+            xElementLocatorsSettingsGrid.DataSourceList = mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.ElementLocatorsSettingsList;
         }
 
         private void SetAutoMapElementTypesGridView()
@@ -204,10 +209,27 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         {
             if (mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList.Count > 0)
             {
-                bool valueToSet = !mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList[0].Selected;
+                bool valueToSet = !mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList.All(elem => elem.Selected);
+
+                if (mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType == null)
+                {
+                    mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType = [];
+                }
+
                 foreach (UIElementFilter elem in mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList)
                 {
                     elem.Selected = valueToSet;
+                    if (elem.Selected)
+                    {
+                        if (!mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Any(x => x.ElementType.Equals(elem.ElementType)))
+                        {
+                            mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Add(elem);
+                        }
+                    }
+                    else
+                    {
+                        mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Remove(elem);
+                    }
                 }
             }
         }
@@ -216,11 +238,29 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         {
             if (mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList.Count > 0)
             {
-                bool valueToSet = !mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList[0].Selected;
+                bool valueToSet = !mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList.All(elem => elem.Selected);
+
+                if (mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType == null)
+                {
+                    mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType = [];
+                }
+
                 foreach (UIElementFilter elem in mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList)
                 {
                     elem.Selected = valueToSet;
+                    if (elem.Selected)
+                    {
+                        if (!mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Any(x => x.ElementType.Equals(elem.ElementType)))
+                        {
+                            mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Add(elem);
+                        }
+                    }
+                    else
+                    {
+                        mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType.Remove(elem);
+                    }
                 }
+
             }
         }
 

@@ -18,6 +18,8 @@ limitations under the License.
 
 //using Ginger.SolutionGeneral;
 
+using System;
+
 namespace Ginger
 {
     public interface IUserProfileOperations
@@ -32,8 +34,8 @@ namespace Ginger
         void SavePasswords();
         void SaveRecentAppAgentsMapping();
         void SaveUserProfile();
-        public void RefreshSourceControlCredentials(GingerCoreNET.SourceControl.SourceControlBase.eSourceControlType argsSourceControlType);
-
+        public void RefreshSourceControlCredentials(Guid guid);
+        public void ReadOldSourceControlCredentials(GingerCoreNET.SourceControl.SourceControlBase mSourceControl);
         bool IsSharedUserProfile { get; }
     }
 }

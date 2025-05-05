@@ -60,7 +60,7 @@ namespace Ginger.SourceControl
             if (WorkSpace.Instance.Solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
             {
                 xSourceControlBranchPanel.Visibility = Visibility.Visible;
-                xSourceControlBranchLabel.Content = WorkSpace.Instance.Solution.SourceControl.SourceControlBranch;
+                xSourceControlBranchLabel.Content = WorkSpace.Instance.Solution.SourceControl.Branch;
             }
             else
             {
@@ -242,9 +242,10 @@ namespace Ginger.SourceControl
 
         private async void CommitAndCheckinButton_Click(object sender, RoutedEventArgs e)
         {
+            WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfile(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Guid);
             if (WorkSpace.Instance.Solution.SourceControl.Name == SourceControlBase.eSourceControlType.GIT.ToString())
             {
-                if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorName) || String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorEmail))
+                if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.AuthorName) || String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.AuthorEmail))
                 {
                     Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, "Please provide Author Name and Email in source control connection details page.");
                     return;
@@ -642,7 +643,7 @@ namespace Ginger.SourceControl
 
         private async void LocalCommitButton_Click(object sender, RoutedEventArgs e)
         {
-            if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorName) || String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorEmail))
+            if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.AuthorName) || String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.AuthorEmail))
             {
                 Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, "Please provide Author Name and Email in source control connection details page.");
                 return;
@@ -730,12 +731,12 @@ namespace Ginger.SourceControl
                         break;
 
                     case SourceControlFileInfo.eRepositoryItemStatus.Modified:
-                        if (fi.Locked && fi.LockedOwner != WorkSpace.Instance.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByAnotherUser, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                        if (fi.Locked && fi.LockedOwner != WorkSpace.Instance.Solution.SourceControl.Username && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByAnotherUser, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                         {
                             SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
                             pathsToCommit.Add(fi.Path);
                         }
-                        else if (fi.Locked && fi.LockedOwner == WorkSpace.Instance.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByMe, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                        else if (fi.Locked && fi.LockedOwner == WorkSpace.Instance.Solution.SourceControl.Username && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByMe, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                         {
                             SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
                             pathsToCommit.Add(fi.Path);
@@ -809,7 +810,7 @@ namespace Ginger.SourceControl
 
         private async void LocalUndoChanges_Click(object sender, RoutedEventArgs e)
         {
-            if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorName) || String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorEmail))
+            if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.AuthorName) || String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.AuthorEmail))
             {
                 Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, "Please provide Author Name and Email in source control connection details page.");
                 return;

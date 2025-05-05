@@ -241,7 +241,7 @@ namespace Ginger.SolutionGeneral
                 Path.Combine(solutionFolder, "Ginger.Solution.xml"),
             ];
 
-            string[] SolutionMainFolders = new string[] { "Agents", "ALMDefectProfiles", "Applications Models", "BusinessFlows", "Configurations", "DataSources", "Environments", "HTMLReportConfigurations", "PluginPackages", "Plugins", "RunSetConfigs", "SharedRepository" };
+            string[] SolutionMainFolders = ["Agents", "ALMDefectProfiles", "Applications Models", "BusinessFlows", "Configurations", "DataSources", "Environments", "HTMLReportConfigurations", "PluginPackages", "Plugins", "RunSetConfigs", "SharedRepository"];
             Parallel.ForEach(SolutionMainFolders, folder =>
             {
                 // Get each main folder sub folder all levels
@@ -384,15 +384,21 @@ namespace Ginger.SolutionGeneral
         public ObservableList<ExternalItemFieldBase> ExternalItemsFields = [];
 
         public ePlatformType GetTargetApplicationPlatform(RepositoryItemKey TargetApplicationKey)
-            {
+        {
             if (TargetApplicationKey != null)
+            {
+                string targetAppName = TargetApplicationKey.ItemName;
+                Guid targetAppGuid = TargetApplicationKey.Guid;
+                ApplicationPlatform appPlatform = ApplicationPlatforms.FirstOrDefault(ap => string.Equals(ap.AppName, targetAppName));
+                if (appPlatform == null)
                 {
-                string targetapp = TargetApplicationKey.ItemName;
-                ePlatformType platform = (from x in ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
-                return platform;
+                    appPlatform = ApplicationPlatforms.FirstOrDefault(ap => ap.Guid == targetAppGuid);
                 }
-            return ePlatformType.Web;
+                ePlatformType platform = appPlatform != null ? appPlatform.Platform : default;
+                return platform;
             }
+            return ePlatformType.Web;
+        }
 
         /// <summary>
         /// This method will return platform for the target application name
@@ -400,14 +406,14 @@ namespace Ginger.SolutionGeneral
         /// <param name="targetapp"></param>
         /// <returns></returns>
         public ePlatformType GetApplicationPlatformForTargetApp(string targetapp)
-            {
+        {
             if (!string.IsNullOrEmpty(targetapp))
-                {
-                ePlatformType platform = (from x in ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
-                return platform;
-                }
-            return ePlatformType.NA;
+            {
+                ApplicationPlatform appPlatform = ApplicationPlatforms.FirstOrDefault(ap => string.Equals(ap.AppName, targetapp));
+                return appPlatform != null ? appPlatform.Platform : default;
             }
+            return ePlatformType.NA;
+        }
 
 
         // overriding this SerializationError here because previously we were supporting only one ALMConfig 

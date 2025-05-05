@@ -81,7 +81,7 @@ namespace Ginger.Actions
 
             xFilePathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.FilePathInput, nameof(ActInputValue.Value), true, true, UCValueExpression.eBrowserType.File, "*");
 
-            xFolderPathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.FolderPathInput, nameof(ActMobileDevice.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");            
+            xFolderPathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.FolderPathInput, nameof(ActMobileDevice.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");
 
             xAppPackageVE.Init(Context.GetAsContext(mAct.Context), mAct.ActionAppPackage, nameof(ActInputValue.Value));
 
@@ -232,7 +232,6 @@ namespace Ginger.Actions
             xFileTransferPnl.Visibility = Visibility.Collapsed;
             xSpecificPerformanceDataPnl.Visibility = Visibility.Collapsed;
             xDeviceRotationPnl.Visibility = Visibility.Collapsed;
-          
             xMultiTouchGrid.Visibility = Visibility.Collapsed;
 
             switch (mAct.MobileDeviceAction)
@@ -285,8 +284,9 @@ namespace Ginger.Actions
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.OpenDeeplink:
-                    xAppPnl.Visibility = Visibility.Visible; 
+                    xAppPnl.Visibility = Visibility.Visible;
                     xInputLabelVE.Content = "Link:";
+                    xInputTextBlock.Text = "";
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
 
@@ -295,21 +295,25 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.IsAppInstalled:
                 case ActMobileDevice.eMobileDeviceAction.RemoveApp:
                 case ActMobileDevice.eMobileDeviceAction.QueryAppState:
+                case ActMobileDevice.eMobileDeviceAction.ClearAppData:
                     xAppPnl.Visibility = Visibility.Visible;
                     break;
                     
                 case ActMobileDevice.eMobileDeviceAction.SetContext:
                     xInputLabelVE.Content = "Context to Set:";
+                    xInputTextBlock.Text = "";
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.RunScript:
                     xInputLabelVE.Content = "Script:";
+                    xInputTextBlock.Text = "";
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.StartRecordingScreen:
-                    xInputLabelVE.Content = "Note: Max duration recording: 30 min.";
+                    xInputLabelVE.Content = "Note: Max duration recording: 30 min."; 
+                    xInputTextBlock.Text = "";
                     xInputVE.Visibility = Visibility.Collapsed;
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
@@ -326,24 +330,35 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.PushFileToDevice:
                     xFilePathLbl.Content = "Local File to Push:";
                     xFolderPathLbl.Content = "Device Target Folder:";
+                    xFileTextBlock.Text="For Multiple Files Select Folder";
                     xFilePathLbl.Visibility = Visibility.Visible;
                     xFilePathTextBox.Visibility = Visibility.Visible;
                     xFolderPathLbl.Visibility = Visibility.Visible;
                     xFolderPathTxtBox.Visibility = Visibility.Visible;
-                    xFileTransferPnl.Visibility = Visibility.Visible;
+                    xFileTransferPnl.Visibility = Visibility.Visible;          
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.PullFileFromDevice:
+                    xFolderPathLbl.Content = "Local Target to Push:";
+                    xFilePathLbl.Content = "Device File to Pull:";  
+                    xFileTextBlock.Text = "Target Folders Path:\nDocuments: /storage/emulated/0/Documents/\nPictures: /storage/emulated/0/Pictures/\nDownloads: /storage/emulated/0/Download/";
+                    xFolderTextBlock.Text = "Select Folder";
                     xFilePathLbl.Visibility = Visibility.Visible;
                     xFilePathTextBox.Visibility = Visibility.Visible;
                     xFolderPathLbl.Visibility = Visibility.Visible;
                     xFolderPathTxtBox.Visibility = Visibility.Visible;
-                    xFileTransferPnl.Visibility = Visibility.Visible;
+                    xFileTransferPnl.Visibility = Visibility.Visible;              
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.SetClipboardText:
                     xInputLabelVE.Content = "Text:";
+                    xInputTextBlock.Text = "";
                     xInputPnl.Visibility = Visibility.Visible;
+                    break;
+                case ActMobileDevice.eMobileDeviceAction.TypeUsingkeyboard:
+                    xInputLabelVE.Content = "Text:";
+                    xInputTextBlock.Text = "Note: For IOS, Keyboard Should be Open.";
+                    xInputPnl.Visibility = Visibility.Visible;               
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.GetSpecificPerformanceData:
@@ -354,10 +369,32 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.RotateSimulation:
                     xDeviceRotationPnl.Visibility = Visibility.Visible;
                     break;
-               
+                case ActMobileDevice.eMobileDeviceAction.LockForDuration:
+                    xInputLabelVE.Content = "Set a Time Duration for Lock(Seconds):";
+                    xInputTextBlock.Text = "";
+                    xInputPnl.Visibility = Visibility.Visible;
+                    break;
 
                 case ActMobileDevice.eMobileDeviceAction.PerformMultiTouch:
                     xMultiTouchGrid.Visibility = Visibility.Visible;
+                    break;
+                case ActMobileDevice.eMobileDeviceAction.GrantAppPermission:
+                    xAppPnl.Visibility = Visibility.Visible;
+                    xInputLabelVE.Content = "Permission:";
+                    xInputTextBlock.Text = ""; 
+                    xInputPnl.Visibility = Visibility.Visible;
+                    break;
+
+                case ActMobileDevice.eMobileDeviceAction.SendAppToBackground:
+                    xInputLabelVE.Content = "Set a Time Duration for Background(Seconds):";
+                    xInputTextBlock.Text = "";
+                    xInputPnl.Visibility = Visibility.Visible;                  
+                    break;
+                case ActMobileDevice.eMobileDeviceAction.StartActivity:
+                    xAppPnl.Visibility = Visibility.Visible;
+                    xInputLabelVE.Content = "Activity:";
+                    xInputTextBlock.Text = "";
+                    xInputPnl.Visibility = Visibility.Visible;
                     break;
             }
         }

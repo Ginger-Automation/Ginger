@@ -51,8 +51,8 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override bool IsSupportingGetLatestForIndividualFiles { get { return true; } }
 
-        public override eSourceControlType GetSourceControlType { get { return eSourceControlType.GIT; } }
-
+        public override eSourceControlType GetSourceControlType {  get { return eSourceControlType.GIT; } }
+        
         public override List<string> GetSourceControlmConflict => throw new NotImplementedException();
 
         public override bool AddFile(string Path, ref string error)
@@ -95,7 +95,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
             return [];
         }
 
-        public override string GetCurrentBranchForSolution()
+        public override string GetCurrentWorkingBranch()
         {
             return "master";
         }
@@ -144,14 +144,14 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
             string GetCloneUrlString()
             {
-                if (string.IsNullOrEmpty(SourceControlUser))
+                if (string.IsNullOrEmpty(Username))
                 {
                     return URI;
                 }
                 Uri url = new Uri(URI);
                 string scheme = url.Scheme;
 
-                return url.Scheme + @"://" + SourceControlUser + ":" + SourceControlPass + "@" + url.Host + url.AbsolutePath;
+                return url.Scheme + @"://" + Username + ":" + Password + "@" + url.Host + url.AbsolutePath;
             }
         }
 
@@ -270,5 +270,16 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
         {
             throw new NotImplementedException();
         }
+
+        public override bool CreateBranch( string newBranchName, ref string error)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<string> GetLocalBranches()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

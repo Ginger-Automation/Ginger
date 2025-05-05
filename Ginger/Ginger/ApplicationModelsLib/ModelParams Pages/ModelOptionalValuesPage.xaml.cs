@@ -145,7 +145,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             if (CurrentOP != null)
             {
-                if (OldValue.Equals(GlobalAppModelParameter.CURRENT_VALUE))
+                if (OldValue!= null && OldValue.Equals(GlobalAppModelParameter.CURRENT_VALUE))
                 {
                     CurrentOP.Value = OldValue;
                 }

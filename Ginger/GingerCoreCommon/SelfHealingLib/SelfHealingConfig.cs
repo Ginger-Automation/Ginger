@@ -77,6 +77,20 @@ namespace Amdocs.Ginger.Common.SelfHealingLib
                 }
             }
         }
+        private bool mForceUpdateApplicationModel;
+        [IsSerializedForLocalRepository]
+        public bool ForceUpdateApplicationModel
+        {
+            get { return mForceUpdateApplicationModel; }
+            set
+            {
+                if (mForceUpdateApplicationModel != value)
+                {
+                    mForceUpdateApplicationModel = value;
+                    OnPropertyChanged(nameof(ForceUpdateApplicationModel));
+                }
+            }
+        }
         private bool mAutoExecuteInSimulationMode;
         [IsSerializedForLocalRepository]
         public bool AutoExecuteInSimulationMode
