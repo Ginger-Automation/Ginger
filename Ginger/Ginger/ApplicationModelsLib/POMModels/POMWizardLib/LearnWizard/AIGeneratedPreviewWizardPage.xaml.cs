@@ -18,7 +18,7 @@ using System.Windows.Controls;
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
     /// <summary>
-    /// Interaction logic for POMScreenshotHTMLViewPage.xaml
+    /// Interaction logic for AIGeneratedPreviewWizardPage.xaml
     /// </summary>
     public partial class AIGeneratedPreviewWizardPage : Page, IWizardPage
     {
