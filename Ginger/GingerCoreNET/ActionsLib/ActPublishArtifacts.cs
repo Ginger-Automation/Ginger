@@ -84,7 +84,7 @@ namespace GingerCore.Actions
                 {
                     if (!System.IO.File.Exists(item.ValueForDriver))
                     {
-                        Error += $"Artifact File Path is invalid/doesn't exist/not enough permissions to access file: {item.ValueForDriver}";
+                        Error += $"Artifact File Path is invalid/doesn't exist/not enough permissions to access file: {item.ValueForDriver}" + Environment.NewLine;
                         continue;
                     }
                     try
@@ -92,13 +92,13 @@ namespace GingerCore.Actions
                         var fileSize = new System.IO.FileInfo(item.ValueForDriver).Length;
                         if (fileSize > MaxUploadSizeBytes)
                         {
-                            Error += $"File size greater than 5MB cannot be uploaded: {item.ValueForDriver}";
+                            Error += $"File size greater than 5MB cannot be uploaded: {item.ValueForDriver}" + Environment.NewLine;
                             continue;
                         }
                     }
                     catch (Exception ex)
                     {
-                        Error += $"Failed to check file size for {item.ValueForDriver}: {ex.Message}";
+                        Error += $"Failed to check file size for {item.ValueForDriver}: {ex.Message}" + Environment.NewLine;
                         continue;
                     }
 
@@ -107,7 +107,7 @@ namespace GingerCore.Actions
             }
             catch (Exception ex)
             {
-                Error += $"Failed to upload artifacts: {ex.Message}";
+                Error += $"Failed to upload artifacts: {ex.Message}" + Environment.NewLine;
                 return;
             }
         }
