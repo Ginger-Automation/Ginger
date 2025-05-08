@@ -126,7 +126,7 @@ namespace Ginger.SourceControl
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.Username));
 
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, PasswordBox.PasswordCharProperty, mSourceControl, nameof(SourceControlBase.Password));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.Password));
             SourceControlPassTextBox.Password = mSourceControl.Password;
 
 
