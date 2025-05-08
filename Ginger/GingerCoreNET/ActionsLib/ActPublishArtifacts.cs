@@ -16,12 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace GingerCore.Actions
 {
@@ -63,11 +65,11 @@ namespace GingerCore.Actions
         
         public override string ActionEditPage { get { return "ActPublishArtifactsEditPage"; } }
 
-        public override string ActionUserDescription { get { return "Upload of Artifacts for HTML Report usage."; } }
+        public override string ActionUserDescription { get { return "This action uploads artifacts at the end of execution, along with other artifacts to be published."; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("Use this action for uploading of Artifacts for HTML Report usage.");
+            TBH.AddText("Use this action to upload artifacts for centralized HTML report usage, artifacts e.g. Reports generated outside ginger.");
         }
 
         public override void Execute()
@@ -80,25 +82,25 @@ namespace GingerCore.Actions
                     return;
                 }
 
+                if (!WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationIsEnabled &&
+                    WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ePublishToCentralDB.No)
+                {
+                    Error = "Please Enable Local/Centralized Execution Logger Settings from \"Configurations => Reports => Execution Logger Configurations\" to execute Publish Artifacts actions.";
+                    return;
+                }
+
+                if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ePublishToCentralDB.Yes && 
+                    WorkSpace.Instance.Solution.LoggerConfigurations.UploadArtifactsToCentralizedReport == eUploadExecutionArtifactsToCentralizedReport.No)
+                {
+                    Error = "Please Enable Upload execution artifacts in \"CONFIGURATIONS => Reports => Execution Logger Configurations => Centralized Execution Logger Settings\" to execute Publish Artifacts actions.";
+                    return;
+                }
+
                 foreach (ActInputValue item in ActInputValues)
                 {
                     if (!System.IO.File.Exists(item.ValueForDriver))
                     {
                         Error += $"Artifact File Path is invalid/doesn't exist/not enough permissions to access file: {item.ValueForDriver}" + Environment.NewLine;
-                        continue;
-                    }
-                    try
-                    {
-                        var fileSize = new System.IO.FileInfo(item.ValueForDriver).Length;
-                        if (fileSize > MaxUploadSizeBytes)
-                        {
-                            Error += $"File size greater than 5MB cannot be uploaded: {item.ValueForDriver}" + Environment.NewLine;
-                            continue;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Error += $"Failed to check file size for {item.ValueForDriver}: {ex.Message}" + Environment.NewLine;
                         continue;
                     }
 

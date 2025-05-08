@@ -924,6 +924,11 @@ namespace Ginger.Actions
 
         private string GetUniqueParamName()
         {
+            if (mAction is ActPublishArtifacts)
+            {
+                return "Artifact " + (mAction.InputValues.Select(iv => int.TryParse(iv.Param.AsSpan("Artifact ".Length), out var n) ? n : -1).DefaultIfEmpty(-1).Max() + 1);
+            }
+
             return "p" + (mAction.InputValues.Select(iv => int.TryParse(iv.Param?.TrimStart('p'), out var n) ? n : -1).DefaultIfEmpty(-1).Max() + 1);
         }
 
