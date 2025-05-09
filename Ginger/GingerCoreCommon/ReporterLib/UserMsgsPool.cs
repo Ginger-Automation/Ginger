@@ -107,7 +107,7 @@ namespace Amdocs.Ginger.Common
         BusinessFlowAlreadyMappedToTC, AskIfSureWantToClose, AskIfSureWantToCloseWithoutNote, AskIfSureWantToRestart, AskIfSureWantToRestartWithoutNote, AskIfSureWantToRestartInAdminMode, WindowClosed, TargetWindowNotSelected,
         ChangingEnvironmentParameterValue, IFSaveChangesOfBF, AskIfToLoadExternalFields, WhetherToOpenSolution,
         AutomationTabExecResultsNotExists, FolderNamesAreTooLong, FolderSizeTooSmall, DefaultTemplateCantBeDeleted, FileNotExist, ExecutionsResultsProdIsNotOn, ExecutionsResultsNotExists, ExecutionsResultsToDelete, AllExecutionsResultsToDelete, FilterNotBeenSet, RetreivingAllElements, ClickElementAgain, CloseFilterPage,
-        BusinessFlowNeedTargetApplication, HTMLReportAttachment, ImageSize,
+        BusinessFlowNeedTargetApplication, HTMLReportAttachment, ImageSize, ImageSizeTill5Mb,
         GherkinAskToSaveFeatureFile, GherkinScenariosGenerated, GherkinNotifyFeatureFileExists, GherkinNotifyFeatureFileSelectedFromTheSolution, GherkinNotifyBFIsNotExistForThisFeatureFile, GherkinFileNotFound, GherkinColumnNotExist, GherkinActivityNotFound, GherkinBusinessFlowNotCreated, GherkinFeatureFileImportedSuccessfully, GherkinFeatureFileImportOnlyFeatureFileAllowedErrorMessage,
         AskIfSureWantToDeLink, AnalyzerFoundIssues, AnalyzerFoundNoIssues, AnalyzerSaveRunSet,
         AskIfSureWantToUndoChange,
@@ -618,9 +618,9 @@ namespace Amdocs.Ginger.Common
                 { eUserMsgKey.ExecutionsResultsToDelete, new UserMsg(eUserMsgType.QUESTION, "Delete Executions Results", "Are you sure you want to delete selected Executions Results?", eUserMsgOption.YesNo, eUserMsgSelection.No) },
                 { eUserMsgKey.AllExecutionsResultsToDelete, new UserMsg(eUserMsgType.QUESTION, "Delete All Executions Results", "Are you sure you want to delete all Executions Results?", eUserMsgOption.YesNo, eUserMsgSelection.No) },
                 { eUserMsgKey.HTMLReportAttachment, new UserMsg(eUserMsgType.WARN, "HTML Report Attachment", "HTML Report Attachment already exists, please delete existing one.", eUserMsgOption.OK, eUserMsgSelection.None) },
-                { eUserMsgKey.ImageSize, new UserMsg(eUserMsgType.WARN, "Image Size", "Image Size should be less than 30 Kb", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.ImageSize, new UserMsg(eUserMsgType.WARN, "Image Size", "Image Size should be less than 488 Kb", eUserMsgOption.OK, eUserMsgSelection.None) },
                 { eUserMsgKey.BFNotExistInDB, new UserMsg(eUserMsgType.INFO, "Run " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), "Business Flow data don't exist in LiteDB, Please run to generate report", eUserMsgOption.OK, eUserMsgSelection.None) },
-
+                { eUserMsgKey.ImageSizeTill5Mb, new UserMsg(eUserMsgType.WARN, "Image Size", "Image Size should be less than 5 MB", eUserMsgOption.OK, eUserMsgSelection.None) },
                 #endregion Reports
 
                 #region Otoma
