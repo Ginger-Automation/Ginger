@@ -6082,7 +6082,7 @@ namespace GingerCore.Drivers
             string elementType = string.Empty;
             if (!string.IsNullOrEmpty(xpath))
             {
-                string[] xpathSpliter = [","];
+                string[] xpathSpliter = ["/"];
                 string[] elementsTypesPath = xpath.Split(xpathSpliter, StringSplitOptions.RemoveEmptyEntries);
                 if (elementsTypesPath.Length == 0)
                 {
