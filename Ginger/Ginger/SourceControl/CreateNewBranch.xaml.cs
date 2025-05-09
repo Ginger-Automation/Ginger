@@ -120,7 +120,7 @@ namespace Ginger.SourceControl
 
                 if (string.IsNullOrEmpty(mSourceControl.AuthorEmail) && string.IsNullOrEmpty(mSourceControl.AuthorName))
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Author name or Author email not found.");
+                    ShowErrorMsg("Author name or Author email not found.");
                     return;
                 }
 
