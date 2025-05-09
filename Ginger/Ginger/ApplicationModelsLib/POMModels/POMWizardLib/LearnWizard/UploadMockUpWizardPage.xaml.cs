@@ -20,6 +20,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         private AddPOMFromScreenshotWizard mWizard;
         private ePlatformType mAppPlatform;
         ScreenShotViewPage mScreenShotViewPage;
+        private const int MAX_IMAGE_SIZE_BYTES = 5242880; // 5MB
         public UploadMockUpWizardPage()
         {
             InitializeComponent();
@@ -49,7 +50,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 if (!string.IsNullOrEmpty(op.FileName))
                 {
                     var fileLength = new FileInfo(op.FileName).Length;
-                    if (fileLength <= 5242880)
+                    if (fileLength <= MAX_IMAGE_SIZE_BYTES)
                     {
                         if ((op.FileName != null) && (op.FileName != string.Empty))
                         {
