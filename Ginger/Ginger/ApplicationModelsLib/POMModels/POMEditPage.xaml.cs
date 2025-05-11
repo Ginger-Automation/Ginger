@@ -29,7 +29,6 @@ using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
-using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -159,7 +158,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             else
             {
-               xScreenshotOperationBtns.IsEnabled = true;
+                xScreenshotOperationBtns.IsEnabled = true;
             }
             SetIconImageType();
         }
@@ -476,10 +475,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
             };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoButton, eventName: nameof(ButtonBase.Click), handler: UndoButton_Click);
 
+            // creating this event handler for stopping the spy
+            RoutedEventHandler closeButtonHandler = (sender, e) =>
+            {
+                mPomAllElementsPage.StopSpying();
+                mWin.Close();
+            };
 
             this.Height = 800;
             this.Width = 800;
-            GingerCore.General.LoadGenericWindow(ref mWin, App.MainWindow, windowStyle, mPOM.Name + " Edit Page", this, [saveButton, undoButton]);
+            GingerCore.General.LoadGenericWindow(ref mWin, App.MainWindow, windowStyle, mPOM.Name + " Edit Page", this, [saveButton, undoButton], closeEventHandler: closeButtonHandler);
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
