@@ -476,7 +476,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoButton, eventName: nameof(ButtonBase.Click), handler: UndoButton_Click);
 
             // creating this event handler for stopping the spy
-            RoutedEventHandler closeButtonHandler = (sender, e) =>
+            RoutedEventHandler closeButtonHandler = (_, e) =>
             {
                 mPomAllElementsPage.StopSpying();
                 mWin.Close();
@@ -506,6 +506,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 Mouse.OverrideCursor = Cursors.Wait;
                 mPOM.RestoreFromBackup(true);
+                mPomAllElementsPage.StopSpying();
                 mWin.Close();
             }
             finally
