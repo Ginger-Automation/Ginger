@@ -1166,17 +1166,12 @@ namespace GingerCoreNET.GeneralLib
         {
             if (FileName.StartsWith(WorkSpace.Instance.SolutionRepository.SolutionFolder))
             {
-                return ConvertSolutionRelativePath(FileName);
+                return WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(FileName);
             }
             else
             {
                 return FileName;
             }
-        }
-
-        public static string ConvertSolutionRelativePath(string fileName)
-        {
-            return WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(fileName);
         }
     }
 

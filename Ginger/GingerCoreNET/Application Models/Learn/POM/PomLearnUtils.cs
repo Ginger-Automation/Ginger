@@ -272,11 +272,15 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             PrepareLearningConfigurations();
             LearnScreenShot();
             POM.PageURL = ((AgentOperations)Agent.AgentOperations).Driver.GetURL();
-            string normalizedPageUrl = Path.GetFullPath(new Uri(POM.PageURL).LocalPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-            if (normalizedPageUrl.Contains(WorkSpace.Instance.SolutionRepository.SolutionFolder))
+            if (!Uri.IsWellFormedUriString(POM.PageURL, UriKind.Absolute) || POM.PageURL.StartsWith("file:///"))
             {
-                POM.PageURL = GingerCoreNET.GeneralLib.General.SetupRelativePath(normalizedPageUrl);
+                string normalizedPageUrl = Path.GetFullPath(new Uri(POM.PageURL).LocalPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                if (normalizedPageUrl.Contains(WorkSpace.Instance.SolutionRepository.SolutionFolder))
+                {
+                    POM.PageURL = GingerCoreNET.GeneralLib.General.SetupRelativePath(normalizedPageUrl);
+                }
             }
+                
             POM.Name = IWindowExplorerDriver.GetActiveWindow().Title;
             // appending Specific frame title in POM name
             if (!string.IsNullOrEmpty(SpecificFramePath))
