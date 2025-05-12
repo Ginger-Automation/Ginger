@@ -2657,7 +2657,6 @@ namespace Ginger.Run
 
         public void SetCurrentActivityAgent()
         {
-            //UpdateApplicationAgents();
             // We take it based on the Activity target App
             string AppName = CurrentBusinessFlow.CurrentActivity.TargetApplication;
             //For unit test cases, solution applications will be always null
@@ -3836,7 +3835,8 @@ namespace Ginger.Run
                                 if (!mGingerRunner.RunInSimulationMode ||
                                     (mGingerRunner.RunInSimulationMode == true && driverActs.Any(x => x.SupportSimulation == false)))
                                 {
-                                    //Set the Agent to run actions with  
+                                    UpdateApplicationAgents();
+                                    //Set the Agent to run actions with
                                     SetCurrentActivityAgent();
                                 }
                             }
