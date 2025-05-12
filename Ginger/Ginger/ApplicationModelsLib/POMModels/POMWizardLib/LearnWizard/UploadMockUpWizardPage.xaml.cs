@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2025 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Application_Models;
 using Ginger.Actions.UserControls;
 using GingerCore.GeneralLib;
@@ -20,6 +38,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         private AddPOMFromScreenshotWizard mWizard;
         private ePlatformType mAppPlatform;
         ScreenShotViewPage mScreenShotViewPage;
+        private const int MAX_IMAGE_SIZE_BYTES = 5242880; // 5MB
         public UploadMockUpWizardPage()
         {
             InitializeComponent();
@@ -49,7 +68,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 if (!string.IsNullOrEmpty(op.FileName))
                 {
                     var fileLength = new FileInfo(op.FileName).Length;
-                    if (fileLength <= 500000)
+                    if (fileLength <= MAX_IMAGE_SIZE_BYTES)
                     {
                         if ((op.FileName != null) && (op.FileName != string.Empty))
                         {
@@ -71,7 +90,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKey.ImageSize, "500");
+                        Reporter.ToUser(eUserMsgKey.ImageSizeTill5Mb, "500");
                     }
                 }
             }
