@@ -247,7 +247,7 @@ namespace Ginger.Run
                 }
             }
         }
-        
+
         private void LoadRunSetConfigBySelection(RunSetConfig defaultRunSet)
         {
             //hide current Run set UI
