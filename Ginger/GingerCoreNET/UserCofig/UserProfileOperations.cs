@@ -91,7 +91,6 @@ namespace Ginger
 
         private void LoadRecentSolutionsAsObjects()
         {
-
             CleanRecentSolutionsList();
 
             mRecentSolutionsAsObjects = [];
@@ -121,7 +120,6 @@ namespace Ginger
                     }
                 }
             }
-
             return;
         }
 
@@ -348,7 +346,7 @@ namespace Ginger
                 return true;
             }
             return false;
-        
+
         }
         public void RefreshSourceControlCredentials(Guid solutionGuid)
         {
