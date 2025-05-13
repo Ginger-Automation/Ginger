@@ -117,13 +117,6 @@ namespace Ginger.SourceControl
                     return;
                 }
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
-
-                if (string.IsNullOrEmpty(mSourceControl.AuthorEmail) && string.IsNullOrEmpty(mSourceControl.AuthorName))
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Author name or Author email not found.");
-                    return;
-                }
-
                 await Task.Run(() =>
                 {
                     CreateNewSourceControlBranch(sender, e);
