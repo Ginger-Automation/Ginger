@@ -1161,6 +1161,18 @@ namespace GingerCoreNET.GeneralLib
         {
             await runsetExecutor.RunRunset();
         }
+
+        internal static string SetupRelativePath(string FileName)
+        {
+            if (FileName.StartsWith(WorkSpace.Instance.SolutionRepository.SolutionFolder))
+            {
+                return WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(FileName);
+            }
+            else
+            {
+                return FileName;
+            }
+        }
     }
 
 }

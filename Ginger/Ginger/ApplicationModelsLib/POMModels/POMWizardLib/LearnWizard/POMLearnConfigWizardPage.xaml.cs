@@ -293,7 +293,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
                 if (ucAgentControl.SelectedAgent != null)
                 {
-                    Uri uri = ValidateURL(mBasePOMWizard.HtmlFilePath);
+                    Uri uri = ValidateURL(General.GetFullFilePath(mBasePOMWizard.HtmlFilePath));
                     if (uri != null)
                     {
                         NavigateAgentToHtml(ucAgentControl.SelectedAgent, uri);
@@ -310,13 +310,20 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             try
             {
-                await Task.Run(() =>
+                if(((AgentOperations)agent.AgentOperations).Driver != null)
+                {
+                    Act act = new ActBrowserElement
+                    {
+                        ControlAction = ActBrowserElement.eControlAction.GotoURL,
+                        ValueForDriver = uri.AbsoluteUri,
+                    };
+
+                    act.GetOrCreateInputParam(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
+
+                    await Task.Run(() =>
                         ((AgentOperations)agent.AgentOperations)
-                            .Driver.RunAction(new ActBrowserElement
-                            {
-                                ControlAction = ActBrowserElement.eControlAction.GotoURL,
-                                ValueForDriver = uri.AbsoluteUri
-                            }));
+                            .Driver.RunAction(act));
+                }
             }
             catch (Exception ex)
             {
