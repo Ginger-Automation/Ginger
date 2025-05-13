@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Ginger
 {
@@ -284,6 +285,10 @@ namespace Ginger
 
         public UserProfile LoadPasswords(UserProfile userProfile)
         {
+            if (!ValidateWindowOS())
+            {
+                return userProfile;
+            }
             if (WorkSpace.Instance.Solution != null)
             {
                 var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
@@ -317,6 +322,10 @@ namespace Ginger
 
         public void SavePasswords()
         {
+            if (!ValidateWindowOS())
+            {
+                return;
+            }
             if (WorkSpace.Instance.Solution != null)
             {
                 var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
@@ -332,9 +341,21 @@ namespace Ginger
                 WinCredentialUtil.SetCredentials("Ginger_ALM_" + almConfig.AlmType, almConfig.ALMUserName, almConfig.ALMPassword);
             }
         }
-
+        private bool ValidateWindowOS()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return true;
+            }
+            return false;
+        
+        }
         public void RefreshSourceControlCredentials(Guid solutionGuid)
         {
+            if (!ValidateWindowOS())
+            {
+                return;
+            }
             var GingerSolutionSourceControl = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(solutionGuid);
             UserPass userPassObj = WinCredentialUtil.ReadCredential($"Ginger_Sol_Git_{solutionGuid}");
             GingerSolutionSourceControl.SourceControlInfo.Password = userPassObj.Password;
@@ -347,6 +368,10 @@ namespace Ginger
         /// <param name="mSourceControl">The source control object to populate with credentials.</param>
         public void ReadOldSourceControlCredentials(GingerCoreNET.SourceControl.SourceControlBase mSourceControl)
         {
+            if (!ValidateWindowOS())
+            {
+                return;
+            }
             try
             {
                 UserPass userPassObj = WinCredentialUtil.ReadCredential($"Ginger_SolutionSourceControl");
