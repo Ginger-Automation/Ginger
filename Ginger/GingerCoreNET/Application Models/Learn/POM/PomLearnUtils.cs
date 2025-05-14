@@ -34,6 +34,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using static GingerCore.Agent;
 
 namespace Amdocs.Ginger.CoreNET.Application_Models
 {
@@ -272,14 +273,19 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             PrepareLearningConfigurations();
             LearnScreenShot();
             POM.PageURL = ((AgentOperations)Agent.AgentOperations).Driver.GetURL();
-            if (!Uri.IsWellFormedUriString(POM.PageURL, UriKind.Absolute) || POM.PageURL.StartsWith("file:///"))
+            if(Agent.Platform == ePlatformType.Web)
             {
-                string normalizedPageUrl = Path.GetFullPath(new Uri(POM.PageURL).LocalPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-                if (normalizedPageUrl.Contains(WorkSpace.Instance.SolutionRepository.SolutionFolder))
+                Uri uri = new Uri(POM.PageURL);
+                if (uri.IsFile && File.Exists(uri.AbsolutePath))
                 {
-                    POM.PageURL = GingerCoreNET.GeneralLib.General.SetupRelativePath(normalizedPageUrl);
+                    string normalizedPageUrl = Path.GetFullPath(new Uri(POM.PageURL).LocalPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                    if (normalizedPageUrl.Contains(WorkSpace.Instance.SolutionRepository.SolutionFolder))
+                    {
+                        POM.PageURL = GingerCoreNET.GeneralLib.General.SetupRelativePath(normalizedPageUrl);
+                    }
                 }
             }
+            
                 
             POM.Name = IWindowExplorerDriver.GetActiveWindow().Title;
             // appending Specific frame title in POM name
