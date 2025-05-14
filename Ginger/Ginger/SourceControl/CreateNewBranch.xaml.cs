@@ -47,8 +47,15 @@ namespace Ginger.SourceControl
         }
         private void SourceControlInit()
         {
-            mSourceControl = new GITSourceControl();
-            WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfile(mSourceControl, WorkSpace.Instance.Solution.Guid);
+            if (WorkSpace.Instance.Solution.SourceControl != null)
+            {
+                mSourceControl = WorkSpace.Instance.Solution.SourceControl;
+            }
+            else
+            {
+                mSourceControl = new GITSourceControl();
+                WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfile(mSourceControl, WorkSpace.Instance.Solution.Guid);
+            }
         }
         private void Init()
         {
