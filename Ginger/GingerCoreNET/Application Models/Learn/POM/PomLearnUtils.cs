@@ -273,20 +273,25 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             PrepareLearningConfigurations();
             LearnScreenShot();
             POM.PageURL = ((AgentOperations)Agent.AgentOperations).Driver.GetURL();
-            if(Agent.Platform == ePlatformType.Web)
+            if (Agent.Platform == ePlatformType.Web)
             {
-                Uri uri = new Uri(POM.PageURL);
-                if (uri.IsFile && File.Exists(uri.AbsolutePath))
+                try
                 {
-                    string normalizedPageUrl = Path.GetFullPath(new Uri(POM.PageURL).LocalPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-                    if (normalizedPageUrl.Contains(WorkSpace.Instance.SolutionRepository.SolutionFolder))
+                    Uri uri = new Uri(POM.PageURL);
+                    if (uri.IsFile && File.Exists(uri.AbsolutePath))
                     {
-                        POM.PageURL = GingerCoreNET.GeneralLib.General.SetupRelativePath(normalizedPageUrl);
+                        string normalizedPageUrl = Path.GetFullPath(new Uri(POM.PageURL).LocalPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                        if (normalizedPageUrl.Contains(WorkSpace.Instance.SolutionRepository.SolutionFolder))
+                        {
+                            POM.PageURL = GingerCoreNET.GeneralLib.General.SetupRelativePath(normalizedPageUrl);
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, $"Invalid URI format in POM.PageURL: {POM.PageURL}", ex);
+                }
             }
-            
-                
             POM.Name = IWindowExplorerDriver.GetActiveWindow().Title;
             // appending Specific frame title in POM name
             if (!string.IsNullOrEmpty(SpecificFramePath))
