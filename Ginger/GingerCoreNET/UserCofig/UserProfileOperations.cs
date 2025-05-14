@@ -341,12 +341,7 @@ namespace Ginger
         }
         private bool ValidateWindowOS()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return true;
-            }
-            return false;
-
+            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         }
         public void RefreshSourceControlCredentials(Guid solutionGuid)
         {
