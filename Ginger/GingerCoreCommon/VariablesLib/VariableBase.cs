@@ -676,7 +676,7 @@ namespace GingerCore.Variables
 
         public override void PrepareItemToBeCopied()
         {
-            this.IsSharedRepositoryInstance = TargetFrameworkHelper.Helper.IsSharedRepositoryItem(this);
+            this.IsSharedRepositoryInstance = TargetFrameworkHelper.Helper?.IsSharedRepositoryItem(this) ?? false;
         }
 
         public override string GetItemType()
