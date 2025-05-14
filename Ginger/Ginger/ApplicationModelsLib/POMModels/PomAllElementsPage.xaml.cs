@@ -220,7 +220,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             xCreateNewElement.Visibility = Visibility.Collapsed;
             xStatusLable.Content = "Spying is Off";
-            mDispatcherTimer.IsEnabled = false;
+
+            if (mDispatcherTimer != null)
+            {
+                mDispatcherTimer.IsEnabled = false;
+            }
         }
 
         public ElementInfo mSpyElement;
