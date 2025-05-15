@@ -55,8 +55,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             try
             {
-                // Define the path to the local application data folder//Environment.SpecialFolder.LocalApplicationData
-                mWizard.userTempDataFolderPath = Path.Combine((Path.GetTempPath()), "GingerWebView2");
+                // Define the path to the local application data folder
+                mWizard.userTempDataFolderPath = Path.Combine(Path.GetTempPath(), "GingerWebView2");
 
                 // Create the directory if it doesn't exist
                 Directory.CreateDirectory(mWizard.userTempDataFolderPath);
