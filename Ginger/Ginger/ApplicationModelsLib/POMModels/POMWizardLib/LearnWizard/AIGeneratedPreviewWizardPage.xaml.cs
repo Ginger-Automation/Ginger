@@ -22,6 +22,8 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Ginger.UserControlsLib.TextEditor;
 using GingerWPF.WizardLib;
 using HtmlAgilityPack;
+using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.Wpf;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -41,7 +43,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     public partial class AIGeneratedPreviewWizardPage : Page, IWizardPage
     {
         private AddPOMFromScreenshotWizard mWizard;
-
+        
 
         ApiSettings ApiSettings { get; set; }
         public AIGeneratedPreviewWizardPage()
@@ -49,12 +51,34 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             InitializeComponent();
         }
 
+        public async void InitializeWebView()
+        {
+            try
+            {
+                // Define the path to the local application data folder
+                mWizard.userTempDataFolderPath = Path.Combine(Path.GetTempPath(), "GingerWebView2");
+
+                // Create the directory if it doesn't exist
+                Directory.CreateDirectory(mWizard.userTempDataFolderPath);
+
+                // Initialize WebView2 with the custom user data folder
+                var environment = await CoreWebView2Environment.CreateAsync(null, mWizard.userTempDataFolderPath);
+                await MyWebView.EnsureCoreWebView2Async(environment);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load preview",ex);
+            }
+        }
+
+
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
                     mWizard = (AddPOMFromScreenshotWizard)WizardEventArgs.Wizard;
+                    InitializeWebView();
                     ApiSettings = LoadApiSettings();
                     if (ApiSettings == null)
                     {
