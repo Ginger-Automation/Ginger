@@ -8663,12 +8663,14 @@ namespace GingerCore.Drivers
                         }
                         break;
                     case ActBrowserElement.eControlAction.GetNetworkLog:
+                        mAct = act;
                         if (ValidateBrowserCompatibility(Driver))
                         {
                             GetNetworkLogAsync(act).GetAwaiter().GetResult();
                         }
                         break;
                     case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
+                        mAct = act;
                         if (ValidateBrowserCompatibility(Driver))
                         {
                             StopMonitoringNetworkLog(act).GetAwaiter().GetResult();
