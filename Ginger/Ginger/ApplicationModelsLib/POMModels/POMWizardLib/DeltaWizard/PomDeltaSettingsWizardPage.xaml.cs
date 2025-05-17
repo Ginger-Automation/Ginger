@@ -146,6 +146,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList = elementList["Basic"];
                 mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList = elementList["Advanced"];
             }
+            mWizard.mPomDeltaUtils.PomLearnUtils.SelectElementsToList(mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList, mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType);
+            mWizard.mPomDeltaUtils.PomLearnUtils.SelectElementsToList(mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList, mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.FilteredElementType);
+
+
             xAutoMapBasicElementTypesGrid.DataSourceList = mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList;
             xAutoMapAdvancedElementTypesGrid.DataSourceList = mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList;
         }

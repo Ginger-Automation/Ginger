@@ -47,8 +47,15 @@ namespace Ginger.SourceControl
         }
         private void SourceControlInit()
         {
-            mSourceControl = new GITSourceControl();
-            WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfile(mSourceControl, WorkSpace.Instance.Solution.Guid);
+            if (WorkSpace.Instance.Solution.SourceControl != null)
+            {
+                mSourceControl = WorkSpace.Instance.Solution.SourceControl;
+            }
+            else
+            {
+                mSourceControl = new GITSourceControl();
+                WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfile(mSourceControl, WorkSpace.Instance.Solution.Guid);
+            }
         }
         private void Init()
         {
@@ -117,13 +124,6 @@ namespace Ginger.SourceControl
                     return;
                 }
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
-
-                if (string.IsNullOrEmpty(mSourceControl.AuthorEmail) && string.IsNullOrEmpty(mSourceControl.AuthorName))
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Author name or Author email not found.");
-                    return;
-                }
-
                 await Task.Run(() =>
                 {
                     CreateNewSourceControlBranch(sender, e);

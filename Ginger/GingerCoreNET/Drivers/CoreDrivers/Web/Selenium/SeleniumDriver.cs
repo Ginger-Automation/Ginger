@@ -100,7 +100,7 @@ namespace GingerCore.Drivers
         private const string BRAVE_64BIT_BINARY_PATH = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
         private const string EDGE_32BIT_BINARY_PATH = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
         private const string EDGE_64BIT_BINARY_PATH = "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe";
-
+        private const int DevToolsProtocolVersion = 127;
         String[] SeleniumUserArgs = null;
         DriverService driverService = null;
         private readonly List<string> HighlightStyleList = ["arguments[0].style.outline='3px dashed rgb(239, 183, 247)'", "arguments[0].style.backgroundColor='rgb(239, 183, 247)'", "arguments[0].style.border='3px dashed rgb(239, 183, 247)'"];
@@ -6082,8 +6082,8 @@ namespace GingerCore.Drivers
             string elementType = string.Empty;
             if (!string.IsNullOrEmpty(xpath))
             {
-                string[] xpathSpliter = [","];
-                string[] elementsTypesPath = xpath.Split(xpathSpliter, StringSplitOptions.RemoveEmptyEntries);
+                string[] xpathSplitter = new string[] { "/" };
+                string[] elementsTypesPath = xpath.Split(xpathSplitter, StringSplitOptions.RemoveEmptyEntries);
                 if (elementsTypesPath.Length == 0)
                 {
                     return;
@@ -8663,12 +8663,14 @@ namespace GingerCore.Drivers
                         }
                         break;
                     case ActBrowserElement.eControlAction.GetNetworkLog:
+                        mAct = act;
                         if (ValidateBrowserCompatibility(Driver))
                         {
                             GetNetworkLogAsync(act).GetAwaiter().GetResult();
                         }
                         break;
                     case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
+                        mAct = act;
                         if (ValidateBrowserCompatibility(Driver))
                         {
                             StopMonitoringNetworkLog(act).GetAwaiter().GetResult();
@@ -10894,7 +10896,7 @@ namespace GingerCore.Drivers
                 try
                 {
                     //DevTool Session 
-                    devToolsSession = devTools.GetDevToolsSession();
+                    devToolsSession = devTools.GetDevToolsSession(DevToolsProtocolVersion);
                     devToolsDomains = devToolsSession.GetVersionSpecificDomains<DevToolsDomains>();
                     devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V127.Network.EnableCommandSettings());
                     blockOrUnblockUrls();

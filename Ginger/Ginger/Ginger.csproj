@@ -37,6 +37,8 @@
     <None Remove="ApplicationModelsLib\APIModels\ApiActionsConversionWizard\ApiActionsConversionIntro.md" />
     <None Remove="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
     <None Remove="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
+    <None Remove="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMScreenshotIntro.md" />
+    <None Remove="ApplicationModelsLib\POMModels\POMWizardLib\UpdateMultipleWizard\UpdateMultiplePOMtIntro.md" />
     <None Remove="ConflictResolve\ConflictResolveIntro.md" />
     <None Remove="DataSource\ImportExcelWizardLib\ImportDataSourceIntro.md" />
     <None Remove="External\Katalon\ImportKatalonObjectRepositoryIntro.md" />
@@ -666,6 +668,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMScreenshotIntro.md" />
+    <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\UpdateMultipleWizard\UpdateMultiplePOMtIntro.md" />
     <Resource Include="ConflictResolve\ConflictResolveIntro.md" />
     <Resource Include="External\Katalon\ImportKatalonObjectRepositoryIntro.md" />
     <Resource Include="GingerIconNew.ico">
