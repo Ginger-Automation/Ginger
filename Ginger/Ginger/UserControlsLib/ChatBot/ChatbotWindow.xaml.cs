@@ -233,7 +233,7 @@ namespace Amdocs.Ginger.UserControls
                 //string messageToCopy = ((StackPanel)sender).Tag.ToString();
                 string message = ((Border)((sender as FrameworkElement).Parent as StackPanel).Children[1]).Child.GetValue(TextBlock.TextProperty).ToString();
                 // Copy the message to the clipboard
-                Clipboard.SetText(message);
+                GingerCore.General.SetClipboardText(message);
             };
 
             // Add time below the message  new BitmapImage(new Uri(@"/Images/" + ImageFile, UriKind.RelativeOrAbsolute))
@@ -370,7 +370,7 @@ namespace Amdocs.Ginger.UserControls
                     sb.Append($"{item.Item1}: {item.Item2}");
                 }
 
-                Clipboard.SetText(sb.ToString());
+                GingerCore.General.SetClipboardText(sb.ToString());
             }
         }
     }
