@@ -2307,7 +2307,7 @@ namespace Amdocs.Ginger.CoreNET
                 return null;
             }
         }
-
+        Screenshot fullScreenshot = null; // ((ITakesScreenshot)Driver).GetScreenshot(); 
         async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             if (AppType == eAppType.Web)
@@ -2327,6 +2327,8 @@ namespace Amdocs.Ginger.CoreNET
                 }
 
                 await GetPageSourceDocument(true);
+
+                fullScreenshot = ((ITakesScreenshot)Driver).GetScreenshot();
 
                 //Get all elements but only clickable elements= user can interact with them
                 XmlNodeList nodes = pageSourceXml.SelectNodes("//*");
@@ -2380,8 +2382,13 @@ namespace Amdocs.Ginger.CoreNET
                     EI.SetLocatorsAndPropertiesCategory(this.PomCategory);
 
                     if (pomSetting.FilteredElementType == null ||
-                        (pomSetting.FilteredElementType != null && pomSetting.FilteredElementType.Any(x=>x.ElementType.Equals(EI.ElementTypeEnum))))
+                        (pomSetting.FilteredElementType != null && pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(EI.ElementTypeEnum))))
                     {
+                        if ((EI.XPath).Contains("android") || (EI.XPath).Contains("XCUIElement"))
+                        {
+                            AppiumElement realElement = Driver.FindElement(By.XPath(EI.XPath));
+                            EI.ScreenShotImage = TakeElementScreenShot(realElement);
+                        }
                         foundElementsList.Add(EI);
                     }
                 }
@@ -2393,7 +2400,42 @@ namespace Amdocs.Ginger.CoreNET
                 mIsDriverBusy = false;
             }
         }
+        private string TakeElementScreenShot(IWebElement element)
+        {         
+            using (Bitmap fullImage = ScreenshotToImage(fullScreenshot))
+            {
+                var location = element.Location;
+                var size = element.Size;
 
+                // Ensure the crop rectangle is within bounds
+                Rectangle cropRect = new Rectangle(
+                Math.Max(location.X, 0),
+                Math.Max(location.Y, 0),
+                Math.Min(size.Width, fullImage.Width - location.X),
+                Math.Min(size.Height, fullImage.Height - location.Y)
+            );
+                using (Bitmap elementImage = new Bitmap(cropRect.Width, cropRect.Height))
+                {
+                    using (Graphics g = Graphics.FromImage(elementImage))
+                    {
+                        g.DrawImage(fullImage, new Rectangle(0, 0, cropRect.Width, cropRect.Height), cropRect, GraphicsUnit.Pixel);
+                    }
+
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        elementImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                        return Convert.ToBase64String(ms.ToArray());
+                    }
+                }
+            }
+        }
+        private Bitmap ScreenshotToImage(Screenshot screenshot)
+        {
+            using (MemoryStream ms = new MemoryStream(screenshot.AsByteArray))
+            {
+                return new Bitmap(ms);
+            }
+        }
         private async Task<ElementInfo> GetElementInfoforXmlNode(XmlNode xmlNode)
         {
             ElementInfo EI = new ElementInfo();
@@ -4403,7 +4445,7 @@ namespace Amdocs.Ginger.CoreNET
 
             if (string.IsNullOrEmpty(LocalFolderPath))
                 throw new ArgumentException("Local folder path cannot be null or empty", nameof(LocalFolderPath));
-          
+
             var remoteFilePath = Path.Combine(LocalFolderPath, Path.GetFileName(DeviceFilePath));
 
             try
