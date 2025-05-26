@@ -186,6 +186,7 @@ namespace Ginger.SourceControl
                 WorkSpace.Instance.UserProfile.SetSourceControlPropertyOnUserProfile(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Guid);
                 WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
                 WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
+                Close();
 
             }
         }
