@@ -242,7 +242,6 @@ namespace Ginger.SourceControl
 
         private async void CommitAndCheckinButton_Click(object sender, RoutedEventArgs e)
         {
-            WorkSpace.Instance.UserProfile.GetSourceControlPropertyFromUserProfile(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Guid);
             if (WorkSpace.Instance.Solution.SourceControl.Name == SourceControlBase.eSourceControlType.GIT.ToString())
             {
                 if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.AuthorName) || String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.AuthorEmail))
