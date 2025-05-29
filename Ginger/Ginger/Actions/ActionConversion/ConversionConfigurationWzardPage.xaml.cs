@@ -85,7 +85,10 @@ namespace Ginger.Actions.ActionConversion
         {
             if (mWizard.ConversionType == eActionConversionType.SingleBusinessFlow)
             {
-                ((WizardWindow)mWizard.mWizardWindow).xFinishButton.IsEnabled = true;
+                if (mWizard.mWizardWindow is WizardWindow wizardWindow)
+                {
+                    wizardWindow.xFinishButton.IsEnabled = true;
+                }
             }
             xPOMSelectionPage.OwnerWindow = (Window)mWizard.mWizardWindow;
             DataContext = mWizard;
@@ -199,7 +202,7 @@ namespace Ginger.Actions.ActionConversion
         {
             ObservableList<ConvertableTargetApplicationDetails> lstTA = [];
             // fetching list of selected convertible activities from the first grid
-            if (mWizard.ConversionType == ActionsConversionWizard.eActionConversionType.SingleBusinessFlow)
+            if (mWizard.ConversionType == eActionConversionType.SingleBusinessFlow)
             {
                 foreach (var targetBase in mWizard.Context.BusinessFlow.TargetApplications)
                 {
