@@ -29,6 +29,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using static Ginger.Actions.ActionConversion.ActionsConversionWizard;
 
 namespace Ginger.Actions.ActionConversion
 {
@@ -82,7 +83,13 @@ namespace Ginger.Actions.ActionConversion
         /// <param name="WizardEventArgs"></param>
         private void Init(WizardEventArgs WizardEventArgs)
         {
-            ((WizardWindow)mWizard.mWizardWindow).xFinishButton.IsEnabled = false;
+            if (mWizard.ConversionType == eActionConversionType.SingleBusinessFlow)
+            {
+                if (mWizard.mWizardWindow is WizardWindow wizardWindow)
+                {
+                    wizardWindow.xFinishButton.IsEnabled = true;
+                }
+            }
             xPOMSelectionPage.OwnerWindow = (Window)mWizard.mWizardWindow;
             DataContext = mWizard;
             xRadSameActivity.IsChecked = !mWizard.NewActivityChecked;
@@ -195,7 +202,7 @@ namespace Ginger.Actions.ActionConversion
         {
             ObservableList<ConvertableTargetApplicationDetails> lstTA = [];
             // fetching list of selected convertible activities from the first grid
-            if (mWizard.ConversionType == ActionsConversionWizard.eActionConversionType.SingleBusinessFlow)
+            if (mWizard.ConversionType == eActionConversionType.SingleBusinessFlow)
             {
                 foreach (var targetBase in mWizard.Context.BusinessFlow.TargetApplications)
                 {

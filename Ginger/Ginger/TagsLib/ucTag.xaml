@@ -8,7 +8,7 @@
 
     <Border x:Name="xTagBorder" BorderBrush="{StaticResource $BackgroundColor_DarkGray}" CornerRadius="5" BorderThickness="1" Background="{StaticResource $BackgroundColor_Gray}" Margin="0,0,5,0">
         <StackPanel x:Name="tagStack" Background="Transparent" Orientation="Horizontal" Margin="2,0,2,0" HorizontalAlignment="Left"  Height="24" MouseLeave="tagStack_MouseLeave" MouseEnter="tagStack_MouseEnter">
-            <Label x:Name="lblTagName" Background="Transparent" Style="{StaticResource @SmallerInputFieldLabelStyle}" FontSize="11"/>
+            <TextBlock x:Name="lblTagName" Background="Transparent" FontSize="11" VerticalAlignment="Center" Margin="0,0,4,0"/>
             <Button x:Name="xDeleteTagBtn" BorderBrush="Transparent" VerticalAlignment="Center" ToolTip="Remove" HorizontalAlignment="Left" Width="10" Height="10"  BorderThickness="0" Margin="0,0,2,0">
                 <Button.Content>
                     <Border>
