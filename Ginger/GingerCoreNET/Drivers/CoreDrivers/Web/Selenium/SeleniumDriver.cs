@@ -100,7 +100,7 @@ namespace GingerCore.Drivers
         private const string BRAVE_64BIT_BINARY_PATH = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
         private const string EDGE_32BIT_BINARY_PATH = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
         private const string EDGE_64BIT_BINARY_PATH = "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe";
-        private const int DevToolsProtocolVersion = 127;
+        private const int DevToolsProtocolVersion = 136;
         String[] SeleniumUserArgs = null;
         DriverService driverService = null;
         private readonly List<string> HighlightStyleList = ["arguments[0].style.outline='3px dashed rgb(239, 183, 247)'", "arguments[0].style.backgroundColor='rgb(239, 183, 247)'", "arguments[0].style.border='3px dashed rgb(239, 183, 247)'"];
@@ -4008,6 +4008,7 @@ namespace GingerCore.Drivers
                 catch (OpenQA.Selenium.NoSuchElementException)
                 {
                     /* not sure what causes this */
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error: Element not found - {Button.LocateBy} {Button.LocateValue}");
                 }
             }
             else
