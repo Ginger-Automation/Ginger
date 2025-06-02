@@ -552,7 +552,7 @@
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="System.Drawing.Common">
-      <Version>8.0.7</Version>
+      <Version>9.0.5</Version>
     </PackageReference>
     <PackageReference Include="System.Formats.Asn1" Version="9.0.1" />
     <PackageReference Include="System.Globalization">
