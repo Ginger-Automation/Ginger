@@ -1350,6 +1350,8 @@ namespace Ginger.Functionalities
                 xFindAttributePanel.Visibility = Visibility.Collapsed;
                 xErrorMsgPanel.Visibility = Visibility.Collapsed;
                 xAttributeValuePanel.Visibility = Visibility.Collapsed;
+                xAttributeValueUpdatePnl.Visibility = Visibility.Collapsed;
+
 
                 xButtonPanel.Visibility = Visibility.Visible;
                 xMatchCasePanel.Visibility = Visibility.Visible;
@@ -1381,6 +1383,7 @@ namespace Ginger.Functionalities
                 xFindAndReplanceBtnPanel.Visibility = Visibility.Collapsed;
                 xItemMainComboPanel.Visibility = Visibility.Collapsed;
 
+                xAttributeValueUpdatePnl.Visibility= Visibility.Visible;
                 xItemSelectionPanel.Visibility = Visibility.Visible;
                 xFindAttributePanel.Visibility = Visibility.Visible;
                 xErrorMsgPanel.Visibility = Visibility.Visible;
@@ -1492,11 +1495,12 @@ namespace Ginger.Functionalities
             {
                 mFoundItemsList.Clear();
                 xFoundItemsGrid.Visibility = Visibility.Visible;
-                xProcessingImage.Visibility = Visibility.Visible;
+                xProcessingImage2.Visibility = Visibility.Visible;
 
                 await Task.Run(() => FindItems_item());
+                MarkUnMarkAllActionsForFindandReplace(true);
+                xProcessingImage2.Visibility = Visibility.Collapsed;
 
-                xProcessingImage.Visibility = Visibility.Collapsed;
             }
             catch (Exception ex)
             {

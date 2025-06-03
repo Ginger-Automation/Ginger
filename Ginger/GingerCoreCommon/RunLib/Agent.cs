@@ -49,7 +49,6 @@ namespace GingerCore
         }
 
         [IsSerializedForLocalRepository]
-        [AllowUserToEdit]
         public eAgentType AgentType { get; set; }
 
         [IsSerializedForLocalRepository]
@@ -187,7 +186,6 @@ namespace GingerCore
 
         private eDriverType mDriverType;
         [IsSerializedForLocalRepository]
-        [AllowUserToEdit]
         public eDriverType DriverType
         {
             get
@@ -286,7 +284,6 @@ namespace GingerCore
         private ePlatformType? mPlatform;
 
         [IsSerializedForLocalRepository]
-        [AllowUserToEdit]
         public ePlatformType Platform
         {
             get
@@ -637,7 +634,6 @@ namespace GingerCore
         /// Flag used to mark for use healenium as self healing
         /// </summary>
         [IsSerializedForLocalRepository]
-        [AllowUserToEdit]
         public bool Healenium
         {
             get
@@ -659,7 +655,6 @@ namespace GingerCore
         /// use for Healenium Remot Url
         /// </summary>
         [IsSerializedForLocalRepository]
-        [AllowUserToEdit]
         public string HealeniumURL
         {
             get

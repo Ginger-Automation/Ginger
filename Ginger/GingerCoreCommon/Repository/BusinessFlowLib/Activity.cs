@@ -383,7 +383,6 @@ namespace GingerCore
         /// Automation development status of the Activity
         /// </summary>
         [IsSerializedForLocalRepository]
-        [AllowUserToEdit]
         public eActivityAutomationStatus? AutomationStatus
         {
             get { return mAutomationStatus; }
@@ -399,7 +398,6 @@ namespace GingerCore
 
         eActionRunOption? mActionRunOption;
         [IsSerializedForLocalRepository]
-        [AllowUserToEdit]
         public eActionRunOption? ActionRunOption
         {
             get { return mActionRunOption; }
