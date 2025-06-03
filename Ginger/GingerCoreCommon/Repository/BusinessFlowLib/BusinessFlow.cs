@@ -217,7 +217,6 @@ namespace GingerCore
         public List<string> SolutionVariablesBeforeExec { get; set; }
 
         private string mName;
-
         [IsSerializedForLocalRepository]
         public string Name
         {
@@ -234,6 +233,7 @@ namespace GingerCore
 
         private string mDescription;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(nameof(Description)); } } }
 
         private Guid instanceGuid;
@@ -308,6 +308,7 @@ namespace GingerCore
         }
 
         eBusinessFlowStatus mStatus;
+        [AllowUserToEdit]
         [IsSerializedForLocalRepository]
         public eBusinessFlowStatus Status
         {
@@ -323,6 +324,7 @@ namespace GingerCore
         }
 
         private bool mActive = true;
+        [AllowUserToEdit]
         [IsSerializedForLocalRepository(DefaultValue: true)]
         public bool Active
         {
@@ -338,6 +340,7 @@ namespace GingerCore
         }
 
         private bool mMandatory;
+        [AllowUserToEdit]
         [IsSerializedForLocalRepository]
         public bool Mandatory
         {

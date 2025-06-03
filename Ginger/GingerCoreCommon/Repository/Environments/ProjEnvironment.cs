@@ -71,6 +71,7 @@ namespace GingerCore.Environments
 
         private bool mActive;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
         [IsSerializedForLocalRepository]

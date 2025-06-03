@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -42,7 +43,6 @@ namespace Amdocs.Ginger.Common.Functionalities
         private bool mIsSelected = false;
         // [IsSerializedForLocalRepository]
         public bool IsSelected { get { return mIsSelected; } set { mIsSelected = value; OnPropertyChanged(nameof(IsSelected)); } }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -99,7 +99,7 @@ namespace Amdocs.Ginger.Common.Functionalities
         private string mFoundField;
         public string FoundField { get { return mFoundField; } set { mFoundField = value; OnPropertyChanged(nameof(FoundField)); } }
 
-
+        public Type FieldType { get; set; }
 
 
         public RepositoryItemBase ParentItemToSave { get; set; }

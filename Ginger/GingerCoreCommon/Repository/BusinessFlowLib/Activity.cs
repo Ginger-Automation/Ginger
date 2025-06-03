@@ -225,6 +225,7 @@ namespace GingerCore
 
         private bool mActive;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public Boolean Active
         {
             get
@@ -265,6 +266,7 @@ namespace GingerCore
         }
         private bool mMandatory;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public bool Mandatory
         {
             get { return mMandatory; }
@@ -280,6 +282,7 @@ namespace GingerCore
 
         private string mDescription;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public string Description
         {
             get { return mDescription; }
@@ -380,6 +383,7 @@ namespace GingerCore
         /// Automation development status of the Activity
         /// </summary>
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public eActivityAutomationStatus? AutomationStatus
         {
             get { return mAutomationStatus; }
@@ -395,6 +399,7 @@ namespace GingerCore
 
         eActionRunOption? mActionRunOption;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public eActionRunOption? ActionRunOption
         {
             get { return mActionRunOption; }

@@ -49,6 +49,7 @@ namespace GingerCore
         }
 
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public eAgentType AgentType { get; set; }
 
         [IsSerializedForLocalRepository]
@@ -115,6 +116,7 @@ namespace GingerCore
         }
 
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public bool Active { get; set; }
 
         [IsSerializedForLocalRepository]
@@ -185,6 +187,7 @@ namespace GingerCore
 
         private eDriverType mDriverType;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public eDriverType DriverType
         {
             get
@@ -225,6 +228,7 @@ namespace GingerCore
 
         private string mNotes;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public string Notes { get { return mNotes; } set { if (mNotes != value) { mNotes = value; OnPropertyChanged(nameof(Notes)); } } }
 
         [IsSerializedForLocalRepository]
@@ -282,6 +286,7 @@ namespace GingerCore
         private ePlatformType? mPlatform;
 
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public ePlatformType Platform
         {
             get
@@ -632,6 +637,7 @@ namespace GingerCore
         /// Flag used to mark for use healenium as self healing
         /// </summary>
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public bool Healenium
         {
             get
@@ -653,6 +659,7 @@ namespace GingerCore
         /// use for Healenium Remot Url
         /// </summary>
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public string HealeniumURL
         {
             get

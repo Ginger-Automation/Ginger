@@ -28,6 +28,8 @@ using Ginger.UserControls;
 using Ginger.Variables;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Activities;
+using GingerCore.Environments;
 using GingerCore.Variables;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using System;
@@ -80,8 +82,13 @@ namespace Ginger.Functionalities
             InitializeComponent();
             mContext = context;
             mItemToSearchOn = itemToSearchOn;
+            EnumHelper.PopulateComboBoxWithEnumDescriptions(xMainItemListCB, typeof(eBulkPublishItemsList));
+
             SetFoundItemsGridView();
             Init();
+            xFindReplaceBtn.IsChecked = true;
+
+
         }
 
         private void MFindAndReplaceUtils_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -111,51 +118,74 @@ namespace Ginger.Functionalities
         public enum eGridView
         {
             FindView,
+            ReplaceAttributeValueView
         }
 
         private void SetFoundItemsGridView()
         {
-            //# Find View 
-            //GridViewDef mReplaceView = new GridViewDef(eGridView.ReplaceView.ToString());
-            GridViewDef mReplaceView = new GridViewDef(GridViewDef.DefaultViewName)
+            try
             {
-                GridColsView =
-            [
-                new GridColView() { Field = nameof(FoundItem.IsSelected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["IsSelectedTemplate"] },
+                // Replace View
+                GridViewDef mReplaceView = new GridViewDef(GridViewDef.DefaultViewName)
+                {
+                    GridColsView =
+                    [
+                        new GridColView() { Field = nameof(FoundItem.IsSelected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["IsSelectedTemplate"] },
                 new GridColView() { Field = nameof(FoundItem.OriginObjectType), Header = "Item Type", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
                 new GridColView() { Field = nameof(FoundItem.OriginObjectName), Header = "Item Name", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true, Style = FindResource("@DataGridColumn_Bold") as Style },
                 new GridColView() { Field = nameof(FoundItem.ParentItemPath), Header = "Item Path", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
                 new GridColView() { Field = nameof(FoundItem.ItemParent), Header = "Item Parent", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
                 new GridColView() { Field = nameof(FoundItem.FoundField), Header = "Found Field", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true, Style = FindResource("@DataGridColumn_Bold") as Style },
                 new GridColView() { Field = nameof(FoundItem.FieldValue), Header = "Field Value", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true, Style = FindResource("@DataGridColumn_Bold") as Style },
-                //mReplaceView.GridColsView.Add(new GridColView() { Field = nameof(FoundItem.StatusIcon), Header = "", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, AllowSorting = true, MaxWidth = 20 });
                 new GridColView() { Field = nameof(FoundItem.Status), Header = "Status", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
                 new GridColView() { Field = "View Details", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["ViewDetailsButton"] },
             ]
-            };
-            xFoundItemsGrid.SetAllColumnsDefaultView(mReplaceView);
+                };
+                xFoundItemsGrid.SetAllColumnsDefaultView(mReplaceView);
 
-            GridViewDef mFineView = new GridViewDef(eGridView.FindView.ToString())
-            {
-                GridColsView =
-            [
-                new GridColView() { Field = nameof(FoundItem.IsSelected), Visible = false },
+                // Find View
+                GridViewDef mFineView = new GridViewDef(eGridView.FindView.ToString())
+                {
+                    GridColsView =
+                    [
+                        new GridColView() { Field = nameof(FoundItem.IsSelected), Visible = false },
                 new GridColView() { Field = nameof(FoundItem.Status), Visible = false },
             ]
-            };
-            xFoundItemsGrid.AddCustomView(mFineView);
+                };
+                xFoundItemsGrid.AddCustomView(mFineView);
+                xFoundItemsGrid.ChangeGridView(eGridView.FindView.ToString());
 
+                // Replace Attribute Value View
+                GridViewDef mAttributeValueChangeValue = new GridViewDef(eGridView.ReplaceAttributeValueView.ToString())
+                {
+                    GridColsView =
+                    [
+                        new GridColView() { Field = nameof(FoundItem.ItemParent), Visible = false },
+                new GridColView() { Field = "View Details", Visible = false },
+                new GridColView() { Field = nameof(FoundItem.IsSelected), Header = "Selected", WidthWeight = 15, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, Visible = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["IsSelectedTemplate"] },
+                new GridColView() { Field = nameof(FoundItem.OriginObjectType), Header = "Item Type", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = false },
+                new GridColView() { Field = nameof(FoundItem.OriginObjectName), Header = "Item Name", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = false, Style = FindResource("@DataGridColumn_Bold") as Style },
+                new GridColView() { Field = nameof(FoundItem.ParentItemPath), Header = "Item Path", WidthWeight = 15, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
+                new GridColView() { Field = nameof(FoundItem.FoundField), Header = "Found Field", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = false, Style = FindResource("@DataGridColumn_Bold") as Style },
+                new GridColView() { Field = nameof(FoundItem.FieldValue), Header = "Field Value", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = false, Style = FindResource("@DataGridColumn_Bold") as Style },
+                new GridColView() { Field = nameof(FoundItem.Status), Header = "Status", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = false, Visible = true },
+            ]
+                };
+                xFoundItemsGrid.AddCustomView(mAttributeValueChangeValue);
 
-            xFoundItemsGrid.btnMarkAll.Visibility = Visibility.Collapsed;
-            xFoundItemsGrid.ShowViewCombo = Visibility.Collapsed;
-            xFoundItemsGrid.MarkUnMarkAllActive += MarkUnMarkAllActions;
-
-            xFoundItemsGrid.InitViewItems();
-            xFoundItemsGrid.SetTitleLightStyle = true;
-            xFoundItemsGrid.ChangeGridView(eGridView.FindView.ToString());
-            xFoundItemsGrid.RowChangedEvent += RowChangedHandler;
-            xFoundItemsGrid.DataSourceList = mFoundItemsList;
+                xFoundItemsGrid.InitViewItems();
+                xFoundItemsGrid.MarkUnMarkAllActive += MarkUnMarkAllActionsForFindandReplace;
+                xFoundItemsGrid.ShowViewCombo = Visibility.Collapsed;
+                xFoundItemsGrid.SetTitleLightStyle = true;
+                xFoundItemsGrid.DataSourceList = mFoundItemsList;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in SetFoundItemsGridView", ex);
+                ShowErrorMsg("An error occurred while setting up the grid view.");
+            }
         }
+
 
         private void ClearUI()
         {
@@ -203,18 +233,30 @@ namespace Ginger.Functionalities
             }
         }
 
-        private void MarkUnMarkAllActions(bool Status)
+        private void MarkUnMarkAllActionsForFindandReplace(bool Status)
         {
             if (xFoundItemsGrid.DataSourceList.Count <= 0)
             {
                 return;
             }
-
-            if (xFoundItemsGrid.DataSourceList.Count > 0)
+            if (xFindReplaceBtn.IsChecked == true)
             {
-                foreach (object item in xFoundItemsGrid.GetVisibileGridItems())
+                if (xFoundItemsGrid.DataSourceList.Count > 0)
                 {
-                    ((FoundItem)item).IsSelected = Status;
+                    foreach (object item in xFoundItemsGrid.GetVisibileGridItems())
+                    {
+                        ((FoundItem)item).IsSelected = Status;
+                    }
+                }
+            }
+            else
+            {
+                if (xFoundItemsGrid.DataSourceList.Count > 0)
+                {
+                    foreach (object item in mFoundItemsList)
+                    {
+                        ((FoundItem)item).IsSelected = Status;
+                    }
                 }
             }
         }
@@ -242,7 +284,7 @@ namespace Ginger.Functionalities
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xMatchWholeWordCheckBox, CheckBox.IsCheckedProperty, mSearchConfig, nameof(SearchConfig.MatchAllWord));
 
             xFindWhatTextBox.KeyDown += new KeyEventHandler(xFindWhatTextBox_KeyDown);
-            xFoundItemsGrid.MouseDoubleClick += LineDoubleClicked;
+
             mFindAndReplaceUtils.PropertyChanged += MFindAndReplaceUtils_PropertyChanged;
 
             mMainItemsTypeList.Add(new FindItemType { Name = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), Type = typeof(BusinessFlow), GetItemsToSearchIn = GetBusinessFlowsToSearchIn });
@@ -1299,11 +1341,602 @@ namespace Ginger.Functionalities
         {
             mValueToReplace = xReplaceValueTextBox.Text;
         }
+        private void xFindReplaceBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                mFoundItemsList.Clear();
+                xItemSelectionPanel.Visibility = Visibility.Collapsed;
+                xFindAttributePanel.Visibility = Visibility.Collapsed;
+                xErrorMsgPanel.Visibility = Visibility.Collapsed;
+                xAttributeValuePanel.Visibility = Visibility.Collapsed;
+
+                xButtonPanel.Visibility = Visibility.Visible;
+                xMatchCasePanel.Visibility = Visibility.Visible;
+                xReplaceValuePanel.Visibility = Visibility.Visible;
+                xFindValuePanel.Visibility = Visibility.Visible;
+                xFindAndReplanceBtnPanel.Visibility = Visibility.Visible;
+                xItemMainComboPanel.Visibility = Visibility.Visible;
+
+                xFoundItemsGrid.ChangeGridView(eGridView.FindView.ToString());
+                xFoundItemsGrid.MouseDoubleClick += LineDoubleClicked;
+                xFoundItemsGrid.btnMarkAll.Visibility = Visibility.Collapsed;
+                xFoundItemsGrid.RowChangedEvent += RowChangedHandler;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occoured while find and replace", ex);
+            }
+        }
+
+        private void xAttributeValueBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                mFoundItemsList.Clear();
+                xButtonPanel.Visibility = Visibility.Collapsed;
+                xMatchCasePanel.Visibility = Visibility.Collapsed;
+                xReplaceValuePanel.Visibility = Visibility.Collapsed;
+                xFindValuePanel.Visibility = Visibility.Collapsed;
+                xFindAndReplanceBtnPanel.Visibility = Visibility.Collapsed;
+                xItemMainComboPanel.Visibility = Visibility.Collapsed;
+
+                xItemSelectionPanel.Visibility = Visibility.Visible;
+                xFindAttributePanel.Visibility = Visibility.Visible;
+                xErrorMsgPanel.Visibility = Visibility.Visible;
+                xAttributeValuePanel.Visibility = Visibility.Visible;
+
+                xFoundItemsGrid.ChangeGridView(eGridView.ReplaceAttributeValueView.ToString());
+                xFoundItemsGrid.MouseDoubleClick -= LineDoubleClicked;
+                xFoundItemsGrid.btnMarkAll.Visibility = Visibility.Visible;
+                xFoundItemsGrid.RowChangedEvent -= RowChangedHandler;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occoured while changing field value", ex);
+            }
+        }
+
+        private void xMainItemListCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                if (xMainItemListCB?.SelectedItem is string selectedDescription)
+                {
+                    ItemTypeSelectedValue = selectedDescription;
+
+                    xAttributeNameComboBox.Items.Clear();
+                   
+                    FillItemToSearchIn();
+
+                    var searchItem = mItemsToSearchIn.FirstOrDefault();
+                    if (searchItem != null)
+                    {
+                        var attributeNameList = mFindAndReplaceUtils.GetSerializableEditableMemberNames(searchItem.OriginItemObject);
+                        GingerCore.General.FillComboFromList(xAttributeNameComboBox, attributeNameList);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in xMainItemListCB_SelectionChanged", ex);
+            }
+        }
+
+        private void xSubItemListCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                // Placeholder for future logic
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in xSubItemListCB_SelectionChanged", ex);
+            }
+        }
+
+        void AttributeValueControlVisibility()
+        {
+            try
+            {
+                xAttributeValueLbl.Visibility = Visibility.Visible;
+                xUpdateAttributeValueBtn.Visibility = Visibility.Visible;
+
+                var searchItem = mItemsToSearchIn.FirstOrDefault();
+                if (searchItem == null) return;
+
+                mFindAndReplaceUtils.FindTopLevelAttributeNames(searchItem.Item, mFoundItemsList, mAttributeName, mSearchConfig, searchItem.ParentItemToSave, searchItem.ItemParent);
+
+                var item = mFoundItemsList.FirstOrDefault();
+                if (item == null || item.FieldType == null) return;
+
+                if (item.FieldType.Name == "Boolean")
+                {
+                    xAttributeValueCheckBox.Visibility = Visibility.Visible;
+                    mAttributeValue = xAttributeValueCheckBox.IsChecked.ToString();
+                    xAttributeValueTxtbox.Visibility = Visibility.Collapsed;
+                    xAttributeValueComboBox.Visibility = Visibility.Collapsed;
+                }
+                else if (item.FieldType.Name == "String")
+                {
+                    xAttributeValueCheckBox.Visibility = Visibility.Collapsed;
+                    xAttributeValueTxtbox.Visibility = Visibility.Visible;
+                    xAttributeValueComboBox.Visibility = Visibility.Collapsed;
+                }
+                else if (item.FieldType.BaseType?.Name == "Enum")
+                {
+                    string enumTypeName = item.FieldType.FullName;
+                    Type enumType = item.FieldType.Assembly.GetType(enumTypeName);
+
+                    if (enumType != null && enumType.IsEnum)
+                    {
+                        GingerCore.General.FillComboFromEnumType(xAttributeValueComboBox, enumType);
+
+                        xAttributeValueCheckBox.Visibility = Visibility.Collapsed;
+                        xAttributeValueTxtbox.Visibility = Visibility.Collapsed;
+                        xAttributeValueComboBox.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in AttributeValueControlVisibility", ex);
+            }
+        }
+
+        private async void FindItemsAsync_item()
+        {
+            mFindAndReplaceUtils.ProcessingState = FindAndReplaceUtils.eProcessingState.Running;
+
+            try
+            {
+                mFoundItemsList.Clear();
+                xFoundItemsGrid.Visibility = Visibility.Visible;
+                xProcessingImage.Visibility = Visibility.Visible;
+
+                await Task.Run(() => FindItems_item());
+
+                xProcessingImage.Visibility = Visibility.Collapsed;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in FindItemsAsync_item", ex);
+                ShowErrorMsg("An error occurred while finding items.");
+            }
+            finally
+            {
+                mFindAndReplaceUtils.ProcessingState = FindAndReplaceUtils.eProcessingState.Pending;
+            }
+        }
+        public enum eBulkPublishItemsList
+        {
+            [EnumValueDescription("Business Flow")]
+            Businessflow,
+
+            [EnumValueDescription("Activity")]
+            Activity,
+
+            [EnumValueDescription("Variables")]
+            Variable,
+
+            [EnumValueDescription("Environments")]
+            Environments,
+
+            [EnumValueDescription("Global variables")]
+            GlobalVariables,
+
+            [EnumValueDescription("Agents")]
+            Agents,
+
+            [EnumValueDescription("Runsets")]
+            Runsets
+        }
+        private string ItemTypeSelectedValue;
+
+
+        private void FillItemToSearchIn()
+        {
+            try
+            {
+                mItemsToSearchIn.Clear();
+                if (!string.IsNullOrEmpty(ItemTypeSelectedValue))
+                {
+                    var itemType = EnumHelper.GetEnumFromDescription<eBulkPublishItemsList>(ItemTypeSelectedValue);
+
+                    if (itemType.HasValue)
+                    {
+                        switch (itemType.Value)
+                        {
+                            case eBulkPublishItemsList.Businessflow:
+                                foreach (var item in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
+                                {
+                                    mItemsToSearchIn.Add(new ItemToSearchIn(item, item, item, string.Empty, string.Empty));
+                                }
+                                break;
+                            case eBulkPublishItemsList.Activity:
+                                //Pull BF Activities
+                                foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
+                                {
+                                    foreach (Activity activity in bf.Activities)
+                                    {
+                                        if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                                        {
+                                            return;
+                                        }
+
+                                        mItemsToSearchIn.Add(new ItemToSearchIn(activity, activity, bf, bf.Name, string.Empty));
+                                    }
+                                }
+
+                                //Pull Activities from shared repository
+                                ObservableList<Activity> RepoActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                                foreach (Activity activity in RepoActions)
+                                {
+                                    if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                                    {
+                                        return;
+                                    }
+
+                                    mItemsToSearchIn.Add(new ItemToSearchIn(activity, activity, activity, string.Empty, string.Empty));
+                                }
+                                break;
+
+                            case eBulkPublishItemsList.Variable:
+
+                                AddVariableFromBusinessFlowList(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>());
+
+                                //pull variables from shared repository activities
+                                ObservableList<Activity> RepoActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                                foreach (Activity activity in RepoActivities)
+                                {
+                                    foreach (VariableBase VB in activity.Variables)
+                                    {
+                                        string ActivityVariablePath = activity.ItemName;
+                                        if (mSubItemType == null || VB.GetType() == mSubItemType)
+                                        {
+                                            mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB, activity, ActivityVariablePath, string.Empty));
+                                        }
+                                    }
+                                }
+                                ObservableList<VariableBase> RepoVariables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
+                                foreach (VariableBase VB in RepoVariables)
+                                {
+                                    
+                                    if (mSubItemType == null || VB.GetType() == mSubItemType)
+                                    {
+                                        mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB, VB, string.Empty, string.Empty));
+                                    }
+                                }
+                                break;
+
+                            case eBulkPublishItemsList.Environments:
+                                foreach (var item in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
+                                {
+                                    mItemsToSearchIn.Add(new ItemToSearchIn(item, item, item, string.Empty, string.Empty));
+                                }
+                                break;
+
+                            case eBulkPublishItemsList.GlobalVariables:
+                                foreach (var item in ((Solution)WorkSpace.Instance.Solution).Variables)
+                                {
+                                    mItemsToSearchIn.Add(new ItemToSearchIn(item, item, item, string.Empty, string.Empty));
+                                }
+                                break;
+
+                            case eBulkPublishItemsList.Agents:
+                                foreach (var item in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>())
+                                {
+                                    mItemsToSearchIn.Add(new ItemToSearchIn(item, item, item, string.Empty, string.Empty));
+                                }
+                                break;
+
+                            case eBulkPublishItemsList.Runsets:
+                                foreach (var item in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>())
+                                {
+                                    mItemsToSearchIn.Add(new ItemToSearchIn(item, item, item, string.Empty, string.Empty));
+                                }
+                                break;
+
+                            default:
+                                Reporter.ToLog(eLogLevel.WARN, "Unhandled item type in FillItemToSearchIn");
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "Invalid item type selection in FillItemToSearchIn");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in FillItemToSearchIn", ex);
+                ShowErrorMsg("An error occurred while filling items to search.");
+            }
+        }
+
+        private void FindItems_item()
+        {
+            try
+            {
+                foreach (ItemToSearchIn searchItem in mItemsToSearchIn)
+                {
+                    if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                    {
+                        return;
+                    }
+
+                    mFindAndReplaceUtils.FindTopLevelAttributeNames(
+                        searchItem.Item,
+                        mFoundItemsList,
+                        mAttributeName,
+                        mSearchConfig,
+                        searchItem.ParentItemToSave,
+                        searchItem.ItemParent
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Find Items", ex);
+            }
+        }
+
+        private void ShowErrorMsg(string message)
+        {
+            try
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    try
+                    {
+                        xErrorMsg.Visibility = Visibility.Visible;
+                        xErrorMsg.Content = message;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error while showing error message on UI", ex);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Dispatcher invoke failed in ShowErrorMsg", ex);
+            }
+        }
+
+        private void HideErrorMsg()
+        {
+            try
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    try
+                    {
+                        xErrorMsg.Visibility = Visibility.Collapsed;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error while hiding error message on UI", ex);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Dispatcher invoke failed in HideErrorMsg", ex);
+            }
+        }
+
+        public void UpdateSelectedAttributeValues(string newValue, SearchConfig searchConfig, string findWhat)
+        {
+            try
+            {
+                foreach (FoundItem foundItem in mFoundItemsList.Where(x => x.IsSelected))
+                {
+                    bool success = mFindAndReplaceUtils.ReplaceItemEnhanced(searchConfig, findWhat, foundItem, newValue);
+
+                    if (success)
+                    {
+                        foundItem.Status = FoundItem.eStatus.Replaced;
+                    }
+                    else
+                    {
+                        foundItem.Status = FoundItem.eStatus.ReplaceFailed;
+                    }
+                }
+                bool hasSelectedItem = mFoundItemsList.Any(item => item.Status == FoundItem.eStatus.Replaced);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to update selected attribute values", ex);
+            }
+        }
+
+        private void CheckAll(object? sender, RoutedEventArgs e)
+        {
+            try
+            {
+                foreach (var item in mFoundItemsList)
+                {
+                    item.IsSelected = true;
+                }
+
+                xFoundItemsGrid.DataSourceList = mFoundItemsList;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in CheckAll", ex);
+            }
+        }
+
+        private void UnCheckAll(object? sender, RoutedEventArgs e)
+        {
+            try
+            {
+                foreach (var item in mFoundItemsList)
+                {
+                    item.IsSelected = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in UnCheckAll", ex);
+            }
+        }
+
+        private string mAttributeName;
+        private string mAttributeValue;
+
+        private void xAttributeValueTxtbox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                mAttributeValue = xAttributeValueTxtbox.Text;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in xAttributeValueTxtbox_TextChanged", ex);
+            }
+        }
+
+        private void xUpdateAttributeValueBtn_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                bool hasSelectedItem = mFoundItemsList.Any(item => item.IsSelected);
+                HideErrorMsg();
+
+                if (string.IsNullOrEmpty(mAttributeValue))
+                {
+                    ShowErrorMsg("Attribute Value is empty.");
+                    return;
+                }
+
+                if (!hasSelectedItem)
+                {
+                    ShowErrorMsg("No item selected from below grid.");
+                    return;
+                }
+
+                UpdateSelectedAttributeValues(mAttributeValue, mSearchConfig, mAttributeName);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in xUpdateAttributeValueBtn_Click", ex);
+            }
+        }
+
+        private void xAttributeValueComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                mAttributeValue = xAttributeValueComboBox.SelectedValue?.ToString();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in xAttributeValueComboBox_SelectionChanged", ex);
+            }
+        }
+
+        private void xAttributeValueCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                mAttributeValue = xAttributeValueCheckBox.IsChecked.ToString();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in xAttributeValueCheckBox_Checked", ex);
+            }
+        }
+
+        private void xAttributeValueCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                mAttributeValue = xAttributeValueCheckBox.IsChecked.ToString();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in xAttributeValueCheckBox_Unchecked", ex);
+            }
+        }
+
+        private void xAttributeNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                mAttributeName = xAttributeNameComboBox.SelectedValue?.ToString();
+
+                HideErrorMsg();
+
+                if (string.IsNullOrEmpty(ItemTypeSelectedValue))
+                {
+                    ShowErrorMsg("No item selected.");
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(mAttributeName))
+                {
+                    ShowErrorMsg("Attribute name is empty.");
+                    return;
+                }
+
+                ClearUI();
+                AttributeValueControlVisibility();
+                FindItemsAsync_item();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in xAttributeNameComboBox_SelectionChanged", ex);
+            }
+        }
+
     }
 
 
 
+    public static class EnumHelper
+    {
+        public static TEnum? GetEnumFromDescription<TEnum>(string description) where TEnum : struct, Enum
+        {
+            foreach (var field in typeof(TEnum).GetFields())
+            {
+                var attribute = field.GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false)
+                                     .FirstOrDefault() as EnumValueDescriptionAttribute;
 
+                if (attribute != null && attribute.ValueDescription == description)
+                {
+                    if (Enum.TryParse(field.Name, out TEnum result))
+                        return result;
+                }
+            }
+
+            return null;
+        }
+
+        public static void PopulateComboBoxWithEnumDescriptions(ComboBox comboBox, Type enumType)
+        {
+            if (!enumType.IsEnum) throw new ArgumentException("Provided type must be an enum.");
+
+            comboBox.Items.Clear();
+
+            foreach (Enum value in Enum.GetValues(enumType))
+            {
+                string description = GetEnumDescription(value);
+                comboBox.Items.Add(description);
+            }
+        }
+
+        private static string GetEnumDescription(Enum value)
+        {
+            var field = value.GetType().GetField(value.ToString());
+            var attribute = field?.GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false)
+                                 .FirstOrDefault() as EnumValueDescriptionAttribute;
+
+            return attribute?.ValueDescription ?? value.ToString();
+        }
+    }
 
 
 }
