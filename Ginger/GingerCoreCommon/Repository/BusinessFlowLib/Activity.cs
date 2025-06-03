@@ -225,6 +225,7 @@ namespace GingerCore
 
         private bool mActive;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public Boolean Active
         {
             get
@@ -265,6 +266,7 @@ namespace GingerCore
         }
         private bool mMandatory;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public bool Mandatory
         {
             get { return mMandatory; }
@@ -280,6 +282,7 @@ namespace GingerCore
 
         private string mDescription;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public string Description
         {
             get { return mDescription; }

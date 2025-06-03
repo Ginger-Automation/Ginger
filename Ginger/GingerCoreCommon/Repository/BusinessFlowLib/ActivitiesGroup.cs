@@ -75,6 +75,7 @@ namespace GingerCore.Activities
 
         private string mDescription;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit]
         public string Description
         {
             get { return mDescription; }
