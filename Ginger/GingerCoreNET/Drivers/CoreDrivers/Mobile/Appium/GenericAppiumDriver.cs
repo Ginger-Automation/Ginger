@@ -55,6 +55,7 @@ using NUglify.Html;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
+using OpenQA.Selenium.Appium.Android.Enums;
 using OpenQA.Selenium.Appium.Enums;
 using OpenQA.Selenium.Appium.Interactions;
 using OpenQA.Selenium.Appium.iOS;
@@ -74,6 +75,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using AppiumInteractions = OpenQA.Selenium.Appium.Interactions;
+using PointerInputDevice = OpenQA.Selenium.Interactions.PointerInputDevice;
 
 namespace Amdocs.Ginger.CoreNET
 {
@@ -1965,7 +1967,10 @@ namespace Amdocs.Ginger.CoreNET
                             ((AndroidDriver)Driver).Lock();
                             break;
                         case eLockOperation.UnLock:
-                            ((AndroidDriver)Driver).Unlock();
+                            if (((AndroidDriver)Driver).IsLocked())
+                            {
+                                ((AndroidDriver)Driver).Unlock("none", "none");
+                            }
                             System.Threading.Thread.Sleep(200);
                             SwipeScreen(eSwipeSide.Up, 1, TimeSpan.FromMilliseconds(200));
                             break;
@@ -4810,7 +4815,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 ((AndroidDriver)Driver).Lock();
                 Thread.Sleep(1000 * int.Parse(time));
-                ((AndroidDriver)Driver).Unlock();
+                ((AndroidDriver)Driver).Unlock("none","none");
             }
             else if (Driver is IOSDriver)
             {
