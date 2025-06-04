@@ -23,7 +23,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
@@ -31,7 +30,6 @@ using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Activities;
 using GingerCore.DataSource;
-using GingerCoreNET.ALMLib;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -237,7 +235,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             };
             return accountReportActivityGroup;
         }
-
         public static AccountReportActivityGroup MapActivityGroupEndData(ActivitiesGroup activitiesGroup, Context context)
         {
             AccountReportActivityGroup accountReportActivityGroup = new AccountReportActivityGroup
@@ -304,7 +301,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
             return accountReportBusinessFlow;
         }
-
         public static AccountReportBusinessFlow MapBusinessFlowEndData(BusinessFlow businessFlow, Context context)
         {
             AccountReportBusinessFlow accountReportBusinessFlow = new AccountReportBusinessFlow
@@ -432,7 +428,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportRunner.IsPublished = gingerRunner.Publish;
             return accountReportRunner;
         }
-
         public static AccountReportRunner MapRunnerEndData(GingerRunner gingerRunner, Context context)
         {
             AccountReportRunner accountReportRunner = new AccountReportRunner
@@ -478,9 +473,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         }
 
         public static AccountReportRunSet MapRunsetStartData(RunSetConfig runSetConfig, Context context)
-        {
+        {            
             GingerCore.ValueExpression valueExpression = new(context.Environment, context, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
-
+            
             AccountReportRunSet accountReportRunSet = new AccountReportRunSet
             {
                 //updating source application and user
@@ -519,7 +514,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             SetRunSetChildCountsAtStart(runSetConfig, accountReportRunSet);
             return accountReportRunSet;
         }
-
         public static AccountReportRunSet MapRunsetEndData(RunSetConfig runSetConfig)
         {
             AccountReportRunSet accountReportRunSet = new AccountReportRunSet
@@ -954,7 +948,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
             if (mAction is ActUIElement element && element.ElementLocateBy == Common.UIElement.eLocateBy.POMElement)
             {
-                inputValues = mAction.InputValues.Select(inputValue =>
+                inputValues = mAction.InputValues.Where(inputVal => inputVal.ItemName != "DisplayValue").Select(inputValue =>
                 {
                     if (inputValue.ItemName == "ElementLocateValue")
                     {
@@ -966,7 +960,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                         else
                         {
                             var pomElementGuids = inputValue.Value.Split("_");
-                            return OverrideHTMLRelatedCharacters(inputValue.Param + "_:_" + $"POM GUID: {pomElementGuids[0]}" + "_:_" + $"Element GUID: {pomElementGuids[1]}");
+                            if (pomElementGuids.Length == 2)
+                            {
+                                return OverrideHTMLRelatedCharacters(inputValue.Param + "_:_" + $"POM GUID: {pomElementGuids[0]}" + "_:_" + $"Element GUID: {pomElementGuids[1]}");
+                            }
+                            else
+                            {
+                                return OverrideHTMLRelatedCharacters(inputValue.Param + "_:_" + inputValue.Value + "_:_" + inputValue.ValueForDriver);
+                            }
                         }
                     }
                     return OverrideHTMLRelatedCharacters(inputValue.Param + "_:_" + inputValue.Value + "_:_" + inputValue.ValueForDriver);
