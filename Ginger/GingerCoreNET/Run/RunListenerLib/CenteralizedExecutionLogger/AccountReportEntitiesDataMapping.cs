@@ -23,6 +23,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
@@ -30,6 +31,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Activities;
 using GingerCore.DataSource;
+using GingerCoreNET.ALMLib;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -950,22 +952,25 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             List<string> inputValues = new List<string>();
 
-            if (mAction is ActUIElement && ((ActUIElement)mAction).ElementLocateBy == Common.UIElement.eLocateBy.POMElement)
+            if (mAction is ActUIElement element && element.ElementLocateBy == Common.UIElement.eLocateBy.POMElement)
             {
-                foreach (Ginger.Repository.ActInputValue inputValue in mAction.InputValues)
+                inputValues = mAction.InputValues.Select(inputValue =>
                 {
                     if (inputValue.ItemName == "ElementLocateValue")
                     {
                         var displayValue = mAction.InputValues.FirstOrDefault(AIV => AIV.ItemName == "DisplayValue");
                         if (displayValue != null)
                         {
-                            inputValues.Add(OverrideHTMLRelatedCharacters(inputValue.Param + "_:_" + displayValue.Value + "_:_" + displayValue.Value));
-                            continue;
-                        }                       
+                            return OverrideHTMLRelatedCharacters(inputValue.Param + "_:_" + displayValue.Value + "_:_" + displayValue.Value);
+                        }
+                        else
+                        {
+                            var pomElementGuids = inputValue.Value.Split("_");
+                            return OverrideHTMLRelatedCharacters(inputValue.Param + "_:_" + $"POM GUID: {pomElementGuids[0]}" + "_:_" + $"Element GUID: {pomElementGuids[1]}");
+                        }
                     }
-
-                    inputValues.Add(OverrideHTMLRelatedCharacters(inputValue.Param + "_:_" + inputValue.Value + "_:_" + inputValue.ValueForDriver));
-                }
+                    return OverrideHTMLRelatedCharacters(inputValue.Param + "_:_" + inputValue.Value + "_:_" + inputValue.ValueForDriver);
+                }).ToList();
             }
             else
             {

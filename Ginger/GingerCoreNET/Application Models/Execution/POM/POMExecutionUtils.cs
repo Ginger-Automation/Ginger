@@ -165,8 +165,9 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 {
                     pElementType.SetValue(elementAction, ((ElementInfo)actConfig.LearnedElementInfo).ElementTypeEnum);
                 }
-                //    POM Name: {ActualName} ElementName: {Actual Name}
-                elementAction.AddOrUpdateInputParamValue("DisplayValue", $"POM Name: {WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(new Guid(actConfig.POMGuid)).ItemName} ElementName: {elementInfo.ElementName}");
+
+                var pom = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(new Guid(actConfig.POMGuid))?.ItemName ?? actConfig.POMGuid;
+                elementAction.AddOrUpdateInputParamValue("DisplayValue", $"POM Name: {pom} ElementName: {elementInfo.ElementName}");
             }
         }
 
