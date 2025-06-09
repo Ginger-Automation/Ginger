@@ -84,7 +84,7 @@ namespace GingerCore.Variables
 
         private bool mSetAsInputValue = true;
         [IsSerializedForLocalRepository(true)]
-        [AllowUserToEdit]
+        [AllowUserToEdit("Input Value")]
         public bool SetAsInputValue
         {
             get { return mSetAsInputValue; }

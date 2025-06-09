@@ -108,8 +108,8 @@
 
         <StackPanel HorizontalAlignment="Right" Visibility="Collapsed" Orientation="Horizontal" Margin="0,0,20,0" Grid.Row="6" x:Name="xAttributeValueUpdatePnl">
 
-            <UserControls:ucButton x:Name="xUpdateAttributeValueBtn" ButtonType="RoundTextAndImageButton" ButtonText="Update" ButtonImageType="Refresh" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xUpdateAttributeValueBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Visibility="Collapsed"/>
-            <UserControls:ImageMakerControl x:Name="xProcessingImage2" Grid.Column="0" Grid.Row="6" ImageType="Processing" Height="30" Width="30" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Visibility="Collapsed"/>
+            <UserControls:ImageMakerControl x:Name="xProcessingImage2" Grid.Column="0" Grid.Row="6" ImageType="Processing" Height="30" Width="30"  Visibility="Collapsed"/>
+            <UserControls:ucButton x:Name="xUpdateAttributeValueBtn" ButtonType="RoundTextAndImageButton" ButtonText="Update" ButtonImageType="Refresh" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xUpdateAttributeValueBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Visibility="Collapsed"/>           
         </StackPanel>
 
 

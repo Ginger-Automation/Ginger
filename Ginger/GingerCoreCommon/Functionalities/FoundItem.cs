@@ -30,11 +30,10 @@ namespace Amdocs.Ginger.Common.Functionalities
         public enum eStatus
         {
             [EnumValueDescription("Pending Replace")]
-            PendingReplace,
+            Pending,
             Replaced,
-            ReplaceFailed,
-            Saved,
-            SavedFailed
+            Failed,
+            Saved
         }
 
         private eStatus mStatus;

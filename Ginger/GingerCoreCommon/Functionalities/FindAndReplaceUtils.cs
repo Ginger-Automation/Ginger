@@ -74,7 +74,9 @@ namespace Amdocs.Ginger.Common.Functionalities
                         nameof(RepositoryItemBase.ContainingFolder) or nameof(RepositoryItemBase.ContainingFolderFullPath) or
                         nameof(RepositoryItemBase.ParentGuid) or "Created" or "Version" or
                         "CreatedBy" or "LastUpdate" or "LastUpdateBy")
+                    {
                         continue;
+                    }
 
                     object value = null;
                     Type memberType = null;
@@ -138,6 +140,7 @@ namespace Amdocs.Ginger.Common.Functionalities
                 }
                 catch
                 {
+                    Reporter.ToLog(eLogLevel.WARN, $"Failed to process member {member.Name} in {item.GetType().Name}");
                     continue;
                 }
             }
@@ -434,12 +437,15 @@ namespace Amdocs.Ginger.Common.Functionalities
             try
             {
                 if (FI?.ItemObject == null || string.IsNullOrEmpty(FI.FieldName))
+                {
                     return false;
+                }
 
                 PropertyInfo property = FI.ItemObject.GetType().GetProperty(FI.FieldName);
                 if (property == null || !property.CanWrite)
+                {
                     return false;
-
+                }
                 Type propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
                 object valueToSet = null;
                 bool result = false;
@@ -459,7 +465,7 @@ namespace Amdocs.Ginger.Common.Functionalities
                     default:
                         if (propertyType.IsEnum)
                         {
-                            result = Enum.TryParse(propertyType, newValue, ignoreCase: true, out object enumValue);
+                            result = Enum.TryParse(propertyType, newValue, ignoreCase: !searchConfig.MatchCase, out object enumValue);
                             valueToSet = enumValue;
                         }
                         break;
@@ -482,7 +488,8 @@ namespace Amdocs.Ginger.Common.Functionalities
             }
             catch (Exception ex)
             {
-                // Optional: Log exception details here
+
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to replace value for property {FI.FieldName}", ex);
                 return false;
             }
         }

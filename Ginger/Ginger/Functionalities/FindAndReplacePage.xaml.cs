@@ -82,7 +82,7 @@ namespace Ginger.Functionalities
             InitializeComponent();
             mContext = context;
             mItemToSearchOn = itemToSearchOn;
-            EnumHelper.PopulateComboBoxWithEnumDescriptions(xMainItemListCB, typeof(eBulkPublishItemsList));
+            GingerCore.General.PopulateComboBoxWithEnumDescriptions(xMainItemListCB, typeof(eBulkPublishItemsList));
 
             SetFoundItemsGridView();
             Init();
@@ -162,10 +162,10 @@ namespace Ginger.Functionalities
                     [
                         new GridColView() { Field = nameof(FoundItem.ItemParent), Visible = false },
                 new GridColView() { Field = "View Details", Visible = false },
-                new GridColView() { Field = nameof(FoundItem.IsSelected), Header = "Selected", WidthWeight = 15, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, Visible = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["IsSelectedTemplate"] },
+                new GridColView() { Field = nameof(FoundItem.IsSelected), Header = "Selected", WidthWeight = 20, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, Visible = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["IsSelectedTemplate"] },
                 new GridColView() { Field = nameof(FoundItem.OriginObjectType), Header = "Item Type", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = false },
-                new GridColView() { Field = nameof(FoundItem.OriginObjectName), Header = "Item Name", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = false, Style = FindResource("@DataGridColumn_Bold") as Style },
-                new GridColView() { Field = nameof(FoundItem.ParentItemPath), Header = "Item Path", WidthWeight = 15, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
+                new GridColView() { Field = nameof(FoundItem.OriginObjectName), Header = "Item Name", WidthWeight = 20, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = false, Style = FindResource("@DataGridColumn_Bold") as Style },
+                new GridColView() { Field = nameof(FoundItem.ParentItemPath), Header = "Item Path", WidthWeight = 20, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
                 new GridColView() { Field = nameof(FoundItem.FoundField), Header = "Found Field", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = false, Style = FindResource("@DataGridColumn_Bold") as Style },
                 new GridColView() { Field = nameof(FoundItem.FieldValue), Header = "Field Value", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = false, Style = FindResource("@DataGridColumn_Bold") as Style },
                 new GridColView() { Field = nameof(FoundItem.Status), Header = "Status", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = false, Visible = true },
@@ -239,7 +239,7 @@ namespace Ginger.Functionalities
             {
                 return;
             }
-            if (xFindReplaceBtn.IsChecked == true)
+            if ((bool)xFindReplaceBtn.IsChecked)
             {
                 if (xFoundItemsGrid.DataSourceList.Count > 0)
                 {
@@ -411,7 +411,7 @@ namespace Ginger.Functionalities
             {
                 EnableDisableButtons(false);
 
-                List<FoundItem> FIList = mFoundItemsList.Where(x => x.IsSelected == true && (x.Status == FoundItem.eStatus.PendingReplace || x.Status == FoundItem.eStatus.ReplaceFailed)).ToList();
+                List<FoundItem> FIList = mFoundItemsList.Where(x => x.IsSelected == true && (x.Status == FoundItem.eStatus.Pending || x.Status == FoundItem.eStatus.Failed)).ToList();
                 if (FIList.Count == 0)
                 {
                     Reporter.ToUser(eUserMsgKey.FindAndReplaceNoItemsToRepalce);
@@ -445,7 +445,7 @@ namespace Ginger.Functionalities
                     }
                     else
                     {
-                        foundItem.Status = FoundItem.eStatus.ReplaceFailed;
+                        foundItem.Status = FoundItem.eStatus.Replaced;
                     }
 
                 }
@@ -1239,7 +1239,7 @@ namespace Ginger.Functionalities
             try
             {
                 EnableDisableButtons(false);
-                List<FoundItem> FIList = mFoundItemsList.Where(x => x.IsSelected == true && (x.Status == FoundItem.eStatus.Replaced || x.Status == FoundItem.eStatus.SavedFailed)).ToList();
+                List<FoundItem> FIList = mFoundItemsList.Where(x => x.IsSelected == true && (x.Status == FoundItem.eStatus.Replaced || x.Status == FoundItem.eStatus.Failed)).ToList();
 
                 await Task.Run(() => Save(FIList));
             }
@@ -1268,7 +1268,7 @@ namespace Ginger.Functionalities
                     }
                     catch
                     {
-                        foundItem.Status = FoundItem.eStatus.SavedFailed;
+                        foundItem.Status = FoundItem.eStatus.Failed;
                     }
 
                 }
@@ -1383,7 +1383,7 @@ namespace Ginger.Functionalities
                 xFindAndReplanceBtnPanel.Visibility = Visibility.Collapsed;
                 xItemMainComboPanel.Visibility = Visibility.Collapsed;
 
-                xAttributeValueUpdatePnl.Visibility= Visibility.Visible;
+                xAttributeValueUpdatePnl.Visibility = Visibility.Visible;
                 xItemSelectionPanel.Visibility = Visibility.Visible;
                 xFindAttributePanel.Visibility = Visibility.Visible;
                 xErrorMsgPanel.Visibility = Visibility.Visible;
@@ -1396,7 +1396,8 @@ namespace Ginger.Functionalities
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occoured while changing field value", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to switch to Change Attribute Value mode", ex);
+                ShowErrorMsg("Failed to switch modes. Please try again.");
             }
         }
 
@@ -1409,7 +1410,9 @@ namespace Ginger.Functionalities
                     ItemTypeSelectedValue = selectedDescription;
 
                     xAttributeNameComboBox.Items.Clear();
-                   
+                    xAttributeNameComboBox.Text = "Select the Attribute...";
+                    xFoundItemsGrid.Visibility = Visibility.Collapsed;
+                    xAttributeValueUpdatePnl.Visibility = Visibility.Collapsed;
                     FillItemToSearchIn();
 
                     var searchItem = mItemsToSearchIn.FirstOrDefault();
@@ -1422,19 +1425,7 @@ namespace Ginger.Functionalities
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in xMainItemListCB_SelectionChanged", ex);
-            }
-        }
-
-        private void xSubItemListCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            try
-            {
-                // Placeholder for future logic
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in xSubItemListCB_SelectionChanged", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error:", ex);
             }
         }
 
@@ -1446,12 +1437,18 @@ namespace Ginger.Functionalities
                 xUpdateAttributeValueBtn.Visibility = Visibility.Visible;
 
                 var searchItem = mItemsToSearchIn.FirstOrDefault();
-                if (searchItem == null) return;
+                if (searchItem == null)
+                {
+                    return;
+                }
 
                 mFindAndReplaceUtils.FindTopLevelAttributeNames(searchItem.Item, mFoundItemsList, mAttributeName, mSearchConfig, searchItem.ParentItemToSave, searchItem.ItemParent);
 
                 var item = mFoundItemsList.FirstOrDefault();
-                if (item == null || item.FieldType == null) return;
+                if (item == null || item.FieldType == null)
+                {
+                    return;
+                }
 
                 if (item.FieldType.Name == "Boolean")
                 {
@@ -1483,7 +1480,7 @@ namespace Ginger.Functionalities
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in AttributeValueControlVisibility", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error:", ex);
             }
         }
 
@@ -1504,7 +1501,7 @@ namespace Ginger.Functionalities
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in FindItemsAsync_item", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error:", ex);
                 ShowErrorMsg("An error occurred while finding items.");
             }
             finally
@@ -1545,7 +1542,7 @@ namespace Ginger.Functionalities
                 mItemsToSearchIn.Clear();
                 if (!string.IsNullOrEmpty(ItemTypeSelectedValue))
                 {
-                    var itemType = EnumHelper.GetEnumFromDescription<eBulkPublishItemsList>(ItemTypeSelectedValue);
+                    var itemType = GingerCore.General.GetEnumFromDescription<eBulkPublishItemsList>(ItemTypeSelectedValue);
 
                     if (itemType.HasValue)
                     {
@@ -1605,7 +1602,7 @@ namespace Ginger.Functionalities
                                 ObservableList<VariableBase> RepoVariables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
                                 foreach (VariableBase VB in RepoVariables)
                                 {
-                                    
+
                                     if (mSubItemType == null || VB.GetType() == mSubItemType)
                                     {
                                         mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB, VB, string.Empty, string.Empty));
@@ -1656,6 +1653,17 @@ namespace Ginger.Functionalities
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error in FillItemToSearchIn", ex);
                 ShowErrorMsg("An error occurred while filling items to search.");
+            }
+        }
+
+        private void AddRepositoryItems<T>(Func<IEnumerable<T>> getItems) where T : RepositoryItemBase
+        {
+            foreach (var item in getItems())
+            {
+                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                    return;
+
+                mItemsToSearchIn.Add(new ItemToSearchIn(item, item, item, string.Empty, string.Empty));
             }
         }
 
@@ -1745,10 +1753,9 @@ namespace Ginger.Functionalities
                     }
                     else
                     {
-                        foundItem.Status = FoundItem.eStatus.ReplaceFailed;
+                        foundItem.Status = FoundItem.eStatus.Failed;
                     }
                 }
-                bool hasSelectedItem = mFoundItemsList.Any(item => item.Status == FoundItem.eStatus.Replaced);
             }
             catch (Exception ex)
             {
@@ -1799,7 +1806,7 @@ namespace Ginger.Functionalities
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in xAttributeValueTxtbox_TextChanged", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error:", ex);
             }
         }
 
@@ -1826,7 +1833,7 @@ namespace Ginger.Functionalities
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in xUpdateAttributeValueBtn_Click", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error:", ex);
             }
         }
 
@@ -1838,7 +1845,7 @@ namespace Ginger.Functionalities
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in xAttributeValueComboBox_SelectionChanged", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error:", ex);
             }
         }
 
@@ -1850,7 +1857,7 @@ namespace Ginger.Functionalities
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in xAttributeValueCheckBox_Checked", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error:", ex);
             }
         }
 
@@ -1862,7 +1869,7 @@ namespace Ginger.Functionalities
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in xAttributeValueCheckBox_Unchecked", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error:", ex);
             }
         }
 
@@ -1871,7 +1878,7 @@ namespace Ginger.Functionalities
             try
             {
                 mAttributeName = xAttributeNameComboBox.SelectedValue?.ToString();
-
+                xAttributeValueUpdatePnl.Visibility = Visibility.Visible;
                 HideErrorMsg();
 
                 if (string.IsNullOrEmpty(ItemTypeSelectedValue))
@@ -1892,55 +1899,9 @@ namespace Ginger.Functionalities
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in xAttributeNameComboBox_SelectionChanged", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error:", ex);
             }
         }
 
     }
-
-
-
-    public static class EnumHelper
-    {
-        public static TEnum? GetEnumFromDescription<TEnum>(string description) where TEnum : struct, Enum
-        {
-            foreach (var field in typeof(TEnum).GetFields())
-            {
-                var attribute = field.GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false)
-                                     .FirstOrDefault() as EnumValueDescriptionAttribute;
-
-                if (attribute != null && attribute.ValueDescription == description)
-                {
-                    if (Enum.TryParse(field.Name, out TEnum result))
-                        return result;
-                }
-            }
-
-            return null;
-        }
-
-        public static void PopulateComboBoxWithEnumDescriptions(ComboBox comboBox, Type enumType)
-        {
-            if (!enumType.IsEnum) throw new ArgumentException("Provided type must be an enum.");
-
-            comboBox.Items.Clear();
-
-            foreach (Enum value in Enum.GetValues(enumType))
-            {
-                string description = GetEnumDescription(value);
-                comboBox.Items.Add(description);
-            }
-        }
-
-        private static string GetEnumDescription(Enum value)
-        {
-            var field = value.GetType().GetField(value.ToString());
-            var attribute = field?.GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false)
-                                 .FirstOrDefault() as EnumValueDescriptionAttribute;
-
-            return attribute?.ValueDescription ?? value.ToString();
-        }
-    }
-
-
 }
