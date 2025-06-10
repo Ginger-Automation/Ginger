@@ -30,6 +30,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Environments;
+using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using System;
@@ -84,7 +85,7 @@ namespace Ginger.Functionalities
             mItemToSearchOn = itemToSearchOn;
             SetFoundItemsGridView();
             Init();
-        
+
 
 
         }
@@ -116,9 +117,12 @@ namespace Ginger.Functionalities
         public enum eGridView
         {
             FindView,
-            ReplaceAttributeValueView
+            ReplaceAttributeValueView,
+            ReplaceAttributeCheckBoxView,
+            ReplaceAttributeComboBoxView,
+            ReplaceAttributeTextBoxView
         }
-
+        List<ComboEnumItem> valueTypes;
         private void SetFoundItemsGridView()
         {
             try
@@ -130,12 +134,22 @@ namespace Ginger.Functionalities
                     [
                         new GridColView() { Field = nameof(FoundItem.IsSelected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["IsSelectedTemplate"] },
                 new GridColView() { Field = nameof(FoundItem.OriginObjectType), Header = "Item Type", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
-                new GridColView() { Field = nameof(FoundItem.OriginObjectName), Header = "Item Name", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true, Style = FindResource("@DataGridColumn_Bold") as Style },
-                new GridColView() { Field = nameof(FoundItem.ParentItemPath), Header = "Item Path", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
+                new GridColView() { Field = nameof(FoundItem.OriginObjectName), Header = "Item Name", WidthWeight = 20, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true, Style = FindResource("@DataGridColumn_Bold") as Style },
+                new GridColView() { Field = nameof(FoundItem.ParentItemPath), Header = "Item Path", WidthWeight = 20, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
                 new GridColView() { Field = nameof(FoundItem.ItemParent), Header = "Item Parent", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
                 new GridColView() { Field = nameof(FoundItem.FoundField), Header = "Found Field", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true, Style = FindResource("@DataGridColumn_Bold") as Style },
                 new GridColView() { Field = nameof(FoundItem.FieldValue), Header = "Field Value", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true, Style = FindResource("@DataGridColumn_Bold") as Style },
+
+                new GridColView() { Field = "FieldValueCheckBox", Header = "Field Value", WidthWeight = 10, HorizontalAlignment = System.Windows.HorizontalAlignment.Left, Visible = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["xAttributeValueCheckBoxTemplate"] },
+
+
+                    new GridColView() { Field = "FieldValueComboBox", Header = "Field Value", WidthWeight = 15, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, Visible = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["xAttributeValueComboBoxTemplate"] , CellValuesList = valueTypes },
+
+
+                new GridColView() { Field = "FieldValueTextBox", Header = "Field Value", WidthWeight = 15, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, Visible = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["xAttributeValueTextBoxTemplate"] },
+
                 new GridColView() { Field = nameof(FoundItem.Status), Header = "Status", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
+
                 new GridColView() { Field = "View Details", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["ViewDetailsButton"] },
             ]
                 };
@@ -144,32 +158,63 @@ namespace Ginger.Functionalities
                 // Find View
                 GridViewDef mFineView = new GridViewDef(eGridView.FindView.ToString())
                 {
-                    GridColsView =
-                    [
+                    GridColsView =[
                         new GridColView() { Field = nameof(FoundItem.IsSelected), Visible = false },
-                new GridColView() { Field = nameof(FoundItem.Status), Visible = false },
-            ]
+                        new GridColView() { Field = nameof(FoundItem.Status), Visible = false },
+                        new GridColView() { Field = "FieldValueCheckBox", Visible = false },
+                        new GridColView() { Field = "FieldValueComboBox", Visible = false },
+                        new GridColView() { Field = "FieldValueTextBox", Visible = false },]
                 };
                 xFoundItemsGrid.AddCustomView(mFineView);
                 xFoundItemsGrid.ChangeGridView(eGridView.FindView.ToString());
 
-                // Replace Attribute Value View
-                GridViewDef mAttributeValueChangeValue = new GridViewDef(eGridView.ReplaceAttributeValueView.ToString())
+                GridViewDef ReplaceAttributeValueView = new GridViewDef(eGridView.ReplaceAttributeValueView.ToString())
                 {
-                    GridColsView =
-                    [
-                        new GridColView() { Field = nameof(FoundItem.ItemParent), Visible = false },
-                new GridColView() { Field = "View Details", Visible = false },
-                new GridColView() { Field = nameof(FoundItem.IsSelected), Header = "Selected", WidthWeight = 20, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, Visible = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["IsSelectedTemplate"] },
-                new GridColView() { Field = nameof(FoundItem.OriginObjectType), Header = "Item Type", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = false },
-                new GridColView() { Field = nameof(FoundItem.OriginObjectName), Header = "Item Name", WidthWeight = 20, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = false, Style = FindResource("@DataGridColumn_Bold") as Style },
-                new GridColView() { Field = nameof(FoundItem.ParentItemPath), Header = "Item Path", WidthWeight = 20, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
-                new GridColView() { Field = nameof(FoundItem.FoundField), Header = "Found Field", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = false, Style = FindResource("@DataGridColumn_Bold") as Style },
-                new GridColView() { Field = nameof(FoundItem.FieldValue), Header = "Field Value", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = false, Style = FindResource("@DataGridColumn_Bold") as Style },
-                new GridColView() { Field = nameof(FoundItem.Status), Header = "Status", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = false, Visible = true },
-            ]
+                    GridColsView =[
+                       new GridColView() { Field = nameof(FoundItem.ItemParent), Visible = false },
+                       new GridColView() { Field = "View Details", Visible = false },
+                       new GridColView() { Field = "FieldValueCheckBox", Visible = false },
+                       new GridColView() { Field = "FieldValueComboBox", Visible = false },
+                       new GridColView() { Field = "FieldValueTextBox", Visible = false },]
                 };
-                xFoundItemsGrid.AddCustomView(mAttributeValueChangeValue);
+                xFoundItemsGrid.AddCustomView(ReplaceAttributeValueView);
+
+                GridViewDef ReplaceAttributeTextBoxView = new GridViewDef(eGridView.ReplaceAttributeTextBoxView.ToString())
+                {
+                    GridColsView =[
+                       new GridColView() { Field = nameof(FoundItem.ItemParent), Visible = false },
+                       new GridColView() { Field = "View Details", Visible = false },
+                       new GridColView() { Field = nameof(FoundItem.FieldValue),Visible=false },
+                       new GridColView() { Field = "FieldValueCheckBox", Visible = false },
+                       new GridColView() { Field = "FieldValueComboBox", Visible = false }              ] 
+                };
+                xFoundItemsGrid.AddCustomView(ReplaceAttributeTextBoxView);
+
+
+
+                GridViewDef ReplaceAttributeCheckBoxView = new GridViewDef(eGridView.ReplaceAttributeCheckBoxView.ToString())
+                {
+                    GridColsView = [
+                       new GridColView() { Field = nameof(FoundItem.ItemParent), Visible = false },
+                       new GridColView() { Field = "View Details", Visible = false },
+                       new GridColView() { Field = nameof(FoundItem.FieldValue),Visible=false },
+                       new GridColView() { Field = "FieldValueTextBox", Visible = false },
+                       new GridColView() { Field = "FieldValueComboBox", Visible = false }              ]
+                };
+                xFoundItemsGrid.AddCustomView(ReplaceAttributeCheckBoxView);
+
+
+                GridViewDef ReplaceAttributeComboBoxView = new GridViewDef(eGridView.ReplaceAttributeComboBoxView.ToString())
+                {
+                GridColsView = [
+                       new GridColView() { Field = nameof(FoundItem.ItemParent), Visible = false },
+                       new GridColView() { Field = "View Details", Visible = false },
+                       new GridColView() { Field = nameof(FoundItem.FieldValue),Visible=false },
+                       new GridColView() { Field = "FieldValueCheckBox", Visible = false },
+                       new GridColView() { Field = "FieldValueTextBox", Visible = false }             ]
+                };
+                xFoundItemsGrid.AddCustomView(ReplaceAttributeComboBoxView);
+                //  setUpdateAttributeGridView();
 
                 xFoundItemsGrid.InitViewItems();
                 xFoundItemsGrid.MarkUnMarkAllActive += MarkUnMarkAllActionsForFindandReplace;
@@ -184,7 +229,7 @@ namespace Ginger.Functionalities
             }
         }
 
-
+       
         private void ClearUI()
         {
             mFindAndReplaceUtils.ProcessingState = FindAndReplaceUtils.eProcessingState.Pending;
@@ -292,7 +337,7 @@ namespace Ginger.Functionalities
             xMainItemTypeComboBox.ItemsSource = mMainItemsTypeList;
 
 
-            mMainItemsTypeList.Add(new FindItemType { Name =eTermResKey.Environment.ToString(), Type = typeof(ProjEnvironment), GetItemsToSearchIn = GetEnvironmentToSearchIn });
+            mMainItemsTypeList.Add(new FindItemType { Name = eTermResKey.Environment.ToString(), Type = typeof(ProjEnvironment), GetItemsToSearchIn = GetEnvironmentToSearchIn });
             mMainItemsTypeList.Add(new FindItemType { Name = eTermResKey.Agents.ToString(), Type = typeof(Agent), GetItemsToSearchIn = GetAgentToSearchIn });
             xMainItemListCB.SelectedValuePath = nameof(FindItemType.Type);
             xMainItemListCB.DisplayMemberPath = nameof(FindItemType.Name);
@@ -1457,6 +1502,7 @@ namespace Ginger.Functionalities
                 mFindAndReplaceUtils.FindTopLevelAttributeNames(searchItem.Item, mFoundItemsList, mAttributeName, mSearchConfig, searchItem.ParentItemToSave, searchItem.ItemParent);
 
                 var item = mFoundItemsList.FirstOrDefault();
+                mFoundItemsList.Clear();
                 if (item == null || item.FieldType == null)
                 {
                     return;
@@ -1464,6 +1510,7 @@ namespace Ginger.Functionalities
 
                 if (item.FieldType.Name == "Boolean")
                 {
+                    xFoundItemsGrid.ChangeGridView(eGridView.ReplaceAttributeCheckBoxView.ToString());
                     xAttributeValueCheckBox.Visibility = Visibility.Visible;
                     mAttributeValue = xAttributeValueCheckBox.IsChecked.ToString();
                     xAttributeValueTxtbox.Visibility = Visibility.Collapsed;
@@ -1471,6 +1518,7 @@ namespace Ginger.Functionalities
                 }
                 else if (item.FieldType.Name == "String")
                 {
+                    xFoundItemsGrid.ChangeGridView(eGridView.ReplaceAttributeTextBoxView.ToString());
                     xAttributeValueCheckBox.Visibility = Visibility.Collapsed;
                     xAttributeValueTxtbox.Visibility = Visibility.Visible;
                     xAttributeValueComboBox.Visibility = Visibility.Collapsed;
@@ -1482,13 +1530,15 @@ namespace Ginger.Functionalities
 
                     if (enumType != null && enumType.IsEnum)
                     {
+                        valueTypes = GingerCore.General.GetEnumValuesForCombo(enumType);
+                        xFoundItemsGrid.ChangeGridView(eGridView.ReplaceAttributeComboBoxView.ToString());
                         GingerCore.General.FillComboFromEnumType(xAttributeValueComboBox, enumType);
 
                         xAttributeValueCheckBox.Visibility = Visibility.Collapsed;
                         xAttributeValueTxtbox.Visibility = Visibility.Collapsed;
                         xAttributeValueComboBox.Visibility = Visibility.Visible;
                     }
-                }
+                }              
             }
             catch (Exception ex)
             {
@@ -1829,11 +1879,6 @@ namespace Ginger.Functionalities
                 bool hasSelectedItem = mFoundItemsList.Any(item => item.IsSelected);
                 HideErrorMsg();
 
-                if (string.IsNullOrEmpty(mAttributeValue))
-                {
-                    ShowErrorMsg("Attribute Value is empty.");
-                    return;
-                }
 
                 if (!hasSelectedItem)
                 {

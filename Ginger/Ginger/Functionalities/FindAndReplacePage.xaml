@@ -24,7 +24,7 @@
             </DataTemplate>
 
             <DataTemplate x:Key="xAttributeValueComboBoxTemplate">
-                <ComboBox SelectedValue="{Binding   Path=FieldValue,Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding FieldValue}"  Style="{StaticResource $FlatEditInputComboBoxStyle}"/>
+                <ComboBox x:Name="xFieldValueGridCB" SelectedValue="{Binding   Path=FieldValue,Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding FieldValue}"  Style="{StaticResource $FlatEditInputComboBoxStyle}"/>
             </DataTemplate>
 
             <DataTemplate x:Key="xAttributeValueCheckBoxTemplate">
