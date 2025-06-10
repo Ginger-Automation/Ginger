@@ -19,8 +19,23 @@
             </DataTemplate>
 
             <DataTemplate x:Key="IsSelectedTemplate">
-                <CheckBox x:Name="IsSelected_FieldSelection" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                <CheckBox x:Name="IsSelected_FieldSelection" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                          IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
             </DataTemplate>
+
+            <DataTemplate x:Key="xAttributeValueComboBoxTemplate">
+                <ComboBox SelectedValue="{Binding   Path=FieldValue,Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding FieldValue}"  Style="{StaticResource $FlatEditInputComboBoxStyle}"/>
+            </DataTemplate>
+
+            <DataTemplate x:Key="xAttributeValueCheckBoxTemplate">
+                <CheckBox IsChecked="{Binding Path=FieldValue,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"    HorizontalAlignment="Center" Style="{StaticResource @GridCellCheckBoxStyle}"/>
+            </DataTemplate>
+
+            <DataTemplate x:Key="xAttributeValueTextBoxTemplate">
+                <TextBox Text="{Binding FieldValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"    Style="{StaticResource @TextBoxStyle}"/>
+            </DataTemplate>
+
+
         </Grid.Resources>
 
         <Grid.RowDefinitions>
@@ -80,7 +95,7 @@
         </StackPanel>
 
 
-     
+
 
 
 
@@ -109,11 +124,11 @@
         <StackPanel HorizontalAlignment="Right" Visibility="Collapsed" Orientation="Horizontal" Margin="0,0,20,0" Grid.Row="6" x:Name="xAttributeValueUpdatePnl">
 
             <UserControls:ImageMakerControl x:Name="xProcessingImage2" Grid.Column="0" Grid.Row="6" ImageType="Processing" Height="30" Width="30"  Visibility="Collapsed"/>
-            <UserControls:ucButton x:Name="xUpdateAttributeValueBtn" ButtonType="RoundTextAndImageButton" ButtonText="Update" ButtonImageType="Refresh" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xUpdateAttributeValueBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Visibility="Collapsed"/>           
+            <UserControls:ucButton x:Name="xUpdateAttributeValueBtn" ButtonType="RoundTextAndImageButton" ButtonText="Update" ButtonImageType="Refresh" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xUpdateAttributeValueBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Visibility="Collapsed"/>
         </StackPanel>
 
 
-       
+
         <Ginger:ucGrid x:Name="xFoundItemsGrid" Title="Find Results" Grid.Row="7" IsReadOnly="False" ShowAdd="Collapsed" ShowDelete="Collapsed"  ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Visible" Visibility="Collapsed"/>
 
     </Grid>

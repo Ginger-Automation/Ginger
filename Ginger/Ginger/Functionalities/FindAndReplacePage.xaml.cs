@@ -82,11 +82,9 @@ namespace Ginger.Functionalities
             InitializeComponent();
             mContext = context;
             mItemToSearchOn = itemToSearchOn;
-            GingerCore.General.PopulateComboBoxWithEnumDescriptions(xMainItemListCB, typeof(eBulkPublishItemsList));
-
             SetFoundItemsGridView();
             Init();
-            xFindReplaceBtn.IsChecked = true;
+        
 
 
         }
@@ -239,26 +237,15 @@ namespace Ginger.Functionalities
             {
                 return;
             }
-            if ((bool)xFindReplaceBtn.IsChecked)
+
+            if (xFoundItemsGrid.DataSourceList.Count > 0)
             {
-                if (xFoundItemsGrid.DataSourceList.Count > 0)
+                foreach (object item in xFoundItemsGrid.GetVisibileGridItems())
                 {
-                    foreach (object item in xFoundItemsGrid.GetVisibileGridItems())
-                    {
-                        ((FoundItem)item).IsSelected = Status;
-                    }
+                    ((FoundItem)item).IsSelected = Status;
                 }
             }
-            else
-            {
-                if (xFoundItemsGrid.DataSourceList.Count > 0)
-                {
-                    foreach (object item in mFoundItemsList)
-                    {
-                        ((FoundItem)item).IsSelected = Status;
-                    }
-                }
-            }
+
         }
 
         private SearchConfig mSearchConfig { get; set; }
@@ -303,6 +290,14 @@ namespace Ginger.Functionalities
             xMainItemTypeComboBox.SelectedValuePath = nameof(FindItemType.Type);
             xMainItemTypeComboBox.DisplayMemberPath = nameof(FindItemType.Name);
             xMainItemTypeComboBox.ItemsSource = mMainItemsTypeList;
+
+
+            mMainItemsTypeList.Add(new FindItemType { Name =eTermResKey.Environment.ToString(), Type = typeof(ProjEnvironment), GetItemsToSearchIn = GetEnvironmentToSearchIn });
+            mMainItemsTypeList.Add(new FindItemType { Name = eTermResKey.Agents.ToString(), Type = typeof(Agent), GetItemsToSearchIn = GetAgentToSearchIn });
+            xMainItemListCB.SelectedValuePath = nameof(FindItemType.Type);
+            xMainItemListCB.DisplayMemberPath = nameof(FindItemType.Name);
+            xMainItemListCB.ItemsSource = mMainItemsTypeList;
+
 
         }
 
@@ -377,6 +372,7 @@ namespace Ginger.Functionalities
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
         {
+            xFindReplaceBtn.IsChecked = true;
             var title = mContext switch
             {
                 eContext.AutomatePage => string.Format("Find & Replace in '{0}' {1}", ((BusinessFlow)mItemToSearchOn).Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)),
@@ -452,7 +448,7 @@ namespace Ginger.Functionalities
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Faile to Replace Items", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Fail to Replace Items", ex);
             }
         }
 
@@ -527,7 +523,7 @@ namespace Ginger.Functionalities
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Faile to Find Items", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Fail to Find Items", ex);
             }
         }
 
@@ -555,6 +551,21 @@ namespace Ginger.Functionalities
                     }
 
                     break;
+            }
+        }
+
+        private void GetAgentToSearchIn()
+        {
+            foreach (var item in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>())
+            {
+                mItemsToSearchIn.Add(new ItemToSearchIn(item, item, item, string.Empty, string.Empty));
+            }
+        }
+        private void GetEnvironmentToSearchIn()
+        {
+            foreach (var item in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
+            {
+                mItemsToSearchIn.Add(new ItemToSearchIn(item, item, item, string.Empty, string.Empty));
             }
         }
 
@@ -1275,7 +1286,7 @@ namespace Ginger.Functionalities
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Faile to Save", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Fail to Save", ex);
             }
         }
 
@@ -1405,23 +1416,24 @@ namespace Ginger.Functionalities
         {
             try
             {
-                if (xMainItemListCB?.SelectedItem is string selectedDescription)
+
+                ClearUI();
+                mMainItemType = (FindItemType)xMainItemListCB.SelectedItem;
+
+
+                mItemsToSearchIn.Clear();
+                mMainItemType.GetItemsToSearchIn();
+                xAttributeNameComboBox.Items.Clear();
+                xAttributeNameComboBox.Text = "Select the Attribute...";
+                xFoundItemsGrid.Visibility = Visibility.Collapsed;
+                xAttributeValueUpdatePnl.Visibility = Visibility.Collapsed;
+                var searchItem = mItemsToSearchIn.FirstOrDefault();
+                if (searchItem != null)
                 {
-                    ItemTypeSelectedValue = selectedDescription;
-
-                    xAttributeNameComboBox.Items.Clear();
-                    xAttributeNameComboBox.Text = "Select the Attribute...";
-                    xFoundItemsGrid.Visibility = Visibility.Collapsed;
-                    xAttributeValueUpdatePnl.Visibility = Visibility.Collapsed;
-                    FillItemToSearchIn();
-
-                    var searchItem = mItemsToSearchIn.FirstOrDefault();
-                    if (searchItem != null)
-                    {
-                        var attributeNameList = mFindAndReplaceUtils.GetSerializableEditableMemberNames(searchItem.OriginItemObject);
-                        GingerCore.General.FillComboFromList(xAttributeNameComboBox, attributeNameList);
-                    }
+                    var attributeNameList = mFindAndReplaceUtils.GetSerializableEditableMemberNames(searchItem.OriginItemObject);
+                    GingerCore.General.FillComboFromList(xAttributeNameComboBox, attributeNameList);
                 }
+
             }
             catch (Exception ex)
             {
@@ -1881,11 +1893,7 @@ namespace Ginger.Functionalities
                 xAttributeValueUpdatePnl.Visibility = Visibility.Visible;
                 HideErrorMsg();
 
-                if (string.IsNullOrEmpty(ItemTypeSelectedValue))
-                {
-                    ShowErrorMsg("No item selected.");
-                    return;
-                }
+
 
                 if (string.IsNullOrEmpty(mAttributeName))
                 {
