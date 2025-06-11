@@ -23,8 +23,11 @@
                           IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
             </DataTemplate>
 
+
+            
+
             <DataTemplate x:Key="xAttributeValueComboBoxTemplate">
-                <ComboBox x:Name="xFieldValueGridCB" SelectedValue="{Binding   Path=FieldValue,Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding FieldValue}"  Style="{StaticResource $FlatEditInputComboBoxStyle}"/>
+                <ComboBox x:Name="xRunSetComboBox" Grid.Column="1" Margin="20,10,0,0" Style="{StaticResource $FlatInputComboBoxStyle}" HorizontalAlignment="Stretch" SelectionChanged="FieldValueComboBox_SelectionChanged" Width="auto"/>
             </DataTemplate>
 
             <DataTemplate x:Key="xAttributeValueCheckBoxTemplate">
@@ -110,20 +113,9 @@
             <ComboBox x:Name="xAttributeNameComboBox" Text="Select the Attribute..." SelectionChanged="xAttributeNameComboBox_SelectionChanged" VerticalAlignment="Center" Height="20"  Width="250" IsEditable="true" Style="{StaticResource $FlatInputComboBoxStyle}"/>
 
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="3"  x:Name="xAttributeValuePanel" Visibility="Collapsed">
-            <Label x:Name="xAttributeValueLbl"  Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Width="120" Visibility="Collapsed">Attribute Value:</Label>
-            <TextBox x:Name="xAttributeValueTxtbox"  Style="{StaticResource @TextBoxStyle}" VerticalAlignment="Center" Width="250" Height="20" TextChanged="xAttributeValueTxtbox_TextChanged" Visibility="Collapsed"/>
-            <ComboBox x:Name="xAttributeValueComboBox" Text="Select value" SelectionChanged="xAttributeValueComboBox_SelectionChanged" VerticalAlignment="Center" Height="20"  Width="250" IsEditable="true" Style="{StaticResource $FlatInputComboBoxStyle}" Visibility="Collapsed"/>
-            <CheckBox x:Name="xAttributeValueCheckBox" VerticalAlignment="Center" Checked="xAttributeValueCheckBox_Checked" Unchecked="xAttributeValueCheckBox_Unchecked" Visibility="Collapsed"  Width="250"/>
-        </StackPanel>
 
-        <StackPanel Grid.Row="4" x:Name="xErrorMsgPanel" Visibility="Collapsed">
-            <Label x:Name="xErrorMsg" Content="" Visibility="Collapsed" VerticalAlignment="Top" FontSize="10" HorizontalAlignment="Stretch" IsEnabled="False" Style="{StaticResource @InputFieldLabelStyle}" Foreground="Red"  Margin="0,0,0,0"/>
-        </StackPanel>
-
-        <StackPanel HorizontalAlignment="Right" Visibility="Collapsed" Orientation="Horizontal" Margin="0,0,20,0" Grid.Row="6" x:Name="xAttributeValueUpdatePnl">
-
-            <UserControls:ImageMakerControl x:Name="xProcessingImage2" Grid.Column="0" Grid.Row="6" ImageType="Processing" Height="30" Width="30"  Visibility="Collapsed"/>
+        <StackPanel HorizontalAlignment="Right" Visibility="Collapsed" Orientation="Horizontal" Margin="0,0,20,0" Grid.Row="3" x:Name="xAttributeValueUpdatePnl">
+            <UserControls:ImageMakerControl x:Name="xProcessingImage2" Grid.Column="0" Grid.Row="3" ImageType="Processing" Height="30" Width="30"  Visibility="Collapsed"/>
             <UserControls:ucButton x:Name="xUpdateAttributeValueBtn" ButtonType="RoundTextAndImageButton" ButtonText="Update" ButtonImageType="Refresh" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xUpdateAttributeValueBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Visibility="Collapsed"/>
         </StackPanel>
 

@@ -53,7 +53,16 @@ namespace Amdocs.Ginger.Common.Functionalities
                 handler(this, new PropertyChangedEventArgs(name));
             }
         }
-
+        private bool _isModified;
+        public bool IsModified
+        {
+            get => _isModified;
+            set
+            {
+                _isModified = value;
+                OnPropertyChanged(nameof(IsModified));
+            }
+        }
         public RepositoryItemBase OriginObject { get; set; }
 
         public string OriginObjectType
@@ -132,7 +141,6 @@ namespace Amdocs.Ginger.Common.Functionalities
 
         }
 
-
         public string FieldName { get; set; }
 
 
@@ -146,9 +154,12 @@ namespace Amdocs.Ginger.Common.Functionalities
             set
             {
                 mFieldValue = value;
+                IsModified = true;
                 OnPropertyChanged(nameof(FieldValue));
             }
         }
+        public static List<string> FieldValueOption { get; set; }
+
 
         public List<string> OptionalValuesToRepalce = [];
 

@@ -100,7 +100,7 @@ namespace GingerCore.Variables
 
         private bool mMandatoryInput = false;
         [IsSerializedForLocalRepository(false)]
-        [AllowUserToEdit]
+        [AllowUserToEdit("Madatory Input")]
         public bool MandatoryInput
         {
             get { return mMandatoryInput; }
@@ -116,7 +116,7 @@ namespace GingerCore.Variables
 
         private bool mSetAsOutputValue = true;
         [IsSerializedForLocalRepository(true)]
-        [AllowUserToEdit]
+        [AllowUserToEdit("Output Variable")]
         public bool SetAsOutputValue
         {
             get { return mSetAsOutputValue; }
@@ -151,7 +151,7 @@ namespace GingerCore.Variables
 
         private string mDescription;
         [IsSerializedForLocalRepository]
-        [AllowUserToEdit]
+        [AllowUserToEdit("Description")]
         public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(nameof(Description)); } } }
 
         private string mValue;

@@ -116,7 +116,7 @@ namespace Amdocs.Ginger.Common.Functionalities
                         memberType = field.FieldType;
                     }
 
-                    string attributeName = member.Name;
+                    string attributeName = (string)member.GetCustomAttribute<AllowUserToEdit>().GetDefualtValue();
 
                     string matchAgainst = searchConfig.MatchCase ? attributeName : attributeName.ToUpper();
                     string search = searchConfig.MatchCase ? textToFind : textToFind.ToUpper();
@@ -128,12 +128,13 @@ namespace Amdocs.Ginger.Common.Functionalities
                             OriginObject = item,
                             ItemObject = item,
                             ParentItemToSave = parentItemToSave,
-                            FieldName = attributeName,
+                            FieldName=member.Name,
                             FieldValue = value?.ToString() ?? "",
                             ItemParent = itemParent,
                             FoundField = attributeName,
                             FieldType = memberType,
-                            OptionalValuesToRepalce = []
+                            OptionalValuesToRepalce = [],
+                            IsModified = false,
                         });
                     }
 
@@ -164,7 +165,8 @@ namespace Amdocs.Ginger.Common.Functionalities
                     if (member is PropertyInfo prop)
                     {
                         isSerializable = prop.GetCustomAttribute<IsSerializedForLocalRepositoryAttribute>() != null;
-                        isEditable = prop.GetCustomAttribute<AllowUserToEdit>() != null;
+                        isEditable = prop.GetCustomAttribute<AllowUserToEdit>()!= null;
+                        
                     }
                     else if (member is FieldInfo field)
                     {
@@ -174,7 +176,7 @@ namespace Amdocs.Ginger.Common.Functionalities
 
                     if (isSerializable && isEditable)
                     {
-                        memberNames.Add(member.Name);
+                        memberNames.Add((string)member.GetCustomAttribute<AllowUserToEdit>().GetDefualtValue());
                     }
                 }
                 catch
@@ -431,11 +433,12 @@ namespace Amdocs.Ginger.Common.Functionalities
 
         }
 
-
-        public bool ReplaceItemEnhanced(SearchConfig searchConfig, string findWhat, FoundItem FI, string newValue)
+/*
+        public bool ReplaceItemEnhanced( FoundItem FI )
         {
             try
             {
+                string newValue = FI.FieldValue;
                 if (FI?.ItemObject == null || string.IsNullOrEmpty(FI.FieldName))
                 {
                     return false;
@@ -465,7 +468,7 @@ namespace Amdocs.Ginger.Common.Functionalities
                     default:
                         if (propertyType.IsEnum)
                         {
-                            result = Enum.TryParse(propertyType, newValue, ignoreCase: !searchConfig.MatchCase, out object enumValue);
+                            result = Enum.TryParse(propertyType, newValue, out object enumValue);
                             valueToSet = enumValue;
                         }
                         break;
@@ -492,8 +495,67 @@ namespace Amdocs.Ginger.Common.Functionalities
                 Reporter.ToLog(eLogLevel.ERROR, $"Failed to replace value for property {FI.FieldName}", ex);
                 return false;
             }
-        }
+        }*/
 
+        public bool ReplaceItemEnhanced(FoundItem foundItem)
+        {
+            if (foundItem?.ItemObject == null || string.IsNullOrWhiteSpace(foundItem.FieldName))
+                return false;
+
+            try
+            {
+                var property = foundItem.ItemObject.GetType().GetProperty(foundItem.FieldName);
+                if (property == null || !property.CanWrite)
+                    return false;
+
+                var targetType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                object valueToSet = null;
+                bool isValid = false;
+
+                string input = foundItem.FieldValue;
+
+                if (targetType.IsEnum)
+                {
+                    isValid = Enum.TryParse(targetType, input, out valueToSet);
+                }
+                else
+                {
+                    switch (Type.GetTypeCode(targetType))
+                    {
+                        case TypeCode.Boolean:
+                            isValid = bool.TryParse(input, out var boolVal);
+                            valueToSet = boolVal;
+                            break;
+
+                        case TypeCode.String:
+                            valueToSet = input;
+                            isValid = true;
+                            break;
+
+                    }
+                }
+
+                if (!isValid) 
+                {
+                    return false; 
+                }
+
+                property.SetValue(foundItem.ItemObject, valueToSet);
+                foundItem.FieldValue = valueToSet?.ToString();
+
+                if (foundItem.ItemObject is not null)
+                {
+                    foundItem.ItemObject.DirtyStatus = Enums.eDirtyStatus.Modified;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to replace value for property {foundItem.FieldName}", ex);
+                return false;
+            }
+        }
 
 
 

@@ -75,7 +75,7 @@ namespace Ginger.Run
 
         private string mDescription;
         [IsSerializedForLocalRepository]
-        [AllowUserToEdit]
+        [AllowUserToEdit("Description")]
         public string Description
         {
             get { return mDescription; }
@@ -173,7 +173,6 @@ namespace Ginger.Run
         /// Used by the user to describe the logic of the Runset run with a specific set of variables values
         /// </summary>
         [IsSerializedForLocalRepository]
-        [AllowUserToEdit]
         public string RunDescription
         {
             get
@@ -316,7 +315,6 @@ namespace Ginger.Run
 
         public bool mRunModeParallel = true;
         [IsSerializedForLocalRepository(true)]
-        [AllowUserToEdit]
         public bool RunModeParallel
         {
             get
@@ -335,7 +333,6 @@ namespace Ginger.Run
 
         public bool mStopRunnersOnFailure = false;
         [IsSerializedForLocalRepository]
-        [AllowUserToEdit]
         public bool StopRunnersOnFailure
         {
             get
@@ -354,7 +351,7 @@ namespace Ginger.Run
 
         public bool mRunWithAnalyzer = true;
         [IsSerializedForLocalRepository(true)]
-        [AllowUserToEdit]
+        [AllowUserToEdit("Run with Analyzer")]
         public bool RunWithAnalyzer
         {
             get

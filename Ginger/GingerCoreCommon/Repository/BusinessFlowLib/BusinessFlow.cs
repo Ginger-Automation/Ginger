@@ -233,7 +233,7 @@ namespace GingerCore
 
         private string mDescription;
         [IsSerializedForLocalRepository]
-        [AllowUserToEdit]
+        [AllowUserToEdit("Description")]
         public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(nameof(Description)); } } }
 
         private Guid instanceGuid;
@@ -308,7 +308,7 @@ namespace GingerCore
         }
 
         eBusinessFlowStatus mStatus;
-        [AllowUserToEdit]
+        [AllowUserToEdit("Status")]
         [IsSerializedForLocalRepository]
         public eBusinessFlowStatus Status
         {
@@ -324,7 +324,7 @@ namespace GingerCore
         }
 
         private bool mActive = true;
-        [AllowUserToEdit]
+        [AllowUserToEdit("Active")]
         [IsSerializedForLocalRepository(DefaultValue: true)]
         public bool Active
         {
@@ -340,7 +340,7 @@ namespace GingerCore
         }
 
         private bool mMandatory;
-        [AllowUserToEdit]
+        [AllowUserToEdit("Mandatory")]
         [IsSerializedForLocalRepository]
         public bool Mandatory
         {
