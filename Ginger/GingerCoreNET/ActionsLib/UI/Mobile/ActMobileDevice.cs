@@ -102,6 +102,19 @@ namespace GingerCore.Actions
             }
         }
 
+        public eUnlockTypes UnLockTypes
+
+        {
+            get
+            {
+                return GetOrCreateInputParam<eUnlockTypes>(nameof(UnLockTypes), eUnlockTypes.none);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(UnLockTypes), value.ToString());
+                OnPropertyChanged(nameof(UnLockTypes));
+            }
+        }
 
         public eAuthResultDetailsFailureSimulation AuthResultDetailsFailureSimulation
         {
@@ -368,6 +381,17 @@ namespace GingerCore.Actions
             Diskinfo,
         }
 
+        public enum eUnlockTypes
+        {
+            [EnumValueDescription("PIN")]
+            pin,
+            [EnumValueDescription("Password")]
+            password,
+            [EnumValueDescription("Pattern")]
+            pattern,
+            [EnumValueDescription("none")]
+            none
+        }
 
 
         public enum eRotateDeviceState

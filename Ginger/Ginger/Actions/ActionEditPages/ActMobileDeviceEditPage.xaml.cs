@@ -25,6 +25,7 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -78,6 +79,8 @@ namespace Ginger.Actions
             xDeviceRotateComboBox.Init(mAct, nameof(mAct.RotateDeviceState), typeof(ActMobileDevice.eRotateDeviceState), ActionNameComboBox_SelectionChanged);
 
             xDataTypeComboBox.Init(mAct, nameof(mAct.PerformanceTypes), typeof(ActMobileDevice.ePerformanceTypes), ActionNameComboBox_SelectionChanged);
+
+            xUnlockTypeComboBox.Init(mAct, nameof(mAct.UnLockTypes), typeof(ActMobileDevice.eUnlockTypes), UnlockTypeComboBox_SelectionChanged);
 
             xFilePathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.FilePathInput, nameof(ActInputValue.Value), true, true, UCValueExpression.eBrowserType.File, "*");
 
@@ -187,6 +190,11 @@ namespace Ginger.Actions
             ChangeAuthResultDetailsComboBox();
         }
 
+        private void UnlockTypeComboBox_SelectionChanged(object sender,SelectionChangedEventArgs e)
+        {
+            SetControlsView();
+        }
+
         private void ChangeAuthResultDetailsComboBox()
         {
             switch (mAct.AuthResultSimulation)
@@ -232,6 +240,7 @@ namespace Ginger.Actions
             xFileTransferPnl.Visibility = Visibility.Collapsed;
             xSpecificPerformanceDataPnl.Visibility = Visibility.Collapsed;
             xDeviceRotationPnl.Visibility = Visibility.Collapsed;
+            xUnlockDevicePnl.Visibility = Visibility.Collapsed;
             xMultiTouchGrid.Visibility = Visibility.Collapsed;
 
             switch (mAct.MobileDeviceAction)
@@ -396,6 +405,18 @@ namespace Ginger.Actions
                     xInputTextBlock.Text = "";
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
+                case ActMobileDevice.eMobileDeviceAction.UnlockDevice:
+                    var selectedValue = xUnlockTypeComboBox.ComboBoxSelectedValue?.ToString();
+                    xInputLabelVE.Content = $"Enter Value";
+                    if (selectedValue != null && selectedValue.Equals("none", StringComparison.OrdinalIgnoreCase))
+                    {
+                        xInputTextBlock.Text = "";
+                    }
+                    xUnlockDevicePnl.Visibility = Visibility.Visible;
+                    xInputPnl.Visibility = Visibility.Visible;
+                    
+                    break;
+
             }
         }
 

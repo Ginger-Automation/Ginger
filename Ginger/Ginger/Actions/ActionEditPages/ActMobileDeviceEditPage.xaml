@@ -22,6 +22,10 @@
             <Actions:UCValueExpression x:Name="xAppPackageVE" HorizontalAlignment="Left" VerticalAlignment="Center" Width="330" Margin="-1,5,0,0"/>
             <TextBlock Style="{StaticResource $TextBlockStyle}" FontSize="10" TextWrapping="Wrap" Width="330" Text="Set as 'default' for pointing the initial app package, 'current' for pointing the current running app or specifiy the wanted application package to point on."/>
         </StackPanel>
+        <StackPanel x:Name="xUnlockDevicePnl" HorizontalAlignment="Left" Orientation="Horizontal" DockPanel.Dock="Top" Margin="5,10,0,0" Visibility="Collapsed">
+            <Label Style="{StaticResource $LabelStyle}" Content="Choose Unlock Type:"></Label>
+            <UserControlsLib1:UCComboBox x:Name="xUnlockTypeComboBox" VerticalAlignment="Top" Margin="0,-2,0,0" Width="241" />
+        </StackPanel>
         <StackPanel x:Name="xInputPnl"  HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="7,10,0,0" Visibility="Collapsed">
             <Label  x:Name="xInputLabelVE" Style="{StaticResource $LabelStyle}" Content="Input:"/> 
             <Actions:UCValueExpression x:Name="xInputVE" VerticalAlignment="Top" Width="330"/>
@@ -106,7 +110,6 @@
             <Label Style="{StaticResource $LabelStyle}" Content="Choose State: "/>
             <UserControlsLib1:UCComboBox x:Name="xDeviceRotateComboBox" VerticalAlignment="Top" Margin="0,-2,0,0" Width="241"/>
         </StackPanel>
-        
         <Ginger:ucGrid x:Name="xMultiTouchGrid" Title="Touch Operations to Perform" ShowTitle="Collapsed" Visibility="Collapsed" Margin="0,10,0,0"/>
         
     </DockPanel>

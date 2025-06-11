@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
+using GingerCore.Actions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -43,7 +44,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
 
         void PerformVolumeButtonPress(eVolumeOperation volumeOperation);
 
-        void PerformLockButtonPress(eLockOperation lockOperation);
+        void PerformLockButtonPress(eLockOperation lockOperation, ActMobileDevice act=null);
 
         Byte[] GetScreenshotImage();
 
