@@ -435,70 +435,8 @@ namespace Amdocs.Ginger.Common.Functionalities
 
         }
 
-/*
-        public bool ReplaceItemEnhanced( FoundItem FI )
-        {
-            try
-            {
-                string newValue = FI.FieldValue;
-                if (FI?.ItemObject == null || string.IsNullOrEmpty(FI.FieldName))
-                {
-                    return false;
-                }
 
-                PropertyInfo property = FI.ItemObject.GetType().GetProperty(FI.FieldName);
-                if (property == null || !property.CanWrite)
-                {
-                    return false;
-                }
-                Type propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-                object valueToSet = null;
-                bool result = false;
-
-                switch (Type.GetTypeCode(propertyType))
-                {
-                    case TypeCode.Boolean:
-                        result = bool.TryParse(newValue, out bool boolValue);
-                        valueToSet = boolValue;
-                        break;
-
-                    case TypeCode.String:
-                        valueToSet = newValue;
-                        result = true;
-                        break;
-
-                    default:
-                        if (propertyType.IsEnum)
-                        {
-                            result = Enum.TryParse(propertyType, newValue, out object enumValue);
-                            valueToSet = enumValue;
-                        }
-                        break;
-                }
-
-                if (result)
-                {
-                    property.SetValue(FI.ItemObject, valueToSet);
-                    FI.FieldValue = valueToSet?.ToString();
-
-                    if (FI.ItemObject is not null)
-                    {
-                        FI.ItemObject.DirtyStatus = Enums.eDirtyStatus.Modified;
-                    }
-
-                    return true;
-                }
-
-                return false;
-            }
-            catch (Exception ex)
-            {
-
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to replace value for property {FI.FieldName}", ex);
-                return false;
-            }
-        }*/
-
+     
         public bool ReplaceItemEnhanced(FoundItem foundItem)
         {
             if (foundItem?.ItemObject == null || string.IsNullOrWhiteSpace(foundItem.FieldName))
@@ -507,43 +445,35 @@ namespace Amdocs.Ginger.Common.Functionalities
             try
             {
                 var property = foundItem.ItemObject.GetType().GetProperty(foundItem.FieldName);
-                if (property == null || !property.CanWrite)
+                if (property is null || !property.CanWrite)
                     return false;
 
                 var targetType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                var input = foundItem.FieldValue;
                 object valueToSet = null;
                 bool isValid = false;
 
-                string input = foundItem.FieldValue;
-
                 if (targetType.IsEnum)
                 {
-                    isValid = Enum.TryParse(targetType, input, out valueToSet);
+                    isValid = Enum.TryParse(targetType, input, out var enumValue);
+                    valueToSet = enumValue;
                 }
                 else
                 {
-                    switch (Type.GetTypeCode(targetType))
+                    isValid = targetType switch
                     {
-                        case TypeCode.Boolean:
-                            isValid = bool.TryParse(input, out var boolVal);
-                            valueToSet = boolVal;
-                            break;
-
-                        case TypeCode.String:
-                            valueToSet = input;
-                            isValid = true;
-                            break;
-
-                    }
+                        Type t when t == typeof(bool) => bool.TryParse(input, out var boolVal) && Assign(out valueToSet, boolVal),
+                        Type t when t == typeof(string) => Assign(out valueToSet, input),
+                        _ => false
+                    };
                 }
 
-                if (!isValid) 
-                {
-                    return false; 
-                }
+                if (!isValid)
+                    return false;
 
                 property.SetValue(foundItem.ItemObject, valueToSet);
                 foundItem.FieldValue = valueToSet?.ToString();
+
 
                 if (foundItem.ItemObject is not null)
                 {
@@ -557,8 +487,13 @@ namespace Amdocs.Ginger.Common.Functionalities
                 Reporter.ToLog(eLogLevel.ERROR, $"Failed to replace value for property {foundItem.FieldName}", ex);
                 return false;
             }
-        }
 
+            static bool Assign<T>(out object target, T value)
+            {
+                target = value!;
+                return true;
+            }
+        }
 
 
 

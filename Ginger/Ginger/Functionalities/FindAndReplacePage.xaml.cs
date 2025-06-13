@@ -1771,17 +1771,6 @@ namespace Ginger.Functionalities
             }
         }
 
-        private void AddRepositoryItems<T>(Func<IEnumerable<T>> getItems) where T : RepositoryItemBase
-        {
-            foreach (var item in getItems())
-            {
-                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
-                    return;
-
-                mItemsToSearchIn.Add(new ItemToSearchIn(item, item, item, string.Empty, string.Empty));
-            }
-        }
-
         private void FindItems_item()
         {
             try
