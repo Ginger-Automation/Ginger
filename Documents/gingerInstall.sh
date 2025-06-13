@@ -23,7 +23,7 @@ fi
 
 
 mkdir $GingerInstallDirectory
-tar -xzf GingerRuntime.tar.gz -C $GingerInstallDirectory
+tar -xzf GingerRuntime_Linux.tar.gz -C $GingerInstallDirectory
 
 chmod 777 /opt/ginger/GingerRuntime
 
