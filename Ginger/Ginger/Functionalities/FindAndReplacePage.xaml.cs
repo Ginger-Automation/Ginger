@@ -26,6 +26,7 @@ using Ginger.Actions;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
+using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControls;
 using Ginger.Variables;
 using GingerCore;
@@ -37,6 +38,7 @@ using GingerCore.Variables;
 using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModels;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -75,19 +77,21 @@ namespace Ginger.Functionalities
         {
             SolutionPage,
             AutomatePage,
-            RunsetPage
+            RunsetPage,
+            FolderItems
         }
 
         public eContext mContext;
 
         public object ItemToSearchOn => mItemToSearchOn;
+        List<ITreeViewItem> mTreeViewChildItems;
 
-
-        public FindAndReplacePage(eContext context, object itemToSearchOn = null)
+        public FindAndReplacePage(eContext context, object itemToSearchOn = null, List<ITreeViewItem> childNodes = null)
         {
             InitializeComponent();
             mContext = context;
             mItemToSearchOn = itemToSearchOn;
+            mTreeViewChildItems = childNodes;
             SetFoundItemsGridView();
             Init();
 
@@ -128,7 +132,7 @@ namespace Ginger.Functionalities
             ReplaceAttributeComboBoxView,
             ReplaceAttributeTextBoxView
         }
-       
+
 
         List<ComboEnumItem> valueTypes;
         private void SetFoundItemsGridView()
@@ -265,7 +269,7 @@ namespace Ginger.Functionalities
 
         private void FieldValueComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-           
+
         }
 
         private void BulkUpdateValueForAll(object sender, RoutedEventArgs e)
@@ -489,6 +493,7 @@ namespace Ginger.Functionalities
             {
                 eContext.AutomatePage => string.Format("Find & Replace in '{0}' {1}", ((BusinessFlow)mItemToSearchOn).Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)),
                 eContext.RunsetPage => string.Format("Find in '{0}' {1}", WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet)),
+                eContext.FolderItems => string.Format("Find & Replace in Folder "),
                 _ => "Find & Replace",
             };
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this);
@@ -664,7 +669,21 @@ namespace Ginger.Functionalities
                             mItemsToSearchIn.Add(new ItemToSearchIn(bf, bf, WorkSpace.Instance.RunsetExecutor.RunSetConfig, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\" + bf.Name, string.Empty));
                         }
                     }
-
+                    break;
+                case eContext.FolderItems:
+                    foreach (ITreeViewItem node in mTreeViewChildItems)
+                    {
+                        if (node != null && node.NodeObject() is RepositoryItemBase)
+                        {
+                            RepositoryItemBase BF = (RepositoryItemBase)node.NodeObject();
+                            if (BF is BusinessFlow)
+                            {
+                                mItemsToSearchIn.Add(new ItemToSearchIn(BF, BF, BF, string.Empty, string.Empty));
+                            }
+                        }
+                    }
+                    break;
+                default:
                     break;
             }
         }
@@ -746,8 +765,35 @@ namespace Ginger.Functionalities
                             }
                         }
                     }
-
                     break;
+                case eContext.FolderItems:
+                    foreach (ITreeViewItem node in mTreeViewChildItems)
+                    {
+                        if (node?.NodeObject() is RepositoryItemBase repositoryItem)
+                        {
+                            if (repositoryItem is BusinessFlow businessFlow)
+                            {
+                                if (businessFlow == null)
+                                {
+                                    continue;
+                                }
+                                foreach (Activity activity in businessFlow.Activities)
+                                {
+                                    if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                                    {
+                                        return;
+                                    }
+
+                                    mItemsToSearchIn.Add(new ItemToSearchIn(activity, activity, businessFlow, businessFlow.Name, string.Empty));
+                                }
+                            }
+                        }
+                    }
+                    break;
+
+
+
+
             }
         }
 
@@ -858,6 +904,38 @@ namespace Ginger.Functionalities
                     }
 
                     break;
+                case eContext.FolderItems:
+                    foreach (ITreeViewItem node in mTreeViewChildItems)
+                    {
+                        if (node?.NodeObject() is RepositoryItemBase repositoryItem)
+                        {
+                            if (repositoryItem is BusinessFlow businessFlow)
+                            {
+                                if (businessFlow == null)
+                                {
+                                    continue;
+                                }
+                                foreach (Activity activity in businessFlow.Activities)
+                                {
+                                    string itemParent = businessFlow.Name + @"\" + activity.ActivityName;
+                                    foreach (Act action in activity.Acts)
+                                    {
+                                        if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                                        {
+                                            return;
+                                        }
+
+                                        if (mSubItemType == null || action.GetType() == mSubItemType)
+                                        {
+                                            mItemsToSearchIn.Add(new ItemToSearchIn(action, action, businessFlow, itemParent, string.Empty));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+
             }
         }
 
@@ -924,6 +1002,47 @@ namespace Ginger.Functionalities
                     }
 
                     break;
+                case eContext.FolderItems:
+                    foreach (ITreeViewItem node in mTreeViewChildItems)
+                    {
+                        if (node?.NodeObject() is RepositoryItemBase repositoryItem)
+                        {
+                            if (repositoryItem is BusinessFlow businessFlow)
+                            {
+                                if (businessFlow == null)
+                                {
+                                    continue;
+                                }
+
+                                foreach (VariableBase VB in businessFlow.Variables)
+                                {
+                                    if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                                    {
+                                        return;
+                                    }
+
+                                    if (mSubItemType == null || VB.GetType() == mSubItemType)
+                                    {
+                                        mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB, businessFlow, businessFlow.Name, string.Empty));
+                                    }
+                                }
+
+                                foreach (Activity activity in businessFlow.Activities)
+                                {
+                                    foreach (VariableBase VB in activity.Variables)
+                                    {
+                                        string ActivityVariablePath = $"{businessFlow.Name}\\{activity.ItemName}";
+                                        if (mSubItemType == null || VB.GetType() == mSubItemType)
+                                        {
+                                            mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB, activity, ActivityVariablePath, string.Empty));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+
             }
         }
 
@@ -1485,6 +1604,10 @@ namespace Ginger.Functionalities
                 xFoundItemsGrid.MouseDoubleClick += LineDoubleClicked;
                 xFoundItemsGrid.btnMarkAll.Visibility = Visibility.Collapsed;
                 xFoundItemsGrid.RowChangedEvent += RowChangedHandler;
+
+                xRow3.Height = new GridLength(0);
+                xRow4.Height = new GridLength(50);
+                xRow5.Height = new GridLength(40);
             }
             catch (Exception ex)
             {
@@ -1510,6 +1633,10 @@ namespace Ginger.Functionalities
                 xFoundItemsGrid.MouseDoubleClick -= LineDoubleClicked;
                 xFoundItemsGrid.btnMarkAll.Visibility = Visibility.Visible;
                 xFoundItemsGrid.RowChangedEvent -= RowChangedHandler;
+
+                xRow3.Height = new GridLength(0);
+                xRow4.Height = new GridLength(0);
+                xRow5.Height = new GridLength(0);
             }
             catch (Exception ex)
             {
@@ -1598,9 +1725,11 @@ namespace Ginger.Functionalities
                 mFoundItemsList.Clear();
                 xFoundItemsGrid.Visibility = Visibility.Visible;
                 xProcessingImage2.Visibility = Visibility.Visible;
+                xUpdateAttributeValueBtn.IsEnabled = false;
 
                 await Task.Run(() => FindItems_item());
                 MarkUnMarkAllActionsForFindandReplace(true);
+                xUpdateAttributeValueBtn.IsEnabled = true;
                 xProcessingImage2.Visibility = Visibility.Collapsed;
 
             }
@@ -1679,9 +1808,9 @@ namespace Ginger.Functionalities
             }
         }
 
-    
 
-     
+
+
 
 
         private void xAttributeNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1691,7 +1820,7 @@ namespace Ginger.Functionalities
                 mAttributeName = xAttributeNameComboBox.SelectedValue?.ToString();
                 xAttributeValueUpdatePnl.Visibility = Visibility.Visible;
                 if (string.IsNullOrEmpty(mAttributeName))
-                { 
+                {
                     return;
                 }
                 ClearUI();

@@ -21,10 +21,7 @@
             <DataTemplate x:Key="IsSelectedTemplate">
                 <CheckBox x:Name="IsSelected_FieldSelection" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                           IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
-            </DataTemplate>
-
-
-            
+            </DataTemplate>         
 
             <DataTemplate x:Key="xAttributeValueComboBoxTemplate">
                 <ComboBox x:Name="xRunSetComboBox" Grid.Column="1" Margin="20,10,0,0" Style="{StaticResource $FlatInputComboBoxStyle}" HorizontalAlignment="Stretch" SelectionChanged="FieldValueComboBox_SelectionChanged" Width="auto"/>
@@ -47,8 +44,8 @@
             <RowDefinition Height="40"/>
             <RowDefinition Height="40"/>
             <RowDefinition Name="xRow3" Height="0"/>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="40"/>
+            <RowDefinition Name="xRow4" Height="0"/>
+            <RowDefinition Name="xRow5" Height="0"/>
             <RowDefinition Height="400*"/>
         </Grid.RowDefinitions>
 

@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger;
+using Ginger.Functionalities;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.SourceControl;
 using GingerCore;
@@ -37,6 +38,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using static Ginger.ExecuterService.Contracts.V1.GingerParser.ParserApiRoutes;
 
 namespace GingerWPF.TreeViewItemsLib
 {
@@ -769,5 +771,23 @@ namespace GingerWPF.TreeViewItemsLib
             }
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
         }
+
+        FindAndReplacePage mfindAndReplacePageAutomate = null;
+
+
+        public override void UpdateItemAttributeValue()
+        {
+            List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
+            bool showConfirmation = true;
+            int itemsSavedCount = 0;
+
+
+            if (mfindAndReplacePageAutomate == null || mfindAndReplacePageAutomate.ItemToSearchOn != childNodes)
+            {
+                mfindAndReplacePageAutomate = new FindAndReplacePage(FindAndReplacePage.eContext.FolderItems, childNodes: childNodes);
+            }
+            mfindAndReplacePageAutomate.ShowAsWindow();
+        }
     }
 }
+
