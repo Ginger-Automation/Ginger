@@ -405,9 +405,11 @@ namespace Ginger.Functionalities
             xMainItemTypeComboBox.DisplayMemberPath = nameof(FindItemType.Name);
             xMainItemTypeComboBox.ItemsSource = mMainItemsTypeList;
 
-
-            mMainItemsTypeList.Add(new FindItemType { Name = eTermResKey.Environment.ToString(), Type = typeof(ProjEnvironment), GetItemsToSearchIn = GetEnvironmentToSearchIn });
-            mMainItemsTypeList.Add(new FindItemType { Name = eTermResKey.Agents.ToString(), Type = typeof(Agent), GetItemsToSearchIn = GetAgentToSearchIn });
+            if (mContext is eContext.SolutionPage)
+            {
+                mMainItemsTypeList.Add(new FindItemType { Name = eTermResKey.Environment.ToString(), Type = typeof(ProjEnvironment), GetItemsToSearchIn = GetEnvironmentToSearchIn });
+                mMainItemsTypeList.Add(new FindItemType { Name = eTermResKey.Agents.ToString(), Type = typeof(Agent), GetItemsToSearchIn = GetAgentToSearchIn });
+            }
             xMainItemListCB.SelectedValuePath = nameof(FindItemType.Type);
             xMainItemListCB.DisplayMemberPath = nameof(FindItemType.Name);
             xMainItemListCB.ItemsSource = mMainItemsTypeList;
