@@ -61,6 +61,7 @@ using OpenQA.Selenium.Appium.Interactions;
 using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Support.UI;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -1968,26 +1969,26 @@ namespace Amdocs.Ginger.CoreNET
                             ((AndroidDriver)Driver).Lock();
                             break;
                         case eLockOperation.UnLock:
-                            switch (act.UnLockTypes)
+                            switch (act.UnLockType)
                             {
-                                case ActMobileDevice.eUnlockTypes.none:
+                                case ActMobileDevice.eUnlockType.none:
                                     {
                                         if (((AndroidDriver)Driver).IsLocked())
                                         {
-                                            ((AndroidDriver)Driver).Unlock("none", "none");
+                                            ((AndroidDriver)Driver).Unlock("none", "none", "uiautomator",5000);
                                         }
-                                        System.Threading.Thread.Sleep(200);
+                                        Task.Delay(200);
                                         SwipeScreen(eSwipeSide.Up, 1, TimeSpan.FromMilliseconds(200));
                                         break;
                                     }
-                                case ActMobileDevice.eUnlockTypes.pin:
+                                case ActMobileDevice.eUnlockType.pin:
                                     {
                                         try
                                         {
                                             if (((AndroidDriver)Driver).IsLocked())
                                             {
                                                 Reporter.ToLog(eLogLevel.DEBUG, "Device is locked. Unlocking with pin...");
-                                                ((AndroidDriver)Driver).Unlock(act.ActionInput.ValueForDriver, nameof(ActMobileDevice.eUnlockTypes.pin));
+                                                ((AndroidDriver)Driver).Unlock(act.ActionInput.ValueForDriver, nameof(ActMobileDevice.eUnlockType.pin), "uiautomator", 5000);
                                             }
                                         }
                                         catch (Exception ex)
@@ -1997,7 +1998,7 @@ namespace Amdocs.Ginger.CoreNET
                                         }
                                         break;
                                     }
-                                case ActMobileDevice.eUnlockTypes.pattern:
+                                case ActMobileDevice.eUnlockType.pattern:
                                     {
                                         try
                                         {
@@ -2005,7 +2006,7 @@ namespace Amdocs.Ginger.CoreNET
                                             {
                                                 Reporter.ToLog(eLogLevel.DEBUG, "Device is locked. Unlocking with pattern...");
                                                 // Unlock manually using ADB or custom logic
-                                                ((AndroidDriver)Driver).Unlock(act.ActionInput.ValueForDriver, nameof(ActMobileDevice.eUnlockTypes.pattern));
+                                                ((AndroidDriver)Driver).Unlock(act.ActionInput.ValueForDriver, nameof(ActMobileDevice.eUnlockType.pattern), "uiautomator", 5000);
 
                                             }
                                         }
@@ -2016,7 +2017,7 @@ namespace Amdocs.Ginger.CoreNET
                                         }
                                         break;
                                     }
-                                case ActMobileDevice.eUnlockTypes.password:
+                                case ActMobileDevice.eUnlockType.password:
                                     {
                                         try
                                         {
@@ -2024,7 +2025,7 @@ namespace Amdocs.Ginger.CoreNET
                                             {
                                                 Reporter.ToLog(eLogLevel.DEBUG, "Device is locked. Unlocking with password...");
                                                 // Unlock manually using ADB or custom logic
-                                                ((AndroidDriver)Driver).Unlock(act.ActionInput.ValueForDriver, nameof(ActMobileDevice.eUnlockTypes.password));
+                                                ((AndroidDriver)Driver).Unlock(act.ActionInput.ValueForDriver, nameof(ActMobileDevice.eUnlockType.password), "uiautomator", 5000);
                                             }
                                         }
                                         catch (Exception ex)
@@ -2047,18 +2048,20 @@ namespace Amdocs.Ginger.CoreNET
                         case eLockOperation.UnLock:
                             try
                             {
-                                switch (act.UnLockTypes)
+                                switch (act.UnLockType)
                                 {
-                                    case ActMobileDevice.eUnlockTypes.none:
+                                    case ActMobileDevice.eUnlockType.none:
                                         {
                                             ((IOSDriver)Driver).Unlock();
                                         }
                                         break;
-                                    case eUnlockTypes.pin:
-                                    case eUnlockTypes.password:
+                                    case eUnlockType.pin:
+                                    case eUnlockType.password:
                                         System.Threading.Thread.Sleep(200);
                                         Reporter.ToLog(eLogLevel.DEBUG, "Device is locked. Unlocking with pin/password...");
                                         SwipeScreen(eSwipeSide.Up, 1, TimeSpan.FromMilliseconds(200));
+                                        new WebDriverWait(Driver, TimeSpan.FromSeconds(5))
+                                            .Until(_ => Driver.IsKeyboardShown());
                                         TypeUsingIOSkeyboard(act.ActionInput.ValueForDriver);
                                         break;
                                     default:

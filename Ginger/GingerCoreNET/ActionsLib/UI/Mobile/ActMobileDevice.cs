@@ -102,17 +102,17 @@ namespace GingerCore.Actions
             }
         }
 
-        public eUnlockTypes UnLockTypes
+        public eUnlockType UnLockType
 
         {
             get
             {
-                return GetOrCreateInputParam<eUnlockTypes>(nameof(UnLockTypes), eUnlockTypes.none);
+                return GetOrCreateInputParam<eUnlockType>(nameof(UnLockType), eUnlockType.none);
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(UnLockTypes), value.ToString());
-                OnPropertyChanged(nameof(UnLockTypes));
+                AddOrUpdateInputParamValue(nameof(UnLockType), value.ToString());
+                OnPropertyChanged(nameof(UnLockType));
             }
         }
 
@@ -381,7 +381,7 @@ namespace GingerCore.Actions
             Diskinfo,
         }
 
-        public enum eUnlockTypes
+        public enum eUnlockType
         {
             [EnumValueDescription("PIN")]
             pin,

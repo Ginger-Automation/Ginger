@@ -25,6 +25,7 @@ using Ginger.Agents;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.TextEditor;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Drivers;
 using System;
 using System.Collections.Generic;
@@ -1036,12 +1037,12 @@ namespace Ginger.Drivers.DriversWindows
             {
                 if (!lockDone)
                 {
-                    mDriver.PerformLockButtonPress(eLockOperation.Lock);
+                    mDriver.PerformLockButtonPress(eLockOperation.Lock,null);
                     lockDone = true;
                 }
                 else
                 {
-                    mDriver.PerformLockButtonPress(eLockOperation.UnLock);
+                    mDriver.PerformLockButtonPress(eLockOperation.UnLock,null);
                     lockDone = false;
                 }
             }

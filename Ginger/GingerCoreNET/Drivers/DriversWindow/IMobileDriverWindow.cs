@@ -44,7 +44,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
 
         void PerformVolumeButtonPress(eVolumeOperation volumeOperation);
 
-        void PerformLockButtonPress(eLockOperation lockOperation, ActMobileDevice act=null);
+        void PerformLockButtonPress(eLockOperation lockOperation, ActMobileDevice act);
 
         Byte[] GetScreenshotImage();
 

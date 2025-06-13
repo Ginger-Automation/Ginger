@@ -80,11 +80,11 @@ namespace Ginger.Actions
 
             xDataTypeComboBox.Init(mAct, nameof(mAct.PerformanceTypes), typeof(ActMobileDevice.ePerformanceTypes), ActionNameComboBox_SelectionChanged);
 
-            xUnlockTypeComboBox.Init(mAct, nameof(mAct.UnLockTypes), typeof(ActMobileDevice.eUnlockTypes), UnlockTypeComboBox_SelectionChanged);
+            xUnlockTypeComboBox.Init(mAct, nameof(mAct.UnLockType), typeof(ActMobileDevice.eUnlockType), UnlockTypeComboBox_SelectionChanged);
 
             xFilePathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.FilePathInput, nameof(ActInputValue.Value), true, true, UCValueExpression.eBrowserType.File, "*");
 
-            xFolderPathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.FolderPathInput, nameof(ActMobileDevice.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");
+            xFolderPathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.FolderPathInput, nameof(ActInputValue.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");
 
             xAppPackageVE.Init(Context.GetAsContext(mAct.Context), mAct.ActionAppPackage, nameof(ActInputValue.Value));
 
