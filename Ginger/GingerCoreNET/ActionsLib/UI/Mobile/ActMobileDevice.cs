@@ -389,7 +389,7 @@ namespace GingerCore.Actions
             password,
             [EnumValueDescription("Pattern")]
             pattern,
-            [EnumValueDescription("none")]
+            [EnumValueDescription("None")]
             none
         }
 
