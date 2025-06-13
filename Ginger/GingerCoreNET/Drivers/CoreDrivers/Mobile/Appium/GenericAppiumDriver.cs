@@ -2066,6 +2066,7 @@ namespace Amdocs.Ginger.CoreNET
                                         break;
                                     default:
                                         Reporter.ToLog(eLogLevel.ERROR, "iOS devices cannot be unlocked by Appium – run tests with the device already unlocked.");
+                                        act.Error = "Unlock attempt failed: ";
                                         break;
                                 }
                             }
