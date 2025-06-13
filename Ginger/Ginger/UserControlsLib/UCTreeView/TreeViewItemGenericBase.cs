@@ -331,8 +331,8 @@ namespace GingerWPF.TreeViewItemsLib
             }
             if (allowAttributeUpdate)
             {
-                TreeViewUtils.AddMenuItem(CM, "Update Attribute value", UpdateItemAttributeValue, null, "@Edit_16x16.png");
-                mTreeView.AddToolbarTool("@Edit_16x16.png", "Update Attribute value", UpdateItemAttributeValue);
+                TreeViewUtils.AddMenuItem(CM, "Find And Replace", UpdateItemAttributeValue, null, eImageType.Search);
+                mTreeView.AddToolbarTool(eImageType.Search, "Update Attribute value", UpdateItemAttributeValue);
             }
         }
         public abstract void UpdateItemAttributeValue();

@@ -52,7 +52,7 @@
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top"  Grid.Row="0">
             <Label x:Name="Label" Margin="0,5,0,0" Style="{StaticResource @InputFieldLabelStyle}">Select Operation:</Label>
             <RadioButton x:Name="xFindReplaceBtn"   Content="Find And Replace" GroupName="Options" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Checked="xFindReplaceBtn_Checked"/>
-            <RadioButton x:Name="xAttributeValueBtn"  Content="Change Attribute Value" GroupName="Options" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Checked="xAttributeValueBtn_Checked"/>
+            <RadioButton x:Name="xAttributeValueBtn"  Content="Replace Attribute" GroupName="Options" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Checked="xAttributeValueBtn_Checked"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Grid.Row="1" x:Name="xItemMainComboPanel" >
@@ -113,7 +113,6 @@
 
         <StackPanel HorizontalAlignment="Right" Visibility="Collapsed" Orientation="Horizontal" Margin="0,0,20,0" Grid.Row="3" x:Name="xAttributeValueUpdatePnl">
             <UserControls:ImageMakerControl x:Name="xProcessingImage2" Grid.Column="0" Grid.Row="3" ImageType="Processing" Height="30" Width="30"  Visibility="Collapsed"/>
-            <UserControls:ucButton x:Name="xUpdateAttributeValueBtn" ButtonType="RoundTextAndImageButton" ButtonText="Update" ButtonImageType="Refresh" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xUpdateAttributeValueBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Visibility="Collapsed"/>
         </StackPanel>
 
 

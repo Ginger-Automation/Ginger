@@ -1563,7 +1563,7 @@ namespace Ginger.Actions
             ObservableList<Button> winButtons = [];
             Button okBtn = new Button
             {
-                Content = "Ok"
+                Content = "Ok",
             };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: okBtn_Click);
 

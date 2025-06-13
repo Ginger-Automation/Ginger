@@ -134,7 +134,7 @@ namespace Amdocs.Ginger.Common.Functionalities
                             FoundField = attributeName,
                             FieldType = memberType,
                             OptionalValuesToRepalce = [],
-                            IsModified = false,
+                            Status = FoundItem.eStatus.Pending,
                         });
                     }
 
@@ -319,8 +319,10 @@ namespace Amdocs.Ginger.Common.Functionalities
                                             OptionalValuseToReplaceList.Add("True");
                                             OptionalValuseToReplaceList.Add("False");
                                         }
+                                        var item1 = new FoundItem() { OriginObject = OriginItemObject, ItemObject = item, ParentItemToSave = parentItemToSave, FieldName = mi.Name, FieldValue = stringValue, ItemParent = itemParent, FoundField = finalFoundFieldPath, OptionalValuesToRepalce = OptionalValuseToReplaceList };
 
-                                        foundItemsList.Add(new FoundItem() { OriginObject = OriginItemObject, ItemObject = item, ParentItemToSave = parentItemToSave, FieldName = mi.Name, FieldValue = stringValue, ItemParent = itemParent, FoundField = finalFoundFieldPath, OptionalValuesToRepalce = OptionalValuseToReplaceList });
+                                        item1.Status=FoundItem.eStatus.Pending;
+                                        foundItemsList.Add(item1);
                                     }
 
                                     else

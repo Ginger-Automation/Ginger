@@ -33,6 +33,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Environments;
+using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerCoreNET.Application_Models;
@@ -47,6 +48,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using static Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib.BulkUpdateSharedRepositoryActivitiesPage;
@@ -94,6 +96,7 @@ namespace Ginger.Functionalities
             mTreeViewChildItems = childNodes;
             SetFoundItemsGridView();
             Init();
+            PageButton();
 
 
 
@@ -191,7 +194,6 @@ namespace Ginger.Functionalities
                 GridViewDef mFineView = new GridViewDef(eGridView.FindView.ToString())
                 {
                     GridColsView = [
-                    new GridColView() { Field = nameof(FoundItem.IsSelected), Visible = false },
                         new GridColView() { Field = nameof(FoundItem.Status), Visible = false },
                         new GridColView() { Field = "FieldValueCheckBox", Visible = false },
                         new GridColView() { Field = "FieldValueComboBox", Visible = false },
@@ -205,7 +207,6 @@ namespace Ginger.Functionalities
                 GridViewDef ReplaceAttributeValueView = new GridViewDef(nameof(eGridView.ReplaceAttributeValueView))
                 {
                     GridColsView = [
-                       new GridColView() { Field = nameof(FoundItem.ItemParent), Visible = false },
                        new GridColView() { Field = "View Details", Visible = false },
                        new GridColView() { Field = "FieldValueCheckBox", Visible = false },
                        new GridColView() { Field = "FieldValueComboBox", Visible = false },
@@ -216,7 +217,6 @@ namespace Ginger.Functionalities
                 GridViewDef ReplaceAttributeTextBoxView = new GridViewDef(eGridView.ReplaceAttributeTextBoxView.ToString())
                 {
                     GridColsView = [
-                       new GridColView() { Field = nameof(FoundItem.ItemParent), Visible = false },
                        new GridColView() { Field = "View Details", Visible = false },
                        new GridColView() { Field = nameof(FoundItem.FieldValue),Visible=false },
                        new GridColView() { Field = "FieldValueCheckBox", Visible = false },
@@ -229,7 +229,6 @@ namespace Ginger.Functionalities
                 GridViewDef ReplaceAttributeCheckBoxView = new GridViewDef(eGridView.ReplaceAttributeCheckBoxView.ToString())
                 {
                     GridColsView = [
-                       new GridColView() { Field = nameof(FoundItem.ItemParent), Visible = false },
                        new GridColView() { Field = "View Details", Visible = false },
                        new GridColView() { Field = nameof(FoundItem.FieldValue),Visible=false },
                        new GridColView() { Field = "FieldValueTextBox", Visible = false },
@@ -241,7 +240,6 @@ namespace Ginger.Functionalities
                 GridViewDef ReplaceAttributeComboBoxView = new GridViewDef(eGridView.ReplaceAttributeComboBoxView.ToString())
                 {
                     GridColsView = [
-                       new GridColView() { Field = nameof(FoundItem.ItemParent), Visible = false },
                        new GridColView() { Field = "View Details", Visible = false },
                        new GridColView() { Field = nameof(FoundItem.FieldValue),Visible=false },
                        new GridColView() { Field = "FieldValueCheckBox", Visible = false },
@@ -485,10 +483,29 @@ namespace Ginger.Functionalities
             }
         }
 
+        ObservableList<Button> winButtons = [];
+
+        Button searchBtn = new Button
+        {
+            Content = "Replace Selected"
+        };
+        Button closeBtn = new Button
+        {
+            Content = "Close"
+        };
+        private void PageButton()
+        {
+            searchBtn.Click += xUpdateAttributeValueBtn_Click;
+            winButtons.Add(searchBtn);
+            closeBtn.Click += CloseBtn_Click;
+            winButtons.Add(closeBtn);
+        }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
         {
             xFindReplaceBtn.IsChecked = true;
+
+
             var title = mContext switch
             {
                 eContext.AutomatePage => string.Format("Find & Replace in '{0}' {1}", ((BusinessFlow)mItemToSearchOn).Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)),
@@ -496,7 +513,12 @@ namespace Ginger.Functionalities
                 eContext.FolderItems => string.Format("Find & Replace in Folder "),
                 _ => "Find & Replace",
             };
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, windowBtnsList: winButtons);
+        }
+
+        private void CloseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            _pageGenericWin.Close();
         }
 
         private void ReplaceButtonClicked(object sender, RoutedEventArgs e)
@@ -554,11 +576,11 @@ namespace Ginger.Functionalities
                 {
                     if (mFindAndReplaceUtils.ReplaceItem(mSearchConfig, mFindWhat, foundItem, newValue))
                     {
-                        foundItem.Status = FoundItem.eStatus.Replaced;
+                        foundItem.Status = FoundItem.eStatus.Updated;
                     }
                     else
                     {
-                        foundItem.Status = FoundItem.eStatus.Replaced;
+                        foundItem.Status = FoundItem.eStatus.Failed;
                     }
 
                 }
@@ -1484,7 +1506,7 @@ namespace Ginger.Functionalities
             try
             {
                 EnableDisableButtons(false);
-                List<FoundItem> FIList = mFoundItemsList.Where(x => x.IsSelected == true && (x.Status == FoundItem.eStatus.Replaced || x.Status == FoundItem.eStatus.Failed)).ToList();
+                List<FoundItem> FIList = mFoundItemsList.Where(x => x.IsSelected == true && (x.Status == FoundItem.eStatus.Updated || x.Status == FoundItem.eStatus.Failed)).ToList();
 
                 await Task.Run(() => Save(FIList));
             }
@@ -1605,6 +1627,8 @@ namespace Ginger.Functionalities
                 xFoundItemsGrid.btnMarkAll.Visibility = Visibility.Collapsed;
                 xFoundItemsGrid.RowChangedEvent += RowChangedHandler;
 
+                searchBtn.Visibility = Visibility.Collapsed;
+
                 xRow3.Height = new GridLength(0);
                 xRow4.Height = new GridLength(50);
                 xRow5.Height = new GridLength(40);
@@ -1633,6 +1657,8 @@ namespace Ginger.Functionalities
                 xFoundItemsGrid.MouseDoubleClick -= LineDoubleClicked;
                 xFoundItemsGrid.btnMarkAll.Visibility = Visibility.Visible;
                 xFoundItemsGrid.RowChangedEvent -= RowChangedHandler;
+
+                searchBtn.Visibility = Visibility.Visible;
 
                 xRow3.Height = new GridLength(0);
                 xRow4.Height = new GridLength(0);
@@ -1674,7 +1700,7 @@ namespace Ginger.Functionalities
         {
             try
             {
-                xUpdateAttributeValueBtn.Visibility = Visibility.Visible;
+                searchBtn.Visibility = Visibility.Visible;
 
                 var searchItem = mItemsToSearchIn.FirstOrDefault();
                 if (searchItem == null)
@@ -1725,11 +1751,11 @@ namespace Ginger.Functionalities
                 mFoundItemsList.Clear();
                 xFoundItemsGrid.Visibility = Visibility.Visible;
                 xProcessingImage2.Visibility = Visibility.Visible;
-                xUpdateAttributeValueBtn.IsEnabled = false;
+                searchBtn.IsEnabled = false;
 
                 await Task.Run(() => FindItems_item());
                 MarkUnMarkAllActionsForFindandReplace(true);
-                xUpdateAttributeValueBtn.IsEnabled = true;
+                searchBtn.IsEnabled = true;
                 xProcessingImage2.Visibility = Visibility.Collapsed;
 
             }
@@ -1786,15 +1812,15 @@ namespace Ginger.Functionalities
         {
             try
             {
-                IEnumerable<FoundItem> ModifiedAndSelectedItemList = mFoundItemsList.Where(item => item.IsModified && item.IsSelected);
+                IEnumerable<FoundItem> ModifiedAndSelectedItemList = mFoundItemsList.Where(item => item.Status == FoundItem.eStatus.Modified && item.IsSelected);
                 foreach (FoundItem foundItem in ModifiedAndSelectedItemList)
                 {
                     bool success = mFindAndReplaceUtils.ReplaceItemEnhanced(foundItem);
 
                     if (success)
                     {
-                        foundItem.Status = FoundItem.eStatus.Replaced;
-                        foundItem.IsModified = false;
+                        foundItem.Status = FoundItem.eStatus.Updated;
+                        foundItem.IsModified = FoundItem.eStatus.Pending;
                     }
                     else
                     {

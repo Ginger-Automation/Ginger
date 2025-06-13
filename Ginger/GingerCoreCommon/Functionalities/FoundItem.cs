@@ -31,13 +31,52 @@ namespace Amdocs.Ginger.Common.Functionalities
         {
             [EnumValueDescription("Pending Replace")]
             Pending,
-            Replaced,
+            Updated,
             Failed,
-            Saved
+            Saved,
+            Modified
         }
 
         private eStatus mStatus;
-        public eStatus Status { get { return mStatus; } set { mStatus = value; OnPropertyChanged(nameof(Status)); } }
+        public eStatus Status { 
+            get { return mStatus; } 
+            set { mStatus = value; OnPropertyChanged(nameof(Status)); } }
+
+
+        public string FieldName { get; set; }
+
+
+        private string mFieldValue;
+        public string FieldValue
+        {
+            get
+            {
+                return mFieldValue;
+            }
+            set
+            {
+                mFieldValue = value;
+                IsModified = eStatus.Modified;
+                OnPropertyChanged(nameof(FieldValue));
+            }
+        }
+
+        private eStatus _isModified;
+        public eStatus IsModified
+        {
+            get => _isModified;
+            set
+            {
+                _isModified = value;
+
+                if (IsModified == eStatus.Modified)
+                {
+                    Status= eStatus.Modified;
+                }
+                OnPropertyChanged(nameof(IsModified));
+            }
+        }
+
 
         private bool mIsSelected = false;
         // [IsSerializedForLocalRepository]
@@ -53,16 +92,7 @@ namespace Amdocs.Ginger.Common.Functionalities
                 handler(this, new PropertyChangedEventArgs(name));
             }
         }
-        private bool _isModified;
-        public bool IsModified
-        {
-            get => _isModified;
-            set
-            {
-                _isModified = value;
-                OnPropertyChanged(nameof(IsModified));
-            }
-        }
+     
         public RepositoryItemBase OriginObject { get; set; }
 
         public string OriginObjectType
@@ -141,23 +171,7 @@ namespace Amdocs.Ginger.Common.Functionalities
 
         }
 
-        public string FieldName { get; set; }
-
-
-        private string mFieldValue;
-        public string FieldValue
-        {
-            get
-            {
-                return mFieldValue;
-            }
-            set
-            {
-                mFieldValue = value;
-                IsModified = true;
-                OnPropertyChanged(nameof(FieldValue));
-            }
-        }
+    
         public static List<string> FieldValueOption { get; set; }
 
 
