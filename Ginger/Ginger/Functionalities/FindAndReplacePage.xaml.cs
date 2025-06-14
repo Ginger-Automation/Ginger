@@ -263,7 +263,11 @@ namespace Ginger.Functionalities
                     .Cast<FoundItem>();
 
                 FoundItem highlightedItem = (FoundItem)xFoundItemsGrid.CurrentItem;
-
+                if (highlightedItem == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR,"No selected row is found.");
+                    return;
+                }
                 foreach (FoundItem item in visibleItems)
                 {
                     if (item.IsSelected)
@@ -528,7 +532,7 @@ namespace Ginger.Functionalities
             {
                 EnableDisableButtons(false);
 
-                List<FoundItem> FIList = mFoundItemsList.Where(x => x.IsSelected == true && (x.Status == FoundItem.eStatus.Pending || x.Status == FoundItem.eStatus.Failed)).ToList();
+                List<FoundItem> FIList = mFoundItemsList.Where(x => x.IsSelected && (x.Status == FoundItem.eStatus.Pending || x.Status == FoundItem.eStatus.Failed)).ToList();
                 if (FIList.Count == 0)
                 {
                     Reporter.ToUser(eUserMsgKey.FindAndReplaceNoItemsToRepalce);
@@ -1484,7 +1488,7 @@ namespace Ginger.Functionalities
             try
             {
                 EnableDisableButtons(false);
-                List<FoundItem> FIList = mFoundItemsList.Where(x => x.IsSelected == true && (x.Status == FoundItem.eStatus.Updated || x.Status == FoundItem.eStatus.Failed)).ToList();
+                List<FoundItem> FIList = mFoundItemsList.Where(x => x.IsSelected && (x.Status == FoundItem.eStatus.Updated || x.Status == FoundItem.eStatus.Failed)).ToList();
 
                 await Task.Run(() => Save(FIList));
             }
@@ -1720,7 +1724,7 @@ namespace Ginger.Functionalities
             }
         }
 
-        private async void FindItemsAsync_item()
+        private async Task FindItemsAsync_item()
         {
             mFindAndReplaceUtils.ProcessingState = FindAndReplaceUtils.eProcessingState.Running;
 
