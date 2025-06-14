@@ -50,6 +50,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Forms.Design;
 using System.Windows.Input;
 using static Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib.BulkUpdateSharedRepositoryActivitiesPage;
 
@@ -97,9 +98,6 @@ namespace Ginger.Functionalities
             SetFoundItemsGridView();
             Init();
             PageButton();
-
-
-
         }
 
         private void MFindAndReplaceUtils_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -136,8 +134,6 @@ namespace Ginger.Functionalities
             ReplaceAttributeTextBoxView
         }
 
-
-        List<ComboEnumItem> valueTypes;
         private void SetFoundItemsGridView()
         {
             try
@@ -157,20 +153,7 @@ namespace Ginger.Functionalities
 
                 new GridColView() { Field = "FieldValueCheckBox", Header = "Field Value", WidthWeight = 10, HorizontalAlignment = System.Windows.HorizontalAlignment.Left, Visible = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["xAttributeValueCheckBoxTemplate"] },
 
-
-                  /*  new GridColView() { Field = "FieldValueComboBox", Header = "Field Value", WidthWeight = 15, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, Visible = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["xAttributeValueComboBoxTemplate"] , CellValuesList = valueTypes },
-*//*
-                      new GridColView()
-                    {
-                        Header ="Field Value" ,
-                        Field = "FieldValueComboBox",
-                        CellTemplate = (DataTemplate)this.FindAndReplace.Resources["xAttributeValueComboBoxTemplate"],
-                        StyleType = GridColView.eGridColStyleType.Template,
-                        WidthWeight = 20,
-                     
-                    },*/
-
-                new GridColView() { Field = "FieldValueComboBox", Header ="Field Value", WidthWeight = 20, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(FoundItem.FieldValueOption), nameof(FoundItem.FieldValue), true,comboSelectionChangedHandler:FieldValueComboBox_SelectionChanged) },
+                new GridColView() { Field = "FieldValueComboBox", Header ="Field Value", WidthWeight = 20, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(FoundItem.FieldValueOption), nameof(FoundItem.FieldValue), true) },
 
                 new GridColView() { Field = "FieldValueTextBox", Header = "Field Value", WidthWeight = 15, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, Visible = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["xAttributeValueTextBoxTemplate"] },
 
@@ -265,10 +248,7 @@ namespace Ginger.Functionalities
             }
         }
 
-        private void FieldValueComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
+    
 
         private void BulkUpdateValueForAll(object sender, RoutedEventArgs e)
         {
@@ -503,7 +483,7 @@ namespace Ginger.Functionalities
             winButtons.Add(closeBtn);
         }
 
-        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
+        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free, string folderName=null)
         {
             xFindReplaceBtn.IsChecked = true;
 
@@ -512,7 +492,7 @@ namespace Ginger.Functionalities
             {
                 eContext.AutomatePage => string.Format("Find & Replace in '{0}' {1}", ((BusinessFlow)mItemToSearchOn).Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)),
                 eContext.RunsetPage => string.Format("Find in '{0}' {1}", WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet)),
-                eContext.FolderItems => string.Format("Find & Replace in Folder "),
+                eContext.FolderItems => string.Format($"Find & Replace Folder: {folderName}"),
                 _ => "Find & Replace",
             };
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, windowBtnsList: winButtons);
@@ -673,9 +653,7 @@ namespace Ginger.Functionalities
         {
             switch (mContext)
             {
-                case eContext.SolutionPage:/*
-                    RepositoryFolder rr = new Amdocs.Ginger.Repository.RepositoryFolder();
-                    var tt = rr.GetFolderRepositoryItems<BusinessFlow>();*/
+                case eContext.SolutionPage:
                     foreach (BusinessFlow BF in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
                     {
                         mItemsToSearchIn.Add(new ItemToSearchIn(BF, BF, BF, string.Empty, string.Empty));
@@ -706,8 +684,6 @@ namespace Ginger.Functionalities
                             }
                         }
                     }
-                    break;
-                default:
                     break;
             }
         }

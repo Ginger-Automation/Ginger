@@ -1556,48 +1556,7 @@ namespace GingerCore
                 ImageFormat.Jpeg => System.Drawing.Imaging.ImageFormat.Jpeg,
                 _ => throw new Exception($"Unknown ImageFormat '{imageFormat}'"),
             };
-        }
-
-
-        public static TEnum? GetEnumFromDescription<TEnum>(string description) where TEnum : struct, Enum
-        {
-            foreach (var field in typeof(TEnum).GetFields())
-            {
-                var attribute = field.GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false)
-                                     .FirstOrDefault() as EnumValueDescriptionAttribute;
-
-                if (attribute != null && attribute.ValueDescription == description)
-                {
-                    if (Enum.TryParse(field.Name, out TEnum result))
-                        return result;
-                }
-            }
-
-            return null;
-        }
-
-        public static void PopulateComboBoxWithEnumDescriptions(ComboBox comboBox, Type enumType)
-        {
-            if (!enumType.IsEnum) throw new ArgumentException("Provided type must be an enum.");
-
-            comboBox.Items.Clear();
-
-            foreach (Enum value in Enum.GetValues(enumType))
-            {
-                string description = GetEnumDescription(value);
-                comboBox.Items.Add(description);
-            }
-        }
-
-        private static string GetEnumDescription(Enum value)
-        {
-            var field = value.GetType().GetField(value.ToString());
-            var attribute = field?.GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false)
-                                 .FirstOrDefault() as EnumValueDescriptionAttribute;
-
-            return attribute?.ValueDescription ?? value.ToString();
-        }
-
+        }       
     }
 }
 

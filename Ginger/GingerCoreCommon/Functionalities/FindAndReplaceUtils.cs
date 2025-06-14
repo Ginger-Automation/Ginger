@@ -439,14 +439,15 @@ namespace Amdocs.Ginger.Common.Functionalities
      
         public bool ReplaceItemEnhanced(FoundItem foundItem)
         {
-            if (foundItem?.ItemObject == null || string.IsNullOrWhiteSpace(foundItem.FieldName))
-                return false;
+            if (foundItem?.ItemObject == null || string.IsNullOrWhiteSpace(foundItem.FieldName)) {  return false; } 
 
             try
             {
                 var property = foundItem.ItemObject.GetType().GetProperty(foundItem.FieldName);
                 if (property is null || !property.CanWrite)
+                {
                     return false;
+                }
 
                 var targetType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
                 var input = foundItem.FieldValue;
@@ -468,8 +469,7 @@ namespace Amdocs.Ginger.Common.Functionalities
                     };
                 }
 
-                if (!isValid)
-                    return false;
+                if (!isValid) {  return false; }    
 
                 property.SetValue(foundItem.ItemObject, valueToSet);
                 foundItem.FieldValue = valueToSet?.ToString();

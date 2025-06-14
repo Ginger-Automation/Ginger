@@ -1211,13 +1211,10 @@ namespace Ginger
             SolutionFindAndReplace();
         }
 
-        FindAndReplacePage mfindAndReplacePageSolution = null;
+
         private void SolutionFindAndReplace()
         {
-            if (mfindAndReplacePageSolution == null)
-            {
-                mfindAndReplacePageSolution = new FindAndReplacePage(FindAndReplacePage.eContext.SolutionPage);
-            }
+            FindAndReplacePage mfindAndReplacePageSolution = new FindAndReplacePage(FindAndReplacePage.eContext.SolutionPage);            
             mfindAndReplacePageSolution.ShowAsWindow();
         }
 

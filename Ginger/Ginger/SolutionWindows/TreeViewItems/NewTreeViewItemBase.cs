@@ -38,6 +38,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms.Design;
 using static Ginger.ExecuterService.Contracts.V1.GingerParser.ParserApiRoutes;
 
 namespace GingerWPF.TreeViewItemsLib
@@ -772,22 +773,17 @@ namespace GingerWPF.TreeViewItemsLib
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
         }
 
-        FindAndReplacePage mfindAndReplacePageAutomate = null;
-
-
         public override void UpdateItemAttributeValue()
         {
             List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
+
             bool showConfirmation = true;
             int itemsSavedCount = 0;
-
-
-            if (mfindAndReplacePageAutomate == null || mfindAndReplacePageAutomate.ItemToSearchOn != childNodes)
-            {
-                mfindAndReplacePageAutomate = new FindAndReplacePage(FindAndReplacePage.eContext.FolderItems, childNodes: childNodes);
-            }
-            mfindAndReplacePageAutomate.ShowAsWindow();
+            FindAndReplacePage mfindAndReplacePageAutomate = new FindAndReplacePage(FindAndReplacePage.eContext.FolderItems, childNodes: childNodes);
+            
+            mfindAndReplacePageAutomate.ShowAsWindow(folderName: mTreeView.Tree.GetSelectedTreeNodeName());
         }
     }
 }
-
+ 
+  

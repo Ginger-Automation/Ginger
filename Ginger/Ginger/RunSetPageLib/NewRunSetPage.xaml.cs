@@ -247,7 +247,7 @@ namespace Ginger.Run
                 }
             }
         }
-        
+
         private void LoadRunSetConfigBySelection(RunSetConfig defaultRunSet)
         {
             //hide current Run set UI
@@ -3295,7 +3295,6 @@ namespace Ginger.Run
             }
         }
 
-        FindAndReplacePage mfindAndReplacePageRunSet = null;
 
         private void xFind_Click(object sender, RoutedEventArgs e)
         {
@@ -3304,11 +3303,7 @@ namespace Ginger.Run
 
         public void ShowFindAndReplacePage()
         {
-            if (mfindAndReplacePageRunSet == null)
-            {
-                mfindAndReplacePageRunSet = new FindAndReplacePage(FindAndReplacePage.eContext.RunsetPage);
-
-            }
+            FindAndReplacePage mfindAndReplacePageRunSet = new FindAndReplacePage(FindAndReplacePage.eContext.RunsetPage);
             mfindAndReplacePageRunSet.ShowAsWindow();
         }
 

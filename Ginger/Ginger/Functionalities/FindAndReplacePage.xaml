@@ -24,7 +24,7 @@
             </DataTemplate>         
 
             <DataTemplate x:Key="xAttributeValueComboBoxTemplate">
-                <ComboBox x:Name="xRunSetComboBox" Grid.Column="1" Margin="20,10,0,0" Style="{StaticResource $FlatInputComboBoxStyle}" HorizontalAlignment="Stretch" SelectionChanged="FieldValueComboBox_SelectionChanged" Width="auto"/>
+                <ComboBox x:Name="xRunSetComboBox" Grid.Column="1" Margin="20,10,0,0" Style="{StaticResource $FlatInputComboBoxStyle}" HorizontalAlignment="Stretch" Width="auto"/>
             </DataTemplate>
 
             <DataTemplate x:Key="xAttributeValueCheckBoxTemplate">
