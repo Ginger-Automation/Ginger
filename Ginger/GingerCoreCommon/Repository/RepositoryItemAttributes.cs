@@ -63,6 +63,42 @@ namespace Amdocs.Ginger.Repository
         }
     }
 
+    public class AllowUserToEdit : Attribute
+    {
+        object mDefaultValue = null;
 
+        public AllowUserToEdit()
+        {
+
+        }
+
+        /// <summary>
+        /// If Default value is set and the value in the attr is the same as default it will not be save to the xml, save space and load time
+        /// </summary>
+        /// <param name="DefaultValue">True or False</param>
+        public AllowUserToEdit(bool DefaultValue)
+        {
+            mDefaultValue = DefaultValue;
+        }
+
+        /// <summary>
+        /// If Default value is set and the value in the attr is the same as default it will not be save to the xml, save space and load time
+        /// </summary>
+        /// <param name="DefaultValue">Can be Enum value or any object which can be default for the attr</param>
+        public AllowUserToEdit(string DefaultValue)
+        {
+            mDefaultValue = DefaultValue;
+        }
+
+        public override string ToString()
+        {
+            return "Allow user to edit value";
+        }
+
+        public object GetDefualtValue()
+        {
+            return mDefaultValue;
+        }
+    }
 
 }

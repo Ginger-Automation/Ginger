@@ -292,7 +292,7 @@ namespace GingerCore
                 else
                 {
                     EnumValueDescriptionAttribute[] _attributes = (EnumValueDescriptionAttribute[])EnumType.GetField(EnumValue.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false);
-              
+
                     if (_attributes.Length > 0)
                     {
                         s = _attributes[0].ValueDescription;
@@ -1327,7 +1327,7 @@ namespace GingerCore
                 ShowToolTip(control, "Copied to clipboard");
             }
         }
-            
+
 
         private static void ShowToolTip(Control control, string message)
         {
@@ -1556,7 +1556,7 @@ namespace GingerCore
                 ImageFormat.Jpeg => System.Drawing.Imaging.ImageFormat.Jpeg,
                 _ => throw new Exception($"Unknown ImageFormat '{imageFormat}'"),
             };
-        }
+        }       
     }
 }
 

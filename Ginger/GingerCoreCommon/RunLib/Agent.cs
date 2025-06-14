@@ -115,6 +115,7 @@ namespace GingerCore
         }
 
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit("Active")]
         public bool Active { get; set; }
 
         [IsSerializedForLocalRepository]
@@ -225,6 +226,7 @@ namespace GingerCore
 
         private string mNotes;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit("Notes")]
         public string Notes { get { return mNotes; } set { if (mNotes != value) { mNotes = value; OnPropertyChanged(nameof(Notes)); } } }
 
         [IsSerializedForLocalRepository]

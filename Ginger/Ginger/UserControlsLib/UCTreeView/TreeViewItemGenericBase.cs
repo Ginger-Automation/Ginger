@@ -267,7 +267,7 @@ namespace GingerWPF.TreeViewItemsLib
             }
         }
 
-        public void AddFolderNodeBasicManipulationsOptions(ContextMenu CM, string nodeItemTypeName, bool allowRefresh = true, bool allowAddNew = true, bool allowPaste = true, bool allowSaveAll = true, bool allowCutItems = true, bool allowCopyItems = true, bool allowRenameFolder = true, bool allowAddSubFolder = true, bool allowDeleteFolder = true, bool allowOpenFolder = true, bool allowDeleteAllItems = false, bool allowWireMockMapping = false, bool allowMultiPomUpdate = false)
+        public void AddFolderNodeBasicManipulationsOptions(ContextMenu CM, string nodeItemTypeName, bool allowRefresh = true, bool allowAddNew = true, bool allowPaste = true, bool allowSaveAll = true, bool allowCutItems = true, bool allowCopyItems = true, bool allowRenameFolder = true, bool allowAddSubFolder = true, bool allowDeleteFolder = true, bool allowOpenFolder = true, bool allowDeleteAllItems = false, bool allowWireMockMapping = false, bool allowMultiPomUpdate = false, bool allowAttributeUpdate = false)
         {
             if (allowRefresh)
             {
@@ -329,8 +329,17 @@ namespace GingerWPF.TreeViewItemsLib
                 TreeViewUtils.AddMenuItem(CM, "Create WireMock Mapping", CreateWireMockMappingHandler, null, "WireMockLogo16x16.png");
                 mTreeView.AddToolbarTool("WireMockLogo16x16.png", "Create WireMock Mapping", CreateWireMockMappingHandler);
             }
+            if (allowAttributeUpdate)
+            {
+                TreeViewUtils.AddMenuItem(CM, "Find And Replace", UpdateItemAttributeValue, null, eImageType.Search);
+                mTreeView.AddToolbarTool(eImageType.Search, "Update Attribute value", UpdateItemAttributeValue);
+            }
         }
-
+        public abstract void UpdateItemAttributeValue();
+        public void UpdateItemAttributeValue(object sender, System.Windows.RoutedEventArgs e)
+        {
+            UpdateItemAttributeValue();
+        }
         public abstract bool PasteCopiedTreeItem(object nodeItemToCopy, TreeViewItemGenericBase targetFolderNode, bool toRefreshFolder = true);
         public abstract void PasteCopiedTreeItems();
         public abstract bool PasteCutTreeItem(object nodeItemToCut, TreeViewItemGenericBase targetFolderNode, bool toRefreshFolder = true);

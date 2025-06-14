@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -29,20 +30,57 @@ namespace Amdocs.Ginger.Common.Functionalities
         public enum eStatus
         {
             [EnumValueDescription("Pending Replace")]
-            PendingReplace,
-            Replaced,
-            ReplaceFailed,
+            Pending,
+            Updated,
+            Failed,
             Saved,
-            SavedFailed
+            Modified
         }
 
         private eStatus mStatus;
-        public eStatus Status { get { return mStatus; } set { mStatus = value; OnPropertyChanged(nameof(Status)); } }
+        public eStatus Status { 
+            get { return mStatus; } 
+            set { mStatus = value; OnPropertyChanged(nameof(Status)); } }
+
+
+        public string FieldName { get; set; }
+
+
+        private string mFieldValue;
+        public string FieldValue
+        {
+            get
+            {
+                return mFieldValue;
+            }
+            set
+            {
+                mFieldValue = value;
+                IsModified = eStatus.Modified;
+                OnPropertyChanged(nameof(FieldValue));
+            }
+        }
+
+        private eStatus _isModified;
+        public eStatus IsModified
+        {
+            get => _isModified;
+            set
+            {
+                _isModified = value;
+
+                if (IsModified == eStatus.Modified)
+                {
+                    Status= eStatus.Modified;
+                }
+                OnPropertyChanged(nameof(IsModified));
+            }
+        }
+
 
         private bool mIsSelected = false;
         // [IsSerializedForLocalRepository]
         public bool IsSelected { get { return mIsSelected; } set { mIsSelected = value; OnPropertyChanged(nameof(IsSelected)); } }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -54,7 +92,7 @@ namespace Amdocs.Ginger.Common.Functionalities
                 handler(this, new PropertyChangedEventArgs(name));
             }
         }
-
+     
         public RepositoryItemBase OriginObject { get; set; }
 
         public string OriginObjectType
@@ -99,7 +137,7 @@ namespace Amdocs.Ginger.Common.Functionalities
         private string mFoundField;
         public string FoundField { get { return mFoundField; } set { mFoundField = value; OnPropertyChanged(nameof(FoundField)); } }
 
-
+        public Type FieldType { get; set; }
 
 
         public RepositoryItemBase ParentItemToSave { get; set; }
@@ -133,23 +171,9 @@ namespace Amdocs.Ginger.Common.Functionalities
 
         }
 
+    
+        public static List<string> FieldValueOption { get; set; }
 
-        public string FieldName { get; set; }
-
-
-        private string mFieldValue;
-        public string FieldValue
-        {
-            get
-            {
-                return mFieldValue;
-            }
-            set
-            {
-                mFieldValue = value;
-                OnPropertyChanged(nameof(FieldValue));
-            }
-        }
 
         public List<string> OptionalValuesToRepalce = [];
 

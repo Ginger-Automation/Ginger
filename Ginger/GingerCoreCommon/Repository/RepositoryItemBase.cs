@@ -1526,6 +1526,7 @@ namespace Amdocs.Ginger.Repository
         /// Flag used to mark if item is ready to be published on third party applications which enhancing Ginger framework
         /// </summary>
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit("Publish")]
         public bool Publish
         {
             get

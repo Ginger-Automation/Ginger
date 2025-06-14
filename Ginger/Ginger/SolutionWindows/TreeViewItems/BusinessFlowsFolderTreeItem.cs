@@ -142,11 +142,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 if (mBusFlowsFolder.IsRootFolder)
                 {
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), allowRenameFolder: false, allowDeleteFolder: false, allowRefresh: false, allowDeleteAllItems: true);
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), allowRenameFolder: false, allowDeleteFolder: false, allowRefresh: false, allowDeleteAllItems: true,allowAttributeUpdate:true);
                 }
                 else
                 {
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), allowRefresh: false);
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), allowRefresh: false, allowAttributeUpdate: true);
                 }
 
                 MenuItem actConversionMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Conversion", eImageType.Convert);

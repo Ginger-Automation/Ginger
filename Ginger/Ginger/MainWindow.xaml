@@ -197,7 +197,7 @@
 
                         <usercontrols:ucButton x:Name="xFindAndReplaceBtn" ButtonType="ImageButton" ToolTip="Find and Replace in Solution"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Search" Click="xFindAndReplaceSolutionButton_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Menu}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,0"/>
 
-                        <Grid DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
+                      <Grid DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
                             <usercontrols:ucButton x:Name="xSaveAllBtn" ButtonType="ImageButton" ToolTip="Save All" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="SaveAll" Click="xSaveAllBtn_Click" MouseEnter="xSaveAllBtn_MouseEnter" MouseLeave="xSaveAllBtn_MouseLeave" ButtonStyle="{StaticResource $ImageButtonStyle_Menu}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,0"/>
                             <Label x:Name="xModifiedItemsCounter" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Top" FontFamily="OpenSans" Foreground="White" FontSize="12" FontWeight="Bold" Padding="0,0,0,0">
                                 <Label.Content>
