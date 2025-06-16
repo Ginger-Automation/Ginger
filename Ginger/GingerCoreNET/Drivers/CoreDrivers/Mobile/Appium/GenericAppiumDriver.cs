@@ -1635,22 +1635,29 @@ namespace Amdocs.Ginger.CoreNET
         }
         private static void ScrollDown(AppiumDriver driver)
         {
-            var windowSize = driver.Manage().Window.Size;
+            try
+            {
+                var windowSize = driver.Manage().Window.Size;
 
-            int startX = windowSize.Width / 2;
-            int startY = (int)(windowSize.Height * 0.8);
-            int endY = (int)(windowSize.Height * 0.2);
+                int startX = windowSize.Width / 2;
+                int startY = (int)(windowSize.Height * 0.8);
+                int endY = (int)(windowSize.Height * 0.2);
 
-            var touch = new PointerInputDevice(PointerKind.Touch);
-            var sequence = new ActionSequence(touch, 0);
+                var touch = new PointerInputDevice(PointerKind.Touch);
+                var sequence = new ActionSequence(touch, 0);
 
-            sequence.AddAction(touch.CreatePointerMove(CoordinateOrigin.Viewport, startX, startY, TimeSpan.Zero));
-            sequence.AddAction(touch.CreatePointerDown(0));
-            sequence.AddAction(touch.CreatePause(TimeSpan.FromMilliseconds(300)));
-            sequence.AddAction(touch.CreatePointerMove(CoordinateOrigin.Viewport, startX, endY, TimeSpan.FromMilliseconds(500)));
-            sequence.AddAction(touch.CreatePointerUp(0));
+                sequence.AddAction(touch.CreatePointerMove(CoordinateOrigin.Viewport, startX, startY, TimeSpan.Zero));
+                sequence.AddAction(touch.CreatePointerDown(0));
+                sequence.AddAction(touch.CreatePause(TimeSpan.FromMilliseconds(300)));
+                sequence.AddAction(touch.CreatePointerMove(CoordinateOrigin.Viewport, startX, endY, TimeSpan.FromMilliseconds(500)));
+                sequence.AddAction(touch.CreatePointerUp(0));
 
-            driver.PerformActions(new List<ActionSequence> { sequence });
+                driver.PerformActions(new List<ActionSequence> { sequence });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while scrolling for screen-shot", ex);
+            }
         }
 
         public Bitmap CaptureFullPageCroppedScreenshot()
@@ -1660,45 +1667,48 @@ namespace Amdocs.Ginger.CoreNET
             int maxScrolls = 10;
             HashSet<string> capturedScreens = new HashSet<string>();
 
-            while (scrollCount < maxScrolls)
+            try
             {
-                if (scrollCount != 0)
+                while (scrollCount < maxScrolls)
                 {
-                    HideStickyElements(Driver);
+
+                    Screenshot screenshot = ((ITakesScreenshot)Driver).GetScreenshot();
+                    Bitmap bmp = new Bitmap(new MemoryStream(screenshot.AsByteArray));
+
+                    // Dynamically calculate crop sizes based on image height
+                    int cropTopPixels = (int)(bmp.Height * 0.05);     // ~5% for status bar
+                    int cropBottomPixels = (int)(bmp.Height * 0.07);  // ~5% for gesture bar
+
+                    Rectangle cropArea = new Rectangle(0, cropTopPixels, bmp.Width, bmp.Height - cropTopPixels - cropBottomPixels);
+                    Bitmap croppedBmp = bmp.Clone(cropArea, bmp.PixelFormat);
+
+                    bmp.Dispose();
+
+                    string hash = Convert.ToBase64String(ScreenshotToBytes(croppedBmp));
+                    if (!capturedScreens.Add(hash))
+                    {
+                        croppedBmp.Dispose();
+                        break;
+                    }
+
+                    screenshots.Add(croppedBmp);// keep reference for merge
+
+                    try
+                    {
+                        ScrollDown(Driver);
+                    }
+                    catch
+                    {
+                        break;
+                    }
+
+                    scrollCount++;
+                    Thread.Sleep(500);
                 }
-
-                Screenshot screenshot = ((ITakesScreenshot)Driver).GetScreenshot();
-                Bitmap bmp = new Bitmap(new MemoryStream(screenshot.AsByteArray));
-
-                // Dynamically calculate crop sizes based on image height
-                int cropTopPixels = (int)(bmp.Height * 0.05);     // ~5% for status bar
-                int cropBottomPixels = (int)(bmp.Height * 0.07);  // ~5% for gesture bar
-
-                Rectangle cropArea = new Rectangle(0, cropTopPixels, bmp.Width, bmp.Height - cropTopPixels - cropBottomPixels);
-                Bitmap croppedBmp = bmp.Clone(cropArea, bmp.PixelFormat);
-
-                bmp.Dispose();
-
-                string hash = Convert.ToBase64String(ScreenshotToBytes(croppedBmp));
-                if (!capturedScreens.Add(hash))
-                {
-                    croppedBmp.Dispose();
-                    break;
-                }
-
-                screenshots.Add(croppedBmp);// keep reference for merge
-
-                try
-                {
-                    ScrollDown(Driver);
-                }
-                catch
-                {
-                    break;
-                }
-
-                scrollCount++;
-                Thread.Sleep(500);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while capturing full page screen-shot", ex);
             }
 
             Bitmap fullImage = MergeScreenshotsVertically(screenshots);
@@ -1713,36 +1723,26 @@ namespace Amdocs.Ginger.CoreNET
             Bitmap finalImage = new Bitmap(width, totalHeight);
             using (Graphics g = Graphics.FromImage(finalImage))
             {
-                int offset = 0;
-                if (images == null || images.Count == 0)
+                try
                 {
-                    throw new ArgumentException("images collection must contain at least one Bitmap", nameof(images));
+                    int offset = 0;
+                    if (images == null || images.Count == 0)
+                    {
+                        throw new ArgumentException("images collection must contain at least one Bitmap", nameof(images));
+                    }
+                    foreach (var image in images)
+                    {
+                        g.DrawImage(image, new Rectangle(0, offset, image.Width, image.Height));
+                        offset += image.Height;
+                        image.Dispose();          // free as soon as we are done
+                    }
                 }
-                foreach (var image in images)
+                catch (Exception ex)
                 {
-                    g.DrawImage(image, new Rectangle(0, offset, image.Width, image.Height));
-                    offset += image.Height;
-                    image.Dispose();          // free as soon as we are done
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while merging screen-shots", ex);
                 }
             }
             return finalImage;
-        }
-
-        public static void HideStickyElements(AppiumDriver driver)
-        {
-            try
-            {
-                IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-                js.ExecuteScript(@"
-            const stickyElements = document.querySelectorAll('.shopping_cart_link, header, footer, .fixed, .sticky');
-            stickyElements.forEach(el => el.style.display = 'none');
-        ");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error hiding sticky elements: " + ex.Message);
-
-            }
         }
 
 
@@ -4451,8 +4451,13 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     videoBase64 = ((IOSDriver)Driver).StopRecordingScreen();
                 }
-                byte[] videoBytes = Convert.FromBase64String(videoBase64);
-                File.WriteAllBytes(targetFile, videoBytes); //"format mp4"
+
+                if (!string.IsNullOrEmpty(videoBase64))
+                {
+                    byte[] videoBytes = Convert.FromBase64String(videoBase64);
+                    File.WriteAllBytes(targetFile, videoBytes); //"format mp4"
+                }
+
                 return targetFile;
             }
             catch (Exception ex)
