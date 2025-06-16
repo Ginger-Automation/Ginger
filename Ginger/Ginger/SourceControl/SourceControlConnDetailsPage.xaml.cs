@@ -49,7 +49,7 @@ namespace Ginger.SourceControl
         }
 
 
-      
+
 
         private void CopyMouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -129,8 +129,9 @@ namespace Ginger.SourceControl
                     {
                         SourceControlClassTextBox.Text = nameof(GingerSolutionSourceControl.SourceControlInfo.Type);
                     }
-                    xSourceControlBranchTextBox.Text = SourceControlIntegration.GetCurrentBranchForSolution(WorkSpace.Instance.Solution.SourceControl);
                    
+                    xSourceControlBranchTextBox.Text = SourceControlIntegration.GetCurrentBranchForSolution(WorkSpace.Instance.Solution.SourceControl) ?? string.Empty;
+
                     SourceControlUserTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Username;
                     SourceControlPassTextBox.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
                     SourceControlUserAuthorNameTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.AuthorName;
