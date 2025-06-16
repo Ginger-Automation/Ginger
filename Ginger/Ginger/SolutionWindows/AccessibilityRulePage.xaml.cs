@@ -122,6 +122,7 @@ namespace Ginger.SolutionWindows
 
             if (clickedRadioButton != null && clickedRadioButton.IsChecked == true)
             {
+
                 string selectedOption = clickedRadioButton.Content.ToString();
 
                 actAccessibilityTesting.CurrentRuleType = selectedOption;

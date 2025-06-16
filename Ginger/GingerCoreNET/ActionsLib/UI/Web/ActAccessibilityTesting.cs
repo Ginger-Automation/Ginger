@@ -436,17 +436,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             {
             ObservableList<AccessibilityRuleData> allRules = GetRuleList();
 
-
-            AccessibilityConfiguration mAccessibilityConfiguration;
-            if (WorkSpace.Instance.SolutionRepository != null)
-                {
-                mAccessibilityConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<AccessibilityConfiguration>() ?? new AccessibilityConfiguration();
-                }
-            else
-                {
-                mAccessibilityConfiguration = new AccessibilityConfiguration();
-                }
-
             // Start with the rules excluded by the user's configuration ('Active' field being false)
             HashSet<string> finalExcludedRuleIds = new HashSet<string>(
                 allRules.Where(x => !x.Active).Select(x => x.RuleID),
