@@ -67,17 +67,6 @@ namespace Amdocs.Ginger.Common.Functionalities
             {
                 try
                 {
-                    if (member.Name is
-                        nameof(ActInputValue.ValueForDriver) or "mBackupDic" or nameof(RepositoryItemBase.FileName) or
-                        nameof(RepositoryItemBase.Guid) or nameof(RepositoryItemBase.ObjFolderName) or
-                        nameof(RepositoryItemBase.ObjFileExt) or "ScreenShots" or
-                        nameof(RepositoryItemBase.ContainingFolder) or nameof(RepositoryItemBase.ContainingFolderFullPath) or
-                        nameof(RepositoryItemBase.ParentGuid) or "Created" or "Version" or
-                        "CreatedBy" or "LastUpdate" or "LastUpdateBy")
-                    {
-                        continue;
-                    }
-
                     object value = null;
                     Type memberType = null;
                     bool isSerializable = false;

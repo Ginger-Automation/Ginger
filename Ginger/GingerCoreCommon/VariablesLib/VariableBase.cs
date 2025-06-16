@@ -100,7 +100,7 @@ namespace GingerCore.Variables
 
         private bool mMandatoryInput = false;
         [IsSerializedForLocalRepository(false)]
-        [AllowUserToEdit("Madatory Input")]
+        [AllowUserToEdit("Mandatory Input")]
         public bool MandatoryInput
         {
             get { return mMandatoryInput; }
