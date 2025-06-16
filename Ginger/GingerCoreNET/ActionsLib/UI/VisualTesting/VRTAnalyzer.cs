@@ -389,15 +389,14 @@ namespace GingerCore.Actions.VisualTesting
         private Image GetScreenshot()
         {
             Image image;
-            if (mDriver is GenericAppiumDriver gDriver)
-            {
-                image = gDriver.CaptureFullPageCroppedScreenshot();
-            }
-            else
-            {
-                image = mDriver.GetScreenShot(null, mAct.IsFullPageScreenshot);
-            }
+            image = mDriver is GenericAppiumDriver gDriver
+                ? gDriver.CaptureFullPageCroppedScreenshot()
+                : mDriver.GetScreenShot(null, mAct.IsFullPageScreenshot);
 
+            if (image == null)
+            {
+                throw new InvalidOperationException("Screen-shot capture returned null for driver " + mDriver.GetType().Name);
+            }
             return image;
         }
 
