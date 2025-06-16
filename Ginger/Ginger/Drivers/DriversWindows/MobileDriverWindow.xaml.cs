@@ -25,6 +25,7 @@ using Ginger.Agents;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.TextEditor;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Drivers;
 using System;
 using System.Collections.Generic;
