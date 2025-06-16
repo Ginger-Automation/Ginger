@@ -61,6 +61,7 @@ using OpenQA.Selenium.Appium.Interactions;
 using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Support.UI;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -1199,7 +1200,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.UnlockDevice:
-                        PerformLockButtonPress(eLockOperation.UnLock);
+                        PerformLockButtonPress(eLockOperation.UnLock,act);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceBattery:
@@ -2080,7 +2081,22 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        public void PerformLockButtonPress(eLockOperation LockOperation)
+        private void AndroidUnlock(ActMobileDevice act, string unlockKind)
+        {
+            try
+            {
+                if (!((AndroidDriver)Driver).IsLocked()) return;
+                Reporter.ToLog(eLogLevel.DEBUG, $"Device is locked. Unlocking with {unlockKind}...");
+                ((AndroidDriver)Driver).Unlock(act.ActionInput.ValueForDriver, unlockKind, "uiautomator", 5000);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Unlock attempt failed: " + ex.Message);
+                act.Error = "Unlock attempt failed: " + ex.Message;
+            }
+        }
+
+        public void PerformLockButtonPress(eLockOperation LockOperation, ActMobileDevice act=null)
         {
             switch (DevicePlatformType)
             {
@@ -2091,12 +2107,40 @@ namespace Amdocs.Ginger.CoreNET
                             ((AndroidDriver)Driver).Lock();
                             break;
                         case eLockOperation.UnLock:
-                            if (((AndroidDriver)Driver).IsLocked())
+                            if(act != null)
                             {
-                                ((AndroidDriver)Driver).Unlock("none", "none");
+                                try
+                                {
+                                    switch (act.UnLockType)
+                                    {
+                                        case ActMobileDevice.eUnlockType.none:
+                                            {
+                                                if (((AndroidDriver)Driver).IsLocked())
+                                                {
+                                                    ((AndroidDriver)Driver).Unlock("none", "none", "uiautomator", 5000);
+                                                }
+                                                Thread.Sleep(200);
+                                                SwipeScreen(eSwipeSide.Up, 1, TimeSpan.FromMilliseconds(200));
+                                                break;
+                                            }
+                                        case ActMobileDevice.eUnlockType.pin:
+                                            AndroidUnlock(act, nameof(ActMobileDevice.eUnlockType.pin));
+                                            break;
+                                        case ActMobileDevice.eUnlockType.pattern:
+                                            AndroidUnlock(act, nameof(ActMobileDevice.eUnlockType.pattern));
+                                            break;
+                                        case ActMobileDevice.eUnlockType.password:
+                                            AndroidUnlock(act, nameof(ActMobileDevice.eUnlockType.password));
+                                            break;
+                                    }
+                                    break;
+                                }
+                                catch (Exception ex)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, "Unlock attempt failed: " + ex.Message);
+                                    act.Error = "Unlock attempt failed: " + ex.Message;
+                                }
                             }
-                            System.Threading.Thread.Sleep(200);
-                            SwipeScreen(eSwipeSide.Up, 1, TimeSpan.FromMilliseconds(200));
                             break;
                     }
                     break;
@@ -2107,7 +2151,39 @@ namespace Amdocs.Ginger.CoreNET
                             ((IOSDriver)Driver).Lock();
                             break;
                         case eLockOperation.UnLock:
-                            ((IOSDriver)Driver).Unlock();
+                            try
+                            {
+                                if (act != null)
+                                {
+                                    switch (act.UnLockType)
+                                    {
+                                        case ActMobileDevice.eUnlockType.none:
+                                            {
+                                                ((IOSDriver)Driver).Unlock();
+                                            }
+                                            break;
+                                        case ActMobileDevice.eUnlockType.pin:
+                                        case ActMobileDevice.eUnlockType.password:
+                                            System.Threading.Thread.Sleep(200);
+                                            Reporter.ToLog(eLogLevel.DEBUG, "Device is locked. Unlocking with pin/password...");
+                                            SwipeScreen(eSwipeSide.Up, 1, TimeSpan.FromMilliseconds(200));
+                                            new WebDriverWait(Driver, TimeSpan.FromSeconds(5))
+                                                .Until(_ => Driver.IsKeyboardShown());
+                                            TypeUsingIOSkeyboard(act.ActionInput.ValueForDriver);
+                                            break;
+                                        default:
+                                            Reporter.ToLog(eLogLevel.ERROR, "iOS devices cannot be unlocked by Appium – run tests with the device already unlocked.");
+                                            act.Error = "Unlock attempt failed: unsupported unlock type on iOS.";
+                                            break;
+                                    }
+                                }
+                                break;
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, "Unlock attempt failed: " + ex.Message);
+                                act.Error = "Unlock attempt failed: " + ex.Message;
+                            }
                             break;
                     }
                     break;
