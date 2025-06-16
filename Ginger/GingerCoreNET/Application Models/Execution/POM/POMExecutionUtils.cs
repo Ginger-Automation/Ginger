@@ -165,7 +165,26 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 {
                     pElementType.SetValue(elementAction, ((ElementInfo)actConfig.LearnedElementInfo).ElementTypeEnum);
                 }
+
+                elementAction.AddOrUpdateInputParamValue("DisplayValue", $"POM Name: {GetPOMName(actConfig.POMGuid)}   ElementName: {elementInfo.ElementName}");
             }
+        }
+
+        private static string GetPOMName(string pomGUID)
+        {
+            if (!string.IsNullOrEmpty(pomGUID))
+            {
+                if (Guid.TryParse(pomGUID, out Guid pomGuid))
+                {
+                    var applicationPOMModel = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(pomGuid);
+                    if (applicationPOMModel != null)
+                    {
+                        return applicationPOMModel.ItemName;
+                    }
+                }
+            }
+
+            return pomGUID;
         }
 
         public bool PriotizeLocatorPosition()
