@@ -408,7 +408,7 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.UnlockDevice:
                     var selectedValue = xUnlockTypeComboBox.ComboBoxSelectedValue?.ToString();
                     xInputLabelVE.Content = $"Enter Value";
-                    if (selectedValue != null && selectedValue.Equals(nameof(ActMobileDevice.eUnlockTypes.none), StringComparison.OrdinalIgnoreCase))
+                    if (selectedValue != null && selectedValue.Equals(nameof(ActMobileDevice.eUnlockType.none), StringComparison.OrdinalIgnoreCase))
                     {
                         mAct.ActionInput.Value = "";
                     }
