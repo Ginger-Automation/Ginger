@@ -1653,43 +1653,6 @@ namespace Amdocs.Ginger.CoreNET
             driver.PerformActions(new List<ActionSequence> { sequence });
         }
 
-
-        public bool IsPageScrollable()
-        {
-            try
-            {
-                string beforeScroll = Driver.PageSource;
-
-                // Perform a small scroll down
-                var windowSize = Driver.Manage().Window.Size;
-                int startX = windowSize.Width / 2;
-                int startY = (int)(windowSize.Height * 0.8);
-                int endY = (int)(windowSize.Height * 0.2);
-
-                var touch = new PointerInputDevice(PointerKind.Touch);
-                var sequence = new ActionSequence(touch, 0);
-
-                sequence.AddAction(touch.CreatePointerMove(CoordinateOrigin.Viewport, startX, startY, TimeSpan.Zero));
-                sequence.AddAction(touch.CreatePointerDown(0));
-                sequence.AddAction(touch.CreatePause(TimeSpan.FromMilliseconds(200)));
-                sequence.AddAction(touch.CreatePointerMove(CoordinateOrigin.Viewport, startX, endY, TimeSpan.FromMilliseconds(300)));
-                sequence.AddAction(touch.CreatePointerUp(0));
-
-                Driver.PerformActions(new List<ActionSequence> { sequence });
-
-                Thread.Sleep(500); // Allow time for scroll to complete
-
-                string afterScroll = Driver.PageSource;
-
-                return !beforeScroll.Equals(afterScroll);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error checking scrollability: {ex.Message}");
-                return false;
-            }
-        }
-
         public Bitmap CaptureFullPageCroppedScreenshot()
         {
             List<Bitmap> screenshots = new List<Bitmap>();
@@ -1723,7 +1686,7 @@ namespace Amdocs.Ginger.CoreNET
                     break;
                 }
 
-                screenshots.Add(croppedBmp);
+                screenshots.Add(croppedBmp);// keep reference for merge
 
                 try
                 {
@@ -1751,10 +1714,15 @@ namespace Amdocs.Ginger.CoreNET
             using (Graphics g = Graphics.FromImage(finalImage))
             {
                 int offset = 0;
+                if (images == null || images.Count == 0)
+                {
+                    throw new ArgumentException("images collection must contain at least one Bitmap", nameof(images));
+                }
                 foreach (var image in images)
                 {
                     g.DrawImage(image, new Rectangle(0, offset, image.Width, image.Height));
                     offset += image.Height;
+                    image.Dispose();          // free as soon as we are done
                 }
             }
             return finalImage;
@@ -1777,19 +1745,6 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        //Good to have so keep it we can add this in get full page screen-shot in screen-shot action
-        private void ActScreenShotHandlerFullPage(Act act)
-        {
-            try
-            {
-                act.AddScreenShot(CaptureFullPageCroppedScreenshot(), "Device Screenshot");
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while taking device screen shot", ex);
-                act.Error = "Error occurred while taking device screen shot, Details: " + ex.Message;
-            }
-        }
 
 
 

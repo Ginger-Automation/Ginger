@@ -216,14 +216,7 @@ namespace GingerCore.Actions.VisualTesting
                     {
                         if (mAct.GetInputParamValue(VRTAnalyzer.BaselineImage) == eBaselineImageBy.ActiveWindow.ToString())
                         {
-                            if (mDriver is GenericAppiumDriver)
-                            {
-                                image = ((GenericAppiumDriver)mDriver).CaptureFullPageCroppedScreenshot();
-                            }
-                            else
-                            {
-                                image = mDriver.GetScreenShot(null, mAct.IsFullPageScreenshot);
-                            }
+                            image = GetScreenshot();
                         }
                         else
                         {
@@ -233,14 +226,7 @@ namespace GingerCore.Actions.VisualTesting
                     }
                     else
                     {
-                        if (mDriver is GenericAppiumDriver)
-                        {
-                            image = ((GenericAppiumDriver)mDriver).CaptureFullPageCroppedScreenshot();
-                        }
-                        else
-                        {
-                            image = mDriver.GetScreenShot(null, mAct.IsFullPageScreenshot);
-                        }
+                        image = GetScreenshot();
                     }
                 }
                 else
@@ -398,6 +384,21 @@ namespace GingerCore.Actions.VisualTesting
                 Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when TrackVRT", ex);
                 mAct.Error += ex.Message;
             }
+        }
+
+        private Image GetScreenshot()
+        {
+            Image image;
+            if (mDriver is GenericAppiumDriver gDriver)
+            {
+                image = gDriver.CaptureFullPageCroppedScreenshot();
+            }
+            else
+            {
+                image = mDriver.GetScreenShot(null, mAct.IsFullPageScreenshot);
+            }
+
+            return image;
         }
 
         private string GetTags()
