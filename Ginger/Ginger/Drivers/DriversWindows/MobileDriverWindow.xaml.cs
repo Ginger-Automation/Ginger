@@ -1037,12 +1037,12 @@ namespace Ginger.Drivers.DriversWindows
             {
                 if (!lockDone)
                 {
-                    mDriver.PerformLockButtonPress(eLockOperation.Lock,null);
+                    mDriver.PerformLockButtonPress(eLockOperation.Lock);
                     lockDone = true;
                 }
                 else
                 {
-                    mDriver.PerformLockButtonPress(eLockOperation.UnLock,null);
+                    mDriver.PerformLockButtonPress(eLockOperation.UnLock);
                     lockDone = false;
                 }
             }
