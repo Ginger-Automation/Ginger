@@ -45,6 +45,7 @@ using InputSimulatorStandard;
 using Microsoft.VisualStudio.Services.Common;
 using Newtonsoft.Json;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Chromium;
 using OpenQA.Selenium.Common;
@@ -402,6 +403,7 @@ namespace GingerCore.Drivers
 
 
         protected IWebDriver Driver;
+        protected AppiumDriver MobDriver;
         protected eBrowserType mBrowserType;
         protected NgWebDriver ngDriver;
         private String DefaultWindowHandler = null;
@@ -475,7 +477,6 @@ namespace GingerCore.Drivers
         {
             this.Driver = (IWebDriver)driver;
         }
-
         public override void InitDriver(Agent agent)
         {
             if (BrowserType == WebBrowserType.RemoteWebDriver)
@@ -1912,8 +1913,7 @@ namespace GingerCore.Drivers
                     }
                 }
             }
-
-            act.AnalyzerAccessibility(Driver, e);
+            act.AnalyzerAccessibility(Driver, e, (ePlatformType)act.Platform);
         }
 
         private void ScreenshotHandler(ActScreenShot act)
@@ -3508,17 +3508,17 @@ namespace GingerCore.Drivers
                     }
                     break;
                 case ActGenElement.eGenElementAction.SetAttributeUsingJs:
+                {
+                    e = LocateElement(act);
+                    char[] delimit = new char[] { '=' };
+                    string insertval = act.GetInputParamCalculatedValue("Value");
+                    string[] vals = insertval.Split(delimit, 2);
+                    if (vals.Length != 2)
                     {
-                        e = LocateElement(act);
-                        char[] delimit = new char[] { '=' };
-                        string insertval = act.GetInputParamCalculatedValue("Value");
-                        string[] vals = insertval.Split(delimit, 2);
-                        if (vals.Length != 2)
-                        {
-                            throw new Exception(@"Inot string should be in the format : attribute=value");
-                        } ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
-                    }
-                    break;
+                        throw new Exception(@"Inot string should be in the format : attribute=value");
+                    } ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
+                }
+                break;
                 default:
                     throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
 

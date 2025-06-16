@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.VariablesLib;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.Appium;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
@@ -62,6 +63,9 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
         public override bool ValueConfigsNeeded { get { return false; } }
 
+        // Public property to set the type of rules to fetch
+        public string CurrentRuleType { get; set; } = "Web"; // Default to "Web"
+
         public override List<ePlatformType> Platforms
         {
             get
@@ -69,6 +73,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 if (mPlatforms.Count == 0)
                 {
                     mPlatforms.Add(ePlatformType.Web);
+                    mPlatforms.Add(ePlatformType.Mobile);
                 }
                 return mPlatforms;
             }
@@ -89,9 +94,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         {
             PlatformAction platformAction = new PlatformAction(this);
 
-
-
-
             foreach (ActInputValue aiv in this.InputValues)
             {
                 if (!platformAction.InputParams.ContainsKey(aiv.Param))
@@ -99,8 +101,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                     platformAction.InputParams.Add(aiv.Param, aiv.ValueForDriver);
                 }
             }
-
-
             return platformAction;
         }
 
@@ -184,6 +184,31 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             wcag22aa,
             [EnumValueDescription("Best Practice")]
             bestpractice,
+        }
+
+        public enum eMobileAccessibilityStandards
+        {
+            [EnumValueDescription("All Applicable Standards")]
+            All,
+
+            // --- WCAG Principles/Levels ---
+            [EnumValueDescription("WCAG 2.1 Level A")]
+            WCAG21A,
+            [EnumValueDescription("WCAG 2.1 Level AA")]
+            WCAG21AA,
+            [EnumValueDescription("WCAG 2.1 Level AAA")]
+            WCAG21AAA,
+
+            // --- European Standard EN 301 549 ---
+            [EnumValueDescription("EN 301 549 (General Standard)")]
+            EN_301_549,
+            [EnumValueDescription("EN 301 549 - 9.4.1.2 (Name, Role, Value)")]
+            EN_9_4_1_2,
+            [EnumValueDescription("EN 301 549 - 9.4.1.3 (Info and Relationships)")]
+            EN_9_4_1_3,
+
+            [EnumValueDescription("Best Practice Recommendation")]
+            BestPractice
         }
 
         public enum eSeverity
@@ -325,7 +350,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             ObservableList<AccessibilityRuleData> ruleDatalist;
             try
             {
-                string AccessbiltyString = GetAccessiblityrules();
+                string AccessbiltyString = GetAccessiblityrules(this.CurrentRuleType);
                 ruleDatalist = AccessibilityRuleDataObjet.GetAccessibilityRules(AccessbiltyString);
                 foreach (AccessibilityRuleData ruleData in ruleDatalist)
                 {
@@ -398,11 +423,138 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             return eTarget.Page;
         }
 
-        private static string GetAccessiblityrules()
+        // This property becomes the single source of filtered rules
+        public ObservableList<AccessibilityRuleData> ActiveRulesForAnalysis
+        {
+            get
+            {
+                return GetFilteredRuleList();
+            }
+        }
+
+        private ObservableList<AccessibilityRuleData> GetFilteredRuleList()
+        {
+            ObservableList<AccessibilityRuleData> allRules = GetRuleList();
+
+
+            AccessibilityConfiguration mAccessibilityConfiguration;
+            if (WorkSpace.Instance.SolutionRepository != null)
+            {
+                mAccessibilityConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<AccessibilityConfiguration>() ?? new AccessibilityConfiguration();
+            }
+            else
+            {
+                mAccessibilityConfiguration = new AccessibilityConfiguration();
+            }
+
+            // Start with the rules excluded by the user's configuration ('Active' field being false)
+            HashSet<string> finalExcludedRuleIds = new HashSet<string>(
+                allRules.Where(x => !x.Active).Select(x => x.RuleID),
+                StringComparer.OrdinalIgnoreCase
+            );
+
+            // Apply filtering based on Analyzer mode
+            if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(eAnalyzer.ByStandard))
+            {
+                if (StandardList == null || !StandardList.Any())
+                {
+
+                    Reporter.ToLog(eLogLevel.ERROR, "Error: 'ByStandard' analyzer selected, but no standards are provided.");
+
+                    return new ObservableList<AccessibilityRuleData>();
+                }
+
+
+                HashSet<string> selectedStandardTags = new HashSet<string>(
+                    StandardList.Select(item => item.Value.ToString().Equals("bestpractice", StringComparison.OrdinalIgnoreCase) ? "best-practice" : item.Value.ToString()),
+                    StringComparer.OrdinalIgnoreCase
+                );
+
+                // Assuming Tag is a string or list of strings that can be matched.
+                allRules = new ObservableList<AccessibilityRuleData>(
+     allRules.Where(r =>
+     {
+         if (string.IsNullOrEmpty(r.Tags)) // Handle cases where Tags might be null or empty
+         {
+             return false;
+         }
+
+         // Split the comma-separated tags string into a collection of individual tags
+         // .Select(s => s.Trim()) to remove leading/trailing whitespace from each tag
+         // .ToList() to make it a List<string> if needed, or keep as IEnumerable<string>
+         IEnumerable<string> ruleIndividualTags = r.Tags.Split(',')
+                                                      .Select(s => s.Trim())
+                                                      .Where(s => !string.IsNullOrWhiteSpace(s)); // Filter out empty strings from splitting
+
+         // Check if any of the individual tags for the rule are in the selectedStandardTags
+         return ruleIndividualTags.Any(ruleTag => selectedStandardTags.Contains(ruleTag));
+     })
+ );
+                if (SeverityList != null && SeverityList.Any())
+                {
+                    List<string> selectedSeverities = SeverityList.Select(x => x.Value.ToLower()).ToList();
+
+
+                    // Rules to exclude based on severity: if a rule's impact is NOT in the selected severities
+                    var severityExcludedRuleIds = allRules
+                        .Where(r => !selectedSeverities.Contains(r.Impact.ToLower())) // Exclude if its Impact is NOT among the selected
+                        .Select(r => r.RuleID);
+
+                    foreach (var ruleId in severityExcludedRuleIds)
+                    {
+                        finalExcludedRuleIds.Add(ruleId);
+                    }
+                }
+            }
+            else if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(eAnalyzer.BySeverity))
+            {
+                if (SeverityList == null || !SeverityList.Any())
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error: 'BySeverity' analyzer selected, but no severities are provided.");
+                    // Optionally, set currentAct.Status = Failed and currentAct.Error
+                    return new ObservableList<AccessibilityRuleData>();
+                }
+
+                List<string> selectedSeverities = SeverityList.Select(x => x.Value.ToLower()).ToList();
+
+                // Filter rules: only include rules whose Impact matches a selected severity
+                allRules = new ObservableList<AccessibilityRuleData>(
+                    allRules.Where(r => selectedSeverities.Contains(r.Impact.ToLower()))
+                );
+            }
+
+            // Final step: Apply the combined exclusions to the initially loaded rules
+            // Create the final list of rules that are truly active for the analyzer
+            ObservableList<AccessibilityRuleData> finalActiveRules = new ObservableList<AccessibilityRuleData>();
+            foreach (AccessibilityRuleData ruleData in allRules)
+            {
+                if (!finalExcludedRuleIds.Contains(ruleData.RuleID))
+                {
+                    ruleData.Active = true; // Mark as active for consistency, though not strictly needed here
+                    finalActiveRules.Add(ruleData);
+                }
+                else
+                {
+                    ruleData.Active = false; // Explicitly mark as inactive if excluded
+                }
+            }
+
+            return finalActiveRules;
+        }
+
+        private static string GetAccessiblityrules(string platType)
         {
             try
             {
-                return EmbeddedResourceProvider.ReadEmbeddedFile("AccessiblityRules.json");
+                if (platType.Equals("Mobile", StringComparison.OrdinalIgnoreCase))
+                {
+                    return EmbeddedResourceProvider.ReadEmbeddedFile("MobileAccessiblityRules.json");
+                }
+                else if (platType.Equals("Web", StringComparison.OrdinalIgnoreCase))
+                {
+                    return EmbeddedResourceProvider.ReadEmbeddedFile("AccessiblityRules.json");
+                }
+                return string.Empty;
             }
             catch (Exception ex)
             {
@@ -762,8 +914,25 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             }
             return count;
         }
+        //Analyzer for Mobile
+        public void AnalyzerMobileAccessibility(IWebDriver driver, IWebElement elementXPath = null)
+        {
+            try
+            {
+                Artifacts = [];
+                MobileAccessibilityAnalyzer axeBuilder = new MobileAccessibilityAnalyzer(driver, ActiveRulesForAnalysis);
+                axeBuilder.AnalyzerMobileAccessibility(driver, elementXPath, currentAct: this, axeBuilder);
+            }
+            catch (Exception ex)
+            {
+                Error = "Error during mobile accessibility testing: " + ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, "Error during mobile accessibility testing", ex);
+            }
+        }
 
-        public void AnalyzerAccessibility(IWebDriver Driver, IWebElement element)
+
+        //Analyzer for Web
+        public void AnalyzerAccessibility(IWebDriver Driver, IWebElement element, ePlatformType platformType)
         {
             AxeBuilder axeBuilder = null;
             try
@@ -961,6 +1130,22 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         }
 
 
+    }
+
+    public class AccessibilityIssue
+    {
+        public string RuleId { get; set; } // e.g., "WCAG_1_1_1", "Android_TouchTargetSize"
+        public string Description { get; set; }
+        public string ElementIdentifier { get; set; } // A unique way to identify the element (e.g., XPath, resource-id)
+        public string Severity { get; set; } // e.g., "Critical", "Moderate", "Minor"
+        public string SuggestedFix { get; set; } // Guidance on how to fix the issue
+        public string RelatedWCAG { get; set; } // e.g., "WCAG 2.1.1 (A)"
+
+
+        public override string ToString()
+        {
+            return $"[{Severity}] {RuleId}: {Description} | Element: {ElementIdentifier} | Suggested Fix: {SuggestedFix}";
+        }
     }
 
     internal static class EmbeddedResourceProvider
