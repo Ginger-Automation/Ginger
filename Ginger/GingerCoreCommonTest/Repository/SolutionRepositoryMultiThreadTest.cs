@@ -41,6 +41,7 @@ namespace GingerCoreCommonTest.Repository
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
+
             TempRepositoryFolder = TestResources.GetTestTempFolder("Solutions", "SRMultiThreadTestTemp");
             Console.WriteLine("SolutionRepositoryTest folder: " + TempRepositoryFolder);
 
