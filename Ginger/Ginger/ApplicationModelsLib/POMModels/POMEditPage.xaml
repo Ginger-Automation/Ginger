@@ -26,7 +26,7 @@
                 <ColumnDefinition Width="20*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <UserControls:ImageMakerControl x:Name="xIconImage" Grid.Column="0" Margin="0,0,0,25" DataContext="{Binding RelativeSource={RelativeSource Self}}" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"/>
-            
+
             <TextBlock x:Name="xFirstLabel" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,25" Text="POM Name" VerticalAlignment="Center" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" />
 
             <DockPanel x:Name="xOperationsPnl" Grid.Column="2" MinWidth="500" VerticalAlignment="Center" HorizontalAlignment="Right">
@@ -46,10 +46,11 @@
                 <ScrollViewer>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="500" />
+                            <ColumnDefinition Width="151" />
+                            <ColumnDefinition Width="349"/>
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <StackPanel Orientation="Vertical" Grid.Column="0" Margin="15,20,20,0">
+                        <StackPanel Orientation="Vertical" Grid.Column="0" Margin="15,20,20,0" Grid.ColumnSpan="2">
                             <DockPanel>
                                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                                     <Label Style="{StaticResource $LabelStyle}" Content="Name:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
@@ -80,19 +81,19 @@
                             <StackPanel x:Name="xPageUrlStackPanel" Orientation="Horizontal" Margin="0,10,0,0">
                                 <UserControl:UCValueExpression x:Name="xPageURLTextBox" HorizontalAlignment="Left"
                                                                VerticalAlignment="Center" Width="440"/>
-                                
+
                                 <UserControls:ucButton x:Name="xPageURLBtn" ButtonType="ImageButton" HorizontalAlignment="Center" 
                                                        VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" 
                                                        ButtonImageHeight="16" ButtonImageType="GoNext" Click="xPageURLBtn_Click"
                                                        ToolTip="Go to Page" Margin="0,0,0,0"/>
-                           
+
                             </StackPanel>
 
                             <Frame x:Name="xFrameBusinessFlowControl" NavigationUIVisibility="Hidden" 
                                        BorderBrush="Transparent" HorizontalAlignment="Left"/>
                         </StackPanel>
 
-                        <Grid  Grid.Column="1" >
+                        <Grid  Grid.Column="2" >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="40"></RowDefinition>
                                 <RowDefinition Height="500*"></RowDefinition>

@@ -107,7 +107,7 @@ namespace Amdocs.Ginger.Common
         BusinessFlowAlreadyMappedToTC, AskIfSureWantToClose, AskIfSureWantToCloseWithoutNote, AskIfSureWantToRestart, AskIfSureWantToRestartWithoutNote, AskIfSureWantToRestartInAdminMode, WindowClosed, TargetWindowNotSelected,
         ChangingEnvironmentParameterValue, IFSaveChangesOfBF, AskIfToLoadExternalFields, WhetherToOpenSolution,
         AutomationTabExecResultsNotExists, FolderNamesAreTooLong, FolderSizeTooSmall, DefaultTemplateCantBeDeleted, FileNotExist, ExecutionsResultsProdIsNotOn, ExecutionsResultsNotExists, ExecutionsResultsToDelete, AllExecutionsResultsToDelete, FilterNotBeenSet, RetreivingAllElements, ClickElementAgain, CloseFilterPage,
-        BusinessFlowNeedTargetApplication, HTMLReportAttachment, ImageSize,
+        BusinessFlowNeedTargetApplication, HTMLReportAttachment, ImageSize, ImageSizeTill5Mb,
         GherkinAskToSaveFeatureFile, GherkinScenariosGenerated, GherkinNotifyFeatureFileExists, GherkinNotifyFeatureFileSelectedFromTheSolution, GherkinNotifyBFIsNotExistForThisFeatureFile, GherkinFileNotFound, GherkinColumnNotExist, GherkinActivityNotFound, GherkinBusinessFlowNotCreated, GherkinFeatureFileImportedSuccessfully, GherkinFeatureFileImportOnlyFeatureFileAllowedErrorMessage,
         AskIfSureWantToDeLink, AnalyzerFoundIssues, AnalyzerFoundNoIssues, AnalyzerSaveRunSet,
         AskIfSureWantToUndoChange,
@@ -166,7 +166,8 @@ namespace Amdocs.Ginger.Common
         UploadSolutionInfo,
         UploadSolutionToSourceControl,
         UploadSolutionFailed,
-        SourceControlBranchNameEmpty, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace,
+        SourceControlBranchNameEmpty,SourceControlBranchEmptyOrAlreadyExists, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace,
+        SourceControlBranchCreated,
         DeleteRecoverFolderWarn,
         EnvParamNameExists,
         GingerOpsConnectionFail,
@@ -353,6 +354,11 @@ namespace Amdocs.Ginger.Common
                 { eUserMsgKey.UploadSolutionToSourceControl, new UserMsg(eUserMsgType.QUESTION, "Upload Solution", "The solution was created and loaded successfully.\nPlease make a note of the encryption key provided from solution details page." + Environment.NewLine + "Do you want to upload the Solution: '{0}' to Source Control?", eUserMsgOption.YesNo, eUserMsgSelection.No) },
                 { eUserMsgKey.UploadSolutionFailed, new UserMsg(eUserMsgType.ERROR, "Upload Solution", "Failed to Upload Solution to Source Control" + Environment.NewLine + "'{0}'", eUserMsgOption.OK, eUserMsgSelection.None) },
                 { eUserMsgKey.SourceControlBranchNameEmpty, new UserMsg(eUserMsgType.ERROR, "Upload Solution", "Branch name cannot be empty.", eUserMsgOption.OK, eUserMsgSelection.None) },
+
+                 { eUserMsgKey.SourceControlBranchCreated, new UserMsg(eUserMsgType.INFO, "Create New Branch", "Branch created successfully.", eUserMsgOption.OK, eUserMsgSelection.None) },
+
+                { eUserMsgKey.SourceControlBranchEmptyOrAlreadyExists, new UserMsg(eUserMsgType.ERROR, "Create New Branch", "Branch Name is already exists or empty.", eUserMsgOption.OK, eUserMsgSelection.None) },
+
                 { eUserMsgKey.HandleConflictsBeforeMovingForward, new UserMsg(eUserMsgType.ERROR, "Unhandled Conflicts", "You have {0} unhandled conflicts, please handle them before moving forward.", eUserMsgOption.OK, eUserMsgSelection.OK) },
                 { eUserMsgKey.HasUnhandledConflicts, new UserMsg(eUserMsgType.ERROR, "Unhandled Conflicts", "Cannot merge since you have {0} unhandled conflicts.", eUserMsgOption.OK, eUserMsgSelection.OK) },
                 { eUserMsgKey.HasUnhandledMandatoryIssues, new UserMsg(eUserMsgType.ERROR, "Unhandled Issues", "Cannot merge since you have {0} unhandled High/Critical issues.", eUserMsgOption.OK, eUserMsgSelection.OK) },
@@ -612,9 +618,9 @@ namespace Amdocs.Ginger.Common
                 { eUserMsgKey.ExecutionsResultsToDelete, new UserMsg(eUserMsgType.QUESTION, "Delete Executions Results", "Are you sure you want to delete selected Executions Results?", eUserMsgOption.YesNo, eUserMsgSelection.No) },
                 { eUserMsgKey.AllExecutionsResultsToDelete, new UserMsg(eUserMsgType.QUESTION, "Delete All Executions Results", "Are you sure you want to delete all Executions Results?", eUserMsgOption.YesNo, eUserMsgSelection.No) },
                 { eUserMsgKey.HTMLReportAttachment, new UserMsg(eUserMsgType.WARN, "HTML Report Attachment", "HTML Report Attachment already exists, please delete existing one.", eUserMsgOption.OK, eUserMsgSelection.None) },
-                { eUserMsgKey.ImageSize, new UserMsg(eUserMsgType.WARN, "Image Size", "Image Size should be less than 30 Kb", eUserMsgOption.OK, eUserMsgSelection.None) },
+                { eUserMsgKey.ImageSize, new UserMsg(eUserMsgType.WARN, "Image Size", "Image Size should be less than 500 Kb", eUserMsgOption.OK, eUserMsgSelection.None) },
                 { eUserMsgKey.BFNotExistInDB, new UserMsg(eUserMsgType.INFO, "Run " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), "Business Flow data don't exist in LiteDB, Please run to generate report", eUserMsgOption.OK, eUserMsgSelection.None) },
-
+                { eUserMsgKey.ImageSizeTill5Mb, new UserMsg(eUserMsgType.WARN, "Image Size", "Image Size should be less than 5 MB", eUserMsgOption.OK, eUserMsgSelection.None) },
                 #endregion Reports
 
                 #region Otoma

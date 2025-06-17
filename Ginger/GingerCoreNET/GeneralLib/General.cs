@@ -20,14 +20,20 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.Repository.SolutionCategories;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
 using Ginger.Configurations;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.ALM.RQM;
 using GingerCore.DataSource;
 using GingerCore.Environments;
+using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections;
@@ -932,6 +938,240 @@ namespace GingerCoreNET.GeneralLib
             decryptedPassword = EncryptionHandler.IsStringEncrypted(evaluatedValue) ? EncryptionHandler.DecryptwithKey(evaluatedValue) : evaluatedValue;
 
             return decryptedPassword;
+        }
+
+        public static ObservableList<MultiPomRunSetMapping> GetSelectedRunsetList(ObservableList<RunSetConfig> RunSetConfigList, ObservableList<BusinessFlow> businessFlows, IEnumerable<ApplicationPOMModel> selectedPOMModels, Dictionary<ApplicationPOMModel, List<RunSetConfig>> ApplicationPOMModelrunsetConfigMapping)
+        {
+            foreach (var applicationPOMModel in selectedPOMModels)
+            {
+                var matchingRunSetConfigs = RunSetConfigList
+                    .Where(runsetConfig => runsetConfig.GingerRunners
+                        .Any(gingerRunner => businessFlows
+                            .Where(businessFlow => gingerRunner.BusinessFlowsRunList
+                                .Select(y => y.BusinessFlowGuid)
+                                .Contains(businessFlow.Guid))
+                            .Any(businessFlow => businessFlow.Activities
+                                .Any(activity => activity.Acts
+                                    .Any(act =>
+                                            (act is ActUIElement actUIElement && actUIElement.ElementLocateBy == eLocateBy.POMElement &&
+                                                actUIElement.ElementLocateValue.Split("_")[0] == applicationPOMModel.Guid.ToString()) ||
+                                            (act is ActBrowserElement actBrowserElement && actBrowserElement.LocateBy == eLocateBy.POMElement &&
+                                                actBrowserElement.LocateValue.Split("_")[0] == applicationPOMModel.Guid.ToString()))))));
+
+                foreach (var runsetConfig in matchingRunSetConfigs)
+                {
+                    if (!ApplicationPOMModelrunsetConfigMapping.ContainsKey(applicationPOMModel))
+                    {
+                        ApplicationPOMModelrunsetConfigMapping[applicationPOMModel] = new List<RunSetConfig>();
+                    }
+                    ApplicationPOMModelrunsetConfigMapping[applicationPOMModel].Add(runsetConfig);
+                }
+            }
+
+
+            ObservableList<MultiPomRunSetMapping> multiPomRunSetMappingsList = new ObservableList<MultiPomRunSetMapping>();
+
+            foreach (var kvp in ApplicationPOMModelrunsetConfigMapping)
+            {
+                MultiPomRunSetMapping multiPomRunSetMappingItem = new MultiPomRunSetMapping();
+                multiPomRunSetMappingItem.ApplicationAPIModel = kvp.Key;
+                multiPomRunSetMappingItem.ApplicationAPIModelName = multiPomRunSetMappingItem.ApplicationAPIModel.Name;
+                multiPomRunSetMappingItem.RunSetConfigList = kvp.Value;
+                multiPomRunSetMappingItem.RunSetStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+
+                multiPomRunSetMappingsList.Add(multiPomRunSetMappingItem);
+            }
+
+            // Set the most common RunSetConfig for each item, but retain the unique RunSetConfig if it differs
+            foreach (MultiPomRunSetMapping item in multiPomRunSetMappingsList)
+            {
+                if (item.RunSetConfigList != null && item.RunSetConfigList.Any())
+                {
+                    //Find the most common RunSetConfig across all items in multiPomRunSetMappingsList
+                    var mostCommonRunSetConfig = multiPomRunSetMappingsList
+                        .SelectMany(item => item.RunSetConfigList)
+                        .GroupBy(runsetConfig => runsetConfig)
+                        .OrderByDescending(group => group.Count())
+                        .FirstOrDefault()?.Key;
+
+                    // Check if the most common RunSetConfig is present in the current item's RunSetConfigList
+                    if (item.RunSetConfigList.Contains(mostCommonRunSetConfig))
+                    {
+                        item.SelectedRunset = mostCommonRunSetConfig;
+                        item.RunsetName = mostCommonRunSetConfig?.Name;
+                    }
+                    else
+                    {
+                        var uniqueRunSetConfig = item.RunSetConfigList
+                            .GroupBy(runsetConfig => runsetConfig)
+                            .OrderByDescending(group => group.Count())
+                            .FirstOrDefault()?.Key;
+
+                        item.SelectedRunset = uniqueRunSetConfig;
+                        item.RunsetName = uniqueRunSetConfig?.Name;
+                    }
+                }
+                else
+                {
+                    // Handle case where RunSetConfigList is empty or null
+                    item.SelectedRunset = null;
+                    item.RunsetName = string.Empty;
+                    item.PomUpdateStatus = $"No Runset found";
+                }
+            }
+
+            return multiPomRunSetMappingsList;
+        }
+        public static async Task RunSelectedRunset(MultiPomRunSetMapping mSelectedPomWithRunset, ObservableList<MultiPomRunSetMapping> MultiPomRunSetMappingList, CLIHelper mCLIHelper)
+        {
+            if (mSelectedPomWithRunset.SelectedRunset != null)
+            {
+                mSelectedPomWithRunset.SelectedRunset.SourceApplication = mCLIHelper.SourceApplication;
+                mSelectedPomWithRunset.SelectedRunset.SourceApplicationUser = mCLIHelper.SourceApplicationUser;
+                mSelectedPomWithRunset.SelectedRunset.AutoUpdatedPOMList = new();
+                if (mSelectedPomWithRunset.SelectedRunset?.SelfHealingConfiguration != null)
+                {
+                    if (mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.EnableSelfHealing)
+                    {
+                        if (mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.AutoUpdateApplicationModel)
+                        {
+                            if (!mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.ForceUpdateApplicationModel)
+                            {
+                                mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.ForceUpdateApplicationModel = true;
+                            }
+                        }
+                        else
+                        {
+                            mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.AutoUpdateApplicationModel = true;
+                            mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.ForceUpdateApplicationModel = true;
+                        }
+                    }
+                    else
+                    {
+                        mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.EnableSelfHealing = true;
+                        mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.AutoUpdateApplicationModel = true;
+                        mSelectedPomWithRunset.SelectedRunset.SelfHealingConfiguration.ForceUpdateApplicationModel = true;
+                    }
+                }
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected, "RunSet");
+                return;
+            }
+
+            WorkSpace.Instance.RunningInExecutionMode = true;
+            LoadRunsetConfigToRunsetExecutor(runsetExecutor: WorkSpace.Instance.RunsetExecutor, runSetConfig: mSelectedPomWithRunset.SelectedRunset, mCLIHelper: mCLIHelper);
+            try
+            {
+                mSelectedPomWithRunset.RunSetStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
+                await ExecuteRunSet();
+                foreach (MultiPomRunSetMapping elem in MultiPomRunSetMappingList)
+                {
+                    if (mSelectedPomWithRunset.SelectedRunset.Guid.Equals(elem.SelectedRunset?.Guid))
+                    {
+                        if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Contains(elem.ApplicationAPIModel.Guid))
+                        {
+                            elem.PomUpdateStatus = $"'{elem.ApplicationAPIModel.Name}' Updated";                           
+                            var aPOMModified = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().FirstOrDefault(aPOM => aPOM.Guid == elem.ApplicationAPIModel.Guid);
+                            if (aPOMModified != null)
+                            {
+                                SaveHandler.Save(aPOMModified);
+                            }
+                            else
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, $"Cannot find POM with GUID '{elem.ApplicationAPIModel.Guid}' to save");
+                            }
+                        }
+                        else
+                        {
+                            elem.PomUpdateStatus = $"'{elem.ApplicationAPIModel.Name}' Not Updated";
+                        }
+
+                        elem.RunSetStatus = mSelectedPomWithRunset.SelectedRunset.RunSetExecutionStatus;
+                        if (elem.RunSetStatus.Equals(Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed))
+                        {
+                            elem.PomUpdateStatus = $"'{elem.PomUpdateStatus}' and Runset status Failed";
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while Execute RunSet", ex);
+            }
+            finally
+            {
+                WorkSpace.Instance.RunningInExecutionMode = false;
+            }
+        }
+        public static void LoadRunsetConfigToRunsetExecutor(RunSetConfig runSetConfig, RunsetExecutor runsetExecutor, CLIHelper mCLIHelper)
+        {
+            runsetExecutor.RunSetConfig = runSetConfig;
+
+
+            if (!mCLIHelper.LoadRunset(runsetExecutor))
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load Runset ");
+                return;
+            }
+
+            if (!mCLIHelper.PrepareRunsetForExecution())
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Prepare Runset for execution");
+                return;
+            }
+
+        }
+        public static async Task ExecuteRunSet()
+        {
+            Reporter.ToLog(eLogLevel.INFO, string.Format("Executing {0}... ", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+            try
+            {
+                if (WorkSpace.Instance.GingerCLIMode == eGingerCLIMode.run)
+                {
+                   await Execute(WorkSpace.Instance.RunsetExecutor);
+                }
+                else
+                {
+                    await Task.Run(async () =>
+                    {
+
+                        try
+                        {
+                            await Execute(WorkSpace.Instance.RunsetExecutor);
+                        }
+                        catch (Exception ex)
+                        {
+                            // Handle the exception
+                            Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while Execute RunSet", ex);
+                        }
+                    });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while Execute RunSet", ex);
+            }
+        }
+
+        public static async Task Execute(RunsetExecutor runsetExecutor)
+        {
+            await runsetExecutor.RunRunset();
+        }
+
+        internal static string SetupRelativePath(string FileName)
+        {
+            if (FileName.StartsWith(WorkSpace.Instance.SolutionRepository.SolutionFolder))
+            {
+                return WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(FileName);
+            }
+            else
+            {
+                return FileName;
+            }
         }
     }
 
