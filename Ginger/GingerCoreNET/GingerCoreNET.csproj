@@ -57,6 +57,7 @@
     <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\AccessiblityRules.json" />
     <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporter.css" />
     <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporterElements.js" />
+    <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\MobileAccessiblityRules.json" />
     <None Remove="Drivers\WebServicesDriver\WebServicesDriverWindow.xaml" />
     <None Remove="log4netLib\log4net.config" />    
     <None Remove="Reports\GingerExecutionReport\assets\css\bootstrap.css" />
@@ -1312,6 +1313,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporter.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\MobileAccessiblityRules.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
 

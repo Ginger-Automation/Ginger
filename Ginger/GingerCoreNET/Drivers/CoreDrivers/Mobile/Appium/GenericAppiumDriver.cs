@@ -38,6 +38,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Mobile;
+using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
@@ -328,6 +329,14 @@ namespace Amdocs.Ginger.CoreNET
                     return false;
                 }
 
+                if (DevicePlatformType == eDevicePlatformType.Android || DevicePlatformType == eDevicePlatformType.Android)
+                {
+
+                }
+                else
+                {
+
+                }
                 mSeleniumDriver = new SeleniumDriver(Driver)//used for running regular Selenium actions
                 {
                     isAppiumSession = true,
@@ -537,6 +546,13 @@ namespace Amdocs.Ginger.CoreNET
                     return;
                 }
 
+                //Mobile
+                if (actionType == typeof(ActAccessibilityTesting))
+                {
+                    ActAccessibilityTestingHandler((ActAccessibilityTesting)act);
+                    return;
+                }
+
                 //Naitive/Hybrid
                 if (actionType == typeof(ActUIElement))
                 {
@@ -574,6 +590,42 @@ namespace Amdocs.Ginger.CoreNET
             finally
             {
                 OnDriverMessage(eDriverMessageType.ActionPerformed);
+            }
+        }
+
+        // Add this method to handle ActAccessibilityTesting for mobile
+        private void ActAccessibilityTestingHandler(ActAccessibilityTesting act)
+        {
+            try
+            {
+                IWebElement elementInfo = null;
+
+                if (act.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Element)
+                {
+                    elementInfo = LocateElement(act);  // Locate specific element
+                }
+                else if (act.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Page)
+                {
+
+                    // For 'Page', use the root element to analyze the full screen
+                    elementInfo = (AppiumElement)Driver.FindElement(By.ClassName("android.widget.FrameLayout"));
+                }
+
+                if (elementInfo != null)
+                {
+                    act.AnalyzerMobileAccessibility(Driver, elementInfo);
+                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                }
+                else
+                {
+                    act.Error = "Element not found.";
+                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                }
+            }
+            catch (Exception ex)
+            {
+                act.Error = ex.Message;
+                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             }
         }
 
@@ -1245,32 +1297,32 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SimulateBiometrics:
+                    {
+                        string biometricsAnswer = string.Empty;
+                        switch (act.AuthResultSimulation)
                         {
-                            string biometricsAnswer = string.Empty;
-                            switch (act.AuthResultSimulation)
+                            case ActMobileDevice.eAuthResultSimulation.Success:
                             {
-                                case ActMobileDevice.eAuthResultSimulation.Success:
-                                    {
-                                        biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), "");
-                                        break;
-                                    }
-                                case ActMobileDevice.eAuthResultSimulation.Failure:
-                                    {
-                                        biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsFailureSimulation.ToString());
-                                        break;
-                                    }
-                                case ActMobileDevice.eAuthResultSimulation.Cancel:
-                                    {
-                                        biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsCancelSimulation.ToString());
-                                        break;
-                                    }
+                                biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), "");
+                                break;
                             }
-                            if (!string.IsNullOrEmpty(biometricsAnswer) && biometricsAnswer != "success")
+                            case ActMobileDevice.eAuthResultSimulation.Failure:
                             {
-                                act.Error = "An Error occurred during biometrics simulation. Error2: " + biometricsAnswer;
+                                biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsFailureSimulation.ToString());
+                                break;
                             }
-                            break;
+                            case ActMobileDevice.eAuthResultSimulation.Cancel:
+                            {
+                                biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsCancelSimulation.ToString());
+                                break;
+                            }
                         }
+                        if (!string.IsNullOrEmpty(biometricsAnswer) && biometricsAnswer != "success")
+                        {
+                            act.Error = "An Error occurred during biometrics simulation. Error2: " + biometricsAnswer;
+                        }
+                        break;
+                    }
 
                     case ActMobileDevice.eMobileDeviceAction.StopSimulatePhotoOrVideo:
                         CameraAndBarcodeSimulationRequest(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
@@ -1332,15 +1384,15 @@ namespace Amdocs.Ginger.CoreNET
                         switch (act.RotateDeviceState)
                         {
                             case ActMobileDevice.eRotateDeviceState.Landscape:
-                                {
-                                    SwitchToLandscape();
-                                    break;
-                                }
+                            {
+                                SwitchToLandscape();
+                                break;
+                            }
                             case ActMobileDevice.eRotateDeviceState.Portrait:
-                                {
-                                    SwitchToPortrait();
-                                    break;
-                                }
+                            {
+                                SwitchToPortrait();
+                                break;
+                            }
                         }
                         NotifyDeviceRotation();
                         break;
@@ -1392,30 +1444,30 @@ namespace Amdocs.Ginger.CoreNET
                             switch (act.PerformanceTypes)
                             {
                                 case ActMobileDevice.ePerformanceTypes.Cpuinfo:
-                                    {
-                                        GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
-                                        break;
-                                    }
+                                {
+                                    GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
+                                    break;
+                                }
                                 case ActMobileDevice.ePerformanceTypes.Memoryinfo:
-                                    {
-                                        GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
-                                        break;
-                                    }
+                                {
+                                    GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
+                                    break;
+                                }
                                 case ActMobileDevice.ePerformanceTypes.Batteryinfo:
-                                    {
-                                        GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
-                                        break;
-                                    }
+                                {
+                                    GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
+                                    break;
+                                }
                                 case ActMobileDevice.ePerformanceTypes.Networkinfo:
-                                    {
-                                        GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
-                                        break;
-                                    }
+                                {
+                                    GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
+                                    break;
+                                }
                                 case ActMobileDevice.ePerformanceTypes.Diskinfo:
-                                    {
-                                        GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
-                                        break;
-                                    }
+                                {
+                                    GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
+                                    break;
+                                }
                             }
                         }
                         break;
