@@ -600,5 +600,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             throw new NotImplementedException();
         }
+
+        public override void UpdateItemAttributeValue()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

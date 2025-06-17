@@ -36,7 +36,10 @@ namespace GingerCore
         [EnumValueDescription("Accessibility Rules")]
         AccessibilityRules,
 
-        Parameter
+        Parameter,
+        Agents,
+        Environment
+
     }
 
     public enum eSkinDicsType
