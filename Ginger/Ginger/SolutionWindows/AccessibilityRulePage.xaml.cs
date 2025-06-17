@@ -98,10 +98,10 @@ namespace Ginger.SolutionWindows
             ]
             };
 
-            xAccessibilityRulesGrid.AddRadioButton(content: "Web", "AccessibilityType", LoadWebRulesData, isChecked: true);
-            xAccessibilityRulesGrid.AddRadioButton(content: "Mobile", "AccessibilityType", LoadMobileRulesData);
+            xAccessibilityRulesGrid.AddRadioButton(content: "Web", "AccessibilityType", LoadWebMobileRulesData, isChecked: true);
+            xAccessibilityRulesGrid.AddRadioButton(content: "Mobile", "AccessibilityType", LoadWebMobileRulesData);
 
-            xAccessibilityRulesGrid.AddLabel("              ");
+            xAccessibilityRulesGrid.AddLabel("     ");
 
             xAccessibilityRulesGrid.AddLabel("Note: Ginger will only analyze the active accessibility testing rules; inactive rules will not be considered.");
 
@@ -116,32 +116,14 @@ namespace Ginger.SolutionWindows
             xAccessibilityRulesGrid.DataSourceList = accessibilityRuleDatas;
         }
 
-        private void LoadWebRulesData(object sender, RoutedEventArgs e)
+        private void LoadWebMobileRulesData(object sender, RoutedEventArgs e)
         {
-            RadioButton? clickedRadioButton = sender as RadioButton;
+            RadioButton clickedRadioButton = sender as RadioButton;
 
-            if (clickedRadioButton != null && clickedRadioButton.IsChecked == true)
-            {
-
-                string selectedOption = clickedRadioButton.Content.ToString();
-
-                actAccessibilityTesting.CurrentRuleType = selectedOption;
-
-            }
-
-            LoadGridData();
-        }
-
-        private void LoadMobileRulesData(object sender, RoutedEventArgs e)
-        {
-            RadioButton? clickedRadioButton = sender as RadioButton;
-
-            if (clickedRadioButton != null && clickedRadioButton.IsChecked == true)
+            if (clickedRadioButton != null && clickedRadioButton.IsChecked.HasValue && clickedRadioButton.IsChecked.Value)
             {
                 string selectedOption = clickedRadioButton.Content.ToString();
-
                 actAccessibilityTesting.CurrentRuleType = selectedOption;
-
             }
             LoadGridData();
         }
