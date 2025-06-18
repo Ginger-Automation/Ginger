@@ -50,6 +50,7 @@ using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GraphQL;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUglify.Html;
@@ -2643,8 +2644,7 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         if ((EI.XPath).Contains("android") || (EI.XPath).Contains("XCUIElement"))
                         {
-                            AppiumElement realElement = Driver.FindElement(By.XPath(EI.XPath));
-                            EI.ScreenShotImage = TakeElementScreenShot(realElement);
+                            EI.ScreenShotImage = TakeElementScreenShot(EI,fullScreenshot);
                         }
                         foundElementsList.Add(EI);
                     }
@@ -2657,20 +2657,24 @@ namespace Amdocs.Ginger.CoreNET
                 mIsDriverBusy = false;
             }
         }
-        private string TakeElementScreenShot(IWebElement element)
-        {         
+        private string TakeElementScreenShot(ElementInfo elementInfo, Screenshot fullScreenshot)
+        {
             using (Bitmap fullImage = ScreenshotToImage(fullScreenshot))
             {
-                var location = element.Location;
-                var size = element.Size;
+                int cropX;
+                int cropY;
+                int cropWidth;
+                int cropHeight;
 
-                // Ensure the crop rectangle is within bounds
-                Rectangle cropRect = new Rectangle(
-                Math.Max(location.X, 0),
-                Math.Max(location.Y, 0),
-                Math.Min(size.Width, fullImage.Width - location.X),
-                Math.Min(size.Height, fullImage.Height - location.Y)
-            );
+                string BoundsValue = elementInfo.GetElementProperties().FirstOrDefault(x => x.Name.Equals("bounds", StringComparison.InvariantCultureIgnoreCase)).Value;
+
+                GetLocationAndSizeOfElement(BoundsValue, out cropX,out cropY,out cropWidth,out cropHeight);
+
+                if (cropWidth <= 0 || cropHeight <= 0)
+                    throw new ArgumentException("Invalid crop dimensions.");
+
+                Rectangle cropRect = new Rectangle(cropX, cropY, cropWidth, cropHeight);
+
                 using (Bitmap elementImage = new Bitmap(cropRect.Width, cropRect.Height))
                 {
                     using (Graphics g = Graphics.FromImage(elementImage))
@@ -2680,12 +2684,33 @@ namespace Amdocs.Ginger.CoreNET
 
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        elementImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                        elementImage.Save(ms, ImageFormat.Png);
                         return Convert.ToBase64String(ms.ToArray());
                     }
                 }
+
             }
         }
+
+        private void GetLocationAndSizeOfElement(string bounds, out int cropX, out int cropY, out int cropWidth, out int cropHeight)
+        {
+
+            // Remove the square brackets and split the string
+            string[] parts = bounds.Replace("[", "").Split(']');
+
+            // Parse the first part as x and y
+            string[] xy = parts[0].Split(',');
+            cropX = int.Parse(xy[0]);
+            cropY = int.Parse(xy[1]);
+
+            // Parse the second part as width and height
+            string[] wh = parts[1].Split(',');
+            cropWidth = int.Parse(wh[0]);
+            cropHeight = int.Parse(wh[1]);
+
+        }
+
+
         private Bitmap ScreenshotToImage(Screenshot screenshot)
         {
             using (MemoryStream ms = new MemoryStream(screenshot.AsByteArray))
