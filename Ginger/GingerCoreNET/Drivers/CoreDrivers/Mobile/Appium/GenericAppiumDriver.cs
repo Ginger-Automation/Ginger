@@ -50,7 +50,6 @@ using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GraphQL;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUglify.Html;
@@ -72,6 +71,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -1253,7 +1253,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.UnlockDevice:
-                        PerformLockButtonPress(eLockOperation.UnLock,act);
+                        PerformLockButtonPress(eLockOperation.UnLock, act);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceBattery:
@@ -1298,32 +1298,32 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SimulateBiometrics:
-                    {
-                        string biometricsAnswer = string.Empty;
-                        switch (act.AuthResultSimulation)
                         {
-                            case ActMobileDevice.eAuthResultSimulation.Success:
+                            string biometricsAnswer = string.Empty;
+                            switch (act.AuthResultSimulation)
                             {
-                                biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), "");
-                                break;
+                                case ActMobileDevice.eAuthResultSimulation.Success:
+                                    {
+                                        biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), "");
+                                        break;
+                                    }
+                                case ActMobileDevice.eAuthResultSimulation.Failure:
+                                    {
+                                        biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsFailureSimulation.ToString());
+                                        break;
+                                    }
+                                case ActMobileDevice.eAuthResultSimulation.Cancel:
+                                    {
+                                        biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsCancelSimulation.ToString());
+                                        break;
+                                    }
                             }
-                            case ActMobileDevice.eAuthResultSimulation.Failure:
+                            if (!string.IsNullOrEmpty(biometricsAnswer) && biometricsAnswer != "success")
                             {
-                                biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsFailureSimulation.ToString());
-                                break;
+                                act.Error = "An Error occurred during biometrics simulation. Error2: " + biometricsAnswer;
                             }
-                            case ActMobileDevice.eAuthResultSimulation.Cancel:
-                            {
-                                biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsCancelSimulation.ToString());
-                                break;
-                            }
+                            break;
                         }
-                        if (!string.IsNullOrEmpty(biometricsAnswer) && biometricsAnswer != "success")
-                        {
-                            act.Error = "An Error occurred during biometrics simulation. Error2: " + biometricsAnswer;
-                        }
-                        break;
-                    }
 
                     case ActMobileDevice.eMobileDeviceAction.StopSimulatePhotoOrVideo:
                         CameraAndBarcodeSimulationRequest(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
@@ -1385,15 +1385,15 @@ namespace Amdocs.Ginger.CoreNET
                         switch (act.RotateDeviceState)
                         {
                             case ActMobileDevice.eRotateDeviceState.Landscape:
-                            {
-                                SwitchToLandscape();
-                                break;
-                            }
+                                {
+                                    SwitchToLandscape();
+                                    break;
+                                }
                             case ActMobileDevice.eRotateDeviceState.Portrait:
-                            {
-                                SwitchToPortrait();
-                                break;
-                            }
+                                {
+                                    SwitchToPortrait();
+                                    break;
+                                }
                         }
                         NotifyDeviceRotation();
                         break;
@@ -1445,30 +1445,30 @@ namespace Amdocs.Ginger.CoreNET
                             switch (act.PerformanceTypes)
                             {
                                 case ActMobileDevice.ePerformanceTypes.Cpuinfo:
-                                {
-                                    GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
-                                    break;
-                                }
+                                    {
+                                        GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
+                                        break;
+                                    }
                                 case ActMobileDevice.ePerformanceTypes.Memoryinfo:
-                                {
-                                    GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
-                                    break;
-                                }
+                                    {
+                                        GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
+                                        break;
+                                    }
                                 case ActMobileDevice.ePerformanceTypes.Batteryinfo:
-                                {
-                                    GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
-                                    break;
-                                }
+                                    {
+                                        GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
+                                        break;
+                                    }
                                 case ActMobileDevice.ePerformanceTypes.Networkinfo:
-                                {
-                                    GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
-                                    break;
-                                }
+                                    {
+                                        GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
+                                        break;
+                                    }
                                 case ActMobileDevice.ePerformanceTypes.Diskinfo:
-                                {
-                                    GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
-                                    break;
-                                }
+                                    {
+                                        GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
+                                        break;
+                                    }
                             }
                         }
                         break;
@@ -2149,7 +2149,7 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        public void PerformLockButtonPress(eLockOperation LockOperation, ActMobileDevice act=null)
+        public void PerformLockButtonPress(eLockOperation LockOperation, ActMobileDevice act = null)
         {
             switch (DevicePlatformType)
             {
@@ -2160,7 +2160,7 @@ namespace Amdocs.Ginger.CoreNET
                             ((AndroidDriver)Driver).Lock();
                             break;
                         case eLockOperation.UnLock:
-                            if(act != null)
+                            if (act != null)
                             {
                                 try
                                 {
@@ -2565,7 +2565,7 @@ namespace Amdocs.Ginger.CoreNET
                 return null;
             }
         }
-        Screenshot fullScreenshot = null; // ((ITakesScreenshot)Driver).GetScreenshot(); 
+
         async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             if (AppType == eAppType.Web)
@@ -2644,7 +2644,16 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         if ((EI.XPath).Contains("android") || (EI.XPath).Contains("XCUIElement"))
                         {
-                            EI.ScreenShotImage = TakeElementScreenShot(EI, fullImage);
+                            try
+                            {
+                                EI.ScreenShotImage = TakeElementScreenShot(EI, fullImage);
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR,$"Skipping element due to screen-shot error: {ex.Message}",ex);
+                                EI.ScreenShotImage = null;
+                            }
+
                         }
                         foundElementsList.Add(EI);
                     }
@@ -2659,25 +2668,26 @@ namespace Amdocs.Ginger.CoreNET
         }
         private string TakeElementScreenShot(ElementInfo elementInfo, Bitmap fullImage)
         {
-
-            if (fullImage == null)
+            try
             {
-                throw new ArgumentNullException(nameof(fullImage), "Full image cannot be null.");
-            }
+                if (fullImage == null)
+                {
+                    throw new ArgumentNullException(nameof(fullImage), "Full image cannot be null.");
+                }
 
-            if (elementInfo == null)
-            { 
-                throw new ArgumentNullException(nameof(elementInfo), "elementInfo cannot be null."); 
-            }
+                if (elementInfo == null)
+                {
+                    throw new ArgumentNullException(nameof(elementInfo), "elementInfo cannot be null.");
+                }
 
-            int cropX;
+                int cropX;
                 int cropY;
                 int cropWidth;
                 int cropHeight;
 
                 string BoundsValue = elementInfo.GetElementProperties().FirstOrDefault(x => x.Name.Equals("bounds", StringComparison.InvariantCultureIgnoreCase)).Value;
 
-                GetLocationAndSizeOfElement(BoundsValue, out cropX,out cropY,out cropWidth,out cropHeight);
+                GetLocationAndSizeOfElement(BoundsValue, out cropX, out cropY, out cropWidth, out cropHeight);
 
                 if (cropWidth <= 0 || cropHeight <= 0)
                     throw new ArgumentException("Invalid crop dimensions.");
@@ -2697,32 +2707,51 @@ namespace Amdocs.Ginger.CoreNET
                         return Convert.ToBase64String(ms.ToArray());
                     }
                 }
+            }
+            catch ( Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Take element screen-shot: ", ex);
+                return null;
+            }
         }
 
         private void GetLocationAndSizeOfElement(string bounds, out int cropX, out int cropY, out int cropWidth, out int cropHeight)
         {
+            try
+            {
 
-            // Remove the square brackets and split the string
-            string[] parts = bounds.Replace("[", "").Split(']');
+                // Remove the square brackets and split the string
+                string[] parts = bounds.Replace("[", "").Split(']');
 
-            // Parse the first part as x and y
-            string[] xy = parts[0].Split(',');
-            cropX = int.Parse(xy[0]);
-            cropY = int.Parse(xy[1]);
+                // Parse the first part as x and y
+                string[] xy = parts[0].Split(',');
+                cropX = int.Parse(xy[0]);
+                cropY = int.Parse(xy[1]);
 
-            // Parse the second part as width and height
-            string[] wh = parts[1].Split(',');
-            cropWidth = int.Parse(wh[0]);
-            cropHeight = int.Parse(wh[1]);
-
+                // Parse the second part as width and height
+                string[] wh = parts[1].Split(',');
+                int x2 = int.Parse(wh[0]);
+                int y2 = int.Parse(wh[1]);
+                cropWidth = Math.Max(0, x2 - cropX);
+                cropHeight = Math.Max(0, y2 - cropY);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG,$"Failed to parse bounds string: {bounds}", ex);
+            }
+            finally
+            {
+                cropX = 0; cropY = 0; cropWidth = 0; cropHeight = 0;
+            }
         }
 
 
         private Bitmap ScreenshotToImage(Screenshot screenshot)
         {
             using (MemoryStream ms = new MemoryStream(screenshot.AsByteArray))
+            using (var original = new Bitmap(ms))
             {
-                return new Bitmap(ms);
+                return (Bitmap)original.Clone();
             }
         }
         private async Task<ElementInfo> GetElementInfoforXmlNode(XmlNode xmlNode)
