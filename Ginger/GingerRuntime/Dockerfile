@@ -52,8 +52,8 @@ RUN apt-get update && \
 WORKDIR /GingerRuntime
 
 RUN ./selenium-manager/linux/selenium-manager --browser chrome
-RUN ./selenium-manager/linux/selenium-manager --browser firefox
-#RUN ./selenium-manager/linux/selenium-manager --browser edge
+RUN ./selenium-manager/linux/selenium-manager --browser firefox --browser-version 134
+RUN ./selenium-manager/linux/selenium-manager --browser edge --browser-version 134
 
 # Specify the entry point
 ENTRYPOINT ["dotnet", "GingerRuntime.dll"]

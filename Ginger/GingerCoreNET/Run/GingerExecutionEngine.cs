@@ -3246,7 +3246,12 @@ namespace Ginger.Run
                 int index = CurrentBusinessFlow.Activities.IndexOf(CurrentBusinessFlow.CurrentActivity) + 1;
                 ActivitiesGroup activitiesGroup = CurrentBusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID);
                 CurrentBusinessFlow.AddActivity(sharedActivityInstance, activitiesGroup, index);
-
+                ApplicationAgent appAgent = (ApplicationAgent)mGingerRunner.ApplicationAgents.FirstOrDefault(x => x.AppName.Equals(sharedActivityInstance.TargetApplication.ToString()
+                   ));
+                if (appAgent == null)
+                {
+                    UpdateApplicationAgents();
+                }
                 NotifyDynamicActivityWasAddedToBusinessflow(CurrentBusinessFlow);
 
                 //set it as next activity to run                                  

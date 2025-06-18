@@ -1868,9 +1868,17 @@ namespace GingerCore.SourceControl
 
         public override string GetCurrentWorkingBranch()
         {
-            using (var repo = new LibGit2Sharp.Repository(LocalFolder))
+            try
             {
-                return repo.Head.FriendlyName;
+                using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                {
+                    return repo.Head.FriendlyName;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while fetching current Branch", ex);
+                return null;
             }
         }
 

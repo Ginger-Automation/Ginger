@@ -60,6 +60,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         /// </summary>
         public string HtmlFilePath { get; set; }
 
+        public string userTempDataFolderPath { get; set; }
+
         protected BasePOMWizard(RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
         {
             mPomLearnUtils = new PomLearnUtils(new ApplicationPOMModel(), pomModelsFolder: pomModelsFolder);

@@ -37,7 +37,6 @@ using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.CommunicationProtocol;
 using GingerCore.Drivers.Selenium.SeleniumBMP;
-using GingerCore.Environments;
 using GingerCoreNET.Drivers.CommonLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using HtmlAgilityPack;
@@ -45,6 +44,7 @@ using InputSimulatorStandard;
 using Microsoft.VisualStudio.Services.Common;
 using Newtonsoft.Json;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Chromium;
 using OpenQA.Selenium.Common;
@@ -72,7 +72,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using static GingerCoreNET.GeneralLib.General;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V127.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V136.DevToolsSessionDomains;
 
 
 
@@ -100,7 +100,7 @@ namespace GingerCore.Drivers
         private const string BRAVE_64BIT_BINARY_PATH = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
         private const string EDGE_32BIT_BINARY_PATH = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
         private const string EDGE_64BIT_BINARY_PATH = "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe";
-
+        private const int DevToolsProtocolVersion = 136;
         String[] SeleniumUserArgs = null;
         DriverService driverService = null;
         private readonly List<string> HighlightStyleList = ["arguments[0].style.outline='3px dashed rgb(239, 183, 247)'", "arguments[0].style.backgroundColor='rgb(239, 183, 247)'", "arguments[0].style.border='3px dashed rgb(239, 183, 247)'"];
@@ -402,6 +402,7 @@ namespace GingerCore.Drivers
 
 
         protected IWebDriver Driver;
+        protected AppiumDriver MobDriver;
         protected eBrowserType mBrowserType;
         protected NgWebDriver ngDriver;
         private String DefaultWindowHandler = null;
@@ -475,7 +476,6 @@ namespace GingerCore.Drivers
         {
             this.Driver = (IWebDriver)driver;
         }
-
         public override void InitDriver(Agent agent)
         {
             if (BrowserType == WebBrowserType.RemoteWebDriver)
@@ -692,7 +692,7 @@ namespace GingerCore.Drivers
                             // This is correct way of setting private mode in Firefox, it doesn't preserve history of ongoing session
                             FirefoxOption.SetPreference("browser.privatebrowsing.autostart", true);
                         }
-                        
+
                         driverService = FirefoxDriverService.CreateDefaultService();
                         AddCustomDriverPath(driverService);
                         driverService.HideCommandPromptWindow = HideConsoleWindow;
@@ -1912,7 +1912,6 @@ namespace GingerCore.Drivers
                     }
                 }
             }
-
             act.AnalyzerAccessibility(Driver, e);
         }
 
@@ -3508,17 +3507,17 @@ namespace GingerCore.Drivers
                     }
                     break;
                 case ActGenElement.eGenElementAction.SetAttributeUsingJs:
+                {
+                    e = LocateElement(act);
+                    char[] delimit = new char[] { '=' };
+                    string insertval = act.GetInputParamCalculatedValue("Value");
+                    string[] vals = insertval.Split(delimit, 2);
+                    if (vals.Length != 2)
                     {
-                        e = LocateElement(act);
-                        char[] delimit = new char[] { '=' };
-                        string insertval = act.GetInputParamCalculatedValue("Value");
-                        string[] vals = insertval.Split(delimit, 2);
-                        if (vals.Length != 2)
-                        {
-                            throw new Exception(@"Inot string should be in the format : attribute=value");
-                        } ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
-                    }
-                    break;
+                        throw new Exception(@"Inot string should be in the format : attribute=value");
+                    } ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
+                }
+                break;
                 default:
                     throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
 
@@ -4005,9 +4004,10 @@ namespace GingerCore.Drivers
                         e.Click();
                     }
                 }
-                catch (OpenQA.Selenium.ElementNotVisibleException)
+                catch (OpenQA.Selenium.NoSuchElementException)
                 {
                     /* not sure what causes this */
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error: Element not found - {Button.LocateBy} {Button.LocateValue}");
                 }
             }
             else
@@ -4283,7 +4283,7 @@ namespace GingerCore.Drivers
                         // Check if the application model needs to be forcefully updated based on the self-healing configuration
                         // Automatically update the current Page Object Model (POM) for the current agent in the current activity
                         // Add the GUID of the updated POM to the list of auto-updated POMs in the runset configuration
-                        pomExcutionUtil.AutoForceUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent,act);
+                        pomExcutionUtil.AutoForceUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent, act);
 
                         elem = LocateElementByLocators(currentPOMElementInfo, currentPOM.MappedUIElements, false, pomExcutionUtil);
 
@@ -5476,7 +5476,7 @@ namespace GingerCore.Drivers
             }
 
             // Element Screenshot only mapped elements
-            if (pomSetting.LearnScreenshotsOfElements && pomSetting.FilteredElementType.Any(x=>x.ElementType.Equals(elementTypeEnum)))
+            if (pomSetting.LearnScreenshotsOfElements && pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(elementTypeEnum)))
             {
                 foundElementInfo.ScreenShotImage = TakeElementScreenShot(webElement);
             }
@@ -6082,8 +6082,8 @@ namespace GingerCore.Drivers
             string elementType = string.Empty;
             if (!string.IsNullOrEmpty(xpath))
             {
-                string[] xpathSpliter = [","];
-                string[] elementsTypesPath = xpath.Split(xpathSpliter, StringSplitOptions.RemoveEmptyEntries);
+                string[] xpathSplitter = new string[] { "/" };
+                string[] elementsTypesPath = xpath.Split(xpathSplitter, StringSplitOptions.RemoveEmptyEntries);
                 if (elementsTypesPath.Length == 0)
                 {
                     return;
@@ -8663,12 +8663,14 @@ namespace GingerCore.Drivers
                         }
                         break;
                     case ActBrowserElement.eControlAction.GetNetworkLog:
+                        mAct = act;
                         if (ValidateBrowserCompatibility(Driver))
                         {
                             GetNetworkLogAsync(act).GetAwaiter().GetResult();
                         }
                         break;
                     case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
+                        mAct = act;
                         if (ValidateBrowserCompatibility(Driver))
                         {
                             StopMonitoringNetworkLog(act).GetAwaiter().GetResult();
@@ -10894,9 +10896,9 @@ namespace GingerCore.Drivers
                 try
                 {
                     //DevTool Session 
-                    devToolsSession = devTools.GetDevToolsSession();
+                    devToolsSession = devTools.GetDevToolsSession(DevToolsProtocolVersion);
                     devToolsDomains = devToolsSession.GetVersionSpecificDomains<DevToolsDomains>();
-                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V127.Network.EnableCommandSettings());
+                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V136.Network.EnableCommandSettings());
                     blockOrUnblockUrls();
                 }
                 catch (Exception ex)
@@ -10952,11 +10954,11 @@ namespace GingerCore.Drivers
             {
                 if (mAct.ControlAction == ActBrowserElement.eControlAction.SetBlockedUrls)
                 {
-                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V127.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V136.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
                 }
                 else if (mAct.ControlAction == ActBrowserElement.eControlAction.UnblockeUrls)
                 {
-                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V127.Network.SetBlockedURLsCommandSettings() { Urls = [] });
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V136.Network.SetBlockedURLsCommandSettings() { Urls = [] });
                 }
                 Thread.Sleep(300);
             }
@@ -11021,7 +11023,7 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-        
+
         public async Task StopMonitoringNetworkLog(ActBrowserElement act)
         {
             try
@@ -11046,7 +11048,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
                     }
 
-                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V127.Network.DisableCommandSettings());
+                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V136.Network.DisableCommandSettings());
                     devToolsSession.Dispose();
                     devTools.CloseDevToolsSession();
 

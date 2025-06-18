@@ -42,7 +42,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib.UpdateMultipleWizar
         {
             mMultiPomDeltaUtils = new MultiPomDeltaUtils(new ApplicationPOMModel(), pomModelsFolder: pomModelsFolder);
 
-            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Page Objects Model Introduction", Page: new WizardIntroPage("/ApplicationModelsLib/POMModels/POMWizardLib/LearnWizard/AddPOMIntro.md"));
+            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Page Objects Model Introduction", Page: new WizardIntroPage("/ApplicationModelsLib/POMModels/POMWizardLib/UpdateMultipleWizard/UpdateMultiplePOMtIntro.md"));
 
             AddPage(Name: "Target App POM Selector", Title: "Target App POM Selector", SubTitle: "Target Application  POM Selector", Page: new UpdateMultiplePomConfigWizardPage());
 

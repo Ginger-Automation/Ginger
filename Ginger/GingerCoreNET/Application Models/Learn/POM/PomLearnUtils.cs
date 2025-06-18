@@ -34,6 +34,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using static GingerCore.Agent;
 
 namespace Amdocs.Ginger.CoreNET.Application_Models
 {
@@ -130,11 +131,8 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 var elementList = PlatformInfoBase.GetPlatformImpl(ePlatformType.Web).GetUIElementFilterList();
                 AutoMapBasicElementTypesList = elementList["Basic"];
                 AutoMapAdvanceElementTypesList = elementList["Advanced"];
-                foreach (UIElementFilter uIElementFilter in POM.PomSetting.FilteredElementType)
-                {
-                    SelectElementsToList(AutoMapBasicElementTypesList, uIElementFilter, AutoMapBasicElementTypesList);
-                    SelectElementsToList(AutoMapAdvanceElementTypesList, uIElementFilter, AutoMapAdvanceElementTypesList);
-                }
+                SelectElementsToList(AutoMapBasicElementTypesList, POM.PomSetting.FilteredElementType);
+                SelectElementsToList(AutoMapAdvanceElementTypesList, POM.PomSetting.FilteredElementType);
             }
             mAgent = agent;
             mPomModelsFolder = pomModelsFolder;
@@ -142,15 +140,12 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             mElementsList.CollectionChanged += ElementsListCollectionChanged;
         }
 
-        void SelectElementsToList(ObservableList<UIElementFilter> elements, UIElementFilter filter, ObservableList<UIElementFilter> targetList)
+        public void SelectElementsToList(ObservableList<UIElementFilter> elements, ObservableList<UIElementFilter> filterList)
         {
-            foreach (var element in elements)
+            foreach (UIElementFilter element in elements)
             {
-                if (filter.ElementType.Equals(element.ElementType))
-                {
-                    UIElementFilter uIElementFilter = targetList.FirstOrDefault(x => x.ElementType.Equals(element.ElementType));
-                    uIElementFilter.Selected = filter.Selected;
-                }
+                var selectedFilter = filterList.FirstOrDefault(filter => filter.ElementType.Equals(element.ElementType));
+                element.Selected = selectedFilter?.Selected ?? false;
             }
         }
 
@@ -243,6 +238,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 POM.PomSetting.SpecificFramePath = POM.PomSetting.SpecificFramePath != null ? POM.PomSetting.SpecificFramePath : SpecificFramePath;
                 POM.PomSetting.LearnScreenshotsOfElements = POM.PomSetting.LearnScreenshotsOfElements ? POM.PomSetting.LearnScreenshotsOfElements : LearnScreenshotsOfElements;
                 POM.PomSetting.LearnShadowDomElements = POM.PomSetting.LearnShadowDomElements ? POM.PomSetting.LearnShadowDomElements : LearnShadowDomElements;
+                POM.PomSetting = POM.PomSetting;
             }
             else
             {
@@ -259,8 +255,6 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 pomSetting.LearnShadowDomElements = LearnShadowDomElements;
                 POM.PomSetting = pomSetting;
             }
-
-
         }
 
         public void LearnScreenShot()
@@ -279,6 +273,25 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             PrepareLearningConfigurations();
             LearnScreenShot();
             POM.PageURL = ((AgentOperations)Agent.AgentOperations).Driver.GetURL();
+            if (Agent.Platform == ePlatformType.Web)
+            {
+                try
+                {
+                    Uri uri = new Uri(POM.PageURL);
+                    if (uri.IsFile && File.Exists(uri.AbsolutePath))
+                    {
+                        string normalizedPageUrl = Path.GetFullPath(new Uri(POM.PageURL).LocalPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                        if (normalizedPageUrl.Contains(WorkSpace.Instance.SolutionRepository.SolutionFolder))
+                        {
+                            POM.PageURL = GingerCoreNET.GeneralLib.General.SetupRelativePath(normalizedPageUrl);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, $"Invalid URI format in POM.PageURL: {POM.PageURL}", ex);
+                }
+            }
             POM.Name = IWindowExplorerDriver.GetActiveWindow().Title;
             // appending Specific frame title in POM name
             if (!string.IsNullOrEmpty(SpecificFramePath))
@@ -298,13 +311,13 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 if (SelectedElementTypesList.Count > 0)
                 {
-                    await IWindowExplorerDriver.GetVisibleControls(pomSetting, mElementsList, POM.ApplicationPOMMetaData);
+                    await IWindowExplorerDriver.GetVisibleControls(POM.PomSetting, mElementsList, POM.ApplicationPOMMetaData);
                 }
             }
             else
             {
-                pomSetting.FilteredElementType = null;
-                await IWindowExplorerDriver.GetVisibleControls(pomSetting, mElementsList, POM.ApplicationPOMMetaData);
+                POM.PomSetting.FilteredElementType = null;
+                await IWindowExplorerDriver.GetVisibleControls(POM.PomSetting, mElementsList, POM.ApplicationPOMMetaData);
             }
 
             featureTracker.Metadata.Add("MappedElementCount", POM.MappedUIElements != null ? POM.MappedUIElements.Count.ToString() : "");

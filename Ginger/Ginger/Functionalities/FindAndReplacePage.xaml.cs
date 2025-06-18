@@ -18,18 +18,28 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Functionalities;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
+using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControls;
 using Ginger.Variables;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Activities;
+using GingerCore.Environments;
+using GingerCore.FlowControlLib;
+using GingerCore.GeneralLib;
 using GingerCore.Variables;
+using GingerCoreNET.Application_Models;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModels;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -38,8 +48,11 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Forms.Design;
 using System.Windows.Input;
+using static Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib.BulkUpdateSharedRepositoryActivitiesPage;
 
 namespace Ginger.Functionalities
 {
@@ -67,21 +80,24 @@ namespace Ginger.Functionalities
         {
             SolutionPage,
             AutomatePage,
-            RunsetPage
+            RunsetPage,
+            FolderItems
         }
 
         public eContext mContext;
 
         public object ItemToSearchOn => mItemToSearchOn;
+        List<ITreeViewItem> mTreeViewChildItems;
 
-
-        public FindAndReplacePage(eContext context, object itemToSearchOn = null)
+        public FindAndReplacePage(eContext context, object itemToSearchOn = null, List<ITreeViewItem> childNodes = null)
         {
             InitializeComponent();
             mContext = context;
             mItemToSearchOn = itemToSearchOn;
+            mTreeViewChildItems = childNodes;
             SetFoundItemsGridView();
             Init();
+            PageButton();
         }
 
         private void MFindAndReplaceUtils_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -111,50 +127,160 @@ namespace Ginger.Functionalities
         public enum eGridView
         {
             FindView,
+            ReplaceView,
+            ReplaceAttributeValueView,
+            ReplaceAttributeCheckBoxView,
+            ReplaceAttributeComboBoxView,
+            ReplaceAttributeTextBoxView
         }
 
         private void SetFoundItemsGridView()
         {
-            //# Find View 
-            //GridViewDef mReplaceView = new GridViewDef(eGridView.ReplaceView.ToString());
-            GridViewDef mReplaceView = new GridViewDef(GridViewDef.DefaultViewName)
+            try
             {
-                GridColsView =
-            [
-                new GridColView() { Field = nameof(FoundItem.IsSelected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["IsSelectedTemplate"] },
+                // Replace View
+                GridViewDef DefaultViewName = new GridViewDef(GridViewDef.DefaultViewName)
+                {
+                    GridColsView =
+                    [
+                        new GridColView() { Field = nameof(FoundItem.IsSelected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["IsSelectedTemplate"] },
                 new GridColView() { Field = nameof(FoundItem.OriginObjectType), Header = "Item Type", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
-                new GridColView() { Field = nameof(FoundItem.OriginObjectName), Header = "Item Name", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true, Style = FindResource("@DataGridColumn_Bold") as Style },
-                new GridColView() { Field = nameof(FoundItem.ParentItemPath), Header = "Item Path", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
+                new GridColView() { Field = nameof(FoundItem.OriginObjectName), Header = "Item Name", WidthWeight = 20, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true, Style = FindResource("@DataGridColumn_Bold") as Style },
+                new GridColView() { Field = nameof(FoundItem.ParentItemPath), Header = "Item Path", WidthWeight = 20, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
                 new GridColView() { Field = nameof(FoundItem.ItemParent), Header = "Item Parent", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
                 new GridColView() { Field = nameof(FoundItem.FoundField), Header = "Found Field", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true, Style = FindResource("@DataGridColumn_Bold") as Style },
                 new GridColView() { Field = nameof(FoundItem.FieldValue), Header = "Field Value", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true, Style = FindResource("@DataGridColumn_Bold") as Style },
-                //mReplaceView.GridColsView.Add(new GridColView() { Field = nameof(FoundItem.StatusIcon), Header = "", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, AllowSorting = true, MaxWidth = 20 });
+
+                new GridColView() { Field = "FieldValueCheckBox", Header = "Field Value", WidthWeight = 10, HorizontalAlignment = System.Windows.HorizontalAlignment.Left, Visible = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["xAttributeValueCheckBoxTemplate"] },
+
+                new GridColView() { Field = "FieldValueComboBox", Header ="Field Value", WidthWeight = 20, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(FoundItem.FieldValueOption), nameof(FoundItem.FieldValue), true) },
+
+                new GridColView() { Field = "FieldValueTextBox", Header = "Field Value", WidthWeight = 15, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, Visible = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["xAttributeValueTextBoxTemplate"] },
+
                 new GridColView() { Field = nameof(FoundItem.Status), Header = "Status", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true },
+
                 new GridColView() { Field = "View Details", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.FindAndReplace.Resources["ViewDetailsButton"] },
             ]
-            };
-            xFoundItemsGrid.SetAllColumnsDefaultView(mReplaceView);
+                };
+                xFoundItemsGrid.SetAllColumnsDefaultView(DefaultViewName);
 
-            GridViewDef mFineView = new GridViewDef(eGridView.FindView.ToString())
+                // Find View
+                GridViewDef ReplaceView = new GridViewDef(eGridView.ReplaceView.ToString())
+                {
+                    GridColsView = [
+                        new GridColView() { Field = "FieldValueCheckBox", Visible = false },
+                        new GridColView() { Field = "FieldValueComboBox", Visible = false },
+                        new GridColView() { Field = "FieldValueTextBox", Visible = false },]
+                };
+                xFoundItemsGrid.AddCustomView(ReplaceView);
+
+                GridViewDef mFineView = new GridViewDef(eGridView.FindView.ToString())
+                {
+                    GridColsView = [
+                        new GridColView() { Field = nameof(FoundItem.Status), Visible = false },
+                        new GridColView() { Field = "FieldValueCheckBox", Visible = false },
+                        new GridColView() { Field = "FieldValueComboBox", Visible = false },
+                        new GridColView() { Field = "FieldValueTextBox", Visible = false },]
+                };
+                xFoundItemsGrid.AddCustomView(mFineView);
+
+
+                xFoundItemsGrid.ChangeGridView(eGridView.FindView.ToString());
+
+                GridViewDef ReplaceAttributeValueView = new GridViewDef(nameof(eGridView.ReplaceAttributeValueView))
+                {
+                    GridColsView = [
+                       new GridColView() { Field = "View Details", Visible = false },
+                       new GridColView() { Field = "FieldValueCheckBox", Visible = false },
+                       new GridColView() { Field = "FieldValueComboBox", Visible = false },
+                       new GridColView() { Field = "FieldValueTextBox", Visible = false },]
+                };
+                xFoundItemsGrid.AddCustomView(ReplaceAttributeValueView);
+
+                GridViewDef ReplaceAttributeTextBoxView = new GridViewDef(eGridView.ReplaceAttributeTextBoxView.ToString())
+                {
+                    GridColsView = [
+                       new GridColView() { Field = "View Details", Visible = false },
+                       new GridColView() { Field = nameof(FoundItem.FieldValue),Visible=false },
+                       new GridColView() { Field = "FieldValueCheckBox", Visible = false },
+                       new GridColView() { Field = "FieldValueComboBox", Visible = false }              ]
+                };
+                xFoundItemsGrid.AddCustomView(ReplaceAttributeTextBoxView);
+
+
+
+                GridViewDef ReplaceAttributeCheckBoxView = new GridViewDef(eGridView.ReplaceAttributeCheckBoxView.ToString())
+                {
+                    GridColsView = [
+                       new GridColView() { Field = "View Details", Visible = false },
+                       new GridColView() { Field = nameof(FoundItem.FieldValue),Visible=false },
+                       new GridColView() { Field = "FieldValueTextBox", Visible = false },
+                       new GridColView() { Field = "FieldValueComboBox", Visible = false }              ]
+                };
+                xFoundItemsGrid.AddCustomView(ReplaceAttributeCheckBoxView);
+
+
+                GridViewDef ReplaceAttributeComboBoxView = new GridViewDef(eGridView.ReplaceAttributeComboBoxView.ToString())
+                {
+                    GridColsView = [
+                       new GridColView() { Field = "View Details", Visible = false },
+                       new GridColView() { Field = nameof(FoundItem.FieldValue),Visible=false },
+                       new GridColView() { Field = "FieldValueCheckBox", Visible = false },
+                       new GridColView() { Field = "FieldValueTextBox", Visible = false }             ]
+                };
+                xFoundItemsGrid.AddCustomView(ReplaceAttributeComboBoxView);
+                xFoundItemsGrid.InitViewItems();
+
+
+                xFoundItemsGrid.AddToolbarTool(
+                    eImageType.Share,
+                    "Set highlighted value for all",
+                    BulkUpdateValueForAll);
+
+                xFoundItemsGrid.MarkUnMarkAllActive += MarkUnMarkAllActionsForFindandReplace;
+                xFoundItemsGrid.ShowViewCombo = Visibility.Collapsed;
+                xFoundItemsGrid.SetTitleLightStyle = true;
+                xFoundItemsGrid.DataSourceList = mFoundItemsList;
+            }
+            catch (Exception ex)
             {
-                GridColsView =
-            [
-                new GridColView() { Field = nameof(FoundItem.IsSelected), Visible = false },
-                new GridColView() { Field = nameof(FoundItem.Status), Visible = false },
-            ]
-            };
-            xFoundItemsGrid.AddCustomView(mFineView);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in SetFoundItemsGridView", ex);
+            }
+        }
 
+    
 
-            xFoundItemsGrid.btnMarkAll.Visibility = Visibility.Collapsed;
-            xFoundItemsGrid.ShowViewCombo = Visibility.Collapsed;
-            xFoundItemsGrid.MarkUnMarkAllActive += MarkUnMarkAllActions;
+        private void BulkUpdateValueForAll(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if ((bool)xFindReplaceBtn.IsChecked)
+                {
+                    return;
+                }
+                IEnumerable<FoundItem> visibleItems = xFoundItemsGrid
+                    .GetFilteredItems()
+                    .Cast<FoundItem>();
 
-            xFoundItemsGrid.InitViewItems();
-            xFoundItemsGrid.SetTitleLightStyle = true;
-            xFoundItemsGrid.ChangeGridView(eGridView.FindView.ToString());
-            xFoundItemsGrid.RowChangedEvent += RowChangedHandler;
-            xFoundItemsGrid.DataSourceList = mFoundItemsList;
+                FoundItem highlightedItem = (FoundItem)xFoundItemsGrid.CurrentItem;
+                if (highlightedItem == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR,"No selected row is found.");
+                    return;
+                }
+                foreach (FoundItem item in visibleItems)
+                {
+                    if (item.IsSelected)
+                    {
+                        item.FieldValue = highlightedItem.FieldValue;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error: No Helighted row found.", ex);
+            }
         }
 
         private void ClearUI()
@@ -203,20 +329,21 @@ namespace Ginger.Functionalities
             }
         }
 
-        private void MarkUnMarkAllActions(bool Status)
+        private void MarkUnMarkAllActionsForFindandReplace(bool Status)
         {
-            if (xFoundItemsGrid.DataSourceList.Count <= 0)
+            if (xFoundItemsGrid.DataSourceList?.Count <= 0)
             {
                 return;
             }
 
             if (xFoundItemsGrid.DataSourceList.Count > 0)
             {
-                foreach (object item in xFoundItemsGrid.GetVisibileGridItems())
+                foreach (object item in xFoundItemsGrid.GetSourceItemsAsIList())
                 {
                     ((FoundItem)item).IsSelected = Status;
                 }
             }
+
         }
 
         private SearchConfig mSearchConfig { get; set; }
@@ -242,7 +369,7 @@ namespace Ginger.Functionalities
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xMatchWholeWordCheckBox, CheckBox.IsCheckedProperty, mSearchConfig, nameof(SearchConfig.MatchAllWord));
 
             xFindWhatTextBox.KeyDown += new KeyEventHandler(xFindWhatTextBox_KeyDown);
-            xFoundItemsGrid.MouseDoubleClick += LineDoubleClicked;
+
             mFindAndReplaceUtils.PropertyChanged += MFindAndReplaceUtils_PropertyChanged;
 
             mMainItemsTypeList.Add(new FindItemType { Name = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), Type = typeof(BusinessFlow), GetItemsToSearchIn = GetBusinessFlowsToSearchIn });
@@ -261,6 +388,16 @@ namespace Ginger.Functionalities
             xMainItemTypeComboBox.SelectedValuePath = nameof(FindItemType.Type);
             xMainItemTypeComboBox.DisplayMemberPath = nameof(FindItemType.Name);
             xMainItemTypeComboBox.ItemsSource = mMainItemsTypeList;
+
+            if (mContext is eContext.SolutionPage)
+            {
+                mMainItemsTypeList.Add(new FindItemType { Name = eTermResKey.Environment.ToString(), Type = typeof(ProjEnvironment), GetItemsToSearchIn = GetEnvironmentToSearchIn });
+                mMainItemsTypeList.Add(new FindItemType { Name = eTermResKey.Agents.ToString(), Type = typeof(Agent), GetItemsToSearchIn = GetAgentToSearchIn });
+            }
+            xMainItemListCB.SelectedValuePath = nameof(FindItemType.Type);
+            xMainItemListCB.DisplayMemberPath = nameof(FindItemType.Name);
+            xMainItemListCB.ItemsSource = mMainItemsTypeList;
+
 
         }
 
@@ -332,16 +469,42 @@ namespace Ginger.Functionalities
             }
         }
 
+        ObservableList<Button> winButtons = [];
 
-        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
+        Button searchBtn = new Button
         {
+            Content = "Replace Selected"
+        };
+        Button closeBtn = new Button
+        {
+            Content = "Close"
+        };
+        private void PageButton()
+        {
+            searchBtn.Click += xUpdateAttributeValueBtn_Click;
+            winButtons.Add(searchBtn);
+            closeBtn.Click += CloseBtn_Click;
+            winButtons.Add(closeBtn);
+        }
+
+        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free, string folderName=null)
+        {
+            xFindReplaceBtn.IsChecked = true;
+
+
             var title = mContext switch
             {
                 eContext.AutomatePage => string.Format("Find & Replace in '{0}' {1}", ((BusinessFlow)mItemToSearchOn).Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)),
                 eContext.RunsetPage => string.Format("Find in '{0}' {1}", WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet)),
+                eContext.FolderItems => string.Format($"Find & Replace Folder: {folderName}"),
                 _ => "Find & Replace",
             };
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, windowBtnsList: winButtons);
+        }
+
+        private void CloseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            _pageGenericWin.Close();
         }
 
         private void ReplaceButtonClicked(object sender, RoutedEventArgs e)
@@ -369,7 +532,7 @@ namespace Ginger.Functionalities
             {
                 EnableDisableButtons(false);
 
-                List<FoundItem> FIList = mFoundItemsList.Where(x => x.IsSelected == true && (x.Status == FoundItem.eStatus.PendingReplace || x.Status == FoundItem.eStatus.ReplaceFailed)).ToList();
+                List<FoundItem> FIList = mFoundItemsList.Where(x => x.IsSelected && (x.Status == FoundItem.eStatus.Pending || x.Status == FoundItem.eStatus.Failed)).ToList();
                 if (FIList.Count == 0)
                 {
                     Reporter.ToUser(eUserMsgKey.FindAndReplaceNoItemsToRepalce);
@@ -399,18 +562,18 @@ namespace Ginger.Functionalities
                 {
                     if (mFindAndReplaceUtils.ReplaceItem(mSearchConfig, mFindWhat, foundItem, newValue))
                     {
-                        foundItem.Status = FoundItem.eStatus.Replaced;
+                        foundItem.Status = FoundItem.eStatus.Updated;
                     }
                     else
                     {
-                        foundItem.Status = FoundItem.eStatus.ReplaceFailed;
+                        foundItem.Status = FoundItem.eStatus.Failed;
                     }
 
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Faile to Replace Items", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Fail to Replace Items", ex);
             }
         }
 
@@ -456,6 +619,7 @@ namespace Ginger.Functionalities
         }
 
         private bool CurrentlyOnProcessIndicator = false;
+        private string? mAttributeName;
 
         private void EnableDisableButtons(bool Enabled)
         {
@@ -485,7 +649,7 @@ namespace Ginger.Functionalities
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Faile to Find Items", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Fail to Find Items", ex);
             }
         }
 
@@ -511,8 +675,35 @@ namespace Ginger.Functionalities
                             mItemsToSearchIn.Add(new ItemToSearchIn(bf, bf, WorkSpace.Instance.RunsetExecutor.RunSetConfig, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\" + bf.Name, string.Empty));
                         }
                     }
-
                     break;
+                case eContext.FolderItems:
+                    foreach (ITreeViewItem node in mTreeViewChildItems)
+                    {
+                        if (node != null && node.NodeObject() is RepositoryItemBase)
+                        {
+                            RepositoryItemBase BF = (RepositoryItemBase)node.NodeObject();
+                            if (BF is BusinessFlow)
+                            {
+                                mItemsToSearchIn.Add(new ItemToSearchIn(BF, BF, BF, string.Empty, string.Empty));
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private void GetAgentToSearchIn()
+        {
+            foreach (var item in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>())
+            {
+                mItemsToSearchIn.Add(new ItemToSearchIn(item, item, item, string.Empty, string.Empty));
+            }
+        }
+        private void GetEnvironmentToSearchIn()
+        {
+            foreach (var item in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
+            {
+                mItemsToSearchIn.Add(new ItemToSearchIn(item, item, item, string.Empty, string.Empty));
             }
         }
 
@@ -578,8 +769,35 @@ namespace Ginger.Functionalities
                             }
                         }
                     }
-
                     break;
+                case eContext.FolderItems:
+                    foreach (ITreeViewItem node in mTreeViewChildItems)
+                    {
+                        if (node?.NodeObject() is RepositoryItemBase repositoryItem)
+                        {
+                            if (repositoryItem is BusinessFlow businessFlow)
+                            {
+                                if (businessFlow == null)
+                                {
+                                    continue;
+                                }
+                                foreach (Activity activity in businessFlow.Activities)
+                                {
+                                    if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                                    {
+                                        return;
+                                    }
+
+                                    mItemsToSearchIn.Add(new ItemToSearchIn(activity, activity, businessFlow, businessFlow.Name, string.Empty));
+                                }
+                            }
+                        }
+                    }
+                    break;
+
+
+
+
             }
         }
 
@@ -690,6 +908,38 @@ namespace Ginger.Functionalities
                     }
 
                     break;
+                case eContext.FolderItems:
+                    foreach (ITreeViewItem node in mTreeViewChildItems)
+                    {
+                        if (node?.NodeObject() is RepositoryItemBase repositoryItem)
+                        {
+                            if (repositoryItem is BusinessFlow businessFlow)
+                            {
+                                if (businessFlow == null)
+                                {
+                                    continue;
+                                }
+                                foreach (Activity activity in businessFlow.Activities)
+                                {
+                                    string itemParent = businessFlow.Name + @"\" + activity.ActivityName;
+                                    foreach (Act action in activity.Acts)
+                                    {
+                                        if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                                        {
+                                            return;
+                                        }
+
+                                        if (mSubItemType == null || action.GetType() == mSubItemType)
+                                        {
+                                            mItemsToSearchIn.Add(new ItemToSearchIn(action, action, businessFlow, itemParent, string.Empty));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+
             }
         }
 
@@ -756,6 +1006,47 @@ namespace Ginger.Functionalities
                     }
 
                     break;
+                case eContext.FolderItems:
+                    foreach (ITreeViewItem node in mTreeViewChildItems)
+                    {
+                        if (node?.NodeObject() is RepositoryItemBase repositoryItem)
+                        {
+                            if (repositoryItem is BusinessFlow businessFlow)
+                            {
+                                if (businessFlow == null)
+                                {
+                                    continue;
+                                }
+
+                                foreach (VariableBase VB in businessFlow.Variables)
+                                {
+                                    if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                                    {
+                                        return;
+                                    }
+
+                                    if (mSubItemType == null || VB.GetType() == mSubItemType)
+                                    {
+                                        mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB, businessFlow, businessFlow.Name, string.Empty));
+                                    }
+                                }
+
+                                foreach (Activity activity in businessFlow.Activities)
+                                {
+                                    foreach (VariableBase VB in activity.Variables)
+                                    {
+                                        string ActivityVariablePath = $"{businessFlow.Name}\\{activity.ItemName}";
+                                        if (mSubItemType == null || VB.GetType() == mSubItemType)
+                                        {
+                                            mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB, activity, ActivityVariablePath, string.Empty));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+
             }
         }
 
@@ -1197,7 +1488,7 @@ namespace Ginger.Functionalities
             try
             {
                 EnableDisableButtons(false);
-                List<FoundItem> FIList = mFoundItemsList.Where(x => x.IsSelected == true && (x.Status == FoundItem.eStatus.Replaced || x.Status == FoundItem.eStatus.SavedFailed)).ToList();
+                List<FoundItem> FIList = mFoundItemsList.Where(x => x.IsSelected && (x.Status == FoundItem.eStatus.Updated || x.Status == FoundItem.eStatus.Failed)).ToList();
 
                 await Task.Run(() => Save(FIList));
             }
@@ -1226,14 +1517,14 @@ namespace Ginger.Functionalities
                     }
                     catch
                     {
-                        foundItem.Status = FoundItem.eStatus.SavedFailed;
+                        foundItem.Status = FoundItem.eStatus.Failed;
                     }
 
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Faile to Save", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Fail to Save", ex);
             }
         }
 
@@ -1277,7 +1568,7 @@ namespace Ginger.Functionalities
             xReplaceButton.Visibility = Visibility.Visible;
             xFoundItemsGrid.btnMarkAll.Visibility = Visibility.Visible;
             xRow3.Height = new GridLength(30);
-            xFoundItemsGrid.ChangeGridView(GridViewDef.DefaultViewName);
+            xFoundItemsGrid.ChangeGridView(eGridView.ReplaceView.ToString());
 
         }
 
@@ -1299,11 +1590,245 @@ namespace Ginger.Functionalities
         {
             mValueToReplace = xReplaceValueTextBox.Text;
         }
+        private void xFindReplaceBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                mFoundItemsList.Clear();
+                xItemSelectionPanel.Visibility = Visibility.Collapsed;
+                xFindAttributePanel.Visibility = Visibility.Collapsed;
+                xAttributeValueUpdatePnl.Visibility = Visibility.Collapsed;
+                xButtonPanel.Visibility = Visibility.Visible;
+                xMatchCasePanel.Visibility = Visibility.Visible;
+                xReplaceValuePanel.Visibility = Visibility.Visible;
+                xFindValuePanel.Visibility = Visibility.Visible;
+                xFindAndReplanceBtnPanel.Visibility = Visibility.Visible;
+                xItemMainComboPanel.Visibility = Visibility.Visible;
+                xFoundItemsGrid.ChangeGridView(eGridView.FindView.ToString());
+                xFoundItemsGrid.MouseDoubleClick += LineDoubleClicked;
+                xFoundItemsGrid.btnMarkAll.Visibility = Visibility.Collapsed;
+                xFoundItemsGrid.RowChangedEvent += RowChangedHandler;
+
+                searchBtn.Visibility = Visibility.Collapsed;
+
+                xRow3.Height = new GridLength(0);
+                xRow4.Height = new GridLength(50);
+                xRow5.Height = new GridLength(40);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occoured while find and replace", ex);
+            }
+        }
+
+        private void xAttributeValueBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                mFoundItemsList.Clear();
+                xButtonPanel.Visibility = Visibility.Collapsed;
+                xMatchCasePanel.Visibility = Visibility.Collapsed;
+                xReplaceValuePanel.Visibility = Visibility.Collapsed;
+                xFindValuePanel.Visibility = Visibility.Collapsed;
+                xFindAndReplanceBtnPanel.Visibility = Visibility.Collapsed;
+                xItemMainComboPanel.Visibility = Visibility.Collapsed;
+                xAttributeValueUpdatePnl.Visibility = Visibility.Visible;
+                xItemSelectionPanel.Visibility = Visibility.Visible;
+                xFindAttributePanel.Visibility = Visibility.Visible;
+                xFoundItemsGrid.ChangeGridView(eGridView.ReplaceAttributeValueView.ToString());
+                xFoundItemsGrid.MouseDoubleClick -= LineDoubleClicked;
+                xFoundItemsGrid.btnMarkAll.Visibility = Visibility.Visible;
+                xFoundItemsGrid.RowChangedEvent -= RowChangedHandler;
+
+                searchBtn.Visibility = Visibility.Visible;
+
+                xRow3.Height = new GridLength(0);
+                xRow4.Height = new GridLength(0);
+                xRow5.Height = new GridLength(0);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to switch to Change Attribute Value mode", ex);
+            }
+        }
+
+        private void xMainItemListCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                ClearUI();
+                mMainItemType = (FindItemType)xMainItemListCB.SelectedItem;
+                mItemsToSearchIn.Clear();
+                mMainItemType.GetItemsToSearchIn();
+                xAttributeNameComboBox.Items.Clear();
+                xAttributeNameComboBox.Text = "Select the Attribute...";
+                xFoundItemsGrid.Visibility = Visibility.Collapsed;
+                xAttributeValueUpdatePnl.Visibility = Visibility.Collapsed;
+                var searchItem = mItemsToSearchIn.FirstOrDefault();
+                if (searchItem != null)
+                {
+                    var attributeNameList = mFindAndReplaceUtils.GetSerializableEditableMemberNames(searchItem.OriginItemObject);
+                    GingerCore.General.FillComboFromList(xAttributeNameComboBox, attributeNameList);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error:", ex);
+            }
+        }
+
+        void AttributeValueControlVisibility()
+        {
+            try
+            {
+                searchBtn.Visibility = Visibility.Visible;
+
+                var searchItem = mItemsToSearchIn.FirstOrDefault();
+                if (searchItem == null)
+                {
+                    return;
+                }
+                mFindAndReplaceUtils.FindTopLevelAttributeNames(searchItem.Item, mFoundItemsList, mAttributeName, mSearchConfig, searchItem.ParentItemToSave, searchItem.ItemParent);
+
+                var item = mFoundItemsList.FirstOrDefault();
+                mFoundItemsList.Clear();
+                if (item == null || item.FieldType == null)
+                {
+                    return;
+                }
+                if (item.FieldType.Name == "Boolean")
+                {
+                    xFoundItemsGrid.ChangeGridView(eGridView.ReplaceAttributeCheckBoxView.ToString());
+                }
+                else if (item.FieldType.Name == "String")
+                {
+                    xFoundItemsGrid.ChangeGridView(eGridView.ReplaceAttributeTextBoxView.ToString());
+                }
+                else if (item.FieldType.BaseType?.Name == "Enum")
+                {
+                    string enumTypeName = item.FieldType.FullName;
+                    Type enumType = item.FieldType.Assembly.GetType(enumTypeName);
+                    if (enumType != null && enumType.IsEnum)
+                    {
+                        List<ComboEnumItem> comboItems = GingerCore.General.GetEnumValuesForCombo(enumType);
+                        FoundItem.FieldValueOption = comboItems.Select(item => item.text).ToList();
+
+                        xFoundItemsGrid.ChangeGridView(eGridView.ReplaceAttributeComboBoxView.ToString());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error:", ex);
+            }
+        }
+
+        private async Task FindItemsAsync_item()
+        {
+            mFindAndReplaceUtils.ProcessingState = FindAndReplaceUtils.eProcessingState.Running;
+
+            try
+            {
+                mFoundItemsList.Clear();
+                xFoundItemsGrid.Visibility = Visibility.Visible;
+                xProcessingImage2.Visibility = Visibility.Visible;
+                searchBtn.IsEnabled = false;
+
+                await Task.Run(() => FindItems_item());
+                MarkUnMarkAllActionsForFindandReplace(true);
+                searchBtn.IsEnabled = true;
+                xProcessingImage2.Visibility = Visibility.Collapsed;
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error:", ex);
+            }
+            finally
+            {
+                mFindAndReplaceUtils.ProcessingState = FindAndReplaceUtils.eProcessingState.Pending;
+            }
+        }
+
+        private void FindItems_item()
+        {
+            try
+            {
+                foreach (ItemToSearchIn searchItem in mItemsToSearchIn)
+                {
+                    if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                    {
+                        return;
+                    }
+
+                    mFindAndReplaceUtils.FindTopLevelAttributeNames(
+                        searchItem.Item,
+                        mFoundItemsList,
+                        mAttributeName,
+                        mSearchConfig,
+                        searchItem.ParentItemToSave,
+                        searchItem.ItemParent
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Find Items", ex);
+            }
+        }
+
+
+        private void xUpdateAttributeValueBtn_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                IEnumerable<FoundItem> ModifiedAndSelectedItemList = mFoundItemsList.Where(item => item.Status == FoundItem.eStatus.Modified && item.IsSelected);
+                foreach (FoundItem foundItem in ModifiedAndSelectedItemList)
+                {
+                    bool success = mFindAndReplaceUtils.ReplaceItemEnhanced(foundItem);
+
+                    if (success)
+                    {
+                        foundItem.Status = FoundItem.eStatus.Updated;
+                        foundItem.IsModified = FoundItem.eStatus.Pending;
+                    }
+                    else
+                    {
+                        foundItem.Status = FoundItem.eStatus.Failed;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to update selected attribute values", ex);
+            }
+        }
+
+
+
+
+
+
+        private void xAttributeNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                mAttributeName = xAttributeNameComboBox.SelectedValue?.ToString();
+                xAttributeValueUpdatePnl.Visibility = Visibility.Visible;
+                if (string.IsNullOrEmpty(mAttributeName))
+                {
+                    return;
+                }
+                ClearUI();
+                AttributeValueControlVisibility();
+                FindItemsAsync_item();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error:", ex);
+            }
+        }
+
     }
-
-
-
-
-
-
 }

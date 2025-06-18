@@ -1,9 +1,29 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2025 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Ginger.UserControlsLib.TextEditor;
 using GingerWPF.WizardLib;
 using HtmlAgilityPack;
+using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.Wpf;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -18,12 +38,12 @@ using System.Windows.Controls;
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
     /// <summary>
-    /// Interaction logic for POMScreenshotHTMLViewPage.xaml
+    /// Interaction logic for AIGeneratedPreviewWizardPage.xaml
     /// </summary>
     public partial class AIGeneratedPreviewWizardPage : Page, IWizardPage
     {
         private AddPOMFromScreenshotWizard mWizard;
-
+        
 
         ApiSettings ApiSettings { get; set; }
         public AIGeneratedPreviewWizardPage()
@@ -31,12 +51,34 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             InitializeComponent();
         }
 
+        public async void InitializeWebView()
+        {
+            try
+            {
+                // Define the path to the local application data folder
+                mWizard.userTempDataFolderPath = Path.Combine(Path.GetTempPath(), "GingerWebView2");
+
+                // Create the directory if it doesn't exist
+                Directory.CreateDirectory(mWizard.userTempDataFolderPath);
+
+                // Initialize WebView2 with the custom user data folder
+                var environment = await CoreWebView2Environment.CreateAsync(null, mWizard.userTempDataFolderPath);
+                await MyWebView.EnsureCoreWebView2Async(environment);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load preview",ex);
+            }
+        }
+
+
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
                     mWizard = (AddPOMFromScreenshotWizard)WizardEventArgs.Wizard;
+                    InitializeWebView();
                     ApiSettings = LoadApiSettings();
                     if (ApiSettings == null)
                     {
