@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET;
 using GingerCore.Environments;
 using GingerCoreNET.GeneralLib;
 using System;
@@ -215,7 +216,7 @@ namespace GingerCore.Actions.VisualTesting
                     {
                         if (mAct.GetInputParamValue(VRTAnalyzer.BaselineImage) == eBaselineImageBy.ActiveWindow.ToString())
                         {
-                            image = mDriver.GetScreenShot(null, mAct.IsFullPageScreenshot);
+                            image = GetScreenshot();
                         }
                         else
                         {
@@ -225,7 +226,7 @@ namespace GingerCore.Actions.VisualTesting
                     }
                     else
                     {
-                        image = mDriver.GetScreenShot(null, mAct.IsFullPageScreenshot);
+                        image = GetScreenshot();
                     }
                 }
                 else
@@ -385,6 +386,20 @@ namespace GingerCore.Actions.VisualTesting
             }
         }
 
+        private Image GetScreenshot()
+        {
+            Image image;
+            image = mDriver is GenericAppiumDriver gDriver
+                ? gDriver.CaptureFullPageCroppedScreenshot()
+                : mDriver.GetScreenShot(null, mAct.IsFullPageScreenshot);
+
+            if (image == null)
+            {
+                throw new InvalidOperationException("Screen-shot capture returned null for driver " + mDriver.GetType().Name);
+            }
+            return image;
+        }
+
         private string GetTags()
         {
             try
@@ -456,6 +471,5 @@ namespace GingerCore.Actions.VisualTesting
             Bitmap bmp = new Bitmap(filepath);
             return bmp;
         }
-
     }
 }

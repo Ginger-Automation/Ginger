@@ -16,11 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.ComponentModel;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Newtonsoft.Json;
+using System;
+using System.ComponentModel;
 
 namespace Ginger.Configurations
 {
@@ -58,6 +58,10 @@ namespace Ginger.Configurations
         private string mACTRules;
         public string ACTRules { get { return mACTRules; } set { if (mACTRules != value) { mACTRules = value; OnPropertyChanged(nameof(ACTRules)); } } }
         public override string ItemName { get; set; }
+
+        // NEW PROPERTIES:
+        public string SuggestedFix { get; set; }
+        public string RelatedWCAG { get; set; }
 
         public ObservableList<AccessibilityRuleData> GetAccessibilityRules(string AccessbiltyString)
         {

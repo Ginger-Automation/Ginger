@@ -27,6 +27,7 @@ using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.Activities;
 using GingerCore.DataSource;
 using System;
@@ -89,6 +90,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportAction.EndTimeStamp = action.EndTimeStamp;
             accountReportAction.ElapsedEndTimeStamp = action.Elapsed;
             accountReportAction.RunStatus = (eExecutionStatus)action.Status;
+            accountReportAction.InputValues = GetInputValues(action);
             accountReportAction.OutputValues = action.ReturnValues.Select(a => a.Param + "_:_" + a.Actual + "_:_" + a.ExpectedCalculated + "_:_" + a.Status + "_:_" + a.Description).ToList();
             accountReportAction.FlowControls = action.FlowControls.Select(a => a.Condition + "_:_" + a.ConditionCalculated + "_:_" + a.FlowControlAction + "_:_" + a.Status).ToList();
             accountReportAction.Error = action.Error;
@@ -233,7 +235,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             };
             return accountReportActivityGroup;
         }
-
         public static AccountReportActivityGroup MapActivityGroupEndData(ActivitiesGroup activitiesGroup, Context context)
         {
             AccountReportActivityGroup accountReportActivityGroup = new AccountReportActivityGroup
@@ -300,7 +301,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
             return accountReportBusinessFlow;
         }
-
         public static AccountReportBusinessFlow MapBusinessFlowEndData(BusinessFlow businessFlow, Context context)
         {
             AccountReportBusinessFlow accountReportBusinessFlow = new AccountReportBusinessFlow
@@ -428,7 +428,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportRunner.IsPublished = gingerRunner.Publish;
             return accountReportRunner;
         }
-
         public static AccountReportRunner MapRunnerEndData(GingerRunner gingerRunner, Context context)
         {
             AccountReportRunner accountReportRunner = new AccountReportRunner
@@ -474,9 +473,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         }
 
         public static AccountReportRunSet MapRunsetStartData(RunSetConfig runSetConfig, Context context)
-        {
+        {            
             GingerCore.ValueExpression valueExpression = new(context.Environment, context, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
-
+            
             AccountReportRunSet accountReportRunSet = new AccountReportRunSet
             {
                 //updating source application and user
@@ -515,7 +514,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             SetRunSetChildCountsAtStart(runSetConfig, accountReportRunSet);
             return accountReportRunSet;
         }
-
         public static AccountReportRunSet MapRunsetEndData(RunSetConfig runSetConfig)
         {
             AccountReportRunSet accountReportRunSet = new AccountReportRunSet
@@ -946,8 +944,39 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public static List<string> GetInputValues(Act mAction)
         {
+            List<string> inputValues = new List<string>();
 
-            List<string> inputValues = mAction.InputValues.Select(a => OverrideHTMLRelatedCharacters(a.Param + "_:_" + a.Value + "_:_" + a.ValueForDriver)).ToList();
+            if (mAction is ActUIElement element && element.ElementLocateBy == Common.UIElement.eLocateBy.POMElement)
+            {
+                inputValues = mAction.InputValues.Where(inputVal => inputVal.ItemName != "DisplayValue").Select(inputValue =>
+                {
+                    if (inputValue.ItemName == "ElementLocateValue")
+                    {
+                        var displayValue = mAction.InputValues.FirstOrDefault(AIV => AIV.ItemName == "DisplayValue");
+                        if (displayValue != null)
+                        {
+                            return OverrideHTMLRelatedCharacters(inputValue.Param + "_:_" + displayValue.Value + "_:_" + displayValue.Value);
+                        }
+                        else
+                        {
+                            var pomElementGuids = inputValue.Value.Split("_");
+                            if (pomElementGuids.Length == 2)
+                            {
+                                return OverrideHTMLRelatedCharacters(inputValue.Param + "_:_" + $"POM GUID: {pomElementGuids[0]}" + "_:_" + $"Element GUID: {pomElementGuids[1]}");
+                            }
+                            else
+                            {
+                                return OverrideHTMLRelatedCharacters(inputValue.Param + "_:_" + inputValue.Value + "_:_" + inputValue.ValueForDriver);
+                            }
+                        }
+                    }
+                    return OverrideHTMLRelatedCharacters(inputValue.Param + "_:_" + inputValue.Value + "_:_" + inputValue.ValueForDriver);
+                }).ToList();
+            }
+            else
+            {
+                inputValues = mAction.InputValues.Select(a => OverrideHTMLRelatedCharacters(a.Param + "_:_" + a.Value + "_:_" + a.ValueForDriver)).ToList();
+            }
 
             if ((mAction.GetInputValueListForVEProcessing() != null) && (mAction.GetInputValueListForVEProcessing().Count > 0))
             {
