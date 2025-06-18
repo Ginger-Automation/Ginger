@@ -2586,7 +2586,7 @@ namespace Amdocs.Ginger.CoreNET
 
                 await GetPageSourceDocument(true);
 
-                fullScreenshot = ((ITakesScreenshot)Driver).GetScreenshot();
+                using var fullImage = ScreenshotToImage(((ITakesScreenshot)Driver).GetScreenshot());
 
                 //Get all elements but only clickable elements= user can interact with them
                 XmlNodeList nodes = pageSourceXml.SelectNodes("//*");
@@ -2644,7 +2644,7 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         if ((EI.XPath).Contains("android") || (EI.XPath).Contains("XCUIElement"))
                         {
-                            EI.ScreenShotImage = TakeElementScreenShot(EI,fullScreenshot);
+                            EI.ScreenShotImage = TakeElementScreenShot(EI, fullImage);
                         }
                         foundElementsList.Add(EI);
                     }
@@ -2657,11 +2657,20 @@ namespace Amdocs.Ginger.CoreNET
                 mIsDriverBusy = false;
             }
         }
-        private string TakeElementScreenShot(ElementInfo elementInfo, Screenshot fullScreenshot)
+        private string TakeElementScreenShot(ElementInfo elementInfo, Bitmap fullImage)
         {
-            using (Bitmap fullImage = ScreenshotToImage(fullScreenshot))
+
+            if (fullImage == null)
             {
-                int cropX;
+                throw new ArgumentNullException(nameof(fullImage), "Full image cannot be null.");
+            }
+
+            if (elementInfo == null)
+            { 
+                throw new ArgumentNullException(nameof(elementInfo), "elementInfo cannot be null."); 
+            }
+
+            int cropX;
                 int cropY;
                 int cropWidth;
                 int cropHeight;
@@ -2688,8 +2697,6 @@ namespace Amdocs.Ginger.CoreNET
                         return Convert.ToBase64String(ms.ToArray());
                     }
                 }
-
-            }
         }
 
         private void GetLocationAndSizeOfElement(string bounds, out int cropX, out int cropY, out int cropWidth, out int cropHeight)
