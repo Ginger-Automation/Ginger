@@ -885,13 +885,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 Artifacts = [];
                 context = context is IWrapsElement ? (context as IWrapsElement).WrappedElement : context;
 
-                string screenShotPath = GetDataImageString(context);
-                if (screenShotPath.StartsWith("data:image/png;base64,", StringComparison.OrdinalIgnoreCase))
+                string screenShotBase64 = GetDataImageString(context);
+                if (screenShotBase64.StartsWith("data:image/png;base64,", StringComparison.OrdinalIgnoreCase))
                 {
-                    screenShotPath = screenShotPath.Substring("data:image/png;base64,".Length);
+                    screenShotBase64 = screenShotBase64.Substring("data:image/png;base64,".Length);
                 }
                 MobileAccessibilityAnalyzer axeBuilder = new MobileAccessibilityAnalyzer(driver, ActiveRulesForAnalysis);
-                axeBuilder.AnalyzerMobileAccessibility(driver, elementXPath, currentAct: this, axeBuilder, screenShotPath);
+                axeBuilder.AnalyzerMobileAccessibility(driver, elementXPath, currentAct: this, axeBuilder, screenShotBase64);
             }
             catch (Exception ex)
             {

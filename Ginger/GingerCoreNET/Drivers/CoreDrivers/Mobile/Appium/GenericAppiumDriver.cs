@@ -42,6 +42,7 @@ using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
@@ -602,7 +603,9 @@ namespace Amdocs.Ginger.CoreNET
 
                 if (act.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Element)
                 {
-                    elementInfo = LocateElement(act);  // Locate specific element
+                    act.Status = eRunStatus.Failed;
+                    act.Error = "Element-level mobile accessibility analysis is not supported. Please select 'Page' as the target.";
+                    return;
                 }
                 else if (act.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Page)
                 {
@@ -1297,32 +1300,32 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SimulateBiometrics:
+                    {
+                        string biometricsAnswer = string.Empty;
+                        switch (act.AuthResultSimulation)
                         {
-                            string biometricsAnswer = string.Empty;
-                            switch (act.AuthResultSimulation)
+                            case ActMobileDevice.eAuthResultSimulation.Success:
                             {
-                                case ActMobileDevice.eAuthResultSimulation.Success:
-                                    {
-                                        biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), "");
-                                        break;
-                                    }
-                                case ActMobileDevice.eAuthResultSimulation.Failure:
-                                    {
-                                        biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsFailureSimulation.ToString());
-                                        break;
-                                    }
-                                case ActMobileDevice.eAuthResultSimulation.Cancel:
-                                    {
-                                        biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsCancelSimulation.ToString());
-                                        break;
-                                    }
+                                biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), "");
+                                break;
                             }
-                            if (!string.IsNullOrEmpty(biometricsAnswer) && biometricsAnswer != "success")
+                            case ActMobileDevice.eAuthResultSimulation.Failure:
                             {
-                                act.Error = "An Error occurred during biometrics simulation. Error2: " + biometricsAnswer;
+                                biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsFailureSimulation.ToString());
+                                break;
                             }
-                            break;
+                            case ActMobileDevice.eAuthResultSimulation.Cancel:
+                            {
+                                biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsCancelSimulation.ToString());
+                                break;
+                            }
                         }
+                        if (!string.IsNullOrEmpty(biometricsAnswer) && biometricsAnswer != "success")
+                        {
+                            act.Error = "An Error occurred during biometrics simulation. Error2: " + biometricsAnswer;
+                        }
+                        break;
+                    }
 
                     case ActMobileDevice.eMobileDeviceAction.StopSimulatePhotoOrVideo:
                         CameraAndBarcodeSimulationRequest(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
@@ -1384,15 +1387,15 @@ namespace Amdocs.Ginger.CoreNET
                         switch (act.RotateDeviceState)
                         {
                             case ActMobileDevice.eRotateDeviceState.Landscape:
-                                {
-                                    SwitchToLandscape();
-                                    break;
-                                }
+                            {
+                                SwitchToLandscape();
+                                break;
+                            }
                             case ActMobileDevice.eRotateDeviceState.Portrait:
-                                {
-                                    SwitchToPortrait();
-                                    break;
-                                }
+                            {
+                                SwitchToPortrait();
+                                break;
+                            }
                         }
                         NotifyDeviceRotation();
                         break;
@@ -1444,30 +1447,30 @@ namespace Amdocs.Ginger.CoreNET
                             switch (act.PerformanceTypes)
                             {
                                 case ActMobileDevice.ePerformanceTypes.Cpuinfo:
-                                    {
-                                        GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
-                                        break;
-                                    }
+                                {
+                                    GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
+                                    break;
+                                }
                                 case ActMobileDevice.ePerformanceTypes.Memoryinfo:
-                                    {
-                                        GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
-                                        break;
-                                    }
+                                {
+                                    GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
+                                    break;
+                                }
                                 case ActMobileDevice.ePerformanceTypes.Batteryinfo:
-                                    {
-                                        GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
-                                        break;
-                                    }
+                                {
+                                    GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
+                                    break;
+                                }
                                 case ActMobileDevice.ePerformanceTypes.Networkinfo:
-                                    {
-                                        GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
-                                        break;
-                                    }
+                                {
+                                    GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
+                                    break;
+                                }
                                 case ActMobileDevice.ePerformanceTypes.Diskinfo:
-                                    {
-                                        GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
-                                        break;
-                                    }
+                                {
+                                    GetSpecificPerformanceData(appPackage, act.PerformanceTypes.ToString(), act);
+                                    break;
+                                }
                             }
                         }
                         break;
@@ -2166,15 +2169,15 @@ namespace Amdocs.Ginger.CoreNET
                                     switch (act.UnLockType)
                                     {
                                         case ActMobileDevice.eUnlockType.none:
+                                        {
+                                            if (((AndroidDriver)Driver).IsLocked())
                                             {
-                                                if (((AndroidDriver)Driver).IsLocked())
-                                                {
-                                                    ((AndroidDriver)Driver).Unlock("none", "none", "uiautomator", 5000);
-                                                }
-                                                Thread.Sleep(200);
-                                                SwipeScreen(eSwipeSide.Up, 1, TimeSpan.FromMilliseconds(200));
-                                                break;
+                                                ((AndroidDriver)Driver).Unlock("none", "none", "uiautomator", 5000);
                                             }
+                                            Thread.Sleep(200);
+                                            SwipeScreen(eSwipeSide.Up, 1, TimeSpan.FromMilliseconds(200));
+                                            break;
+                                        }
                                         case ActMobileDevice.eUnlockType.pin:
                                             AndroidUnlock(act, nameof(ActMobileDevice.eUnlockType.pin));
                                             break;
@@ -2210,10 +2213,10 @@ namespace Amdocs.Ginger.CoreNET
                                     switch (act.UnLockType)
                                     {
                                         case ActMobileDevice.eUnlockType.none:
-                                            {
-                                                ((IOSDriver)Driver).Unlock();
-                                            }
-                                            break;
+                                        {
+                                            ((IOSDriver)Driver).Unlock();
+                                        }
+                                        break;
                                         case ActMobileDevice.eUnlockType.pin:
                                         case ActMobileDevice.eUnlockType.password:
                                             System.Threading.Thread.Sleep(200);
