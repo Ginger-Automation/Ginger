@@ -2685,9 +2685,9 @@ namespace Amdocs.Ginger.CoreNET
                 int cropWidth;
                 int cropHeight;
 
-                string BoundsValue = elementInfo.GetElementProperties().FirstOrDefault(x => x.Name.Equals("bounds", StringComparison.InvariantCultureIgnoreCase)).Value;
+                
 
-                GetLocationAndSizeOfElement(BoundsValue, out cropX, out cropY, out cropWidth, out cropHeight);
+                GetLocationAndSizeOfElement(elementInfo, out cropX, out cropY, out cropWidth, out cropHeight);
 
                 if (cropWidth <= 0 || cropHeight <= 0)
                     throw new ArgumentException("Invalid crop dimensions.");
@@ -2715,33 +2715,44 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        private void GetLocationAndSizeOfElement(string bounds, out int cropX, out int cropY, out int cropWidth, out int cropHeight)
+        private void GetLocationAndSizeOfElement(ElementInfo elementInfo, out int cropX, out int cropY, out int cropWidth, out int cropHeight)
         {
+            var props = elementInfo.GetElementProperties()
+                     .ToDictionary(p => p.Name, p => p.Value, StringComparer.InvariantCultureIgnoreCase);
+
+            string BoundsValue = props.TryGetValue("bounds", out var xBounds) ? xBounds : string.Empty;
             try
             {
+                if (!string.IsNullOrEmpty(BoundsValue))
+                {
+                    // Remove the square brackets and split the string
+                    string[] parts = BoundsValue.Replace("[", "").Split(']');
 
-                // Remove the square brackets and split the string
-                string[] parts = bounds.Replace("[", "").Split(']');
+                    // Parse the first part as x and y
+                    string[] xy = parts[0].Split(',');
+                    cropX = int.Parse(xy[0]);
+                    cropY = int.Parse(xy[1]);
 
-                // Parse the first part as x and y
-                string[] xy = parts[0].Split(',');
-                cropX = int.Parse(xy[0]);
-                cropY = int.Parse(xy[1]);
-
-                // Parse the second part as width and height
-                string[] wh = parts[1].Split(',');
-                int x2 = int.Parse(wh[0]);
-                int y2 = int.Parse(wh[1]);
-                cropWidth = Math.Max(0, x2 - cropX);
-                cropHeight = Math.Max(0, y2 - cropY);
+                    // Parse the second part as width and height
+                    string[] wh = parts[1].Split(',');
+                    int x2 = int.Parse(wh[0]);
+                    int y2 = int.Parse(wh[1]);
+                    cropWidth = Math.Max(0, x2 - cropX);
+                    cropHeight = Math.Max(0, y2 - cropY);
+                }
+                else
+                {
+                    cropX = props.TryGetValue("x", out var xVal) ? Convert.ToInt32(xVal) : 0;
+                    cropY = props.TryGetValue("y", out var yVal) ? Convert.ToInt32(yVal) : 0;
+                    cropWidth = props.TryGetValue("width", out var widthVal) ? Convert.ToInt32(widthVal) : 0;
+                    cropHeight = props.TryGetValue("height", out var heightVal) ? Convert.ToInt32(heightVal) : 0;
+                }
+                
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG,$"Failed to parse bounds string: {bounds}", ex);
-            }
-            finally
-            {
                 cropX = 0; cropY = 0; cropWidth = 0; cropHeight = 0;
+                Reporter.ToLog(eLogLevel.DEBUG,$"Failed to parse bounds string: {BoundsValue}", ex);
             }
         }
 
