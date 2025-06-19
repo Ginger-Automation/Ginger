@@ -2,11 +2,14 @@
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
+using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Configurations;
 using GingerCore.Actions;
+using Newtonsoft.Json;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -21,7 +24,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.Appium
         private const int MIN_TOUCH_TARGET_SIZE_PX = 48;
 
         private IWebDriver _driver;
-        private ObservableList<AccessibilityRuleData> _activeRulesForAnalysis; // This will hold the filtered rules
+        private ObservableCollection<AccessibilityRuleData> _activeRulesForAnalysis; // This will hold the filtered rules
 
         // Assuming a standard screen size for off-screen checks.
         private const int SCREEN_WIDTH_PX = 1080;
@@ -33,10 +36,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.Appium
         private static readonly Regex GenericLinkTextRegex = new Regex(@"\b(click here|tap here|learn more|read more|details|link)\b", RegexOptions.IgnoreCase);
 
         // Constructor now accepts the list of active rules
-        public MobileAccessibilityAnalyzer(IWebDriver driver, ObservableList<AccessibilityRuleData> activeRules)
+        public MobileAccessibilityAnalyzer(IWebDriver driver, ObservableCollection<AccessibilityRuleData> activeRules)
         {
             this._driver = driver;
-            this._activeRulesForAnalysis = activeRules ?? new ObservableList<AccessibilityRuleData>(); // Initialize to empty list if null
+            this._activeRulesForAnalysis = activeRules ?? new ObservableCollection<AccessibilityRuleData>(); // Initialize to empty list if null
 
         }
 
@@ -622,11 +625,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.Appium
         }
 
         // Inside your AnalyzerMobileAccessibility method in ActAccessibilityTesting
-        public void AnalyzerMobileAccessibility(IWebDriver Driver, IWebElement element, Act currentAct, MobileAccessibilityAnalyzer mobileAnalyzer)
+        public void AnalyzerMobileAccessibility(IWebDriver Driver, IWebElement element, Act currentAct, MobileAccessibilityAnalyzer mobileAnalyzer, string screenShotPath = null)
         {
             try
             {
-                currentAct.Artifacts = new ObservableList<ArtifactDetails>(); // Initialize artifacts list
+                currentAct.Artifacts = new ObservableList<ArtifactDetails>();
                 currentAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
 
                 if (currentAct.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && !string.IsNullOrEmpty(currentAct.Error))
@@ -662,12 +665,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.Appium
                     path = Path.Combine(folderPath, reportname);
 
                     // Create the HTML report
-                    CreateMobileAccessibilityHtmlReport(mobileAxeResult, path);
+                    CreateMobileAccessibilityHtmlReport(mobileAxeResult, path, screenShotPath);
 
                     Act.AddArtifactToAction(Path.GetFileName(path), currentAct, path);
                     currentAct.AddOrUpdateReturnParamActual(ParamName: "Mobile Accessibility report", ActualValue: path);
                 }
-
+                SetMobileAccessibilityResultToAction(mobileAxeResult, currentAct);
                 // You might want to set a 'failed' status if critical issues are found
                 if (mobileAxeResult.Any(issue => issue.Severity == "Critical"))
                 {
@@ -692,11 +695,111 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.Appium
         }
 
         /// <summary>
+        /// Sets the action result for mobile accessibility testing based on found issues and filtering.
+        /// </summary>
+        /// <param name="mobileAxeResult">The list of accessibility issues found by the analyzer.</param>
+        /// <param name="currentAct">The current Act object to update with status and return parameters.</param>
+        public void SetMobileAccessibilityResultToAction(List<AccessibilityIssue> mobileAxeResult, Act currentAct)
+        {
+
+            bool hasAnyViolations = mobileAxeResult.Any();
+            bool actionResult = true;
+
+            IEnumerable<string> violationImpacts = mobileAxeResult.Select(x => x.Severity.ToLower()).Distinct();
+
+            string analyzerType = currentAct.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer);
+
+            // Get the selected severities from the UI configuration
+            List<string> selectedSeverityValues = null;
+            if (((ActAccessibilityTesting)currentAct).SeverityList != null && ((ActAccessibilityTesting)currentAct).SeverityList.Any())
+            {
+                selectedSeverityValues = ((ActAccessibilityTesting)currentAct).SeverityList.Select(x => x.Value.ToLower()).ToList();
+            }
+
+            if (analyzerType == nameof(ActAccessibilityTesting.eAnalyzer.ByStandard))
+            {
+                if (selectedSeverityValues != null && selectedSeverityValues.Any())
+                {
+
+                    actionResult = hasAnyViolations;
+
+
+                    actionResult = violationImpacts.Intersect(selectedSeverityValues).Any();
+                }
+                else
+                {
+                    actionResult = hasAnyViolations;
+                }
+            }
+            else if (analyzerType == nameof(ActAccessibilityTesting.eAnalyzer.BySeverity))
+            {
+                if (selectedSeverityValues != null && selectedSeverityValues.Count != 0)
+                {
+
+                    actionResult = selectedSeverityValues.Any(severity => violationImpacts.Contains(severity));
+                }
+                else
+                {
+                    actionResult = hasAnyViolations;
+                }
+            }
+            else
+            {
+                actionResult = hasAnyViolations;
+            }
+
+            var jsonResponse = JsonConvert.SerializeObject(mobileAxeResult, Newtonsoft.Json.Formatting.Indented);
+            currentAct.RawResponseValues = jsonResponse;
+            currentAct.AddOrUpdateReturnParamActual(ParamName: "Raw Response", ActualValue: jsonResponse);
+
+            if (hasAnyViolations)
+            {
+                if (actionResult)
+                {
+                    currentAct.Status = eRunStatus.Failed;
+                    currentAct.Error = $"Accessibility testing resulted in violations matching the configured criteria.";
+                }
+                else
+                {
+                    currentAct.Status = eRunStatus.Passed;
+                    currentAct.Error = $"Accessibility testing found violations, but none matched the configured failure criteria.";
+                }
+
+
+                currentAct.AddOrUpdateReturnParamActual(ParamName: "ViolationCount", ActualValue: mobileAxeResult.Count.ToString());
+                currentAct.AddOrUpdateReturnParamActual(ParamName: "ViolationList", ActualValue: String.Join(",", mobileAxeResult.Select(x => x.RuleId).Distinct()));
+                currentAct.AddOrUpdateReturnParamActual(ParamName: "ViolationSeverity", ActualValue: string.Join(",", violationImpacts));
+
+                int violatedNodeIndex = 0;
+                foreach (AccessibilityIssue issue in mobileAxeResult)
+                {
+                    violatedNodeIndex++;
+                    currentAct.AddOrUpdateReturnParamActualWithPath(ParamName: "ViolationId", ActualValue: issue.RuleId, violatedNodeIndex.ToString());
+                    if (!string.IsNullOrEmpty(issue.ElementIdentifier))
+                    {
+                        currentAct.AddOrUpdateReturnParamActualWithPath(ParamName: "NodeXPath", ActualValue: issue.ElementIdentifier, violatedNodeIndex.ToString());
+                    }
+                    currentAct.AddOrUpdateReturnParamActualWithPath(ParamName: "ViolationHelp", ActualValue: issue.Description + " - Suggested Fix: " + issue.SuggestedFix, violatedNodeIndex.ToString());
+                    currentAct.AddOrUpdateReturnParamActualWithPath(ParamName: "ViolationSeverity", ActualValue: issue.Severity, violatedNodeIndex.ToString());
+                }
+            }
+            else
+            {
+
+                currentAct.Status = eRunStatus.Passed;
+                currentAct.Error = string.Empty;
+                currentAct.AddOrUpdateReturnParamActual(ParamName: "ViolationCount", ActualValue: "0");
+                currentAct.AddOrUpdateReturnParamActual(ParamName: "ViolationList", ActualValue: "");
+                currentAct.AddOrUpdateReturnParamActual(ParamName: "ViolationSeverity", ActualValue: "");
+            }
+        }
+
+        /// <summary>
         /// Generates an HTML report from the list of mobile accessibility issues.
         /// </summary>
         /// <param name="issues">The list of accessibility issues.</param>
         /// <param name="outputPath">The file path where the HTML report will be saved.</param>
-        private void CreateMobileAccessibilityHtmlReport(List<AccessibilityIssue> issues, string outputPath)
+        private void CreateMobileAccessibilityHtmlReport(List<AccessibilityIssue> issues, string outputPath, string screenshotPath = null)
         {
             StringBuilder html = new StringBuilder();
 
@@ -730,6 +833,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.Appium
             html.Append("        .issue-details strong { color: #555; }");
             html.Append("        .no-issues { text-align: center; color: #27ae60; font-size: 1.2em; padding: 30px; border: 1px dashed #2ecc71; border-radius: 5px; }");
             html.Append("        .footer { text-align: center; margin-top: 50px; font-size: 0.9em; color: #777; }");
+            html.Append("        .screenshot-container { text-align: center; margin-top: 30px; background-color: #f0f0f0; padding: 20px; border-radius: 8px; }");
+            html.Append("        .screenshot-container img { ");
+            html.Append("            max-width: 70%; /* Limit the maximum width of the image */ ");
+            html.Append("            height: auto; /* Maintain aspect ratio */ ");
+            html.Append("            display: block; /* Make it a block element to apply margin auto */ ");
+            html.Append("            margin: 0 auto; /* Center the image horizontally */ ");
+            html.Append("            border: 1px solid #ddd; ");
+            html.Append("            border-radius: 5px; ");
+            html.Append("            box-shadow: 0 2px 8px rgba(0,0,0,0.1); ");
+            html.Append("        }");
             html.Append("    </style>");
             html.Append("</head>");
             html.Append("<body>");
@@ -748,7 +861,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.Appium
             html.Append("            <div class='summary-item'><h3>Total Issues</h3><p>" + totalIssues + "</p></div>");
             html.Append("        </div>");
 
-
+            if (!string.IsNullOrWhiteSpace(screenshotPath))
+            {
+                html.Append("        <h2>Page Screenshot</h2>");
+                html.Append("        <div class='screenshot-container'>");
+                html.Append("            <img src='data:image/png;base64," + screenshotPath + "' alt='Screenshot of the mobile page' />");
+                html.Append("        </div>");
+            }
 
             if (issues.Any())
             {
