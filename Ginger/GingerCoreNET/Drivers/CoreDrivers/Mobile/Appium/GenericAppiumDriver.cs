@@ -71,7 +71,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -2650,7 +2649,7 @@ namespace Amdocs.Ginger.CoreNET
                             }
                             catch (Exception ex)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR,$"Skipping element due to screen-shot error: {ex.Message}",ex);
+                                Reporter.ToLog(eLogLevel.ERROR, $"Skipping element due to screen-shot error: {ex.Message}", ex);
                                 EI.ScreenShotImage = null;
                             }
 
@@ -2685,7 +2684,7 @@ namespace Amdocs.Ginger.CoreNET
                 int cropWidth;
                 int cropHeight;
 
-                
+
 
                 GetLocationAndSizeOfElement(elementInfo, out cropX, out cropY, out cropWidth, out cropHeight);
 
@@ -2708,7 +2707,7 @@ namespace Amdocs.Ginger.CoreNET
                     }
                 }
             }
-            catch ( Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to Take element screen-shot: ", ex);
                 return null;
@@ -2747,12 +2746,12 @@ namespace Amdocs.Ginger.CoreNET
                     cropWidth = props.TryGetValue("width", out var widthVal) ? Convert.ToInt32(widthVal) : 0;
                     cropHeight = props.TryGetValue("height", out var heightVal) ? Convert.ToInt32(heightVal) : 0;
                 }
-                
+
             }
             catch (Exception ex)
             {
                 cropX = 0; cropY = 0; cropWidth = 0; cropHeight = 0;
-                Reporter.ToLog(eLogLevel.DEBUG,$"Failed to parse bounds string: {BoundsValue}", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, $"Failed to parse bounds string: {BoundsValue}", ex);
             }
         }
 
