@@ -31,30 +31,21 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.Appium
             return [.. filteredRules];
         }
 
-        public static ObservableCollection<AccessibilityRuleData> DisableRules(this ObservableCollection<AccessibilityRuleData> source, string[] ruleIDsToDisable)
+        public static string[] NormalizeTagNames(string[] tags)
         {
-            if (ruleIDsToDisable == null || !ruleIDsToDisable.Any())
+            if (tags == null)
             {
-                return source;
+                return tags;
             }
 
-            var ruleIDsSet = new HashSet<string>(ruleIDsToDisable, StringComparer.OrdinalIgnoreCase);
-
-            var filteredRules = source.Where(rule => !ruleIDsSet.Contains(rule.RuleID)).ToList();
-            return [.. filteredRules];
-        }
-
-        public static ObservableCollection<AccessibilityRuleData> WithRules(this ObservableCollection<AccessibilityRuleData> source, string[] ruleIDsToInclude)
-        {
-            if (ruleIDsToInclude == null || !ruleIDsToInclude.Any())
+            string[] normalizedTags = new string[tags.Length];
+            for (int i = 0; i < tags.Length; i++)
             {
-                return [];
+                normalizedTags[i] = tags[i].Equals("bestpractice", StringComparison.OrdinalIgnoreCase)
+                    ? "best-practice"
+                    : tags[i];
             }
-
-            var ruleIDsSet = new HashSet<string>(ruleIDsToInclude, StringComparer.OrdinalIgnoreCase);
-
-            var filteredRules = source.Where(rule => ruleIDsSet.Contains(rule.RuleID)).ToList();
-            return [.. filteredRules];
+            return normalizedTags;
         }
     }
 }

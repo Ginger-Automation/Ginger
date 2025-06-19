@@ -452,13 +452,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             {
                 selectedStandardTags = StandardList.Select(i => i.Value.ToString().ToLower()).ToList();
 
-                for (int i = 0; i < selectedStandardTags.Count; i++)
-                {
-                    if (selectedStandardTags[i].Equals("bestpractice", StringComparison.OrdinalIgnoreCase))
-                    {
-                        selectedStandardTags[i] = "best-practice";
-                    }
-                }
+                selectedStandardTags = MobileAccessibilityRuleDataExtensions.NormalizeTagNames(selectedStandardTags.ToArray()).ToList();
             }
 
             List<string>? selectedSeverities = null;
@@ -975,13 +969,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 if (StandardList != null && StandardList.Any())
                 {
                     string[] Tag_array = StandardList.Select(i => i.Value.ToString()).ToArray();
-                    for (int i = 0; i < Tag_array.Length; i++)
-                    {
-                        if (Tag_array[i].Equals("bestpractice", StringComparison.OrdinalIgnoreCase))
-                        {
-                            Tag_array[i] = "best-practice";
-                        }
-                    }
+                    Tag_array = MobileAccessibilityRuleDataExtensions.NormalizeTagNames(Tag_array);
                     axeBuilder.WithTags(Tag_array);
                 }
                 else if (StandardList == null || !StandardList.Any())

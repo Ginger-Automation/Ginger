@@ -702,7 +702,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.Appium
         public void SetMobileAccessibilityResultToAction(List<AccessibilityIssue> mobileAxeResult, Act currentAct)
         {
 
-            bool hasAnyViolations = mobileAxeResult.Any();
+            bool hasAnyViolations = mobileAxeResult.Count != 0;
             bool actionResult = true;
 
             IEnumerable<string> violationImpacts = mobileAxeResult.Select(x => x.Severity.ToLower()).Distinct();
@@ -722,9 +722,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.Appium
                 {
 
                     actionResult = hasAnyViolations;
-
-
-                    actionResult = violationImpacts.Intersect(selectedSeverityValues).Any();
                 }
                 else
                 {
@@ -834,15 +831,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.Appium
             html.Append("        .no-issues { text-align: center; color: #27ae60; font-size: 1.2em; padding: 30px; border: 1px dashed #2ecc71; border-radius: 5px; }");
             html.Append("        .footer { text-align: center; margin-top: 50px; font-size: 0.9em; color: #777; }");
             html.Append("        .screenshot-container { text-align: center; margin-top: 30px; background-color: #f0f0f0; padding: 20px; border-radius: 8px; }");
-            html.Append("        .screenshot-container img { ");
-            html.Append("            max-width: 70%; /* Limit the maximum width of the image */ ");
-            html.Append("            height: auto; /* Maintain aspect ratio */ ");
-            html.Append("            display: block; /* Make it a block element to apply margin auto */ ");
-            html.Append("            margin: 0 auto; /* Center the image horizontally */ ");
-            html.Append("            border: 1px solid #ddd; ");
-            html.Append("            border-radius: 5px; ");
-            html.Append("            box-shadow: 0 2px 8px rgba(0,0,0,0.1); ");
-            html.Append("        }");
+            html.Append(" .screenshot-container img { max-width: 70%; height: auto; display: block; margin: 0 auto; border: 1px solid #ddd; border-radius: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }");
             html.Append("    </style>");
             html.Append("</head>");
             html.Append("<body>");
