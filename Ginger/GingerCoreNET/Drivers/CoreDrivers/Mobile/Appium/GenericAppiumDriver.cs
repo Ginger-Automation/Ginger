@@ -1419,11 +1419,17 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PushFileToDevice:
-                        PushFileToDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                        if (ValidateAndroidOnlyOperation(act, "Push file to device"))
+                        {
+                            PushFileToDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                        }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PullFileFromDevice:
-                        PullFileFromDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                        if (ValidateAndroidOnlyOperation(act, "Pull file to device"))
+                        {
+                            PullFileFromDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                        }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SetClipboardText:
@@ -1435,9 +1441,12 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceLogs:
-                        string deviceLogsPath = GetDeviceLogs(act.FolderPathInput.ValueForDriver);
-                        act.AddOrUpdateReturnParamActual("DeviceLogFilePath", deviceLogsPath);
-                        Act.AddArtifactToAction(Path.GetFileName(deviceLogsPath), act, deviceLogsPath);
+                        if (ValidateAndroidOnlyOperation(act, "Get Device Logs"))
+                        {
+                            string deviceLogsPath = GetDeviceLogs(act.FolderPathInput.ValueForDriver);
+                            act.AddOrUpdateReturnParamActual("DeviceLogFilePath", deviceLogsPath);
+                            Act.AddArtifactToAction(Path.GetFileName(deviceLogsPath), act, deviceLogsPath);
+                        }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetSpecificPerformanceData:
@@ -1555,7 +1564,17 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        public string SimulatePhotoOrBarcode(string photoString, string action)
+        private bool ValidateAndroidOnlyOperation(ActMobileDevice act, string operationName)
+        {
+            if (DevicePlatformType != eDevicePlatformType.Android)
+            {
+                act.Error = $"{operationName} not supported for this mobile OS or application type.";
+                return false;
+            }
+            return true;
+        }
+
+public string SimulatePhotoOrBarcode(string photoString, string action)
         {
             Bitmap picture = null;
             string response = string.Empty;
