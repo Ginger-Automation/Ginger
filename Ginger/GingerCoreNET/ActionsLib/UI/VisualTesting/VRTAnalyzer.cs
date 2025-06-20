@@ -263,7 +263,7 @@ namespace GingerCore.Actions.VisualTesting
                 {
                     if (webDriver is AndroidDriver)
                     {
-                        os = $"Andriod";
+                        os = $"Android";
                     }
                     else if (webDriver is IOSDriver)
                     {
