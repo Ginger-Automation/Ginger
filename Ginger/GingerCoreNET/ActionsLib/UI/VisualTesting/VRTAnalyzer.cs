@@ -21,6 +21,9 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
 using GingerCore.Environments;
 using GingerCoreNET.GeneralLib;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Appium.Android;
+using OpenQA.Selenium.Appium.iOS;
 using System;
 using System.Drawing;
 using System.IO;
@@ -253,12 +256,24 @@ namespace GingerCore.Actions.VisualTesting
                         }
                     }
                 }
-
+                IWebDriver webDriver = mDriver.GetWebDriver();
                 //Operating System
                 string os = string.Empty;
                 if (WorkSpace.Instance.Solution.VRTConfiguration.OS)
                 {
-                    os = GingerPluginCore.OperatingSystem.GetCurrentOS();
+                    if (webDriver is AndroidDriver)
+                    {
+                        os = $"Andriod";
+                    }
+                    else if (webDriver is IOSDriver)
+                    {
+                        os = $"IOS";
+                    }
+                    else
+                    {
+                        os = GingerPluginCore.OperatingSystem.GetCurrentOS();
+                    }
+
                 }
                 //tags
                 string tags = string.Empty;
@@ -287,7 +302,26 @@ namespace GingerCore.Actions.VisualTesting
                 string browser = string.Empty;
                 if (WorkSpace.Instance.Solution.VRTConfiguration.Agent)
                 {
-                    browser = mDriver.GetPlatform() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web ? mDriver.GetAgentAppName() : mDriver.GetAgentAppName() + "App";
+                    if (mDriver.GetPlatform() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
+                    {
+
+                        if (webDriver is AndroidDriver)
+                        {
+                            browser = $"chrome";
+                        }
+                        else if (webDriver is IOSDriver)
+                        {
+                            browser = $"safari";
+                        }
+                        else
+                        {
+                            browser = mDriver.GetAgentAppName();
+                        }
+                    }
+                    else
+                    {
+                        browser = mDriver.GetAgentAppName() + "App";
+                    }
                 }
                 //Viewport/resolution from driver
                 string viewport = string.Empty;

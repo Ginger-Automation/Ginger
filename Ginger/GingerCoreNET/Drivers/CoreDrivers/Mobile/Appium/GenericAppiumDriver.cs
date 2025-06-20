@@ -1419,11 +1419,25 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PushFileToDevice:
-                        PushFileToDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                        if (DevicePlatformType == eDevicePlatformType.Android)
+                        {
+                            PushFileToDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                        }
+                        else
+                        {
+                            act.Error = "Operation not supported for this mobile OS or application type.";
+                        }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PullFileFromDevice:
-                        PullFileFromDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                        if (DevicePlatformType == eDevicePlatformType.Android)
+                        {
+                            PullFileFromDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                        }
+                        else
+                        {
+                            act.Error = "Operation not supported for this mobile OS or application type.";
+                        }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SetClipboardText:
@@ -1435,9 +1449,16 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceLogs:
-                        string deviceLogsPath = GetDeviceLogs(act.FolderPathInput.ValueForDriver);
-                        act.AddOrUpdateReturnParamActual("DeviceLogFilePath", deviceLogsPath);
-                        Act.AddArtifactToAction(Path.GetFileName(deviceLogsPath), act, deviceLogsPath);
+                        if (DevicePlatformType == eDevicePlatformType.Android)
+                        {
+                            string deviceLogsPath = GetDeviceLogs(act.FolderPathInput.ValueForDriver);
+                            act.AddOrUpdateReturnParamActual("DeviceLogFilePath", deviceLogsPath);
+                            Act.AddArtifactToAction(Path.GetFileName(deviceLogsPath), act, deviceLogsPath);
+                        }
+                        else
+                        {
+                            act.Error = "Operation not supported for this mobile OS or application type.";
+                        }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetSpecificPerformanceData:
