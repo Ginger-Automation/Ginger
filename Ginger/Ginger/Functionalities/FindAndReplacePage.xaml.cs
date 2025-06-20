@@ -239,8 +239,6 @@ namespace Ginger.Functionalities
             }
         }
 
-
-
         private void BulkUpdateValueForAll(object sender, RoutedEventArgs e)
         {
             try
@@ -1810,9 +1808,6 @@ namespace Ginger.Functionalities
                 xAttributeNameComboBox.IsEnabled = !value;
             }
         }
-        public bool IsNotLoading => !IsLoading;
-
-
 
         private void xAttributeNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
