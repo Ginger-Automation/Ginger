@@ -38,6 +38,7 @@ using Newtonsoft.Json;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -424,7 +425,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         }
 
         // This property becomes the single source of filtered rules
-        public ObservableList<AccessibilityRuleData> ActiveRulesForAnalysis
+        public ObservableCollection<AccessibilityRuleData> ActiveRulesForAnalysis
         {
             get
             {
@@ -432,105 +433,78 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             }
         }
 
-        private ObservableList<AccessibilityRuleData> GetFilteredRuleList()
+        /// <summary>
+        /// Filters the accessibility rule list based on selected standards and/or severity levels.
+        /// </summary>
+        /// <returns>An ObservableCollection of AccessibilityRuleData for analysis.</returns>
+        public ObservableCollection<AccessibilityRuleData> GetFilteredRuleList()
         {
-            ObservableList<AccessibilityRuleData> allRules = GetRuleList();
+            //all rules that are marked as Active in configuration
+            ObservableCollection<AccessibilityRuleData> rulesForAnalysis =
+                [.. GetRuleList().Where(x => x.Active)];
 
-            // Start with the rules excluded by the user's configuration ('Active' field being false)
-            HashSet<string> finalExcludedRuleIds = new HashSet<string>(
-                allRules.Where(x => !x.Active).Select(x => x.RuleID),
-                StringComparer.OrdinalIgnoreCase
-            );
+            // Get the selected analyzer type
+            string analyzerType = GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer);
 
-            // Apply filtering based on Analyzer mode
-            if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(eAnalyzer.ByStandard))
+            // lists for selected tags and severities
+            List<string>? selectedStandardTags = null;
+            if (StandardList != null && StandardList.Any())
             {
-                if (StandardList == null || !StandardList.Any())
+                selectedStandardTags = StandardList.Select(i => i.Value.ToString().ToLower()).ToList();
+
+                selectedStandardTags = MobileAccessibilityRuleDataExtensions.NormalizeTagNames(selectedStandardTags.ToArray()).ToList();
+            }
+
+            List<string>? selectedSeverities = null;
+            if (SeverityList != null && SeverityList.Count != 0)
+            {
+                selectedSeverities = [.. SeverityList.Select(x => x.Value.ToLower())];
+            }
+
+            // Apply filtering based on Analyzer type
+            if (analyzerType == nameof(ActAccessibilityTesting.eAnalyzer.ByStandard))
+            {
+                if (selectedStandardTags == null || selectedStandardTags.Count == 0)
                 {
-
-                    Reporter.ToLog(eLogLevel.ERROR, "Error: 'ByStandard' analyzer selected, but no standards are provided.");
-
-                    return new ObservableList<AccessibilityRuleData>();
+                    Status = eRunStatus.Failed;
+                    Error = "Standard list is empty or not set when 'By Standard' analyzer is selected.";
+                    return [];
                 }
 
+                // Filter rules to only include those matching selected standards/tags
+                rulesForAnalysis = rulesForAnalysis.WithTags([.. selectedStandardTags]);
 
-                HashSet<string> selectedStandardTags = new HashSet<string>(
-                    StandardList.Select(item => item.Value.ToString().Equals("bestpractice", StringComparison.OrdinalIgnoreCase) ? "best-practice" : item.Value.ToString()),
-                    StringComparer.OrdinalIgnoreCase
+                if (selectedSeverities != null && selectedSeverities.Count != 0)
+                {
+                    rulesForAnalysis = new ObservableCollection<AccessibilityRuleData>(
+                        rulesForAnalysis.Where(rule => !selectedSeverities.Contains(rule.Impact.ToLower()))
+                    );
+                }
+            }
+            else if (analyzerType == nameof(ActAccessibilityTesting.eAnalyzer.BySeverity))
+            {
+                if (selectedSeverities == null || selectedSeverities.Count == 0)
+                {
+                    Status = eRunStatus.Failed;
+                    Error = "Severity list is empty or not set when 'By Severity' analyzer is selected.";
+                    return [];
+                }
+
+                // Filter rules to only include those matching selected severities
+                rulesForAnalysis = new ObservableCollection<AccessibilityRuleData>(
+                    rulesForAnalysis.Where(rule => selectedSeverities.Contains(rule.Impact.ToLower()))
                 );
 
-                // Assuming Tag is a string or list of strings that can be matched.
-                allRules = new ObservableList<AccessibilityRuleData>(
-     allRules.Where(r =>
-     {
-         if (string.IsNullOrEmpty(r.Tags)) // Handle cases where Tags might be null or empty
-         {
-             return false;
-         }
-
-         // Split the comma-separated tags string into a collection of individual tags
-         // .Select(s => s.Trim()) to remove leading/trailing whitespace from each tag
-         // .ToList() to make it a List<string> if needed, or keep as IEnumerable<string>
-         IEnumerable<string> ruleIndividualTags = r.Tags.Split(',')
-                                                      .Select(s => s.Trim())
-                                                      .Where(s => !string.IsNullOrWhiteSpace(s)); // Filter out empty strings from splitting
-
-         // Check if any of the individual tags for the rule are in the selectedStandardTags
-         return ruleIndividualTags.Any(ruleTag => selectedStandardTags.Contains(ruleTag));
-     })
- );
-                if (SeverityList != null && SeverityList.Any())
-                {
-                    List<string> selectedSeverities = SeverityList.Select(x => x.Value.ToLower()).ToList();
-
-
-                    // Rules to exclude based on severity: if a rule's impact is NOT in the selected severities
-                    var severityExcludedRuleIds = allRules
-                        .Where(r => !selectedSeverities.Contains(r.Impact.ToLower())) // Exclude if its Impact is NOT among the selected
-                        .Select(r => r.RuleID);
-
-                    foreach (var ruleId in severityExcludedRuleIds)
-                    {
-                        finalExcludedRuleIds.Add(ruleId);
-                    }
-                }
             }
-            else if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(eAnalyzer.BySeverity))
+            else
             {
-                if (SeverityList == null || !SeverityList.Any())
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error: 'BySeverity' analyzer selected, but no severities are provided.");
-                    // Optionally, set currentAct.Status = Failed and currentAct.Error
-                    return new ObservableList<AccessibilityRuleData>();
-                }
 
-                List<string> selectedSeverities = SeverityList.Select(x => x.Value.ToLower()).ToList();
-
-                // Filter rules: only include rules whose Impact matches a selected severity
-                allRules = new ObservableList<AccessibilityRuleData>(
-                    allRules.Where(r => selectedSeverities.Contains(r.Impact.ToLower()))
-                );
+                Status = eRunStatus.Passed;
+                Error = string.Empty;
             }
 
-            // Final step: Apply the combined exclusions to the initially loaded rules
-            // Create the final list of rules that are truly active for the analyzer
-            ObservableList<AccessibilityRuleData> finalActiveRules = new ObservableList<AccessibilityRuleData>();
-            foreach (AccessibilityRuleData ruleData in allRules)
-            {
-                if (!finalExcludedRuleIds.Contains(ruleData.RuleID))
-                {
-                    ruleData.Active = true; // Mark as active for consistency, though not strictly needed here
-                    finalActiveRules.Add(ruleData);
-                }
-                else
-                {
-                    ruleData.Active = false; // Explicitly mark as inactive if excluded
-                }
-            }
-
-            return finalActiveRules;
+            return rulesForAnalysis;
         }
-
         private static string GetAccessibilityRulesFile(string platType)
         {
             try
@@ -904,13 +878,20 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             return count;
         }
         //Analyzer for Mobile
-        public void AnalyzerMobileAccessibility(IWebDriver driver, IWebElement elementXPath = null)
+        public void AnalyzerMobileAccessibility(IWebDriver driver, ISearchContext context, IWebElement elementXPath = null)
         {
             try
             {
                 Artifacts = [];
+                context = context is IWrapsElement ? (context as IWrapsElement).WrappedElement : context;
+
+                string screenShotBase64 = GetDataImageString(context);
+                if (screenShotBase64.StartsWith("data:image/png;base64,", StringComparison.OrdinalIgnoreCase))
+                {
+                    screenShotBase64 = screenShotBase64.Substring("data:image/png;base64,".Length);
+                }
                 MobileAccessibilityAnalyzer axeBuilder = new MobileAccessibilityAnalyzer(driver, ActiveRulesForAnalysis);
-                axeBuilder.AnalyzerMobileAccessibility(driver, elementXPath, currentAct: this, axeBuilder);
+                axeBuilder.AnalyzerMobileAccessibility(driver, elementXPath, currentAct: this, axeBuilder, screenShotBase64);
             }
             catch (Exception ex)
             {
@@ -988,13 +969,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 if (StandardList != null && StandardList.Any())
                 {
                     string[] Tag_array = StandardList.Select(i => i.Value.ToString()).ToArray();
-                    for (int i = 0; i < Tag_array.Length; i++)
-                    {
-                        if (Tag_array[i].Equals("bestpractice", StringComparison.OrdinalIgnoreCase))
-                        {
-                            Tag_array[i] = "best-practice";
-                        }
-                    }
+                    Tag_array = MobileAccessibilityRuleDataExtensions.NormalizeTagNames(Tag_array);
                     axeBuilder.WithTags(Tag_array);
                 }
                 else if (StandardList == null || !StandardList.Any())
