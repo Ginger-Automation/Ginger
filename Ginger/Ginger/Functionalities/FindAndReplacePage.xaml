@@ -101,13 +101,13 @@
 
         <StackPanel Orientation="Horizontal" Grid.Row="1" x:Name="xItemSelectionPanel" Visibility="Collapsed">
             <Label x:Name="xMainItemsList" Style="{StaticResource @InputFieldLabelStyle}" Width="120" VerticalAlignment="Center">Item Type:</Label>
-            <ComboBox x:Name="xMainItemListCB" Text="Select the item..." SelectionChanged="xMainItemListCB_SelectionChanged" VerticalAlignment="Center" Height="20"  Width="250" IsEditable="true" Style="{StaticResource $FlatInputComboBoxStyle}" />
+            <ComboBox x:Name="xMainItemListCB" IsEnabled="{Binding IsNotLoading}" Text="Select the item..." SelectionChanged="xMainItemListCB_SelectionChanged" VerticalAlignment="Center" Height="20"  Width="250" IsEditable="true" Style="{StaticResource $FlatInputComboBoxStyle}" />
         </StackPanel>
 
 
         <StackPanel Orientation="Horizontal" Grid.Row="2" x:Name="xFindAttributePanel" Visibility="Collapsed">
             <Label  Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Width="120">Attribute Name:</Label>
-            <ComboBox x:Name="xAttributeNameComboBox" Text="Select the Attribute..." SelectionChanged="xAttributeNameComboBox_SelectionChanged" VerticalAlignment="Center" Height="20"  Width="250" IsEditable="true" Style="{StaticResource $FlatInputComboBoxStyle}"/>
+            <ComboBox x:Name="xAttributeNameComboBox" IsEnabled="{Binding IsNotLoading}" Text="Select the Attribute..." SelectionChanged="xAttributeNameComboBox_SelectionChanged" VerticalAlignment="Center" Height="20"  Width="250" IsEditable="true" Style="{StaticResource $FlatInputComboBoxStyle}"/>
 
         </StackPanel>
 
