@@ -23,6 +23,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
@@ -944,44 +945,68 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public static List<string> GetInputValues(Act mAction)
         {
-            List<string> inputValues = new List<string>();
+            List<string> inputValues = new();
+
+            // Helper function for formatting
+            static string FormatInputValue(ActInputValue a)
+            {
+                if (EncryptionHandler.IsStringEncrypted(a.DisplayValue))
+                {
+                    return OverrideHTMLRelatedCharacters($"{a.Param}_:_{a.Value}_:_{a.DisplayValue}");
+                }
+                else
+                {
+                    return OverrideHTMLRelatedCharacters($"{a.Param}_:_{a.Value}_:_{a.ValueForDriver}");
+                }
+            }
 
             if (mAction is ActUIElement element && element.ElementLocateBy == Common.UIElement.eLocateBy.POMElement)
             {
-                inputValues = mAction.InputValues.Where(inputVal => inputVal.ItemName != "DisplayValue").Select(inputValue =>
-                {
-                    if (inputValue.ItemName == "ElementLocateValue")
+                inputValues = mAction.InputValues
+                    .Where(inputVal => inputVal.ItemName != "DisplayValue")
+                    .Select(inputValue =>
                     {
-                        var displayValue = mAction.InputValues.FirstOrDefault(AIV => AIV.ItemName == "DisplayValue");
-                        if (displayValue != null)
+                        if (inputValue.ItemName == "ElementLocateValue")
                         {
-                            return OverrideHTMLRelatedCharacters(inputValue.Param + "_:_" + displayValue.Value + "_:_" + displayValue.Value);
-                        }
-                        else
-                        {
-                            var pomElementGuids = inputValue.Value.Split("_");
-                            if (pomElementGuids.Length == 2)
+                            var displayValue = mAction.InputValues.FirstOrDefault(AIV => AIV.ItemName == "DisplayValue");
+                            if (displayValue != null)
                             {
-                                return OverrideHTMLRelatedCharacters(inputValue.Param + "_:_" + $"POM GUID: {pomElementGuids[0]}" + "_:_" + $"Element GUID: {pomElementGuids[1]}");
+                                return OverrideHTMLRelatedCharacters($"{inputValue.Param}_:_{displayValue.Value}_:_{displayValue.Value}");
                             }
                             else
                             {
-                                return OverrideHTMLRelatedCharacters(inputValue.Param + "_:_" + inputValue.Value + "_:_" + inputValue.ValueForDriver);
+                                var pomElementGuids = inputValue.Value.Split("_");
+                                if (pomElementGuids.Length == 2)
+                                {
+                                    return OverrideHTMLRelatedCharacters($"{inputValue.Param}_:_POM GUID: {pomElementGuids[0]}_:_Element GUID: {pomElementGuids[1]}");
+                                }
+                                else
+                                {
+                                    return FormatInputValue(inputValue);
+                                }
                             }
                         }
-                    }
-                    return OverrideHTMLRelatedCharacters(inputValue.Param + "_:_" + inputValue.Value + "_:_" + inputValue.ValueForDriver);
-                }).ToList();
+                        return FormatInputValue(inputValue);
+                    }).ToList();
             }
             else
             {
-                inputValues = mAction.InputValues.Select(a => OverrideHTMLRelatedCharacters(a.Param + "_:_" + a.Value + "_:_" + a.ValueForDriver)).ToList();
+                inputValues = mAction.InputValues.Select(FormatInputValue).ToList();
             }
 
-            if ((mAction.GetInputValueListForVEProcessing() != null) && (mAction.GetInputValueListForVEProcessing().Count > 0))
+            // Process additional input value lists
+            var veInputLists = mAction.GetInputValueListForVEProcessing();
+            if (veInputLists != null && veInputLists.Count > 0)
             {
-                mAction.GetInputValueListForVEProcessing().ForEach(x => x.Select(a => OverrideHTMLRelatedCharacters(a.Param + "_:_" + a.Value + "_:_" + a.ValueForDriver)).ToList().ForEach(z => inputValues.Add(z)));
+                foreach (var list in veInputLists)
+                {
+                    foreach (var a in list)
+                    {
+                        inputValues.Add(FormatInputValue(a));
+                    }
+                }
             }
+
             return inputValues;
         }
 
