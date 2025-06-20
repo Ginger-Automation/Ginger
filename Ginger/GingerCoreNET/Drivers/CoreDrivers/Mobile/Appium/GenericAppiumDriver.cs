@@ -1767,7 +1767,7 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                     }
 
                     screenshots.Add(croppedBmp);// keep reference for merge
-
+                    string beforeScrollSource = Driver.PageSource;
                     try
                     {
                         ScrollDown(Driver);
@@ -1778,7 +1778,14 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                     }
 
                     scrollCount++;
-                    Thread.Sleep(500);
+                    Thread.Sleep(1000);
+                    string afterScrollSource = Driver.PageSource;
+
+                    if (beforeScrollSource == afterScrollSource)
+                    {
+                        // No change in content — end of scroll
+                        break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -1822,9 +1829,7 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
 
 
 
-
-
-        private Tuple<int?, int?> GetUserCustomeScreenshotSize()
+    private Tuple<int?, int?> GetUserCustomeScreenshotSize()
         {
             int? customeWidth = null;
             int? customeHeight = null;
