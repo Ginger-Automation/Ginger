@@ -34,7 +34,7 @@ on:
           - 'No'  # Do not add SSL certificate
 jobs:            
     Builder:
-        name: Build Solution
+        name: Build & Test
         uses: ./.github/workflows/Build.yml
         secrets: inherit
 
