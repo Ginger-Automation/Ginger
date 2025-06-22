@@ -217,7 +217,6 @@ namespace GingerCore
         public List<string> SolutionVariablesBeforeExec { get; set; }
 
         private string mName;
-
         [IsSerializedForLocalRepository]
         public string Name
         {
@@ -234,6 +233,7 @@ namespace GingerCore
 
         private string mDescription;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit("Description")]
         public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(nameof(Description)); } } }
 
         private Guid instanceGuid;
@@ -308,6 +308,7 @@ namespace GingerCore
         }
 
         eBusinessFlowStatus mStatus;
+        [AllowUserToEdit("Status")]
         [IsSerializedForLocalRepository]
         public eBusinessFlowStatus Status
         {
@@ -323,6 +324,7 @@ namespace GingerCore
         }
 
         private bool mActive = true;
+        [AllowUserToEdit("Active")]
         [IsSerializedForLocalRepository(DefaultValue: true)]
         public bool Active
         {
@@ -338,6 +340,7 @@ namespace GingerCore
         }
 
         private bool mMandatory;
+        [AllowUserToEdit("Mandatory")]
         [IsSerializedForLocalRepository]
         public bool Mandatory
         {
@@ -1232,7 +1235,7 @@ namespace GingerCore
             }
         }
 
-        private void LoadLinkedActivities()
+        public void LoadLinkedActivities(SolutionRepository solutionRepository = null)
         {
             if (this.Activities.Any(f => f.IsLinkedItem))
             {
@@ -1242,7 +1245,16 @@ namespace GingerCore
                     {
                         return;
                     }
-                    Activity sharedActivity = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(this.Activities[i].ParentGuid);
+                    Activity sharedActivity = null;
+
+                    if (solutionRepository != null)
+                    {
+                        sharedActivity = solutionRepository.GetRepositoryItemByGuid<Activity>(this.Activities[i].ParentGuid);
+                    }
+                    else
+                    {
+                        sharedActivity = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(this.Activities[i].ParentGuid);
+                    }
 
                     if (sharedActivity != null)
                     {

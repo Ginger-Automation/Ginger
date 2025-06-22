@@ -75,6 +75,7 @@ namespace Ginger.Run
 
         private string mDescription;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit("Description")]
         public string Description
         {
             get { return mDescription; }
@@ -350,6 +351,7 @@ namespace Ginger.Run
 
         public bool mRunWithAnalyzer = true;
         [IsSerializedForLocalRepository(true)]
+        [AllowUserToEdit("Run with Analyzer")]
         public bool RunWithAnalyzer
         {
             get
@@ -521,7 +523,9 @@ namespace Ginger.Run
         public string SourceApplication { get; set; }
         public string SourceApplicationUser { get; set; }
 
-        public List<Guid> AutoUpdatedPOMList { get; set; }
+        public List<Guid> AutoUpdatedPOMList { 
+            get; 
+            set; }
 
     }
 }

@@ -98,6 +98,11 @@ namespace Ginger.SolutionWindows
             ]
             };
 
+            xAccessibilityRulesGrid.AddRadioButton(content: "Web", "AccessibilityType", LoadWebMobileRulesData, isChecked: true);
+            xAccessibilityRulesGrid.AddRadioButton(content: "Mobile", "AccessibilityType", LoadWebMobileRulesData);
+
+            xAccessibilityRulesGrid.AddLabel("     ");
+
             xAccessibilityRulesGrid.AddLabel("Note: Ginger will only analyze the active accessibility testing rules; inactive rules will not be considered.");
 
             xAccessibilityRulesGrid.SetAllColumnsDefaultView(view);
@@ -109,6 +114,18 @@ namespace Ginger.SolutionWindows
             List<AccessibilityRuleData> sortedList = actAccessibilityTesting.RulesItemsdata.OrderByDescending(data => !data.Active).ToList();
             ObservableList<AccessibilityRuleData> accessibilityRuleDatas = [.. sortedList];
             xAccessibilityRulesGrid.DataSourceList = accessibilityRuleDatas;
+        }
+
+        private void LoadWebMobileRulesData(object sender, RoutedEventArgs e)
+        {
+            RadioButton clickedRadioButton = sender as RadioButton;
+
+            if (clickedRadioButton != null && clickedRadioButton.IsChecked.HasValue && clickedRadioButton.IsChecked.Value)
+            {
+                string selectedOption = clickedRadioButton.Content.ToString();
+                actAccessibilityTesting.CurrentRuleType = selectedOption;
+            }
+            LoadGridData();
         }
 
         private void CheckBox_Click(object sender, RoutedEventArgs e)

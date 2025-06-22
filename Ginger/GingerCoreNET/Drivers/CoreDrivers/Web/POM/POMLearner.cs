@@ -687,15 +687,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
                 var attributeCount = 0;
 
-                var attList = UserTemplateRegex.Matches(template.Value);
+                MatchCollection attList = UserTemplateRegex.Matches(template.Value);
                 var strList = new List<string>();
-                foreach (string? item in attList)
+                foreach (Match item in attList)
                 {
                     if (item == null)
                     {
                         continue;
                     }
-                    strList.Add(item.ToString().Remove(0, 1));
+                    strList.Add(item.Value.Remove(0, 1));
                 }
 
                 foreach (var item in htmlAttributes)

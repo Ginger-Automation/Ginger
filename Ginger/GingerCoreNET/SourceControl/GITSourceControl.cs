@@ -33,7 +33,7 @@ using System.Threading.Tasks;
 namespace GingerCore.SourceControl
 {
 
-    public class GITSourceControl : SourceControlBase 
+    public class GITSourceControl : SourceControlBase
     {
         private const string XMLFileExtension = ".xml";
         private const string IgnoreFileExtension = ".ignore";
@@ -1134,6 +1134,97 @@ namespace GingerCore.SourceControl
             return wasConnectedSuccessfully;
         }
 
+
+        public override bool CreateBranch(string newBranchName, ref string error)
+        {
+            try
+            {
+                using (var repo = new Repository(LocalFolder))
+                {
+                    // Check for uncommitted changes or conflicts
+                    var status = repo.RetrieveStatus();
+                    if (status.IsDirty || repo.Index.Conflicts.Any())
+                    {
+                        error = "There are uncommitted changes or conflicts in the existing branch.\nPlease resolve them before creating a new branch.";
+                        return false;
+                    }
+
+                    // Checkout the existing branch
+                    if (string.IsNullOrEmpty(Branch) || repo.Branches[Branch] == null)
+                    {
+                        error = "The source branch is not specified or does not exist.";
+                        return false;
+                    }
+                    Branch existingBranch = repo.Branches[Branch];
+                    Commands.Checkout(repo, existingBranch);
+
+                    // Create the new branch based on the existing branch
+                    Branch newBranch = repo.Branches.Add(newBranchName, existingBranch.Tip);
+                    if (newBranch == null)
+                    {
+                        error = "Failed to create the new branch.";
+                        return false;
+                    }
+
+                    // Set the upstream branch for the new branch
+                    repo.Branches.Update(newBranch, b => b.TrackedBranch = existingBranch.CanonicalName);
+
+                    // Checkout the new branch 
+                    Commands.Checkout(repo, newBranch);
+
+                    // Set the upstream remote for the new branch
+                    var remote = repo.Network.Remotes["origin"];
+                    if (remote != null)
+                    {
+                        repo.Branches.Update(newBranch,
+                        b => b.Remote = remote.Name,
+                        b => b.UpstreamBranch = $"refs/heads/{newBranch.FriendlyName}");
+                    }
+                    else
+                    {
+                        error = "Remote 'origin' does not exist.";
+                        return false;
+                    }
+
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                error = $"Failed to create branch '{newBranchName}': {ex.Message}";
+                Reporter.ToLog(eLogLevel.ERROR, error, ex);
+                return false;
+            }
+        }
+
+
+        public override List<string> GetLocalBranches()
+        {
+            List<string> branchNames = new List<string>();
+
+            try
+            {
+                using (var repo = new Repository(LocalFolder))
+                {
+                    foreach (Branch branch in repo.Branches)
+                    {
+                        if (!branch.IsRemote)
+                        {
+                            branchNames.Add(branch.FriendlyName);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to retrieve local branches", ex);
+            }
+
+            return branchNames;
+
+        }
+
+
         public override bool InitializeRepository(string remoteURL)
         {
             try
@@ -1244,7 +1335,7 @@ namespace GingerCore.SourceControl
                     {
                         FailOnConflict = true,
                     },
-                    FetchOptions=new FetchOptions()
+                    FetchOptions = new FetchOptions()
 
                 };
                 GetFetchOptions(pullOption?.FetchOptions);
@@ -1775,11 +1866,19 @@ namespace GingerCore.SourceControl
             return true;
         }
 
-        public override string GetCurrentBranchForSolution()
+        public override string GetCurrentWorkingBranch()
         {
-            using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+            try
             {
-                return repo.Head.FriendlyName;
+                using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                {
+                    return repo.Head.FriendlyName;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while fetching current Branch", ex);
+                return null;
             }
         }
 

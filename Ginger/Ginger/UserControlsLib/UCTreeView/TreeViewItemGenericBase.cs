@@ -20,13 +20,12 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.External.WireMock;
 using Amdocs.Ginger.Repository;
+using Ginger;
+using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.Repository;
-using GingerCore;
 using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Microsoft.VisualStudio.Services.WebApi;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -65,8 +64,13 @@ namespace GingerWPF.TreeViewItemsLib
         public enum eFolderNodePastOperations { None, Copy, Cut, CopyItems, CutItems }
         public static eFolderNodePastOperations mCurrentFolderNodePastOperations = eFolderNodePastOperations.None;
 
-        public void AddItemNodeBasicManipulationsOptions(ContextMenu CM, bool allowSave = true, bool allowCopy = true, bool allowCut = true, bool allowDuplicate = true, bool allowDelete = true, bool allowViewXML = true, bool allowOpenContainingFolder = true, bool allowEdit = false, bool allowWireMockMapping = false)
+        public void AddItemNodeBasicManipulationsOptions(ContextMenu CM, bool allowSave = true, bool allowCopy = true, bool allowCut = true, bool allowDuplicate = true, bool allowDelete = true, bool allowViewXML = true, bool allowOpenContainingFolder = true, bool allowEdit = false, bool allowWireMockMapping = false, bool allowEditPOM = false)
         {
+            if (allowEditPOM)
+            {
+                TreeViewUtils.AddMenuItem(CM, "Edit POM", EditPOMHandler, null, eImageType.Edit);
+                mTreeView.AddToolbarTool(eImageType.Edit, "Edit POM", EditPOMHandler);
+            }
             if (allowSave)
             {
                 TreeViewUtils.AddMenuItem(CM, "Save", SaveTreeItemHandler, null, "@Save_16x16.png");
@@ -244,9 +248,26 @@ namespace GingerWPF.TreeViewItemsLib
             }
         }
 
-        
+        private void EditPOMHandler(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                object item = ((ITreeViewItem)this).NodeObject();
+                if (item is ApplicationPOMModel pomModel)
+                {
+                    var editPage = new POMEditPage(pomModel, Ginger.General.eRIPageViewMode.Standalone);
+                    editPage.ShowAsWindow(eWindowShowStyle.Dialog);
+                }
 
-        public void AddFolderNodeBasicManipulationsOptions(ContextMenu CM, string nodeItemTypeName, bool allowRefresh = true, bool allowAddNew = true, bool allowPaste = true, bool allowSaveAll = true, bool allowCutItems = true, bool allowCopyItems = true, bool allowRenameFolder = true, bool allowAddSubFolder = true, bool allowDeleteFolder = true, bool allowOpenFolder = true, bool allowDeleteAllItems = false, bool allowWireMockMapping = false,bool allowMultiPomUpdate = false)
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while opening edit page of POM", ex);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "An error occurred while opening edit page of POM. Please check the logs for more details.");
+            }
+        }
+
+        public void AddFolderNodeBasicManipulationsOptions(ContextMenu CM, string nodeItemTypeName, bool allowRefresh = true, bool allowAddNew = true, bool allowPaste = true, bool allowSaveAll = true, bool allowCutItems = true, bool allowCopyItems = true, bool allowRenameFolder = true, bool allowAddSubFolder = true, bool allowDeleteFolder = true, bool allowOpenFolder = true, bool allowDeleteAllItems = false, bool allowWireMockMapping = false, bool allowMultiPomUpdate = false, bool allowAttributeUpdate = false)
         {
             if (allowRefresh)
             {
@@ -308,8 +329,17 @@ namespace GingerWPF.TreeViewItemsLib
                 TreeViewUtils.AddMenuItem(CM, "Create WireMock Mapping", CreateWireMockMappingHandler, null, "WireMockLogo16x16.png");
                 mTreeView.AddToolbarTool("WireMockLogo16x16.png", "Create WireMock Mapping", CreateWireMockMappingHandler);
             }
+            if (allowAttributeUpdate)
+            {
+                TreeViewUtils.AddMenuItem(CM, "Find And Replace", UpdateItemAttributeValue, null, eImageType.Search);
+                mTreeView.AddToolbarTool(eImageType.Search, "Update Attribute value", UpdateItemAttributeValue);
+            }
         }
-
+        public abstract void UpdateItemAttributeValue();
+        public void UpdateItemAttributeValue(object sender, System.Windows.RoutedEventArgs e)
+        {
+            UpdateItemAttributeValue();
+        }
         public abstract bool PasteCopiedTreeItem(object nodeItemToCopy, TreeViewItemGenericBase targetFolderNode, bool toRefreshFolder = true);
         public abstract void PasteCopiedTreeItems();
         public abstract bool PasteCutTreeItem(object nodeItemToCut, TreeViewItemGenericBase targetFolderNode, bool toRefreshFolder = true);
@@ -552,7 +582,7 @@ namespace GingerWPF.TreeViewItemsLib
                 string newName = itemToCopy.ItemName + "_Copy";
                 if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Copied/Duplicated Item Name", "New Name:", ref newName))
                 {
-                    bool nameExit = General.IsNameAlreadyexists(itemToCopy, newName);
+                    bool nameExit = GingerCore.General.IsNameAlreadyexists(itemToCopy, newName);
                     if (!nameExit)
                     {
                         RepositoryItemBase itemCopy = itemToCopy.CreateCopy();

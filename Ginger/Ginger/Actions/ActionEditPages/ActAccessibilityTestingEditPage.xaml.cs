@@ -56,7 +56,17 @@ namespace Ginger.Actions
             xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy, LocateByList);
             xLocateValueVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(Act.Fields.LocateValue));
 
-            ObservableList<OperationValues> StandardTaglist = GetStandardTagslist();
+            ObservableList<OperationValues>? StandardTaglist;
+            if (act.Platform == ePlatformType.Mobile)
+            {
+                StandardTaglist = GetStandardTagslistMobile();
+                mAct.CurrentRuleType = ePlatformType.Mobile.ToString();
+            }
+            else
+            {
+                StandardTaglist = GetStandardTagslist();
+                mAct.CurrentRuleType = ePlatformType.Web.ToString();
+            }
             ObservableList<OperationValues> SeverityList = GetSeverityList();
             mAct.Items = [];
             xStdStack.Visibility = Visibility.Visible;
@@ -220,6 +230,49 @@ namespace Ginger.Actions
                 new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.bestpractice), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.bestpractice)) },
             ];
             return StandardTagList;
+        }
+
+        public ObservableList<OperationValues> GetStandardTagslistMobile()
+        {
+            ObservableList<OperationValues> StandardTagListMobile = new ObservableList<OperationValues>
+        {
+            // WCAG Principles/Levels
+            new OperationValues() {
+                Value = nameof(ActAccessibilityTesting.eMobileAccessibilityStandards.WCAG21A),
+                DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eMobileAccessibilityStandards), nameof(ActAccessibilityTesting.eMobileAccessibilityStandards.WCAG21A))
+            },
+            new OperationValues() {
+                Value = nameof(ActAccessibilityTesting.eMobileAccessibilityStandards.WCAG21AA),
+                DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eMobileAccessibilityStandards), nameof(ActAccessibilityTesting.eMobileAccessibilityStandards.WCAG21AA))
+            },
+            new OperationValues() {
+                Value = nameof(ActAccessibilityTesting.eMobileAccessibilityStandards.WCAG21AAA),
+                DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eMobileAccessibilityStandards), nameof(ActAccessibilityTesting.eMobileAccessibilityStandards.WCAG21AAA))
+            },
+
+            // European Standard EN 301 549
+            new OperationValues() {
+                Value = nameof(ActAccessibilityTesting.eMobileAccessibilityStandards.EN_301_549),
+                DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eMobileAccessibilityStandards), nameof(ActAccessibilityTesting.eMobileAccessibilityStandards.EN_301_549))
+            },
+            new OperationValues() {
+                Value = nameof(ActAccessibilityTesting.eMobileAccessibilityStandards.EN_9_4_1_2),
+                DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eMobileAccessibilityStandards), nameof(ActAccessibilityTesting.eMobileAccessibilityStandards.EN_9_4_1_2))
+            },
+            new OperationValues() {
+                Value = nameof(ActAccessibilityTesting.eMobileAccessibilityStandards.EN_9_4_1_3),
+                DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eMobileAccessibilityStandards), nameof(ActAccessibilityTesting.eMobileAccessibilityStandards.EN_9_4_1_3))
+            },
+
+            // General Categories / Best Practices
+            
+            new OperationValues() {
+                Value = nameof(ActAccessibilityTesting.eMobileAccessibilityStandards.BestPractice),
+                DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eMobileAccessibilityStandards), nameof(ActAccessibilityTesting.eMobileAccessibilityStandards.BestPractice))
+            }
+        };
+
+            return StandardTagListMobile;
         }
 
         public ObservableList<OperationValues> GetSeverityList()

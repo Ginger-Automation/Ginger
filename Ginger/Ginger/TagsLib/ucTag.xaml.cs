@@ -38,8 +38,8 @@ namespace Ginger
         {
             InitializeComponent();
             mTag = tag;
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(lblTagName, Label.ContentProperty, mTag, RepositoryItemTag.Fields.Name);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(lblTagName, Label.ToolTipProperty, mTag, RepositoryItemTag.Fields.Description);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(lblTagName, TextBlock.TextProperty, mTag, RepositoryItemTag.Fields.Name);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(lblTagName, TextBlock.ToolTipProperty, mTag, RepositoryItemTag.Fields.Description);
             closeImage.Visibility = Visibility.Hidden;
 
             xDeleteTagBtn.Tag = tag;
@@ -50,7 +50,7 @@ namespace Ginger
 
         public void SetLabelText(string text)
         {
-            lblTagName.Content = text;
+            lblTagName.Text = text;
         }
 
 

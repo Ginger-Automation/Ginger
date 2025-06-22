@@ -33,7 +33,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             analyze,
             info,
             clean,
-            open
+            open,
+            MultiPOMUpdate
         }
 
         [Option('o', "operation", Required = true, HelpText = "Select operation to run on solution")]
@@ -104,6 +105,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
             return true;
         }
+
+
+        [Option("targetApplication", Required = false, HelpText = "(Optional) Target application name or GUID whose POMs should be updated.")]
+        public string TargetApplication { get; set; } = string.Empty;
+
+        [Option("applicationModels", Required = false, HelpText = "(Optional) Pass the semicolon-separated values of POM GUIDs to update the specified POMs used in Runsets.")]
+        public string ApplicationModels { get; set; }
+
+        [Option("runSets", Required = false, HelpText = "(Optional) Pass the semicolon-separated values of Runset GUIDs to update the POMs used in Runsets.")]
+        public string RunSets { get; set; }
+
     }
 
 }

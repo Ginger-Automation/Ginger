@@ -935,7 +935,7 @@ namespace Ginger
 
         private void xDownloadSolutionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            
+
             SourceControlProjectsPage p = new SourceControl.SourceControlProjectsPage();
             p.ShowAsWindow();
         }
@@ -948,6 +948,10 @@ namespace Ginger
             }
 
             App.CheckIn(WorkSpace.Instance.Solution.Folder);
+        }
+        private void btnSourceControlCreateBranch_Click(object sender, RoutedEventArgs e)
+        {
+            App.CreateNewBranch();
         }
         ProgressNotifier progressNotifier = null;
         /// <summary>
@@ -978,7 +982,7 @@ namespace Ginger
                 }
 
                 App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
-               
+
             }
             catch (Exception ex)
             {
@@ -1023,7 +1027,7 @@ namespace Ginger
                 if (e.CompletedSteps > 0 && e.TotalSteps > 0 && e.CompletedSteps <= e.TotalSteps)
                 {
                     double progress = Math.Round(((double)e.CompletedSteps / e.TotalSteps) * 100, 2);
-                    if (Math.Abs(progress) < 0.01) 
+                    if (Math.Abs(progress) < 0.01)
                     {
                         return;
                     }
@@ -1207,13 +1211,10 @@ namespace Ginger
             SolutionFindAndReplace();
         }
 
-        FindAndReplacePage mfindAndReplacePageSolution = null;
+
         private void SolutionFindAndReplace()
         {
-            if (mfindAndReplacePageSolution == null)
-            {
-                mfindAndReplacePageSolution = new FindAndReplacePage(FindAndReplacePage.eContext.SolutionPage);
-            }
+            FindAndReplacePage mfindAndReplacePageSolution = new FindAndReplacePage(FindAndReplacePage.eContext.SolutionPage);            
             mfindAndReplacePageSolution.ShowAsWindow();
         }
 
