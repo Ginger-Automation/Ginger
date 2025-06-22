@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
+using GingerCore;
 using GingerCore.Variables;
 using System;
 
@@ -36,6 +37,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
         public static VariableBase CreateParameterFromConfig(ParameterConfig Parameter)
         {
             ValidateParameterConfig(Parameter);
+            if (EncryptionHandler.IsStringEncrypted(Parameter.Value))
+            {
+                Parameter.Value = EncryptionHandler.DecryptwithKey(Parameter.Value);
+            }
             return new VariableDynamic()
             {
                 ValueExpression = Parameter.Value,
@@ -47,7 +52,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             ValidateParameterConfig(ParameterConfig);
 
             ParameterFromGinger.Name = ParameterConfig.Name;
-            ParameterFromGinger.SetValue(ParameterConfig.Value);
+
+            if (ParameterFromGinger is VariablePasswordString varpPassword)
+            {
+                if (!EncryptionHandler.IsStringEncrypted(ParameterConfig.Value))
+                {
+                    varpPassword.SetInitialValue(EncryptionHandler.EncryptwithKey(ParameterConfig.Value));
+                }
+                else
+                {
+                    varpPassword.SetInitialValue(ParameterConfig.Value);
+                }
+            }
+            else
+            {
+                ParameterFromGinger.SetValue(ParameterConfig.Value);
+            }
         }
     }
 }

@@ -42,6 +42,7 @@ using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
@@ -602,7 +603,9 @@ namespace Amdocs.Ginger.CoreNET
 
                 if (act.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Element)
                 {
-                    elementInfo = LocateElement(act);  // Locate specific element
+                    act.Status = eRunStatus.Failed;
+                    act.Error = "Element-level mobile accessibility analysis is not supported. Please select 'Page' as the target.";
+                    return;
                 }
                 else if (act.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Page)
                 {
@@ -1252,7 +1255,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.UnlockDevice:
-                        PerformLockButtonPress(eLockOperation.UnLock,act);
+                        PerformLockButtonPress(eLockOperation.UnLock, act);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceBattery:
@@ -1416,11 +1419,17 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PushFileToDevice:
-                        PushFileToDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                        if (ValidateAndroidOnlyOperation(act, "Push file to device"))
+                        {
+                            PushFileToDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                        }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PullFileFromDevice:
-                        PullFileFromDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                        if (ValidateAndroidOnlyOperation(act, "Pull file to device"))
+                        {
+                            PullFileFromDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                        }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SetClipboardText:
@@ -1432,9 +1441,12 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceLogs:
-                        string deviceLogsPath = GetDeviceLogs(act.FolderPathInput.ValueForDriver);
-                        act.AddOrUpdateReturnParamActual("DeviceLogFilePath", deviceLogsPath);
-                        Act.AddArtifactToAction(Path.GetFileName(deviceLogsPath), act, deviceLogsPath);
+                        if (ValidateAndroidOnlyOperation(act, "Get Device Logs"))
+                        {
+                            string deviceLogsPath = GetDeviceLogs(act.FolderPathInput.ValueForDriver);
+                            act.AddOrUpdateReturnParamActual("DeviceLogFilePath", deviceLogsPath);
+                            Act.AddArtifactToAction(Path.GetFileName(deviceLogsPath), act, deviceLogsPath);
+                        }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetSpecificPerformanceData:
@@ -1552,7 +1564,17 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        public string SimulatePhotoOrBarcode(string photoString, string action)
+        private bool ValidateAndroidOnlyOperation(ActMobileDevice act, string operationName)
+        {
+            if (DevicePlatformType != eDevicePlatformType.Android)
+            {
+                act.Error = $"{operationName} not supported for this mobile OS or application type.";
+                return false;
+            }
+            return true;
+        }
+
+public string SimulatePhotoOrBarcode(string photoString, string action)
         {
             Bitmap picture = null;
             string response = string.Empty;
@@ -1745,7 +1767,7 @@ namespace Amdocs.Ginger.CoreNET
                     }
 
                     screenshots.Add(croppedBmp);// keep reference for merge
-
+                    string beforeScrollSource = Driver.PageSource;
                     try
                     {
                         ScrollDown(Driver);
@@ -1756,7 +1778,14 @@ namespace Amdocs.Ginger.CoreNET
                     }
 
                     scrollCount++;
-                    Thread.Sleep(500);
+                    Thread.Sleep(1000);
+                    string afterScrollSource = Driver.PageSource;
+
+                    if (beforeScrollSource == afterScrollSource)
+                    {
+                        // No change in content — end of scroll
+                        break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -1800,9 +1829,7 @@ namespace Amdocs.Ginger.CoreNET
 
 
 
-
-
-        private Tuple<int?, int?> GetUserCustomeScreenshotSize()
+    private Tuple<int?, int?> GetUserCustomeScreenshotSize()
         {
             int? customeWidth = null;
             int? customeHeight = null;
@@ -2148,7 +2175,7 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        public void PerformLockButtonPress(eLockOperation LockOperation, ActMobileDevice act=null)
+        public void PerformLockButtonPress(eLockOperation LockOperation, ActMobileDevice act = null)
         {
             switch (DevicePlatformType)
             {
@@ -2159,22 +2186,22 @@ namespace Amdocs.Ginger.CoreNET
                             ((AndroidDriver)Driver).Lock();
                             break;
                         case eLockOperation.UnLock:
-                            if(act != null)
+                            if (act != null)
                             {
                                 try
                                 {
                                     switch (act.UnLockType)
                                     {
                                         case ActMobileDevice.eUnlockType.none:
+                                        {
+                                            if (((AndroidDriver)Driver).IsLocked())
                                             {
-                                                if (((AndroidDriver)Driver).IsLocked())
-                                                {
-                                                    ((AndroidDriver)Driver).Unlock("none", "none", "uiautomator", 5000);
-                                                }
-                                                Thread.Sleep(200);
-                                                SwipeScreen(eSwipeSide.Up, 1, TimeSpan.FromMilliseconds(200));
-                                                break;
+                                                ((AndroidDriver)Driver).Unlock("none", "none", "uiautomator", 5000);
                                             }
+                                            Thread.Sleep(200);
+                                            SwipeScreen(eSwipeSide.Up, 1, TimeSpan.FromMilliseconds(200));
+                                            break;
+                                        }
                                         case ActMobileDevice.eUnlockType.pin:
                                             AndroidUnlock(act, nameof(ActMobileDevice.eUnlockType.pin));
                                             break;
@@ -2210,10 +2237,10 @@ namespace Amdocs.Ginger.CoreNET
                                     switch (act.UnLockType)
                                     {
                                         case ActMobileDevice.eUnlockType.none:
-                                            {
-                                                ((IOSDriver)Driver).Unlock();
-                                            }
-                                            break;
+                                        {
+                                            ((IOSDriver)Driver).Unlock();
+                                        }
+                                        break;
                                         case ActMobileDevice.eUnlockType.pin:
                                         case ActMobileDevice.eUnlockType.password:
                                             System.Threading.Thread.Sleep(200);
@@ -2585,6 +2612,8 @@ namespace Amdocs.Ginger.CoreNET
 
                 await GetPageSourceDocument(true);
 
+                using var fullImage = ScreenshotToImage(((ITakesScreenshot)Driver).GetScreenshot());
+
                 //Get all elements but only clickable elements= user can interact with them
                 XmlNodeList nodes = pageSourceXml.SelectNodes("//*");
                 for (int i = 0; i < nodes.Count; i++)
@@ -2639,6 +2668,19 @@ namespace Amdocs.Ginger.CoreNET
                     if (pomSetting.FilteredElementType == null ||
                         (pomSetting.FilteredElementType != null && pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(EI.ElementTypeEnum))))
                     {
+                        if ((EI.XPath).Contains("android") || (EI.XPath).Contains("XCUIElement"))
+                        {
+                            try
+                            {
+                                EI.ScreenShotImage = TakeElementScreenShot(EI, fullImage);
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, $"Skipping element due to screen-shot error: {ex.Message}", ex);
+                                EI.ScreenShotImage = null;
+                            }
+
+                        }
                         foundElementsList.Add(EI);
                     }
                 }
@@ -2650,7 +2692,105 @@ namespace Amdocs.Ginger.CoreNET
                 mIsDriverBusy = false;
             }
         }
+        private string TakeElementScreenShot(ElementInfo elementInfo, Bitmap fullImage)
+        {
+            try
+            {
+                if (fullImage == null)
+                {
+                    throw new ArgumentNullException(nameof(fullImage), "Full image cannot be null.");
+                }
 
+                if (elementInfo == null)
+                {
+                    throw new ArgumentNullException(nameof(elementInfo), "elementInfo cannot be null.");
+                }
+
+                int cropX;
+                int cropY;
+                int cropWidth;
+                int cropHeight;
+
+
+
+                GetLocationAndSizeOfElement(elementInfo, out cropX, out cropY, out cropWidth, out cropHeight);
+
+                if (cropWidth <= 0 || cropHeight <= 0)
+                    throw new ArgumentException("Invalid crop dimensions.");
+
+                Rectangle cropRect = new Rectangle(cropX, cropY, cropWidth, cropHeight);
+
+                using (Bitmap elementImage = new Bitmap(cropRect.Width, cropRect.Height))
+                {
+                    using (Graphics g = Graphics.FromImage(elementImage))
+                    {
+                        g.DrawImage(fullImage, new Rectangle(0, 0, cropRect.Width, cropRect.Height), cropRect, GraphicsUnit.Pixel);
+                    }
+
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        elementImage.Save(ms, ImageFormat.Png);
+                        return Convert.ToBase64String(ms.ToArray());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Take element screen-shot: ", ex);
+                return null;
+            }
+        }
+
+        private void GetLocationAndSizeOfElement(ElementInfo elementInfo, out int cropX, out int cropY, out int cropWidth, out int cropHeight)
+        {
+            var props = elementInfo.GetElementProperties()
+                     .ToDictionary(p => p.Name, p => p.Value, StringComparer.InvariantCultureIgnoreCase);
+
+            string BoundsValue = props.TryGetValue("bounds", out var xBounds) ? xBounds : string.Empty;
+            try
+            {
+                if (!string.IsNullOrEmpty(BoundsValue))
+                {
+                    // Remove the square brackets and split the string
+                    string[] parts = BoundsValue.Replace("[", "").Split(']');
+
+                    // Parse the first part as x and y
+                    string[] xy = parts[0].Split(',');
+                    cropX = int.Parse(xy[0]);
+                    cropY = int.Parse(xy[1]);
+
+                    // Parse the second part as width and height
+                    string[] wh = parts[1].Split(',');
+                    int x2 = int.Parse(wh[0]);
+                    int y2 = int.Parse(wh[1]);
+                    cropWidth = Math.Max(0, x2 - cropX);
+                    cropHeight = Math.Max(0, y2 - cropY);
+                }
+                else
+                {
+                    cropX = props.TryGetValue("x", out var xVal) ? Convert.ToInt32(xVal) : 0;
+                    cropY = props.TryGetValue("y", out var yVal) ? Convert.ToInt32(yVal) : 0;
+                    cropWidth = props.TryGetValue("width", out var widthVal) ? Convert.ToInt32(widthVal) : 0;
+                    cropHeight = props.TryGetValue("height", out var heightVal) ? Convert.ToInt32(heightVal) : 0;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                cropX = 0; cropY = 0; cropWidth = 0; cropHeight = 0;
+                Reporter.ToLog(eLogLevel.DEBUG, $"Failed to parse bounds string: {BoundsValue}", ex);
+            }
+        }
+
+
+        private Bitmap ScreenshotToImage(Screenshot screenshot)
+        {
+            using (MemoryStream ms = new MemoryStream(screenshot.AsByteArray))
+            using (var original = new Bitmap(ms))
+            {
+                return (Bitmap)original.Clone();
+            }
+        }
         private async Task<ElementInfo> GetElementInfoforXmlNode(XmlNode xmlNode)
         {
             ElementInfo EI = new ElementInfo();
