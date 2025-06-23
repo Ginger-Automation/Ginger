@@ -594,6 +594,12 @@ namespace GingerCore.Platforms.PlatformsInfo
                     eLocateBy.NA,
                     eLocateBy.Unknown,
                     eLocateBy.ByTagName,
+                    eLocateBy.ByLabel,
+                    eLocateBy.ByPlaceholder,
+                    eLocateBy.ByAltText,
+                    eLocateBy.ByTestID,
+                    eLocateBy.Chained,
+
                 ];
             }
             return mElementLocatorsTypeList;
