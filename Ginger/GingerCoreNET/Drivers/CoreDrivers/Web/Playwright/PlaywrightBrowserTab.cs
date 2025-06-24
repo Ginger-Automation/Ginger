@@ -615,12 +615,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     locator = _currentFrame.Locator($"css=.{value}");
                     break;
                 case eLocateBy.ByLinkText:
+                case eLocateBy.ByText:
                     locator = _currentFrame.Locator($"text={value}");
                     break;
-                case eLocateBy.ByText:
-                    locator = _currentFrame.Locator($"css=[text='{value}']");
-                    break;
                 case eLocateBy.ByHref:
+                case eLocateBy.ByUrl:
                     locator = _currentFrame.Locator($"css=a[href='{value}']");
                     break;
                 case eLocateBy.ByValue:
@@ -630,10 +629,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     locator = _currentFrame.Locator($"nth={value}");
                     break;
                 case eLocateBy.ByTitle:
-                    locator = _currentFrame.Locator($"css=[title='{value}']");
-                    break;
-                case eLocateBy.ByUrl:
-                    locator = _currentFrame.Locator($"css=a[href='{value}']");
+                    locator = _currentFrame.Locator($"css=[title='{value}']");                    
                     break;
                 case eLocateBy.ByngModel:
                 case eLocateBy.ByModelName:
