@@ -1657,6 +1657,11 @@ namespace Ginger.Functionalities
                 if (searchItem != null)
                 {
                     var attributeNameList = mFindAndReplaceUtils.GetSerializableEditableMemberNames(searchItem.OriginItemObject);
+                    if (mMainItemType.Name == "Action")
+                    {
+                        attributeNameList.Remove("Publish");
+                    }
+
                     GingerCore.General.FillComboFromList(xAttributeNameComboBox, attributeNameList);
                 }
 
