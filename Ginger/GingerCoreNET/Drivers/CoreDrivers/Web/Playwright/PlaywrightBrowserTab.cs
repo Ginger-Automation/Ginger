@@ -629,7 +629,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     locator = _currentFrame.Locator($"nth={value}");
                     break;
                 case eLocateBy.ByTitle:
-                    locator = _currentFrame.Locator($"css=[title='{value}']");                    
+                    locator = _currentFrame.Locator($"css=[title='{value}']");
                     break;
                 case eLocateBy.ByngModel:
                 case eLocateBy.ByModelName:
@@ -663,10 +663,24 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     locator = _currentFrame.GetByTestId(value);
                     break;
                 case eLocateBy.Chained:
-                    var parts = value.Split(">");
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        throw new ArgumentException("Chained locator value cannot be null or empty.");
+                    }
+
+                    var parts = value.Split(">", StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length < 2)
+                    {
+                        throw new ArgumentException("Chained locator must contain at least two parts separated by '>'.");
+                    }
+
                     locator = _currentFrame.Locator(parts[0].Trim());
                     for (int i = 1; i < parts.Length; i++)
                     {
+                        if (string.IsNullOrWhiteSpace(parts[i]))
+                        {
+                            throw new ArgumentException($"Chained locator part {i} cannot be empty.");
+                        }
                         locator = locator.Locator(parts[i].Trim());
                     }
                     break;
