@@ -609,6 +609,16 @@ namespace Amdocs.Ginger.Common.UIElement
         iOSPredicateString,
         [EnumValueDescription("iOS Class Chain Strategy")]
         iOSClassChain,
+        [EnumValueDescription("By Label")]
+        ByLabel,
+        [EnumValueDescription("By Placeholder")]
+        ByPlaceholder,
+        [EnumValueDescription("By Alt Text")]
+        ByAltText,
+        [EnumValueDescription("By Test ID")]
+        ByTestID,
+        [EnumValueDescription("By Chained locator")]
+        Chained
     }
 
     public enum eElementType
