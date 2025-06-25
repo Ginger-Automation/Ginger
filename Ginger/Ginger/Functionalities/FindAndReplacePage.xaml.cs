@@ -363,7 +363,7 @@ namespace Ginger.Functionalities
 
             mMainItemsTypeList.Add(new FindItemType { Name = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), Type = typeof(BusinessFlow), GetItemsToSearchIn = GetBusinessFlowsToSearchIn });
             mMainItemsTypeList.Add(new FindItemType { Name = GingerDicser.GetTermResValue(eTermResKey.Activity), Type = typeof(Activity), GetItemsToSearchIn = GetActivitiesToSearchIn });
-            mMainItemsTypeList.Add(new FindItemType { Name = "Action", Type = typeof(Act), HasSubType = true, GetItemsToSearchIn = GetActionsToSearchIn, GetSubItems = GetPlatformsActions });
+            mMainItemsTypeList.Add(new FindItemType { Name = ActionName, Type = typeof(Act), HasSubType = true, GetItemsToSearchIn = GetActionsToSearchIn, GetSubItems = GetPlatformsActions });
             mMainItemsTypeList.Add(new FindItemType { Name = GingerDicser.GetTermResValue(eTermResKey.Variable), Type = typeof(VariableBase), HasSubType = true, GetItemsToSearchIn = GetVariablesToSearchIn, GetSubItems = GetVariables });
             if (mContext is eContext.RunsetPage or eContext.SolutionPage)
             {
@@ -1640,7 +1640,7 @@ namespace Ginger.Functionalities
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to switch to Change Attribute Value mode", ex);
             }
         }
-
+        const string ActionName = "Action";
         private void xMainItemListCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
@@ -1657,6 +1657,11 @@ namespace Ginger.Functionalities
                 if (searchItem != null)
                 {
                     var attributeNameList = mFindAndReplaceUtils.GetSerializableEditableMemberNames(searchItem.OriginItemObject);
+                    if (mMainItemType.Name == ActionName)
+                    {
+                        attributeNameList.Remove(nameof(RepositoryItemBase.Publish));
+                    }
+
                     GingerCore.General.FillComboFromList(xAttributeNameComboBox, attributeNameList);
                 }
 
