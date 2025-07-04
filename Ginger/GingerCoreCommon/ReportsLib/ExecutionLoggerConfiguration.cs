@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using static Ginger.Configurations.SealightsConfiguration;
 
@@ -241,6 +242,43 @@ namespace Ginger.Reports
         //        }
         //    }
         //}
+
+
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {
+            if (errorType == SerializationErrorType.PropertyNotFound)
+            {
+                var workspace = GingerCoreCommonWorkSpace.Instance;
+                var solution = workspace?.Solution;
+                var playConfig = solution?.GingerPlayConfiguration;
+
+                if (playConfig == null)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, $"GingerPlayConfiguration is null during deserialization for property '{name}'. Value: '{value}'");
+                    return false;
+                }
+
+                if (string.Equals("CentralizedHtmlReportServiceURL", name) && !string.IsNullOrEmpty(value))
+                {
+                    playConfig.CentralizedHTMLReportServiceURL = value;
+                    playConfig.GingerPlayReportServiceEnabled = true;
+                    return true;
+                }
+                if (string.Equals("CentralLoggerEndPointUrl", name) && !string.IsNullOrEmpty(value))
+                {
+                    playConfig.CentralizedAccountReportURL = value;
+                    playConfig.GingerPlayReportServiceEnabled = true;
+                    return true;
+                }
+                if (string.Equals("ExecutionServiceURLUsed", name) && !string.IsNullOrEmpty(value))
+                {
+                    playConfig.CentralizedExecutionHandlerURL = value;
+                    playConfig.GingerPlayExecutionServiceEnabled = true;
+                    return true;
+                }
+            }
+            return false;
+        }
 
 
         /// <summary>

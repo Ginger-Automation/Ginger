@@ -22,8 +22,9 @@ using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.CoreNET.GenAIServices;
 using Ginger.UserControlsLib;
 using Ginger.ValidationRules;
+using GingerCore;
 using GingerCore.GeneralLib;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -36,6 +37,7 @@ namespace Ginger.ExternalConfigurations
     {
         private GingerPlayConfiguration gingerPlayConfiguration;
         private GingerPlayAPITokenManager GingerPlayAPITokenManager = new();
+
         public GingerPlayConfigurationpage()
         {
             InitializeComponent();
@@ -91,54 +93,6 @@ namespace Ginger.ExternalConfigurations
             xTestConBtn.IsEnabled = isChecked;
         }
 
-        private async Task xReportServiceCheckBox_CheckedAsync(object sender, System.Windows.RoutedEventArgs e)
-        {
-            ShowLoader();
-            bool isHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(gingerPlayConfiguration.ReportServiceHealthURL);
-            HideLoader();
-
-            if (isHealthy)
-            {
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Report Service is UP");
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Report Service is DOWN");
-            }
-        }
-
-        private async Task xExecutionServiceCheckBox_CheckedAsync(object sender, System.Windows.RoutedEventArgs e)
-        {
-            ShowLoader();
-            bool isHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(gingerPlayConfiguration.ExecutionServiceHealthURL);
-            HideLoader();
-
-            if (isHealthy)
-            {
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Execution Service is UP");
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Execution Service is DOWN");
-            }
-        }
-
-        private async Task xAIServiceCheckBox_CheckedAsync(object sender, System.Windows.RoutedEventArgs e)
-        {
-            ShowLoader();
-            bool isHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(gingerPlayConfiguration.AIServiceHealthURL);
-            HideLoader();
-
-            if (isHealthy)
-            {
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "AI Service is UP");
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "AI Service is DOWN");
-            }
-        }
-
         private async void xTestConBtn_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -151,9 +105,37 @@ namespace Ginger.ExternalConfigurations
                     return;
                 }
 
+                // Test main connection
                 bool isAuthorized = await GingerPlayAPITokenManager.GetOrValidateToken();
+
+                // Check health for selected services
+                var healthMessages = new List<string>();
+
+                if (xReportServiceCheckBox.IsChecked == true)
+                {
+                    bool isReportServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetReportServiceHealthUrl());
+                    healthMessages.Add($"Report Service: {(isReportServiceHealthy ? "UP" : "DOWN")}");
+                }
+                if (xExecutionServiceCheckBox.IsChecked == true)
+                {
+                    bool isExecutionServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetExecutionServiceHealthUrl());
+                    healthMessages.Add($"Execution Service: {(isExecutionServiceHealthy ? "UP" : "DOWN")}");
+                }
+                if (xAIServiceCheckBox.IsChecked == true)
+                {
+                    bool isAIServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetAIServiceHealthUrl());
+                    healthMessages.Add($"AI Service: {(isAIServiceHealthy ? "UP" : "DOWN")}");
+                }
+
+                // Show main connection result
                 ShowConnectionResult(isAuthorized);
 
+                // Show service health summary if any were checked
+                if (healthMessages.Count > 0)
+                {
+                    string summary = string.Join("\n", healthMessages);
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"Service Health Status:\n{summary}");
+                }
             }
             finally
             {
@@ -201,6 +183,22 @@ namespace Ginger.ExternalConfigurations
             xAIServiceCheckBox.IsEnabled = isChecked;
             xExecutionServiceCheckBox.IsEnabled = isChecked;
             xTestConBtn.IsEnabled = isChecked;
+        }
+
+        private void xGatewayURLTextBox_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        {
+            if (!EncryptionHandler.IsStringEncrypted(xClientIdTextBox.ValueTextBox.Text))
+            {
+                xClientIdTextBox.ValueTextBox.Text = ValueExpression.IsThisAValueExpression(xClientIdTextBox.ValueTextBox.Text) ? xClientIdTextBox.ValueTextBox.Text : EncryptionHandler.EncryptwithKey(xClientIdTextBox.ValueTextBox.Text);
+            }
+        }
+
+        private void xClientIdTextBox_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        {
+            if (!EncryptionHandler.IsStringEncrypted(xClientSecretTextBox.ValueTextBox.Text))
+            {
+                xClientSecretTextBox.ValueTextBox.Text = ValueExpression.IsThisAValueExpression(xClientSecretTextBox.ValueTextBox.Text) ? xClientSecretTextBox.ValueTextBox.Text : EncryptionHandler.EncryptwithKey(xClientSecretTextBox.ValueTextBox.Text);
+            }
         }
     }
 }

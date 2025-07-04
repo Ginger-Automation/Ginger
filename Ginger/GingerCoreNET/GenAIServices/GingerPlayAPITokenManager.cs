@@ -18,7 +18,6 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         GingerCore.ValueExpression valueExpression;
         private GingerPlayConfiguration GingerPlayConfiguration;
 
-
         private async Task<bool> GetToken()
         {
             try
@@ -26,12 +25,12 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
                 GingerPlayAPITokenResponseInfo responseInfo;
 
 
-                var httpClient = new HttpClient();
-                var host = CredentialsCalculation(GingerPlayConfiguration.AuthenticationServiceURL);
+                _httpClient = new HttpClient();
+                var host = CredentialsCalculation(GingerPlayEndPointManager.GetGenerateTokenUrl());
                 if (!string.IsNullOrEmpty(host))
                 {
                     host = !host.EndsWith('/') ? $"{host}/" : host;
-                    httpClient.BaseAddress = new Uri(host);
+                    _httpClient.BaseAddress = new Uri(host);
                 }
                 var data = new[]
                {
@@ -40,15 +39,13 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
                 new KeyValuePair<string, string>("client_secret", CredentialsCalculation(GingerPlayConfiguration.GingerPlayClientSecret)),
                 };
 
-                var response = await httpClient.PostAsync("", new FormUrlEncodedContent(data));
+                var response = await _httpClient.PostAsync("", new FormUrlEncodedContent(data));
                 var result = await response.Content.ReadAsAsync<dynamic>();
                 responseInfo = result.ToObject<GingerPlayAPITokenResponseInfo>();
                 this.token = responseInfo.access_token;
-                httpClient.DefaultRequestHeaders.Clear();
-                httpClient.Dispose();
+
                 if (!string.IsNullOrEmpty(token))
                 {
-                    GingerPlayConfiguration.Token = this.token;
                     return true;
                 }
                 else
@@ -63,6 +60,12 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
                 Reporter.ToLog(eLogLevel.ERROR, $"{error}, Error :{ex.Message}");
                 Reporter.ToLog(eLogLevel.ERROR, $"{error}, Error :{ex.Message}, InnerException:{ex.InnerException},StackTrace:{ex.StackTrace}");
                 return false;
+            }
+            finally
+            {
+                GingerPlayConfiguration.Token = this.token;
+                _httpClient.DefaultRequestHeaders.Clear();
+                _httpClient.Dispose();
             }
         }
 
@@ -117,7 +120,9 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
                 using var httpClient = new HttpClient();
                 var response = await httpClient.GetAsync(healthUrl);
                 if (!response.IsSuccessStatusCode)
+                {
                     return false;
+                }
 
                 var json = await response.Content.ReadAsStringAsync();
                 using var doc = JsonDocument.Parse(json);

@@ -144,7 +144,7 @@ namespace Amdocs.Ginger.CoreNET
         }
         public static string GetReportHTMLServiceUrl()
         {
-            var baseURI = GingerPlayEndPointManager.GetAccountReportServiceUrl();
+            var baseURI = GingerPlayEndPointManager.GetHTMLReportServiceUrl();
 
             if (!string.IsNullOrEmpty(baseURI))
             {

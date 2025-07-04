@@ -33,6 +33,12 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
 
         private const string EXECUTION_SERVICE = "ginger-execution";
 
+        private const string REPORT_SERVICE_HEALTH_PATH = "OnlineReportMS/health";
+        private const string EXECUTION_SERVICE_HEALTH_PATH = "ExecuterHandlerService/health";
+        private const string AI_SERVICE_HEALTH_PATH = "ginger-ai/health";
+        private const string GENERATE_TOKEN_URL = "connect/token";
+
+
         private static readonly GingerPlayConfiguration GingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count == 0
       ? new GingerPlayConfiguration()
       : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
@@ -139,6 +145,35 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the Execution Service URL. Please check the configuration.");
                 return null;
             }
+        }
+
+        public static string GetGenerateTokenUrl()
+        {
+            return BuildServiceUrl(GENERATE_TOKEN_URL);
+        }
+
+        public static string GetReportServiceHealthUrl()
+        {
+            return BuildServiceUrl(REPORT_SERVICE_HEALTH_PATH);
+        }
+
+        public static string GetExecutionServiceHealthUrl()
+        {
+            return BuildServiceUrl(EXECUTION_SERVICE_HEALTH_PATH);
+        }
+
+        public static string GetAIServiceHealthUrl()
+        {
+            return BuildServiceUrl(AI_SERVICE_HEALTH_PATH);
+        }
+
+        private static string BuildServiceUrl(string path)
+        {
+            var baseUrl = GingerPlayConfiguration.GingerPlayGatewayUrl;
+            if (string.IsNullOrEmpty(baseUrl))
+                return null;
+            if (!baseUrl.EndsWith("/")) baseUrl += "/";
+            return baseUrl + path;
         }
     }
 }

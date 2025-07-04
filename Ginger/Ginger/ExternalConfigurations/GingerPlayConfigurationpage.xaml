@@ -44,12 +44,12 @@
                         <Label x:Name="xGatewayURL" Content="Gateway URL:"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>
                         <Label x:Name="xGatewayURLValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
                     </StackPanel>
-                    <Activities:UCValueExpression x:Name="xGatewayURLTextBox"  Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="GingerOps Account URL" Margin="10,0,0,0"  Width="400"/>
+                    <Activities:UCValueExpression x:Name="xGatewayURLTextBox"  Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="GingerOps Account URL" Margin="10,0,0,0"  Width="400" LostKeyboardFocus="xGatewayURLTextBox_LostKeyboardFocus"/>
 
                     <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
                         <Label x:Name="xClientIdLabel" Content="Client Id:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
                     </StackPanel>
-                    <Activities:UCValueExpression x:Name="xClientIdTextBox"  Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Id" Margin="10,0,0,0"  Width="400"/>
+                    <Activities:UCValueExpression x:Name="xClientIdTextBox"  Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Id" Margin="10,0,0,0"  Width="400" LostKeyboardFocus="xClientIdTextBox_LostKeyboardFocus"/>
 
                     <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="3">
                         <Label x:Name="xClientSecretLabel" Content="Client Secret:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
@@ -57,13 +57,13 @@
                     <Activities:UCValueExpression x:Name="xClientSecretTextBox"  Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Secret" Margin="10,0,0,0" Width="400" />
 
                     <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Margin="0,0,427,0">
-                        <CheckBox Content="Report Service" VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xReportServiceCheckBox" Checked="xReportServiceCheckBox_Checked" />
+                        <CheckBox Content="Report Service" VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xReportServiceCheckBox" />
 
 
-                        <CheckBox Content="Execution Service" VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xExecutionServiceCheckBox" Checked="xExecutionServiceCheckBox_Checked" />
+                        <CheckBox Content="Execution Service" VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xExecutionServiceCheckBox" />
 
 
-                        <CheckBox Content="AI Service"  VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xAIServiceCheckBox" Checked="xAIServiceCheckBox_Checked" />
+                        <CheckBox Content="AI Service"  VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xAIServiceCheckBox" />
 
                     </StackPanel>
                     <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">

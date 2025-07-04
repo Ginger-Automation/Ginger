@@ -119,24 +119,6 @@ namespace Amdocs.Ginger.Common.External.Configurations
             }
         }
 
-        private string mAuthenticationServiceURL = "https://usstlattstl01/connect/token";
-        [IsSerializedForLocalRepository]
-        public string AuthenticationServiceURL
-        {
-            get
-            {
-                return mAuthenticationServiceURL;
-            }
-            set
-            {
-                if (mAuthenticationServiceURL != value)
-                {
-                    mAuthenticationServiceURL = value;
-                    OnPropertyChanged(nameof(AuthenticationServiceURL));
-                }
-            }
-        }
-
         private bool mGingerPlayExecutionServiceEnabled;
         [IsSerializedForLocalRepository]
         public bool GingerPlayExecutionServiceEnabled
@@ -169,13 +151,6 @@ namespace Amdocs.Ginger.Common.External.Configurations
 
         public string Token = "token";
 
-        public string ReportServiceHealthURL = "https://usstlattstl01/OnlineReportMS/health";
-
-        public string ExecutionServiceHealthURL = "https://usstlattstl01/ExecuterHandlerService/health";
-
-        public string AIServiceHealthURL = "https://usstlattstl01/GenAIService/health";
-
-
         public override string ItemName
         {
             get
@@ -189,38 +164,49 @@ namespace Amdocs.Ginger.Common.External.Configurations
         }
 
         //For Backward compatibility
+        private string mCentralizedAccountReportURL = string.Empty;
         [IsSerializedForLocalRepository]
-        public string CentralizedAccountReportURL = string.Empty;
-        [IsSerializedForLocalRepository]
-        public string CentralizedHTMLReportServiceURL = string.Empty;
-        [IsSerializedForLocalRepository]
-        public string CentralizedExecutionHandlerURL = string.Empty;
-
-
-        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        public string CentralizedAccountReportURL
         {
-            if (errorType == SerializationErrorType.PropertyNotFound)
+            get { return mCentralizedAccountReportURL; }
+            set
             {
-                if (string.Equals("CentralizedHtmlReportServiceURL", name) && !string.IsNullOrEmpty(value))
+                if (mCentralizedAccountReportURL != value)
                 {
-                    this.CentralizedHTMLReportServiceURL = value;
-                    this.GingerPlayReportServiceEnabled = true;
-                    return true;
-                }
-                if (string.Equals("CentralLoggerEndPointUrl", name) && !string.IsNullOrEmpty(value))
-                {
-                    this.CentralizedAccountReportURL = value;
-                    this.GingerPlayReportServiceEnabled = true;
-                    return true;
-                }
-                if (string.Equals("ExecutionServiceURLUsed", name) && !string.IsNullOrEmpty(value))
-                {
-                    this.CentralizedExecutionHandlerURL = value;
-                    this.GingerPlayExecutionServiceEnabled = true;
-                    return true;
+                    mCentralizedAccountReportURL = value;
+                    OnPropertyChanged(nameof(CentralizedAccountReportURL));
                 }
             }
-            return false;
+        }
+
+        private string mCentralizedHTMLReportServiceURL = string.Empty;
+        [IsSerializedForLocalRepository]
+        public string CentralizedHTMLReportServiceURL
+        {
+            get { return mCentralizedHTMLReportServiceURL; }
+            set
+            {
+                if (mCentralizedHTMLReportServiceURL != value)
+                {
+                    mCentralizedHTMLReportServiceURL = value;
+                    OnPropertyChanged(nameof(CentralizedHTMLReportServiceURL));
+                }
+            }
+        }
+
+        private string mCentralizedExecutionHandlerURL = string.Empty;
+        [IsSerializedForLocalRepository]
+        public string CentralizedExecutionHandlerURL
+        {
+            get { return mCentralizedExecutionHandlerURL; }
+            set
+            {
+                if (mCentralizedExecutionHandlerURL != value)
+                {
+                    mCentralizedExecutionHandlerURL = value;
+                    OnPropertyChanged(nameof(CentralizedExecutionHandlerURL));
+                }
+            }
         }
 
         public override string GetNameForFileName() { return Name; }

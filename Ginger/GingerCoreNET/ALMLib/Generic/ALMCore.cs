@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.GenAIServices;
 using Amdocs.Ginger.Repository;
@@ -224,9 +225,10 @@ namespace GingerCore.ALM
                 publishToALMConfig.HtmlReportUrl = "";
                 publishToALMConfig.ExecutionId = "";
 
+                GingerPlayConfiguration gingerPlayConfig = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
                 bool check =
                     WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Any(g => g.IsSelected && g.PublishLogToCentralDB == ePublishToCentralDB.Yes)
-                    && WorkSpace.Instance.Solution.GingerPlayConfiguration is { GingerPlayEnabled: true, GingerPlayReportServiceEnabled: true, GingerPlayGatewayUrl.Length: > 0 };
+                    && gingerPlayConfig is { GingerPlayEnabled: true, GingerPlayReportServiceEnabled: true, GingerPlayGatewayUrl.Length: > 0 };
 
                 if (!exectutedFromAutomateTab && check)
                 {
