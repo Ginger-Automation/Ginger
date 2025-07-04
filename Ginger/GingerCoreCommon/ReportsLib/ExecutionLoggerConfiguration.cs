@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using static Ginger.Configurations.SealightsConfiguration;
 
@@ -191,55 +192,92 @@ namespace Ginger.Reports
             }
         }
 
-        private string mCentralizedHtmlReportServiceURL;
-        [IsSerializedForLocalRepository]
-        public string CentralizedHtmlReportServiceURL
-        {
-            get
-            {
-                return mCentralizedHtmlReportServiceURL;
-            }
-            set
-            {
-                if (mCentralizedHtmlReportServiceURL != value)
-                {
-                    mCentralizedHtmlReportServiceURL = value;
-                    OnPropertyChanged(nameof(CentralizedHtmlReportServiceURL));
-                }
-            }
-        }
+        //private string mCentralizedHtmlReportServiceURL;
+        //[IsSerializedForLocalRepository]
+        //public string CentralizedHtmlReportServiceURL
+        //{
+        //    get
+        //    {
+        //        return mCentralizedHtmlReportServiceURL;
+        //    }
+        //    set
+        //    {
+        //        if (mCentralizedHtmlReportServiceURL != value)
+        //        {
+        //            mCentralizedHtmlReportServiceURL = value;
+        //            OnPropertyChanged(nameof(CentralizedHtmlReportServiceURL));
+        //        }
+        //    }
+        //}
 
-        private string mCentralLoggerEndPointUrl;
-        [IsSerializedForLocalRepository]
-        public string CentralLoggerEndPointUrl
-        {
-            get
-            {
-                return mCentralLoggerEndPointUrl;
-            }
-            set
-            {
-                if (mCentralLoggerEndPointUrl != value)
-                {
-                    mCentralLoggerEndPointUrl = value;
-                    OnPropertyChanged(nameof(CentralLoggerEndPointUrl));
-                }
-            }
-        }
+        //private string mCentralLoggerEndPointUrl;
+        //[IsSerializedForLocalRepository]
+        //public string CentralLoggerEndPointUrl
+        //{
+        //    get
+        //    {
+        //        return mCentralLoggerEndPointUrl;
+        //    }
+        //    set
+        //    {
+        //        if (mCentralLoggerEndPointUrl != value)
+        //        {
+        //            mCentralLoggerEndPointUrl = value;
+        //            OnPropertyChanged(nameof(CentralLoggerEndPointUrl));
+        //        }
+        //    }
+        //}
 
-        private string mExecutionHandlerURL;
-        [IsSerializedForLocalRepository]
-        public string ExecutionHandlerURL
+        //private string mExecutionHandlerURL;
+        //[IsSerializedForLocalRepository]
+        //public string ExecutionHandlerURL
+        //{
+        //    get => mExecutionHandlerURL;
+        //    set
+        //    {
+        //        if (!string.Equals(mExecutionHandlerURL, value))
+        //        {
+        //            mExecutionHandlerURL = value;
+        //            OnPropertyChanged(nameof(ExecutionHandlerURL));
+        //        }
+        //    }
+        //}
+
+
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
         {
-            get => mExecutionHandlerURL;
-            set
+            if (errorType == SerializationErrorType.PropertyNotFound)
             {
-                if (!string.Equals(mExecutionHandlerURL, value))
+                var workspace = GingerCoreCommonWorkSpace.Instance;
+                var solution = workspace?.Solution;
+                var playConfig = solution?.GingerPlayConfiguration;
+
+                if (playConfig == null)
                 {
-                    mExecutionHandlerURL = value;
-                    OnPropertyChanged(nameof(ExecutionHandlerURL));
+                    Reporter.ToLog(eLogLevel.WARN, $"GingerPlayConfiguration is null during deserialization for property '{name}'. Value: '{value}'");
+                    return false;
+                }
+
+                if (string.Equals("CentralizedHtmlReportServiceURL", name) && !string.IsNullOrEmpty(value))
+                {
+                    playConfig.CentralizedHTMLReportServiceURL = value;
+                    playConfig.GingerPlayReportServiceEnabled = true;
+                    return true;
+                }
+                if (string.Equals("CentralLoggerEndPointUrl", name) && !string.IsNullOrEmpty(value))
+                {
+                    playConfig.CentralizedAccountReportURL = value;
+                    playConfig.GingerPlayReportServiceEnabled = true;
+                    return true;
+                }
+                if (string.Equals("ExecutionServiceURLUsed", name) && !string.IsNullOrEmpty(value))
+                {
+                    playConfig.CentralizedExecutionHandlerURL = value;
+                    playConfig.GingerPlayExecutionServiceEnabled = true;
+                    return true;
                 }
             }
+            return false;
         }
 
 

@@ -16,11 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.SourceControlLib;
@@ -30,6 +25,11 @@ using Ginger.UserConfig;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace Ginger
 {
@@ -517,7 +517,7 @@ namespace Ginger
             }
         }
 
-        bool mShowEnterpriseFeatures;
+        bool mShowEnterpriseFeatures = true;
         [IsSerializedForLocalRepository]
         public bool ShowEnterpriseFeatures
         {
@@ -901,7 +901,7 @@ namespace Ginger
                     mSourceControl.Branch = item.SourceControlInfo.Branch;
                     GingerSolutions.RemoveAt(0);
                     RecentDownloadedSolutionGuid = solutionGuid;
-                    SetSourceControlPropertyOnUserProfile(mSourceControl, solutionGuid);                   
+                    SetSourceControlPropertyOnUserProfile(mSourceControl, solutionGuid);
                 }
 
             }

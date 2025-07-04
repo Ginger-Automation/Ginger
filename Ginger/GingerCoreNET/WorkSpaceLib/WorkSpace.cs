@@ -411,19 +411,6 @@ namespace amdocs.ginger.GingerCoreNET
                 WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
             }
 
-            // General Report Configurations
-            ExecutionLoggerConfiguration executionLoggerConfiguration = Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
-
-            if (!string.IsNullOrEmpty(executionLoggerConfiguration?.CentralLoggerEndPointUrl) || !string.IsNullOrEmpty(executionLoggerConfiguration?.CentralizedHtmlReportServiceURL))
-            {
-                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
-            }
-
-            if (WorkSpace.Instance.Solution.ALMConfigs.Count > 0)
-            {
-                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
-            }
-
         }
 
         public bool OpenSolution(string solutionFolder, string encryptionKey = null)

@@ -71,6 +71,8 @@ namespace Amdocs.Ginger.CoreNET.Repository
             SR.AddItemInfo<AccessibilityConfiguration>("*.Ginger.Configuration.xml", SolutionRepository.cSolutionRootFolderSign + "Configurations" + Path.DirectorySeparatorChar + "AccessibilityConfiguration", true, "AccessibilityConfiguration", PropertyNameForFileName: nameof(AccessibilityConfiguration.Name));
             SR.AddItemInfo<GingerOpsConfiguration>("*.Ginger.Configuration.xml", SolutionRepository.cSolutionRootFolderSign + "Configurations" + Path.DirectorySeparatorChar + "GingerOpsConfiguration", true, $"{GingerDicser.GetTermResValue(eTermResKey.GingerOps)}Configuration", PropertyNameForFileName: nameof(GingerOpsConfiguration.Name));
             SR.AddItemInfo<WireMockConfiguration>("*.Ginger.Configuration.xml", SolutionRepository.cSolutionRootFolderSign + "Configurations" + Path.DirectorySeparatorChar + "WireMockConfiguration", true, "WireMock Configuration", PropertyNameForFileName: nameof(WireMockConfiguration.Name));
+            SR.AddItemInfo<GingerPlayConfiguration>("*.Ginger.Configuration.xml", SolutionRepository.cSolutionRootFolderSign + "Configurations" + Path.DirectorySeparatorChar + "GingerPlayConfiguration", true, "GingerPlay Configuration", PropertyNameForFileName: nameof(GingerPlayConfiguration.Name));
+
 
             return SR;
         }

@@ -586,6 +586,7 @@
     <None Remove="Images\Views32x32.png" />
     <None Remove="Images\WireMockLogo16x16.png" />
     <None Remove="Images\WireMock_Logo.png" />
+     <None Remove="Images\NewGingerFavIcon.png" />
     <None Remove="Images\Workflow16x16.png" />
     <None Remove="Images\Workflow32x32.png" />
     <None Remove="Images\X16x16.png" />
@@ -2563,6 +2564,9 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\WireMockLogo16x16.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+	<Resource Include="UserControlsLib\ImageMakerLib\Images\NewGingerFavIcon.png">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+  </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\xml.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -2648,6 +2652,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="StaticDrivers\handle.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="UserControlsLib\ImageMakerLib\Images\NewGingerFavIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
