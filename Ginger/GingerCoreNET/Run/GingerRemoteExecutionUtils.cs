@@ -18,13 +18,13 @@ limitations under the License.
 using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.GenAIServices;
 using Ginger.Reports;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Net.Http;
 
 namespace Amdocs.Ginger.CoreNET
@@ -94,7 +94,7 @@ namespace Amdocs.Ginger.CoreNET
         }
         public static string GetReportDataServiceUrl()
         {
-            var baseURI = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected)).CentralLoggerEndPointUrl;
+            var baseURI = GingerPlayEndPointManager.GetAccountReportServiceUrl();
 
             if (!string.IsNullOrEmpty(baseURI) && !baseURI.EndsWith("/"))
             {
@@ -144,7 +144,7 @@ namespace Amdocs.Ginger.CoreNET
         }
         public static string GetReportHTMLServiceUrl()
         {
-            var baseURI = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected)).CentralizedHtmlReportServiceURL;
+            var baseURI = GingerPlayEndPointManager.GetAccountReportServiceUrl();
 
             if (!string.IsNullOrEmpty(baseURI))
             {

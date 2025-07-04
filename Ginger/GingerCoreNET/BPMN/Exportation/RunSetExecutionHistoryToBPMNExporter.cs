@@ -19,6 +19,7 @@ limitations under the License.
 using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
+using Amdocs.Ginger.CoreNET.GenAIServices;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
@@ -284,7 +285,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
         /// <returns><see cref="AccountReportRunSetClient"/> containing the execution details.</returns>
         private Task<AccountReportRunSetClient> GetExecutionDataFromAccountReportAsync(string executionId)
         {
-            AccountReportApiHandler handler = new(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+            AccountReportApiHandler handler = new(GingerPlayEndPointManager.GetAccountReportServiceUrl());
             return handler.GetAccountHTMLReportAsync(Guid.Parse(executionId));
         }
 

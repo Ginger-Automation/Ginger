@@ -191,56 +191,56 @@ namespace Ginger.Reports
             }
         }
 
-        private string mCentralizedHtmlReportServiceURL;
-        [IsSerializedForLocalRepository]
-        public string CentralizedHtmlReportServiceURL
-        {
-            get
-            {
-                return mCentralizedHtmlReportServiceURL;
-            }
-            set
-            {
-                if (mCentralizedHtmlReportServiceURL != value)
-                {
-                    mCentralizedHtmlReportServiceURL = value;
-                    OnPropertyChanged(nameof(CentralizedHtmlReportServiceURL));
-                }
-            }
-        }
+        //private string mCentralizedHtmlReportServiceURL;
+        //[IsSerializedForLocalRepository]
+        //public string CentralizedHtmlReportServiceURL
+        //{
+        //    get
+        //    {
+        //        return mCentralizedHtmlReportServiceURL;
+        //    }
+        //    set
+        //    {
+        //        if (mCentralizedHtmlReportServiceURL != value)
+        //        {
+        //            mCentralizedHtmlReportServiceURL = value;
+        //            OnPropertyChanged(nameof(CentralizedHtmlReportServiceURL));
+        //        }
+        //    }
+        //}
 
-        private string mCentralLoggerEndPointUrl;
-        [IsSerializedForLocalRepository]
-        public string CentralLoggerEndPointUrl
-        {
-            get
-            {
-                return mCentralLoggerEndPointUrl;
-            }
-            set
-            {
-                if (mCentralLoggerEndPointUrl != value)
-                {
-                    mCentralLoggerEndPointUrl = value;
-                    OnPropertyChanged(nameof(CentralLoggerEndPointUrl));
-                }
-            }
-        }
+        //private string mCentralLoggerEndPointUrl;
+        //[IsSerializedForLocalRepository]
+        //public string CentralLoggerEndPointUrl
+        //{
+        //    get
+        //    {
+        //        return mCentralLoggerEndPointUrl;
+        //    }
+        //    set
+        //    {
+        //        if (mCentralLoggerEndPointUrl != value)
+        //        {
+        //            mCentralLoggerEndPointUrl = value;
+        //            OnPropertyChanged(nameof(CentralLoggerEndPointUrl));
+        //        }
+        //    }
+        //}
 
-        private string mExecutionHandlerURL;
-        [IsSerializedForLocalRepository]
-        public string ExecutionHandlerURL
-        {
-            get => mExecutionHandlerURL;
-            set
-            {
-                if (!string.Equals(mExecutionHandlerURL, value))
-                {
-                    mExecutionHandlerURL = value;
-                    OnPropertyChanged(nameof(ExecutionHandlerURL));
-                }
-            }
-        }
+        //private string mExecutionHandlerURL;
+        //[IsSerializedForLocalRepository]
+        //public string ExecutionHandlerURL
+        //{
+        //    get => mExecutionHandlerURL;
+        //    set
+        //    {
+        //        if (!string.Equals(mExecutionHandlerURL, value))
+        //        {
+        //            mExecutionHandlerURL = value;
+        //            OnPropertyChanged(nameof(ExecutionHandlerURL));
+        //        }
+        //    }
+        //}
 
 
         /// <summary>

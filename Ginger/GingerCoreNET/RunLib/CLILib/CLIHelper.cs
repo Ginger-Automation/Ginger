@@ -21,6 +21,7 @@ using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.GenAIServices;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.Repository;
 using Ginger;
@@ -307,7 +308,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         void SetSourceControlParaOnUserProfile()
         {
-           
+
             WorkSpace.Instance.UserProfile.RecentDownloadedSolutionGuid = WorkSpace.Instance.Solution.Guid;
             var SetSourceControlParaOnUserProfile = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             SetSourceControlParaOnUserProfile.SourceControlInfo.Type = WorkSpace.Instance.UserProfile.Type;
@@ -441,9 +442,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (mRunSetConfig.ReRunConfigurations.ReferenceExecutionID != null)
             {
                 if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes
-                    && !string.IsNullOrEmpty(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl))
+                    && !string.IsNullOrEmpty(GingerPlayEndPointManager.GetAccountReportServiceUrl()))
                 {
-                    AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+                    AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(GingerPlayEndPointManager.GetAccountReportServiceUrl());
                     if (mRunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.RunSet)
                     {
                         List<RunsetHLInfoResponse> accountReportRunset = accountReportApiHandler.GetRunsetExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
@@ -630,13 +631,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
                     if (WorkSpace.Instance.GingerCLIMode == eGingerCLIMode.run)
                     {
-                        solutionDownloadedSuccessfully=SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier);
+                        solutionDownloadedSuccessfully = SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier);
                     }
                     else
                     {
                         solutionDownloadedSuccessfully = await Task.Run(() => SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier));
                     }
-                    
+
                     if (!solutionDownloadedSuccessfully)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");

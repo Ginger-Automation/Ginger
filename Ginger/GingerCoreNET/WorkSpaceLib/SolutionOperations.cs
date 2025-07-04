@@ -318,11 +318,11 @@ namespace Ginger.SolutionGeneral
 
                 // This is used for backward compatibility. Please check the comment above the CentralizedHTMLURL attribute.
 
-
-                if (string.IsNullOrEmpty(executionLoggerConfiguration.CentralizedHtmlReportServiceURL))
-                {
-                    executionLoggerConfiguration.CentralizedHtmlReportServiceURL = Solution.HTMLReportsConfigurationSetList.FirstOrDefault((htmlReport) => htmlReport.IsSelected).CentralizedHTMLURL;
-                }
+                // TODO: Uncomment the following lines once the HTMLReportsConfigurationSetList is properly initialized.
+                //if (string.IsNullOrEmpty(executionLoggerConfiguration.CentralizedHtmlReportServiceURL))
+                //{
+                //    executionLoggerConfiguration.CentralizedHtmlReportServiceURL = Solution.HTMLReportsConfigurationSetList.FirstOrDefault((htmlReport) => htmlReport.IsSelected).CentralizedHTMLURL;
+                //}
                 // !!!!!!!!!!!!! FIXME
                 // ExecutionLogger executionLogger = App.AutomateTabGingerRunner.ExecutionLogger;
                 // executionLogger.Configuration = executionLoggerConfiguration;
