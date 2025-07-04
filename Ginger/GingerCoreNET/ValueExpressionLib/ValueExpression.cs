@@ -101,6 +101,7 @@ namespace GingerCore
 
         private static Regex rxDSPattern = new(@"{(\bDS Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
         public static Regex rxEnvParamPattern = new(@"{(\bEnvParam App=)\w+\b[^{}]*}", RegexOptions.Compiled);
+        public static Regex rxEnvDB = new(@"{\s*(EnvApp=\w+)\s+(EnvAppDB=\w+)\s+(Query=[^{}]+)\s*}", RegexOptions.Compiled);
         public static Regex rxEnvUrlPattern = new(@"{(\bEnvURL App=)\w+\b[^{}]*}", RegexOptions.Compiled);
         private static Regex rxFDPattern = new(@"{(\bFD Object=)\w+\b[^{}]*}", RegexOptions.Compiled);
         private static Regex rxExecutionJsonDataPattern = new(@"{ExecutionJsonData}", RegexOptions.Compiled);
@@ -237,6 +238,7 @@ namespace GingerCore
                 ReplaceGlobalParameters();
                 //replace environment parameters which embedded into functions like VBS
                 ReplaceEnvVars();
+                ReplaceEnvDB();
                 CalculateComplexFormulas();
                 ReplaceDataSources();
                 ProcessGeneralFuncations();
@@ -245,6 +247,7 @@ namespace GingerCore
                 EvaluateBogusDataGenrateFunctions();
 
             }
+          
             if (!string.IsNullOrEmpty(SolutionFolder))
             {
 
@@ -1379,7 +1382,14 @@ namespace GingerCore
 
             return extraParamDict;
         }
-
+        private void ReplaceEnvDB()
+        {
+            MatchCollection envParamMatches = rxEnvDB.Matches(mValueCalculated);
+            foreach (Match match in envParamMatches)
+            {
+                ReplaceEnvDBWithValue(match.Value);
+            }
+        }
         private void ReplaceEnvVars()
         {
             MatchCollection envParamMatches = rxEnvParamPattern.Matches(mValueCalculated);
@@ -1513,7 +1523,82 @@ namespace GingerCore
                 mValueCalculated = mValueCalculated.Replace(p, "");
             }
         }
+        private void ReplaceEnvDBWithValue(string str)
+        {
+            try
+            {
+                string EnvApp = "", EnvAppDB = "", Query = "";
 
+                var parts = str.Split(' ');
+
+                foreach (var part in parts)
+                {
+                    if (part.StartsWith("EnvApp="))
+                    {
+                        EnvApp = part.Substring("EnvApp=".Length);
+                    }
+                    else if (part.StartsWith("EnvAppDB="))
+                    {
+                        EnvAppDB = part.Substring("EnvAppDB=".Length);
+                    }
+                    else if (part.StartsWith("Query="))
+                    {
+                        int queryIndex = str.IndexOf("Query=");
+                        Query = str.Substring(queryIndex + "Query=".Length).TrimEnd('}');
+                        break;
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(EnvApp) || string.IsNullOrWhiteSpace(EnvAppDB) || string.IsNullOrWhiteSpace(Query))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "ReplaceEnvDBWithValue Error: Missing required parameters.", null);
+                    return;
+                }
+
+                if (Env == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "ReplaceEnvDBWithValue Error: Env object is null.", null);
+                    return;
+                }
+
+                var envApplication = Env.GetApplication(EnvApp);
+                if (envApplication == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"ReplaceEnvDBWithValue Error: Application '{EnvApp}' not found.", null);
+                    return;
+                }
+
+                var DB = envApplication.Dbs.FirstOrDefault(db => db.Name == EnvAppDB) as Database;
+                if (DB == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"ReplaceEnvDBWithValue Error: Database '{EnvAppDB}' not found.", null);
+                    return;
+                }
+
+                DB.DatabaseOperations = new DatabaseOperations(DB);
+                var DBResponse = DB.DatabaseOperations.FreeSQL(Query, 50);
+
+                if (DBResponse == null || DBResponse.Count < 2)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "ReplaceEnvDBWithValue Error: Invalid or empty DB response.", null);
+                    return;
+                }
+
+                if (DBResponse[1] is List<List<string>> records && records.Count > 0 && records[0].Count > 0)
+                {
+                    var value1 = records[0][0];
+                    mValueCalculated = mValueCalculated.Replace(str, value1);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "ReplaceEnvDBWithValue Error: No records found in DB response.", null);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error:", ex);
+            }
+        }
         public static void GetEnvAppAndParam(string EnvValueExp, ref string AppName, ref string GlobalParamName)
         {
             EnvValueExp = EnvValueExp.Replace("\r\n", "vbCrLf");
@@ -1851,6 +1936,10 @@ namespace GingerCore
                     return true;
                 }
                 else if (MockDataExpPattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (rxEnvDB.IsMatch(mValueCalculated))
                 {
                     return true;
                 }

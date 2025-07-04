@@ -585,19 +585,33 @@ namespace Ginger
                 tviEnv.Selected += CleanHelpText;
                 tviEnvs.Items.Add(tviEnv);
 
-                foreach (EnvApplication a in env.Applications)
+                foreach (EnvApplication envApplication in env.Applications)
                 {
                     TreeViewItem tviEnvApp = new TreeViewItem();
-                    SetItemView(tviEnvApp, a.Name, "", eImageType.Window);
+                    SetItemView(tviEnvApp, envApplication.Name, "", eImageType.Window);
                     tviEnv.Items.Add(tviEnvApp);
                     tviEnvApp.Selected += CleanHelpText;
                     //Add Env URL
                     TreeViewItem tviEnvAppURL = new TreeViewItem();
-                    string URLval = "{EnvURL App=" + a.Name + "}";
-                    SetItemView(tviEnvAppURL, a.Name + " URL =" + a.Url, URLval, eImageType.Browser);
+                    string URLval = "{EnvURL App=" + envApplication.Name + "}";
+                    SetItemView(tviEnvAppURL, envApplication.Name + " URL =" + envApplication.Url, URLval, eImageType.Browser);
                     tviEnvApp.Items.Add(tviEnvAppURL);
                     tviEnvAppURL.MouseDoubleClick += tvi_MouseDoubleClick;
 
+                    //Add Env DB
+                    TreeViewItem EnvDatabases = new TreeViewItem();
+                    SetItemView(EnvDatabases, "Databases", "", eImageType.Database);
+                    tviEnvApp.Items.Add(EnvDatabases);
+
+                    foreach (var db in envApplication.Dbs)
+                    {
+                        TreeViewItem envDb = new TreeViewItem();
+                        string Paramval = "{EnvDB App=" + envApplication.Name + " Param=" + db.Name + "}";
+                        SetItemView(envDb, db.Name, Paramval, eImageType.Database);
+                        EnvDatabases.Items.Add(envDb);
+                        envDb.MouseDoubleClick += (sender, e) =>DatabaseValueExpression(sender, e, envApplication.Name, db.Name);
+
+                    }
                     //Add App Global Params
                     TreeViewItem tviEnvAppGlobalParam = new TreeViewItem();
                     SetItemView(tviEnvAppGlobalParam, "Global Params", "", eImageType.Parameter);
@@ -605,18 +619,39 @@ namespace Ginger
                     tviEnvAppGlobalParam.MouseDoubleClick += tvi_MouseDoubleClick;
 
                     // Add all App General Params
-                    a.ConvertGeneralParamsToVariable();
-                    foreach (VariableBase vb in a.Variables)
+                    envApplication.ConvertGeneralParamsToVariable();
+                    foreach (VariableBase vb in envApplication.Variables)
                     {
 
                         TreeViewItem tviEnvAppParam = new TreeViewItem();
-                        string Paramval = "{EnvParam App=" + a.Name + " Param=" + vb.Name + "}";
+                        string Paramval = "{EnvParam App=" + envApplication.Name + " Param=" + vb.Name + "}";
                         SetItemView(tviEnvAppParam, vb.Name + " =" + vb.Value, Paramval, eImageType.Parameter);
                         tviEnvAppGlobalParam.Items.Add(tviEnvAppParam);
                         tviEnvAppParam.MouseDoubleClick += tvi_MouseDoubleClick;
                         tviEnvAppParam.Selected += CleanHelpText;
                     }
                 }
+            }
+        }
+        private void DatabaseValueExpression(object sender, MouseButtonEventArgs e, string envApp, string dbName)
+        {
+            ValidationDBPage validationDBPage = new ValidationDBPage(new GingerCore.Actions.ActDBValidation() { Context = mContext }, envApp, dbName);
+
+            validationDBPage.ValidationCfgComboBox.SelectedIndex = 0;
+            validationDBPage.ValidationCfgComboBox.IsEnabled = false;
+
+            validationDBPage.RadioButtonsSection.IsVisibleChanged += RadioButtonsSection_IsVisibleChanged;
+            var value = validationDBPage.ShowAsWindow();
+            if (value != null)
+            {
+                AddExpToValue(value);
+            }
+        }
+        private void RadioButtonsSection_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (sender is UIElement element && element.Visibility == Visibility.Visible)
+            {
+                element.Visibility = Visibility.Collapsed;
             }
         }
 
