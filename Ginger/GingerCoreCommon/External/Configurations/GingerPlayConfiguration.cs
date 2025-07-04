@@ -78,7 +78,7 @@ namespace Amdocs.Ginger.Common.External.Configurations
             get { return mGingerPlayEnabled; }
             set
             {
-                if (mGingerPlayReportServiceEnabled != value)
+                if (mGingerPlayEnabled != value)
                 {
                     mGingerPlayEnabled = value;
                     OnPropertyChanged(nameof(GingerPlayEnabled));
@@ -169,6 +169,13 @@ namespace Amdocs.Ginger.Common.External.Configurations
 
         public string Token = "token";
 
+        public string ReportServiceHealthURL = "https://usstlattstl01/OnlineReportMS/health";
+
+        public string ExecutionServiceHealthURL = "https://usstlattstl01/ExecuterHandlerService/health";
+
+        public string AIServiceHealthURL = "https://usstlattstl01/GenAIService/health";
+
+
         public override string ItemName
         {
             get
@@ -194,19 +201,22 @@ namespace Amdocs.Ginger.Common.External.Configurations
         {
             if (errorType == SerializationErrorType.PropertyNotFound)
             {
-                if (string.Equals("CentralizedHtmlReportServiceURL", name))
+                if (string.Equals("CentralizedHtmlReportServiceURL", name) && !string.IsNullOrEmpty(value))
                 {
                     this.CentralizedHTMLReportServiceURL = value;
+                    this.GingerPlayReportServiceEnabled = true;
                     return true;
                 }
-                if (string.Equals("CentralLoggerEndPointUrl", name))
+                if (string.Equals("CentralLoggerEndPointUrl", name) && !string.IsNullOrEmpty(value))
                 {
                     this.CentralizedAccountReportURL = value;
+                    this.GingerPlayReportServiceEnabled = true;
                     return true;
                 }
-                if (string.Equals("ExecutionServiceURLUsed", name))
+                if (string.Equals("ExecutionServiceURLUsed", name) && !string.IsNullOrEmpty(value))
                 {
                     this.CentralizedExecutionHandlerURL = value;
+                    this.GingerPlayExecutionServiceEnabled = true;
                     return true;
                 }
             }

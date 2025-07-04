@@ -316,15 +316,8 @@ namespace Ginger.SolutionGeneral
                 Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
                 ExecutionLoggerConfiguration executionLoggerConfiguration = Solution.LoggerConfigurations;
 
-                // This is used for backward compatibility. Please check the comment above the CentralizedHTMLURL attribute.
-
-                // TODO: Uncomment the following lines once the HTMLReportsConfigurationSetList is properly initialized.
-                //if (string.IsNullOrEmpty(executionLoggerConfiguration.CentralizedHtmlReportServiceURL))
-                //{
-                //    executionLoggerConfiguration.CentralizedHtmlReportServiceURL = Solution.HTMLReportsConfigurationSetList.FirstOrDefault((htmlReport) => htmlReport.IsSelected).CentralizedHTMLURL;
-                //}
                 // !!!!!!!!!!!!! FIXME
-                // ExecutionLogger executionLogger = App.AutomateTabGingerRunner.ExecutionLogger;
+                //ExecutionLogger executionLogger = App.AutomateTabGingerRunner.ExecutionLogger;
                 // executionLogger.Configuration = executionLoggerConfiguration;
 
             }

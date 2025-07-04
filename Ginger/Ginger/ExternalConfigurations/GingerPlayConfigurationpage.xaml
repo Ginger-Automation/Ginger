@@ -38,38 +38,38 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
-                        <CheckBox Content="Allow GingerPlay Integration"  IsChecked="False"  VerticalAlignment="Center" Margin="0,0,10,0" FontSize="12" x:Name="xAllowGingerPlayCheckBox" Checked="xAllowGingerPlayCheckBox_Checked" Unchecked="xAllowGingerPlayCheckBox_Unchecked" />
+                        <CheckBox Content="Allow GingerPlay Integration"   VerticalAlignment="Center" Margin="0,0,10,0" FontSize="12" x:Name="xAllowGingerPlayCheckBox" Checked="xAllowGingerPlayCheckBox_Checked" Unchecked="xAllowGingerPlayCheckBox_Unchecked" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1">
                         <Label x:Name="xGatewayURL" Content="Gateway URL:"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>
                         <Label x:Name="xGatewayURLValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
                     </StackPanel>
-                    <Activities:UCValueExpression x:Name="xGatewayURLTextBox" IsEnabled="False" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="GingerOps Account URL" Margin="10,0,0,0"  Width="400"/>
+                    <Activities:UCValueExpression x:Name="xGatewayURLTextBox"  Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="GingerOps Account URL" Margin="10,0,0,0"  Width="400"/>
 
                     <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
                         <Label x:Name="xClientIdLabel" Content="Client Id:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
                     </StackPanel>
-                    <Activities:UCValueExpression x:Name="xClientIdTextBox" IsEnabled="False" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Id" Margin="10,0,0,0"  Width="400"/>
+                    <Activities:UCValueExpression x:Name="xClientIdTextBox"  Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Id" Margin="10,0,0,0"  Width="400"/>
 
                     <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="3">
                         <Label x:Name="xClientSecretLabel" Content="Client Secret:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
                     </StackPanel>
-                    <Activities:UCValueExpression x:Name="xClientSecretTextBox" IsEnabled="False" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Secret" Margin="10,0,0,0" Width="400" />
+                    <Activities:UCValueExpression x:Name="xClientSecretTextBox"  Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Secret" Margin="10,0,0,0" Width="400" />
 
                     <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Margin="0,0,427,0">
-                        <CheckBox Content="Report Service" IsChecked="False" VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xReportServiceCheckBox" Checked="xReportServiceCheckBox_Checked" />
+                        <CheckBox Content="Report Service" VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xReportServiceCheckBox" Checked="xReportServiceCheckBox_Checked" />
 
 
-                        <CheckBox Content="Execution Service" IsChecked="False"  VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xExecutionServiceCheckBox" Checked="xExecutionServiceCheckBox_Checked" />
+                        <CheckBox Content="Execution Service" VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xExecutionServiceCheckBox" Checked="xExecutionServiceCheckBox_Checked" />
 
 
-                        <CheckBox Content="AI Service" IsChecked="False"  VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xAIServiceCheckBox" Checked="xAIServiceCheckBox_Checked" />
+                        <CheckBox Content="AI Service"  VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xAIServiceCheckBox" Checked="xAIServiceCheckBox_Checked" />
 
                     </StackPanel>
-                    <Grid>
-                        <usercontrols:ucButton x:Name="xTestConBtn" IsEnabled="False" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="-5,246,0,-252" ButtonType="RoundTextAndImageButton" ButtonText="Test Connection" ButtonImageType="Run" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xTestConBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" ToolTip="Test GingerPlay Connection" Width="181"/>
-                        <usercontrols:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="187,28,0,3" HorizontalAlignment="Left" Height="25" Width="20" Visibility="Collapsed"></usercontrols:ImageMakerControl>
-                    </Grid>
+                    <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+                        <usercontrols:ucButton x:Name="xTestConBtn" IsEnabled="False" ButtonType="RoundTextAndImageButton" ButtonText="Test Connection" ButtonImageType="Run" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xTestConBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" ToolTip="Test GingerPlay Connection" Width="181"/>
+                        <usercontrols:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="10,0,0,0" Height="25" Width="20" Visibility="Collapsed"/>
+                    </StackPanel>
                 </Grid>
 
             </StackPanel>

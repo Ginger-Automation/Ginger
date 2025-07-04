@@ -64,13 +64,9 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
             bool handlerURLConfiguredInLoggerConfig = !string.IsNullOrEmpty(GingerPlayEndPointManager.GetExecutionServiceUrl());
             bool handlerURLConfiguredInRunset = !string.IsNullOrEmpty(handlerURLFromRunset);
-            if (!handlerURLConfiguredInLoggerConfig && handlerURLConfiguredInRunset)
-            {
-                //WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL = handlerURLFromRunset;
-            }
 
             AutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, CliHelper);
-            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Any(k => k.GingerPlayEnabled == true && !string.IsNullOrEmpty(k.GingerPlayGatewayUrl)))
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Any(k => k.GingerPlayEnabled && !string.IsNullOrEmpty(k.GingerPlayGatewayUrl)))
             {
                 AutoRunConfiguration.ExecutionServiceUrl = GingerPlayEndPointManager.GetExecutionServiceUrl();
             }

@@ -18,11 +18,12 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using System;
 
 namespace Amdocs.Ginger.CoreNET.GenAIServices
 {
-    public class GingerPlayEndPointManager
+    public static class GingerPlayEndPointManager
     {
         private const string ACCOUNT_REPORT_SERVICE_URL = "ginger-report";
 
@@ -32,14 +33,20 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
 
         private const string EXECUTION_SERVICE = "ginger-execution";
 
-
+        private static readonly GingerPlayConfiguration GingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count == 0
+      ? new GingerPlayConfiguration()
+      : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
         public static string GetAccountReportServiceUrl()
         {
             try
             {
-                if (!string.IsNullOrEmpty(WorkSpace.Instance.Solution.GingerPlayConfiguration.GingerPlayGatewayUrl))
+                if (!string.IsNullOrEmpty(GingerPlayConfiguration.CentralizedAccountReportURL))
                 {
-                    return WorkSpace.Instance.Solution.GingerPlayConfiguration.GingerPlayGatewayUrl + ACCOUNT_REPORT_SERVICE_URL;
+                    return GingerPlayConfiguration.CentralizedAccountReportURL;
+                }
+                else if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl))
+                {
+                    return GingerPlayConfiguration.GingerPlayGatewayUrl + ACCOUNT_REPORT_SERVICE_URL;
                 }
                 else
                 {
@@ -61,9 +68,13 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         {
             try
             {
-                if (!string.IsNullOrEmpty(WorkSpace.Instance.Solution.GingerPlayConfiguration.GingerPlayGatewayUrl))
+                if (!string.IsNullOrEmpty(GingerPlayConfiguration.CentralizedHTMLReportServiceURL))
                 {
-                    return WorkSpace.Instance.Solution.GingerPlayConfiguration.GingerPlayGatewayUrl + HTML_REPORT_SERVICE_URL;
+                    return GingerPlayConfiguration.CentralizedHTMLReportServiceURL;
+                }
+                else if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl))
+                {
+                    return GingerPlayConfiguration.GingerPlayGatewayUrl + HTML_REPORT_SERVICE_URL;
                 }
                 else
                 {
@@ -84,9 +95,9 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         {
             try
             {
-                if (!string.IsNullOrEmpty(WorkSpace.Instance.Solution.GingerPlayConfiguration.GingerPlayGatewayUrl))
+                if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl))
                 {
-                    return WorkSpace.Instance.Solution.GingerPlayConfiguration.GingerPlayGatewayUrl + AI_SERVICE_URL;
+                    return GingerPlayConfiguration.GingerPlayGatewayUrl + AI_SERVICE_URL;
                 }
                 else
                 {
@@ -107,9 +118,13 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         {
             try
             {
-                if (!string.IsNullOrEmpty(WorkSpace.Instance.Solution.GingerPlayConfiguration.GingerPlayGatewayUrl))
+                if (!string.IsNullOrEmpty(GingerPlayConfiguration.CentralizedExecutionHandlerURL))
                 {
-                    return WorkSpace.Instance.Solution.GingerPlayConfiguration.GingerPlayGatewayUrl + EXECUTION_SERVICE;
+                    return GingerPlayConfiguration.CentralizedExecutionHandlerURL;
+                }
+                else if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl))
+                {
+                    return GingerPlayConfiguration.GingerPlayGatewayUrl + EXECUTION_SERVICE;
                 }
                 else
                 {

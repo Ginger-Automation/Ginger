@@ -23,6 +23,7 @@ using Amdocs.Ginger.CoreNET.GenAIServices;
 using Ginger.UserControlsLib;
 using Ginger.ValidationRules;
 using GingerCore.GeneralLib;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -33,8 +34,8 @@ namespace Ginger.ExternalConfigurations
     /// </summary>
     public partial class GingerPlayConfigurationpage : GingerUIPage
     {
-        public GingerPlayConfiguration gingerPlayConfiguration;
-        public GingerPlayAPITokenManager GingerPlayAPITokenManager;
+        private GingerPlayConfiguration gingerPlayConfiguration;
+        private GingerPlayAPITokenManager GingerPlayAPITokenManager = new();
         public GingerPlayConfigurationpage()
         {
             InitializeComponent();
@@ -90,40 +91,75 @@ namespace Ginger.ExternalConfigurations
             xTestConBtn.IsEnabled = isChecked;
         }
 
-        private void xReportServiceCheckBox_Checked(object sender, System.Windows.RoutedEventArgs e)
+        private async Task xReportServiceCheckBox_CheckedAsync(object sender, System.Windows.RoutedEventArgs e)
         {
+            ShowLoader();
+            bool isHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(gingerPlayConfiguration.ReportServiceHealthURL);
+            HideLoader();
 
+            if (isHealthy)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Report Service is UP");
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Report Service is DOWN");
+            }
         }
 
-        private void xExecutionServiceCheckBox_Checked(object sender, System.Windows.RoutedEventArgs e)
+        private async Task xExecutionServiceCheckBox_CheckedAsync(object sender, System.Windows.RoutedEventArgs e)
         {
+            ShowLoader();
+            bool isHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(gingerPlayConfiguration.ExecutionServiceHealthURL);
+            HideLoader();
 
+            if (isHealthy)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Execution Service is UP");
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Execution Service is DOWN");
+            }
         }
 
-        private void xAIServiceCheckBox_Checked(object sender, System.Windows.RoutedEventArgs e)
+        private async Task xAIServiceCheckBox_CheckedAsync(object sender, System.Windows.RoutedEventArgs e)
         {
+            ShowLoader();
+            bool isHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(gingerPlayConfiguration.AIServiceHealthURL);
+            HideLoader();
 
+            if (isHealthy)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "AI Service is UP");
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "AI Service is DOWN");
+            }
         }
 
         private async void xTestConBtn_Click(object sender, RoutedEventArgs e)
         {
-            ShowLoader();
-            xTestConBtn.IsEnabled = false;
-            if (AreRequiredFieldsEmpty())
+            try
             {
-                Reporter.ToUser(eUserMsgKey.RequiredFieldsEmpty);
+                ShowLoader();
+                xTestConBtn.IsEnabled = false;
+                if (AreRequiredFieldsEmpty())
+                {
+                    Reporter.ToUser(eUserMsgKey.RequiredFieldsEmpty);
+                    return;
+                }
+
+                bool isAuthorized = await GingerPlayAPITokenManager.GetOrValidateToken();
+                ShowConnectionResult(isAuthorized);
+
+            }
+            finally
+            {
                 HideLoader();
                 xTestConBtn.IsEnabled = true;
-                return;
             }
-
-            GingerCoreNET.GeneralLib.General.CreateGingerPlayConfiguration();
-
-            GingerPlayAPITokenManager = new();
-            bool isAuthorized = await GingerPlayAPITokenManager.InitClient();
-            ShowConnectionResult(isAuthorized);
-            HideLoader();
-            xTestConBtn.IsEnabled = true;
         }
 
         private static void ShowConnectionResult(bool isAuthorized)

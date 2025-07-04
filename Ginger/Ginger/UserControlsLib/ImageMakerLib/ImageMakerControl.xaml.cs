@@ -215,7 +215,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsStaticImage("WireMock_Logo.png");
                     break;
                 case eImageType.NewGingerFavIcon:
-                    SetAsStaticImage("NewGingerFavIcon.ico");
+                    SetAsStaticImage("NewGingerFavIcon.png");
                     break;
                 case eImageType.WireMockLogo16x16:
                     SetAsStaticImage("WireMockLogo16x16.png");

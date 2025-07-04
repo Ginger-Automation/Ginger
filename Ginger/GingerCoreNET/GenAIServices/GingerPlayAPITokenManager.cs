@@ -1,10 +1,12 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.GenAIServices
@@ -14,43 +16,18 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         HttpClient _httpClient;
         private string token = null;
         GingerCore.ValueExpression valueExpression;
-        public async Task<bool> InitClient()
-        {
-            try
-            {
-                _httpClient = new HttpClient();
-                valueExpression = new GingerCore.ValueExpression();
-                var host = CredentialsCalculation(WorkSpace.Instance.Solution.GingerPlayConfiguration.AuthenticationServiceURL);
-                if (!string.IsNullOrEmpty(host))
-                {
-                    host = !host.EndsWith('/') ? $"{host}/" : host;
-                    _httpClient.BaseAddress = new Uri(host);
-
-                    await GetOrValidateToken();
-                    return true;
-                }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Chat bot service end point is null or empty. pls check configuration");
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Chat bot service initialization failed", ex);
-
-            }
-            return false;
-        }
-
+        private GingerPlayConfiguration GingerPlayConfiguration;
 
 
         private async Task<bool> GetToken()
         {
             try
             {
-                GingerPlayAPITokenResponseInfo responseInfo = new();
+                GingerPlayAPITokenResponseInfo responseInfo;
+
+
                 var httpClient = new HttpClient();
-                var host = CredentialsCalculation(WorkSpace.Instance.Solution.GingerPlayConfiguration.AuthenticationServiceURL);
+                var host = CredentialsCalculation(GingerPlayConfiguration.AuthenticationServiceURL);
                 if (!string.IsNullOrEmpty(host))
                 {
                     host = !host.EndsWith('/') ? $"{host}/" : host;
@@ -58,25 +35,25 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
                 }
                 var data = new[]
                {
-                new KeyValuePair<string, string>("grant_type", CredentialsCalculation(WorkSpace.Instance.Solution.GingerPlayConfiguration.GrantType)),
-                new KeyValuePair<string, string>("client_id", CredentialsCalculation(WorkSpace.Instance.Solution.GingerPlayConfiguration.GingerPlayClientId)),
-                new KeyValuePair<string, string>("client_secret", CredentialsCalculation(WorkSpace.Instance.Solution.GingerPlayConfiguration.GingerPlayClientSecret)),
+                new KeyValuePair<string, string>("grant_type", CredentialsCalculation(GingerPlayConfiguration.GrantType)),
+                new KeyValuePair<string, string>("client_id", CredentialsCalculation(GingerPlayConfiguration.GingerPlayClientId)),
+                new KeyValuePair<string, string>("client_secret", CredentialsCalculation(GingerPlayConfiguration.GingerPlayClientSecret)),
                 };
 
-                var response = await httpClient.PostAsync(WorkSpace.Instance.Solution.GingerPlayConfiguration.Token, new FormUrlEncodedContent(data));
+                var response = await httpClient.PostAsync("", new FormUrlEncodedContent(data));
                 var result = await response.Content.ReadAsAsync<dynamic>();
                 responseInfo = result.ToObject<GingerPlayAPITokenResponseInfo>();
-                token = responseInfo.access_token;
-                _httpClient.DefaultRequestHeaders.Clear();
+                this.token = responseInfo.access_token;
+                httpClient.DefaultRequestHeaders.Clear();
+                httpClient.Dispose();
                 if (!string.IsNullOrEmpty(token))
                 {
-                    _httpClient.DefaultRequestHeaders.Add("Authorization", string.Format($"Bearer {token}"));
-                    WorkSpace.Instance.Solution.GingerPlayConfiguration.Token = string.Format($"Bearer {token}");
+                    GingerPlayConfiguration.Token = this.token;
                     return true;
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the token for Chat service, Please Check your Credentials");
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the token for GingerPlay service, Please Check your Credentials");
                     return true;
                 }
             }
@@ -89,7 +66,7 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
             }
         }
 
-        private async Task<Boolean> GetOrValidateToken()
+        public async Task<Boolean> GetOrValidateToken()
         {
             if (IsTokenValid())
             {
@@ -105,14 +82,17 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         {
             try
             {
-                if (string.IsNullOrEmpty(token) || token.Split('.').Length != 3)
+                GingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count == 0
+      ? new GingerPlayConfiguration()
+      : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+                if (string.IsNullOrEmpty(GingerPlayConfiguration.Token) || GingerPlayConfiguration.Token.Split('.').Length != 3)
                 {
                     return false;
                 }
 
                 DateTime validTo;
                 var handler = new JwtSecurityTokenHandler();
-                var jwtToken = handler.ReadJwtToken(token);
+                var jwtToken = handler.ReadJwtToken(GingerPlayConfiguration.Token);
                 validTo = jwtToken.ValidTo;
                 if (DateTime.UtcNow <= validTo)
                 {
@@ -126,6 +106,26 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occured in validate token", ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> IsServiceHealthyAsync(string healthUrl)
+        {
+            try
+            {
+                using var httpClient = new HttpClient();
+                var response = await httpClient.GetAsync(healthUrl);
+                if (!response.IsSuccessStatusCode)
+                    return false;
+
+                var json = await response.Content.ReadAsStringAsync();
+                using var doc = JsonDocument.Parse(json);
+                var status = doc.RootElement.GetProperty("status").GetString();
+                return string.Equals(status, "Healthy", StringComparison.OrdinalIgnoreCase);
+            }
+            catch
+            {
                 return false;
             }
         }

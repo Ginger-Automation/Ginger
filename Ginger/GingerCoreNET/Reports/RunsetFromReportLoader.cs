@@ -125,7 +125,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
 
         private async Task<GingerExecConfig?> GetExecutionConfigurationFromExecutionHandlerAsync(string executionId)
         {
-            string handlerAPIUrl = GingerPlayEndPointManager.GetExecutionServiceUrl(); //WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL;
+            string handlerAPIUrl = GingerPlayEndPointManager.GetExecutionServiceUrl();
             if (string.IsNullOrEmpty(handlerAPIUrl))
             {
                 //case: URL is null or empty
