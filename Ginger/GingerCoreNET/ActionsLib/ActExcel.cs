@@ -345,6 +345,7 @@ namespace GingerCore.Actions
             catch (Exception ex)
             {
                 Error += eUserMsgKey.ExcelInvalidFieldData + ", " + ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, "Error while reading cell data from Excel", ex);
             }
         }
         public void ReadData()
@@ -410,6 +411,8 @@ namespace GingerCore.Actions
                 {
                     Error = ex.Message;
                 }
+
+                Reporter.ToLog(eLogLevel.ERROR, "Error while reading data from Excel", ex);
             }
         }
 
@@ -452,6 +455,7 @@ namespace GingerCore.Actions
             }
             catch (Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while writing to Excel", ex);
                 this.Error = "Error when trying to update the excel, Please check write data content";
             }
         }
