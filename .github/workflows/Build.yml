@@ -259,5 +259,4 @@ jobs:
                     ./**
                 key: 
                     cache-site-macos-${{github.run_number}}
-                enableCrossOsArchive:
-                    true    
+ 
