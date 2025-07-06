@@ -229,7 +229,7 @@ jobs:
 # ------------------------------------------------------------------------------------------------------   
         -   name: Cache static site content - Windows
             id: cache_windows
-            if: runner.os == 'Windows' || github.event_name == 'workflow_dispatch' || github.event_name != 'push'
+            if: runner.os == 'Windows' && github.event_name == 'workflow_dispatch' 
             uses: actions/cache@v4
             with:
                 path: 
