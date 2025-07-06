@@ -229,7 +229,7 @@ jobs:
 # ------------------------------------------------------------------------------------------------------   
         -   name: Cache static site content - Windows
             id: cache_windows
-            if: runner.os == 'Windows' || github.event_name == 'workflow_dispatch'
+            if: runner.os == 'Windows' || github.event_name == 'workflow_dispatch' || github.event_name != 'push'
             uses: actions/cache@v4
             with:
                 path: 
@@ -248,8 +248,6 @@ jobs:
                     ./**
                 key: 
                     cache-site-linux-${{github.run_number}}
-                enableCrossOsArchive:
-                    true
             
         
         -   name: Cache static site content - macOS
