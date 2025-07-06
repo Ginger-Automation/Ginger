@@ -245,7 +245,7 @@ jobs:
             uses: actions/cache@v4
             with:
                 path: 
-                    ./**
+                    ./Ginger/GingerRuntime/bin/Release/net8.0/linux-x64
                 key: 
                     cache-site-linux-${{github.run_number}}
             
