@@ -1447,7 +1447,7 @@ namespace GingerCore.Drivers.ASCF
 
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null,Bitmap ScreenShot = null)
         {
             //DOTO add grid view contol lists
             return [];

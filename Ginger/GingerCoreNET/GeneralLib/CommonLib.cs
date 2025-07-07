@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.UIElement;
 using System;
+using System.Drawing;
 using System.IO;
 
 namespace GingerCore.GeneralLib
@@ -78,5 +80,7 @@ namespace GingerCore.GeneralLib
             // TODO: if no env var then try to do shell: where java check if good for windows and Linux
             // + search C:\Program Files (x86)\Common Files\Oracle\Java\javapath
         }
+
+        
     }
 }
