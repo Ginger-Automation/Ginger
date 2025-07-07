@@ -47,19 +47,38 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
     internal sealed class PlaywrightBrowserTab : IBrowserTab
     {
         private static readonly IEnumerable<eLocateBy> SupportedElementLocators =
-        [
-            eLocateBy.ByID,
-            eLocateBy.ByCSS,
-            eLocateBy.ByName,
-            eLocateBy.ByXPath,
-            eLocateBy.ByTagName,
-            eLocateBy.ByRelXPath,
-            eLocateBy.POMElement,
-            eLocateBy.ByAutomationID,
-            eLocateBy.ByClassName,
-            eLocateBy.ByCSSSelector,
-            eLocateBy.ByLinkText
-        ];
+[
+    eLocateBy.ByID,
+    eLocateBy.ByCSS,
+    eLocateBy.ByName,
+    eLocateBy.ByXPath,
+    eLocateBy.ByRelXPath,
+    eLocateBy.ByTagName,
+    eLocateBy.POMElement,
+    eLocateBy.ByAutomationID,
+    eLocateBy.ByClassName,
+    eLocateBy.ByCSSSelector,
+    eLocateBy.ByLinkText,
+    eLocateBy.ByHref,
+    eLocateBy.ByValue,
+    eLocateBy.ByIndex,
+    eLocateBy.ByTitle,
+    eLocateBy.ByUrl,
+    eLocateBy.ByngModel,
+    eLocateBy.ByngRepeat,
+    eLocateBy.ByngBind,
+    eLocateBy.ByngSelectedOption,
+    eLocateBy.ByResourceID,
+    eLocateBy.ByContentDescription,
+    eLocateBy.ByText,
+    eLocateBy.ByModelName,
+    eLocateBy.ByLabel,
+    eLocateBy.ByPlaceholder,
+    eLocateBy.ByAltText,
+    eLocateBy.ByTestID,
+    eLocateBy.Chained
+];
+
 
         private static readonly IEnumerable<eLocateBy> SupportedFrameLocators =
         [
@@ -575,6 +594,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     locator = _currentFrame.Locator($"css=#{value}");
                     break;
                 case eLocateBy.ByCSS:
+                case eLocateBy.ByCSSSelector:
                     locator = _currentFrame.Locator($"css={value}");
                     break;
                 case eLocateBy.ByXPath:
@@ -594,11 +614,75 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 case eLocateBy.ByClassName:
                     locator = _currentFrame.Locator($"css=.{value}");
                     break;
-                case eLocateBy.ByCSSSelector:
-                    locator = _currentFrame.Locator($"css={value}");
-                    break;
                 case eLocateBy.ByLinkText:
+                case eLocateBy.ByText:
                     locator = _currentFrame.Locator($"text={value}");
+                    break;
+                case eLocateBy.ByHref:
+                case eLocateBy.ByUrl:
+                    locator = _currentFrame.Locator($"css=a[href='{value}']");
+                    break;
+                case eLocateBy.ByValue:
+                    locator = _currentFrame.Locator($"css=[value='{value}']");
+                    break;
+                case eLocateBy.ByIndex:
+                    locator = _currentFrame.Locator($"nth={value}");
+                    break;
+                case eLocateBy.ByTitle:
+                    locator = _currentFrame.Locator($"css=[title='{value}']");
+                    break;
+                case eLocateBy.ByngModel:
+                case eLocateBy.ByModelName:
+                    locator = _currentFrame.Locator($"css=[ng-model='{value}']");
+                    break;
+                case eLocateBy.ByngRepeat:
+                    locator = _currentFrame.Locator($"css=[ng-repeat='{value}']");
+                    break;
+                case eLocateBy.ByngBind:
+                    locator = _currentFrame.Locator($"css=[ng-bind='{value}']");
+                    break;
+                case eLocateBy.ByngSelectedOption:
+                    locator = _currentFrame.Locator($"css=select[ng-options*='{value}']");
+                    break;
+                case eLocateBy.ByResourceID:
+                    locator = _currentFrame.Locator($"css=[resource-id='{value}']");
+                    break;
+                case eLocateBy.ByContentDescription:
+                    locator = _currentFrame.Locator($"css=[content-desc='{value}']");
+                    break;
+                case eLocateBy.ByLabel:
+                    locator = _currentFrame.GetByLabel(value);
+                    break;
+                case eLocateBy.ByPlaceholder:
+                    locator = _currentFrame.GetByPlaceholder(value);
+                    break;
+                case eLocateBy.ByAltText:
+                    locator = _currentFrame.GetByAltText(value);
+                    break;
+                case eLocateBy.ByTestID:
+                    locator = _currentFrame.GetByTestId(value);
+                    break;
+                case eLocateBy.Chained:
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        throw new ArgumentException("Chained locator value cannot be null or empty.");
+                    }
+
+                    var parts = value.Split(">", StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length < 2)
+                    {
+                        throw new ArgumentException("Chained locator must contain at least two parts separated by '>'.");
+                    }
+
+                    locator = _currentFrame.Locator(parts[0].Trim());
+                    for (int i = 1; i < parts.Length; i++)
+                    {
+                        if (string.IsNullOrWhiteSpace(parts[i]))
+                        {
+                            throw new ArgumentException($"Chained locator part {i} cannot be empty.");
+                        }
+                        locator = locator.Locator(parts[i].Trim());
+                    }
                     break;
                 default:
                     throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");
@@ -645,9 +729,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             _isClosed = true;
 
             if (_playwrightPage.Video != null)
-            {                
-                string path = await _playwrightPage.Video.PathAsync();                
-                var pageURL = _playwrightPage.Url;                
+            {
+                string path = await _playwrightPage.Video.PathAsync();
+                var pageURL = _playwrightPage.Url;
                 //string videoFilePath = videoRecordingDire.Parent.FullName + "Action_" + DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 //await _playwrightPage.Video.SaveAsAsync(videoFilePath);
 
