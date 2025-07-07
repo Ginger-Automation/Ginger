@@ -1185,8 +1185,9 @@ namespace GingerCoreNET.GeneralLib
                 GetLocationAndSizeOfElement(elementInfo, out cropX, out cropY, out cropWidth, out cropHeight);
 
                 if (cropWidth <= 0 || cropHeight <= 0)
+                {
                     throw new ArgumentException("Invalid crop dimensions.");
-
+                }
                 Rectangle cropRect = new Rectangle(cropX, cropY, cropWidth, cropHeight);
 
                 using (Bitmap elementImage = new Bitmap(cropRect.Width, cropRect.Height))
