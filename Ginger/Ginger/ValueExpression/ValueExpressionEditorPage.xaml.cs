@@ -642,6 +642,7 @@ namespace Ginger
 
             validationDBPage.RadioButtonsSection.IsVisibleChanged += RadioButtonsSection_IsVisibleChanged;
             var value = validationDBPage.ShowAsWindow();
+            var value = $"{{ EnvApp={envApp} EnvAppDB={dbName} Query={"<TypeQuery>"}}}";
             if (value != null)
             {
                 AddExpToValue(value);
