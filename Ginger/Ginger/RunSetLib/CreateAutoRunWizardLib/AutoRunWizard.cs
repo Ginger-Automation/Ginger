@@ -136,7 +136,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     {
                         if (AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote)
                         {
-                            using ExecutionHandlerAPIClient executionHandlerAPIClient = new(AutoRunConfiguration.ExecutionServiceUrl);
+                            using ExecutionHandlerAPIClient executionHandlerAPIClient = new(GingerPlayEndPointManager.GetExecutionServiceUrl());
                             AddExecutionRequest executionRequest = JsonSerializer.Deserialize<AddExecutionRequest>(
                                 AutoRunConfiguration.CLIContent,
                                 new JsonSerializerOptions()

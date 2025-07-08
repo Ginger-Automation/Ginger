@@ -51,18 +51,21 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         {
             try
             {
-
-                if (!string.IsNullOrEmpty(LoggerConfig.GetCentralLoggerEndPointURLBackwardCompatibility()))
+                if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl) && GingerPlayConfiguration.GingerPlayReportServiceEnabled)
+                {
+                    return GingerPlayConfiguration.GingerPlayGatewayUrl + ACCOUNT_REPORT_SERVICE_URL;
+                }
+                else if (!string.IsNullOrEmpty(GingerPlayConfiguration.CentralizedAccountReportURL))
+                {
+                    return GingerPlayConfiguration.CentralizedAccountReportURL;
+                }
+                else if (!string.IsNullOrEmpty(LoggerConfig.GetCentralLoggerEndPointURLBackwardCompatibility()))
                 {
                     // If the Central Logger URL is set, use it as the Account Report Service URL
                     GingerPlayConfiguration.CentralizedAccountReportURL = LoggerConfig.GetCentralLoggerEndPointURLBackwardCompatibility();
                     GingerPlayConfiguration.GingerPlayEnabled = true;
                     GingerPlayConfiguration.GingerPlayReportServiceEnabled = true;
                     return GingerPlayConfiguration.CentralizedAccountReportURL;
-                }
-                else if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl))
-                {
-                    return GingerPlayConfiguration.GingerPlayGatewayUrl + ACCOUNT_REPORT_SERVICE_URL;
                 }
                 else
                 {
@@ -84,16 +87,20 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         {
             try
             {
-                if (!string.IsNullOrEmpty(LoggerConfig.GetCentralizedHtmlReportServiceURLBackwardCompatibility()))
+                if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl) && GingerPlayConfiguration.GingerPlayReportServiceEnabled)
+                {
+                    return GingerPlayConfiguration.GingerPlayGatewayUrl + HTML_REPORT_SERVICE_URL;
+                }
+                else if (!string.IsNullOrEmpty(GingerPlayConfiguration.CentralizedHTMLReportServiceURL))
+                {
+                    return GingerPlayConfiguration.CentralizedHTMLReportServiceURL;
+                }
+                else if (!string.IsNullOrEmpty(LoggerConfig.GetCentralizedHtmlReportServiceURLBackwardCompatibility()))
                 {
                     GingerPlayConfiguration.CentralizedHTMLReportServiceURL = LoggerConfig.GetCentralizedHtmlReportServiceURLBackwardCompatibility();
                     GingerPlayConfiguration.GingerPlayEnabled = true;
                     GingerPlayConfiguration.GingerPlayReportServiceEnabled = true;
                     return GingerPlayConfiguration.CentralizedHTMLReportServiceURL;
-                }
-                else if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl))
-                {
-                    return GingerPlayConfiguration.GingerPlayGatewayUrl + HTML_REPORT_SERVICE_URL;
                 }
                 else
                 {
@@ -114,7 +121,7 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         {
             try
             {
-                if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl))
+                if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl) && GingerPlayConfiguration.GingerPlayAIServiceEnabled)
                 {
                     return GingerPlayConfiguration.GingerPlayGatewayUrl + AI_SERVICE_URL;
                 }
@@ -137,16 +144,20 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         {
             try
             {
-                if (!string.IsNullOrEmpty(LoggerConfig.GetExecutionServiceURLBackwardCompatibility()))
+                if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl) && GingerPlayConfiguration.GingerPlayExecutionServiceEnabled)
+                {
+                    return GingerPlayConfiguration.GingerPlayGatewayUrl + EXECUTION_SERVICE;
+                }
+                else if (!string.IsNullOrEmpty(GingerPlayConfiguration.CentralizedExecutionHandlerURL))
+                {
+                    return GingerPlayConfiguration.CentralizedExecutionHandlerURL;
+                }
+                else if (!string.IsNullOrEmpty(LoggerConfig.GetExecutionServiceURLBackwardCompatibility()))
                 {
                     GingerPlayConfiguration.CentralizedExecutionHandlerURL = LoggerConfig.GetExecutionServiceURLBackwardCompatibility();
                     GingerPlayConfiguration.GingerPlayEnabled = true;
                     GingerPlayConfiguration.GingerPlayExecutionServiceEnabled = true;
                     return GingerPlayConfiguration.CentralizedExecutionHandlerURL;
-                }
-                else if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl))
-                {
-                    return GingerPlayConfiguration.GingerPlayGatewayUrl + EXECUTION_SERVICE;
                 }
                 else
                 {
