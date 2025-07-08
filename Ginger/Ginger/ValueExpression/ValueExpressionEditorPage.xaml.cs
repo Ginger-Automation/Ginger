@@ -376,6 +376,7 @@ namespace Ginger
                 "Name" => eImageType.IdBadge,
                 "Phone" => eImageType.Phone,
                 "Random" => eImageType.Operations,
+                "Database" => eImageType.Database,
                 _ => throw new KeyNotFoundException(),
             };
             return eImageTypeCat;
@@ -572,7 +573,6 @@ namespace Ginger
         {
             TreeViewItem Parent = AddOrGetCategory("Data");
             TreeViewItem tviEnvs = new TreeViewItem();
-            tviEnvs.Selected += CleanHelpText;
             SetItemView(tviEnvs, "Environments", "", eImageType.Environment);
             Parent.Items.Add(tviEnvs);
 
@@ -582,7 +582,6 @@ namespace Ginger
             {
                 TreeViewItem tviEnv = new TreeViewItem();
                 SetItemView(tviEnv, env.Name, "", eImageType.Environment);
-                tviEnv.Selected += CleanHelpText;
                 tviEnvs.Items.Add(tviEnv);
 
                 foreach (EnvApplication envApplication in env.Applications)
@@ -590,7 +589,6 @@ namespace Ginger
                     TreeViewItem tviEnvApp = new TreeViewItem();
                     SetItemView(tviEnvApp, envApplication.Name, "", eImageType.Window);
                     tviEnv.Items.Add(tviEnvApp);
-                    tviEnvApp.Selected += CleanHelpText;
                     //Add Env URL
                     TreeViewItem tviEnvAppURL = new TreeViewItem();
                     string URLval = "{EnvURL App=" + envApplication.Name + "}";
@@ -609,7 +607,9 @@ namespace Ginger
                         string Paramval = "{EnvDB App=" + envApplication.Name + " Param=" + db.Name + "}";
                         SetItemView(envDb, db.Name, Paramval, eImageType.Database);
                         EnvDatabases.Items.Add(envDb);
-                        envDb.MouseDoubleClick += (sender, e) =>DatabaseValueExpression(sender, e, envApplication.Name, db.Name);
+                        envDb.MouseDoubleClick += (sender, e) => DatabaseValueExpression(sender, e, envApplication.Name, db.Name);
+                        envDb.Selected += EnvDb_Selected;
+                        envDb.Unselected += CleanHelpText;
 
                     }
                     //Add App Global Params
@@ -633,28 +633,26 @@ namespace Ginger
                 }
             }
         }
+
+        private void EnvDb_Selected(object sender, RoutedEventArgs e)
+        {
+            ShowSpecificHelp("Fetch Data From Database", "Database", "Samples", "{EnvApp=<EnvName> EnvAppDB=<DBName> Query=<TypeQuery>}", "Expression:" + System.Environment.NewLine + "Configure the Database in Environment with username, password and table");
+        }
+
         private void DatabaseValueExpression(object sender, MouseButtonEventArgs e, string envApp, string dbName)
         {
-            ValidationDBPage validationDBPage = new ValidationDBPage(new GingerCore.Actions.ActDBValidation() { Context = mContext }, envApp, dbName);
-
-            validationDBPage.ValidationCfgComboBox.SelectedIndex = 0;
-            validationDBPage.ValidationCfgComboBox.IsEnabled = false;
-
-            validationDBPage.RadioButtonsSection.IsVisibleChanged += RadioButtonsSection_IsVisibleChanged;
-            var value = validationDBPage.ShowAsWindow();
-            var value = $"{{ EnvApp={envApp} EnvAppDB={dbName} Query={"<TypeQuery>"}}}";
+            var value = $"{{ EnvApp={envApp} EnvAppDB={dbName} Query={"<TypeQuery>"} }}";
             if (value != null)
             {
-                AddExpToValue(value);
+                xExpressionUCTextEditor.textEditor.TextArea.Selection.ReplaceSelectionWithText(value);
+
+                xExpressionUCTextEditor.textEditor.TextArea.Caret.Offset = 10;
+
+                xExpressionUCTextEditor.textEditor.TextArea.Caret.BringCaretToView();
+
             }
         }
-        private void RadioButtonsSection_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (sender is UIElement element && element.Visibility == Visibility.Visible)
-            {
-                element.Visibility = Visibility.Collapsed;
-            }
-        }
+
 
         private void AddVariables()
         {

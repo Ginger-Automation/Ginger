@@ -1,112 +1,117 @@
 ﻿<?xml version="1.0"?>
 <SyntaxDefinition name="Value Expression Highlighting" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
-		
+
 	<!-- This is the main ruleset. -->
 	<RuleSet>
-		
+
 		<Keywords fontWeight="bold" fontStyle="italic" foreground="Purple">
-			<Word>{Actual}</Word>      
-    </Keywords>
+			<Word>{Actual}</Word>
+		</Keywords>
 
-    <Keywords fontWeight="bold" fontStyle="italic" foreground="Orange">
-      <Word>DS Name=</Word>
-      <Word>DST=</Word>
-      <Word>MASD=</Word>
-      <Word>IDEN=</Word>
-      <Word>QUERY=</Word>
-      <Word>ICOLVAL=</Word>
-      <Word>IROW=</Word>
-      <Word>ROWNUM=</Word>
-      <Word>WCOLVAL=</Word>
-      <Word>WOPR=</Word>
-      <Word>WROWVAL=</Word>
-      <Word>KEY=</Word>
-      <Word>COND=</Word>
+		<Keywords fontWeight="bold" fontStyle="italic" foreground="Orange">
+			<Word>DS Name=</Word>
+			<Word>DST=</Word>
+			<Word>MASD=</Word>
+			<Word>IDEN=</Word>
+			<Word>QUERY=</Word>
+			<Word>ICOLVAL=</Word>
+			<Word>IROW=</Word>
+			<Word>ROWNUM=</Word>
+			<Word>WCOLVAL=</Word>
+			<Word>WOPR=</Word>
+			<Word>WROWVAL=</Word>
+			<Word>KEY=</Word>
+			<Word>COND=</Word>
+		</Keywords>
 
-	</Keywords>
+		<Keywords fontWeight="bold" fontStyle="italic" foreground="Brown">
+			<Word>EnvURL App=</Word>
+			<Word>EnvParam App=</Word>
+			<Word>Param=</Word>
+		</Keywords>
+		
+		<Keywords fontWeight="bold" fontStyle="italic" foreground="Orange">
+			<Word>EnvApp=</Word>
+			<Word>EnvAppDB=</Word>
+			<Word>Query=</Word>
+		</Keywords>
+		
+		<Keywords fontWeight="bold" fontStyle="italic" foreground="Green">
+			<Word>RegEx Fun=</Word>
+			<Word>Pat=</Word>
+			<Word>P1=</Word>
+			<Word>P2=</Word>
+			<Word>Fun=</Word>
+			<Word>IsMatch</Word>
+		</Keywords>
 
-    <Keywords fontWeight="bold" fontStyle="italic" foreground="Brown">
-      <Word>EnvURL App=</Word>
-      <Word>EnvParam App=</Word>
-      <Word>Param=</Word>
-    </Keywords>
+		<Keywords fontWeight="bold" fontStyle="italic" foreground="DeepPink">
+			<Word>VBS Eval=</Word>
+			<Word>Split</Word>
+			<Word>InStr</Word>
+			<Word>Left</Word>
+			<Word>UCase</Word>
+			<Word>LCase</Word>
+			<Word>Mid</Word>
+			<Word>Len</Word>
+			<Word>Trim</Word>
+			<Word>Replace</Word>
+			<Word>Now</Word>
+			<Word>Tomorrow</Word>
+			<Word>Right</Word>
+			<Word>DateSerial</Word>
+			<Word>Year</Word>
+			<Word>Month</Word>
+			<Word>Day</Word>
+			<Word>CInt</Word>
+			<Word>DatePart</Word>
+			<Word>Timer</Word>
+			<Word>Int</Word>
+			<Word>WeekdayName</Word>
+			<Word>DateDiff</Word>
+			<Word>IsDate</Word>
+			<Word>CDate</Word>
+			<Word>Join</Word>
+			<Word>Array</Word>
+			<Word>CStr</Word>
+			<Word>DateAdd</Word>
+			<Word>WScript.CreateObject</Word>
+		</Keywords>
 
-    <Keywords fontWeight="bold" fontStyle="italic" foreground="Green">
-      <Word>RegEx Fun=</Word>
-      <Word>Pat=</Word>
-      <Word>P1=</Word>
-      <Word>P2=</Word>
-      <Word>Fun=</Word>
-      <Word>IsMatch</Word>      
-    </Keywords>
+		<Keywords fontWeight="bold" fontStyle="italic" foreground="Blue">
+			<Word>Var Name=</Word>
+			<Word>Index=</Word>
+			<Word>GetLength=</Word>
+			<Word>IsContains=</Word>
+		</Keywords>
 
-    <Keywords fontWeight="bold" fontStyle="italic" foreground="DeepPink">
-      <Word>VBS Eval=</Word>
-      <Word>Split</Word>
-      <Word>InStr</Word>
-      <Word>Left</Word>
-      <Word>UCase</Word>
-      <Word>LCase</Word>
-      <Word>Mid</Word>
-      <Word>Len</Word>
-      <Word>Trim</Word>
-      <Word>Replace</Word>
-      <Word>Now</Word>
-      <Word>Tomorrow</Word>
-      <Word>Right</Word>
-      <Word>DateSerial</Word>
-      <Word>Year</Word>
-      <Word>Month</Word>
-      <Word>Day</Word>
-      <Word>CInt</Word>
-      <Word>DatePart</Word>
-      <Word>Timer</Word>
-      <Word>Int</Word>
-      <Word>WeekdayName</Word>
-      <Word>DateDiff</Word>
-      <Word>IsDate</Word>
-      <Word>CDate</Word>
-      <Word>Join</Word>
-      <Word>Array</Word>
-      <Word>CStr</Word>
-      <Word>DateAdd</Word>      
-      <Word>WScript.CreateObject</Word>
-    </Keywords>
+		<Keywords fontWeight="bold" fontStyle="italic" foreground="#964D91">
+			<Word>CS Exp=</Word>
+		</Keywords>
 
-    <Keywords fontWeight="bold" fontStyle="italic" foreground="Blue">
-      <Word>Var Name=</Word>
-	  <Word>Index=</Word>
-	  <Word>GetLength=</Word>
-	  <Word>IsContains=</Word>
-	</Keywords>
+		<Keywords fontWeight="bold" fontStyle="italic" foreground="#3EA7FC">
+			<Word>FD Object=</Word>
+			<Word>Field=</Word>
+		</Keywords>
 
-    <Keywords fontWeight="bold" fontStyle="italic" foreground="#964D91">
-      <Word>CS Exp=</Word>
-    </Keywords>
+		<Keywords fontWeight="bold" fontStyle="italic" foreground="Red">
+			<Word>}</Word>
+			<Word>{</Word>
+		</Keywords>
 
-    <Keywords fontWeight="bold" fontStyle="italic" foreground="#3EA7FC">
-      <Word>FD Object=</Word>
-      <Word>Field=</Word>
-    </Keywords>
-    
-    <Keywords fontWeight="bold" fontStyle="italic" foreground="Red">
-      <Word>}</Word>
-      <Word>{</Word>      
-    </Keywords>
-    
-    <!-- Digits -->
+		<!-- Digits -->
 		<Rule foreground="DarkBlue">
-            \b0[xX][0-9a-fA-F]+  # hex number
-        |    \b
-            (    \d+(\.[0-9]+)?   #number with optional floating point
-            |    \.[0-9]+         #or just starting with floating point
-            )
-            ([eE][+-]?[0-9]+)? # optional exponent
-        </Rule>
+			\b0[xX][0-9a-fA-F]+  # hex number
+			|    \b
+			(    \d+(\.[0-9]+)?   #number with optional floating point
+			|    \.[0-9]+         #or just starting with floating point
+			)
+			([eE][+-]?[0-9]+)? # optional exponent
+		</Rule>
 
-    <Rule foreground="Red">
-      {(\bVBS Eval=)\w+\b[^{}]*}
-    </Rule>
+		<Rule foreground="Red">
+			{(\bVBS Eval=)\w+\b[^{}]*}
+		</Rule>
 
-  </RuleSet>
+	</RuleSet>
 </SyntaxDefinition>

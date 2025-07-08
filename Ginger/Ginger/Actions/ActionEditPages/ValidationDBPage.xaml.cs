@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
+using Ginger.UserControlsLib.TextEditor.Common;
 using GingerCore.Actions;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
@@ -117,43 +118,59 @@ namespace Ginger.Actions
             SetQueryParamsGrid();
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtWhere, TextBox.TextProperty, act, ActDBValidation.Fields.Where);
         }
-        public ValidationDBPage(ActDBValidation act, string EnvApplication, string dbName)
-        {
+    
+        SelectedContentArgs mSelectedContentArgs;
+        public ValidationDBPage(SelectedContentArgs selectedContentArgs,ActDBValidation act)
+      {
             InitializeComponent();
+            mSelectedContentArgs = selectedContentArgs;
+            string selValueExpression = selectedContentArgs.TextEditor.Text.Substring(selectedContentArgs.StartPos, selectedContentArgs.Length);
 
-            this.mAct = act;
+            mAct = act;
+            string envAppPattern = @"EnvApp=(\w+)";
+            string dbNamePattern = @"EnvAppDB=(\w+)";
+            string queryPattern = @"Query=([^}]*)";
+
+            string EnvApplication = Regex.Match(selValueExpression, envAppPattern).Groups[1].Value;
+            string dbName = Regex.Match(selValueExpression, dbNamePattern).Groups[1].Value;
+            string query = Regex.Match(selValueExpression, queryPattern).Groups[1].Value;
+
+
+            GingerCore.General.FillComboFromEnumObj(ValidationCfgComboBox, act.DBValidationType);
             QueryTypeRadioButton.Init(typeof(ActDBValidation.eQueryType), SqlSelection, mAct.GetOrCreateInputParam(ActDBValidation.Fields.QueryTypeRadioButton, ActDBValidation.eQueryType.FreeSQL.ToString()), QueryType_SelectionChanged);
             checkQueryType();
             AppNameComboBox.SelectionChanged -= AppNameComboBox_SelectionChanged;
             DBNameComboBox.SelectionChanged -= DBNameComboBox_SelectionChanged;
+            RadioButtonsSection.IsVisibleChanged += RadioButtonsSection_IsVisibleChanged;
             AppNameComboBox.ItemsSource = new object[] { EnvApplication };
             AppNameComboBox.SelectedIndex = 0;
             DBNameComboBox.ItemsSource = new object[] { dbName };
             DBNameComboBox.SelectedIndex = 0;
             AppNameComboBox.IsEditable = false;
             DBNameComboBox.IsEditable = false;
-            GingerCore.General.FillComboFromEnumObj(ValidationCfgComboBox, act.DBValidationType);
+            ValidationCfgComboBox.SelectedIndex = 0;
+            ValidationCfgComboBox.IsEnabled = false;
+            SQLUCValueExpression.ValueTextBox.Text= query.TrimEnd(' ');
             SetVisibleControlsForAction();
             SQLUCValueExpression.OpenExpressionEditorButton.Visibility = Visibility.Collapsed;
         }
-        public string ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
+        public void UpdateContent()
         {
-            this.Width = 700;
-            this.Height = 500;
-            Button okBtn = new Button
-            {
-                Content = "OK"
-            };
-            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: OKButton_Click);
-            ObservableList<Button> winButtons = [okBtn];
-
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, true, "Cancel");
-            return valueExpression;
+            string txt = mSelectedContentArgs.TextEditor.Text[..mSelectedContentArgs.StartPos];
+            txt += GetValue();
+            txt += mSelectedContentArgs.TextEditor.Text[(mSelectedContentArgs.EndPos + 1)..];
+            mSelectedContentArgs.TextEditor.Text = txt;
         }
-        GenericWindow _pageGenericWin = null;
+        private void RadioButtonsSection_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (sender is UIElement element && element.Visibility == Visibility.Visible)
+            {
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
         private string valueExpression { get; set; }
 
-        private void OKButton_Click(object sender, RoutedEventArgs e)
+        private string GetValue()
         {
             string envApp = AppNameComboBox?.SelectedValue?.ToString();
             string envAppDB = DBNameComboBox?.SelectedValue?.ToString();
@@ -176,7 +193,7 @@ namespace Ginger.Actions
             if (errors.Any())
             {
                 errors.ForEach(param => Reporter.ToLog(eLogLevel.ERROR, $"{param} is null or empty."));
-                return;
+                return "";
             }
 
             // Simplified TextBlockHelper usage
@@ -187,11 +204,9 @@ namespace Ginger.Actions
             a.AddBoldText("EnvAppDB=");
             a.AddText($"{envAppDB} ");
             a.AddBoldText("Query=");
-            a.AddText($"{query} ");
-            a.AddText("}");
-            valueExpression = a.GetText();
-
-            _pageGenericWin.Close();
+            a.AddText($"{query}");
+            a.AddText(" }");
+           return a.GetText();
         }
 
 
