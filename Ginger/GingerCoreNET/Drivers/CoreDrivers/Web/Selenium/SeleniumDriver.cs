@@ -3507,17 +3507,17 @@ namespace GingerCore.Drivers
                     }
                     break;
                 case ActGenElement.eGenElementAction.SetAttributeUsingJs:
-                {
-                    e = LocateElement(act);
-                    char[] delimit = new char[] { '=' };
-                    string insertval = act.GetInputParamCalculatedValue("Value");
-                    string[] vals = insertval.Split(delimit, 2);
-                    if (vals.Length != 2)
                     {
-                        throw new Exception(@"Inot string should be in the format : attribute=value");
-                    } ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
-                }
-                break;
+                        e = LocateElement(act);
+                        char[] delimit = new char[] { '=' };
+                        string insertval = act.GetInputParamCalculatedValue("Value");
+                        string[] vals = insertval.Split(delimit, 2);
+                        if (vals.Length != 2)
+                        {
+                            throw new Exception(@"Inot string should be in the format : attribute=value");
+                        } ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
+                    }
+                    break;
                 default:
                     throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
 
@@ -10969,21 +10969,30 @@ namespace GingerCore.Drivers
             {
                 if (isNetworkLogMonitoringStarted)
                 {
-                    act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
-                    act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
-                    foreach (var val in networkRequestLogList.ToList())
+                    var parsedRequestObjects = networkRequestLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
+                    var parsedResponseObjects = networkResponseLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
+
+                    string formattedRequests = JsonConvert.SerializeObject(parsedRequestObjects, Formatting.Indented);
+                    string formattedResponses = JsonConvert.SerializeObject(parsedResponseObjects, Formatting.Indented);
+
+                    act.AddOrUpdateReturnParamActual("Raw Request", formattedRequests);
+                    act.AddOrUpdateReturnParamActual("Raw Response", formattedResponses);
+
+                    foreach (var val in networkRequestLogList)
                     {
-                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
+                        var value = val.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : val.Item2;
+                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", JsonConvert.SerializeObject(value, Formatting.Indented));
                     }
 
-                    foreach (var val in networkResponseLogList.ToList())
+                    foreach (var val in networkResponseLogList)
                     {
-                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
+                        var value = val.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : val.Item2;
+                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", JsonConvert.SerializeObject(value, Formatting.Indented));
                     }
                 }
                 else
                 {
-                    act.ExInfo = $"Action is skipped,{nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
+                    act.ExInfo = $"Action is skipped, {nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                 }
             }
@@ -10993,6 +11002,7 @@ namespace GingerCore.Drivers
             }
         }
 
+      
 
 
         public async Task StartMonitoringNetworkLog(IWebDriver webDriver)
@@ -11023,12 +11033,12 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-
         public async Task StopMonitoringNetworkLog(ActBrowserElement act)
         {
             try
             {
                 act.Artifacts = [];
+
                 if (isNetworkLogMonitoringStarted)
                 {
                     await interceptor.StopMonitoring();
@@ -11037,38 +11047,61 @@ namespace GingerCore.Drivers
                     interceptor.NetworkResponseReceived -= OnNetworkResponseReceived;
                     interceptor.ClearRequestHandlers();
                     interceptor.ClearResponseHandlers();
-                    act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList(), Formatting.Indented));
-                    act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList(), Formatting.Indented));
-                    foreach (var val in networkRequestLogList.ToList())
+
+                    var parsedRequestObjects = networkRequestLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
+                    var parsedResponseObjects = networkResponseLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2) .ToList();
+
+                    string formattedRequests = JsonConvert.SerializeObject(parsedRequestObjects, Formatting.Indented);
+                    string formattedResponses = JsonConvert.SerializeObject(parsedResponseObjects, Formatting.Indented);
+
+                    act.AddOrUpdateReturnParamActual("Raw Request", formattedRequests);
+                    act.AddOrUpdateReturnParamActual("Raw Response", formattedResponses);
+
+                    foreach (var val in networkRequestLogList)
                     {
-                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
+                        var value = val.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : val.Item2;
+                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}",JsonConvert.SerializeObject(value, Formatting.Indented));
                     }
-                    foreach (var val in networkResponseLogList.ToList())
+
+                    foreach (var val in networkResponseLogList)
                     {
-                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
+                        var value = val.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : val.Item2;
+                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", JsonConvert.SerializeObject(value, Formatting.Indented));
                     }
 
                     await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V136.Network.DisableCommandSettings());
                     devToolsSession.Dispose();
                     devTools.CloseDevToolsSession();
 
-                    string requestPath = _BrowserHelper.CreateNetworkLogFile("NetworklogRequest", networkRequestLogList);
-                    act.ExInfo = $"RequestFile : {requestPath}\n";
-                    string responsePath = _BrowserHelper.CreateNetworkLogFile("NetworklogResponse", networkResponseLogList);
-                    act.ExInfo = $"{act.ExInfo} ResponseFile : {responsePath}\n";
+                    try
+                    {
+                        var parsedRequestTuples = networkRequestLogList.Select((x, i) => Tuple.Create(x.Item1, parsedRequestObjects[i])).ToList();
 
-                    act.AddOrUpdateReturnParamActual("RequestFile", requestPath);
-                    act.AddOrUpdateReturnParamActual("ResponseFile", responsePath);
+                        var parsedResponseTuples = networkResponseLogList.Select((x, i) => Tuple.Create(x.Item1, parsedResponseObjects[i])).ToList();
 
-                    Act.AddArtifactToAction(Path.GetFileName(requestPath), act, requestPath);
+                        string requestPath = _BrowserHelper.CreateNetworkLogFile("NetworklogRequest", parsedRequestTuples);
+                        string responsePath = _BrowserHelper.CreateNetworkLogFile("NetworklogResponse", parsedResponseTuples);
 
-                    Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);
+
+                        act.ExInfo = $"RequestFile : {requestPath}\nResponseFile : {responsePath}\n";
+
+                        act.AddOrUpdateReturnParamActual("RequestFile", requestPath);
+                        act.AddOrUpdateReturnParamActual("ResponseFile", responsePath);
+
+                        Act.AddArtifactToAction(Path.GetFileName(requestPath), act, requestPath);
+                        Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);
+                    }
+                    catch (Exception fileEx)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to create or attach network log files", fileEx);
+                        act.ExInfo += "\nFailed to create or attach network log files.";
+                        act.AddOrUpdateReturnParamActual("NetworkLogFileError", fileEx.Message);
+                    }
                 }
                 else
                 {
-                    act.ExInfo = $"Action is skipped,{nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
+                    act.ExInfo = $"Action is skipped, {nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-
                 }
             }
             catch (Exception ex)
@@ -11076,6 +11109,8 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
+
+        
 
         private int CreateConsoleLogFile(string filePath, string logs, ActBrowserElement act)
         {
