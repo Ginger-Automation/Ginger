@@ -1476,7 +1476,7 @@ namespace Amdocs.Ginger.Repository
         }
 
         /// <summary>
-        /// This method is being called afetr object type is read from xml and all properties/fields been deserialzied
+        /// This method is being called after object type is read from xml and all properties/fields been deserialzied
         /// Use this method to do updates to the object being serialzied 
         /// </summary>
         public virtual void PostDeserialization()

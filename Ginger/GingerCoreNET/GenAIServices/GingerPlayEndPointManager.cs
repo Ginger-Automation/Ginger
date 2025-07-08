@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
+using Ginger.Reports;
 using System;
 
 namespace Amdocs.Ginger.CoreNET.GenAIServices
@@ -39,15 +40,24 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         private const string GENERATE_TOKEN_URL = "connect/token";
 
 
+        private static readonly ExecutionLoggerConfiguration LoggerConfig = WorkSpace.Instance.Solution.LoggerConfigurations;
+
+
         private static readonly GingerPlayConfiguration GingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count == 0
       ? new GingerPlayConfiguration()
       : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+
         public static string GetAccountReportServiceUrl()
         {
             try
             {
-                if (!string.IsNullOrEmpty(GingerPlayConfiguration.CentralizedAccountReportURL))
+
+                if (!string.IsNullOrEmpty(LoggerConfig.GetCentralLoggerEndPointURLBackwardCompatibility()))
                 {
+                    // If the Central Logger URL is set, use it as the Account Report Service URL
+                    GingerPlayConfiguration.CentralizedAccountReportURL = LoggerConfig.GetCentralLoggerEndPointURLBackwardCompatibility();
+                    GingerPlayConfiguration.GingerPlayEnabled = true;
+                    GingerPlayConfiguration.GingerPlayReportServiceEnabled = true;
                     return GingerPlayConfiguration.CentralizedAccountReportURL;
                 }
                 else if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl))
@@ -74,8 +84,11 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         {
             try
             {
-                if (!string.IsNullOrEmpty(GingerPlayConfiguration.CentralizedHTMLReportServiceURL))
+                if (!string.IsNullOrEmpty(LoggerConfig.GetCentralizedHtmlReportServiceURLBackwardCompatibility()))
                 {
+                    GingerPlayConfiguration.CentralizedHTMLReportServiceURL = LoggerConfig.GetCentralizedHtmlReportServiceURLBackwardCompatibility();
+                    GingerPlayConfiguration.GingerPlayEnabled = true;
+                    GingerPlayConfiguration.GingerPlayReportServiceEnabled = true;
                     return GingerPlayConfiguration.CentralizedHTMLReportServiceURL;
                 }
                 else if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl))
@@ -124,8 +137,11 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         {
             try
             {
-                if (!string.IsNullOrEmpty(GingerPlayConfiguration.CentralizedExecutionHandlerURL))
+                if (!string.IsNullOrEmpty(LoggerConfig.GetExecutionServiceURLBackwardCompatibility()))
                 {
+                    GingerPlayConfiguration.CentralizedExecutionHandlerURL = LoggerConfig.GetExecutionServiceURLBackwardCompatibility();
+                    GingerPlayConfiguration.GingerPlayEnabled = true;
+                    GingerPlayConfiguration.GingerPlayExecutionServiceEnabled = true;
                     return GingerPlayConfiguration.CentralizedExecutionHandlerURL;
                 }
                 else if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl))
