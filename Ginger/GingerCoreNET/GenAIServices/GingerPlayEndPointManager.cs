@@ -148,17 +148,6 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
                 {
                     return GingerPlayConfiguration.GingerPlayGatewayUrl + EXECUTION_SERVICE;
                 }
-                else if (!string.IsNullOrEmpty(GingerPlayConfiguration.CentralizedExecutionHandlerURL))
-                {
-                    return GingerPlayConfiguration.CentralizedExecutionHandlerURL;
-                }
-                else if (!string.IsNullOrEmpty(LoggerConfig.GetExecutionServiceURLBackwardCompatibility()))
-                {
-                    GingerPlayConfiguration.CentralizedExecutionHandlerURL = LoggerConfig.GetExecutionServiceURLBackwardCompatibility();
-                    GingerPlayConfiguration.GingerPlayEnabled = true;
-                    GingerPlayConfiguration.GingerPlayExecutionServiceEnabled = true;
-                    return GingerPlayConfiguration.CentralizedExecutionHandlerURL;
-                }
                 else
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting Execution Service URL");

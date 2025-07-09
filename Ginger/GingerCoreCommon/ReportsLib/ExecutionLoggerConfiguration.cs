@@ -192,8 +192,6 @@ namespace Ginger.Reports
         }
 
         // For supporting backward compatibility with old Ginger versions
-        private string mExecutionHandlerURL;
-        public string GetExecutionServiceURLBackwardCompatibility() => mExecutionHandlerURL;
 
         private string mCentralLoggerEndPointUrl;
         public string GetCentralLoggerEndPointURLBackwardCompatibility() => mCentralLoggerEndPointUrl;
@@ -215,11 +213,6 @@ namespace Ginger.Reports
                 if (string.Equals("CentralLoggerEndPointUrl", name) && !string.IsNullOrEmpty(value))
                 {
                     this.mCentralLoggerEndPointUrl = value;
-                    return true;
-                }
-                if (string.Equals("ExecutionHandlerURL", name) && !string.IsNullOrEmpty(value))
-                {
-                    this.mExecutionHandlerURL = value;
                     return true;
                 }
             }
