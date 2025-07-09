@@ -126,10 +126,10 @@ namespace Ginger.Actions
             mSelectedContentArgs = selectedContentArgs;
             string selValueExpression = selectedContentArgs.TextEditor.Text.Substring(selectedContentArgs.StartPos, selectedContentArgs.Length);
 
-            mAct = act;
-            string envAppPattern = @"EnvApp=(\w+)";
-            string dbNamePattern = @"EnvAppDB=(\w+)";
-            string queryPattern = @"Query=([^}]*)";
+            mAct = act; 
+            string envAppPattern = @"EnvApp=([^}\s]+)";
+            string dbNamePattern = @"EnvAppDB=([^}\s]+)";
+            string queryPattern = @"Query=([^}]+)";
 
             string EnvApplication = Regex.Match(selValueExpression, envAppPattern).Groups[1].Value;
             string dbName = Regex.Match(selValueExpression, dbNamePattern).Groups[1].Value;
@@ -168,7 +168,6 @@ namespace Ginger.Actions
                 element.Visibility = Visibility.Collapsed;
             }
         }
-        private string valueExpression { get; set; }
 
         private string GetValue()
         {

@@ -102,7 +102,7 @@ namespace GingerCore
 
         private static Regex rxDSPattern = new(@"{(\bDS Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
         public static Regex rxEnvParamPattern = new(@"{(\bEnvParam App=)\w+\b[^{}]*}", RegexOptions.Compiled);
-        public static Regex rxEnvDB = new(@"{\s*(EnvApp=\w+)\s+(EnvAppDB=\w+)\s+(Query=[^{}]+)\s*}", RegexOptions.Compiled);
+        public static readonly Regex rxEnvDB = new(@"{\s*(EnvApp=\w+)\s+(EnvAppDB=\w+)\s+(Query=[^{}]+)\s*}", RegexOptions.Compiled);
         public static Regex rxEnvUrlPattern = new(@"{(\bEnvURL App=)\w+\b[^{}]*}", RegexOptions.Compiled);
         private static Regex rxFDPattern = new(@"{(\bFD Object=)\w+\b[^{}]*}", RegexOptions.Compiled);
         private static Regex rxExecutionJsonDataPattern = new(@"{ExecutionJsonData}", RegexOptions.Compiled);
@@ -1542,6 +1542,8 @@ namespace GingerCore
                 string envApp = envAppMatch.Groups[1].Value;
                 string envAppDB = envAppDBMatch.Groups[1].Value;
                 string query = queryMatch.Groups[1].Value;
+
+
 
                 if (string.IsNullOrWhiteSpace(envApp) || string.IsNullOrWhiteSpace(envAppDB) || string.IsNullOrWhiteSpace(query))
                 {
