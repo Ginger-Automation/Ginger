@@ -23,7 +23,7 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
             try
             {
                 GingerPlayAPITokenResponseInfo responseInfo;
-
+                valueExpression = new();
 
                 _httpClient = new HttpClient();
                 var host = CredentialsCalculation(GingerPlayEndPointManager.GetGenerateTokenUrl());

@@ -185,7 +185,7 @@ namespace Ginger.ExternalConfigurations
             xTestConBtn.IsEnabled = isChecked;
         }
 
-        private void xGatewayURLTextBox_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        private void xClientIdTextBox_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
         {
             if (!EncryptionHandler.IsStringEncrypted(xClientIdTextBox.ValueTextBox.Text))
             {
@@ -193,7 +193,7 @@ namespace Ginger.ExternalConfigurations
             }
         }
 
-        private void xClientIdTextBox_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        private void xClientSecretTextBox_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
         {
             if (!EncryptionHandler.IsStringEncrypted(xClientSecretTextBox.ValueTextBox.Text))
             {

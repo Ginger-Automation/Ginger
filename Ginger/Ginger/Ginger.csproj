@@ -586,7 +586,6 @@
     <None Remove="Images\Views32x32.png" />
     <None Remove="Images\WireMockLogo16x16.png" />
     <None Remove="Images\WireMock_Logo.png" />
-     <None Remove="Images\NewGingerFavIcon.png" />
     <None Remove="Images\Workflow16x16.png" />
     <None Remove="Images\Workflow32x32.png" />
     <None Remove="Images\X16x16.png" />
@@ -612,6 +611,7 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoGray.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerIconWhite.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\GingerPlayLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerSplashImageNew.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\hbase.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\hbase.svg" />
@@ -2513,6 +2513,9 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconWhite.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerPlayLogo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerSplashImageNew.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -2564,9 +2567,6 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\WireMockLogo16x16.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-	<Resource Include="UserControlsLib\ImageMakerLib\Images\NewGingerFavIcon.png">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-  </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\xml.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -2652,9 +2652,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="StaticDrivers\handle.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="UserControlsLib\ImageMakerLib\Images\NewGingerFavIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -181,7 +181,7 @@ namespace Amdocs.Ginger.Common.Enums
         ExpandToFullScreen,
         Exchange,
         GingerAnalytics,
-        NewGingerFavIcon,
+        GingerPlayLogo,
         WireMockLogo,
         WireMock_Logo,
         WireMockLogo16x16,
