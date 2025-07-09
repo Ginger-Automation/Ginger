@@ -636,12 +636,12 @@ namespace Ginger
 
         private void EnvDb_Selected(object sender, RoutedEventArgs e)
         {
-            ShowSpecificHelp("Fetch Data From Database", "Database", "Samples", "{EnvApp=<EnvName> EnvAppDB=<DBName> Query=<TypeQuery>}", "Expression:" + System.Environment.NewLine + "Configure the Database in Environment with username, password and table");
+            ShowSpecificHelp("Fetch Data From Database", "", "Sample", "{EnvApp=<EnvName> EnvAppDB=<DBName> Query=<TypeQuery>}\nExample:\n{ EnvApp=web EnvAppDB=classicmodels Query=select customerName from customers where customerNumber=103 }\n It will fetch one value at time.", "Expression:" + System.Environment.NewLine + "Configure the Database in Environment with username, password and table");
         }
 
         private void DatabaseValueExpression(object sender, MouseButtonEventArgs e, string envApp, string dbName)
         {
-            var value = $"{{ EnvApp={envApp} EnvAppDB={dbName} Query={"<TypeQuery>"} }}";
+            var value = $"{{EnvApp={envApp} EnvAppDB={dbName} Query={"<TypeQuery>"}}}";
             if (value != null)
             {
                 xExpressionUCTextEditor.textEditor.TextArea.Selection.ReplaceSelectionWithText(value);

@@ -198,14 +198,14 @@ namespace Ginger.Actions
 
             // Simplified TextBlockHelper usage
             var a = new TextBlockHelper(new TextBlock());
-            a.AddText("{ ");
+            a.AddText("{");
             a.AddBoldText("EnvApp=");
             a.AddText($"{envApp} ");
             a.AddBoldText("EnvAppDB=");
             a.AddText($"{envAppDB} ");
             a.AddBoldText("Query=");
             a.AddText($"{query}");
-            a.AddText(" }");
+            a.AddText("}");
            return a.GetText();
         }
 

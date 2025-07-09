@@ -30,7 +30,7 @@
 			<Word>Param=</Word>
 		</Keywords>
 		
-		<Keywords fontWeight="bold" fontStyle="italic" foreground="Orange">
+		<Keywords fontWeight="bold" fontStyle="italic" foreground="Brown">
 			<Word>EnvApp=</Word>
 			<Word>EnvAppDB=</Word>
 			<Word>Query=</Word>

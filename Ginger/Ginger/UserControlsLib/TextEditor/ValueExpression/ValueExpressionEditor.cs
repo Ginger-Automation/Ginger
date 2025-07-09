@@ -186,7 +186,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             {
                 p = new ActDataSourcePage(SelectedContentArgs);
             }
-            if (txt.StartsWith("{ EnvApp="))
+            if (txt.StartsWith("{EnvApp="))
             {
                 p = new ValidationDBPage(SelectedContentArgs, new GingerCore.Actions.ActDBValidation() { Context = mContext });
             }
