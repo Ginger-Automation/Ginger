@@ -1188,15 +1188,18 @@ namespace GingerCoreNET.GeneralLib
                 {
                     throw new ArgumentException("Invalid crop dimensions.");
                 }
+                // Clamp crop rectangle to the bounds of the full image
                 Rectangle cropRect = new Rectangle(cropX, cropY, cropWidth, cropHeight);
-
-                using (Bitmap elementImage = new Bitmap(cropRect.Width, cropRect.Height))
+                cropRect.Intersect(new Rectangle(0, 0, fullImage.Width, fullImage.Height));
+                if (cropRect.Width == 0 || cropRect.Height == 0)
                 {
-                    using (Graphics g = Graphics.FromImage(elementImage))
-                    {
-                        g.DrawImage(fullImage, new Rectangle(0, 0, cropRect.Width, cropRect.Height), cropRect, GraphicsUnit.Pixel);
-                    }
+                    Reporter.ToLog(eLogLevel.WARN,
+                    $"Element bounds {cropX},{cropY},{cropWidth},{cropHeight} are outside the screenshot area {fullImage.Width}x{fullImage.Height}");
+                    return null;
+                }
 
+                using (Bitmap elementImage = fullImage.Clone(cropRect, fullImage.PixelFormat))
+                {
                     using (MemoryStream ms = new MemoryStream())
                     {
                         elementImage.Save(ms, ImageFormat.Png);
@@ -1224,16 +1227,21 @@ namespace GingerCoreNET.GeneralLib
                 {
                     // Remove the square brackets and split the string
                     string[] parts = BoundsValue.Replace("[", "").Split(']');
-
+                    if (parts.Length < 2)
+                    {
+                        throw new FormatException($"Unexpected bounds format: {BoundsValue}");
+                    }
                     // Parse the first part as x and y
                     string[] xy = parts[0].Split(',');
-                    cropX = int.Parse(xy[0]);
-                    cropY = int.Parse(xy[1]);
 
                     // Parse the second part as width and height
                     string[] wh = parts[1].Split(',');
-                    int x2 = int.Parse(wh[0]);
-                    int y2 = int.Parse(wh[1]);
+
+                    if (!int.TryParse(xy[0], out cropX) || !int.TryParse(xy[1], out cropY) || !int.TryParse(wh[0], out int x2) || !int.TryParse(wh[1], out int y2))
+                    {
+                        throw new FormatException($"Unable to parse bounds string: {BoundsValue}");
+                    }
+
                     cropWidth = Math.Max(0, x2 - cropX);
                     cropHeight = Math.Max(0, y2 - cropY);
                 }
