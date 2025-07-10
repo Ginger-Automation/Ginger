@@ -82,15 +82,7 @@ namespace Ginger.ExternalConfigurations
 
         private void xAllowGingerPlayCheckBox_Checked(object sender, System.Windows.RoutedEventArgs e)
         {
-            bool isChecked = xAllowGingerPlayCheckBox.IsChecked == true;
-            gingerPlayConfiguration.GingerPlayEnabled = isChecked;
-            xGatewayURLTextBox.IsEnabled = isChecked;
-            xClientIdTextBox.IsEnabled = isChecked;
-            xClientSecretTextBox.IsEnabled = isChecked;
-            xReportServiceCheckBox.IsEnabled = isChecked;
-            xAIServiceCheckBox.IsEnabled = isChecked;
-            xExecutionServiceCheckBox.IsEnabled = isChecked;
-            xTestConBtn.IsEnabled = isChecked;
+            UpdateControlStates();
         }
 
         private async void xTestConBtn_Click(object sender, RoutedEventArgs e)
@@ -111,17 +103,17 @@ namespace Ginger.ExternalConfigurations
                 // Check health for selected services
                 var healthMessages = new List<string>();
 
-                if (xReportServiceCheckBox.IsChecked == true)
+                if ((bool)xReportServiceCheckBox.IsChecked)
                 {
                     bool isReportServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetReportServiceHealthUrl());
                     healthMessages.Add($"Report Service: {(isReportServiceHealthy ? "UP" : "DOWN")}");
                 }
-                if (xExecutionServiceCheckBox.IsChecked == true)
+                if ((bool)xExecutionServiceCheckBox.IsChecked)
                 {
                     bool isExecutionServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetExecutionServiceHealthUrl());
                     healthMessages.Add($"Execution Service: {(isExecutionServiceHealthy ? "UP" : "DOWN")}");
                 }
-                if (xAIServiceCheckBox.IsChecked == true)
+                if ((bool)xAIServiceCheckBox.IsChecked)
                 {
                     bool isAIServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetAIServiceHealthUrl());
                     healthMessages.Add($"AI Service: {(isAIServiceHealthy ? "UP" : "DOWN")}");
@@ -173,7 +165,10 @@ namespace Ginger.ExternalConfigurations
 
         private void xAllowGingerPlayCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-
+            UpdateControlStates();
+        }
+        private void UpdateControlStates()
+        {
             bool isChecked = xAllowGingerPlayCheckBox.IsChecked == true;
             gingerPlayConfiguration.GingerPlayEnabled = isChecked;
             xGatewayURLTextBox.IsEnabled = isChecked;
@@ -184,7 +179,6 @@ namespace Ginger.ExternalConfigurations
             xExecutionServiceCheckBox.IsEnabled = isChecked;
             xTestConBtn.IsEnabled = isChecked;
         }
-
         private void xClientIdTextBox_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
         {
             if (!EncryptionHandler.IsStringEncrypted(xClientIdTextBox.ValueTextBox.Text))

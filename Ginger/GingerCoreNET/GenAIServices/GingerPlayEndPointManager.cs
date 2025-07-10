@@ -187,8 +187,13 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         {
             var baseUrl = GingerPlayConfiguration.GingerPlayGatewayUrl;
             if (string.IsNullOrEmpty(baseUrl))
+            {
                 return null;
-            if (!baseUrl.EndsWith("/")) baseUrl += "/";
+            }
+            if (!baseUrl.EndsWith("/"))
+            {
+                baseUrl += "/";
+            }
             return baseUrl + path;
         }
     }
