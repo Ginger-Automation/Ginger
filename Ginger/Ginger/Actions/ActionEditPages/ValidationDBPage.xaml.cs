@@ -20,9 +20,11 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
+using Ginger.UserControlsLib.TextEditor.Common;
 using GingerCore.Actions;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
+using GingerCore.Helpers;
 using GingerCore.NoSqlBase;
 using System;
 using System.Collections.Generic;
@@ -95,8 +97,7 @@ namespace Ginger.Actions
             txtInsertJson.ValueTextBox.Text = string.Empty;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtInsertJson, TextBox.TextProperty, act, nameof(ActDBValidation.InsertJson), BindingMode.TwoWay);
             txtInsertJson.BindControl(Context.GetAsContext(act.Context), act, nameof(ActDBValidation.InsertJson));
-            txtInsertJson.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.InsertJson), string.Empty),
-                               true, false);
+            txtInsertJson.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.InsertJson), string.Empty), true, false);
             txtInsertJson.ValueTextBox.AddValidationRule(new RunSetLib.CreateCLIWizardLib.ValidateJsonFormat());
 
             txtInsertJson.AdjustHight(200);
@@ -117,6 +118,96 @@ namespace Ginger.Actions
             SetQueryParamsGrid();
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtWhere, TextBox.TextProperty, act, ActDBValidation.Fields.Where);
         }
+    
+        SelectedContentArgs mSelectedContentArgs;
+        public ValidationDBPage(SelectedContentArgs selectedContentArgs,ActDBValidation act)
+      {
+            InitializeComponent();
+            mSelectedContentArgs = selectedContentArgs;
+            string selValueExpression = selectedContentArgs.TextEditor.Text.Substring(selectedContentArgs.StartPos, selectedContentArgs.Length);
+
+            mAct = act; 
+            string envAppPattern = @"EnvApp=([^}\s]+)";
+            string dbNamePattern = @"EnvAppDB=([^}\s]+)";
+            string queryPattern = @"Query=([^}]+)";
+
+            string EnvApplication = Regex.Match(selValueExpression, envAppPattern).Groups[1].Value;
+            string dbName = Regex.Match(selValueExpression, dbNamePattern).Groups[1].Value;
+            string query = Regex.Match(selValueExpression, queryPattern).Groups[1].Value;
+
+
+            GingerCore.General.FillComboFromEnumObj(ValidationCfgComboBox, act.DBValidationType);
+            QueryTypeRadioButton.Init(typeof(ActDBValidation.eQueryType), SqlSelection, mAct.GetOrCreateInputParam(ActDBValidation.Fields.QueryTypeRadioButton, ActDBValidation.eQueryType.FreeSQL.ToString()), QueryType_SelectionChanged);
+            checkQueryType();
+            AppNameComboBox.SelectionChanged -= AppNameComboBox_SelectionChanged;
+            DBNameComboBox.SelectionChanged -= DBNameComboBox_SelectionChanged;
+            RadioButtonsSection.IsVisibleChanged += RadioButtonsSection_IsVisibleChanged;
+            AppNameComboBox.ItemsSource = new object[] { EnvApplication };
+            AppNameComboBox.SelectedIndex = 0;
+            DBNameComboBox.ItemsSource = new object[] { dbName };
+            DBNameComboBox.SelectedIndex = 0;
+            AppNameComboBox.IsEditable = false;
+            DBNameComboBox.IsEditable = false;
+            ValidationCfgComboBox.SelectedIndex = 0;
+            ValidationCfgComboBox.IsEnabled = false;
+            SQLUCValueExpression.ValueTextBox.Text= query.TrimEnd(' ');
+            SetVisibleControlsForAction();
+            SQLUCValueExpression.OpenExpressionEditorButton.Visibility = Visibility.Collapsed;
+        }
+        public void UpdateContent()
+        {
+            string txt = mSelectedContentArgs.TextEditor.Text[..mSelectedContentArgs.StartPos];
+            txt += GetValue();
+            txt += mSelectedContentArgs.TextEditor.Text[(mSelectedContentArgs.EndPos + 1)..];
+            mSelectedContentArgs.TextEditor.Text = txt;
+        }
+        private void RadioButtonsSection_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (sender is UIElement element && element.Visibility == Visibility.Visible)
+            {
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private string GetValue()
+        {
+            string envApp = AppNameComboBox?.SelectedValue?.ToString();
+            string envAppDB = DBNameComboBox?.SelectedValue?.ToString();
+            string query = SQLUCValueExpression?.ValueTextBox?.Text;
+
+            var errors = new List<string>();
+            if (string.IsNullOrWhiteSpace(envApp)) 
+            { 
+                errors.Add("EnvApp"); 
+            }
+            if (string.IsNullOrWhiteSpace(envAppDB)) 
+            { 
+                errors.Add("EnvAppDB"); 
+            }
+            if (string.IsNullOrWhiteSpace(query)) 
+            {
+                errors.Add("Query"); 
+            }
+
+            if (errors.Any())
+            {
+                errors.ForEach(param => Reporter.ToLog(eLogLevel.ERROR, $"{param} is null or empty."));
+                return "";
+            }
+
+            // Simplified TextBlockHelper usage
+            var a = new TextBlockHelper(new TextBlock());
+            a.AddText("{");
+            a.AddBoldText("EnvApp=");
+            a.AddText($"{envApp} ");
+            a.AddBoldText("EnvAppDB=");
+            a.AddText($"{envAppDB} ");
+            a.AddBoldText("Query=");
+            a.AddText($"{query}");
+            a.AddText("}");
+           return a.GetText();
+        }
+
 
         private async void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {

@@ -79,7 +79,8 @@ namespace GingerCore.Variables
             OutputVariable,
             ApplicationModelParameter,
             DataSource,
-            ActivityOutputVariable
+            ActivityOutputVariable,
+            ValueExpression
         }
 
         private bool mSetAsInputValue = true;

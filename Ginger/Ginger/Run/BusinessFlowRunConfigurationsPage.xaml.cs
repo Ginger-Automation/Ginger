@@ -188,7 +188,7 @@ namespace Ginger.Run
                             }
                     }),
                     WidthWeight = 40,
-
+                
                 });
             }
             else if (mWindowMode == eWindowMode.SummaryView)

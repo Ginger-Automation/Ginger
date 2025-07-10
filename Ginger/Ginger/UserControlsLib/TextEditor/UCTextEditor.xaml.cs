@@ -46,7 +46,7 @@ namespace Ginger.UserControlsLib.TextEditor
     public partial class UCTextEditor : UserControl, IDragDrop, ITextHandler
     {
         TextEditorBase mTextEditor = null;
-        GridLength mLastEditPageRowHeight = new GridLength(150);
+        GridLength mLastEditPageRowHeight = new GridLength(200);
         CompletionWindow completionWindow;
 
         public bool AllowWordWrapping
@@ -316,13 +316,13 @@ namespace Ginger.UserControlsLib.TextEditor
                 return;
             }
 
-            Page p = mTextEditor.GetSelectedContentPageEditor(args);
+            Page p = mTextEditor.GetSelectedContentPageEditor(args);           
             if (p != null)
             {
                 SelectionEditorFrame.ClearAndSetContent(p);
                 SelectionEditorFrame.Visibility = Visibility.Visible;
 
-                if (mLastEditPageRowHeight.Value == 0) { mLastEditPageRowHeight = new GridLength(150); }
+                if (mLastEditPageRowHeight.Value == 0) { mLastEditPageRowHeight = new GridLength(200); }
 
                 EditPageRow.Height = mLastEditPageRowHeight;
                 SelectionEditorFrameSplitter.Visibility = Visibility.Visible;
