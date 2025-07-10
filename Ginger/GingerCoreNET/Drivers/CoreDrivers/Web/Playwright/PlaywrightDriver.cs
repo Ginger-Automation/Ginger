@@ -921,7 +921,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             POMLearner pomLearner = POMLearner.Create(pageSource, new PlaywrightBrowserElementProvider(currentTab), pomSetting, xpathImpl: this);
             CancellationTokenSource cancellationTokenSource = new();
-            Task learnElementsTask = pomLearner.LearnElementsAsync(foundElementsList, cancellationTokenSource.Token);
+            Task learnElementsTask = pomLearner.LearnElementsAsync(foundElementsList, cancellationTokenSource.Token, ScreenShot: ScreenShot);
             _ = Task.Run(() =>
             {
                 while (!StopProcess && !learnElementsTask.IsCompleted) ;
