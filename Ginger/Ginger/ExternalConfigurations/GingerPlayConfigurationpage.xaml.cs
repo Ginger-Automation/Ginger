@@ -19,7 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
-using Amdocs.Ginger.CoreNET.GenAIServices;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Ginger.UserControlsLib;
 using Ginger.ValidationRules;
 using GingerCore;

@@ -19,7 +19,7 @@ limitations under the License.
 using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
-using Amdocs.Ginger.CoreNET.GenAIServices;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;

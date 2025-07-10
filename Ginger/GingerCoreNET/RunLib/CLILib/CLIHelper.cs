@@ -21,7 +21,7 @@ using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET.GenAIServices;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.Repository;
 using Ginger;

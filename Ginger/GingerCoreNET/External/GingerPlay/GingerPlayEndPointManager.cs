@@ -22,17 +22,17 @@ using Amdocs.Ginger.Common.External.Configurations;
 using Ginger.Reports;
 using System;
 
-namespace Amdocs.Ginger.CoreNET.GenAIServices
+namespace Amdocs.Ginger.CoreNET.External.GingerPlay
 {
     public static class GingerPlayEndPointManager
     {
-        private const string ACCOUNT_REPORT_SERVICE_URL = "OnlineReportMS";
+        private const string ACCOUNT_REPORT_SERVICE_URL = "ginger-report";
 
-        private const string HTML_REPORT_SERVICE_URL = "HTMLReportService";
+        private const string HTML_REPORT_SERVICE_URL = "ginger-html-report";
 
         private const string AI_SERVICE_URL = "ginger-ai";
 
-        private const string EXECUTION_SERVICE = "ExecuterHandlerService";
+        private const string EXECUTION_SERVICE = "ginger-execution";
 
         private const string REPORT_SERVICE_HEALTH_PATH = "OnlineReportMS/health";
         private const string EXECUTION_SERVICE_HEALTH_PATH = "ExecuterHandlerService/health";
@@ -158,6 +158,18 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
                 if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl) && GingerPlayConfiguration.GingerPlayExecutionServiceEnabled)
                 {
                     return GingerPlayConfiguration.GingerPlayGatewayUrl + EXECUTION_SERVICE;
+                }
+                else if (!string.IsNullOrEmpty(GingerPlayConfiguration.CentralizedExecutionHandlerURL))
+                {
+                    return GingerPlayConfiguration.CentralizedExecutionHandlerURL;
+                }
+                else if (!string.IsNullOrEmpty(LoggerConfig.GetExecutionServiceURLBackwardCompatibility()))
+                {
+                    // If the Central Logger URL is set, use it as the Execution Service URL
+                    GingerPlayConfiguration.CentralizedExecutionHandlerURL = LoggerConfig.GetExecutionServiceURLBackwardCompatibility();
+                    GingerPlayConfiguration.GingerPlayEnabled = true;
+                    GingerPlayConfiguration.GingerPlayExecutionServiceEnabled = true;
+                    return GingerPlayConfiguration.CentralizedExecutionHandlerURL;
                 }
                 else
                 {

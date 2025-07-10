@@ -1,4 +1,4 @@
-﻿namespace Amdocs.Ginger.CoreNET.GenAIServices
+﻿namespace Amdocs.Ginger.CoreNET.External.GingerPlay
 {
     /// <summary>
     /// Represents the response from GingerPlay API token endpoint

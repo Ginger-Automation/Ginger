@@ -9,7 +9,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Amdocs.Ginger.CoreNET.GenAIServices
+namespace Amdocs.Ginger.CoreNET.External.GingerPlay
 {
     public class GingerPlayAPITokenManager
     {

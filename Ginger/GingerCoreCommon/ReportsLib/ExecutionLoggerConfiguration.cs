@@ -199,6 +199,9 @@ namespace Ginger.Reports
         private string mCentralizedHtmlReportServiceURL;
         public string GetCentralizedHtmlReportServiceURLBackwardCompatibility() => mCentralizedHtmlReportServiceURL;
 
+        private string mExecutionHandlerURL;
+        public string GetExecutionServiceURLBackwardCompatibility() => mExecutionHandlerURL;
+
 
 
         public override bool SerializationError(SerializationErrorType errorType, string name, string value)
@@ -213,6 +216,11 @@ namespace Ginger.Reports
                 if (string.Equals("CentralLoggerEndPointUrl", name) && !string.IsNullOrEmpty(value))
                 {
                     this.mCentralLoggerEndPointUrl = value;
+                    return true;
+                }
+                if (string.Equals("ExecutionHandlerURL", name) && !string.IsNullOrEmpty(value))
+                {
+                    this.mExecutionHandlerURL = value;
                     return true;
                 }
             }

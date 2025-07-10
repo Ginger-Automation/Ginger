@@ -19,7 +19,7 @@ limitations under the License.
 using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.GenAIServices;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.Run;
 using Ginger.Run;
 using GingerCore;

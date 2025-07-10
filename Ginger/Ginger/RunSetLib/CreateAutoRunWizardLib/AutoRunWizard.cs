@@ -19,7 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
-using Amdocs.Ginger.CoreNET.GenAIServices;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.Run.RemoteExecution;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Requests;
@@ -66,7 +66,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             bool handlerURLConfiguredInRunset = !string.IsNullOrEmpty(handlerURLFromRunset);
 
             AutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, CliHelper);
-            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Any(k => k.GingerPlayEnabled && !string.IsNullOrEmpty(k.GingerPlayGatewayUrl)))
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Any(k => k.GingerPlayEnabled && (!string.IsNullOrEmpty(k.GingerPlayGatewayUrl) || !string.IsNullOrEmpty(k.CentralizedExecutionHandlerURL))))
             {
                 AutoRunConfiguration.ExecutionServiceUrl = GingerPlayEndPointManager.GetExecutionServiceUrl();
             }

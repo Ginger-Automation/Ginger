@@ -1100,7 +1100,7 @@ namespace Amdocs.Ginger.Repository
             if (DirtyStatus != eDirtyStatus.NoTracked && DirtyTrackingFields != null && DirtyTrackingFields.Contains(name) && DirtyTracking != eDirtyTracking.Paused)
             {
                 DirtyStatus = eDirtyStatus.Modified;
-                RaiseDirtyChangedEvent();
+                //RaiseDirtyChangedEvent();
             }
         }
 
@@ -1111,7 +1111,7 @@ namespace Amdocs.Ginger.Repository
             {
                 DirtyStatus = eDirtyStatus.Modified;
             }
-            RaiseDirtyChangedEvent();
+            //RaiseDirtyChangedEvent();
         }
 
 

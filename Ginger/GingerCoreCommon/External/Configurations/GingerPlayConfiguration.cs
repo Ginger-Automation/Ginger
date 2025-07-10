@@ -194,6 +194,21 @@ namespace Amdocs.Ginger.Common.External.Configurations
             }
         }
 
+        private string mCentralizedExecutionHandlerURL = string.Empty;
+        [IsSerializedForLocalRepository]
+        public string CentralizedExecutionHandlerURL
+        {
+            get { return mCentralizedExecutionHandlerURL; }
+            set
+            {
+                if (mCentralizedExecutionHandlerURL != value)
+                {
+                    mCentralizedExecutionHandlerURL = value;
+                    OnPropertyChanged(nameof(CentralizedExecutionHandlerURL));
+                }
+            }
+        }
+
         public override string GetNameForFileName() { return Name; }
 
     }

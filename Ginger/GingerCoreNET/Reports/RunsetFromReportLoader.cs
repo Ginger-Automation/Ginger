@@ -19,7 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.CoreNET.GenAIServices;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.Run.RemoteExecution;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Amdocs.Ginger.Repository;

@@ -20,7 +20,7 @@ using AccountReport.Contracts;
 using AccountReport.Contracts.ResponseModels;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.CoreNET.GenAIServices;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using AutoMapper;
 using Newtonsoft.Json;
