@@ -895,7 +895,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return Task.Run(() => GetActiveWindowAsync().Result).Result;
         }
 
-        public async Task<List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo>? foundElementsList = null, ObservableList<POMPageMetaData>? PomMetaData = null)
+        public async Task<List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo>? foundElementsList = null, ObservableList<POMPageMetaData>? PomMetaData = null, Bitmap ScreenShot = null)
         {
             ThrowIfClosed();
 
@@ -921,7 +921,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             POMLearner pomLearner = POMLearner.Create(pageSource, new PlaywrightBrowserElementProvider(currentTab), pomSetting, xpathImpl: this);
             CancellationTokenSource cancellationTokenSource = new();
-            Task learnElementsTask = pomLearner.LearnElementsAsync(foundElementsList, cancellationTokenSource.Token);
+            Task learnElementsTask = pomLearner.LearnElementsAsync(foundElementsList, cancellationTokenSource.Token, ScreenShot: ScreenShot);
             _ = Task.Run(() =>
             {
                 while (!StopProcess && !learnElementsTask.IsCompleted) ;
