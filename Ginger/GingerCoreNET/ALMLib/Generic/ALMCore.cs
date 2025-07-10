@@ -228,7 +228,7 @@ namespace GingerCore.ALM
                 GingerPlayConfiguration gingerPlayConfig = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
                 bool check =
                     WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Any(g => g.IsSelected && g.PublishLogToCentralDB == ePublishToCentralDB.Yes)
-                    && gingerPlayConfig is { GingerPlayEnabled: true, GingerPlayReportServiceEnabled: true, GingerPlayGatewayUrl.Length: > 0 };
+                    && gingerPlayConfig is { GingerPlayEnabled: true, GingerPlayReportServiceEnabled: true };
 
                 if (!exectutedFromAutomateTab && check)
                 {

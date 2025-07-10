@@ -26,13 +26,13 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
 {
     public static class GingerPlayEndPointManager
     {
-        private const string ACCOUNT_REPORT_SERVICE_URL = "ginger-report";
+        private const string ACCOUNT_REPORT_SERVICE_URL = "OnlineReportMS";
 
-        private const string HTML_REPORT_SERVICE_URL = "ginger-html-report";
+        private const string HTML_REPORT_SERVICE_URL = "HTMLReportService";
 
         private const string AI_SERVICE_URL = "ginger-ai";
 
-        private const string EXECUTION_SERVICE = "ginger-execution";
+        private const string EXECUTION_SERVICE = "ExecuterHandlerService";
 
         private const string REPORT_SERVICE_HEALTH_PATH = "OnlineReportMS/health";
         private const string EXECUTION_SERVICE_HEALTH_PATH = "ExecuterHandlerService/health";
@@ -43,9 +43,20 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         private static readonly ExecutionLoggerConfiguration LoggerConfig = WorkSpace.Instance.Solution.LoggerConfigurations;
 
 
-        private static readonly GingerPlayConfiguration GingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count == 0
-      ? new GingerPlayConfiguration()
-      : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+        private static GingerPlayConfiguration _gingerPlayConfiguration;
+        private static GingerPlayConfiguration GingerPlayConfiguration
+        {
+            get
+            {
+                if (_gingerPlayConfiguration == null && WorkSpace.Instance?.SolutionRepository != null)
+                {
+                    _gingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count == 0
+                        ? new GingerPlayConfiguration()
+                        : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+                }
+                return _gingerPlayConfiguration ?? new GingerPlayConfiguration();
+            }
+        }
 
         public static string GetAccountReportServiceUrl()
         {

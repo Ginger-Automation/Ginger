@@ -169,7 +169,7 @@ namespace Ginger.ExternalConfigurations
         }
         private void UpdateControlStates()
         {
-            bool isChecked = xAllowGingerPlayCheckBox.IsChecked == true;
+            bool isChecked = (bool)xAllowGingerPlayCheckBox.IsChecked;
             gingerPlayConfiguration.GingerPlayEnabled = isChecked;
             xGatewayURLTextBox.IsEnabled = isChecked;
             xClientIdTextBox.IsEnabled = isChecked;
