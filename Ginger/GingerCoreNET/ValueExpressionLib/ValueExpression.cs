@@ -1534,7 +1534,6 @@ namespace GingerCore
                     return;
                 }
 
-                // Use regex to extract values
                 var envAppMatch = Regex.Match(str, @"\{EnvApp=(.*?)\s");
                 var envAppDBMatch = Regex.Match(str, @"EnvAppDB=(.*?)\s");
                 var queryMatch = Regex.Match(str, @"Query=(.*?)\}");
@@ -1543,17 +1542,9 @@ namespace GingerCore
                 string envAppDB = envAppDBMatch.Groups[1].Value;
                 string query = queryMatch.Groups[1].Value;
 
-
-
                 if (string.IsNullOrWhiteSpace(envApp) || string.IsNullOrWhiteSpace(envAppDB) || string.IsNullOrWhiteSpace(query))
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "ReplaceEnvDBWithValue Error: Missing required parameters.", null);
-                    return;
-                }
-
-                if (!query.StartsWith("select", StringComparison.OrdinalIgnoreCase))
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Given query is not a valid SELECT query.", null);
                     return;
                 }
 
@@ -1577,9 +1568,15 @@ namespace GingerCore
                     return;
                 }
 
-                if ((db.DBType == eDBTypes.MySQL || db.DBType == eDBTypes.PostgreSQL) && !query.TrimEnd().EndsWith("LIMIT 1", StringComparison.OrdinalIgnoreCase))
+                if (IsSqlDatabase(db.DBType))
                 {
-                    query = Regex.Replace(query.TrimEnd(), ";?$", " LIMIT 1;");
+                    if (!query.TrimStart().StartsWith("SELECT", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Given query is not a valid SELECT query.", null);
+                        return;
+                    }
+
+                    query = AddSingleRecordLimit(query, db.DBType);
                 }
 
                 db.DatabaseOperations = new DatabaseOperations(db);
@@ -1605,7 +1602,51 @@ namespace GingerCore
             {
                 Reporter.ToLog(eLogLevel.ERROR, "ReplaceEnvDBWithValue Exception:", ex);
             }
-        }      
+        }
+        private static bool IsSqlDatabase(eDBTypes dbType)
+        {
+            return dbType == eDBTypes.Oracle ||
+                   dbType == eDBTypes.MSSQL ||
+                   dbType == eDBTypes.MSAccess ||
+                   dbType == eDBTypes.DB2 ||
+                   dbType == eDBTypes.PostgreSQL ||
+                   dbType == eDBTypes.MySQL;
+        }
+
+        private static string AddSingleRecordLimit(string query, eDBTypes dbType)
+        {
+            query = query.Trim();
+
+            switch (dbType)
+            {
+                case eDBTypes.MySQL:
+                case eDBTypes.PostgreSQL:
+                    if (!Regex.IsMatch(query, @"\bLIMIT\s+1\b", RegexOptions.IgnoreCase))
+                    {
+                        query = Regex.Replace(query, ";?$", " LIMIT 1;");
+                    }
+                    break;
+
+                case eDBTypes.MSSQL:
+                case eDBTypes.MSAccess:
+                    if (!Regex.IsMatch(query, @"\bTOP\s+1\b", RegexOptions.IgnoreCase))
+                    {
+                        query = Regex.Replace(query, @"(?i)^SELECT", "SELECT TOP 1");
+                    }
+                    break;
+
+                case eDBTypes.DB2:
+                case eDBTypes.Oracle:
+                    if (!Regex.IsMatch(query, @"FETCH\s+FIRST\s+1\s+ROWS\s+ONLY", RegexOptions.IgnoreCase))
+                    {
+                        query = Regex.Replace(query, ";?$", " FETCH FIRST 1 ROWS ONLY;");
+                    }
+                    break;
+            }
+
+            return query;
+        }       
+       
         public static void GetEnvAppAndParam(string EnvValueExp, ref string AppName, ref string GlobalParamName)
         {
             EnvValueExp = EnvValueExp.Replace("\r\n", "vbCrLf");
