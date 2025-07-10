@@ -5245,7 +5245,7 @@ namespace GingerCore.Drivers
         /// Else, it'll be skipped - Checking the performance
         /// </summary>
         public bool ExtraLocatorsRequired = true;
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null,Bitmap ScreenShot = null)
         {
             return await Task.Run(() =>
             {
@@ -5258,8 +5258,7 @@ namespace GingerCore.Drivers
                     Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
-                    List<ElementInfo> list = General.ConvertObservableListToList<ElementInfo>(FindAllElementsFromPOM("", pomSetting, Driver, Guid.Empty, foundElementsList, PomMetaData));
-
+                    List<ElementInfo> list = General.ConvertObservableListToList<ElementInfo>(FindAllElementsFromPOM("", pomSetting, Driver, Guid.Empty, foundElementsList, PomMetaData,ScreenShot:ScreenShot));
                     for (int i = 0; i < list.Count; i++)
                     {
                         ElementInfo elementInfo = list[i];
@@ -5312,14 +5311,14 @@ namespace GingerCore.Drivers
             "noscript", "script", "style", "meta", "head", "link", "html", "body"
         };
 
-        private ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null)
+        private ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null,Bitmap ScreenShot = null)
         {
             // Initialize lists if null
             PomMetaData ??= [];
             foundElementsList ??= [];
 
             // Parse HTML document
-            string documentContents = pageSource ?? Driver.PageSource;
+            string documentContents = pageSource ?? Driver.PageSource;           
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(documentContents);
 
@@ -5357,7 +5356,7 @@ namespace GingerCore.Drivers
                             continue;
                         }
 
-                        HTMLElementInfo foundElementInfo = CreateHTMLElementInfo(webElement, path, htmlElemNode, elementTypeEnum.Item1, elementTypeEnum.Item2, ParentGUID, pomSetting, foundElementsList.Count.ToString());
+                        HTMLElementInfo foundElementInfo = CreateHTMLElementInfo(webElement, path, htmlElemNode, elementTypeEnum.Item1, elementTypeEnum.Item2, ParentGUID, pomSetting, foundElementsList.Count.ToString(), ScreenShot: ScreenShot);
 
                         //set the POM category
                         foundElementInfo.SetLocatorsAndPropertiesCategory(this.PomCategory);
@@ -5369,14 +5368,14 @@ namespace GingerCore.Drivers
                         // Recursively find elements within shadow DOM
                         if (pomSetting.LearnShadowDomElements && elementTypeEnum.Item2 != eElementType.Iframe)
                         {
-                            ProcessShadowDOMElements(pomSetting, webElement, foundElementInfo, path, foundElementsList, PomMetaData);
+                            ProcessShadowDOMElements(pomSetting, webElement, foundElementInfo, path, foundElementsList, PomMetaData, ScreenShot: ScreenShot);
                         }
                     }
 
                     // Handle iframe elements
                     if (elementTypeEnum.Item2 == eElementType.Iframe)
                     {
-                        ProcessIframeElement(parentContext, htmlElemNode, path, pomSetting, ParentGUID, foundElementsList, PomMetaData, isShadowRootDetected, pageSource);
+                        ProcessIframeElement(parentContext, htmlElemNode, path, pomSetting, ParentGUID, foundElementsList, PomMetaData, isShadowRootDetected, pageSource, ScreenShot: ScreenShot);
                     }
 
                     // Collect form elements
@@ -5396,8 +5395,6 @@ namespace GingerCore.Drivers
 
             return foundElementsList;
         }
-
-
         // Method to determine if the element should be learned
         private bool ShouldLearnElement(PomSetting pomSetting, eElementType elementType)
         {
@@ -5443,10 +5440,10 @@ namespace GingerCore.Drivers
         }
 
         // Method to create HTMLElementInfo object
-        private HTMLElementInfo CreateHTMLElementInfo(IWebElement webElement, string path, HtmlNode htmlElemNode, string elementType, eElementType elementTypeEnum, Guid parentGUID, PomSetting pomSetting, string Sequence = "")
+        private HTMLElementInfo CreateHTMLElementInfo(IWebElement webElement, string path, HtmlNode htmlElemNode, string elementType, eElementType elementTypeEnum, Guid parentGUID, PomSetting pomSetting, string Sequence = "",Bitmap ScreenShot = null)
         {
             string xpath = htmlElemNode.XPath;
-            var parentPOMGuid = parentGUID.Equals(Guid.Empty) ? Guid.Empty.ToString() : parentGUID.ToString();
+            var parentPOMGuid = parentGUID == Guid.Empty ? Guid.Empty.ToString() : parentGUID.ToString();
             HTMLElementInfo foundElementInfo = new HTMLElementInfo()
             {
                 ElementType = elementType,
@@ -5457,16 +5454,23 @@ namespace GingerCore.Drivers
                 XPath = xpath,
                 IsAutoLearned = true
             };
+            
 
             ((IWindowExplorer)this).LearnElementInfoDetails(foundElementInfo, pomSetting);
-            foundElementInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.ParentPOMGUID, Value = parentPOMGuid, ShowOnUI = false });
-            foundElementInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.Sequence, Value = Sequence, ShowOnUI = false });
+
+
+            foundElementInfo.Properties.AddRange(new[]
+             {
+                new ControlProperty { Name = ElementProperty.ParentPOMGUID, Value = parentPOMGuid, ShowOnUI = false },
+                new ControlProperty { Name = ElementProperty.Sequence, Value = Sequence, ShowOnUI = false }
+             });
+
 
             if (ExtraLocatorsRequired)
             {
                 GetRelativeXpathElementLocators(foundElementInfo);
 
-                if (pomSetting != null && pomSetting.RelativeXpathTemplateList != null && pomSetting.RelativeXpathTemplateList.Count > 0)
+                if (pomSetting?.RelativeXpathTemplateList?.Count > 0)
                 {
                     foreach (var template in pomSetting.RelativeXpathTemplateList)
                     {
@@ -5474,18 +5478,16 @@ namespace GingerCore.Drivers
                     }
                 }
             }
-
             // Element Screenshot only mapped elements
-            if (pomSetting.LearnScreenshotsOfElements && pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(elementTypeEnum)))
+            if (pomSetting.LearnScreenshotsOfElements && pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(foundElementInfo.ElementTypeEnum)))
             {
-                foundElementInfo.ScreenShotImage = TakeElementScreenShot(webElement);
+                foundElementInfo.ScreenShotImage = GingerCoreNET.GeneralLib.General.TakeElementScreenShot(foundElementInfo, ScreenShot);
             }
-
             return foundElementInfo;
         }
 
         // Method to process elements within shadow DOM
-        private void ProcessShadowDOMElements(PomSetting pomSetting, IWebElement webElement, HTMLElementInfo foundElementInfo, string path, ObservableList<ElementInfo> foundElementsList, ObservableList<POMPageMetaData> PomMetaData)
+        private void ProcessShadowDOMElements(PomSetting pomSetting, IWebElement webElement, HTMLElementInfo foundElementInfo, string path, ObservableList<ElementInfo> foundElementsList, ObservableList<POMPageMetaData> PomMetaData, Bitmap ScreenShot = null)
         {
             ISearchContext shadowRoot = shadowDOM.GetShadowRootIfExists(webElement);
             if (shadowRoot == null)
@@ -5496,19 +5498,19 @@ namespace GingerCore.Drivers
             string innerHTML = shadowDOM.GetHTML(shadowRoot, Driver);
             if (!string.IsNullOrEmpty(innerHTML))
             {
-                FindAllElementsFromPOM(path, pomSetting, shadowRoot, foundElementInfo.Guid, foundElementsList, PomMetaData, true, innerHTML);
+                FindAllElementsFromPOM(path, pomSetting, shadowRoot, foundElementInfo.Guid, foundElementsList, PomMetaData, true, innerHTML, ScreenShot: ScreenShot);
             }
         }
 
         // Method to process iframe elements
-        private void ProcessIframeElement(ISearchContext parentContext, HtmlNode htmlElemNode, string path, PomSetting pomSetting, Guid parentGUID, ObservableList<ElementInfo> foundElementsList, ObservableList<POMPageMetaData> PomMetaData, bool isShadowRootDetected = false, string pageSource = null)
+        private void ProcessIframeElement(ISearchContext parentContext, HtmlNode htmlElemNode, string path, PomSetting pomSetting, Guid parentGUID, ObservableList<ElementInfo> foundElementsList, ObservableList<POMPageMetaData> PomMetaData, bool isShadowRootDetected = false, string pageSource = null, Bitmap ScreenShot = null)
         {
             string xpath = htmlElemNode.XPath;
             IWebElement webElement = parentContext is ShadowRoot shadowRoot ? shadowRoot.FindElement(By.CssSelector(shadowDOM.ConvertXPathToCssSelector(xpath))) :
                                                                                 parentContext.FindElement(By.XPath(xpath));
             Driver.SwitchTo().Frame(webElement);
             string newPath = path == string.Empty ? xpath : path + "," + xpath;
-            FindAllElementsFromPOM(newPath, pomSetting, parentContext, parentGUID, foundElementsList, PomMetaData, isShadowRootDetected, pageSource);
+            FindAllElementsFromPOM(newPath, pomSetting, parentContext, parentGUID, foundElementsList, PomMetaData, isShadowRootDetected, pageSource, ScreenShot: ScreenShot);
             Driver.SwitchTo().ParentFrame();
         }
 
