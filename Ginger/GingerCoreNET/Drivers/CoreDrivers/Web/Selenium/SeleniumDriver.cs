@@ -3517,16 +3517,21 @@ namespace GingerCore.Drivers
                         string[] vals = insertval.Split(delimit, 2);
                         if (vals.Length != 2)
                         {
-                            throw new Exception(@"Inot string should be in the format : attribute=value");
+                            Reporter.ToLog(eLogLevel.DEBUG, @"Input string should be in the format : attribute=value");
                         } ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
                     }
                     break;
                 default:
-                    throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
+                    Reporter.ToLog(eLogLevel.DEBUG, "Action unknown/not implemented for the Driver: " + this.GetType().ToString());
+                    break;
 
             }
         }
-
+        private string EscapeCssAttributeValue(string value)
+        {
+            // Escape single quotes by replacing with escaped version
+            return value?.Replace("'", "\\'") ?? string.Empty;
+        }
         private void MoveToElementActions(ActGenElement act)
         {
             IWebElement e = LocateElement(act, true);
@@ -4682,16 +4687,16 @@ namespace GingerCore.Drivers
                         by = By.CssSelector(locator.LocateValue);
                         break;
                     case eLocateBy.ByTitle:
-                        by = By.CssSelector($"[title='{locator.LocateValue}']");
+                        by = By.CssSelector($"[title='{EscapeCssAttributeValue(locator.LocateValue)}']");
                         break;
                     case eLocateBy.ByAriaLabel:
-                        by = By.CssSelector($"[aria-label='{locator.LocateValue}']");
+                        by = By.CssSelector($"[aria-label='{EscapeCssAttributeValue(locator.LocateValue)}']");
                         break;
                     case eLocateBy.ByDataTestId:
-                        by = By.CssSelector($"[data-testid='{locator.LocateValue}']");
+                        by = By.CssSelector($"[data-testid='{EscapeCssAttributeValue(locator.LocateValue)}']");
                         break;
                     case eLocateBy.ByPlaceholder:
-                        by = By.CssSelector($"[placeholder='{locator.LocateValue}']");
+                        by = By.CssSelector($"[placeholder='{EscapeCssAttributeValue(locator.LocateValue)}']");
                         break;
 
                 }
@@ -5344,7 +5349,7 @@ namespace GingerCore.Drivers
             var idLocator = element.Locators?.FirstOrDefault(l => l.LocateBy == eLocateBy.ByID);
             if (idLocator != null)
             {
-                primary = $"#{idLocator.LocateValue}";
+                primary = $"//*[@id='{idLocator.LocateValue}']";
                 score += 0.9;
             }
             else
@@ -5352,7 +5357,7 @@ namespace GingerCore.Drivers
                 var nameLocator = element.Locators?.FirstOrDefault(l => l.LocateBy == eLocateBy.ByName);
                 if (nameLocator != null)
                 {
-                    primary = $"[name='{nameLocator.LocateValue}']";
+                    primary = $"//*[@name='{nameLocator.LocateValue}']";
                     score += 0.8;
                 }
                 else
@@ -7198,7 +7203,7 @@ namespace GingerCore.Drivers
             string text = element.Text;
             if (!string.IsNullOrWhiteSpace(text) && text.Length < 30)
             {
-                conditions.Add($"contains(text(), '{text.Trim()}')");
+                conditions.Add($"contains(text(), {EscapeXPathString(text.Trim())})");
             }
 
             string conditionString = conditions.Count > 0 ? $"[{string.Join(" and ", conditions)}]" : "";
@@ -7207,6 +7212,16 @@ namespace GingerCore.Drivers
                 var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = $"//{tag}{conditionString}", IsAutoLearned = true };
                 foundElemntInfo.Locators.Add(elementLocator);
             }
+        }
+
+        private string EscapeXPathString(string value)
+        {
+            if (value.Contains("'"))
+            {
+                // If string contains single quotes, use concat() to handle them
+                return "concat('" + value.Replace("'", "',\"'\",'") + "')";
+            }
+            return $"'{value}'";
         }
 
         private bool IsLikelyDynamic(string value)
