@@ -3518,7 +3518,9 @@ namespace GingerCore.Drivers
                         if (vals.Length != 2)
                         {
                             Reporter.ToLog(eLogLevel.DEBUG, @"Input string should be in the format : attribute=value");
-                        } ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
+                            return;
+                        } 
+                        ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
                     }
                     break;
                 default:
@@ -7195,7 +7197,7 @@ namespace GingerCore.Drivers
                     }
                     else
                     {
-                        conditions.Add($"@{attr}='{value}'");
+                        conditions.Add($"@{attr}={EscapeXPathString(value)}");
                     }
                 }
             }
