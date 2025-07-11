@@ -19,6 +19,7 @@ limitations under the License.
 using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.Run;
 using Ginger.Run;
 using GingerCore;
@@ -40,7 +41,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             {
                 if (mAccountReportApiHandler == null || mAccountReportApiHandler.IsConfigurationChanged())
                 {
-                    mAccountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+                    mAccountReportApiHandler = new AccountReportApiHandler(GingerPlayEndPointManager.GetAccountReportServiceUrl());
                 }
                 return mAccountReportApiHandler;
             }

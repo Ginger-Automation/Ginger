@@ -744,6 +744,29 @@ namespace GingerCoreNET.GeneralLib
                 return false;
             }
         }
+
+        public static bool CreateGingerPlayConfiguration()
+        {
+            try
+            {
+                if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Any())
+                {
+                    GingerPlayConfiguration newGingerPlayConfiguration = new GingerPlayConfiguration() { Name = "GingerPlay" };
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newGingerPlayConfiguration);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error creating GingerPlay configuration", ex);
+                return false;
+            }
+        }
+
         public static bool CreateWireMockConfiguration()
         {
             try
@@ -1073,7 +1096,7 @@ namespace GingerCoreNET.GeneralLib
                     {
                         if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Contains(elem.ApplicationAPIModel.Guid))
                         {
-                            elem.PomUpdateStatus = $"'{elem.ApplicationAPIModel.Name}' Updated";                           
+                            elem.PomUpdateStatus = $"'{elem.ApplicationAPIModel.Name}' Updated";
                             var aPOMModified = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().FirstOrDefault(aPOM => aPOM.Guid == elem.ApplicationAPIModel.Guid);
                             if (aPOMModified != null)
                             {
@@ -1132,7 +1155,7 @@ namespace GingerCoreNET.GeneralLib
             {
                 if (WorkSpace.Instance.GingerCLIMode == eGingerCLIMode.run)
                 {
-                   await Execute(WorkSpace.Instance.RunsetExecutor);
+                    await Execute(WorkSpace.Instance.RunsetExecutor);
                 }
                 else
                 {
