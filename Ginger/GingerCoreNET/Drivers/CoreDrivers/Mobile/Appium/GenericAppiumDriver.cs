@@ -15,24 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-
-#region License
-/*
-Copyright © 2014-2025 European Support Limited
-
-Licensed under the Apache License, Version 2.0 (the "License")
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
-
-http://www.apache.org/licenses/LICENSE-2.0 
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS, 
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-See the License for the specific language governing permissions and 
-limitations under the License. 
-*/
-#endregion
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
@@ -2592,7 +2574,7 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
             }
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, Bitmap ScreenShot = null)
         {
             if (AppType == eAppType.Web)
             {
@@ -2672,7 +2654,7 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                         {
                             try
                             {
-                                EI.ScreenShotImage = TakeElementScreenShot(EI, fullImage);
+                                EI.ScreenShotImage = GingerCoreNET.GeneralLib.General.TakeElementScreenShot(EI, ScreenShot); //TakeElementScreenShot(EI, fullImage);
                             }
                             catch (Exception ex)
                             {
@@ -2690,95 +2672,6 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
             finally
             {
                 mIsDriverBusy = false;
-            }
-        }
-        private string TakeElementScreenShot(ElementInfo elementInfo, Bitmap fullImage)
-        {
-            try
-            {
-                if (fullImage == null)
-                {
-                    throw new ArgumentNullException(nameof(fullImage), "Full image cannot be null.");
-                }
-
-                if (elementInfo == null)
-                {
-                    throw new ArgumentNullException(nameof(elementInfo), "elementInfo cannot be null.");
-                }
-
-                int cropX;
-                int cropY;
-                int cropWidth;
-                int cropHeight;
-
-
-
-                GetLocationAndSizeOfElement(elementInfo, out cropX, out cropY, out cropWidth, out cropHeight);
-
-                if (cropWidth <= 0 || cropHeight <= 0)
-                    throw new ArgumentException("Invalid crop dimensions.");
-
-                Rectangle cropRect = new Rectangle(cropX, cropY, cropWidth, cropHeight);
-
-                using (Bitmap elementImage = new Bitmap(cropRect.Width, cropRect.Height))
-                {
-                    using (Graphics g = Graphics.FromImage(elementImage))
-                    {
-                        g.DrawImage(fullImage, new Rectangle(0, 0, cropRect.Width, cropRect.Height), cropRect, GraphicsUnit.Pixel);
-                    }
-
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        elementImage.Save(ms, ImageFormat.Png);
-                        return Convert.ToBase64String(ms.ToArray());
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to Take element screen-shot: ", ex);
-                return null;
-            }
-        }
-
-        private void GetLocationAndSizeOfElement(ElementInfo elementInfo, out int cropX, out int cropY, out int cropWidth, out int cropHeight)
-        {
-            var props = elementInfo.GetElementProperties()
-                     .ToDictionary(p => p.Name, p => p.Value, StringComparer.InvariantCultureIgnoreCase);
-
-            string BoundsValue = props.TryGetValue("bounds", out var xBounds) ? xBounds : string.Empty;
-            try
-            {
-                if (!string.IsNullOrEmpty(BoundsValue))
-                {
-                    // Remove the square brackets and split the string
-                    string[] parts = BoundsValue.Replace("[", "").Split(']');
-
-                    // Parse the first part as x and y
-                    string[] xy = parts[0].Split(',');
-                    cropX = int.Parse(xy[0]);
-                    cropY = int.Parse(xy[1]);
-
-                    // Parse the second part as width and height
-                    string[] wh = parts[1].Split(',');
-                    int x2 = int.Parse(wh[0]);
-                    int y2 = int.Parse(wh[1]);
-                    cropWidth = Math.Max(0, x2 - cropX);
-                    cropHeight = Math.Max(0, y2 - cropY);
-                }
-                else
-                {
-                    cropX = props.TryGetValue("x", out var xVal) ? Convert.ToInt32(xVal) : 0;
-                    cropY = props.TryGetValue("y", out var yVal) ? Convert.ToInt32(yVal) : 0;
-                    cropWidth = props.TryGetValue("width", out var widthVal) ? Convert.ToInt32(widthVal) : 0;
-                    cropHeight = props.TryGetValue("height", out var heightVal) ? Convert.ToInt32(heightVal) : 0;
-                }
-
-            }
-            catch (Exception ex)
-            {
-                cropX = 0; cropY = 0; cropWidth = 0; cropHeight = 0;
-                Reporter.ToLog(eLogLevel.DEBUG, $"Failed to parse bounds string: {BoundsValue}", ex);
             }
         }
 
