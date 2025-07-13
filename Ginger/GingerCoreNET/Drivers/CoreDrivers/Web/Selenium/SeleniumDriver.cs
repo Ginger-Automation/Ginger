@@ -11002,7 +11002,7 @@ namespace GingerCore.Drivers
             }
         }
 
-      
+
 
 
         public async Task StartMonitoringNetworkLog(IWebDriver webDriver)
@@ -11049,7 +11049,7 @@ namespace GingerCore.Drivers
                     interceptor.ClearResponseHandlers();
 
                     var parsedRequestObjects = networkRequestLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
-                    var parsedResponseObjects = networkResponseLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2) .ToList();
+                    var parsedResponseObjects = networkResponseLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
 
                     string formattedRequests = JsonConvert.SerializeObject(parsedRequestObjects, Formatting.Indented);
                     string formattedResponses = JsonConvert.SerializeObject(parsedResponseObjects, Formatting.Indented);
@@ -11060,7 +11060,7 @@ namespace GingerCore.Drivers
                     foreach (var val in networkRequestLogList)
                     {
                         var value = val.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : val.Item2;
-                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}",JsonConvert.SerializeObject(value, Formatting.Indented));
+                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", JsonConvert.SerializeObject(value, Formatting.Indented));
                     }
 
                     foreach (var val in networkResponseLogList)
@@ -11068,13 +11068,11 @@ namespace GingerCore.Drivers
                         var value = val.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : val.Item2;
                         act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", JsonConvert.SerializeObject(value, Formatting.Indented));
                     }
-
-                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V136.Network.DisableCommandSettings());
-                    devToolsSession.Dispose();
-                    devTools.CloseDevToolsSession();
-
                     try
                     {
+                        await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V136.Network.DisableCommandSettings());
+                        devToolsSession.Dispose();
+                        devTools.CloseDevToolsSession();
                         var parsedRequestTuples = networkRequestLogList.Select((x, i) => Tuple.Create(x.Item1, parsedRequestObjects[i])).ToList();
 
                         var parsedResponseTuples = networkResponseLogList.Select((x, i) => Tuple.Create(x.Item1, parsedResponseObjects[i])).ToList();
@@ -11110,7 +11108,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        
+
 
         private int CreateConsoleLogFile(string filePath, string logs, ActBrowserElement act)
         {

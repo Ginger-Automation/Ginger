@@ -49,45 +49,36 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
                 && _act.UpdateOperationInputValues.Any(x => ( !string.IsNullOrEmpty(x.ValueForDriver) ? requestUrl.ToLower().Contains(x.ValueForDriver.ToLower()) : (!string.IsNullOrEmpty(x.Value) && requestUrl.ToLower().Contains(x.Value.ToLower()))));
         }
 
+
         public string CreateNetworkLogFile(string Filename, List<Tuple<string, object>> networkLogList)
         {
-            if (string.IsNullOrEmpty(Filename))
+            if (string.IsNullOrEmpty(Filename) || networkLogList == null)
             {
-                Reporter.ToLog(eLogLevel.INFO, $"Method - {MethodBase.GetCurrentMethod().Name}, Filename should not be empty");
+                Reporter.ToLog(eLogLevel.INFO, $"Method - {MethodBase.GetCurrentMethod().Name}, Filename or networkLogList is invalid");
+                return string.Empty;
             }
 
-            if (networkLogList == null)
-            {
-                Reporter.ToLog(eLogLevel.INFO, $"Method - {MethodBase.GetCurrentMethod().Name}, networkLogList should not be empty");
-            }
             string FullFilePath = string.Empty;
             try
             {
-                string FullDirectoryPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, "Documents", "NetworkLog");
-                if (!System.IO.Directory.Exists(FullDirectoryPath))
+                string FullDirectoryPath = Path.Combine(WorkSpace.Instance.Solution.Folder, "Documents", "NetworkLog");
+                if (!Directory.Exists(FullDirectoryPath))
                 {
-                    System.IO.Directory.CreateDirectory(FullDirectoryPath);
+                    Directory.CreateDirectory(FullDirectoryPath);
                 }
 
-                FullFilePath = $"{FullDirectoryPath}{Path.DirectorySeparatorChar}{Filename}_{DateTime.Now.Day.ToString() }_{ DateTime.Now.Month.ToString() }_{ DateTime.Now.Year.ToString() }_{DateTime.Now.Millisecond.ToString()}.har";
-                if (!System.IO.File.Exists(FullFilePath))
-                {
-                    string FileContent = JsonConvert.SerializeObject(networkLogList.Select(x => x.Item2).ToList());
+                FullFilePath = $"{FullDirectoryPath}{Path.DirectorySeparatorChar}{Filename}_{DateTime.Now:dd_MM_yyyy_HHmmssfff}.har";
 
-                    using (Stream fileStream = System.IO.File.Create(FullFilePath))
-                    {
-                        fileStream.Close();
-                    }
-                    System.IO.File.WriteAllText(FullFilePath, FileContent);
-                }
+                string FileContent = JsonConvert.SerializeObject(networkLogList.Select(x => x.Item2).ToList(), Formatting.Indented);
+                File.WriteAllText(FullFilePath, FileContent);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name} Error: {ex.Message}", ex);
             }
+
             return FullFilePath;
-
-
         }
+
     }
 }
