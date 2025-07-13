@@ -45,7 +45,6 @@ namespace Ginger.User
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoLoadLastRunSetCheckBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoLoadLastRunSet));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xShowSourceControlStatusIconCheckBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.ShowSourceControlStatusIcon));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xWatchFileChangesCheckBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.WatchFileChanges));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xShowEnterpriseFeatures, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.ShowEnterpriseFeatures));
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)

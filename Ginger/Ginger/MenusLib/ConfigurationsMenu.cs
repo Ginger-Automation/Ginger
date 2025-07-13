@@ -93,6 +93,7 @@ namespace Ginger.ConfigurationsLib
             externalConfigMenu.Add(eImageType.Exchange, "Ask Lisa", GetAskLisaConfigsPage, ConsoleKey.X, "Ask Lisa Configurations", "Ask Lisa Configuration AID");
             externalConfigMenu.Add(eImageType.GingerAnalytics, "GingerOps", GetGingerOpsPage, ConsoleKey.X, "GingerOps Configuration", "GingerOps Configuration AID");
             externalConfigMenu.Add(eImageType.WireMockLogo, "WireMock", GetWireMockPage, ConsoleKey.X, "WireMock Configuration", "WireMock Configuration AID");
+            externalConfigMenu.Add(eImageType.GingerPlayLogo, "GingerPlay", GetGingerPlayPage, ConsoleKey.X, "GingerPlay Configuration", "GingerPlay Configuration AID");
             twoLevelMenu.Add(externalConfigMenu);
 
             TopMenuItem accessiblityRulesMenu = new TopMenuItem(eImageType.Accessibility, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", ConsoleKey.T, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", "Name & rules of the Accessibility which been present current json");
@@ -174,6 +175,11 @@ namespace Ginger.ConfigurationsLib
         private static Page GetWireMockPage()
         {
             return new WireMockConfigurationPage();
+        }
+
+        private static Page GetGingerPlayPage()
+        {
+            return new GingerPlayConfigurationpage();
         }
 
         //Remove when we add other pages
