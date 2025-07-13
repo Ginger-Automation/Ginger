@@ -618,7 +618,11 @@ namespace Amdocs.Ginger.Common.UIElement
         [EnumValueDescription("By Test ID")]
         ByTestID,
         [EnumValueDescription("By Chained locator")]
-        Chained
+        Chained,
+        [EnumValueDescription("By ARIA Label")]
+        ByAriaLabel,
+        [EnumValueDescription("By DataTest Id")]
+        ByDataTestId
     }
 
     public enum eElementType

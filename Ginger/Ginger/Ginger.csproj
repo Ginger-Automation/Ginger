@@ -611,6 +611,7 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoGray.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerIconWhite.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\GingerPlayLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerSplashImageNew.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\hbase.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\hbase.svg" />
@@ -2512,6 +2513,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconWhite.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerPlayLogo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerSplashImageNew.png">

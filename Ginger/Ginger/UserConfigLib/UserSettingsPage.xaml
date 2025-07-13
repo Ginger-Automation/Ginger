@@ -30,10 +30,6 @@
                             <ComboBox x:Name="xLoggingLevelComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="200px"/>
                         </StackPanel>
                         <CheckBox x:Name="xAskToUpgradeSolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Do not ask to upgrade Solution"  Margin="0,10,0,5"/>
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox x:Name="xShowEnterpriseFeatures" Style="{StaticResource $CeckBoxStyle}" Content="Show enterprise features"  Margin="0,5,0,5"/>
-                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
-                        </StackPanel>
                         <CheckBox x:Name="xWatchFileChangesCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Auto update on file/folder changes"  Margin="0,5,0,5"/>
                     </StackPanel>
                 </Expander.Content>
