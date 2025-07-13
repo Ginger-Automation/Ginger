@@ -1642,6 +1642,8 @@ namespace GingerCore
                         query = Regex.Replace(query, ";?$", " FETCH FIRST 1 ROWS ONLY;");
                     }
                     break;
+                default:
+                    break;
             }
 
             return query;
