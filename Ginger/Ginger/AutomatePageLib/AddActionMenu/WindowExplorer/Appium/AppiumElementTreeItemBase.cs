@@ -29,6 +29,9 @@ using System.Xml;
 
 namespace Ginger.WindowExplorer.Appium
 {
+    /// <summary>
+    /// test
+    /// </summary>
     public class AppiumElementTreeItemBase : ITreeViewItem, IWindowExplorerTreeItem
     {
         public ITreeView TreeView
