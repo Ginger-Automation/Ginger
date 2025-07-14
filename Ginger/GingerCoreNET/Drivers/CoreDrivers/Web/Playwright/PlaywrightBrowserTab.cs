@@ -47,19 +47,38 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
     internal sealed class PlaywrightBrowserTab : IBrowserTab
     {
         private static readonly IEnumerable<eLocateBy> SupportedElementLocators =
-        [
-            eLocateBy.ByID,
-            eLocateBy.ByCSS,
-            eLocateBy.ByName,
-            eLocateBy.ByXPath,
-            eLocateBy.ByTagName,
-            eLocateBy.ByRelXPath,
-            eLocateBy.POMElement,
-            eLocateBy.ByAutomationID,
-            eLocateBy.ByClassName,
-            eLocateBy.ByCSSSelector,
-            eLocateBy.ByLinkText
-        ];
+[
+    eLocateBy.ByID,
+    eLocateBy.ByCSS,
+    eLocateBy.ByName,
+    eLocateBy.ByXPath,
+    eLocateBy.ByRelXPath,
+    eLocateBy.ByTagName,
+    eLocateBy.POMElement,
+    eLocateBy.ByAutomationID,
+    eLocateBy.ByClassName,
+    eLocateBy.ByCSSSelector,
+    eLocateBy.ByLinkText,
+    eLocateBy.ByHref,
+    eLocateBy.ByValue,
+    eLocateBy.ByIndex,
+    eLocateBy.ByTitle,
+    eLocateBy.ByUrl,
+    eLocateBy.ByngModel,
+    eLocateBy.ByngRepeat,
+    eLocateBy.ByngBind,
+    eLocateBy.ByngSelectedOption,
+    eLocateBy.ByResourceID,
+    eLocateBy.ByContentDescription,
+    eLocateBy.ByText,
+    eLocateBy.ByModelName,
+    eLocateBy.ByLabel,
+    eLocateBy.ByPlaceholder,
+    eLocateBy.ByAltText,
+    eLocateBy.ByTestID,
+    eLocateBy.Chained
+];
+
 
         private static readonly IEnumerable<eLocateBy> SupportedFrameLocators =
         [
@@ -575,6 +594,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     locator = _currentFrame.Locator($"css=#{value}");
                     break;
                 case eLocateBy.ByCSS:
+                case eLocateBy.ByCSSSelector:
                     locator = _currentFrame.Locator($"css={value}");
                     break;
                 case eLocateBy.ByXPath:
@@ -594,11 +614,75 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 case eLocateBy.ByClassName:
                     locator = _currentFrame.Locator($"css=.{value}");
                     break;
-                case eLocateBy.ByCSSSelector:
-                    locator = _currentFrame.Locator($"css={value}");
-                    break;
                 case eLocateBy.ByLinkText:
+                case eLocateBy.ByText:
                     locator = _currentFrame.Locator($"text={value}");
+                    break;
+                case eLocateBy.ByHref:
+                case eLocateBy.ByUrl:
+                    locator = _currentFrame.Locator($"css=a[href='{value}']");
+                    break;
+                case eLocateBy.ByValue:
+                    locator = _currentFrame.Locator($"css=[value='{value}']");
+                    break;
+                case eLocateBy.ByIndex:
+                    locator = _currentFrame.Locator($"nth={value}");
+                    break;
+                case eLocateBy.ByTitle:
+                    locator = _currentFrame.Locator($"css=[title='{value}']");
+                    break;
+                case eLocateBy.ByngModel:
+                case eLocateBy.ByModelName:
+                    locator = _currentFrame.Locator($"css=[ng-model='{value}']");
+                    break;
+                case eLocateBy.ByngRepeat:
+                    locator = _currentFrame.Locator($"css=[ng-repeat='{value}']");
+                    break;
+                case eLocateBy.ByngBind:
+                    locator = _currentFrame.Locator($"css=[ng-bind='{value}']");
+                    break;
+                case eLocateBy.ByngSelectedOption:
+                    locator = _currentFrame.Locator($"css=select[ng-options*='{value}']");
+                    break;
+                case eLocateBy.ByResourceID:
+                    locator = _currentFrame.Locator($"css=[resource-id='{value}']");
+                    break;
+                case eLocateBy.ByContentDescription:
+                    locator = _currentFrame.Locator($"css=[content-desc='{value}']");
+                    break;
+                case eLocateBy.ByLabel:
+                    locator = _currentFrame.GetByLabel(value);
+                    break;
+                case eLocateBy.ByPlaceholder:
+                    locator = _currentFrame.GetByPlaceholder(value);
+                    break;
+                case eLocateBy.ByAltText:
+                    locator = _currentFrame.GetByAltText(value);
+                    break;
+                case eLocateBy.ByTestID:
+                    locator = _currentFrame.GetByTestId(value);
+                    break;
+                case eLocateBy.Chained:
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        throw new ArgumentException("Chained locator value cannot be null or empty.");
+                    }
+
+                    var parts = value.Split(">", StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length < 2)
+                    {
+                        throw new ArgumentException("Chained locator must contain at least two parts separated by '>'.");
+                    }
+
+                    locator = _currentFrame.Locator(parts[0].Trim());
+                    for (int i = 1; i < parts.Length; i++)
+                    {
+                        if (string.IsNullOrWhiteSpace(parts[i]))
+                        {
+                            throw new ArgumentException($"Chained locator part {i} cannot be empty.");
+                        }
+                        locator = locator.Locator(parts[i].Trim());
+                    }
                     break;
                 default:
                     throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");
@@ -645,9 +729,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             _isClosed = true;
 
             if (_playwrightPage.Video != null)
-            {                
-                string path = await _playwrightPage.Video.PathAsync();                
-                var pageURL = _playwrightPage.Url;                
+            {
+                string path = await _playwrightPage.Video.PathAsync();
+                var pageURL = _playwrightPage.Url;
                 //string videoFilePath = videoRecordingDire.Parent.FullName + "Action_" + DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 //await _playwrightPage.Video.SaveAsAsync(videoFilePath);
 
@@ -734,12 +818,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
 
         }
-        /// <summary>
-        /// This asynchronous method retrieves the captured network logs (requests and responses) for the current browser element and stores them in the act object.
-        /// It only performs the action if network log monitoring has been started.
-        /// </summary>
-        /// <param name="act"></param>
-        /// <returns></returns>
+
+
         public async Task GetCaptureNetworkLog(ActBrowserElement act)
         {
             _act = act;
@@ -750,21 +830,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 {
                     if (isNetworkLogMonitoringStarted)
                     {
-                        act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList(), Formatting.Indented));
-                        act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList(), Formatting.Indented));
-                        foreach (var val in networkRequestLogList.ToList())
-                        {
-                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
-                        }
-
-                        foreach (var val in networkResponseLogList.ToList())
-                        {
-                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
-                        }
+                        _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList);
                     }
                     else
                     {
-                        act.ExInfo = $"Action is skipped,{nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
+                        act.ExInfo = $"Action is skipped, {nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
                         act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                     }
                 });
@@ -774,11 +844,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-        /// <summary>
-        /// This asynchronous method stops the network log capture by unsubscribing from the network request and response events. 
-        /// It then processes and stores the captured logs, saves them to files, and attaches the files as artifacts to the act object.
-        /// </summary>
-        /// <param name="act"></param>
 
         public async Task StopCaptureNetworkLog(ActBrowserElement act)
         {
@@ -786,56 +851,27 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             _BrowserHelper = new BrowserHelper(act);
             try
             {
-                await Task.Run(async () =>
+                await Task.Run(() =>
                 {
                     try
                     {
-
                         if (networkRequestLogList.Count != networkResponseLogList.Count)
                         {
-                            int timeout = 60;
+                            int timeout = act.Timeout ?? 60;
                             Stopwatch st = Stopwatch.StartNew();
-                            if (act.Timeout is not null && act.Timeout != 0)
-                            {
-                                timeout = act.Timeout.Value;
-                            }
-                            st.Start();
+
                             while (timeout > st.Elapsed.TotalSeconds)
                             {
                                 if (networkRequestLogList.Count == networkResponseLogList.Count)
-                                {
                                     break;
-                                }
-                                System.Threading.Thread.Sleep(1000);
+
+                                Thread.Sleep(1000);
                             }
-                            st.Stop();
                         }
 
                         isNetworkLogMonitoringStarted = false;
-                        act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
-                        act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
-                        foreach (var val in networkRequestLogList)
-                        {
-                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
-                        }
-                        foreach (var val in networkResponseLogList)
-                        {
-                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
-                        }
-                        string requestPath = _BrowserHelper.CreateNetworkLogFile("NetworklogRequest", networkRequestLogList);
-                        act.ExInfo = $"RequestFile : {requestPath}\n";
-                        string responsePath = _BrowserHelper.CreateNetworkLogFile("NetworklogResponse", networkResponseLogList);
-                        act.ExInfo = $"{act.ExInfo} ResponseFile : {responsePath}\n";
-
-                        act.AddOrUpdateReturnParamActual("RequestFile", requestPath);
-                        act.AddOrUpdateReturnParamActual("ResponseFile", responsePath);
-
-                        Act.AddArtifactToAction(Path.GetFileName(requestPath), act, requestPath);
-
-                        Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);
+                        _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList,true);
                     }
-
-
                     catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
@@ -850,7 +886,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 DetachEvents();
             }
-
         }
 
         private void DetachEvents()

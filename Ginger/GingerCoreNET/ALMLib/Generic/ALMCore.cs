@@ -18,7 +18,9 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Environments;
@@ -223,14 +225,14 @@ namespace GingerCore.ALM
                 publishToALMConfig.HtmlReportUrl = "";
                 publishToALMConfig.ExecutionId = "";
 
-                bool check = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Any(g => g.IsSelected &&
-                !string.IsNullOrEmpty(g.CentralLoggerEndPointUrl) &&
-                g.PublishLogToCentralDB == ePublishToCentralDB.Yes &&
-                !string.IsNullOrEmpty(g.CentralizedHtmlReportServiceURL));
+                GingerPlayConfiguration gingerPlayConfig = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+                bool check =
+                    WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Any(g => g.IsSelected && g.PublishLogToCentralDB == ePublishToCentralDB.Yes)
+                    && gingerPlayConfig is { GingerPlayEnabled: true, GingerPlayReportServiceEnabled: true };
 
                 if (!exectutedFromAutomateTab && check)
                 {
-                    publishToALMConfig.HtmlReportUrl = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => x.IsSelected).CentralizedHtmlReportServiceURL;
+                    publishToALMConfig.HtmlReportUrl = GingerPlayEndPointManager.GetHTMLReportServiceUrl();
                     publishToALMConfig.ExecutionId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString();
                 }
                 foreach (BusinessFlow BizFlow in BusinessFlows) //Here going for each businessFlow

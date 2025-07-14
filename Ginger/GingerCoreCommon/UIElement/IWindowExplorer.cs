@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using System.Collections.Generic;
+using System.Drawing;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Repository;
@@ -37,7 +38,7 @@ namespace Amdocs.Ginger.Common.UIElement
         string GetFocusedControl();
         ElementInfo GetControlFromMousePosition();
         AppWindow GetActiveWindow();
-        Task<List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null);
+        Task<List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, Bitmap ScreenShot = null);
         List<ElementInfo> GetElementChildren(ElementInfo ElementInfo);
         // Get All element properties to be displayed in properties 
         ObservableList<ControlProperty> GetElementProperties(ElementInfo ElementInfo);

@@ -1,0 +1,140 @@
+{
+  "accessibilityRules": [
+    {
+      "RuleID": "AccessibleName_Missing",
+      "Description": "Interactive element lacks a descriptive accessible label (content-desc, label, name, text, or hint).",
+      "Impact": "Critical",
+      "Tags": "labeling, mobile, wcag2a, wcag2aa, EN_301_549, EN_9_4_1_2, EN-9.4.1.3",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "Image_MissingContentDesc",
+      "Description": "Image or ImageButton is missing a content-desc/label/name for screen readers.",
+      "Impact": "Critical",
+      "Tags": "images, labeling, mobile, wcag2a, EN_301_549, EN_9_4_1_2",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "GenericText_Interactive",
+      "Description": "Interactive element has generic or non-descriptive text/label (e.g., 'Click here', 'Learn more').",
+      "Impact": "Moderate",
+      "Tags": "labeling, text, mobile, wcag2a, wcag2aa, EN_301_549",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "RedundantDescription",
+      "Description": "Element has redundant text and content-desc/label. Screen readers might announce it twice.",
+      "Impact": "Minor",
+      "Tags": "labeling, redundancy, mobile, wcag2a, EN_301_549",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "TouchTarget_TooSmall",
+      "Description": "Interactive element has a touch target size smaller than the recommended minimum (e.g., 48x48px).",
+      "Impact": "Critical",
+      "Tags": "interactivity, size, mobile, wcag2aa, EN_301_549",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "EditableField_NoLabel",
+      "Description": "Editable text field lacks an accessible label/description.",
+      "Impact": "Critical",
+      "Tags": "forms, labeling, mobile, wcag2a, EN_301_549",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "InformationalElement_Interactive",
+      "Description": "Informational element (like a TextView/StaticText) is marked as interactive but lacks a clear accessible role or descriptive name/label.",
+      "Impact": "Moderate",
+      "Tags": "interactivity, role, mobile, wcag2a, EN_301_549",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "State_Missing",
+      "Description": "Checkbox/Radio button/Switch is missing 'checked' or 'selected' state attribute.",
+      "Impact": "Moderate",
+      "Tags": "state, mobile, wcag2a, EN_301_549",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "EnabledState_Mismatch",
+      "Description": "Interactive element is marked as disabled but may still be reachable or announced incorrectly.",
+      "Impact": "Minor",
+      "Tags": "state, interactivity, mobile, wcag2a, EN_301_549",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "Element_OffScreen",
+      "Description": "Element is completely off-screen and inaccessible.",
+      "Impact": "Critical",
+      "Tags": "layout, visibility, mobile, wcag2a, wcag2aa, EN_301_549",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "Element_PartiallyOffScreen",
+      "Description": "Element is partially off-screen, potentially causing issues with visibility or interaction.",
+      "Impact": "Moderate",
+      "Tags": "layout, visibility, mobile, wcag2a, wcag2aa, EN_301_549",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "ImportantForAccessibility_No",
+      "Description": "Element has 'importantForAccessibility=\"no\"' (Android specific) but contains interactive or meaningful content that might be hidden from assistive technologies.",
+      "Impact": "Moderate",
+      "Tags": "android, visibility, mobile, wcag2a, EN_301_549",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "PasswordField_ValueExposed",
+      "Description": "Password field's visible text or accessible label might expose sensitive information or be too generic. It should typically be obscured.",
+      "Impact": "Critical",
+      "Tags": "security, forms, mobile, wcag2a, wcag2aa, EN_301_549",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "SpecialCharacterLabel",
+      "Description": "Element's accessible label consists only of special characters. This is not descriptive for screen readers.",
+      "Impact": "Moderate",
+      "Tags": "labeling, text, mobile, wcag2aa, EN_301_549",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "InputType_GenericButSpecificLabel",
+      "Description": "Editable field's label suggests a specific input type (e.g., email, phone) but has a generic input type attribute. Consider using a more specific type.",
+      "Impact": "Minor",
+      "Tags": "forms, input, mobile, wcag2aa, EN_301_549",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "LabelInName_Mismatch",
+      "Description": "Interactive element's accessible label does not contain its visible text. This can be confusing for screen reader users.",
+      "Impact": "Moderate",
+      "Tags": "labeling, mobile, wcag2aa, wcag2a, EN_301_549",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "TraversalOrder_Review",
+      "Description": "Focusable element detected. Manual review is required to ensure logical traversal order for keyboard/directional navigation.",
+      "Impact": "Minor",
+      "Tags": "navigation, focus, mobile, manual-review, wcag2a, EN_301_549",
+      "Issue Type": "needs-review",
+      "ACT Rules": ""
+    }
+  ]
+}

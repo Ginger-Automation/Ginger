@@ -18,6 +18,8 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.Run.RemoteExecution;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Requests;
@@ -29,6 +31,7 @@ using IWshRuntimeLibrary;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -59,17 +62,13 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
             string handlerURLFromRunset = RunsetConfig.GetExecutionServiceURLUsed();
 
-            bool handlerURLConfiguredInLoggerConfig = !string.IsNullOrEmpty(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL);
+            bool handlerURLConfiguredInLoggerConfig = !string.IsNullOrEmpty(GingerPlayEndPointManager.GetExecutionServiceUrl());
             bool handlerURLConfiguredInRunset = !string.IsNullOrEmpty(handlerURLFromRunset);
-            if (!handlerURLConfiguredInLoggerConfig && handlerURLConfiguredInRunset)
-            {
-                WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL = handlerURLFromRunset;
-            }
 
             AutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, CliHelper);
-            if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Any(k => k.GingerPlayEnabled && (!string.IsNullOrEmpty(k.GingerPlayGatewayUrl) || !string.IsNullOrEmpty(k.CentralizedExecutionHandlerURL))))
             {
-                AutoRunConfiguration.ExecutionServiceUrl = WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL;
+                AutoRunConfiguration.ExecutionServiceUrl = GingerPlayEndPointManager.GetExecutionServiceUrl();
             }
             AutoRunShortcut = new RunSetAutoRunShortcut(AutoRunConfiguration);
 
@@ -137,7 +136,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     {
                         if (AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote)
                         {
-                            using ExecutionHandlerAPIClient executionHandlerAPIClient = new(AutoRunConfiguration.ExecutionServiceUrl);
+                            using ExecutionHandlerAPIClient executionHandlerAPIClient = new(GingerPlayEndPointManager.GetExecutionServiceUrl());
                             AddExecutionRequest executionRequest = JsonSerializer.Deserialize<AddExecutionRequest>(
                                 AutoRunConfiguration.CLIContent,
                                 new JsonSerializerOptions()

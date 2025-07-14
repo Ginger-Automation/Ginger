@@ -79,11 +79,13 @@ namespace GingerCore.Variables
             OutputVariable,
             ApplicationModelParameter,
             DataSource,
-            ActivityOutputVariable
+            ActivityOutputVariable,
+            ValueExpression
         }
 
         private bool mSetAsInputValue = true;
         [IsSerializedForLocalRepository(true)]
+        [AllowUserToEdit("Input Value")]
         public bool SetAsInputValue
         {
             get { return mSetAsInputValue; }
@@ -99,6 +101,7 @@ namespace GingerCore.Variables
 
         private bool mMandatoryInput = false;
         [IsSerializedForLocalRepository(false)]
+        [AllowUserToEdit("Mandatory Input")]
         public bool MandatoryInput
         {
             get { return mMandatoryInput; }
@@ -114,6 +117,7 @@ namespace GingerCore.Variables
 
         private bool mSetAsOutputValue = true;
         [IsSerializedForLocalRepository(true)]
+        [AllowUserToEdit("Output Variable")]
         public bool SetAsOutputValue
         {
             get { return mSetAsOutputValue; }
@@ -148,6 +152,7 @@ namespace GingerCore.Variables
 
         private string mDescription;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit("Description")]
         public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(nameof(Description)); } } }
 
         private string mValue;

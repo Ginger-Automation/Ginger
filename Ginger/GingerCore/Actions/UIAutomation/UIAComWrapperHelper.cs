@@ -4089,6 +4089,7 @@ namespace GingerCore.Drivers
                     CurrentWindow.SetFocus();
                     System.Windows.Forms.SendKeys.SendWait("c");
                     val = GetClipboardText();
+                    Reporter.ToLog(eLogLevel.DEBUG, "GetControlText Text Copied" + val);
                     ClearClipboardText();
                 }
             }
@@ -4102,28 +4103,36 @@ namespace GingerCore.Drivers
 
         private static string GetClipboardText()
         {
-            string clipboardText = "";
-            bool bDone = false;
+            string clipboardText = GingerCore.General.GetClipboardText();
+            
+            if (string.IsNullOrEmpty(clipboardText))
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Clipboard couldn't be identified, so trying alternative.");
 
-            var t = new Thread(() =>
-            {
-                try
+                bool bDone = false;                
+                // Fall-back mechanism, if above GingerCore.General.GetClipboardText doesn't work, then
+                var t = new Thread(() =>
                 {
-                    clipboardText = Clipboard.GetText(TextDataFormat.Text);
-                    bDone = true;
-                }
-                catch (Exception ex)
+                    try
+                    {
+                        clipboardText = Clipboard.GetText(TextDataFormat.Text);
+                        bDone = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetClipboardText", ex);
+                        bDone = true;
+                    }
+                });
+
+                t.SetApartmentState(ApartmentState.STA);
+                t.Start();
+                while (bDone == false)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetClipboardText", ex);
-                    bDone = true;
+                    Thread.Sleep(100);
                 }
-            });
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            while (bDone == false)
-            {
-                Thread.Sleep(100);
             }
+
             return clipboardText;
         }
 
