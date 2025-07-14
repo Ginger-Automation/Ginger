@@ -18,9 +18,9 @@ limitations under the License.
 
 using AccountReport.Contracts;
 using AccountReport.Contracts.ResponseModels;
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using AutoMapper;
 using Newtonsoft.Json;
@@ -114,7 +114,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public bool IsConfigurationChanged()
         {
-            return !string.Equals(EndPointUrl, WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+            return !string.Equals(EndPointUrl, GingerPlayEndPointManager.GetAccountReportServiceUrl());
         }
         public async Task<bool> SendRunsetExecutionDataToCentralDBAsync(AccountReportRunSet accountReportRunSet, bool isUpdate = false)
         {

@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.Run.RemoteExecution;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Amdocs.Ginger.Repository;
@@ -124,7 +125,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
 
         private async Task<GingerExecConfig?> GetExecutionConfigurationFromExecutionHandlerAsync(string executionId)
         {
-            string handlerAPIUrl = WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL;
+            string handlerAPIUrl = GingerPlayEndPointManager.GetExecutionServiceUrl();
             if (string.IsNullOrEmpty(handlerAPIUrl))
             {
                 //case: URL is null or empty
@@ -177,7 +178,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
 
             runset.Name = GetUniqueRunsetName(runset.Name);
 
-            RepositoryFolderBase bfFolder = GetRootRepositoryFolder<BusinessFlow>();           
+            RepositoryFolderBase bfFolder = GetRootRepositoryFolder<BusinessFlow>();
 
             IEnumerable<BusinessFlowRun> bfRuns = runset
                 .GingerRunners
@@ -200,7 +201,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
                     };
                     bf.DirtyStatus = eDirtyStatus.Modified;
                 }
-               
+
             }
             RepositoryFolderBase runsetFolder = GetRootRepositoryFolder<RunSetConfig>();
             RepositoryFolderBase runsetCacheFolder = GetOrCreateRepositoryFolder(ISolution.CacheDirectoryName, runsetFolder);
