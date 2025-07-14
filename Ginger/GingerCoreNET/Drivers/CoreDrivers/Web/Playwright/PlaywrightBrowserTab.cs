@@ -833,17 +833,27 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 await Task.Run(() =>
                 {
                     if (isNetworkLogMonitoringStarted)
-                    {
-                        act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList(), Formatting.Indented));
-                        act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList(), Formatting.Indented));
-                        foreach (var val in networkRequestLogList.ToList())
+                    {                       
+
+                        var parsedRequestObjects = networkRequestLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
+                        var parsedResponseObjects = networkResponseLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
+
+                        string formattedRequests = JsonConvert.SerializeObject(parsedRequestObjects, Formatting.Indented);
+                        string formattedResponses = JsonConvert.SerializeObject(parsedResponseObjects, Formatting.Indented);
+
+                        act.AddOrUpdateReturnParamActual("Raw Request", formattedRequests);
+                        act.AddOrUpdateReturnParamActual("Raw Response", formattedResponses);
+
+                        foreach (var val in networkRequestLogList)
                         {
-                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
+                            var value = val.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : val.Item2;
+                            act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", JsonConvert.SerializeObject(value, Formatting.Indented));
                         }
 
-                        foreach (var val in networkResponseLogList.ToList())
+                        foreach (var val in networkResponseLogList)
                         {
-                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
+                            var value = val.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : val.Item2;
+                            act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", JsonConvert.SerializeObject(value, Formatting.Indented));
                         }
                     }
                     else
@@ -896,26 +906,41 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         }
 
                         isNetworkLogMonitoringStarted = false;
-                        act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
-                        act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
+                        var parsedRequestObjects = networkRequestLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
+                        var parsedResponseObjects = networkResponseLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
+
+                        string formattedRequests = JsonConvert.SerializeObject(parsedRequestObjects, Formatting.Indented);
+                        string formattedResponses = JsonConvert.SerializeObject(parsedResponseObjects, Formatting.Indented);
+
+                        act.AddOrUpdateReturnParamActual("Raw Request", formattedRequests);
+                        act.AddOrUpdateReturnParamActual("Raw Response", formattedResponses);
+
                         foreach (var val in networkRequestLogList)
                         {
-                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
+                            var value = val.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : val.Item2;
+                            act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", JsonConvert.SerializeObject(value, Formatting.Indented));
                         }
+
                         foreach (var val in networkResponseLogList)
                         {
-                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
+                            var value = val.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : val.Item2;
+                            act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", JsonConvert.SerializeObject(value, Formatting.Indented));
                         }
-                        string requestPath = _BrowserHelper.CreateNetworkLogFile("NetworklogRequest", networkRequestLogList);
-                        act.ExInfo = $"RequestFile : {requestPath}\n";
-                        string responsePath = _BrowserHelper.CreateNetworkLogFile("NetworklogResponse", networkResponseLogList);
-                        act.ExInfo = $"{act.ExInfo} ResponseFile : {responsePath}\n";
+
+                        var parsedRequestTuples = networkRequestLogList.Select((x, i) => Tuple.Create(x.Item1, parsedRequestObjects[i])).ToList();
+
+                        var parsedResponseTuples = networkResponseLogList.Select((x, i) => Tuple.Create(x.Item1, parsedResponseObjects[i])).ToList();
+
+                        string requestPath = _BrowserHelper.CreateNetworkLogFile("NetworklogRequest", parsedRequestTuples);
+                        string responsePath = _BrowserHelper.CreateNetworkLogFile("NetworklogResponse", parsedResponseTuples);
+
+
+                        act.ExInfo = $"RequestFile : {requestPath}\nResponseFile : {responsePath}\n";
 
                         act.AddOrUpdateReturnParamActual("RequestFile", requestPath);
                         act.AddOrUpdateReturnParamActual("ResponseFile", responsePath);
 
                         Act.AddArtifactToAction(Path.GetFileName(requestPath), act, requestPath);
-
                         Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);
                     }
 
