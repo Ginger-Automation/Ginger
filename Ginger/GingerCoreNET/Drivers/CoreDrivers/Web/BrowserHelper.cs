@@ -49,7 +49,43 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
                 && _act.UpdateOperationInputValues.Any(x => ( !string.IsNullOrEmpty(x.ValueForDriver) ? requestUrl.ToLower().Contains(x.ValueForDriver.ToLower()) : (!string.IsNullOrEmpty(x.Value) && requestUrl.ToLower().Contains(x.Value.ToLower()))));
         }
 
+        public void ProcessNetworkLogs(ActBrowserElement act, List<Tuple<string, object>> networkResponseLogList, List<Tuple<string, object>> networkRequestLogList, bool saveToFile = false)
+        {
+            var parsedRequestObjects = networkRequestLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
+            var parsedResponseObjects = networkResponseLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
 
+            string formattedRequests = JsonConvert.SerializeObject(parsedRequestObjects, Formatting.Indented);
+            string formattedResponses = JsonConvert.SerializeObject(parsedResponseObjects, Formatting.Indented);
+
+            act.AddOrUpdateReturnParamActual("Raw Request", formattedRequests);
+            act.AddOrUpdateReturnParamActual("Raw Response", formattedResponses);
+
+            for (int i = 0; i < networkRequestLogList.Count; i++)
+            {
+                act.AddOrUpdateReturnParamActual($"{act.ControlAction} {networkRequestLogList[i].Item1}", JsonConvert.SerializeObject(parsedRequestObjects[i], Formatting.Indented));
+            }
+
+            for (int i = 0; i < networkResponseLogList.Count; i++)
+            {
+                act.AddOrUpdateReturnParamActual($"{act.ControlAction} {networkResponseLogList[i].Item1}", JsonConvert.SerializeObject(parsedResponseObjects[i], Formatting.Indented));
+            }
+
+            if (saveToFile)
+            {
+                var parsedRequestTuples = networkRequestLogList.Select((x, i) => Tuple.Create(x.Item1, parsedRequestObjects[i])).ToList();
+                var parsedResponseTuples = networkResponseLogList.Select((x, i) => Tuple.Create(x.Item1, parsedResponseObjects[i])).ToList();
+
+                string requestPath = CreateNetworkLogFile("NetworklogRequest", parsedRequestTuples);
+                string responsePath = CreateNetworkLogFile("NetworklogResponse", parsedResponseTuples);
+
+                act.ExInfo = $"RequestFile : {requestPath}\nResponseFile : {responsePath}\n";
+                act.AddOrUpdateReturnParamActual("RequestFile", requestPath);
+                act.AddOrUpdateReturnParamActual("ResponseFile", responsePath);
+
+                Act.AddArtifactToAction(Path.GetFileName(requestPath), act, requestPath);
+                Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);
+            }
+        }
         public string CreateNetworkLogFile(string Filename, List<Tuple<string, object>> networkLogList)
         {
             if (string.IsNullOrEmpty(Filename) || networkLogList == null)

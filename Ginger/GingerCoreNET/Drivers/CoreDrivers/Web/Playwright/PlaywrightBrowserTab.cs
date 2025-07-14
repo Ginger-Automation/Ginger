@@ -818,12 +818,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
 
         }
-        /// <summary>
-        /// This asynchronous method retrieves the captured network logs (requests and responses) for the current browser element and stores them in the act object.
-        /// It only performs the action if network log monitoring has been started.
-        /// </summary>
-        /// <param name="act"></param>
-        /// <returns></returns>
+
+
         public async Task GetCaptureNetworkLog(ActBrowserElement act)
         {
             _act = act;
@@ -833,32 +829,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 await Task.Run(() =>
                 {
                     if (isNetworkLogMonitoringStarted)
-                    {                       
-
-                        var parsedRequestObjects = networkRequestLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
-                        var parsedResponseObjects = networkResponseLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
-
-                        string formattedRequests = JsonConvert.SerializeObject(parsedRequestObjects, Formatting.Indented);
-                        string formattedResponses = JsonConvert.SerializeObject(parsedResponseObjects, Formatting.Indented);
-
-                        act.AddOrUpdateReturnParamActual("Raw Request", formattedRequests);
-                        act.AddOrUpdateReturnParamActual("Raw Response", formattedResponses);
-
-                        foreach (var val in networkRequestLogList)
-                        {
-                            var value = val.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : val.Item2;
-                            act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", JsonConvert.SerializeObject(value, Formatting.Indented));
-                        }
-
-                        foreach (var val in networkResponseLogList)
-                        {
-                            var value = val.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : val.Item2;
-                            act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", JsonConvert.SerializeObject(value, Formatting.Indented));
-                        }
+                    {
+                        _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList);
                     }
                     else
                     {
-                        act.ExInfo = $"Action is skipped,{nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
+                        act.ExInfo = $"Action is skipped, {nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
                         act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                     }
                 });
@@ -868,11 +844,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-        /// <summary>
-        /// This asynchronous method stops the network log capture by unsubscribing from the network request and response events. 
-        /// It then processes and stores the captured logs, saves them to files, and attaches the files as artifacts to the act object.
-        /// </summary>
-        /// <param name="act"></param>
 
         public async Task StopCaptureNetworkLog(ActBrowserElement act)
         {
@@ -880,71 +851,27 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             _BrowserHelper = new BrowserHelper(act);
             try
             {
-                await Task.Run(async () =>
+                await Task.Run(() =>
                 {
                     try
                     {
-
                         if (networkRequestLogList.Count != networkResponseLogList.Count)
                         {
-                            int timeout = 60;
+                            int timeout = act.Timeout ?? 60;
                             Stopwatch st = Stopwatch.StartNew();
-                            if (act.Timeout is not null && act.Timeout != 0)
-                            {
-                                timeout = act.Timeout.Value;
-                            }
-                            st.Start();
+
                             while (timeout > st.Elapsed.TotalSeconds)
                             {
                                 if (networkRequestLogList.Count == networkResponseLogList.Count)
-                                {
                                     break;
-                                }
-                                System.Threading.Thread.Sleep(1000);
+
+                                Thread.Sleep(1000);
                             }
-                            st.Stop();
                         }
 
                         isNetworkLogMonitoringStarted = false;
-                        var parsedRequestObjects = networkRequestLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
-                        var parsedResponseObjects = networkResponseLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
-
-                        string formattedRequests = JsonConvert.SerializeObject(parsedRequestObjects, Formatting.Indented);
-                        string formattedResponses = JsonConvert.SerializeObject(parsedResponseObjects, Formatting.Indented);
-
-                        act.AddOrUpdateReturnParamActual("Raw Request", formattedRequests);
-                        act.AddOrUpdateReturnParamActual("Raw Response", formattedResponses);
-
-                        foreach (var val in networkRequestLogList)
-                        {
-                            var value = val.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : val.Item2;
-                            act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", JsonConvert.SerializeObject(value, Formatting.Indented));
-                        }
-
-                        foreach (var val in networkResponseLogList)
-                        {
-                            var value = val.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : val.Item2;
-                            act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", JsonConvert.SerializeObject(value, Formatting.Indented));
-                        }
-
-                        var parsedRequestTuples = networkRequestLogList.Select((x, i) => Tuple.Create(x.Item1, parsedRequestObjects[i])).ToList();
-
-                        var parsedResponseTuples = networkResponseLogList.Select((x, i) => Tuple.Create(x.Item1, parsedResponseObjects[i])).ToList();
-
-                        string requestPath = _BrowserHelper.CreateNetworkLogFile("NetworklogRequest", parsedRequestTuples);
-                        string responsePath = _BrowserHelper.CreateNetworkLogFile("NetworklogResponse", parsedResponseTuples);
-
-
-                        act.ExInfo = $"RequestFile : {requestPath}\nResponseFile : {responsePath}\n";
-
-                        act.AddOrUpdateReturnParamActual("RequestFile", requestPath);
-                        act.AddOrUpdateReturnParamActual("ResponseFile", responsePath);
-
-                        Act.AddArtifactToAction(Path.GetFileName(requestPath), act, requestPath);
-                        Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);
+                        _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList,true);
                     }
-
-
                     catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
@@ -959,7 +886,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 DetachEvents();
             }
-
         }
 
         private void DetachEvents()
