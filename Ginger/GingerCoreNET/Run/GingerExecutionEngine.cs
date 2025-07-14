@@ -975,10 +975,10 @@ namespace Ginger.Run
                             }
                         }
                     }
-                    else if (inputVar.MappedOutputType == VariableBase.eOutputType.DataSource)
+                    else if (inputVar.MappedOutputType == VariableBase.eOutputType.DataSource||inputVar.MappedOutputType == VariableBase.eOutputType.ValueExpression)
                     {
-                        string dsRes = ValueExpression.Calculate(mGingerRunner.ProjEnvironment, CurrentBusinessFlow, inputVar.MappedOutputValue, mGingerRunner.DSList);
-                        mappedValue = string.IsNullOrEmpty(dsRes) ? string.Empty : dsRes;
+                        string calculatedValue = ValueExpression.Calculate(mGingerRunner.ProjEnvironment, CurrentBusinessFlow, inputVar.MappedOutputValue, mGingerRunner.DSList);
+                        mappedValue = string.IsNullOrEmpty(calculatedValue) ? string.Empty : calculatedValue;
                     }
                     else if (inputVar.GetType() != typeof(VariablePasswordString) && inputVar.GetType() != typeof(VariableDynamic))//what this for???
                     {
