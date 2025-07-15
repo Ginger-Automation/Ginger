@@ -11250,35 +11250,6 @@ namespace GingerCore.Drivers
                 Thread.Sleep(300);
             }
         }
-        public async Task GetNetworkLogAsync(ActBrowserElement act)
-        {
-            try
-            {
-                if (isNetworkLogMonitoringStarted)
-                {
-                    act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
-                    act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
-                    foreach (var val in networkRequestLogList.ToList())
-                    {
-                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
-                    }
-
-                    foreach (var val in networkResponseLogList.ToList())
-                    {
-                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
-                    }
-                }
-                else
-                {
-                    act.ExInfo = $"Action is skipped,{nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
-                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-            }
-        }
 
 
 
@@ -11310,12 +11281,34 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
+    
+        public async Task GetNetworkLogAsync(ActBrowserElement act)
+        {
+            try
+            {
+                if (isNetworkLogMonitoringStarted)
+                {
+                   _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList);
+                }
+                else
+                {
+                    act.ExInfo = $"Action is skipped, {nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
+                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+        }
+
 
         public async Task StopMonitoringNetworkLog(ActBrowserElement act)
         {
             try
             {
                 act.Artifacts = [];
+
                 if (isNetworkLogMonitoringStarted)
                 {
                     await interceptor.StopMonitoring();
@@ -11324,38 +11317,26 @@ namespace GingerCore.Drivers
                     interceptor.NetworkResponseReceived -= OnNetworkResponseReceived;
                     interceptor.ClearRequestHandlers();
                     interceptor.ClearResponseHandlers();
-                    act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList(), Formatting.Indented));
-                    act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList(), Formatting.Indented));
-                    foreach (var val in networkRequestLogList.ToList())
+
+                    try
                     {
-                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
+                        await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V136.Network.DisableCommandSettings());
+                        devToolsSession.Dispose();
+                        devTools.CloseDevToolsSession();
+
+                        _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList, saveToFile: true);
                     }
-                    foreach (var val in networkResponseLogList.ToList())
+                    catch (Exception fileEx)
                     {
-                        act.AddOrUpdateReturnParamActual($"{act.ControlAction} {val.Item1}", Convert.ToString(val.Item2));
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to create or attach network log files", fileEx);
+                        act.ExInfo += "\nFailed to create or attach network log files.";
+                        act.AddOrUpdateReturnParamActual("NetworkLogFileError", fileEx.Message);
                     }
-
-                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V136.Network.DisableCommandSettings());
-                    devToolsSession.Dispose();
-                    devTools.CloseDevToolsSession();
-
-                    string requestPath = _BrowserHelper.CreateNetworkLogFile("NetworklogRequest", networkRequestLogList);
-                    act.ExInfo = $"RequestFile : {requestPath}\n";
-                    string responsePath = _BrowserHelper.CreateNetworkLogFile("NetworklogResponse", networkResponseLogList);
-                    act.ExInfo = $"{act.ExInfo} ResponseFile : {responsePath}\n";
-
-                    act.AddOrUpdateReturnParamActual("RequestFile", requestPath);
-                    act.AddOrUpdateReturnParamActual("ResponseFile", responsePath);
-
-                    Act.AddArtifactToAction(Path.GetFileName(requestPath), act, requestPath);
-
-                    Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);
                 }
                 else
                 {
-                    act.ExInfo = $"Action is skipped,{nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
+                    act.ExInfo = $"Action is skipped, {nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-
                 }
             }
             catch (Exception ex)
@@ -11363,6 +11344,8 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
+
+
 
         private int CreateConsoleLogFile(string filePath, string logs, ActBrowserElement act)
         {

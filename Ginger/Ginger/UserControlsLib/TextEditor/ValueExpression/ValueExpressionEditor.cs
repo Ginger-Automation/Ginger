@@ -186,7 +186,10 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             {
                 p = new ActDataSourcePage(SelectedContentArgs);
             }
-
+            if (txt.StartsWith("{EnvApp="))
+            {
+                p = new ValidationDBPage(SelectedContentArgs, new GingerCore.Actions.ActDBValidation() { Context = mContext });
+            }
             if (txt.StartsWith("{FD Object="))
             {
                 Tuple<GingerCore.ValueExpression.eFlowDetailsObjects, string> expParams = GingerCore.ValueExpression.GetFlowDetailsParams(txt);
@@ -250,6 +253,10 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                 else if (p.GetType() == typeof(ValueExpressionMockDataEditorPage))
                 {
                     ((ValueExpressionMockDataEditorPage)p).UpdateContent();
+                }
+                else if (p.GetType() == typeof(ValidationDBPage))
+                {
+                    ((ValidationDBPage)p).UpdateContent();
                 }
             }
             catch (Exception ex)
