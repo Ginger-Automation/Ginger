@@ -126,18 +126,42 @@ namespace Ginger.ExternalConfigurations
 
             if ((bool)xReportServiceCheckBox.IsChecked)
             {
-                bool isReportServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetReportServiceHealthUrl());
-                healthMessages.Add($"Report Service: {(isReportServiceHealthy ? "UP" : "DOWN")}");
+                try
+                {
+                    bool isReportServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetReportServiceHealthUrl());
+                    healthMessages.Add($"Report Service: {(isReportServiceHealthy ? "UP" : "DOWN")}");
+                }
+                catch (System.Exception ex)
+                {
+
+                    healthMessages.Add($"Report Service: ERROR - {ex.Message}");
+                }
             }
             if ((bool)xExecutionServiceCheckBox.IsChecked)
             {
-                bool isExecutionServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetExecutionServiceHealthUrl());
-                healthMessages.Add($"Execution Service: {(isExecutionServiceHealthy ? "UP" : "DOWN")}");
+                try
+                {
+                    bool isExecutionServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetExecutionServiceHealthUrl());
+                    healthMessages.Add($"Execution Service: {(isExecutionServiceHealthy ? "UP" : "DOWN")}");
+                }
+                catch (System.Exception ex)
+                {
+
+                    healthMessages.Add($"Execution Service: ERROR - {ex.Message}");
+                }
             }
             if ((bool)xAIServiceCheckBox.IsChecked)
             {
-                bool isAIServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetAIServiceHealthUrl());
-                healthMessages.Add($"AI Service: {(isAIServiceHealthy ? "UP" : "DOWN")}");
+                try
+                {
+                    bool isAIServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetAIServiceHealthUrl());
+                    healthMessages.Add($"AI Service: {(isAIServiceHealthy ? "UP" : "DOWN")}");
+                }
+                catch (System.Exception ex)
+                {
+
+                    healthMessages.Add($"AI Service: ERROR - {ex.Message}");
+                }
             }
 
             if (healthMessages.Count > 0)
