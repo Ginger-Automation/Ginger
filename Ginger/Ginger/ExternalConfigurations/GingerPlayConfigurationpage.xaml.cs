@@ -80,6 +80,11 @@ namespace Ginger.ExternalConfigurations
             return string.IsNullOrEmpty(gingerPlayConfiguration.GingerPlayGatewayUrl);
         }
 
+        public bool AreCredentialsFieldsEmpty()
+        {
+            return string.IsNullOrEmpty(gingerPlayConfiguration.GingerPlayClientId) || string.IsNullOrEmpty(gingerPlayConfiguration.GingerPlayClientSecret);
+        }
+
         private void xAllowGingerPlayCheckBox_Checked(object sender, System.Windows.RoutedEventArgs e)
         {
             UpdateControlStates();
@@ -97,42 +102,47 @@ namespace Ginger.ExternalConfigurations
                     return;
                 }
 
-                // Test main connection
-                bool isAuthorized = await GingerPlayAPITokenManager.GetOrValidateToken();
-
-                // Check health for selected services
-                var healthMessages = new List<string>();
-
-                if ((bool)xReportServiceCheckBox.IsChecked)
+                if (!AreCredentialsFieldsEmpty())
                 {
-                    bool isReportServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetReportServiceHealthUrl());
-                    healthMessages.Add($"Report Service: {(isReportServiceHealthy ? "UP" : "DOWN")}");
+                    bool isAuthorized = await GingerPlayAPITokenManager.GetOrValidateToken();
+                    // Show main connection result
+                    ShowConnectionResult(isAuthorized);
                 }
-                if ((bool)xExecutionServiceCheckBox.IsChecked)
-                {
-                    bool isExecutionServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetExecutionServiceHealthUrl());
-                    healthMessages.Add($"Execution Service: {(isExecutionServiceHealthy ? "UP" : "DOWN")}");
-                }
-                if ((bool)xAIServiceCheckBox.IsChecked)
-                {
-                    bool isAIServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetAIServiceHealthUrl());
-                    healthMessages.Add($"AI Service: {(isAIServiceHealthy ? "UP" : "DOWN")}");
-                }
-
-                // Show main connection result
-                ShowConnectionResult(isAuthorized);
-
-                // Show service health summary if any were checked
-                if (healthMessages.Count > 0)
-                {
-                    string summary = string.Join("\n", healthMessages);
-                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"Service Health Status:\n{summary}");
-                }
+                ShowServicesHealth();
+                return;
             }
             finally
             {
                 HideLoader();
                 xTestConBtn.IsEnabled = true;
+            }
+        }
+
+        private async void ShowServicesHealth()
+        {
+            // Check health for selected services
+            var healthMessages = new List<string>();
+
+            if ((bool)xReportServiceCheckBox.IsChecked)
+            {
+                bool isReportServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetReportServiceHealthUrl());
+                healthMessages.Add($"Report Service: {(isReportServiceHealthy ? "UP" : "DOWN")}");
+            }
+            if ((bool)xExecutionServiceCheckBox.IsChecked)
+            {
+                bool isExecutionServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetExecutionServiceHealthUrl());
+                healthMessages.Add($"Execution Service: {(isExecutionServiceHealthy ? "UP" : "DOWN")}");
+            }
+            if ((bool)xAIServiceCheckBox.IsChecked)
+            {
+                bool isAIServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetAIServiceHealthUrl());
+                healthMessages.Add($"AI Service: {(isAIServiceHealthy ? "UP" : "DOWN")}");
+            }
+
+            if (healthMessages.Count > 0)
+            {
+                string summary = string.Join("\n", healthMessages);
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"Service Health Status:\n{summary}");
             }
         }
 
