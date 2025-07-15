@@ -43,6 +43,7 @@ using HtmlAgilityPack;
 using InputSimulatorStandard;
 using Microsoft.VisualStudio.Services.Common;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Chrome;
@@ -5289,7 +5290,7 @@ namespace GingerCore.Drivers
                     Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
-                    List<ElementInfo> list = General.ConvertObservableListToList<ElementInfo>(FindAllElementsFromPOM("", pomSetting, Driver, Guid.Empty, foundElementsList, PomMetaData,ScreenShot:ScreenShot));
+                    List<ElementInfo> list = General.ConvertObservableListToList<ElementInfo>(FindAllElementsFromPOM("", pomSetting, Driver, Guid.Empty, foundElementsList, PomMetaData,ScreenShot: ScreenShot));
                     for (int i = 0; i < list.Count; i++)
                     {
                         ElementInfo elementInfo = list[i];
@@ -5397,10 +5398,111 @@ namespace GingerCore.Drivers
         // Define a collection of excluded element names
         internal static HashSet<string> excludedElementNames = new(StringComparer.OrdinalIgnoreCase)
         {
-            "noscript", "script", "style", "meta", "head", "link", "html", "body"
+            "noscript", "script", "style", "meta", "head", "link", "html", "body","br"
         };
 
-        private ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null,Bitmap ScreenShot = null)
+        public void AddElementLocators(ObservableList<ElementLocator> locatorList, dynamic locators)
+        {
+            void AddIfNotNull(eLocateBy locateBy, string value)
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    locatorList.Add(new ElementLocator { LocateBy = locateBy, LocateValue = value,IsAutoLearned = true });
+                }
+            }
+
+            AddIfNotNull(eLocateBy.ByID, locators.ByID);
+            AddIfNotNull(eLocateBy.ByName, locators.ByName);
+            AddIfNotNull(eLocateBy.ByRelXPath, locators.ByRelXPath);
+            AddIfNotNull(eLocateBy.ByXPath, locators.ByXPath);
+            AddIfNotNull(eLocateBy.ByCSS, locators.ByCSS);
+            AddIfNotNull(eLocateBy.ByClassName, locators.ByClassName);
+            AddIfNotNull(eLocateBy.ByTitle, locators.ByTitle);
+            AddIfNotNull(eLocateBy.ByCSSSelector, locators.ByCSSSelector);
+            AddIfNotNull(eLocateBy.ByDataTestId, locators.ByDataTestId);
+            AddIfNotNull(eLocateBy.ByPlaceholder, locators.ByPlaceholder);
+            AddIfNotNull(eLocateBy.ByTagName, locators.ByTagName);
+            AddIfNotNull(eLocateBy.ByLinkText, locators.ByLinkText);
+            AddIfNotNull(eLocateBy.ByHref, locators.ByHref);
+            AddIfNotNull(eLocateBy.ByAriaLabel, locators.ByAriaLabel);
+        }
+
+        public void AddControlProperties(ObservableList<ControlProperty> propertyList, dynamic properties)
+        {
+            void AddIfNotNull(string name, string value)
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    propertyList.Add(new ControlProperty { Name = name, Value = value });
+                }
+            }
+
+            AddIfNotNull("name", properties.name);
+            AddIfNotNull("Xpath", properties.Xpath);
+            AddIfNotNull("class", properties.@class);
+            AddIfNotNull("RelativeXpath", properties.RelativeXpath);
+            AddIfNotNull("TagName", properties.TagName);
+            AddIfNotNull("Displayed", properties.Displayed);
+            AddIfNotNull("Enabled", properties.Enabled);
+            AddIfNotNull("placeholder", properties.placeholder);
+            AddIfNotNull("title", properties.title);
+            AddIfNotNull("type", properties.type);
+            AddIfNotNull("value", properties.value);
+            AddIfNotNull("Selected", properties.Selected);
+            AddIfNotNull("Text", properties.Text);
+            AddIfNotNull("autocorrect", properties.autocorrect);
+            AddIfNotNull("autocapitalize", properties.autocapitalize);
+            AddIfNotNull("DataTest", properties.DataTest);
+            AddIfNotNull("id", properties.id);
+            AddIfNotNull("text", properties.text);
+            AddIfNotNull("style", properties.style);
+            AddIfNotNull("Width", properties.Width);
+            AddIfNotNull("Height", properties.Height);
+            AddIfNotNull("X", properties.X);
+            AddIfNotNull("Y", properties.Y);
+        }
+
+
+
+        public HTMLElementInfo ConvertToHTMLElementInfo(Element element)
+        {
+            var foundElementInfo = new HTMLElementInfo
+            {
+                ElementName = element.Properties.name,
+                ElementType = element.Properties.TagName,
+                ElementTypeEnum = GetElementTypeEnum(jsType: element.Properties.TagName, TypeAtt: element.Properties.type).Item2, // Map to your enum if needed\ 
+                ElementObject = null, // Set if you have the actual WebElement
+                Path = "",            // Set if applicable
+                HTMLElementObject = null, // Set if you have the HTML node
+                XPath = element.locators.ByRelXPath,
+                IsAutoLearned = true,
+                Width = element.Properties.Width != null ? Convert.ToInt32(element.Properties.Width) : 0,
+                Height = element.Properties.Height != null ? Convert.ToInt32(element.Properties.Height) : 0,
+                Active = true
+            };
+
+
+            AddElementLocators(foundElementInfo.Locators, element.locators);
+            AddControlProperties(foundElementInfo.Properties, element.Properties);
+
+
+            if (element.Properties.attributes != null)
+            {
+                foreach (var attr in element.Properties.attributes)
+                {
+                    foundElementInfo.Properties.Add(new ControlProperty { Name = attr.Key, Value = attr.Value });
+                }
+            }
+
+            // Optional: Screenshot
+            foundElementInfo.ScreenShotImage = ""; // Set if you have a base64 image or path
+
+            return foundElementInfo;
+        }
+
+
+
+        private ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null, Bitmap ScreenShot = null)
         {
             // Initialize lists if null
             PomMetaData ??= [];
@@ -5415,8 +5517,109 @@ namespace GingerCore.Drivers
                     .Descendants()
                     .Where(x => !x.Name.StartsWith('#') && !excludedElementNames.Contains(x.Name)
                                 && !x.XPath.Contains("/noscript", StringComparison.OrdinalIgnoreCase));
-
             List<HtmlNode> formElementsList = [];
+            if (pomSetting.LearnPOMByAI)
+            {
+                try
+                {
+                    var rawHtml = string.Join("\n",
+                 htmlDoc.DocumentNode
+                 .Descendants()
+                 .Where(x => !x.Name.StartsWith('#')
+                 && !excludedElementNames.Contains(x.Name)
+                 && !x.XPath.Contains("/noscript", StringComparison.OrdinalIgnoreCase))
+                 .Select(x => x.OuterHtml));
+                    
+                    var payload = new
+                    {
+                        dom = rawHtml // Replace with your actual DOM string
+                    };
+                    string Response = string.Empty;
+                    //GenAI service
+                    Response = GingerCoreNET.GeneralLib.General.GetResponseByOpenAI(payload).GetAwaiter().GetResult();
+
+                    if (Response.Contains("error") || Response.Contains("unauthorized"))
+                    {
+                        Reporter.ToLog(eLogLevel.INFO, "Failed to connect to OpenAI API. Please check your internet connection or firewall settings");
+                        return foundElementsList;
+                    }
+
+                    string cleanedResponse = Response
+                     .Replace("```json", "")
+                     .Replace("```", "")
+                     .Replace("\\\"", "'")
+                     .Replace("\\n", "")
+                     .Replace("\\r", "")
+                     .Replace("\r", "")
+                     .Replace("\n", "").Trim();
+
+                    // Step 1: Parse the outer JSON
+                    var outerJson = JObject.Parse(cleanedResponse); // 'Response' is your raw JSON string
+                    Reporter.ToLog(eLogLevel.DEBUG, $"cleanedResponse: {cleanedResponse} ");
+                    // Step 2: Extract the inner JSON string
+                    string innerJsonString = outerJson["data"]?["genai_result"]?.ToString();
+                    if(innerJsonString == null)
+                    {
+                        innerJsonString = outerJson.ToString();
+                    }
+                    // Step 3: Validate and clean the inner JSON string
+                    if (!string.IsNullOrWhiteSpace(innerJsonString) && innerJsonString.TrimStart().StartsWith("{"))
+                    {
+                        string cleanedJson = innerJsonString;
+
+                        try
+                        {
+                            // Step 4: Deserialize to ElementWrapperInfo
+                            var elementWrapperInfo = JsonConvert.DeserializeObject<ElementWrapperInfo>(cleanedJson);
+
+                            // Step 5: Convert to HTMLElementInfo list
+                            List<HTMLElementInfo> allElements = elementWrapperInfo.elements
+                     .Select(e => ConvertToHTMLElementInfo(e.elementinfo))
+                     .ToList();
+
+                            // Step 6: Convert to ObservableList<ElementInfo>
+                            ObservableList<ElementInfo> elementlist = new ObservableList<ElementInfo>(
+                                 allElements.Select(e => new ElementInfo
+                                 {
+                                     ElementName = e.ElementName,
+                                     ElementType = e.ElementType,
+                                     ElementTypeEnum = e.ElementTypeEnum,
+                                     Locators = e.Locators,
+                                     Properties = e.Properties,
+                                     ScreenShotImage = e.ScreenShotImage,
+                                     X = e.X,
+                                     Y = e.Y,
+                                     Width = e.Width,
+                                     Height = e.Height,
+                                     Active = e.Active,
+                                     Mandatory = e.Mandatory,
+                                     IsAutoLearned = e.IsAutoLearned
+                                 })
+                                 );
+                            foundElementsList.AddRange(elementlist);
+                            return foundElementsList;
+                        }
+                        catch (JsonException ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to parse inner JSON: " + ex.Message,ex);
+                            return foundElementsList;
+                        }
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "genai_result does not contain valid JSON.");
+                        return foundElementsList;
+                    }
+
+                    
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to parse JSON,Please check genai_result does not contain valid JSON.", ex);
+                    return foundElementsList;
+                }
+            }
+            //List<HtmlNode> formElementsList = [];
             // Process HTML elements
             foreach (HtmlNode htmlElemNode in htmlElements)
             {
@@ -5485,7 +5688,6 @@ namespace GingerCore.Drivers
             return foundElementsList;
         }
 
-        
         // Method to determine if the element should be learned
         private bool ShouldLearnElement(PomSetting pomSetting, eElementType elementType)
         {
@@ -5812,7 +6014,7 @@ namespace GingerCore.Drivers
             return false;
         }
 
-        public static Tuple<string, eElementType> GetElementTypeEnum(IWebElement el = null, string jsType = null, HtmlNode htmlNode = null)
+        public static Tuple<string, eElementType> GetElementTypeEnum(IWebElement el = null, string jsType = null, HtmlNode htmlNode = null,string TypeAtt = null)
         {
             Tuple<string, eElementType> returnTuple;
             eElementType elementType = eElementType.Unknown;
@@ -5822,7 +6024,7 @@ namespace GingerCore.Drivers
             if ((el == null) && (jsType != null))
             {
                 elementTagName = jsType;
-                elementTypeAtt = string.Empty;
+                elementTypeAtt = !string.IsNullOrEmpty(TypeAtt)?TypeAtt:string.Empty;
             }
             else if ((el != null) && (jsType == null))
             {
