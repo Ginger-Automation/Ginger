@@ -25,6 +25,7 @@ using Ginger.ValidationRules;
 using GingerCore;
 using GingerCore.GeneralLib;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -118,7 +119,7 @@ namespace Ginger.ExternalConfigurations
             }
         }
 
-        private async void ShowServicesHealth()
+        private async Task ShowServicesHealth()
         {
             // Check health for selected services
             var healthMessages = new List<string>();
