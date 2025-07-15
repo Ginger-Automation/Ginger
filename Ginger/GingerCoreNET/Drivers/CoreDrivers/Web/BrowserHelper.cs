@@ -70,13 +70,24 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
                 act.AddOrUpdateReturnParamActual($"{act.ControlAction} {networkResponseLogList[i].Item1}", JsonConvert.SerializeObject(parsedResponseObjects[i], Formatting.Indented));
             }
 
-            if (saveToFile)
+            if ((act.ControlAction==ActBrowserElement.eControlAction.GetNetworkLog && act.SaveLogToFile) || act.ControlAction==ActBrowserElement.eControlAction.StopMonitoringNetworkLog)
             {
                 var parsedRequestTuples = networkRequestLogList.Select((x, i) => Tuple.Create(x.Item1, parsedRequestObjects[i])).ToList();
                 var parsedResponseTuples = networkResponseLogList.Select((x, i) => Tuple.Create(x.Item1, parsedResponseObjects[i])).ToList();
 
-                string requestPath = CreateNetworkLogFile("NetworklogRequest", parsedRequestTuples);
-                string responsePath = CreateNetworkLogFile("NetworklogResponse", parsedResponseTuples);
+                string RequestFileName = "NetworklogRequest";
+                string ResponseFileName = "NetworklogResponse";
+
+                if (!string.IsNullOrEmpty(act.RequestFileName))
+                {
+                    RequestFileName= act.RequestFileName;
+                }
+                if (!string.IsNullOrEmpty(act.ResponseFileName))
+                {
+                    ResponseFileName = act.ResponseFileName;
+                }
+                string requestPath = CreateNetworkLogFile(RequestFileName, parsedRequestTuples);
+                string responsePath = CreateNetworkLogFile(ResponseFileName, parsedResponseTuples);
 
                 act.ExInfo = $"RequestFile : {requestPath}\nResponseFile : {responsePath}\n";
                 act.AddOrUpdateReturnParamActual("RequestFile", requestPath);

@@ -42,6 +42,10 @@ namespace GingerCore.Actions
             public static string URLSrc = "URLSrc";
             public static string PomGUID = "PomGUID";
             public static string BlockedUrls = "sBlockedUrls";
+            public static string RequestFileName = "RequestFileName";
+            public static string ResponseFileName = "ResponseFileName";
+            public static string SaveLogToFile = "SaveLogToFile";
+            public static string ClearExistingLog = "ClearExistingLog";
         }
 
         public override string ActionDescription { get { return "Browser Action"; } }
@@ -110,6 +114,32 @@ namespace GingerCore.Actions
             }
         }
 
+       public bool ClearExistingLog
+        {
+            get
+            {
+                bool.TryParse(GetOrCreateInputParam(nameof(ClearExistingLog)).Value, out var value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ClearExistingLog), value.ToString());
+                OnPropertyChanged(nameof(ClearExistingLog));
+            }
+        }
+        public bool SaveLogToFile
+        {
+            get
+            {
+                bool.TryParse(GetOrCreateInputParam(nameof(SaveLogToFile)).Value, out var value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(SaveLogToFile), value.ToString());
+                OnPropertyChanged(nameof(SaveLogToFile));
+            }
+        }
 
         public enum eControlAction
         {
@@ -351,6 +381,32 @@ namespace GingerCore.Actions
             {
                 AddOrUpdateInputParamValue(nameof(sBlockedUrls), value);
                 OnPropertyChanged(nameof(sBlockedUrls));
+            }
+        }
+        public string ResponseFileName
+        {
+            get
+            {
+                string value = GetOrCreateInputParam(nameof(ResponseFileName)).Value;
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ResponseFileName), value);
+                OnPropertyChanged(nameof(ResponseFileName));
+            }
+        }
+        public string RequestFileName
+        {
+            get
+            {
+                string value = GetOrCreateInputParam(nameof(RequestFileName)).Value;
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(RequestFileName), value);
+                OnPropertyChanged(nameof(RequestFileName));
             }
         }
 

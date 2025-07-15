@@ -313,6 +313,12 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xFrameWindowScreenShotCB, CheckBox.IsCheckedProperty, takeOnlyActiveScreenshot, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xFrameWindowScreenShotCB, CheckBox.ToolTipProperty, takeOnlyActiveScreenshot, nameof(DriverConfigParam.Description));
 
+
+            //Start network monitoring log
+            DriverConfigParam networkMonitoring = mAgent.GetOrCreateParam(nameof(SeleniumDriver.StartNetworkMonitoring));
+            BindingHandler.ObjFieldBinding(xNetworklogCB, CheckBox.IsCheckedProperty, takeOnlyActiveScreenshot, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xNetworklogCB, CheckBox.ToolTipProperty, takeOnlyActiveScreenshot, nameof(DriverConfigParam.Description));
+
             //Handle IFrame Shift auto
             DriverConfigParam handleIFrameShiftAuto = mAgent.GetOrCreateParam(nameof(SeleniumDriver.HandelIFramShiftAutomaticallyForPomElement));
             BindingHandler.ObjFieldBinding(xAutoFrameShiftForPOMCB, CheckBox.IsCheckedProperty, handleIFrameShiftAuto, nameof(DriverConfigParam.Value));
