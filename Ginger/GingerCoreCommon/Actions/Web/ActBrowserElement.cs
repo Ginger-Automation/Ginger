@@ -42,10 +42,10 @@ namespace GingerCore.Actions
             public static string URLSrc = "URLSrc";
             public static string PomGUID = "PomGUID";
             public static string BlockedUrls = "sBlockedUrls";
-            public const string RequestFileName = "RequestFileName";
-            public const string ResponseFileName = "ResponseFileName";
-            public const string SaveLogToFile = "SaveLogToFile";
-            public const string ClearExistingLog = "ClearExistingLog";
+            public readonly static string RequestFileName = "RequestFileName";
+            public readonly static string ResponseFileName = "ResponseFileName";
+            public readonly static string SaveLogToFile = "SaveLogToFile";
+            public readonly static string ClearExistingLog = "ClearExistingLog";
         }
 
         public override string ActionDescription { get { return "Browser Action"; } }
