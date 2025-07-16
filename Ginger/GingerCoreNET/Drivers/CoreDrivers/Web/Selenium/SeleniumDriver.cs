@@ -338,6 +338,12 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Take Only Active Frame Or Window Screen Shot In Case Of Failure")]
         public bool TakeOnlyActiveFrameOrWindowScreenShotInCaseOfFailure { get; set; }
 
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Start network monitoring log.")]
+        public bool StartNetworkMonitoring { get; set; }
+
         [UserConfigured]
         [UserConfiguredDescription("Selenium line arguments || Set Selenium arguments separated with ; sign")]
         public string SeleniumUserArguments { get; set; }
@@ -1060,6 +1066,16 @@ namespace GingerCore.Drivers
 
                 DefaultWindowHandler = Driver.CurrentWindowHandle;
                 InitXpathHelper();
+
+                /*     if (StartNetworkMonitoring)
+                     {
+                         if (ValidateBrowserCompatibility(Driver))
+                         {
+                             _BrowserHelper = new BrowserHelper(new ActBrowserElement());
+                             SetUPDevTools(Driver);
+                             StartMonitoringNetworkLog(Driver).GetAwaiter().GetResult();
+                         }
+                     }*/
             }
             catch (Exception ex)
             {
@@ -3519,7 +3535,7 @@ namespace GingerCore.Drivers
                         {
                             Reporter.ToLog(eLogLevel.DEBUG, @"Input string should be in the format : attribute=value");
                             return;
-                        } 
+                        }
                         ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
                     }
                     break;
@@ -5276,7 +5292,7 @@ namespace GingerCore.Drivers
         /// Else, it'll be skipped - Checking the performance
         /// </summary>
         public bool ExtraLocatorsRequired = true;
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null,Bitmap ScreenShot = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, Bitmap ScreenShot = null)
         {
             return await Task.Run(() =>
             {
@@ -5289,7 +5305,7 @@ namespace GingerCore.Drivers
                     Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
-                    List<ElementInfo> list = General.ConvertObservableListToList<ElementInfo>(FindAllElementsFromPOM("", pomSetting, Driver, Guid.Empty, foundElementsList, PomMetaData,ScreenShot:ScreenShot));
+                    List<ElementInfo> list = General.ConvertObservableListToList<ElementInfo>(FindAllElementsFromPOM("", pomSetting, Driver, Guid.Empty, foundElementsList, PomMetaData, ScreenShot: ScreenShot));
                     for (int i = 0; i < list.Count; i++)
                     {
                         ElementInfo elementInfo = list[i];
@@ -5400,14 +5416,14 @@ namespace GingerCore.Drivers
             "noscript", "script", "style", "meta", "head", "link", "html", "body"
         };
 
-        private ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null,Bitmap ScreenShot = null)
+        private ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null, Bitmap ScreenShot = null)
         {
             // Initialize lists if null
             PomMetaData ??= [];
             foundElementsList ??= [];
 
             // Parse HTML document
-            string documentContents = pageSource ?? Driver.PageSource;           
+            string documentContents = pageSource ?? Driver.PageSource;
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(documentContents);
 
@@ -5485,7 +5501,7 @@ namespace GingerCore.Drivers
             return foundElementsList;
         }
 
-        
+
         // Method to determine if the element should be learned
         private bool ShouldLearnElement(PomSetting pomSetting, eElementType elementType)
         {
@@ -5531,7 +5547,7 @@ namespace GingerCore.Drivers
         }
 
         // Method to create HTMLElementInfo object
-        private HTMLElementInfo CreateHTMLElementInfo(IWebElement webElement, string path, HtmlNode htmlElemNode, string elementType, eElementType elementTypeEnum, Guid parentGUID, PomSetting pomSetting, string Sequence = "",Bitmap ScreenShot = null)
+        private HTMLElementInfo CreateHTMLElementInfo(IWebElement webElement, string path, HtmlNode htmlElemNode, string elementType, eElementType elementTypeEnum, Guid parentGUID, PomSetting pomSetting, string Sequence = "", Bitmap ScreenShot = null)
         {
             string xpath = htmlElemNode.XPath;
             var parentPOMGuid = parentGUID == Guid.Empty ? Guid.Empty.ToString() : parentGUID.ToString();
@@ -5545,7 +5561,7 @@ namespace GingerCore.Drivers
                 XPath = xpath,
                 IsAutoLearned = true
             };
-            
+
 
             ((IWindowExplorer)this).LearnElementInfoDetails(foundElementInfo, pomSetting);
 
@@ -11260,8 +11276,6 @@ namespace GingerCore.Drivers
                 networkRequestLogList = [];
                 networkResponseLogList = [];
                 interceptor = webDriver.Manage().Network;
-
-
                 ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), BusinessFlow);
 
                 foreach (ActInputValue item in mAct.UpdateOperationInputValues)
@@ -11281,14 +11295,19 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-    
+
         public async Task GetNetworkLogAsync(ActBrowserElement act)
         {
             try
             {
                 if (isNetworkLogMonitoringStarted)
-                {
-                   _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList);
+                {                 
+                    _BrowserHelper.ProcessNetworkLogs(act,networkResponseLogList, networkRequestLogList);
+                    if (act.ClearExistingLog)
+                    {
+                        networkResponseLogList = [];
+                        networkRequestLogList = [];
+                    }
                 }
                 else
                 {
@@ -11322,9 +11341,8 @@ namespace GingerCore.Drivers
                     {
                         await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V136.Network.DisableCommandSettings());
                         devToolsSession.Dispose();
-                        devTools.CloseDevToolsSession();
-
-                        _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList, saveToFile: true);
+                        devTools.CloseDevToolsSession();                      
+                        _BrowserHelper.ProcessNetworkLogs(act,networkResponseLogList, networkRequestLogList);
                     }
                     catch (Exception fileEx)
                     {

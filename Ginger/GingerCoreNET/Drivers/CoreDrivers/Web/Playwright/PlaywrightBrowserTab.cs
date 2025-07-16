@@ -831,6 +831,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     if (isNetworkLogMonitoringStarted)
                     {
                         _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList);
+                        if (act.ClearExistingLog)
+                        {
+                            networkResponseLogList = [];
+                            networkRequestLogList = [];
+                        }
                     }
                     else
                     {
@@ -870,7 +875,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         }
 
                         isNetworkLogMonitoringStarted = false;
-                        _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList,true);
+                        _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList);
                     }
                     catch (Exception ex)
                     {
