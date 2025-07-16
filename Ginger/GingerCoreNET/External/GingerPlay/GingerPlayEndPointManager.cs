@@ -34,9 +34,9 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
 
         private const string EXECUTION_SERVICE = "ginger-execution";
 
-        private const string REPORT_SERVICE_HEALTH_PATH = "OnlineReportMS/health";
-        private const string EXECUTION_SERVICE_HEALTH_PATH = "ExecuterHandlerService/health";
-        private const string AI_SERVICE_HEALTH_PATH = "ginger-ai/health";
+        private const string REPORT_SERVICE_HEALTH_PATH = $"{ACCOUNT_REPORT_SERVICE_URL}/health";
+        private const string EXECUTION_SERVICE_HEALTH_PATH = $"{EXECUTION_SERVICE}/health";
+        private const string AI_SERVICE_HEALTH_PATH = $"{AI_SERVICE_URL}/health";
         private const string GENERATE_TOKEN_URL = "connect/token";
 
 
