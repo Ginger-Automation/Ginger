@@ -14,7 +14,6 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
     public class GingerPlayAPITokenManager
     {
         HttpClient _httpClient;
-        private string token = null;
         GingerCore.ValueExpression valueExpression;
         private GingerPlayConfiguration GingerPlayConfiguration;
 
@@ -39,19 +38,18 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                 new KeyValuePair<string, string>("client_secret", CredentialsCalculation(GingerPlayConfiguration.GingerPlayClientSecret)),
                 };
 
-                var response = await _httpClient.PostAsync("", new FormUrlEncodedContent(data));
-                var result = await response.Content.ReadAsAsync<dynamic>();
-                responseInfo = result.ToObject<GingerPlayAPITokenResponseInfo>();
-                this.token = responseInfo.access_token;
-
-                if (!string.IsNullOrEmpty(token))
+                HttpResponseMessage response = await _httpClient.PostAsync("", new FormUrlEncodedContent(data));
+                if (response.IsSuccessStatusCode)
                 {
+                    var result = await response.Content.ReadAsAsync<dynamic>();
+                    responseInfo = result.ToObject<GingerPlayAPITokenResponseInfo>();
+                    GingerPlayConfiguration.Token = responseInfo.access_token;
                     return true;
                 }
                 else
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to get the token for GingerPlay service, Please Check your Credentials");
-                    return true;
+                    return false;
                 }
             }
             catch (Exception ex)
@@ -63,7 +61,6 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
             }
             finally
             {
-                GingerPlayConfiguration.Token = this.token;
                 _httpClient.DefaultRequestHeaders.Clear();
                 _httpClient.Dispose();
             }
