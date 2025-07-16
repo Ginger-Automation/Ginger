@@ -11301,7 +11301,7 @@ namespace GingerCore.Drivers
             try
             {
                 if (isNetworkLogMonitoringStarted)
-                {
+                {                 
                     _BrowserHelper.ProcessNetworkLogs(act,networkResponseLogList, networkRequestLogList);
                     if (act.ClearExistingLog)
                     {
@@ -11341,7 +11341,7 @@ namespace GingerCore.Drivers
                     {
                         await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V136.Network.DisableCommandSettings());
                         devToolsSession.Dispose();
-                        devTools.CloseDevToolsSession();
+                        devTools.CloseDevToolsSession();                      
                         _BrowserHelper.ProcessNetworkLogs(act,networkResponseLogList, networkRequestLogList);
                     }
                     catch (Exception fileEx)

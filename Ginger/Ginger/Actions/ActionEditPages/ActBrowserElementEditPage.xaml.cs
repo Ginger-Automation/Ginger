@@ -207,7 +207,7 @@ namespace Ginger.Actions
             {
                 xSavenetworkLogPnl.Visibility = System.Windows.Visibility.Visible;
                 xClearExistinglogPnl.Visibility = System.Windows.Visibility.Visible;
-                if (xSaveNetworkLog.IsChecked==true)
+                if ((bool)xSaveNetworkLog.IsChecked)
                 {
                     xSaveNetworkLog_Checked(null,null);
                 }
@@ -215,6 +215,7 @@ namespace Ginger.Actions
             else if (mAct.ControlAction == ActBrowserElement.eControlAction.StopMonitoringNetworkLog)
             {
                 xSaveNetworkLog.IsChecked = true;
+                xSaveNetworkLog_Checked(null, null);
                 xSavenetworkLogPnl.Visibility = System.Windows.Visibility.Visible;
             }
             else

@@ -49,7 +49,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
                 && _act.UpdateOperationInputValues.Any(x => ( !string.IsNullOrEmpty(x.ValueForDriver) ? requestUrl.ToLower().Contains(x.ValueForDriver.ToLower()) : (!string.IsNullOrEmpty(x.Value) && requestUrl.ToLower().Contains(x.Value.ToLower()))));
         }
 
-        public void ProcessNetworkLogs(ActBrowserElement act, List<Tuple<string, object>> networkResponseLogList, List<Tuple<string, object>> networkRequestLogList, bool saveToFile = false)
+        public void ProcessNetworkLogs(ActBrowserElement act, List<Tuple<string, object>> networkResponseLogList, List<Tuple<string, object>> networkRequestLogList)
         {
             var parsedRequestObjects = networkRequestLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
             var parsedResponseObjects = networkResponseLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
@@ -75,17 +75,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
                 var parsedRequestTuples = networkRequestLogList.Select((x, i) => Tuple.Create(x.Item1, parsedRequestObjects[i])).ToList();
                 var parsedResponseTuples = networkResponseLogList.Select((x, i) => Tuple.Create(x.Item1, parsedResponseObjects[i])).ToList();
 
-                string RequestFileName = "NetworklogRequest";
-                string ResponseFileName = "NetworklogResponse";
+                string RequestFileName =string.IsNullOrEmpty(act.GetInputParamCalculatedValue(ActBrowserElement.Fields.RequestFileName))? "NetworklogRequest": act.GetInputParamCalculatedValue(ActBrowserElement.Fields.RequestFileName);
+                string ResponseFileName = string.IsNullOrEmpty(act.GetInputParamCalculatedValue(ActBrowserElement.Fields.ResponseFileName)) ? "NetworklogResponse": act.GetInputParamCalculatedValue(ActBrowserElement.Fields.ResponseFileName);
 
-                if (!string.IsNullOrEmpty(act.RequestFileName))
-                {
-                    RequestFileName= act.RequestFileName;
-                }
-                if (!string.IsNullOrEmpty(act.ResponseFileName))
-                {
-                    ResponseFileName = act.ResponseFileName;
-                }
                 string requestPath = CreateNetworkLogFile(RequestFileName, parsedRequestTuples);
                 string responsePath = CreateNetworkLogFile(ResponseFileName, parsedResponseTuples);
 
