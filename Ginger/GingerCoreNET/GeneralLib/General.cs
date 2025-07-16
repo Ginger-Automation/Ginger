@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
@@ -46,6 +47,8 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Security;
+using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
@@ -1295,6 +1298,67 @@ namespace GingerCoreNET.GeneralLib
                 return FileName;
             }
         }
+
+        public static async Task<string> GetResponseByOpenAI(object payload, string url = null)
+        {
+            string Response = string.Empty;
+            GingerPlayAPITokenManager gingerPlayAPITokenManager = new GingerPlayAPITokenManager();
+            bool isAuthorized = await gingerPlayAPITokenManager.GetOrValidateToken();
+            if (isAuthorized || !string.IsNullOrEmpty(url))
+            {
+                string baseURI = GetAIServiceBaseUrl();
+                string path = "extract_dom_elements";
+
+                using (var client = new HttpClient())
+                {
+                    var json = System.Text.Json.JsonSerializer.Serialize(payload);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    try
+                    {
+                        baseURI += path;
+                        if (!string.IsNullOrEmpty(url))
+                        {
+                            baseURI = url;
+                        }
+                        var response = await client.PostAsync(baseURI, content);
+                        response.EnsureSuccessStatusCode();
+                        var responseContent = await response.Content.ReadAsStringAsync();
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Response: {responseContent}");
+                        return responseContent;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Response: Failed to fetch response", ex);
+                        Response = $"Response: Failed to fetch response";
+                    }
+                }
+            }
+            else
+            {
+                Response = $"unauthorized user, please check Credentials";
+            }
+
+            return Response;
+        }
+
+        public static string GetAIServiceBaseUrl()
+        {
+            var baseURI = GingerPlayEndPointManager.GetAIServiceUrl();
+
+            if (!string.IsNullOrEmpty(baseURI))
+            {
+                if (!baseURI.EndsWith("/"))
+                {
+                    baseURI += "/";
+                }
+                if (!baseURI.EndsWith("#/"))
+                {
+                    baseURI += "#/";
+                }
+            }
+            return baseURI;
+        }       
     }
 
 }
