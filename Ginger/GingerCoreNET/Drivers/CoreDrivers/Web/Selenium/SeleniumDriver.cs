@@ -31,7 +31,6 @@ using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
-using DocumentFormat.OpenXml.Drawing.Charts;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
