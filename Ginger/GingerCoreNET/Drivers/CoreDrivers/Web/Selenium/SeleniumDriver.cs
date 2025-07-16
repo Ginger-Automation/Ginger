@@ -5456,7 +5456,6 @@ namespace GingerCore.Drivers
             AddIfNotNull("autocapitalize", properties.autocapitalize);
             AddIfNotNull("DataTest", properties.DataTest);
             AddIfNotNull("id", properties.id);
-            AddIfNotNull("text", properties.text);
             AddIfNotNull("style", properties.style);
             AddIfNotNull("Width", properties.Width);
             AddIfNotNull("Height", properties.Height);
@@ -5542,82 +5541,85 @@ namespace GingerCore.Drivers
                     .Where(x => !x.Name.StartsWith('#') && !excludedElementNames.Contains(x.Name)
                                 && !x.XPath.Contains("/noscript", StringComparison.OrdinalIgnoreCase));
             List<HtmlNode> formElementsList = [];
-            if (pomSetting.LearnPOMByAI)
+            if (!WorkSpace.Instance.BetaFeatures.ShowPOMForAI)
             {
-                try
+                if (pomSetting.LearnPOMByAI)
                 {
-                    var rawHtml = string.Join("\n",
-                 htmlDoc.DocumentNode
-                 .Descendants()
-                 .Where(x => !x.Name.StartsWith('#')
-                 && !excludedElementNames.Contains(x.Name)
-                 && !x.XPath.Contains("/noscript", StringComparison.OrdinalIgnoreCase))
-                 .Select(x => x.OuterHtml));
-
-                    var payload = new
+                    try
                     {
-                        dom = rawHtml // Replace with your actual DOM string
-                    };
-                    string Response = string.Empty;
-                    //GenAI service
-                    Response = GingerCoreNET.GeneralLib.General.GetResponseByOpenAI(payload).GetAwaiter().GetResult();
-
-                    if (IsErrorResponse(Response))
-                    {
-                        Reporter.ToLog(eLogLevel.INFO, "Failed to connect to OpenAI API. Please check your internet connection or firewall settings");
-                        return foundElementsList;
-                    }
-
-                    string cleanedResponse = CleanAIResponse(Response);
-
-                    // Step 1: Parse the outer JSON
-                    var outerJson = JObject.Parse(cleanedResponse); // 'Response' is your raw JSON string
-                    Reporter.ToLog(eLogLevel.DEBUG, $"cleanedResponse: {cleanedResponse} ");
-                    // Step 2: Extract the inner JSON string
-                    string innerJsonString = outerJson["data"]?["genai_result"]?.ToString();
-                    if (innerJsonString == null)
-                    {
-                        innerJsonString = outerJson.ToString();
-                    }
-                    // Step 3: Validate and clean the inner JSON string
-                    if (!string.IsNullOrWhiteSpace(innerJsonString) && innerJsonString.TrimStart().StartsWith("{"))
-                    {
-                        string cleanedJson = innerJsonString;
-
-                        try
+                        var rawHtml = string.Join("\n",
+                     htmlDoc.DocumentNode
+                     .Descendants()
+                     .Where(x => !x.Name.StartsWith('#')
+                     && !excludedElementNames.Contains(x.Name)
+                     && !x.XPath.Contains("/noscript", StringComparison.OrdinalIgnoreCase))
+                     .Select(x => x.OuterHtml));
+                        var payload = new
                         {
-                            var elementWrapperInfo = JsonConvert.DeserializeObject<ElementWrapperInfo>(cleanedJson);
+                            dom = rawHtml // Replace with your actual DOM string
+                        };
+                        string Response = string.Empty;
+                        //GenAI service
+                        Response = GingerCoreNET.GeneralLib.General.GetResponseByOpenAI(payload).GetAwaiter().GetResult();
 
-                            if (elementWrapperInfo?.elements == null || !elementWrapperInfo.elements.Any())
+                        if (IsErrorResponse(Response))
+                        {
+                            Reporter.ToLog(eLogLevel.INFO, "Failed to connect to OpenAI API. Please check your internet connection or firewall settings");
+                            return foundElementsList;
+                        }
+
+                        string cleanedResponse = CleanAIResponse(Response);
+
+                        // Step 1: Parse the outer JSON
+                        var outerJson = JObject.Parse(cleanedResponse); // 'Response' is your raw JSON string
+                        Reporter.ToLog(eLogLevel.DEBUG, $"cleanedResponse: {cleanedResponse} ");
+                        // Step 2: Extract the inner JSON string
+                        string innerJsonString = outerJson["data"]?["genai_result"]?.ToString();
+                        if (innerJsonString == null)
+                        {
+                            innerJsonString = outerJson.ToString();
+                        }
+                        // Step 3: Validate and clean the inner JSON string
+                        if (!string.IsNullOrWhiteSpace(innerJsonString) && innerJsonString.TrimStart().StartsWith("{"))
+                        {
+                            string cleanedJson = innerJsonString;
+
+                            try
                             {
-                                Reporter.ToLog(eLogLevel.WARN, "No elements found in AI response");
+                                var elementWrapperInfo = JsonConvert.DeserializeObject<ElementWrapperInfo>(cleanedJson);
+
+                                if (elementWrapperInfo?.elements == null || !elementWrapperInfo.elements.Any())
+                                {
+                                    Reporter.ToLog(eLogLevel.WARN, "No elements found in AI response");
+                                    return foundElementsList;
+                                }
+
+                                var processedElements = ProcessAIElements(elementWrapperInfo.elements);
+                                foundElementsList.AddRange(processedElements);
                                 return foundElementsList;
                             }
-
-                            var processedElements = ProcessAIElements(elementWrapperInfo.elements);
-                            foundElementsList.AddRange(processedElements);
-                            return foundElementsList;
+                            catch (JsonException ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, "Failed to parse inner JSON: " + ex.Message, ex);
+                                return foundElementsList;
+                            }
                         }
-                        catch (JsonException ex)
+                        else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to parse inner JSON: " + ex.Message, ex);
+                            Reporter.ToLog(eLogLevel.ERROR, "genai_result does not contain valid JSON.");
                             return foundElementsList;
                         }
+
+
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "genai_result does not contain valid JSON.");
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to parse JSON,Please check genai_result does not contain valid JSON.", ex);
                         return foundElementsList;
                     }
-
-
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to parse JSON,Please check genai_result does not contain valid JSON.", ex);
-                    return foundElementsList;
                 }
             }
+            
             //List<HtmlNode> formElementsList = [];
             // Process HTML elements
             foreach (HtmlNode htmlElemNode in htmlElements)

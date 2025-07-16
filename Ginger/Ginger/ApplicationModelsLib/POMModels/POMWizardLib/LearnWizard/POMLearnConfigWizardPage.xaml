@@ -32,7 +32,7 @@
                 </StackPanel>
                 
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox x:Name="xLearnPOMByAI" AutomationProperties.AutomationId="xLearnPOMByAICheckBox AID" Content="POM Learning By AI" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" IsEnabled="True" Style="{StaticResource $CeckBoxStyle}"/>
+                    <CheckBox x:Name="xLearnPOMByAI" AutomationProperties.AutomationId="xLearnPOMByAICheckBox AID" Content="POM Learning By AI" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" IsEnabled="True" Visibility="Collapsed" Style="{StaticResource $CeckBoxStyle}"/>
                 </StackPanel>
 
 
