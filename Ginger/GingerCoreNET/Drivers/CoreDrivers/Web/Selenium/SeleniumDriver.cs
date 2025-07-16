@@ -336,6 +336,12 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Take Only Active Frame Or Window Screen Shot In Case Of Failure")]
         public bool TakeOnlyActiveFrameOrWindowScreenShotInCaseOfFailure { get; set; }
 
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Start network monitoring log.")]
+        public bool StartNetworkMonitoring { get; set; }
+
         [UserConfigured]
         [UserConfiguredDescription("Selenium line arguments || Set Selenium arguments separated with ; sign")]
         public string SeleniumUserArguments { get; set; }
@@ -1058,6 +1064,16 @@ namespace GingerCore.Drivers
 
                 DefaultWindowHandler = Driver.CurrentWindowHandle;
                 InitXpathHelper();
+
+                /*     if (StartNetworkMonitoring)
+                     {
+                         if (ValidateBrowserCompatibility(Driver))
+                         {
+                             _BrowserHelper = new BrowserHelper(new ActBrowserElement());
+                             SetUPDevTools(Driver);
+                             StartMonitoringNetworkLog(Driver).GetAwaiter().GetResult();
+                         }
+                     }*/
             }
             catch (Exception ex)
             {
@@ -11523,8 +11539,6 @@ namespace GingerCore.Drivers
                 networkRequestLogList = [];
                 networkResponseLogList = [];
                 interceptor = webDriver.Manage().Network;
-
-
                 ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), BusinessFlow);
 
                 foreach (ActInputValue item in mAct.UpdateOperationInputValues)
@@ -11550,8 +11564,13 @@ namespace GingerCore.Drivers
             try
             {
                 if (isNetworkLogMonitoringStarted)
-                {
-                    _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList);
+                {                 
+                    _BrowserHelper.ProcessNetworkLogs(act,networkResponseLogList, networkRequestLogList);
+                    if (act.ClearExistingLog)
+                    {
+                        networkResponseLogList = [];
+                        networkRequestLogList = [];
+                    }
                 }
                 else
                 {
@@ -11585,9 +11604,8 @@ namespace GingerCore.Drivers
                     {
                         await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V136.Network.DisableCommandSettings());
                         devToolsSession.Dispose();
-                        devTools.CloseDevToolsSession();
-
-                        _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList, saveToFile: true);
+                        devTools.CloseDevToolsSession();                      
+                        _BrowserHelper.ProcessNetworkLogs(act,networkResponseLogList, networkRequestLogList);
                     }
                     catch (Exception fileEx)
                     {
