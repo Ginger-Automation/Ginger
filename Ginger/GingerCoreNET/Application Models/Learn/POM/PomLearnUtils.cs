@@ -251,7 +251,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 POM.PomSetting.SpecificFramePath = POM.PomSetting.SpecificFramePath != null ? POM.PomSetting.SpecificFramePath : SpecificFramePath;
                 POM.PomSetting.LearnScreenshotsOfElements = POM.PomSetting.LearnScreenshotsOfElements ? POM.PomSetting.LearnScreenshotsOfElements : LearnScreenshotsOfElements;
                 POM.PomSetting.LearnShadowDomElements = POM.PomSetting.LearnShadowDomElements ? POM.PomSetting.LearnShadowDomElements : LearnShadowDomElements;
-                POM.PomSetting.LearnPOMByAI = POM.PomSetting.LearnPOMByAI ? POM.PomSetting.LearnPOMByAI : LearnPOMByAI;
+                POM.PomSetting.LearnPOMByAI = POM.PomSetting.LearnPOMByAI || LearnPOMByAI;
                 POM.PomSetting = POM.PomSetting;
             }
             else
@@ -406,7 +406,9 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 if (curElement != null)
                 {
                     //remove invalid chars
-                    string name =!string.IsNullOrEmpty(curElement.ElementName) ? curElement.ElementName.Trim().Replace(".", "").Replace("?", "").Replace("\n", "").Replace("\r", "").Replace("#", "").Replace("!", " ").Replace(",", " ").Replace("   ", "") : string.Empty;
+                    string name = string.IsNullOrEmpty(curElement.ElementName) ? 
+                        string.Empty : 
+                        curElement.ElementName.Trim().Replace(".", "").Replace("?", "").Replace("\n", "").Replace("\r", "").Replace("#", "").Replace("!", " ").Replace(",", " ").Replace("   ", "");
                     foreach (char chr in Path.GetInvalidFileNameChars())
                     {
                         name = name.Replace(chr.ToString(), string.Empty);

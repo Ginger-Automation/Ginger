@@ -31,6 +31,7 @@ using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
+using DocumentFormat.OpenXml.Drawing.Charts;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
@@ -67,11 +68,8 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -3520,7 +3518,7 @@ namespace GingerCore.Drivers
                         {
                             Reporter.ToLog(eLogLevel.DEBUG, @"Input string should be in the format : attribute=value");
                             return;
-                        } 
+                        }
                         ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
                     }
                     break;
@@ -5277,7 +5275,7 @@ namespace GingerCore.Drivers
         /// Else, it'll be skipped - Checking the performance
         /// </summary>
         public bool ExtraLocatorsRequired = true;
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null,Bitmap ScreenShot = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, Bitmap ScreenShot = null)
         {
             return await Task.Run(() =>
             {
@@ -5290,7 +5288,7 @@ namespace GingerCore.Drivers
                     Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
-                    List<ElementInfo> list = General.ConvertObservableListToList<ElementInfo>(FindAllElementsFromPOM("", pomSetting, Driver, Guid.Empty, foundElementsList, PomMetaData,ScreenShot: ScreenShot));
+                    List<ElementInfo> list = General.ConvertObservableListToList<ElementInfo>(FindAllElementsFromPOM("", pomSetting, Driver, Guid.Empty, foundElementsList, PomMetaData, ScreenShot: ScreenShot));
                     for (int i = 0; i < list.Count; i++)
                     {
                         ElementInfo elementInfo = list[i];
@@ -5405,9 +5403,14 @@ namespace GingerCore.Drivers
         {
             void AddIfNotNull(eLocateBy locateBy, string value)
             {
+                // Escape CSS attribute values for CSS-based selectors
+                if (locateBy == eLocateBy.ByTitle || locateBy == eLocateBy.ByAriaLabel || locateBy == eLocateBy.ByDataTestId || locateBy == eLocateBy.ByPlaceholder)
+                {
+                    value = EscapeCssAttributeValue(value);
+                }
                 if (!string.IsNullOrEmpty(value))
                 {
-                    locatorList.Add(new ElementLocator { LocateBy = locateBy, LocateValue = value,IsAutoLearned = true });
+                    locatorList.Add(new ElementLocator { LocateBy = locateBy, LocateValue = value, IsAutoLearned = true });
                 }
             }
 
@@ -5466,6 +5469,11 @@ namespace GingerCore.Drivers
 
         public HTMLElementInfo ConvertToHTMLElementInfo(Element element)
         {
+            if (element?.Properties == null || element.locators == null)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"{nameof(element)}, Element or its properties cannot be null");
+                return null;
+            }
             var foundElementInfo = new HTMLElementInfo
             {
                 ElementName = element.Properties.name,
@@ -5476,8 +5484,8 @@ namespace GingerCore.Drivers
                 HTMLElementObject = null, // Set if you have the HTML node
                 XPath = element.locators.ByRelXPath,
                 IsAutoLearned = true,
-                Width = element.Properties.Width != null ? Convert.ToInt32(element.Properties.Width) : 0,
-                Height = element.Properties.Height != null ? Convert.ToInt32(element.Properties.Height) : 0,
+                Width = TryParseInt(element.Properties.Width),
+                Height = TryParseInt(element.Properties.Height),
                 Active = true
             };
 
@@ -5501,7 +5509,24 @@ namespace GingerCore.Drivers
         }
 
 
+        private int TryParseInt(string value)
+        {
+            return int.TryParse(value, out int result) ? result : 0;
+        }
 
+        /// <summary>
+        /// Finds all elements from the POM based on the provided settings and context.
+        /// </summary>
+        /// <param name="path">The path to the POM file.</param>
+        /// <param name="pomSetting">The settings for learning the POM.</param>
+        /// <param name="parentContext">The parent search context.</param>
+        /// <param name="ParentGUID">The GUID of the parent element.</param>
+        /// <param name="foundElementsList">List to store found elements.</param>
+        /// <param name="PomMetaData">Metadata for the POM pages.</param>
+        /// <param name="isShadowRootDetected">Indicates if shadow root is detected.</param>
+        /// <param name="pageSource">HTML source of the page.</param>
+        /// <param name="ScreenShot">Screenshot of the page.</param>
+        /// <returns>List of found elements.</returns>
         private ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null, Bitmap ScreenShot = null)
         {
             // Initialize lists if null
@@ -5509,7 +5534,7 @@ namespace GingerCore.Drivers
             foundElementsList ??= [];
 
             // Parse HTML document
-            string documentContents = pageSource ?? Driver.PageSource;           
+            string documentContents = pageSource ?? Driver.PageSource;
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(documentContents);
 
@@ -5529,7 +5554,7 @@ namespace GingerCore.Drivers
                  && !excludedElementNames.Contains(x.Name)
                  && !x.XPath.Contains("/noscript", StringComparison.OrdinalIgnoreCase))
                  .Select(x => x.OuterHtml));
-                    
+
                     var payload = new
                     {
                         dom = rawHtml // Replace with your actual DOM string
@@ -5538,27 +5563,20 @@ namespace GingerCore.Drivers
                     //GenAI service
                     Response = GingerCoreNET.GeneralLib.General.GetResponseByOpenAI(payload).GetAwaiter().GetResult();
 
-                    if (Response.Contains("error") || Response.Contains("unauthorized"))
+                    if (IsErrorResponse(Response))
                     {
                         Reporter.ToLog(eLogLevel.INFO, "Failed to connect to OpenAI API. Please check your internet connection or firewall settings");
                         return foundElementsList;
                     }
 
-                    string cleanedResponse = Response
-                     .Replace("```json", "")
-                     .Replace("```", "")
-                     .Replace("\\\"", "'")
-                     .Replace("\\n", "")
-                     .Replace("\\r", "")
-                     .Replace("\r", "")
-                     .Replace("\n", "").Trim();
+                    string cleanedResponse = CleanAIResponse(Response);
 
                     // Step 1: Parse the outer JSON
                     var outerJson = JObject.Parse(cleanedResponse); // 'Response' is your raw JSON string
                     Reporter.ToLog(eLogLevel.DEBUG, $"cleanedResponse: {cleanedResponse} ");
                     // Step 2: Extract the inner JSON string
                     string innerJsonString = outerJson["data"]?["genai_result"]?.ToString();
-                    if(innerJsonString == null)
+                    if (innerJsonString == null)
                     {
                         innerJsonString = outerJson.ToString();
                     }
@@ -5569,39 +5587,21 @@ namespace GingerCore.Drivers
 
                         try
                         {
-                            // Step 4: Deserialize to ElementWrapperInfo
                             var elementWrapperInfo = JsonConvert.DeserializeObject<ElementWrapperInfo>(cleanedJson);
 
-                            // Step 5: Convert to HTMLElementInfo list
-                            List<HTMLElementInfo> allElements = elementWrapperInfo.elements
-                     .Select(e => ConvertToHTMLElementInfo(e.elementinfo))
-                     .ToList();
+                            if (elementWrapperInfo?.elements == null || !elementWrapperInfo.elements.Any())
+                            {
+                                Reporter.ToLog(eLogLevel.WARN, "No elements found in AI response");
+                                return foundElementsList;
+                            }
 
-                            // Step 6: Convert to ObservableList<ElementInfo>
-                            ObservableList<ElementInfo> elementlist = new ObservableList<ElementInfo>(
-                                 allElements.Select(e => new ElementInfo
-                                 {
-                                     ElementName = e.ElementName,
-                                     ElementType = e.ElementType,
-                                     ElementTypeEnum = e.ElementTypeEnum,
-                                     Locators = e.Locators,
-                                     Properties = e.Properties,
-                                     ScreenShotImage = e.ScreenShotImage,
-                                     X = e.X,
-                                     Y = e.Y,
-                                     Width = e.Width,
-                                     Height = e.Height,
-                                     Active = e.Active,
-                                     Mandatory = e.Mandatory,
-                                     IsAutoLearned = e.IsAutoLearned
-                                 })
-                                 );
-                            foundElementsList.AddRange(elementlist);
+                            var processedElements = ProcessAIElements(elementWrapperInfo.elements);
+                            foundElementsList.AddRange(processedElements);
                             return foundElementsList;
                         }
                         catch (JsonException ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to parse inner JSON: " + ex.Message,ex);
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to parse inner JSON: " + ex.Message, ex);
                             return foundElementsList;
                         }
                     }
@@ -5611,7 +5611,7 @@ namespace GingerCore.Drivers
                         return foundElementsList;
                     }
 
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -5689,6 +5689,66 @@ namespace GingerCore.Drivers
         }
 
         // Method to determine if the element should be learned
+        private ObservableList<ElementInfo> ProcessAIElements(List<ElementWrapper> elements)
+        {
+            var elementList = new ObservableList<ElementInfo>();
+
+            foreach (var element in elements)
+            {
+                try
+                {
+                    var htmlElementInfo = ConvertToHTMLElementInfo(element.elementinfo);
+                    if (htmlElementInfo != null)
+                    {
+                        var elementInfo = new ElementInfo
+                        {
+                            ElementName = htmlElementInfo.ElementName,
+                            ElementType = htmlElementInfo.ElementType,
+                            ElementTypeEnum = htmlElementInfo.ElementTypeEnum,
+                            Locators = htmlElementInfo.Locators,
+                            Properties = htmlElementInfo.Properties,
+                            ScreenShotImage = htmlElementInfo.ScreenShotImage,
+                            X = htmlElementInfo.X,
+                            Y = htmlElementInfo.Y,
+                            Width = htmlElementInfo.Width,
+                            Height = htmlElementInfo.Height,
+                            Active = htmlElementInfo.Active,
+                            Mandatory = htmlElementInfo.Mandatory,
+                            IsAutoLearned = htmlElementInfo.IsAutoLearned
+                        };
+                        elementList.Add(elementInfo);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, $"Failed to process AI element: {ex.Message}");
+                }
+            }
+
+            return elementList;
+        }
+        private bool IsErrorResponse(string response)
+        {
+            return string.IsNullOrWhiteSpace(response) ||
+                   response.Contains("error", StringComparison.OrdinalIgnoreCase) ||
+                   response.Contains("unauthorized", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private string CleanAIResponse(string response)
+        {
+            if (string.IsNullOrWhiteSpace(response)) return string.Empty;
+
+            return response
+                .Replace("```json", "", StringComparison.OrdinalIgnoreCase)
+                .Replace("```", "")
+                .Replace("\\\"", "'")
+                .Replace("\\n", "")
+                .Replace("\\r", "")
+                .Replace("\r", "")
+                .Replace("\n", "")
+                .Trim();
+        }
+
         private bool ShouldLearnElement(PomSetting pomSetting, eElementType elementType)
         {
             if (pomSetting == null || pomSetting.FilteredElementType == null)
@@ -5733,7 +5793,7 @@ namespace GingerCore.Drivers
         }
 
         // Method to create HTMLElementInfo object
-        private HTMLElementInfo CreateHTMLElementInfo(IWebElement webElement, string path, HtmlNode htmlElemNode, string elementType, eElementType elementTypeEnum, Guid parentGUID, PomSetting pomSetting, string Sequence = "",Bitmap ScreenShot = null)
+        private HTMLElementInfo CreateHTMLElementInfo(IWebElement webElement, string path, HtmlNode htmlElemNode, string elementType, eElementType elementTypeEnum, Guid parentGUID, PomSetting pomSetting, string Sequence = "", Bitmap ScreenShot = null)
         {
             string xpath = htmlElemNode.XPath;
             var parentPOMGuid = parentGUID == Guid.Empty ? Guid.Empty.ToString() : parentGUID.ToString();
@@ -5747,7 +5807,7 @@ namespace GingerCore.Drivers
                 XPath = xpath,
                 IsAutoLearned = true
             };
-            
+
 
             ((IWindowExplorer)this).LearnElementInfoDetails(foundElementInfo, pomSetting);
 
@@ -6014,7 +6074,7 @@ namespace GingerCore.Drivers
             return false;
         }
 
-        public static Tuple<string, eElementType> GetElementTypeEnum(IWebElement el = null, string jsType = null, HtmlNode htmlNode = null,string TypeAtt = null)
+        public static Tuple<string, eElementType> GetElementTypeEnum(IWebElement el = null, string jsType = null, HtmlNode htmlNode = null, string TypeAtt = null)
         {
             Tuple<string, eElementType> returnTuple;
             eElementType elementType = eElementType.Unknown;
@@ -6024,7 +6084,7 @@ namespace GingerCore.Drivers
             if ((el == null) && (jsType != null))
             {
                 elementTagName = jsType;
-                elementTypeAtt = !string.IsNullOrEmpty(TypeAtt)?TypeAtt:string.Empty;
+                elementTypeAtt = !string.IsNullOrEmpty(TypeAtt) ? TypeAtt : string.Empty;
             }
             else if ((el != null) && (jsType == null))
             {
@@ -11483,14 +11543,14 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-    
+
         public async Task GetNetworkLogAsync(ActBrowserElement act)
         {
             try
             {
                 if (isNetworkLogMonitoringStarted)
                 {
-                   _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList);
+                    _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList);
                 }
                 else
                 {

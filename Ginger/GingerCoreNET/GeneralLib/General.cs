@@ -1322,9 +1322,10 @@ namespace GingerCoreNET.GeneralLib
                             baseURI = url;
                         }
                         var response = await client.PostAsync(baseURI, content);
-
-                        Reporter.ToLog(eLogLevel.DEBUG, $"Response: {Response}");
-                        return await response.Content.ReadAsStringAsync();
+                        response.EnsureSuccessStatusCode();
+                        var responseContent = await response.Content.ReadAsStringAsync();
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Response: {responseContent}");
+                        return responseContent;
                     }
                     catch (Exception ex)
                     {

@@ -27,8 +27,8 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
 
     public class ElementwrapperProperties
     {
-        [JsonProperty("Paltform element Type")]
-        public string PaltformElementType { get; set; }
+        [JsonProperty("Platform element Type")]
+        public string PlatformElementType { get; set; }
 
         [JsonProperty("Element Type")]
         public string ElementType
@@ -54,7 +54,6 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
         public string DataTest { get; set; }
         public string id { get; set; }
         public string @class { get; set; }
-        public string text { get; set; }
         public Dictionary<string, string> attributes { get; set; }
         public string style { get; set; }
         public string Width { get; set; }
