@@ -158,7 +158,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
                 if (xTargetApplicationComboBox.SelectedItem is ApplicationPlatform selectedplatform)
                 {
-                    //mAppPlatform = selectedplatform.Platform;
+                    mAppPlatform = selectedplatform.Platform;
                 }
             }
             if (mAppPlatform == ePlatformType.Web)
