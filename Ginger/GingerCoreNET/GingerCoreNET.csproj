@@ -325,6 +325,7 @@
     <PackageReference Include="Npgsql" Version="8.0.3" />
     <PackageReference Include="NPOI" Version="2.6.1" />
     <PackageReference Include="NUglify" Version="1.9.7" />
+    <PackageReference Include="OWASPZAPDotNetAPI" Version="2.12.0" />
     <PackageReference Include="protobuf-net" Version="3.2.46" />
     <PackageReference Include="protobuf-net.Core" Version="3.2.46" />
     <PackageReference Include="Protractor" Version="1.0.0" />

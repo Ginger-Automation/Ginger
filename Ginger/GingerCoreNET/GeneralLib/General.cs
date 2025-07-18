@@ -788,6 +788,28 @@ namespace GingerCoreNET.GeneralLib
                 return false;
             }
         }
+
+        public static bool CreateZAPConfiguration()
+        {
+            try
+            {
+                if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Any())
+                {
+                    ZAPConfiguration newZAPConfiguration = new ZAPConfiguration() { Name = "ZAP" };
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newZAPConfiguration);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error creating GingerPlay configuration", ex);
+                return false;
+            }
+        }
         public static bool IsConfigPackageExists(string PackagePath, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType eALMType)
         {
             string settingsFolder = string.Empty;

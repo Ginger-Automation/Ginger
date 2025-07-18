@@ -66,11 +66,8 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -1388,44 +1385,50 @@ namespace GingerCore.Drivers
             var proxy = new Proxy();
 
             options.Proxy = proxy;
-
-            switch (mProxy.Kind)
+            options.Proxy = new Proxy
             {
-                case ProxyKind.Manual:
-                    options.Proxy.Kind = ProxyKind.Manual;
-                    options.Proxy.HttpProxy = mProxy.HttpProxy;
-                    options.Proxy.SslProxy = mProxy.SslProxy;
+                HttpProxy = "localhost:8080",
+                SslProxy = "localhost:8080",
+            };
+            options.AcceptInsecureCertificates = true;
 
-                    if (!string.IsNullOrEmpty(ByPassProxy))
-                    {
-                        options.Proxy.AddBypassAddresses(AddByPassAddress());
-                    }
+            //switch (mProxy.Kind)
+            //{
+            //    case ProxyKind.Manual:
+            //        options.Proxy.Kind = ProxyKind.Manual;
+            //        options.Proxy.HttpProxy = mProxy.HttpProxy;
+            //        options.Proxy.SslProxy = mProxy.SslProxy;
 
-                    //TODO: GETTING ERROR LAUNCHING BROWSER 
-                    // options.Proxy.SocksProxy = mProxy.SocksProxy;
-                    break;
+            //        if (!string.IsNullOrEmpty(ByPassProxy))
+            //        {
+            //            options.Proxy.AddBypassAddresses(AddByPassAddress());
+            //        }
 
-                case ProxyKind.ProxyAutoConfigure:
-                    options.Proxy.Kind = ProxyKind.ProxyAutoConfigure;
-                    options.Proxy.ProxyAutoConfigUrl = mProxy.ProxyAutoConfigUrl;
-                    break;
+            //        //TODO: GETTING ERROR LAUNCHING BROWSER 
+            //        // options.Proxy.SocksProxy = mProxy.SocksProxy;
+            //        break;
 
-                case ProxyKind.Direct:
-                    options.Proxy.Kind = ProxyKind.Direct;
-                    break;
+            //    case ProxyKind.ProxyAutoConfigure:
+            //        options.Proxy.Kind = ProxyKind.ProxyAutoConfigure;
+            //        options.Proxy.ProxyAutoConfigUrl = mProxy.ProxyAutoConfigUrl;
+            //        break;
 
-                case ProxyKind.AutoDetect:
-                    options.Proxy.Kind = ProxyKind.AutoDetect;
-                    break;
+            //    case ProxyKind.Direct:
+            //        options.Proxy.Kind = ProxyKind.Direct;
+            //        break;
 
-                case ProxyKind.System:
-                    options.Proxy.Kind = ProxyKind.System;
-                    break;
+            //    case ProxyKind.AutoDetect:
+            //        options.Proxy.Kind = ProxyKind.AutoDetect;
+            //        break;
 
-                default:
-                    options.Proxy.Kind = ProxyKind.System;
-                    break;
-            }
+            //    case ProxyKind.System:
+            //        options.Proxy.Kind = ProxyKind.System;
+            //        break;
+
+            //    default:
+            //        options.Proxy.Kind = ProxyKind.System;
+            //        break;
+            //}
         }
 
         public override void CloseDriver()
@@ -1892,6 +1895,10 @@ namespace GingerCore.Drivers
                     ActAccessibility(accessibilityTesting);
                     break;
 
+                case ActSecurityTesting securityTesting:
+                    ActSecurity(securityTesting);
+                    break;
+
                 default:
                     act.Error = "Run Action Failed due to unrecognized action type - " + actType.ToString();
                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
@@ -1916,6 +1923,27 @@ namespace GingerCore.Drivers
                 }
             }
             act.AnalyzerAccessibility(Driver, e);
+        }
+
+        private void ActSecurity(ActSecurityTesting act)
+        {
+            string URL_TO_TEST = Driver.Url;
+            if (!string.IsNullOrEmpty(URL_TO_TEST))
+            {
+                if (string.Equals(act.ScanType.ToString(), nameof(ActSecurityTesting.eScanType.Active)))
+                {
+                    act.ExecuteActiveZapScan(URL_TO_TEST);
+                }
+                else
+                {
+                    act.ExecutePassiveZapScan(URL_TO_TEST);
+                }
+            }
+            else
+            {
+                act.Error = "Error: No URL to test. Please navigate to a valid URL before running the security scan.";
+                act.Status = eRunStatus.Failed;
+            }
         }
 
         private void ScreenshotHandler(ActScreenShot act)
@@ -3510,19 +3538,19 @@ namespace GingerCore.Drivers
                     }
                     break;
                 case ActGenElement.eGenElementAction.SetAttributeUsingJs:
+                {
+                    e = LocateElement(act);
+                    char[] delimit = new char[] { '=' };
+                    string insertval = act.GetInputParamCalculatedValue("Value");
+                    string[] vals = insertval.Split(delimit, 2);
+                    if (vals.Length != 2)
                     {
-                        e = LocateElement(act);
-                        char[] delimit = new char[] { '=' };
-                        string insertval = act.GetInputParamCalculatedValue("Value");
-                        string[] vals = insertval.Split(delimit, 2);
-                        if (vals.Length != 2)
-                        {
-                            Reporter.ToLog(eLogLevel.DEBUG, @"Input string should be in the format : attribute=value");
-                            return;
-                        } 
-                        ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
+                        Reporter.ToLog(eLogLevel.DEBUG, @"Input string should be in the format : attribute=value");
+                        return;
                     }
-                    break;
+                        ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
+                }
+                break;
                 default:
                     Reporter.ToLog(eLogLevel.DEBUG, "Action unknown/not implemented for the Driver: " + this.GetType().ToString());
                     break;
@@ -5276,7 +5304,7 @@ namespace GingerCore.Drivers
         /// Else, it'll be skipped - Checking the performance
         /// </summary>
         public bool ExtraLocatorsRequired = true;
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null,Bitmap ScreenShot = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, Bitmap ScreenShot = null)
         {
             return await Task.Run(() =>
             {
@@ -5289,7 +5317,7 @@ namespace GingerCore.Drivers
                     Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
-                    List<ElementInfo> list = General.ConvertObservableListToList<ElementInfo>(FindAllElementsFromPOM("", pomSetting, Driver, Guid.Empty, foundElementsList, PomMetaData,ScreenShot:ScreenShot));
+                    List<ElementInfo> list = General.ConvertObservableListToList<ElementInfo>(FindAllElementsFromPOM("", pomSetting, Driver, Guid.Empty, foundElementsList, PomMetaData, ScreenShot: ScreenShot));
                     for (int i = 0; i < list.Count; i++)
                     {
                         ElementInfo elementInfo = list[i];
@@ -5400,14 +5428,14 @@ namespace GingerCore.Drivers
             "noscript", "script", "style", "meta", "head", "link", "html", "body"
         };
 
-        private ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null,Bitmap ScreenShot = null)
+        private ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null, Bitmap ScreenShot = null)
         {
             // Initialize lists if null
             PomMetaData ??= [];
             foundElementsList ??= [];
 
             // Parse HTML document
-            string documentContents = pageSource ?? Driver.PageSource;           
+            string documentContents = pageSource ?? Driver.PageSource;
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(documentContents);
 
@@ -5485,7 +5513,7 @@ namespace GingerCore.Drivers
             return foundElementsList;
         }
 
-        
+
         // Method to determine if the element should be learned
         private bool ShouldLearnElement(PomSetting pomSetting, eElementType elementType)
         {
@@ -5531,7 +5559,7 @@ namespace GingerCore.Drivers
         }
 
         // Method to create HTMLElementInfo object
-        private HTMLElementInfo CreateHTMLElementInfo(IWebElement webElement, string path, HtmlNode htmlElemNode, string elementType, eElementType elementTypeEnum, Guid parentGUID, PomSetting pomSetting, string Sequence = "",Bitmap ScreenShot = null)
+        private HTMLElementInfo CreateHTMLElementInfo(IWebElement webElement, string path, HtmlNode htmlElemNode, string elementType, eElementType elementTypeEnum, Guid parentGUID, PomSetting pomSetting, string Sequence = "", Bitmap ScreenShot = null)
         {
             string xpath = htmlElemNode.XPath;
             var parentPOMGuid = parentGUID == Guid.Empty ? Guid.Empty.ToString() : parentGUID.ToString();
@@ -5545,7 +5573,7 @@ namespace GingerCore.Drivers
                 XPath = xpath,
                 IsAutoLearned = true
             };
-            
+
 
             ((IWindowExplorer)this).LearnElementInfoDetails(foundElementInfo, pomSetting);
 
@@ -11281,14 +11309,14 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-    
+
         public async Task GetNetworkLogAsync(ActBrowserElement act)
         {
             try
             {
                 if (isNetworkLogMonitoringStarted)
                 {
-                   _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList);
+                    _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList);
                 }
                 else
                 {

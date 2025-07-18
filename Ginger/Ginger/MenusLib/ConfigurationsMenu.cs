@@ -94,6 +94,7 @@ namespace Ginger.ConfigurationsLib
             externalConfigMenu.Add(eImageType.GingerAnalytics, "GingerOps", GetGingerOpsPage, ConsoleKey.X, "GingerOps Configuration", "GingerOps Configuration AID");
             externalConfigMenu.Add(eImageType.WireMockLogo, "WireMock", GetWireMockPage, ConsoleKey.X, "WireMock Configuration", "WireMock Configuration AID");
             externalConfigMenu.Add(eImageType.GingerPlayLogo, "GingerPlay", GetGingerPlayPage, ConsoleKey.X, "GingerPlay Configuration", "GingerPlay Configuration AID");
+            externalConfigMenu.Add(eImageType.ZAP, "ZAP", GetZAPPage, ConsoleKey.X, "ZAP Configuration", "ZAP Configuration AID");
             twoLevelMenu.Add(externalConfigMenu);
 
             TopMenuItem accessiblityRulesMenu = new TopMenuItem(eImageType.Accessibility, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", ConsoleKey.T, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", "Name & rules of the Accessibility which been present current json");
@@ -180,6 +181,10 @@ namespace Ginger.ConfigurationsLib
         private static Page GetGingerPlayPage()
         {
             return new GingerPlayConfigurationpage();
+        }
+        private static Page GetZAPPage()
+        {
+            return new ZAPConfigurationPage();
         }
 
         //Remove when we add other pages
