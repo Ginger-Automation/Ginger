@@ -5557,7 +5557,7 @@ namespace GingerCore.Drivers
                     .Where(x => !x.Name.StartsWith('#') && !excludedElementNames.Contains(x.Name)
                                 && !x.XPath.Contains("/noscript", StringComparison.OrdinalIgnoreCase));
             List<HtmlNode> formElementsList = [];
-            if (!WorkSpace.Instance.BetaFeatures.ShowPOMForAI)
+            if (WorkSpace.Instance.BetaFeatures.ShowPOMForAI)
             {
                 if (pomSetting.LearnPOMByAI)
                 {
