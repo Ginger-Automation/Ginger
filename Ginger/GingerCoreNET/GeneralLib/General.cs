@@ -1307,13 +1307,24 @@ namespace GingerCoreNET.GeneralLib
             if (isAuthorized || !string.IsNullOrEmpty(url))
             {
                 string baseURI = GetAIServiceBaseUrl();
-                string path = "extract_dom_elements";
+                string path = GetAIServicePOMExtractpath();
 
                 using (var client = new HttpClient())
                 {
                     var json = System.Text.Json.JsonSerializer.Serialize(payload);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
 
+                    // Add Bearer token to the Authorization header
+                    string bearerToken = gingerPlayAPITokenManager.GetValidToken();
+                    if(!string.IsNullOrEmpty(bearerToken))
+                    {
+                        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Response: Invalid token");
+                        Response = $"Response: Invalid token";
+                    }
                     try
                     {
                         baseURI += path;
@@ -1345,20 +1356,13 @@ namespace GingerCoreNET.GeneralLib
         public static string GetAIServiceBaseUrl()
         {
             var baseURI = GingerPlayEndPointManager.GetAIServiceUrl();
-
-            if (!string.IsNullOrEmpty(baseURI))
-            {
-                if (!baseURI.EndsWith("/"))
-                {
-                    baseURI += "/";
-                }
-                if (!baseURI.EndsWith("#/"))
-                {
-                    baseURI += "#/";
-                }
-            }
-            return baseURI;
-        }       
+            return $"{baseURI}/";
+        }
+        public static string GetAIServicePOMExtractpath()
+        {
+            var POMExtractpath = GingerPlayEndPointManager.GetAIServicePOMExtractpath();
+            return POMExtractpath;
+        }
     }
 
 }

@@ -105,7 +105,7 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured in validate token", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred in validate token", ex);
                 return false;
             }
         }
@@ -170,6 +170,11 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
             }
 
             return value;
+        }
+
+        public string GetValidToken()
+        {
+            return GingerPlayConfiguration != null ? GingerPlayConfiguration.Token : string.Empty;
         }
     }
 }

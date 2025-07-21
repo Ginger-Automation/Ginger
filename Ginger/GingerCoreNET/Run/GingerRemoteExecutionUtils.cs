@@ -148,13 +148,13 @@ namespace Amdocs.Ginger.CoreNET
 
             if (!string.IsNullOrEmpty(baseURI))
             {
-                if (!baseURI.EndsWith("/"))
-                {
-                    baseURI += "/";
-                }
-                if (!baseURI.EndsWith("#/"))
+                if (baseURI.Length >= 2 && baseURI[^1] == '/' && baseURI[^2] == '#')
                 {
                     baseURI += "#/";
+                }
+                else
+                {
+                    baseURI += "/";
                 }
             }
             return baseURI;
