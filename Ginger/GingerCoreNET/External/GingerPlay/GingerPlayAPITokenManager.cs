@@ -174,7 +174,13 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
 
         public string GetValidToken()
         {
-            return GingerPlayConfiguration != null ? GingerPlayConfiguration.Token : string.Empty;
+            if (GingerPlayConfiguration == null)
+                    {
+                GingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count == 0
+                            ? new GingerPlayConfiguration()
+                            : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+                    }
+                return GingerPlayConfiguration?.Token ?? string.Empty;
         }
     }
 }
