@@ -25,6 +25,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
+using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
@@ -1530,64 +1531,44 @@ namespace GingerCore
             {
                 if (string.IsNullOrWhiteSpace(str))
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Input string is null or empty.", null);
-                    return;
+                    throw new InvalidDataException("Input string is null or empty.");
                 }
 
-                var envAppMatch = Regex.Match(str, @"\{EnvApp=(.*?)\s");
-                var envAppDBMatch = Regex.Match(str, @"EnvAppDB=(.*?)\s");
-                var queryMatch = Regex.Match(str, @"Query=(.*?)\}");
+                var match = Regex.Match(str, @"\{EnvApp=(.*?)\s+EnvAppDB=(.*?)\s+Query=(.*)\}", RegexOptions.Singleline);
 
-                string envApp = envAppMatch.Groups[1].Value;
-                string envAppDB = envAppDBMatch.Groups[1].Value;
-                string query = queryMatch.Groups[1].Value;
-
-                if (string.IsNullOrWhiteSpace(envApp) || string.IsNullOrWhiteSpace(envAppDB) || string.IsNullOrWhiteSpace(query))
+                if (!match.Success)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "ReplaceEnvDBWithValue Error: Missing required parameters.", null);
-                    return;
+                    throw new InvalidDataException("Error: Missing required parameters, please check input");
                 }
-
-                if (Env == null)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "ReplaceEnvDBWithValue Error: Env object is null.", null);
-                    return;
-                }
+                string envApp = match.Groups[1].Value.Trim();
+                string envAppDB = match.Groups[2].Value.Trim();
+                string query = match.Groups[3].Value.Trim();
 
                 var envApplication = Env.GetApplication(envApp);
                 if (envApplication == null)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Application '{envApp}' not found.", null);
-                    return;
+                    throw new InvalidDataException($"Application '{envApp}' not found.");
                 }
-
                 var db = envApplication.Dbs.FirstOrDefault(d => d.Name == envAppDB) as Database;
                 if (db == null)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Database '{envAppDB}' not found.", null);
-                    return;
+                    throw new InvalidDataException($"Database '{envAppDB}' not found.");
                 }
-
                 if (IsSqlDatabase(db.DBType))
                 {
                     if (!query.TrimStart().StartsWith("SELECT", StringComparison.OrdinalIgnoreCase))
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Given query is not a valid SELECT query.", null);
-                        return;
+                        throw new InvalidDataException("Given query is not a valid SELECT query.");
                     }
-
-                    query = AddSingleRecordLimit(query, db.DBType);
                 }
-
+                query = query.Replace("\\n", " ").Replace("\\\"", "\"").Replace("\\", "").Replace("  ", " ");
+                query = AddSingleRecordLimit(query, db.DBType);
                 db.DatabaseOperations = new DatabaseOperations(db);
                 var dbResponse = db.DatabaseOperations.FreeSQL(query, 50);
-
                 if (dbResponse == null || dbResponse.Count < 2)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Invalid or empty DB response.", null);
-                    return;
+                    throw new InvalidDataException("Invalid or empty DB response.");
                 }
-
                 if (dbResponse[1] is List<List<string>> records && records.Count > 0 && records[0].Count > 0)
                 {
                     var value1 = records[0][0];
@@ -1595,12 +1576,14 @@ namespace GingerCore
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "No records found in DB response.", null);
+                    throw new InvalidDataException("No records found in DB response.");
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "ReplaceEnvDBWithValue Exception:", ex);
+                mValueCalculated = mValueCalculated.Replace(str, $"Error: {ex.Message}");
+
+                Reporter.ToLog(eLogLevel.ERROR, "Error:", ex);
             }
         }
         private static bool IsSqlDatabase(eDBTypes dbType)
@@ -1612,7 +1595,6 @@ namespace GingerCore
                    dbType == eDBTypes.PostgreSQL ||
                    dbType == eDBTypes.MySQL;
         }
-
         private static string AddSingleRecordLimit(string query, eDBTypes dbType)
         {
             query = query.Trim();
@@ -1621,9 +1603,24 @@ namespace GingerCore
             {
                 case eDBTypes.MySQL:
                 case eDBTypes.PostgreSQL:
-                    if (!Regex.IsMatch(query, @"\bLIMIT\s+1\b", RegexOptions.IgnoreCase))
+                    if (Regex.IsMatch(query, @"\bLIMIT\s+(\d+)\b", RegexOptions.IgnoreCase))
                     {
-                        query = Regex.Replace(query, ";?$", " LIMIT 1;");
+                        query = Regex.Replace(query, @"\bLIMIT\s+(\d+)\b", match =>
+                        {
+                            int value = int.Parse(match.Groups[1].Value);
+                            return value > 1 ? "LIMIT 1" : match.Value;
+                        }, RegexOptions.IgnoreCase);
+                    }
+                    else
+                    {
+                        if (query.EndsWith(";"))
+                        {
+                            query = query.Substring(0, query.Length - 1).TrimEnd() + " LIMIT 1;";
+                        }
+                        else
+                        {
+                            query += " LIMIT 1";
+                        }
                     }
                     break;
 
@@ -1639,16 +1636,26 @@ namespace GingerCore
                 case eDBTypes.Oracle:
                     if (!Regex.IsMatch(query, @"FETCH\s+FIRST\s+1\s+ROWS\s+ONLY", RegexOptions.IgnoreCase))
                     {
-                        query = Regex.Replace(query, ";?$", " FETCH FIRST 1 ROWS ONLY;");
+                        if (query.EndsWith(";"))
+                        {
+                            query = query.Substring(0, query.Length - 1).TrimEnd() + " FETCH FIRST 1 ROWS ONLY;";
+                        }
+                        else
+                        {
+                            query += " FETCH FIRST 1 ROWS ONLY";
+                        }
                     }
                     break;
+
                 default:
                     break;
             }
 
             return query;
-        }       
-       
+        }
+
+
+
         public static void GetEnvAppAndParam(string EnvValueExp, ref string AppName, ref string GlobalParamName)
         {
             EnvValueExp = EnvValueExp.Replace("\r\n", "vbCrLf");
