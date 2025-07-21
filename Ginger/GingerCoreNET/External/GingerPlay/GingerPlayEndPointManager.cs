@@ -26,15 +26,15 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
 {
     public static class GingerPlayEndPointManager
     {
-        private static readonly string ACCOUNT_REPORT_SERVICE_URL = System.Configuration.ConfigurationManager.AppSettings["ACCOUNT_REPORT_SERVICE_URL"]?.ToString() ?? string.Empty;
+        private static readonly string ACCOUNT_REPORT_SERVICE_URL = System.Configuration.ConfigurationManager.AppSettings["ACCOUNT_REPORT_SERVICE_URL"]?.ToString() ?? "ginger-report";
 
-        private static readonly string HTML_REPORT_SERVICE_URL = System.Configuration.ConfigurationManager.AppSettings["HTML_REPORT_SERVICE_URL"]?.ToString() ?? string.Empty;
+        private static readonly string HTML_REPORT_SERVICE_URL = System.Configuration.ConfigurationManager.AppSettings["HTML_REPORT_SERVICE_URL"]?.ToString() ?? "ginger-html-report";
 
-        private static readonly string AI_SERVICE_URL = System.Configuration.ConfigurationManager.AppSettings["AI_SERVICE_URL"]?.ToString() ?? string.Empty;
+        private static readonly string AI_SERVICE_URL = System.Configuration.ConfigurationManager.AppSettings["AI_SERVICE_URL"]?.ToString() ?? "ginger-ai";
 
-        private static readonly string EXECUTION_SERVICE = System.Configuration.ConfigurationManager.AppSettings["EXECUTION_SERVICE"]?.ToString() ?? string.Empty;
+        private static readonly string EXECUTION_SERVICE = System.Configuration.ConfigurationManager.AppSettings["EXECUTION_SERVICE"]?.ToString() ?? "ginger-execution";
 
-        private static readonly string IDENTITY_SERVICE = System.Configuration.ConfigurationManager.AppSettings["IDENTITY_SERVICE"]?.ToString() ?? string.Empty;
+        private static readonly string IDENTITY_SERVICE = System.Configuration.ConfigurationManager.AppSettings["IDENTITY_SERVICE"]?.ToString() ?? "identity";
 
         private static readonly string REPORT_SERVICE_HEALTH_PATH = $"{ACCOUNT_REPORT_SERVICE_URL}/health";
         private static readonly string EXECUTION_SERVICE_HEALTH_PATH = $"{EXECUTION_SERVICE}/health";
