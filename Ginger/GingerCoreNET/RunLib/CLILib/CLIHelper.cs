@@ -1106,14 +1106,34 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        // Add a flag to prevent multiple disposals
+        private bool _disposed = false;
+
         public void Dispose()
         {
-            try
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
             {
-                _repoFolderManager?.Dispose();
-                _repoFolderManager = null;
+                try
+                {
+                    _repoFolderManager?.Dispose();
+                    _repoFolderManager = null;
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception instead of silently swallowing it
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error disposing RepoFolderManager", ex);
+                }
             }
-            catch { }
+
+            _disposed = true;
         }
     }
 }
