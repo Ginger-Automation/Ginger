@@ -1067,6 +1067,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             string repoName = string.Empty;
             try
             {
+                sourceControlUrl = sourceControlUrl ?? this.SourceControlURL;
+
                 if (!string.IsNullOrEmpty(sourceControlUrl))
                 {
                     // Remove trailing slash if present
