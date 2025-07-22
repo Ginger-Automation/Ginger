@@ -67,6 +67,7 @@ namespace Ginger.ExternalConfigurations
             BindingHandler.ObjFieldBinding(xReportServiceCheckBox, CheckBox.IsCheckedProperty, gingerPlayConfiguration, nameof(gingerPlayConfiguration.GingerPlayReportServiceEnabled));
             BindingHandler.ObjFieldBinding(xAIServiceCheckBox, CheckBox.IsCheckedProperty, gingerPlayConfiguration, nameof(gingerPlayConfiguration.GingerPlayAIServiceEnabled));
             ApplyValidationRules();
+            UpdateControlStates();
         }
 
         private void ApplyValidationRules()
