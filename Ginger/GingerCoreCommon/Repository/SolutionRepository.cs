@@ -212,9 +212,12 @@ namespace Amdocs.Ginger.Repository
 
         public void StopAllRepositoryFolderWatchers()
         {
-            foreach (RepositoryFolderBase RF in SolutionRootFolders)
+            if (SolutionRootFolders != null)
             {
-                RF.StopFileWatcherRecursive();
+                foreach (RepositoryFolderBase RF in SolutionRootFolders)
+                {
+                    RF.StopFileWatcherRecursive();
+                }
             }
         }
 

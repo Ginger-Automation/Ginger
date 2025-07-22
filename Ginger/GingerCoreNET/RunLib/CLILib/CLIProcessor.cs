@@ -84,31 +84,38 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         public async Task ProcessParsedArguments(ParserResult<object> parserResult)
         {
-            // FIXME: failing with exc of obj state
-            // Do not show default version
-            // Parser.Default.Settings.AutoVersion = false;
-            var parser = new Parser(settings =>
+            try
             {
-                settings.IgnoreUnknownArguments = true;
-            });
+                // FIXME: failing with exc of obj state
+                // Do not show default version
+                // Parser.Default.Settings.AutoVersion = false;
+                var parser = new Parser(settings =>
+                {
+                    settings.IgnoreUnknownArguments = true;
+                });
 
-            int result = await parserResult.MapResult(
-                    async (RunOptions opts) => await HandleRunOptions(opts),
-                    async (GridOptions opts) => await HandleGridOption(opts),
-                    async (ConfigFileOptions opts) => await HandleFileOptions("config", opts.FileName, opts.VerboseLevel),
-                    async (DynamicOptions opts) => await HandleDynamicOptions(opts),
-                    async (ScriptOptions opts) => await HandleFileOptions("script", opts.FileName, opts.VerboseLevel),
-                    async (VersionOptions opts) => await HandleVersionOptions(opts),
-                    async (ExampleOptions opts) => await HandleExampleOptions(opts),
-                    async (DoOptions opts) => await HandleDoOptions(opts),
+                int result = await parserResult.MapResult(
+                        async (RunOptions opts) => await HandleRunOptions(opts),
+                        async (GridOptions opts) => await HandleGridOption(opts),
+                        async (ConfigFileOptions opts) => await HandleFileOptions("config", opts.FileName, opts.VerboseLevel),
+                        async (DynamicOptions opts) => await HandleDynamicOptions(opts),
+                        async (ScriptOptions opts) => await HandleFileOptions("script", opts.FileName, opts.VerboseLevel),
+                        async (VersionOptions opts) => await HandleVersionOptions(opts),
+                        async (ExampleOptions opts) => await HandleExampleOptions(opts),
+                        async (DoOptions opts) => await HandleDoOptions(opts),
 
-                    async errs => await HandleCLIParseError(errs)
-            );
+                        async errs => await HandleCLIParseError(errs)
+                );
 
-            if (result != 0)
+                if (result != 0)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error(s) occurred process exit code (" + result + ")");
+                    Environment.ExitCode = 1; // error
+                }
+            }
+            finally
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error(s) occurred process exit code (" + result + ")");
-                Environment.ExitCode = 1; // error
+                mCLIHelper?.ReleaseTempFolder();
             }
         }
 
@@ -519,8 +526,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 mCLIHandler.LoadGeneralConfigurations("", mCLIHelper);
             }
 
-
             WorkSpace.Instance.RunningInExecutionMode = true;
+
+            if (runOptions.UseTempFolder)
+            {
+                mCLIHelper.Solution = runOptions.Solution = mCLIHelper.GetTempFolderPathForRepo(runOptions.URL);
+            }
+
             if (!await CLILoadAndPrepare())
             {
                 Reporter.ToLog(eLogLevel.WARN, "Issue occurred while doing CLI Load and Prepare so aborting execution");
@@ -642,7 +654,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             try
             {
-                if (! await mCLIHelper.LoadSolutionAsync(true))
+                if (!await mCLIHelper.LoadSolutionAsync(true))
                 {
                     return false; // failed to load Solution;
                 }
@@ -736,7 +748,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private static string ReadFile(string fileName)
         {
-            return Ginger.Common.GeneralLib.General.FileContentProvider(fileName);           
+            return Ginger.Common.GeneralLib.General.FileContentProvider(fileName);
         }
     }
 }

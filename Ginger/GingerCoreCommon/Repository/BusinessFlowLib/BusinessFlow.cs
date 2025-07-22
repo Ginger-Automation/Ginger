@@ -1249,11 +1249,11 @@ namespace GingerCore
 
                     if (solutionRepository != null)
                     {
-                        sharedActivity = solutionRepository.GetRepositoryItemByGuid<Activity>(this.Activities[i].ParentGuid);
+                        sharedActivity = solutionRepository?.GetRepositoryItemByGuid<Activity>(this.Activities[i].ParentGuid);
                     }
                     else
                     {
-                        sharedActivity = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(this.Activities[i].ParentGuid);
+                        sharedActivity = GingerCoreCommonWorkSpace.Instance?.SolutionRepository?.GetRepositoryItemByGuid<Activity>(this.Activities[i].ParentGuid);
                     }
 
                     if (sharedActivity != null)
