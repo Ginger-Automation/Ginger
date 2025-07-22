@@ -113,10 +113,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     Environment.ExitCode = 1; // error
                 }
             }
-            catch
-            {
-                throw;
-            }
             finally
             {
                 mCLIHelper?.ReleaseTempFolder();

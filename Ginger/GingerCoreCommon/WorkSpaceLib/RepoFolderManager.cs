@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -201,7 +202,7 @@ namespace Amdocs.Ginger.Common.WorkSpaceLib
                     _lockFileStream = new FileStream(_lockFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
                     
                     // Use a platform-safe locking mechanism
-                    if (Environment.OSVersion.Platform != PlatformID.MacOSX)
+                    if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                     {
                         _lockFileStream.Lock(0, 0);
                     }
@@ -227,25 +228,13 @@ namespace Amdocs.Ginger.Common.WorkSpaceLib
             throw new TimeoutException($"Failed to acquire lock within {_lockAcquisitionTimeout} after {attempt} attempts.");
         }
 
-        private void AcquireLock()
-        {
-            // Open or create the lock file, get exclusive access
-            _lockFileStream = new FileStream(_lockFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
-            
-            // Use platform-safe locking
-            if (Environment.OSVersion.Platform != PlatformID.MacOSX)
-            {
-                _lockFileStream.Lock(0, 0);
-            }
-        }
-
         private void ReleaseLock()
         {
             if (_lockFileStream != null)
             {
                 try
                 {
-                    if (Environment.OSVersion.Platform != PlatformID.MacOSX)
+                    if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                     {
                         _lockFileStream.Unlock(0, 0);
                     }
@@ -287,6 +276,7 @@ namespace Amdocs.Ginger.Common.WorkSpaceLib
 
             string json = File.ReadAllText(_assignmentFilePath);
             _assignments = JsonSerializer.Deserialize<Dictionary<string, AssignmentInfo>>(json) ?? [];
+
         }
 
         private void WriteAssignments()

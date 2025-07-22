@@ -51,7 +51,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         Config, Dynamic, Script, Arguments
     }
 
-    public class CLIHelper : INotifyPropertyChanged
+    public class CLIHelper : INotifyPropertyChanged, IDisposable
     {
         public string Solution;
         public string Env;
@@ -1104,6 +1104,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 _repoFolderManager.ReleaseFolder();
                 Reporter.ToLog(eLogLevel.DEBUG, $"Process {_processId} released folder");
             }
+        }
+
+        public void Dispose()
+        {
+            try
+            {
+                _repoFolderManager?.Dispose();
+                _repoFolderManager = null;
+            }
+            catch { }
         }
     }
 }

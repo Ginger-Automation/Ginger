@@ -72,10 +72,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         break;
                 }
             }
-            catch
-            {
-                throw;
-            }
             finally
             {
                 mCLIHelper?.ReleaseTempFolder();
