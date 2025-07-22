@@ -5635,7 +5635,7 @@ namespace GingerCore.Drivers
                     }
                 }
             }
-            
+
             //List<HtmlNode> formElementsList = [];
             // Process HTML elements
             foreach (HtmlNode htmlElemNode in htmlElements)
@@ -9242,6 +9242,13 @@ namespace GingerCore.Drivers
                             StopMonitoringNetworkLog(act).GetAwaiter().GetResult();
                         }
                         break;
+                    case ActBrowserElement.eControlAction.ClearExistingNetworkLog:
+                        mAct = act;
+                        if (ValidateBrowserCompatibility(Driver))
+                        {
+                            ClearExistingNetworkLog(act).GetAwaiter().GetResult();
+                        }
+                        break;
                     case ActBrowserElement.eControlAction.NavigateBack:
                         Driver.Navigate().Back();
                         break;
@@ -11564,13 +11571,8 @@ namespace GingerCore.Drivers
             try
             {
                 if (isNetworkLogMonitoringStarted)
-                {                 
-                    _BrowserHelper.ProcessNetworkLogs(act,networkResponseLogList, networkRequestLogList);
-                    if (act.ClearExistingLog)
-                    {
-                        networkResponseLogList = [];
-                        networkRequestLogList = [];
-                    }
+                {
+                    _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList);
                 }
                 else
                 {
@@ -11584,7 +11586,11 @@ namespace GingerCore.Drivers
             }
         }
 
-
+        public async Task ClearExistingNetworkLog(ActBrowserElement act)
+        {
+            networkResponseLogList = [];
+            networkRequestLogList = [];
+        }
         public async Task StopMonitoringNetworkLog(ActBrowserElement act)
         {
             try
@@ -11604,8 +11610,8 @@ namespace GingerCore.Drivers
                     {
                         await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V136.Network.DisableCommandSettings());
                         devToolsSession.Dispose();
-                        devTools.CloseDevToolsSession();                      
-                        _BrowserHelper.ProcessNetworkLogs(act,networkResponseLogList, networkRequestLogList);
+                        devTools.CloseDevToolsSession();
+                        _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList);
                     }
                     catch (Exception fileEx)
                     {

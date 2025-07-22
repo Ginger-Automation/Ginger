@@ -75,11 +75,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
                 var parsedRequestTuples = networkRequestLogList.Select((x, i) => Tuple.Create(x.Item1, parsedRequestObjects[i])).ToList();
                 var parsedResponseTuples = networkResponseLogList.Select((x, i) => Tuple.Create(x.Item1, parsedResponseObjects[i])).ToList();
 
-                string requestParamValue = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.RequestFileName);
-                string responseParamValue = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.ResponseFileName);
-                string RequestFileName = string.IsNullOrWhiteSpace(requestParamValue) ? "NetworklogRequest" : requestParamValue;
-                string ResponseFileName = string.IsNullOrWhiteSpace(responseParamValue) ? "NetworklogResponse" : responseParamValue;
-
+                string RequestFileName = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.RequestFileName);
+                string ResponseFileName = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.ResponseFileName);
                 string requestPath = CreateNetworkLogFile(RequestFileName, parsedRequestTuples);
                 string responsePath = CreateNetworkLogFile(ResponseFileName, parsedResponseTuples);
 

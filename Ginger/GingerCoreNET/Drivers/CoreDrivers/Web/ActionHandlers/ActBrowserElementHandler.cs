@@ -166,6 +166,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                     case ActBrowserElement.eControlAction.GetNetworkLog:
                         await HandleGetNetworkLogOperationAsync();
                         break;
+                    case ActBrowserElement.eControlAction.ClearExistingNetworkLog:
+                        await HandleClearExistingNetworkLogOperationAsync();
+                        break;
                     case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
                         await HandleStopMonitoringNetworkLogOperationAsync();
                         break;
@@ -825,6 +828,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             try
             {
                 await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).GetCaptureNetworkLog(_act);
+            }
+            catch (Exception ex)
+            {
+                _act.Error = $"Error when handling Network log  operation.";
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                return;
+            }
+        }
+
+        private async Task HandleClearExistingNetworkLogOperationAsync()
+        {
+            try
+            {
+                await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).ClearExisingNetworkLog();
             }
             catch (Exception ex)
             {

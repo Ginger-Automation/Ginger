@@ -97,6 +97,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 ActBrowserElement.eControlAction.StopMonitoringNetworkLog,
                 ActBrowserElement.eControlAction.SetBlockedUrls,
                 ActBrowserElement.eControlAction.UnblockeUrls,
+                ActBrowserElement.eControlAction.ClearExistingNetworkLog,
             ];
             return browserActElementList;
         }
