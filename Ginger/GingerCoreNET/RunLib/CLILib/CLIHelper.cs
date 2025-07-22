@@ -87,7 +87,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public static event EventHandler<string> GitProgresStatus;
         RepoFolderManager _repoFolderManager;
 
-        string _processId => Environment.ProcessId.ToString();
+        static readonly string _processId = Environment.ProcessId.ToString();
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
         public bool ShowAutoRunWindow
         {
