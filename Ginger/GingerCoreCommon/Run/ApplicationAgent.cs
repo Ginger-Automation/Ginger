@@ -60,7 +60,7 @@ namespace GingerCore.Platforms
             {
                 if (mAppID == Guid.Empty)
                 {
-                    ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == AppName);
+                    ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution?.ApplicationPlatforms?.FirstOrDefault(x => x.AppName == AppName);
                     if (appPlat != null)
                     {
                         return appPlat.Guid;
@@ -85,7 +85,7 @@ namespace GingerCore.Platforms
             {
                 if (mAppPlatform == null)
                 {
-                    mAppPlatform = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == AppName);
+                    mAppPlatform = GingerCoreCommonWorkSpace.Instance.Solution?.ApplicationPlatforms?.FirstOrDefault(x => x.AppName == AppName);
                 }
                 return mAppPlatform;
             }

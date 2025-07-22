@@ -84,31 +84,42 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         public async Task ProcessParsedArguments(ParserResult<object> parserResult)
         {
-            // FIXME: failing with exc of obj state
-            // Do not show default version
-            // Parser.Default.Settings.AutoVersion = false;
-            var parser = new Parser(settings =>
+            try
             {
-                settings.IgnoreUnknownArguments = true;
-            });
+                // FIXME: failing with exc of obj state
+                // Do not show default version
+                // Parser.Default.Settings.AutoVersion = false;
+                var parser = new Parser(settings =>
+                {
+                    settings.IgnoreUnknownArguments = true;
+                });
 
-            int result = await parserResult.MapResult(
-                    async (RunOptions opts) => await HandleRunOptions(opts),
-                    async (GridOptions opts) => await HandleGridOption(opts),
-                    async (ConfigFileOptions opts) => await HandleFileOptions("config", opts.FileName, opts.VerboseLevel),
-                    async (DynamicOptions opts) => await HandleDynamicOptions(opts),
-                    async (ScriptOptions opts) => await HandleFileOptions("script", opts.FileName, opts.VerboseLevel),
-                    async (VersionOptions opts) => await HandleVersionOptions(opts),
-                    async (ExampleOptions opts) => await HandleExampleOptions(opts),
-                    async (DoOptions opts) => await HandleDoOptions(opts),
+                int result = await parserResult.MapResult(
+                        async (RunOptions opts) => await HandleRunOptions(opts),
+                        async (GridOptions opts) => await HandleGridOption(opts),
+                        async (ConfigFileOptions opts) => await HandleFileOptions("config", opts.FileName, opts.VerboseLevel),
+                        async (DynamicOptions opts) => await HandleDynamicOptions(opts),
+                        async (ScriptOptions opts) => await HandleFileOptions("script", opts.FileName, opts.VerboseLevel),
+                        async (VersionOptions opts) => await HandleVersionOptions(opts),
+                        async (ExampleOptions opts) => await HandleExampleOptions(opts),
+                        async (DoOptions opts) => await HandleDoOptions(opts),
 
-                    async errs => await HandleCLIParseError(errs)
-            );
+                        async errs => await HandleCLIParseError(errs)
+                );
 
-            if (result != 0)
+                if (result != 0)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error(s) occurred process exit code (" + result + ")");
+                    Environment.ExitCode = 1; // error
+                }
+            }
+            catch
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error(s) occurred process exit code (" + result + ")");
-                Environment.ExitCode = 1; // error
+                throw;
+            }
+            finally
+            {
+                mCLIHelper?.ReleaseTempFolder();
             }
         }
 

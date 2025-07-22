@@ -46,28 +46,39 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         CLIHelper mCLIHelper = new();
         public async Task RunAsync(DoOptions opts)
         {
-            mOpts = opts;
-            if (opts.UseTempSolutionFolder)
+            try
             {
-                mOpts.Solution = SetSolutionPathToTempFolder(opts.URL);
+                mOpts = opts;
+                if (opts.UseTempSolutionFolder)
+                {
+                    mOpts.Solution = SetSolutionPathToTempFolder(opts.URL);
+                }
+                switch (opts.Operation)
+                {
+                    case DoOptions.DoOperation.analyze:
+                        DoAnalyze();
+                        break;
+                    case DoOptions.DoOperation.clean:
+                        // TODO: remove execution folder, backups and more
+                        break;
+                    case DoOptions.DoOperation.info:
+                        DoInfo();
+                        break;
+                    case DoOptions.DoOperation.open:
+                        await DoOpenAsync();
+                        break;
+                    case DoOptions.DoOperation.MultiPOMUpdate:
+                        await DoMultiPOMUpdate();
+                        break;
+                }
             }
-            switch (opts.Operation)
+            catch
             {
-                case DoOptions.DoOperation.analyze:
-                    DoAnalyze();
-                    break;
-                case DoOptions.DoOperation.clean:
-                    // TODO: remove execution folder, backups and more
-                    break;
-                case DoOptions.DoOperation.info:
-                    DoInfo();
-                    break;
-                case DoOptions.DoOperation.open:
-                    await DoOpenAsync();
-                    break;
-                case DoOptions.DoOperation.MultiPOMUpdate:
-                    await DoMultiPOMUpdate();
-                    break;
+                throw;
+            }
+            finally
+            {
+                mCLIHelper?.ReleaseTempFolder();
             }
         }
 
