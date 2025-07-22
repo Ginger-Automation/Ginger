@@ -67,7 +67,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xLearnOnlyMappedElements.BindControl(mBasePOMWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
                     xLearnScreenshotsOfElements.BindControl(mBasePOMWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnScreenshotsOfElements));
                     xLearnShadowDOMElements.BindControl(mBasePOMWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnShadowDomElements));
-                    if(!WorkSpace.Instance.BetaFeatures.ShowPOMForAI)
+                    if(WorkSpace.Instance.BetaFeatures.ShowPOMForAI)
                     {
                         xLearnPOMByAI.BindControl(mBasePOMWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnPOMByAI));
                     }
@@ -164,7 +164,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (mAppPlatform == ePlatformType.Web)
             {
                 xLearnScreenshotsOfElements.Visibility = Visibility.Visible;
-                if(!WorkSpace.Instance.BetaFeatures.ShowPOMForAI)
+                if(WorkSpace.Instance.BetaFeatures.ShowPOMForAI)
                 {
                     xLearnPOMByAI.Visibility = Visibility.Visible;
                 }

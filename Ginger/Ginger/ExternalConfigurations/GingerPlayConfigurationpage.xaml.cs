@@ -93,6 +93,7 @@ namespace Ginger.ExternalConfigurations
 
         private async void xTestConBtn_Click(object sender, RoutedEventArgs e)
         {
+            string connectionResultMessage = string.Empty;
             try
             {
                 ShowLoader();
@@ -107,9 +108,9 @@ namespace Ginger.ExternalConfigurations
                 {
                     bool isAuthorized = await GingerPlayAPITokenManager.GetOrValidateToken();
                     // Show main connection result
-                    ShowConnectionResult(isAuthorized);
+                    connectionResultMessage = ShowConnectionResult(isAuthorized);
                 }
-                ShowServicesHealth();
+                await ShowServicesHealth(connectionResultMessage);
                 return;
             }
             finally
@@ -119,11 +120,10 @@ namespace Ginger.ExternalConfigurations
             }
         }
 
-        private async Task ShowServicesHealth()
+        private async Task ShowServicesHealth(string connectionResultMessage)
         {
             // Check health for selected services
             var healthMessages = new List<string>();
-
             if ((bool)xReportServiceCheckBox.IsChecked)
             {
                 try
@@ -155,7 +155,7 @@ namespace Ginger.ExternalConfigurations
                 try
                 {
                     bool isAIServiceHealthy = await GingerPlayAPITokenManager.IsServiceHealthyAsync(GingerPlayEndPointManager.GetAIServiceHealthUrl());
-                    healthMessages.Add($"AI Service: {(isAIServiceHealthy ? "UP" : "DOWN")}");
+                    healthMessages.Add($"AI Service: {(isAIServiceHealthy && !connectionResultMessage.Contains("GingerPlay Connection is Failed") ? "UP" : "DOWN")}");
                 }
                 catch (System.Exception ex)
                 {
@@ -167,19 +167,28 @@ namespace Ginger.ExternalConfigurations
             if (healthMessages.Count > 0)
             {
                 string summary = string.Join("\n", healthMessages);
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"Service Health Status:\n{summary}");
+                if (connectionResultMessage.Contains("GingerPlay Connection is Failed"))
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoWithErrorMessage, $"{connectionResultMessage}\nService Health Status:\n{summary}");
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"Service Health Status:\n{summary}");
+                }
             }
         }
 
-        private static void ShowConnectionResult(bool isAuthorized)
+        private static string ShowConnectionResult(bool isAuthorized)
         {
             if (isAuthorized)
             {
-                Reporter.ToUser(eUserMsgKey.GingerPlayConnectionSuccess);
+                //Reporter.ToUser(eUserMsgKey.GingerPlayConnectionSuccess);
+                return "GingerPlay Connection Successful";
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.GingerPlayConnectionFail);
+                //Reporter.ToUser(eUserMsgKey.GingerPlayConnectionFail);
+                return "GingerPlay Connection is Failed, Please check credentials/check error logs";
             }
         }
         public void HideLoader()
