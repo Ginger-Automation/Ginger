@@ -530,8 +530,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 mCLIHandler.LoadGeneralConfigurations("", mCLIHelper);
             }
 
-
             WorkSpace.Instance.RunningInExecutionMode = true;
+
+            if (runOptions.UseTempFolder)
+            {
+                mCLIHelper.Solution = runOptions.Solution = mCLIHelper.GetTempFolderPathForRepo(runOptions.URL);
+            }
+
             if (!await CLILoadAndPrepare())
             {
                 Reporter.ToLog(eLogLevel.WARN, "Issue occurred while doing CLI Load and Prepare so aborting execution");
@@ -653,7 +658,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             try
             {
-                if (! await mCLIHelper.LoadSolutionAsync(true))
+                if (!await mCLIHelper.LoadSolutionAsync(true))
                 {
                     return false; // failed to load Solution;
                 }
@@ -747,7 +752,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private static string ReadFile(string fileName)
         {
-            return Ginger.Common.GeneralLib.General.FileContentProvider(fileName);           
+            return Ginger.Common.GeneralLib.General.FileContentProvider(fileName);
         }
     }
 }
