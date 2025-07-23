@@ -9250,7 +9250,7 @@ namespace GingerCore.Drivers
                         mAct = act;
                         if (ValidateBrowserCompatibility(Driver))
                         {
-                            ClearExistingNetworkLog(act).GetAwaiter().GetResult();
+                            ClearExistingNetworkLog();
                         }
                         break;
                     case ActBrowserElement.eControlAction.NavigateBack:
@@ -11594,7 +11594,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        public async Task ClearExistingNetworkLog(ActBrowserElement act)
+        public void ClearExistingNetworkLog()
         {
             networkResponseLogList = [];
             networkRequestLogList = [];
