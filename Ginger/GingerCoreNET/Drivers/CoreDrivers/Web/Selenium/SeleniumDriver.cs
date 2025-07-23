@@ -1442,7 +1442,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        public override void CloseDriver()
+        public override async void CloseDriver()
         {
             try
             {
@@ -1469,7 +1469,7 @@ namespace GingerCore.Drivers
             {
                 if (isNetworkLogMonitoringStarted)
                 {
-                    StopNetworkLog();
+                   StopNetworkLog().GetAwaiter().GetResult(); ;
                 }
                 if (Driver != null)
                 {
@@ -11550,6 +11550,7 @@ namespace GingerCore.Drivers
                 if (isNetworkLogMonitoringStarted)
                 {
                     mAct.ExInfo = "Start network monitoring is already started";
+                    return;
                 }
                 networkRequestLogList = [];
                 networkResponseLogList = [];

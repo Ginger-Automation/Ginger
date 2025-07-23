@@ -77,7 +77,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
                 string requestParamValue = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.RequestFileName);
                 string responseParamValue = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.ResponseFileName);
                 string RequestFileName = string.IsNullOrWhiteSpace(requestParamValue) ? "NetworklogRequest" : requestParamValue;
-                string ResponseFileName = string.IsNullOrWhiteSpace(responseParamValue) ? "ResponselogRequest" : responseParamValue;
+                string ResponseFileName = string.IsNullOrWhiteSpace(responseParamValue) ? "NetworklogResponse" : responseParamValue;
                 string requestPath = CreateNetworkLogFile(RequestFileName, parsedRequestTuples);
                 string responsePath = CreateNetworkLogFile(ResponseFileName, parsedResponseTuples);
 
