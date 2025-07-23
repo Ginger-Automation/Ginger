@@ -167,7 +167,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                         await HandleGetNetworkLogOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.ClearExistingNetworkLog:
-                        HandleClearExistingNetworkLogOperationAsync();
+                        HandleClearExistingNetworkLogOperation();
                         break;
                     case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
                         await HandleStopMonitoringNetworkLogOperationAsync();
@@ -837,7 +837,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
         }
 
-        private void HandleClearExistingNetworkLogOperationAsync()
+        private void HandleClearExistingNetworkLogOperation()
         {
             try
             {

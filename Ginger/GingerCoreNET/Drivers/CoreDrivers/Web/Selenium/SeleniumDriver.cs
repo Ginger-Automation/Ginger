@@ -1460,7 +1460,7 @@ namespace GingerCore.Drivers
             {
                 if (isNetworkLogMonitoringStarted)
                 {
-                    StopNetworkLog().GetAwaiter().GetResult(); ;
+                    StopNetworkLog().GetAwaiter().GetResult();
                 }
                 if (Driver != null)
                 {
