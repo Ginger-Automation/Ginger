@@ -4407,7 +4407,7 @@ namespace GingerCore.Drivers
 
             ISearchContext shadowRoot = null;
             ISearchContext ParentContext = Driver;
-            int ImpWait = ImplicitWait;
+            TimeSpan ImpWait = Driver.Manage().Timeouts().ImplicitWait;
 
             if (currentPOMElementInfo is HTMLElementInfo htmlCurrentElementInfo)
             {
@@ -4515,10 +4515,17 @@ namespace GingerCore.Drivers
                             if (ParentContext != null)
                             {
                                 elem = LocateElementByLocator(locator, ParentContext, friendlyLocatorElementlist, true);
-                                locator.StatusError = $"{locator.StatusError} {ImplicitWait}";
+                                Reporter.ToLog(eLogLevel.DEBUG, $"{locator.StatusError} timespan : {Driver.Manage().Timeouts().ImplicitWait}");
                                 if (elem == null && locator.LocateBy != eLocateBy.ByID && locator.LocateBy != eLocateBy.ByName)
                                 {
-                                    ImplicitWait = Math.Max(10, (int)(ImplicitWait * 0.75));//decrease Implicit wait by 25% when locater gets failed. (exception for ByID,ByName) 
+                                    // Get current implicit wait timeout
+                                    TimeSpan currentTimeout = Driver.Manage().Timeouts().ImplicitWait;
+
+                                    // Decrease by 25%
+                                    TimeSpan reducedTimeout = TimeSpan.FromMilliseconds(currentTimeout.TotalMilliseconds * 0.75);
+
+                                    // Set the new reduced timeout //decrease Implicit wait by 25% when locater gets failed. (exception for ByID,ByName) 
+                                    Driver.Manage().Timeouts().ImplicitWait = reducedTimeout;
                                 }
                             }
                         }
@@ -4543,7 +4550,7 @@ namespace GingerCore.Drivers
             }
             finally
             {
-                ImplicitWait = ImpWait;//reset Implicit wait
+                Driver.Manage().Timeouts().ImplicitWait = ImpWait;//reset Implicit wait
             }
             
             return elem;
