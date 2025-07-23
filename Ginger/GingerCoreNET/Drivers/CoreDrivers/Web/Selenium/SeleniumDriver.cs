@@ -1065,15 +1065,6 @@ namespace GingerCore.Drivers
                 DefaultWindowHandler = Driver.CurrentWindowHandle;
                 InitXpathHelper();
 
-                /*     if (StartNetworkMonitoring)
-                     {
-                         if (ValidateBrowserCompatibility(Driver))
-                         {
-                             _BrowserHelper = new BrowserHelper(new ActBrowserElement());
-                             SetUPDevTools(Driver);
-                             StartMonitoringNetworkLog(Driver).GetAwaiter().GetResult();
-                         }
-                     }*/
             }
             catch (Exception ex)
             {
@@ -1442,7 +1433,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        public override async void CloseDriver()
+        public override void CloseDriver()
         {
             try
             {
@@ -1469,7 +1460,7 @@ namespace GingerCore.Drivers
             {
                 if (isNetworkLogMonitoringStarted)
                 {
-                   StopNetworkLog().GetAwaiter().GetResult(); ;
+                    StopNetworkLog().GetAwaiter().GetResult(); ;
                 }
                 if (Driver != null)
                 {
@@ -11549,7 +11540,7 @@ namespace GingerCore.Drivers
             {
                 if (isNetworkLogMonitoringStarted)
                 {
-                    mAct.ExInfo = "Start network monitoring is already started";
+                    mAct.ExInfo = "Network monitoring is already started";
                     return;
                 }
                 networkRequestLogList = [];
@@ -11608,7 +11599,7 @@ namespace GingerCore.Drivers
 
                 if (isNetworkLogMonitoringStarted)
                 {
-                    StopNetworkLog();
+                    await StopNetworkLog();
 
                     try
                     {

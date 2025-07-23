@@ -805,7 +805,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             _act = act;
             if (isNetworkLogMonitoringStarted)
             {
-                act.ExInfo = "Start network monitoring is already started.";
+                act.ExInfo = "Network monitoring is already started.";
                 return;
             }
             _BrowserHelper = new BrowserHelper(act);
@@ -850,7 +850,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-        public async Task ClearExistingNetworkLog()
+        public void ClearExistingNetworkLog()
         {
             networkResponseLogList = [];
             networkRequestLogList = [];
