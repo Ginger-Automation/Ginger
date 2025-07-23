@@ -159,11 +159,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public void LoadGeneralConfigurations(string content, CLIHelper cliHelper)
         {
-
             cliHelper.SetSourceControlPassword(cliHelper.sourceControlPass);
             cliHelper.PasswordEncrypted(cliHelper.sourceControlPassEncrypted.ToString());
-
-
         }
 
         public void LoadRunsetConfigurations(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
