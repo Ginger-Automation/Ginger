@@ -107,8 +107,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
         public enum eScanType
         {
-            [EnumValueDescription("Passive")]
-            Passive,
             [EnumValueDescription("Active")]
             Active
         }
@@ -194,20 +192,77 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 zAPConfiguration = value;
             }
         }
-        // Add a method to execute the scan
-        public async void ExecuteActiveZapScan(string testURL)
+        //method to execute the scan
+        public void ExecuteActiveZapScan(string testURL)
         {
-            bool isPassed = false;
+            Status = eRunStatus.Running;
             zapProxyService = new ZapProxyService();
             try
             {
-                // Await the asynchronous method to get the result
-                if (await zapProxyService.IsZapRunningAsync())
+                
+                if (zapProxyService.IsZapRunningAsync())
                 {
                     zapProxyService.AddUrlToScanTree(testURL);
                     zapProxyService.PerformActiveScan(testURL);
 
                     ProcessResultAsync(zapProxyService, this, testURL);
+                    if (AlertList != null)
+                    {
+                        bool isPassed = zapProxyService.EvaluateScanResult(testURL, AlertList);
+                        if (isPassed)
+                        {
+                            Status = eRunStatus.Passed;
+                            return;
+
+                        }
+                        else
+                        {
+                            Status = eRunStatus.Failed;
+                            Error = "Vulnerability Issues Found, Please check the report in Output Values Artifact ";
+                            return;
+                        }
+                    }
+
+                    if (zapProxyService.EvaluateScanResult(testURL))
+                    {
+                        Status = eRunStatus.Passed;
+                        return;
+                    }
+                    else
+                    {
+                        Status = eRunStatus.Failed;
+                        Error = "Vulnerability Issues Found, Please check the report in Output Values Artifact ";
+                        return;
+                    }
+                }
+                else
+                {
+                    Status = eRunStatus.Failed;
+                    Error = "ZAP Proxy is not running. Please start ZAP Proxy before executing the scan.";
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Status = eRunStatus.Failed;
+                Error = $"Error while executing ZAP scan: {ex.Message}";
+                return;
+            }
+
+        }
+
+        public void ExecutePassiveZapScan(string testURL)
+        {
+            bool isPassed = false;
+            Status = eRunStatus.Running;
+            zapProxyService = new ZapProxyService();
+            try
+            {
+                if (zapProxyService.IsZapRunningAsync())
+                {
+
+                    zapProxyService.WaitTillPassiveScanCompleted();
+                    ProcessResultAsync(zapProxyService, (Act)this, testURL);
                     isPassed = zapProxyService.EvaluateScanResult(testURL, AlertList);
 
                 }
@@ -215,6 +270,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 {
                     Status = eRunStatus.Failed;
                     Error = "ZAP Proxy is not running. Please start ZAP Proxy before executing the scan.";
+
                 }
             }
             catch (Exception ex)
@@ -234,34 +290,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                     Status = eRunStatus.Failed;
                     Error = "Security testing Failed with some alerts .";
                 }
-            }
-        }
-
-        public async void ExecutePassiveZapScan(string testURL)
-        {
-            zapProxyService = new ZapProxyService();
-            try
-            {
-                // Await the asynchronous method to get the result
-                if (await zapProxyService.IsZapRunningAsync())
-                {
-
-                    zapProxyService.WaitTillPassiveScanCompleted();
-                    ProcessResultAsync(zapProxyService, (Act)this, testURL);
-                    Status = eRunStatus.Passed;
-                    Error = string.Empty;
-                }
-                else
-                {
-                    Status = eRunStatus.Failed;
-                    Error = "ZAP Proxy is not running. Please start ZAP Proxy before executing the scan.";
-
-                }
-            }
-            catch (Exception ex)
-            {
-                Status = eRunStatus.Failed;
-                Error = $"Error while executing ZAP scan: {ex.Message}";
             }
         }
 

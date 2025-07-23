@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace GingerCoreNET.External.ZAP
 {
@@ -33,12 +32,12 @@ namespace GingerCoreNET.External.ZAP
         /// Checks if OWASP ZAP is running and accessible via its API.
         /// </summary>
         /// <returns>True if ZAP is running and accessible, false otherwise.</returns>
-        public async Task<bool> IsZapRunningAsync()
+        public bool IsZapRunningAsync()
         {
             try
             {
                 // A simple API call to check connectivity [4]
-                IApiResponse version = await Task.Run(() => _zapClient.core.version());
+                IApiResponse version = _zapClient.core.version();
                 return !string.IsNullOrEmpty(version.ToString());
             }
             catch (Exception ex)
@@ -186,7 +185,7 @@ namespace GingerCoreNET.External.ZAP
             var urls = GetUrlsFromScanTree(siteToTest);
             if (urls.Contains(siteToTest))
             {
-                Console.WriteLine($"{siteToTest} has been added to scan tree");
+                Reporter.ToLog(eLogLevel.INFO, $"{siteToTest} has been added to scan tree");
             }
             else
             {
@@ -239,10 +238,10 @@ namespace GingerCoreNET.External.ZAP
                 Thread.Sleep(1000);
                 apiResponse = _zapClient.ascan.status(scanId);
                 status = ((ApiResponseElement)apiResponse).Value;
-                Console.WriteLine("Active scan is in progress");
+                Reporter.ToLog(eLogLevel.INFO, "Active scan is in progress");
             }
 
-            Console.WriteLine("Active scan has completed");
+            Reporter.ToLog(eLogLevel.INFO, "Active scan has completed");
         }
 
         public bool EvaluateScanResult(string targetUrl, ObservableList<OperationValues> allowedAlertNames)
@@ -269,6 +268,13 @@ namespace GingerCoreNET.External.ZAP
             return testPassed;
         }
 
+        public bool EvaluateScanResult(string targetUrl)
+        {
+            var summaryResponse = _zapClient.alert.alertsSummary(targetUrl);
+            var alertSummary = (ApiResponseSet)summaryResponse;
+            return !string.IsNullOrEmpty(alertSummary.ToString());
+
+        }
 
     }
 }
