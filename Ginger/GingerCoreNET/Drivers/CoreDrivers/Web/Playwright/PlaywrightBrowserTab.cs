@@ -803,6 +803,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         public async Task StartCaptureNetworkLog(ActBrowserElement act)
         {
             _act = act;
+            if (isNetworkLogMonitoringStarted)
+            {
+                act.ExInfo = "Start network monitoring is already started.";
+                return;
+            }
             _BrowserHelper = new BrowserHelper(act);
             try
             {
@@ -845,7 +850,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-        public async Task ClearExisingNetworkLog()
+        public async Task ClearExistingNetworkLog()
         {
             networkResponseLogList = [];
             networkRequestLogList = [];

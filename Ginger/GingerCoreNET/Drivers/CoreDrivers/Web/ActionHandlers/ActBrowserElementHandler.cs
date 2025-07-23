@@ -841,7 +841,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         {
             try
             {
-                await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).ClearExisingNetworkLog();
+                await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).ClearExistingNetworkLog();
             }
             catch (Exception ex)
             {

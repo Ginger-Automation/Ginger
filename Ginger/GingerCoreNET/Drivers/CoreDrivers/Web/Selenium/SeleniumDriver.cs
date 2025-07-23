@@ -1467,6 +1467,10 @@ namespace GingerCore.Drivers
 
             try
             {
+                if (isNetworkLogMonitoringStarted)
+                {
+                    StopNetworkLog();
+                }
                 if (Driver != null)
                 {
                     Driver.Quit();
@@ -11543,6 +11547,10 @@ namespace GingerCore.Drivers
         {
             try
             {
+                if (isNetworkLogMonitoringStarted)
+                {
+                    mAct.ExInfo = "Start network monitoring is already started";
+                }
                 networkRequestLogList = [];
                 networkResponseLogList = [];
                 interceptor = webDriver.Manage().Network;
@@ -11599,18 +11607,10 @@ namespace GingerCore.Drivers
 
                 if (isNetworkLogMonitoringStarted)
                 {
-                    await interceptor.StopMonitoring();
-
-                    interceptor.NetworkRequestSent -= OnNetworkRequestSent;
-                    interceptor.NetworkResponseReceived -= OnNetworkResponseReceived;
-                    interceptor.ClearRequestHandlers();
-                    interceptor.ClearResponseHandlers();
+                    StopNetworkLog();
 
                     try
                     {
-                        await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V136.Network.DisableCommandSettings());
-                        devToolsSession.Dispose();
-                        devTools.CloseDevToolsSession();
                         _BrowserHelper.ProcessNetworkLogs(act, networkResponseLogList, networkRequestLogList);
                     }
                     catch (Exception fileEx)
@@ -11632,7 +11632,24 @@ namespace GingerCore.Drivers
             }
         }
 
-
+        private async Task StopNetworkLog()
+        {
+            try
+            {
+                await interceptor.StopMonitoring();
+                interceptor.NetworkRequestSent -= OnNetworkRequestSent;
+                interceptor.NetworkResponseReceived -= OnNetworkResponseReceived;
+                interceptor.ClearRequestHandlers();
+                interceptor.ClearResponseHandlers();
+                await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V136.Network.DisableCommandSettings());
+                devToolsSession.Dispose();
+                devTools.CloseDevToolsSession();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error - {ex.Message}", ex);
+            }
+        }
 
         private int CreateConsoleLogFile(string filePath, string logs, ActBrowserElement act)
         {
