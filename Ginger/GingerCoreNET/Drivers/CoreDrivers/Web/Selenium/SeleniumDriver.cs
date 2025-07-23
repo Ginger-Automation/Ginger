@@ -46,6 +46,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
+using OpenQA.Selenium.BiDi.Modules.BrowsingContext;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Chromium;
 using OpenQA.Selenium.Common;
@@ -4401,7 +4402,7 @@ namespace GingerCore.Drivers
 
             ISearchContext shadowRoot = null;
             ISearchContext ParentContext = Driver;
-
+            TimeSpan ImpWait = Driver.Manage().Timeouts().ImplicitWait;
 
             if (currentPOMElementInfo is HTMLElementInfo htmlCurrentElementInfo)
             {
@@ -4421,108 +4422,132 @@ namespace GingerCore.Drivers
 
             }
 
-            foreach (ElementLocator locator in currentPOMElementInfo.Locators.Where(x => x.Active))
+            try
             {
-                List<FriendlyLocatorElement> friendlyLocatorElementlist = [];
-                if (locator.EnableFriendlyLocator && !iscallfromFriendlyLocator)
+                foreach (ElementLocator locator in currentPOMElementInfo.Locators.Where(x => x.Active))
                 {
-                    IWebElement targetElement = null;
-
-                    foreach (ElementLocator FLocator in currentPOMElementInfo.FriendlyLocators.Where(x => x.Active))
+                    List<FriendlyLocatorElement> friendlyLocatorElementlist = [];
+                    if (locator.EnableFriendlyLocator && !iscallfromFriendlyLocator)
                     {
-                        if (!FLocator.IsAutoLearned)
+                        IWebElement targetElement = null;
+
+                        foreach (ElementLocator FLocator in currentPOMElementInfo.FriendlyLocators.Where(x => x.Active))
                         {
-                            ElementLocator evaluatedLocator = FLocator.CreateInstance() as ElementLocator;
-                            ValueExpression VE = new(GetCurrentProjectEnvironment(), this.BusinessFlow);
-                            FLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
+                            if (!FLocator.IsAutoLearned)
+                            {
+                                ElementLocator evaluatedLocator = FLocator.CreateInstance() as ElementLocator;
+                                ValueExpression VE = new(GetCurrentProjectEnvironment(), this.BusinessFlow);
+                                FLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
+                            }
+
+                            if (FLocator.LocateBy == eLocateBy.POMElement && POMExecutionUtils != null)
+                            {
+                                ElementInfo ReferancePOMElementInfo = POMExecutionUtils.GetFriendlyElementInfo(new Guid(FLocator.LocateValue));
+
+                                targetElement = LocateElementByLocators(ReferancePOMElementInfo, MappedUIElements, true, POMExecutionUtils);
+                            }
+                            else
+                            {
+                                if (shadowRoot != null)
+                                {
+
+                                    targetElement = LocateElementByLocator(locator, shadowRoot, friendlyLocatorElementlist, true);
+
+                                }
+
+                                else
+                                {
+                                    if (ParentContext != null)
+                                    {
+                                        targetElement = LocateElementByLocator(locator, ParentContext);
+                                    }
+                                }
+
+                            }
+                            if (targetElement != null)
+                            {
+                                FriendlyLocatorElement friendlyLocatorElement = new FriendlyLocatorElement
+                                {
+                                    position = FLocator.Position,
+                                    FriendlyElement = targetElement
+                                };
+                                friendlyLocatorElementlist.Add(friendlyLocatorElement);
+                            }
                         }
 
-                        if (FLocator.LocateBy == eLocateBy.POMElement && POMExecutionUtils != null)
-                        {
-                            ElementInfo ReferancePOMElementInfo = POMExecutionUtils.GetFriendlyElementInfo(new Guid(FLocator.LocateValue));
+                    }
 
-                            targetElement = LocateElementByLocators(ReferancePOMElementInfo, MappedUIElements, true, POMExecutionUtils);
+
+
+                    if (!locator.IsAutoLearned)
+                    {
+                        if (shadowRoot != null)
+                        {
+
+                            elem = LocateElementByLocator(locator, shadowRoot, friendlyLocatorElementlist, true);
+
                         }
                         else
                         {
-                            if (shadowRoot != null)
+                            if (ParentContext != null)
                             {
-
-                                targetElement = LocateElementByLocator(locator, shadowRoot, friendlyLocatorElementlist, true);
-
+                                elem = LocateElementIfNotAutoLeared(locator, ParentContext, friendlyLocatorElementlist);
                             }
+                        }
+                    }
+                    else
+                    {
 
-                            else
+                        if (shadowRoot != null)
+                        {
+
+                            elem = LocateElementByLocator(locator, shadowRoot, friendlyLocatorElementlist, true);
+
+                        }
+
+                        else
+                        {
+                            if (ParentContext != null)
                             {
-                                if (ParentContext != null)
+                                elem = LocateElementByLocator(locator, ParentContext, friendlyLocatorElementlist, true);
+                                Reporter.ToLog(eLogLevel.DEBUG, $"{locator.StatusError} timespan : {Driver.Manage().Timeouts().ImplicitWait}");
+                                if (elem == null && locator.LocateBy != eLocateBy.ByID && locator.LocateBy != eLocateBy.ByName)
                                 {
-                                    targetElement = LocateElementByLocator(locator, ParentContext);
+                                    // Get current implicit wait timeout
+                                    TimeSpan currentTimeout = Driver.Manage().Timeouts().ImplicitWait;
+
+                                    // Decrease by 25%
+                                    TimeSpan reducedTimeout = TimeSpan.FromMilliseconds(currentTimeout.TotalMilliseconds * 0.75);
+
+                                    // Set the new reduced timeout //decrease Implicit wait by 25% when locater gets failed. (exception for ByID,ByName) 
+                                    Driver.Manage().Timeouts().ImplicitWait = reducedTimeout;
                                 }
                             }
-
-                        }
-                        if (targetElement != null)
-                        {
-                            FriendlyLocatorElement friendlyLocatorElement = new FriendlyLocatorElement
-                            {
-                                position = FLocator.Position,
-                                FriendlyElement = targetElement
-                            };
-                            friendlyLocatorElementlist.Add(friendlyLocatorElement);
                         }
                     }
 
-                }
-
-
-
-                if (!locator.IsAutoLearned)
-                {
-                    if (shadowRoot != null)
+                    if (elem != null)
                     {
-
-                        elem = LocateElementByLocator(locator, shadowRoot, friendlyLocatorElementlist, true);
-
+                        locator.StatusError = string.Empty;
+                        locator.LocateStatus = ElementLocator.eLocateStatus.Passed;
+                        return elem;
                     }
                     else
                     {
-                        if (ParentContext != null)
-                        {
-                            elem = LocateElementIfNotAutoLeared(locator, ParentContext, friendlyLocatorElementlist);
-                        }
+
+                        locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
                     }
-                }
-                else
-                {
-
-                    if (shadowRoot != null)
-                    {
-
-                        elem = LocateElementByLocator(locator, shadowRoot, friendlyLocatorElementlist, true);
-
-                    }
-
-                    else
-                    {
-                        if (ParentContext != null)
-                        {
-                            elem = LocateElementByLocator(locator, ParentContext, friendlyLocatorElementlist, true);
-                        }
-                    }
-                }
-
-                if (elem != null)
-                {
-                    locator.StatusError = string.Empty;
-                    locator.LocateStatus = ElementLocator.eLocateStatus.Passed;
-                    return elem;
-                }
-                else
-                {
-                    locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
                 }
             }
-
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR,$"Failed to locate element", ex);
+            }
+            finally
+            {
+                Driver.Manage().Timeouts().ImplicitWait = ImpWait;//reset Implicit wait
+            }
+            
             return elem;
         }
 
@@ -7006,16 +7031,17 @@ namespace GingerCore.Drivers
 
         private void AddOptionalValues(ElementInfo ei, IWebElement el, ObservableList<ControlProperty> list)
         {
-            if (ei is not HTMLElementInfo htmlElementInfo || htmlElementInfo.HTMLElementObject != null) return;
-
             if (!ElementInfo.IsElementTypeSupportingOptionalValues(ei.ElementTypeEnum)) return;
-
-            var elementsList = el.FindElements(By.XPath("*"));
-            foreach (var val in elementsList)
+            var htmlElementObject = ((HTMLElementInfo)ei).HTMLElementObject;
+            if (htmlElementObject == null) return;
+            foreach (HtmlNode childNode in htmlElementObject.ChildNodes)
             {
-                if (!string.IsNullOrEmpty(val.Text))
+                if (childNode.NodeType != HtmlNodeType.Text && !string.IsNullOrEmpty(childNode.InnerText))
                 {
-                    var tempOpVals = val.Text.Split('\n');
+                    var tempOpVals = childNode.InnerText
+                        .Split('\n')
+                        .Select(line => line.Trim().Replace("\r", ""))
+                        .Where(line => !string.IsNullOrEmpty(line));
                     foreach (var cuVal in tempOpVals)
                     {
                         ei.OptionalValuesObjectsList.Add(new OptionalValue() { Value = cuVal, IsDefault = false });
