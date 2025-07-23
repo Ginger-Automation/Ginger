@@ -7011,16 +7011,16 @@ namespace GingerCore.Drivers
 
         private void AddOptionalValues(ElementInfo ei, IWebElement el, ObservableList<ControlProperty> list)
         {
-            if (ei is not HTMLElementInfo htmlElementInfo || htmlElementInfo.HTMLElementObject != null) return;
-
             if (!ElementInfo.IsElementTypeSupportingOptionalValues(ei.ElementTypeEnum)) return;
-
-            var elementsList = el.FindElements(By.XPath("*"));
-            foreach (var val in elementsList)
+            var htmlElementObject = ((HTMLElementInfo)ei).HTMLElementObject;
+            foreach (HtmlNode childNode in htmlElementObject.ChildNodes)
             {
-                if (!string.IsNullOrEmpty(val.Text))
+                if (!childNode.Name.StartsWith('#') && !string.IsNullOrEmpty(childNode.InnerText))
                 {
-                    var tempOpVals = val.Text.Split('\n');
+                    var tempOpVals = childNode.InnerText
+                    .Split('\n')
+                    .Where(f => !string.IsNullOrEmpty(f.Trim()) && !f.Trim().Equals('\r'))
+                    .Select(g => g.Trim().Replace("\r", ""));
                     foreach (var cuVal in tempOpVals)
                     {
                         ei.OptionalValuesObjectsList.Add(new OptionalValue() { Value = cuVal, IsDefault = false });
