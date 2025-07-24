@@ -7094,7 +7094,10 @@ namespace GingerCore.Drivers
 
             foreach (var kvp in rect)
             {
-                list.Add(new ControlProperty() { Name = $"BoundingRect: {kvp.Key}", Value = kvp.Value.ToString() });
+                if(!kvp.Key.Equals("toJson", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    list.Add(new ControlProperty() { Name = $"BoundingRect: {kvp.Key}", Value = kvp.Value.ToString() });
+                }
             }
         }
 

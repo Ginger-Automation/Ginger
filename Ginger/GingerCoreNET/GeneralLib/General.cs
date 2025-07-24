@@ -1244,7 +1244,6 @@ namespace GingerCoreNET.GeneralLib
         {
             var props = elementInfo.Properties.GroupBy(p => p.Name, StringComparer.InvariantCultureIgnoreCase)
                 .Select(g => g.First())
-                .Where(p => !p.Name.Equals("BoundingRect: toJSON", StringComparison.InvariantCultureIgnoreCase))
                 .ToDictionary(p => p.Name,p => p.Value, StringComparer.InvariantCultureIgnoreCase);
 
             string BoundsValue = props.TryGetValue("bounds", out var xBounds) ? xBounds : string.Empty;
