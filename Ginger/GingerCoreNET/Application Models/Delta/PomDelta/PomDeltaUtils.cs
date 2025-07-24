@@ -1007,16 +1007,10 @@ namespace GingerCoreNET.Application_Models
             }
 
             //Merge element screen-shot
-            if (string.IsNullOrEmpty(originalElement.ScreenShotImage) && !string.IsNullOrEmpty(secondElement.ScreenShotImage))
+            if (!string.IsNullOrEmpty(secondElement.ScreenShotImage) && (string.IsNullOrEmpty(originalElement.ScreenShotImage) || originalElement.ScreenShotImage != secondElement.ScreenShotImage))
             {
                 originalElement.ScreenShotImage = secondElement.ScreenShotImage;
             }
-            else if (!string.IsNullOrEmpty(originalElement.ScreenShotImage) && !string.IsNullOrEmpty(secondElement.ScreenShotImage) && originalElement.ScreenShotImage != secondElement.ScreenShotImage)
-            {
-                //if both elements have screen-shot, then keep the latest one
-                originalElement.ScreenShotImage = secondElement.ScreenShotImage;
-            }
-            
         }
 
         private int GetOriginalItemIndex(ObservableList<ElementInfo> group, ElementInfo copiedItem)

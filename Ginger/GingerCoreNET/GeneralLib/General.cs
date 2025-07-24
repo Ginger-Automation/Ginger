@@ -1196,11 +1196,13 @@ namespace GingerCoreNET.GeneralLib
                 if (fullImage == null)
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "Full image cannot be null.");
+                    return null;
                 }
 
                 if (elementInfo == null)
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "elementInfo cannot be null.");
+                    return null;
                 }
 
                 int cropX;

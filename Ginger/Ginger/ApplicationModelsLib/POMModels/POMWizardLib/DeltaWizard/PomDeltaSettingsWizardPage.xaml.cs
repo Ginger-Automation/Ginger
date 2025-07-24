@@ -308,7 +308,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             }
         }
 
-        private void xLearnScreenshotsOfElementsCheckBox_Checked(object sender, RoutedEventArgs e)
+        private void xLearnScreenshotsOfElementsCheckBox_StateChanged(object sender, RoutedEventArgs e)
         {
             if (mWizard != null)
             {
