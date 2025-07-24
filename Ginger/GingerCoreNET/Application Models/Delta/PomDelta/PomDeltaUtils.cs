@@ -98,11 +98,11 @@ namespace GingerCoreNET.Application_Models
                 {
                     List<eElementType> selectedElementList = GetSelectedElementList();
 
-                    await mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.POM.PomSetting, POMLatestElements, PomMetaData);
+                    await mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.POM.PomSetting, POMLatestElements, PomMetaData, ScreenShot: PomLearnUtils.ScreenShot);
                 }
                 else
                 {
-                    await mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.POM.PomSetting, POMLatestElements);
+                    await mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.POM.PomSetting, POMLatestElements, ScreenShot: PomLearnUtils.ScreenShot);
                 }
                 SetUnidentifiedElementsDeltaDetails();
                 DoEndOfRelearnElementsSorting();
@@ -1005,6 +1005,18 @@ namespace GingerCoreNET.Application_Models
                     originalElement.Locators.Add(secondElement.Locators[i]);
                 }
             }
+
+            //Merge element screen-shot
+            if (string.IsNullOrEmpty(originalElement.ScreenShotImage) && !string.IsNullOrEmpty(secondElement.ScreenShotImage))
+            {
+                originalElement.ScreenShotImage = secondElement.ScreenShotImage;
+            }
+            else if (!string.IsNullOrEmpty(originalElement.ScreenShotImage) && !string.IsNullOrEmpty(secondElement.ScreenShotImage) && originalElement.ScreenShotImage != secondElement.ScreenShotImage)
+            {
+                //if both elements have screen-shot, then keep the latest one
+                originalElement.ScreenShotImage = secondElement.ScreenShotImage;
+            }
+            
         }
 
         private int GetOriginalItemIndex(ObservableList<ElementInfo> group, ElementInfo copiedItem)

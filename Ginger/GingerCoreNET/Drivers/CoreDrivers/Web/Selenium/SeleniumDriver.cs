@@ -7014,20 +7014,22 @@ namespace GingerCore.Drivers
             ei.X = location.X;
             ei.Y = location.Y;
 
-            list.Add(new ControlProperty() { Name = ElementProperty.Height, Value = ei.Height.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.Width, Value = ei.Width.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.X, Value = ei.X.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.Y, Value = ei.Y.ToString() });
-        }
 
+            AddIfNotEmpty(list, ElementProperty.Height, ei.Height.ToString());
+            AddIfNotEmpty(list, ElementProperty.Width, ei.Width.ToString());
+            AddIfNotEmpty(list, ElementProperty.X, ei.X.ToString());
+            AddIfNotEmpty(list, ElementProperty.Y, ei.Y.ToString());
+
+        }
         private void AddStateProperties(IWebElement el, ObservableList<ControlProperty> list)
         {
-            list.Add(new ControlProperty() { Name = "TagName", Value = el.TagName });
-            list.Add(new ControlProperty() { Name = "Displayed", Value = el.Displayed.ToString() });
-            list.Add(new ControlProperty() { Name = "Enabled", Value = el.Enabled.ToString() });
-            list.Add(new ControlProperty() { Name = "Selected", Value = el.Selected.ToString() });
-            list.Add(new ControlProperty() { Name = "Text", Value = el.Text });
+            AddIfNotEmpty(list, "TagName", el.TagName);
+            AddIfNotEmpty(list, "Displayed", el.Displayed.ToString());
+            AddIfNotEmpty(list, "Enabled", el.Enabled.ToString());
+            AddIfNotEmpty(list, "Selected", el.Selected.ToString());
+            AddIfNotEmpty(list, "Text", el.Text);
         }
+
 
         private void AddOptionalValues(ElementInfo ei, IWebElement el, ObservableList<ControlProperty> list)
         {
@@ -7068,7 +7070,8 @@ namespace GingerCore.Drivers
 
             foreach (var kvp in attributes)
             {
-                if (kvp.Key != "style" && !kvp.Value.ToString().Contains("dashed red"))
+                var value = kvp.Value?.ToString();
+                if (kvp.Key != "style" && !string.IsNullOrEmpty(value) && !value.Contains("dashed red"))
                 {
                     list.Add(new ControlProperty() { Name = kvp.Key, Value = kvp.Value.ToString() });
                 }
@@ -7082,8 +7085,12 @@ namespace GingerCore.Drivers
 
             foreach (var prop in cssProps)
             {
-                var value = js.ExecuteScript($"return window.getComputedStyle(arguments[0]).getPropertyValue('{prop}');", el);
-                list.Add(new ControlProperty() { Name = $"CSS: {prop}", Value = value?.ToString() });
+                var value = js.ExecuteScript($"return window.getComputedStyle(arguments[0]).getPropertyValue('{prop}');", el)?.ToString();
+                if (!string.IsNullOrEmpty(value))
+                {
+                    list.Add(new ControlProperty() { Name = $"CSS: {prop}", Value = value?.ToString() });
+                }
+                
             }
         }
 
@@ -7094,7 +7101,9 @@ namespace GingerCore.Drivers
 
             foreach (var kvp in rect)
             {
-                if(!kvp.Key.Equals("toJson", StringComparison.InvariantCultureIgnoreCase))
+                var value = kvp.Value?.ToString();
+                // Exclude 'toJson' method and empty values
+                if (!kvp.Key.Equals("toJson", StringComparison.InvariantCultureIgnoreCase) && !string.IsNullOrEmpty(value))
                 {
                     list.Add(new ControlProperty() { Name = $"BoundingRect: {kvp.Key}", Value = kvp.Value.ToString() });
                 }
@@ -7152,6 +7161,16 @@ namespace GingerCore.Drivers
             }
 
         }
+
+
+        private void AddIfNotEmpty(ObservableList<ControlProperty> list, string name, string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                list.Add(new ControlProperty() { Name = name, Value = value });
+            }
+        }
+
 
         object IWindowExplorer.GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {

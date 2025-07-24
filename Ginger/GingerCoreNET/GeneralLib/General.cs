@@ -1195,12 +1195,12 @@ namespace GingerCoreNET.GeneralLib
             {
                 if (fullImage == null)
                 {
-                    throw new ArgumentNullException(nameof(fullImage), "Full image cannot be null.");
+                    Reporter.ToLog(eLogLevel.DEBUG, "Full image cannot be null.");
                 }
 
                 if (elementInfo == null)
                 {
-                    throw new ArgumentNullException(nameof(elementInfo), "elementInfo cannot be null.");
+                    Reporter.ToLog(eLogLevel.DEBUG, "elementInfo cannot be null.");
                 }
 
                 int cropX;
@@ -1212,7 +1212,7 @@ namespace GingerCoreNET.GeneralLib
 
                 if (cropWidth <= 0 || cropHeight <= 0)
                 {
-                    throw new ArgumentException("Invalid crop dimensions.");
+                    Reporter.ToLog(eLogLevel.DEBUG, "Invalid crop dimensions.");
                 }
                 // Clamp crop rectangle to the bounds of the full image
                 Rectangle cropRect = new Rectangle(cropX, cropY, cropWidth, cropHeight);
