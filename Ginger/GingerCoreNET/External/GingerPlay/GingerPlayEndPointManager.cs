@@ -84,14 +84,14 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                 else
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting Account Report Service URL");
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the Account Report Service URL. Please check the configuration.");
+                    
                     return null;
                 }
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while getting Account Report Service URL: {ex.Message}");
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the Account Report Service URL. Please check the configuration.");
+                
                 return null;
             }
 
