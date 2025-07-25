@@ -409,13 +409,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     CheckRequestBodySelection();
                     break;
                 case ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded:
-                    BodyInputGridPannel.Visibility = System.Windows.Visibility.Collapsed;
-                    FreeStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                    TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                    RequestBodyTypePanel.Visibility = System.Windows.Visibility.Collapsed;
-                    FormDataGridPanel.Visibility = System.Windows.Visibility.Visible;
-                    RefreshRequestKeyValuesGrid();
-                    break;
                 case ApplicationAPIUtils.eRequestContentType.FormData:
                     BodyInputGridPannel.Visibility = System.Windows.Visibility.Collapsed;
                     FreeStackPanel.Visibility = System.Windows.Visibility.Collapsed;
@@ -512,14 +505,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void CheckRequestBodySelection()
         {
-            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.RequestContentType == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded)
-            {
-                FreeStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                RequestBodyTypePanel.Visibility = System.Windows.Visibility.Collapsed;
-                FormDataGridPanel.Visibility = System.Windows.Visibility.Visible;
-            }
-            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.RequestContentType == ApplicationAPIUtils.eRequestContentType.FormData)
+            if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) &&
+                (mApplicationAPIModel.RequestContentType == ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded ||
+                 mApplicationAPIModel.RequestContentType == ApplicationAPIUtils.eRequestContentType.FormData))
             {
                 FreeStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                 TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
@@ -535,7 +523,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     RequestBodyTypePanel.Visibility = System.Windows.Visibility.Visible;
                     FormDataGridPanel.Visibility = System.Windows.Visibility.Collapsed;
                 }
-                if (mApplicationAPIModel.RequestBodyType == ApplicationAPIUtils.eRequestBodyType.TemplateFile)
+                else if (mApplicationAPIModel.RequestBodyType == ApplicationAPIUtils.eRequestBodyType.TemplateFile)
                 {
                     FreeStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                     TemplateStackPanel.Visibility = System.Windows.Visibility.Visible;
