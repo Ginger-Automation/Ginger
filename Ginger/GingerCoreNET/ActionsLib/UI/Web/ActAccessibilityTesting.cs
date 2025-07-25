@@ -929,7 +929,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
                 if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder != null)
                 {
-                    string folderPath = Path.Combine(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, @"AccessibilityReport");
+                    string folderPath = Path.Combine(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder), @"AccessibilityReport");
                     if (!Directory.Exists(folderPath))
                     {
                         Directory.CreateDirectory(folderPath);
