@@ -1195,12 +1195,14 @@ namespace GingerCoreNET.GeneralLib
             {
                 if (fullImage == null)
                 {
-                    throw new ArgumentNullException(nameof(fullImage), "Full image cannot be null.");
+                    Reporter.ToLog(eLogLevel.DEBUG, "Full image cannot be null.");
+                    return null;
                 }
 
                 if (elementInfo == null)
                 {
-                    throw new ArgumentNullException(nameof(elementInfo), "elementInfo cannot be null.");
+                    Reporter.ToLog(eLogLevel.DEBUG, "elementInfo cannot be null.");
+                    return null;
                 }
 
                 int cropX;
@@ -1212,7 +1214,7 @@ namespace GingerCoreNET.GeneralLib
 
                 if (cropWidth <= 0 || cropHeight <= 0)
                 {
-                    throw new ArgumentException("Invalid crop dimensions.");
+                    Reporter.ToLog(eLogLevel.DEBUG, "Invalid crop dimensions.");
                 }
                 // Clamp crop rectangle to the bounds of the full image
                 Rectangle cropRect = new Rectangle(cropX, cropY, cropWidth, cropHeight);
@@ -1244,7 +1246,6 @@ namespace GingerCoreNET.GeneralLib
         {
             var props = elementInfo.Properties.GroupBy(p => p.Name, StringComparer.InvariantCultureIgnoreCase)
                 .Select(g => g.First())
-                .Where(p => !p.Name.Equals("BoundingRect: toJSON", StringComparison.InvariantCultureIgnoreCase))
                 .ToDictionary(p => p.Name,p => p.Value, StringComparer.InvariantCultureIgnoreCase);
 
             string BoundsValue = props.TryGetValue("bounds", out var xBounds) ? xBounds : string.Empty;
