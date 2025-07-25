@@ -87,7 +87,7 @@ namespace Ginger.ConfigurationsLib
             twoLevelMenu.Add(tagsMenu);
 
             TopMenuItem externalConfigMenu = new TopMenuItem(eImageType.Building, WorkSpace.Instance.Solution.ExternalIntegrationsTabName, ConsoleKey.X, "External Configurations AID", "List of External Configurations to be used");
-            externalConfigMenu.Add(eImageType.GingerPlayLogo, "GingerPlay", GetGingerPlayPage, ConsoleKey.X, "GingerPlay Configuration", "GingerPlay Configuration AID");
+            externalConfigMenu.Add(eImageType.GingerPlayLogo, "Ginger Play", GetGingerPlayPage, ConsoleKey.X, "Ginger Play Configuration", "Ginger Play Configuration AID");
             externalConfigMenu.Add(eImageType.VRT, "VRT", GetVRTExteranalConfigsPage, ConsoleKey.X, "Visual Regression Testing External Configurations", "VRT Configuration AID");
             externalConfigMenu.Add(eImageType.Applitools, "Applitools", GetApplitoolsExteranalConfigsPage, ConsoleKey.X, "Applitools External Configurations", "Applitools Configuration AID");
             externalConfigMenu.Add(eImageType.Sealights, "Sealights", GetSealightsExteranalConfigsPage, ConsoleKey.X, "Sealights External Configurations", "Sealights Configuration AID");

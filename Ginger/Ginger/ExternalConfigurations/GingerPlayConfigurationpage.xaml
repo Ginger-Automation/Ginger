@@ -18,7 +18,7 @@
                 <RowDefinition  Height="1*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" Grid.Row="0">
-                <Label Content="GingerPlay Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                <Label Content="Ginger Play Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                 <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
             </StackPanel>
             <StackPanel Orientation="Vertical" Grid.Row="1">
@@ -38,7 +38,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
-                        <CheckBox Content="Allow GingerPlay Integration"   VerticalAlignment="Center" Margin="0,0,10,0" FontSize="12" x:Name="xAllowGingerPlayCheckBox" Checked="xAllowGingerPlayCheckBox_Checked" Unchecked="xAllowGingerPlayCheckBox_Unchecked" />
+                        <CheckBox Content="Allow Ginger Play Integration"   VerticalAlignment="Center" Margin="0,0,10,0" FontSize="12" x:Name="xAllowGingerPlayCheckBox" Checked="xAllowGingerPlayCheckBox_Checked" Unchecked="xAllowGingerPlayCheckBox_Unchecked" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1">
                         <Label x:Name="xGatewayURL" Content="Gateway URL:"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>

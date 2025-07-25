@@ -765,7 +765,7 @@ namespace GingerCoreNET.GeneralLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error creating GingerPlay configuration", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error creating Ginger Play configuration", ex);
                 return false;
             }
         }
