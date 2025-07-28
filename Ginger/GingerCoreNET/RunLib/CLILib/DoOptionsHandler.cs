@@ -51,7 +51,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 mOpts = opts;
                 if (opts.UseTempSolutionFolder)
                 {
-                    mOpts.Solution = SetSolutionPathToTempFolder(opts.URL);
+                    mOpts.Solution = mCLIHelper.GetTempFolderPathForRepo(opts.URL, opts.Branch);
                 }
                 switch (opts.Operation)
                 {
@@ -124,6 +124,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
                 // Attempt to open the solution
                 mCLIHelper.AddCLIGitProperties(mOpts);
+
                 mCLIHelper.SetWorkSpaceGitProperties(mOpts);
                 mCLIHelper.SetEncryptionKey(encryptionKey);
                 if (mOpts.PasswordEncrypted)
@@ -418,11 +419,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
             }
         }
-
-        private string SetSolutionPathToTempFolder(string sourceControlUrl)
-        {
-            return mCLIHelper.GetTempFolderPathForRepo(sourceControlUrl);
-        }
+      
 
         /// <summary>
         /// Update MultiPOM Update.
