@@ -1,67 +1,62 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup Label="Globals">
-    <SccProjectName>SAK</SccProjectName>
-    <SccProvider>SAK</SccProvider>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccLocalPath>SAK</SccLocalPath>
-  </PropertyGroup>
+	<PropertyGroup Label="Globals">
+		<SccProjectName>SAK</SccProjectName>
+		<SccProvider>SAK</SccProvider>
+		<SccAuxPath>SAK</SccAuxPath>
+		<SccLocalPath>SAK</SccLocalPath>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>Amdocs.Ginger.Runtime</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<RootNamespace>Amdocs.Ginger.Runtime</RootNamespace>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <CodeAnalysisRuleSet>GingerRuntime.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<CodeAnalysisRuleSet>GingerRuntime.ruleset</CodeAnalysisRuleSet>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <CodeAnalysisRuleSet>GingerRuntime.ruleset</CodeAnalysisRuleSet>
-    <WarningLevel>2</WarningLevel>
-  </PropertyGroup>
-  
-    <PropertyGroup>
-    <WebDriverPlatform>linux64</WebDriverPlatform>
-    <PublishChromeDriver>true</PublishChromeDriver>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<CodeAnalysisRuleSet>GingerRuntime.ruleset</CodeAnalysisRuleSet>
+		<WarningLevel>2</WarningLevel>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <GeckoDriverPlatform>linux64</GeckoDriverPlatform>
-    <PublishGeckoDriver>true</PublishGeckoDriver>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
+	<PropertyGroup>
+		<WebDriverPlatform>linux64</WebDriverPlatform>
+		<PublishChromeDriver>true</PublishChromeDriver>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="ReporterLib\**" />
-    <EmbeddedResource Remove="ReporterLib\**" />
-    <None Remove="ReporterLib\**" />
-  </ItemGroup>
+	<PropertyGroup>
+		<GeckoDriverPlatform>linux64</GeckoDriverPlatform>
+		<PublishGeckoDriver>true</PublishGeckoDriver>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.0" />
-    <PackageReference Include="Microsoft.NETCore.App" Version="2.1.30" />
-    <PackageReference Include="MimeKit" Version="4.10.0" />
-    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.100" />
-    <PackageReference Include="runtime.osx.10.10-x64.CoreCompat.System.Drawing" Version="5.8.64" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
-    <PackageReference Include="System.Formats.Asn1" Version="9.0.1" />
-    <PackageReference Include="System.IO.Packaging" Version="9.0.1" />
-    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.1" />
-    <PackageReference Include="System.Security.Permissions" Version="8.0.0" />
-    <PackageReference Include="System.Text.Json" Version="9.0.1" />
-    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="ReporterLib\**" />
+		<EmbeddedResource Remove="ReporterLib\**" />
+		<None Remove="ReporterLib\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="BouncyCastle.Cryptography" Version="2.5.0" />
+		<PackageReference Include="Ginger.ExecuterService.Contracts" Version="25.3.0" />
+		<PackageReference Include="Microsoft.NETCore.App" Version="2.1.30" />
+		<PackageReference Include="MimeKit" Version="4.10.0" />
+		<PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.100" />
+		<PackageReference Include="runtime.osx.10.10-x64.CoreCompat.System.Drawing" Version="5.8.64" />
+		<PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+		<PackageReference Include="System.Formats.Asn1" Version="9.0.1" />
+		<PackageReference Include="System.IO.Packaging" Version="9.0.1" />
+		<PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
+		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.1" />
+		<PackageReference Include="System.Security.Permissions" Version="8.0.0" />
+		<PackageReference Include="System.Text.Json" Version="9.0.1" />
+		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Ginger.ExecuterService.Contracts">
-      <HintPath>..\GingerCoreNET\DLLS\Ginger.ExecuterService.Contracts.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
+	</ItemGroup>
 </Project>
