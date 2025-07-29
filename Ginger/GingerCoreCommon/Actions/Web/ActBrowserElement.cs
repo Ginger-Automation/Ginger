@@ -45,7 +45,6 @@ namespace GingerCore.Actions
             public readonly static string RequestFileName = "RequestFileName";
             public readonly static string ResponseFileName = "ResponseFileName";
             public readonly static string SaveLogToFile = "SaveLogToFile";
-            public readonly static string ClearExistingLog = "ClearExistingLog";
         }
 
         public override string ActionDescription { get { return "Browser Action"; } }
@@ -114,19 +113,7 @@ namespace GingerCore.Actions
             }
         }
 
-       public bool ClearExistingLog
-        {
-            get
-            {
-                bool.TryParse(GetOrCreateInputParam(nameof(ClearExistingLog)).Value, out var value);
-                return value;
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(ClearExistingLog), value.ToString());
-                OnPropertyChanged(nameof(ClearExistingLog));
-            }
-        }
+
         public bool SaveLogToFile
         {
             get
@@ -203,6 +190,8 @@ namespace GingerCore.Actions
             GetNetworkLog,
             [EnumValueDescription("Stop Monitoring Network Logs")]
             StopMonitoringNetworkLog,
+            [EnumValueDescription("Clear Existing Network Logs")]
+            ClearExistingNetworkLog,
             [EnumValueDescription("Set Blocked Urls")]
             SetBlockedUrls,
             [EnumValueDescription("Unblock Urls")]

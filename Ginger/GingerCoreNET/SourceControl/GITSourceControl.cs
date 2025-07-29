@@ -1486,6 +1486,11 @@ namespace GingerCore.SourceControl
                             progressNotifier.NotifyProgressDetailText("Initializing...");
                             return true;
                         }
+                        if (progress.ReceivedObjects == progress.TotalObjects)
+                        {
+                            progressNotifier.NotifyProgressUpdated("Indexing downloaded files:", progress.IndexedObjects, progress.TotalObjects);
+                            return true;
+                        }
                         double percentage = (double)progress.ReceivedObjects / progress.TotalObjects * 100;
                         if (Math.Abs(percentage - previousPercentage) < 0.01)
                         {
@@ -1496,7 +1501,7 @@ namespace GingerCore.SourceControl
                         previousPercentage = percentage;
                         return !cancellationToken.IsCancellationRequested;
                     };
-
+               
                     cloneOptions.OnCheckoutProgress = (_, completedSteps, totalSteps) =>
                     {
                         progressNotifier?.NotifyProgressDetailText($"Checkout solution status: {completedSteps}/{totalSteps}");

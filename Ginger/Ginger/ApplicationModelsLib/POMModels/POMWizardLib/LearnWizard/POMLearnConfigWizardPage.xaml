@@ -13,7 +13,7 @@
     <ScrollViewer>
         <Grid Background="{StaticResource $BackgroundColor_White}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="80"/>
+                <RowDefinition Height="100"/>
                 <RowDefinition Height="320*"/>
             </Grid.RowDefinitions>
 
@@ -22,7 +22,7 @@
                     <Label x:Name="xTAlabel" Style="{StaticResource @LabelStyle}"/>
                     <ComboBox x:Name="xTargetApplicationComboBox"  AutomationProperties.AutomationId="TargetApplication AID" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" SelectionChanged="XTargetApplicationComboBox_SelectionChanged" />
                 </StackPanel>
-
+                
                 <StackPanel Orientation="Horizontal" Margin="5,10,0,0">
                     <Label Grid.Column="0" VerticalAlignment="Center" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Content="Page Elements Setup Method:" />
                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
@@ -30,6 +30,12 @@
                         <RadioButton x:Name="xManualElementConfigurationRadioButton" GroupName="ElementConfigRadioButtonsGroup" Style="{StaticResource $InputRadioButtonStyle}" IsChecked="False" Checked="xAutomaticElementConfigurationRadioButton_Checked" Margin="10,0,0,0"  Content="Manual" FontWeight="Bold"></RadioButton>
                     </StackPanel>
                 </StackPanel>
+                
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox x:Name="xLearnPOMByAI" AutomationProperties.AutomationId="xLearnPOMByAICheckBox AID" Content="POM Learning By AI" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" IsEnabled="True" Visibility="Collapsed" Style="{StaticResource $CeckBoxStyle}"/>
+                </StackPanel>
+
+
             </StackPanel>
 
 

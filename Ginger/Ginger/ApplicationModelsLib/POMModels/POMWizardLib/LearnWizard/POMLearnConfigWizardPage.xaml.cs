@@ -67,6 +67,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xLearnOnlyMappedElements.BindControl(mBasePOMWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
                     xLearnScreenshotsOfElements.BindControl(mBasePOMWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnScreenshotsOfElements));
                     xLearnShadowDOMElements.BindControl(mBasePOMWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnShadowDomElements));
+                    if(WorkSpace.Instance.BetaFeatures.ShowPOMForAI)
+                    {
+                        xLearnPOMByAI.BindControl(mBasePOMWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnPOMByAI));
+                    }
                     xTargetApplicationComboBox.AddValidationRule(new POMTAValidationRule());
 
                     if (xTargetApplicationComboBox.Items != null && xTargetApplicationComboBox.Items.Count > 0)
@@ -160,11 +164,16 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (mAppPlatform == ePlatformType.Web)
             {
                 xLearnScreenshotsOfElements.Visibility = Visibility.Visible;
+                if(WorkSpace.Instance.BetaFeatures.ShowPOMForAI)
+                {
+                    xLearnPOMByAI.Visibility = Visibility.Visible;
+                }
                 isEnableFriendlyLocator = true;
             }
             else
             {
                 xLearnScreenshotsOfElements.Visibility = Visibility.Collapsed;
+                xLearnPOMByAI.Visibility = Visibility.Collapsed;
                 isEnableFriendlyLocator = false;
             }
             SetElementLocatorsSettingsGridView();
@@ -350,7 +359,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xAutoMapElementTypesExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
             xElementLocatorsSettingsExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
             xElementLocatorsSettingsExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
-
             xSpecificFrameConfigPanel.IsEnabled = xAgentControlUC.AgentIsRunning;
         }
 

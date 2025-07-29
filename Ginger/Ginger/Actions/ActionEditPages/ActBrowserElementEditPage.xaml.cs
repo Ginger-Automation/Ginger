@@ -77,7 +77,6 @@ namespace Ginger.Actions
             xResponseFileName.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.ResponseFileName);
 
             xSaveNetworkLog.BindControl(mAct, nameof(ActBrowserElement.Fields.SaveLogToFile));
-            xClearExistingLog.BindControl(mAct, nameof(ActBrowserElement.Fields.ClearExistingLog));
 
             SetGridView();
             SetVisibleControlsForAction();
@@ -96,7 +95,6 @@ namespace Ginger.Actions
             xBlockedUrlsGrid.Visibility = System.Windows.Visibility.Collapsed;
             xLogFileUserDefineName.Visibility = System.Windows.Visibility.Collapsed;
             xSavenetworkLogPnl.Visibility = System.Windows.Visibility.Collapsed;
-            xClearExistinglogPnl.Visibility = System.Windows.Visibility.Collapsed;
         }
 
         private void ResetPOMView()
@@ -206,10 +204,9 @@ namespace Ginger.Actions
             else if (mAct.ControlAction == ActBrowserElement.eControlAction.GetNetworkLog)
             {
                 xSavenetworkLogPnl.Visibility = System.Windows.Visibility.Visible;
-                xClearExistinglogPnl.Visibility = System.Windows.Visibility.Visible;
                 if ((bool)xSaveNetworkLog.IsChecked)
                 {
-                    xSaveNetworkLog_Checked(null,null);
+                    xSaveNetworkLog_Checked(null, null);
                 }
             }
             else if (mAct.ControlAction == ActBrowserElement.eControlAction.StopMonitoringNetworkLog)
@@ -352,6 +349,14 @@ namespace Ginger.Actions
 
         private void xSaveNetworkLog_Checked(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrEmpty(xResponseFileName.ValueTextBox.Text))
+            {
+                xResponseFileName.ValueTextBox.Text = "Network log Response";
+            }
+            if (string.IsNullOrEmpty(xRequestFileName.ValueTextBox.Text))
+            {
+                xRequestFileName.ValueTextBox.Text = "Network log Request";
+            }
             xLogFileUserDefineName.Visibility = System.Windows.Visibility.Visible;
         }
 

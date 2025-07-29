@@ -31,6 +31,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using static GingerCoreNET.SourceControl.SourceControlBase;
+using System.Threading;
 
 namespace Ginger.SourceControl
 {
@@ -146,20 +148,21 @@ namespace Ginger.SourceControl
             return true;
         }
 
-        public static bool GetProject(SourceControlBase SourceControl, string Path, string URI, ProgressNotifier progressNotifier = null, System.Threading.CancellationToken cancellationToken = default)
+        public static bool GetProject(SourceControlBase sourceControl, string path, string uri, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
         {
             try
             {
                 string error = string.Empty;
-                if (!SourceControl.GetProjectWithProgress(Path, URI, ref error, progressNotifier, cancellationToken))
+                bool isLinuxOrSVN = RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || sourceControl.GetSourceControlType == eSourceControlType.SVN;
+
+                bool success = isLinuxOrSVN ? sourceControl.GetProject(path, uri, ref error) : sourceControl.GetProjectWithProgress(path, uri, ref error, progressNotifier, cancellationToken);
+
+                if (!success && !string.IsNullOrEmpty(error))
                 {
-                    if (!string.IsNullOrEmpty(error))
-                    {
-                        Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
-                    }
-                    return false;
+                    Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
                 }
-                return true;
+
+                return success;
             }
             catch (Exception ex)
             {
@@ -167,6 +170,8 @@ namespace Ginger.SourceControl
                 return false;
             }
         }
+
+
 
 
         public static bool GetLatest(string path, SourceControlBase SourceControl)
