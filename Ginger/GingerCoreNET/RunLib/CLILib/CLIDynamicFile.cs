@@ -125,7 +125,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
                     if (exeConfiguration.UseTempFolder)
                     {
-                        exeConfiguration.SolutionLocalPath = cliHelper.GetTempFolderPathForRepo(exeConfiguration.SolutionScmDetails.SolutionRepositoryUrl);
+                        exeConfiguration.SolutionLocalPath = cliHelper.GetTempFolderPathForRepo(exeConfiguration.SolutionScmDetails.SolutionRepositoryUrl,exeConfiguration.SolutionScmDetails.Branch);
                     }
                 }
                 if (!string.IsNullOrEmpty(exeConfiguration.SolutionLocalPath))
