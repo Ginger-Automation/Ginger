@@ -1075,7 +1075,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     sourceControlUrl = sourceControlUrl.TrimEnd('/');
 
                     repoName = Path.GetFileNameWithoutExtension(sourceControlUrl.Split('/').Last());
-                    repoName = $"{repoName}_{branchName}";
+                    repoName = !string.IsNullOrEmpty(branchName) ? $"{repoName}_{branchName}" : $"{repoName}";
                 }
 
                 // Initialize RepoFolderManager if not already done
