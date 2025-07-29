@@ -1062,7 +1062,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         /// A string representing the path to a temporary folder, combining the system's temp directory 
         /// with the repository name extracted from the source control URL.
         /// </returns>
-        public string GetTempFolderPathForRepo(string sourceControlUrl)
+        public string GetTempFolderPathForRepo(string sourceControlUrl, string branchName)
         {
             string repoName = string.Empty;
             try
@@ -1075,6 +1075,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     sourceControlUrl = sourceControlUrl.TrimEnd('/');
 
                     repoName = Path.GetFileNameWithoutExtension(sourceControlUrl.Split('/').Last());
+                    repoName = !string.IsNullOrEmpty(branchName) ? $"{repoName}_{branchName}" : $"{repoName}";
                 }
 
                 // Initialize RepoFolderManager if not already done
