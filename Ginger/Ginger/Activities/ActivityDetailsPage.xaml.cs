@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Ginger.Activities;
+using Ginger.SolutionCategories;
 using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Activities;
@@ -47,6 +48,7 @@ namespace Ginger.BusinessFlowPages
         Activity mActivity;
         Context mContext;
         General.eRIPageViewMode mPageViewMode;
+        SolutionCategoriesPage mSolutionCategoriesPage = null;
 
         public ActivityDetailsPage(Activity activity, Context context, General.eRIPageViewMode pageViewMode)
         {
@@ -138,11 +140,12 @@ namespace Ginger.BusinessFlowPages
             BindingOperations.ClearAllBindings(xConsumerCB);
             BindingOperations.ClearAllBindings(xAutomationStatusCombo);
             BindingOperations.ClearAllBindings(xMandatoryActivityCB);
-            BindingOperations.ClearAllBindings(xPublishcheckbox);
+            BindingOperations.ClearAllBindings(xPublishcheckbox);   
             BindingOperations.ClearAllBindings(xHandlerTypeCombo);
             BindingOperations.ClearAllBindings(xErrorHandlerMappingCmb);
             BindingOperations.ClearAllBindings(xHandlerPostExecutionCombo);
             BindingOperations.ClearAllBindings(xHandlerTriggerOnCombo);
+            xCategoriesFrame.ClearControlsBindings();
         }
 
         private void BindControls()
@@ -162,7 +165,12 @@ namespace Ginger.BusinessFlowPages
             xAutomationStatusCombo.BindControl(mActivity, nameof(Activity.AutomationStatus));
             BindingHandler.ObjFieldBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Mandatory));
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Publish));
-
+            if (mSolutionCategoriesPage == null)
+            {
+                mSolutionCategoriesPage = new SolutionCategoriesPage();
+                xCategoriesFrame.ClearAndSetContent(mSolutionCategoriesPage);
+            }
+            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mActivity.CategoriesDefinitions);
 
             xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
             if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ApplicationPlatforms != null)

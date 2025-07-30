@@ -27,7 +27,9 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.Common.WorkSpaceLib;
+using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -115,6 +117,42 @@ namespace GingerCore
             }
         }
         #endregion
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<SolutionCategoryDefinition> CategoriesDefinitions = [];
+
+        public void AddCategories()
+        {
+            if (CategoriesDefinitions.Count == 0)
+            {
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Product));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.TestType));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Release));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Iteration));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.BusinessProcessTag));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.SubBusinessProcessTag));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory1));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory2));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory3));
+            }
+            else if (CategoriesDefinitions.Count < Enum.GetNames(typeof(eSolutionCategories)).Length)
+            {
+                var allSolutionCategories = CategoriesDefinitions.Select(x => x.Category).ToList();
+                if (!allSolutionCategories.Any(x => x.Equals(eSolutionCategories.BusinessProcessTag)))
+                {
+                    CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.BusinessProcessTag));
+                }
+                if (!allSolutionCategories.Any(x => x.Equals(eSolutionCategories.SubBusinessProcessTag)))
+                {
+                    CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.SubBusinessProcessTag));
+                }
+            }
+        }
+
+        public override void PostDeserialization()
+        {
+            AddCategories();
+        }
 
         public bool IsNotGherkinOptimizedActivity { get { return ActivitiesGroupID is not "Optimized Activities" and not "Optimized Activities - Not in Use"; } }
 
