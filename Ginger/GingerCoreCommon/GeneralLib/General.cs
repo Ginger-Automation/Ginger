@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Repository.SolutionCategories;
+using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -560,5 +562,18 @@ namespace Amdocs.Ginger.Common.GeneralLib
         /// <param name="InitialValue">The initial value of the variable.</param>
         /// <param name="CurrentValue">The current value of the variable.</param>
         public record VariableMinimalRecord(string Name, string InitialValue, string CurrentValue);
+
+        public static void EnsureAllCategories(ObservableList<SolutionCategoryDefinition> categoriesDefinitions)
+        {
+            var existingCategories = categoriesDefinitions.Select(x => x.Category).ToHashSet();
+            var allCategories = Enum.GetValues<eSolutionCategories>();
+            foreach (var category in allCategories)
+            {
+                if (!existingCategories.Contains(category))
+                {
+                    categoriesDefinitions.Add(new SolutionCategoryDefinition(category));
+                }
+            }
+        }
     }
 }
