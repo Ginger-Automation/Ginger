@@ -140,6 +140,7 @@ namespace GingerCore
         public Activity()
         {
             //set fields default values
+            AddCategories();
             mAutomationStatus = eActivityAutomationStatus.Development;
             mActionRunOption = eActionRunOption.StopActionsRunOnFailure;
             Tags.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Tags));

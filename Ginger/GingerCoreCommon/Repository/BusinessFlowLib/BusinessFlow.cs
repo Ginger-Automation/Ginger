@@ -46,6 +46,7 @@ namespace GingerCore
         private Stopwatch _stopwatch;
         public BusinessFlow()
         {
+            AddCategories();
             AllowAutoSave = true;
             this.OnDirtyStatusChanged += BusinessFlow_OnDirtyStatusChanged;
         }
@@ -56,7 +57,7 @@ namespace GingerCore
             Activities = [];
             Variables = [];
             TargetApplications = [];
-
+            AddCategories();
             Activity a = new Activity
             {
                 Active = true,
