@@ -565,16 +565,25 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
         public static void EnsureAllCategories(ObservableList<SolutionCategoryDefinition> categoriesDefinitions)
         {
-            if (categoriesDefinitions == null)
-                Reporter.ToLog(eLogLevel.DEBUG, "Error: Category definition found null");
-            var existingCategories = categoriesDefinitions.Select(x => x.Category).ToHashSet();
-            var allCategories = Enum.GetValues<eSolutionCategories>();
-            foreach (var category in allCategories)
+            try
             {
-                if (!existingCategories.Contains(category))
+                if (categoriesDefinitions == null)
                 {
-                    categoriesDefinitions.Add(new SolutionCategoryDefinition(category));
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error: Category definition found null");
+                    return;
                 }
+                var existingCategories = new HashSet<eSolutionCategories>(categoriesDefinitions.Select(x => x.Category));
+                foreach (var category in Enum.GetValues<eSolutionCategories>())
+                {
+                    if (!existingCategories.Contains(category))
+                    {
+                        categoriesDefinitions.Add(new SolutionCategoryDefinition(category));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in EnsureAllCategories", ex);
             }
         }
     }
