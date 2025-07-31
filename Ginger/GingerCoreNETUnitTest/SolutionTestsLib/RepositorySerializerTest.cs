@@ -97,7 +97,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             // Please double verify if the increase in size make sense and is needed before changing this value of expected length            
             int lt = xml.Count(f => f == '<');
             int gt = xml.Count(f => f == '>');
-            Assert.IsTrue(xml.Length < 3000, "Verify minimal xml is less than 900 bytes");
+            Assert.IsTrue(xml.Length < 3000, "Verify minimal xml is less than 3000 bytes");
             Assert.AreEqual(32, lt, "XML Elements count <");
             Assert.AreEqual(32, gt, "XML Elements count >");
 
