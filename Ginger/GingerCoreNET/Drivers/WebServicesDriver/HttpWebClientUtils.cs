@@ -793,6 +793,12 @@ namespace GingerCore.Actions.WebAPI
                     string ValuesURL = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.EndPointURL) + HttpUtility.UrlEncode(GetRequest[..^1]);
                     Client.BaseAddress = new Uri(ValuesURL);
                 }
+                // Ensure Content-Type header is added to RequestMessage.Headers for GET requests
+                if (!string.IsNullOrEmpty(ContentTypeHeader))
+                {
+                    RequestMessage.Content ??= new StringContent(string.Empty);
+                    RequestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue(ContentTypeHeader);
+                }
                 else
                 {
                     Client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", ContentTypeHeader);
