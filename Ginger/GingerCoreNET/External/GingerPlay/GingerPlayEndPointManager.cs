@@ -26,18 +26,21 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
 {
     public static class GingerPlayEndPointManager
     {
-        private const string ACCOUNT_REPORT_SERVICE_URL = "ginger-report";
+        private static readonly string ACCOUNT_REPORT_SERVICE_URL = System.Configuration.ConfigurationManager.AppSettings["ACCOUNT_REPORT_SERVICE_URL"]?.ToString() ?? "ginger-report";
 
-        private const string HTML_REPORT_SERVICE_URL = "ginger-html-report";
+        private static readonly string HTML_REPORT_SERVICE_URL = System.Configuration.ConfigurationManager.AppSettings["HTML_REPORT_SERVICE_URL"]?.ToString() ?? "ginger-html-report";
 
-        private const string AI_SERVICE_URL = "ginger-ai";
+        private static readonly string AI_SERVICE_URL = System.Configuration.ConfigurationManager.AppSettings["AI_SERVICE_URL"]?.ToString() ?? "ginger-ai";
 
-        private const string EXECUTION_SERVICE = "ginger-execution";
+        private static readonly string EXECUTION_SERVICE = System.Configuration.ConfigurationManager.AppSettings["EXECUTION_SERVICE"]?.ToString() ?? "ginger-execution";
 
-        private const string REPORT_SERVICE_HEALTH_PATH = $"{ACCOUNT_REPORT_SERVICE_URL}/health";
-        private const string EXECUTION_SERVICE_HEALTH_PATH = $"{EXECUTION_SERVICE}/health";
-        private const string AI_SERVICE_HEALTH_PATH = $"{AI_SERVICE_URL}/health";
-        private const string GENERATE_TOKEN_URL = "connect/token";
+        private static readonly string IDENTITY_SERVICE = System.Configuration.ConfigurationManager.AppSettings["IDENTITY_SERVICE"]?.ToString() ?? "identity";
+
+        private static readonly string REPORT_SERVICE_HEALTH_PATH = $"{ACCOUNT_REPORT_SERVICE_URL}/health";
+        private static readonly string EXECUTION_SERVICE_HEALTH_PATH = $"{EXECUTION_SERVICE}/health";
+        private static readonly string AI_SERVICE_HEALTH_PATH = $"{AI_SERVICE_URL}/health";
+        private static readonly string GENERATE_TOKEN_URL = $"{IDENTITY_SERVICE}/connect/token";
+        private static readonly string EXECUTION_SERVICE_GENERATIVEPOM_URL = "generative-ai/extract_dom_elements";
 
 
         private static readonly ExecutionLoggerConfiguration LoggerConfig = WorkSpace.Instance.Solution.LoggerConfigurations;
@@ -81,14 +84,14 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                 else
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting Account Report Service URL");
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the Account Report Service URL. Please check the configuration.");
+                    
                     return null;
                 }
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while getting Account Report Service URL: {ex.Message}");
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the Account Report Service URL. Please check the configuration.");
+                
                 return null;
             }
 
@@ -174,14 +177,12 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                 else
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting Execution Service URL");
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the Execution Service URL. Please check the configuration.");
                     return null;
                 }
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while getting Execution Service URL: {ex.Message}");
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the Execution Service URL. Please check the configuration.");
                 return null;
             }
         }
@@ -204,6 +205,11 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
         public static string GetAIServiceHealthUrl()
         {
             return BuildServiceUrl(AI_SERVICE_HEALTH_PATH);
+        }
+
+        public static string GetAIServicePOMExtractpath()
+        {
+            return EXECUTION_SERVICE_GENERATIVEPOM_URL;
         }
 
         private static string BuildServiceUrl(string path)

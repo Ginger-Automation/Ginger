@@ -56,6 +56,10 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib
         private bool mLearnShadowDomElements;
         [IsSerializedForLocalRepository]
         public bool LearnShadowDomElements { get { return mLearnShadowDomElements; } set { if (mLearnShadowDomElements != value) { mLearnShadowDomElements = value; OnPropertyChanged(nameof(LearnShadowDomElements)); } } }
+
+        private bool mLearnPOMByAI;
+        [IsSerializedForLocalRepository]
+        public bool LearnPOMByAI { get { return mLearnPOMByAI; } set { if (mLearnPOMByAI != value) { mLearnPOMByAI = value; OnPropertyChanged(nameof(LearnPOMByAI)); } } }
         public override string ItemName
         {
             get;

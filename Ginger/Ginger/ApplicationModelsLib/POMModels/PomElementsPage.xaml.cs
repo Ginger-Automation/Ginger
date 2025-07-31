@@ -939,7 +939,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
                 //update screenshot
                 BitmapSource source = null;
-                if (mSelectedElement.ScreenShotImage != null)
+                if (!string.IsNullOrEmpty(mSelectedElement.ScreenShotImage))
                 {
                     source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mSelectedElement.ScreenShotImage.ToString()));
                 }

@@ -49,7 +49,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
                 && _act.UpdateOperationInputValues.Any(x => ( !string.IsNullOrEmpty(x.ValueForDriver) ? requestUrl.ToLower().Contains(x.ValueForDriver.ToLower()) : (!string.IsNullOrEmpty(x.Value) && requestUrl.ToLower().Contains(x.Value.ToLower()))));
         }
 
-        public void ProcessNetworkLogs(ActBrowserElement act, List<Tuple<string, object>> networkResponseLogList, List<Tuple<string, object>> networkRequestLogList, bool saveToFile = false)
+        public void ProcessNetworkLogs(ActBrowserElement act, List<Tuple<string, object>> networkResponseLogList, List<Tuple<string, object>> networkRequestLogList)
         {
             var parsedRequestObjects = networkRequestLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
             var parsedResponseObjects = networkResponseLogList.Select(x => x.Item2 is string str ? JsonConvert.DeserializeObject<object>(str) : x.Item2).ToList();
@@ -70,13 +70,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
                 act.AddOrUpdateReturnParamActual($"{act.ControlAction} {networkResponseLogList[i].Item1}", JsonConvert.SerializeObject(parsedResponseObjects[i], Formatting.Indented));
             }
 
-            if (saveToFile)
+            if ((act.ControlAction==ActBrowserElement.eControlAction.GetNetworkLog && act.SaveLogToFile) || act.ControlAction==ActBrowserElement.eControlAction.StopMonitoringNetworkLog)
             {
                 var parsedRequestTuples = networkRequestLogList.Select((x, i) => Tuple.Create(x.Item1, parsedRequestObjects[i])).ToList();
                 var parsedResponseTuples = networkResponseLogList.Select((x, i) => Tuple.Create(x.Item1, parsedResponseObjects[i])).ToList();
-
-                string requestPath = CreateNetworkLogFile("NetworklogRequest", parsedRequestTuples);
-                string responsePath = CreateNetworkLogFile("NetworklogResponse", parsedResponseTuples);
+                string requestParamValue = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.RequestFileName);
+                string responseParamValue = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.ResponseFileName);
+                string RequestFileName = string.IsNullOrWhiteSpace(requestParamValue) ? "NetworklogRequest" : requestParamValue;
+                string ResponseFileName = string.IsNullOrWhiteSpace(responseParamValue) ? "NetworklogResponse" : responseParamValue;
+                string requestPath = CreateNetworkLogFile(RequestFileName, parsedRequestTuples);
+                string responsePath = CreateNetworkLogFile(ResponseFileName, parsedResponseTuples);
 
                 act.ExInfo = $"RequestFile : {requestPath}\nResponseFile : {responsePath}\n";
                 act.AddOrUpdateReturnParamActual("RequestFile", requestPath);
