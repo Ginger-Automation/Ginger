@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
@@ -45,6 +46,7 @@ namespace GingerCore
         private Stopwatch _stopwatch;
         public BusinessFlow()
         {
+            AddCategories();
             AllowAutoSave = true;
             this.OnDirtyStatusChanged += BusinessFlow_OnDirtyStatusChanged;
         }
@@ -55,7 +57,7 @@ namespace GingerCore
             Activities = [];
             Variables = [];
             TargetApplications = [];
-
+            AddCategories();
             Activity a = new Activity
             {
                 Active = true,
@@ -1975,8 +1977,17 @@ namespace GingerCore
 
         }
 
+        [IsSerializedForLocalRepository]
+        public ObservableList<SolutionCategoryDefinition> CategoriesDefinitions = [];
+
+        public void AddCategories()
+        {
+            General.EnsureAllCategories(CategoriesDefinitions);
+        }
+
         public override void PostDeserialization()
         {
+            AddCategories();
             if (mAttachActivitiesGroupsWasDone)
             {
                 AttachActivitiesGroupsAndActivities();//so attach will be done also in case BF will be reloaded by FileWatcher

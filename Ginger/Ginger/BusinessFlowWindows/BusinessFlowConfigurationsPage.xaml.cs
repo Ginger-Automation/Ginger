@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.BusinessFlowWindows;
+using Ginger.SolutionCategories;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Activities;
@@ -44,6 +45,7 @@ namespace GingerWPF.BusinessFlowsLib
         Context mContext;
         Ginger.General.eRIPageViewMode mPageViewMode;
         private readonly bool _ignoreValidationRules;
+        SolutionCategoriesPage mSolutionCategoriesPage = null;
 
         public BusinessFlowConfigurationsPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode, bool ignoreValidationRules = false)
         {
@@ -173,6 +175,12 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xCreatedByTextBox, TextBox.TextProperty, mBusinessFlow.RepositoryItemHeader, nameof(RepositoryItemHeader.CreatedBy));
             BindingHandler.ObjFieldBinding(xAutoPrecentageTextBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.AutomationPrecentage), System.Windows.Data.BindingMode.OneWay);
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mBusinessFlow, nameof(RepositoryItemBase.Publish));
+            if (mSolutionCategoriesPage == null)
+            {
+                mSolutionCategoriesPage = new SolutionCategoriesPage();
+                xCategoriesFrame.ClearAndSetContent(mSolutionCategoriesPage);
+            }
+            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mBusinessFlow.CategoriesDefinitions);
             //// Per source we can show specific source page info
             //if (mBusinessFlow.Source == BusinessFlow.eSource.Gherkin)
             //{
@@ -192,6 +200,7 @@ namespace GingerWPF.BusinessFlowsLib
             BindingOperations.ClearAllBindings(xCreatedByTextBox);
             BindingOperations.ClearAllBindings(xAutoPrecentageTextBox);
             BindingOperations.ClearAllBindings(xPublishcheckbox);
+            xCategoriesFrame.ClearControlsBindings();
         }
 
         public void UpdateBusinessFlow(BusinessFlow updateBusinessFlow)

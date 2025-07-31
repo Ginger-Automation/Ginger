@@ -83,7 +83,15 @@
                 <ComboBox x:Name="xErrorHandlerMappingCmb"  Style="{StaticResource $FlatEditInputComboBoxStyle}" Width="250" Margin="15,0,0,0" SelectionChanged="xErrorHandlerMappingCmb_SelectionChanged"/>
                 <Button x:Name="xSpecificErrorHandlerBtn" Content="Set Error Handler" Click="xSpecificErrorHandlerBtn_Click"  Margin="10,-5,0,0" Width="120" Style="{StaticResource $InputButtonStyle}"/>
             </StackPanel>
-
+            
+            <Expander x:Name="xCategoriesExpander" DockPanel.Dock="Top" ExpandDirection="Down"  IsExpanded="False" Style="{StaticResource $ExpanderStyle}" HorizontalAlignment="Left" Margin="0,12,0,0">
+                <Expander.Header>
+                    <Label Content="Categories" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                </Expander.Header>
+                <Expander.Content>
+                    <Frame x:Name="xCategoriesFrame"/>
+                </Expander.Content>
+            </Expander>
 
         </DockPanel>
     </ScrollViewer>

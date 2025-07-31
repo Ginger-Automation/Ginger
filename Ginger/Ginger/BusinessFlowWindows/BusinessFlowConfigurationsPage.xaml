@@ -50,6 +50,15 @@
             </StackPanel>
 
             <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
+
+            <Expander x:Name="xCategoriesExpander" DockPanel.Dock="Top" ExpandDirection="Down"  IsExpanded="False" Style="{StaticResource $ExpanderStyle}" HorizontalAlignment="Left" Margin="0,12,0,0">
+                <Expander.Header>
+                    <Label Content="Categories" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                </Expander.Header>
+                <Expander.Content>
+                    <Frame x:Name="xCategoriesFrame"/>
+                </Expander.Content>
+            </Expander>
         </DockPanel>
     </ScrollViewer>
 </Page>
