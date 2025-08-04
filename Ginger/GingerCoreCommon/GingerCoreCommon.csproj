@@ -33,6 +33,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="25.3.0" />
     <PackageReference Include="Ginger.External" Version="1.0.0" />
     <PackageReference Include="LiteDB" Version="5.0.21" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.7.0" />    
@@ -57,10 +58,7 @@
     <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Ginger.ExecuterService.Contracts">
-      <HintPath>..\GingerCoreNET\DLLS\Ginger.ExecuterService.Contracts.dll</HintPath>
-    </Reference>
+  <ItemGroup> 
     <Reference Include="LiteDB">
       <HintPath>..\..\..\..\..\.nuget\packages\litedb\4.1.4\lib\net40\LiteDB.dll</HintPath>
     </Reference>

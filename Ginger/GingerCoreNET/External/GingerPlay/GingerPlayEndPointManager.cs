@@ -177,14 +177,12 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                 else
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting Execution Service URL");
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the Execution Service URL. Please check the configuration.");
                     return null;
                 }
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while getting Execution Service URL: {ex.Message}");
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the Execution Service URL. Please check the configuration.");
                 return null;
             }
         }
