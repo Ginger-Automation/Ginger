@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.BusinessFlowWindows;
@@ -27,6 +28,7 @@ using GingerCore;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -179,8 +181,9 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mSolutionCategoriesPage = new SolutionCategoriesPage();
                 xCategoriesFrame.ClearAndSetContent(mSolutionCategoriesPage);
+                mSolutionCategoriesPage.CategoryValueChanged += CategoriesPage_CategoryValueChanged;
             }
-            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mBusinessFlow.CategoriesDefinitions);
+            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mBusinessFlow.MergedSolutonCategories);
             //// Per source we can show specific source page info
             //if (mBusinessFlow.Source == BusinessFlow.eSource.Gherkin)
             //{
@@ -189,6 +192,11 @@ namespace GingerWPF.BusinessFlowsLib
             //}
 
             SetGridView();
+        }
+
+        private void CategoriesPage_CategoryValueChanged(object sender, EventArgs e)
+        {
+            mBusinessFlow.MergedSolutonCategories = (ObservableList<SolutionCategoryDefinition>)sender;
         }
 
         private void ClearBindings()

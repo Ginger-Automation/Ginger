@@ -46,7 +46,6 @@ namespace GingerCore
         private Stopwatch _stopwatch;
         public BusinessFlow()
         {
-            AddCategories();
             AllowAutoSave = true;
             this.OnDirtyStatusChanged += BusinessFlow_OnDirtyStatusChanged;
         }
@@ -57,7 +56,6 @@ namespace GingerCore
             Activities = [];
             Variables = [];
             TargetApplications = [];
-            AddCategories();
             Activity a = new Activity
             {
                 Active = true,
@@ -1980,14 +1978,53 @@ namespace GingerCore
         [IsSerializedForLocalRepository]
         public ObservableList<SolutionCategoryDefinition> CategoriesDefinitions = [];
 
-        public void AddCategories()
+        public ObservableList<SolutionCategoryDefinition> MergedSolutonCategories
         {
-            General.EnsureAllCategories(CategoriesDefinitions);
+            get
+            {
+                ObservableList<SolutionCategoryDefinition> allCategories = General.GetAllCategories();
+                foreach (var category in allCategories)
+                {
+                    var selectedCat = CategoriesDefinitions.FirstOrDefault(cd => cd.Category == category.Category);
+                    if (selectedCat != null)
+                    {
+                        category.SelectedValueID = selectedCat.SelectedValueID;
+                    }
+                }
+                return allCategories;
+            }
+            set
+            {
+                // Update or add categories from the new list
+                foreach (var newCategory in value)
+                {
+                    var existingCategory = CategoriesDefinitions.FirstOrDefault(cd => cd.Category == newCategory.Category);
+                    if (newCategory.SelectedValueID != Guid.Empty)
+                    {
+                        if (existingCategory != null)
+                        {
+                            existingCategory.SelectedValueID = newCategory.SelectedValueID;
+                        }
+                        else
+                        {
+                            CategoriesDefinitions.Add(newCategory);
+                        }
+                    }
+                }
+
+                // Remove categories without a selected value
+                for (int i = CategoriesDefinitions.Count - 1; i >= 0; i--)
+                {
+                    if (CategoriesDefinitions[i].SelectedValueID == Guid.Empty)
+                    {
+                        CategoriesDefinitions.RemoveAt(i);
+                    }
+                }
+            }
         }
 
         public override void PostDeserialization()
         {
-            AddCategories();
             if (mAttachActivitiesGroupsWasDone)
             {
                 AttachActivitiesGroupsAndActivities();//so attach will be done also in case BF will be reloaded by FileWatcher

@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
+using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Ginger.Activities;
 using Ginger.SolutionCategories;
 using Ginger.UserControlsLib;
@@ -148,6 +149,11 @@ namespace Ginger.BusinessFlowPages
             xCategoriesFrame.ClearControlsBindings();
         }
 
+        private void CategoriesPage_CategoryValueChanged(object sender, EventArgs e)
+        {
+            mActivity.MergedSolutonCategories = (ObservableList<SolutionCategoryDefinition>)sender;
+        }
+
         private void BindControls()
         {
             //Details Tab Bindings
@@ -169,8 +175,9 @@ namespace Ginger.BusinessFlowPages
             {
                 mSolutionCategoriesPage = new SolutionCategoriesPage();
                 xCategoriesFrame.ClearAndSetContent(mSolutionCategoriesPage);
+                mSolutionCategoriesPage.CategoryValueChanged += CategoriesPage_CategoryValueChanged;
             }
-            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mActivity.CategoriesDefinitions);
+            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mActivity.MergedSolutonCategories);
 
             xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
             if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ApplicationPlatforms != null)

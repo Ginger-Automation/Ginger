@@ -257,22 +257,6 @@ namespace Amdocs.Ginger.Repository
                 return;
             }
 
-            // Custom logic for CategoriesDefinitions
-            if (rIAttr.Name == "CategoriesDefinitions" &&
-                rIAttr.value is IObservableList list &&
-                list.GetType().IsGenericType &&
-                list.GetType().GetGenericArguments()[0].Name == "SolutionCategoryDefinition")
-            {
-                // Only serialize if at least one item has SelectedValueID != Guid.Empty
-                bool anySelected = list.Cast<object>()
-                    .OfType<Amdocs.Ginger.Common.Repository.SolutionCategories.SolutionCategoryDefinition>()
-                    .Any(cd => cd.SelectedValueID != Guid.Empty);
-
-                if (!anySelected)
-                {
-                    return; // Skip serialization
-                }
-            }
 
             // Handle different types of attribute values
             switch (rIAttr.value)

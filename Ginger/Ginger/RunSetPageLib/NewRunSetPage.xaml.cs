@@ -21,6 +21,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
@@ -917,10 +918,15 @@ namespace Ginger.Run
             {
                 mSolutionCategoriesPage = new SolutionCategoriesPage();
                 xCategoriesFrame.ClearAndSetContent(mSolutionCategoriesPage);
+                mSolutionCategoriesPage.CategoryValueChanged += CategoriesPage_CategoryValueChanged;
             }
-            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mRunSetConfig.CategoriesDefinitions);
+            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mRunSetConfig.MergedSolutonCategories);
             PropertyChangedEventManager.AddHandler(source: mRunSetConfig, handler: RunSetConfig_PropertyChanged, propertyName: allProperties);
             CollectionChangedEventManager.AddHandler(source: mRunSetConfig.Tags, handler: RunSetTags_CollectionChanged);
+        }
+        private void CategoriesPage_CategoryValueChanged(object sender, EventArgs e)
+        {
+            mRunSetConfig.MergedSolutonCategories = (ObservableList<SolutionCategoryDefinition>)sender;
         }
 
         private void mRunSetConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)

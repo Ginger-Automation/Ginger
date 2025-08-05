@@ -563,28 +563,14 @@ namespace Amdocs.Ginger.Common.GeneralLib
         /// <param name="CurrentValue">The current value of the variable.</param>
         public record VariableMinimalRecord(string Name, string InitialValue, string CurrentValue);
 
-        public static void EnsureAllCategories(ObservableList<SolutionCategoryDefinition> categoriesDefinitions)
+        public static ObservableList<SolutionCategoryDefinition> GetAllCategories()
         {
-            try
+            ObservableList<SolutionCategoryDefinition> returnSolutionCategories = [];
+            foreach (var category in Enum.GetValues<eSolutionCategories>())
             {
-                if (categoriesDefinitions == null)
-                {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Error: Category definition found null");
-                    return;
-                }
-                var existingCategories = new HashSet<eSolutionCategories>(categoriesDefinitions.Select(x => x.Category));
-                foreach (var category in Enum.GetValues<eSolutionCategories>())
-                {
-                    if (!existingCategories.Contains(category))
-                    {
-                        categoriesDefinitions.Add(new SolutionCategoryDefinition(category));
-                    }
-                }
+                returnSolutionCategories.Add(new SolutionCategoryDefinition(category));
             }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception in EnsureAllCategories", ex);
-            }
+            return returnSolutionCategories;
         }
     }
 }

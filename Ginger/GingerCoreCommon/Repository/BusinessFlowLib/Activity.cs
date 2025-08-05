@@ -120,14 +120,49 @@ namespace GingerCore
         [IsSerializedForLocalRepository]
         public ObservableList<SolutionCategoryDefinition> CategoriesDefinitions = [];
 
-        public void AddCategories()
+        public ObservableList<SolutionCategoryDefinition> MergedSolutonCategories
         {
-            General.EnsureAllCategories(CategoriesDefinitions);
-        }
+            get
+            {
+                ObservableList<SolutionCategoryDefinition> allCategories = General.GetAllCategories();
+                foreach (var category in allCategories)
+                {
+                    var selectedCat = CategoriesDefinitions.FirstOrDefault(cd => cd.Category == category.Category);
+                    if (selectedCat != null)
+                    {
+                        category.SelectedValueID = selectedCat.SelectedValueID;
+                    }
+                }
+                return allCategories;
+            }
+            set
+            {
+                // Update or add categories from the new list
+                foreach (var newCategory in value)
+                {
+                    var existingCategory = CategoriesDefinitions.FirstOrDefault(cd => cd.Category == newCategory.Category);
+                    if (newCategory.SelectedValueID != Guid.Empty)
+                    {
+                        if (existingCategory != null)
+                        {
+                            existingCategory.SelectedValueID = newCategory.SelectedValueID;
+                        }
+                        else
+                        {
+                            CategoriesDefinitions.Add(newCategory);
+                        }
+                    }
+                }
 
-        public override void PostDeserialization()
-        {
-            AddCategories();
+                // Remove categories without a selected value
+                for (int i = CategoriesDefinitions.Count - 1; i >= 0; i--)
+                {
+                    if (CategoriesDefinitions[i].SelectedValueID == Guid.Empty)
+                    {
+                        CategoriesDefinitions.RemoveAt(i);
+                    }
+                }
+            }
         }
 
         public bool IsNotGherkinOptimizedActivity { get { return ActivitiesGroupID is not "Optimized Activities" and not "Optimized Activities - Not in Use"; } }
@@ -140,7 +175,6 @@ namespace GingerCore
         public Activity()
         {
             //set fields default values
-            AddCategories();
             mAutomationStatus = eActivityAutomationStatus.Development;
             mActionRunOption = eActionRunOption.StopActionsRunOnFailure;
             Tags.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Tags));
