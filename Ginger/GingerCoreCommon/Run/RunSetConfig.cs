@@ -460,7 +460,9 @@ namespace Ginger.Run
             set 
             {
                 if (value == null)
+                {
                     return;
+                }
 
                 // Update or add categories from the new list
                 foreach (var newCategory in value)
