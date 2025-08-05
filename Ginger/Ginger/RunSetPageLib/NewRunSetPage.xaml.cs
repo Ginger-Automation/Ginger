@@ -926,7 +926,10 @@ namespace Ginger.Run
         }
         private void CategoriesPage_CategoryValueChanged(object sender, EventArgs e)
         {
-            mRunSetConfig.MergedCategoriesDefinitions = (ObservableList<SolutionCategoryDefinition>)sender;
+            if (sender is ObservableList<SolutionCategoryDefinition> categories && mRunSetConfig != null)
+            {
+                mRunSetConfig.MergedCategoriesDefinitions = categories;
+            }
         }
 
         private void mRunSetConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)

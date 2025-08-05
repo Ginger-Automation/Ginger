@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.BusinessFlowWindows;
+using Ginger.Run;
 using Ginger.SolutionCategories;
 using Ginger.UserControls;
 using GingerCore;
@@ -196,7 +197,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void CategoriesPage_CategoryValueChanged(object sender, EventArgs e)
         {
-            mBusinessFlow.MergedCategoriesDefinitions = (ObservableList<SolutionCategoryDefinition>)sender;
+            if (sender is ObservableList<SolutionCategoryDefinition> categories && mBusinessFlow != null)
+            {
+                mBusinessFlow.MergedCategoriesDefinitions = categories;
+            }
         }
 
         private void ClearBindings()
@@ -208,6 +212,10 @@ namespace GingerWPF.BusinessFlowsLib
             BindingOperations.ClearAllBindings(xCreatedByTextBox);
             BindingOperations.ClearAllBindings(xAutoPrecentageTextBox);
             BindingOperations.ClearAllBindings(xPublishcheckbox);
+            if (mSolutionCategoriesPage != null)
+            {
+                mSolutionCategoriesPage.CategoryValueChanged -= CategoriesPage_CategoryValueChanged;
+            }
             xCategoriesFrame.ClearControlsBindings();
         }
 

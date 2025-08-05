@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Ginger.Activities;
+using Ginger.Run;
 using Ginger.SolutionCategories;
 using Ginger.UserControlsLib;
 using GingerCore;
@@ -146,12 +147,19 @@ namespace Ginger.BusinessFlowPages
             BindingOperations.ClearAllBindings(xErrorHandlerMappingCmb);
             BindingOperations.ClearAllBindings(xHandlerPostExecutionCombo);
             BindingOperations.ClearAllBindings(xHandlerTriggerOnCombo);
+            if (mSolutionCategoriesPage != null)
+            {
+                mSolutionCategoriesPage.CategoryValueChanged -= CategoriesPage_CategoryValueChanged;
+            }
             xCategoriesFrame.ClearControlsBindings();
         }
 
         private void CategoriesPage_CategoryValueChanged(object sender, EventArgs e)
         {
-            mActivity.MergedCategoriesDefinitions = (ObservableList<SolutionCategoryDefinition>)sender;
+            if (sender is ObservableList<SolutionCategoryDefinition> categories && mActivity != null)
+            {
+                mActivity.MergedCategoriesDefinitions = categories;
+            }
         }
 
         private void BindControls()
