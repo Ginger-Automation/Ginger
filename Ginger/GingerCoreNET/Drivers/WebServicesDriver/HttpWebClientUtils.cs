@@ -797,7 +797,6 @@ namespace GingerCore.Actions.WebAPI
                 if (!string.IsNullOrEmpty(ContentTypeHeader))
                 {
                     RequestMessage.Content ??= new StringContent(string.Empty);
-
                     try
                     {
                         RequestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue(ContentTypeHeader);
@@ -812,10 +811,7 @@ namespace GingerCore.Actions.WebAPI
                 }
                 else
                 {
-                    if (ContentTypeHeader != null)
-                    {
-                        Client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", ContentTypeHeader);
-                    }
+                    Client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", ContentTypeHeader);
                 }
 
             }
