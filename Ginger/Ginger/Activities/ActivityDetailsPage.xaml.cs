@@ -22,7 +22,6 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Ginger.Activities;
-using Ginger.Run;
 using Ginger.SolutionCategories;
 using Ginger.UserControlsLib;
 using GingerCore;
