@@ -1978,7 +1978,7 @@ namespace GingerCore
         [IsSerializedForLocalRepository]
         public ObservableList<SolutionCategoryDefinition> CategoriesDefinitions = [];
 
-        public ObservableList<SolutionCategoryDefinition> MergedSolutonCategories
+        public ObservableList<SolutionCategoryDefinition> MergedCategoriesDefinitions
         {
             get
             {

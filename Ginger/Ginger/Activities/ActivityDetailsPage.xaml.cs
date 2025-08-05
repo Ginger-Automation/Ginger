@@ -151,7 +151,7 @@ namespace Ginger.BusinessFlowPages
 
         private void CategoriesPage_CategoryValueChanged(object sender, EventArgs e)
         {
-            mActivity.MergedSolutonCategories = (ObservableList<SolutionCategoryDefinition>)sender;
+            mActivity.MergedCategoriesDefinitions = (ObservableList<SolutionCategoryDefinition>)sender;
         }
 
         private void BindControls()
@@ -177,7 +177,7 @@ namespace Ginger.BusinessFlowPages
                 xCategoriesFrame.ClearAndSetContent(mSolutionCategoriesPage);
                 mSolutionCategoriesPage.CategoryValueChanged += CategoriesPage_CategoryValueChanged;
             }
-            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mActivity.MergedSolutonCategories);
+            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mActivity.MergedCategoriesDefinitions);
 
             xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
             if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ApplicationPlatforms != null)

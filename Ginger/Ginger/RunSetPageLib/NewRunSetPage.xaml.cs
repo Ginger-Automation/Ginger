@@ -920,13 +920,13 @@ namespace Ginger.Run
                 xCategoriesFrame.ClearAndSetContent(mSolutionCategoriesPage);
                 mSolutionCategoriesPage.CategoryValueChanged += CategoriesPage_CategoryValueChanged;
             }
-            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mRunSetConfig.MergedSolutonCategories);
+            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mRunSetConfig.MergedCategoriesDefinitions);
             PropertyChangedEventManager.AddHandler(source: mRunSetConfig, handler: RunSetConfig_PropertyChanged, propertyName: allProperties);
             CollectionChangedEventManager.AddHandler(source: mRunSetConfig.Tags, handler: RunSetTags_CollectionChanged);
         }
         private void CategoriesPage_CategoryValueChanged(object sender, EventArgs e)
         {
-            mRunSetConfig.MergedSolutonCategories = (ObservableList<SolutionCategoryDefinition>)sender;
+            mRunSetConfig.MergedCategoriesDefinitions = (ObservableList<SolutionCategoryDefinition>)sender;
         }
 
         private void mRunSetConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)

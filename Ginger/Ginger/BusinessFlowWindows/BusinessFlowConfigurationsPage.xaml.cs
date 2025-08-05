@@ -183,7 +183,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xCategoriesFrame.ClearAndSetContent(mSolutionCategoriesPage);
                 mSolutionCategoriesPage.CategoryValueChanged += CategoriesPage_CategoryValueChanged;
             }
-            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mBusinessFlow.MergedSolutonCategories);
+            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mBusinessFlow.MergedCategoriesDefinitions);
             //// Per source we can show specific source page info
             //if (mBusinessFlow.Source == BusinessFlow.eSource.Gherkin)
             //{
@@ -196,7 +196,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void CategoriesPage_CategoryValueChanged(object sender, EventArgs e)
         {
-            mBusinessFlow.MergedSolutonCategories = (ObservableList<SolutionCategoryDefinition>)sender;
+            mBusinessFlow.MergedCategoriesDefinitions = (ObservableList<SolutionCategoryDefinition>)sender;
         }
 
         private void ClearBindings()

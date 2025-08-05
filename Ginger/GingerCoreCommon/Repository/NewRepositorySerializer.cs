@@ -257,7 +257,6 @@ namespace Amdocs.Ginger.Repository
                 return;
             }
 
-
             // Handle different types of attribute values
             switch (rIAttr.value)
             {
