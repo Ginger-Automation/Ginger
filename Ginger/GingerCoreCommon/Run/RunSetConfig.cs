@@ -446,49 +446,51 @@ namespace Ginger.Run
         {
             get 
             {
-                ObservableList<SolutionCategoryDefinition> allCategories = General.GetAllCategories();
-                foreach (var category in allCategories)
-                {
-                    var selectedCat = CategoriesDefinitions.FirstOrDefault(cd => cd.Category == category.Category);
-                    if (selectedCat != null)
-                    {
-                        category.SelectedValueID = selectedCat.SelectedValueID;
-                    }
-                } 
-                return allCategories;
+                return General.MergeCategories(CategoriesDefinitions);
+                //ObservableList<SolutionCategoryDefinition> allCategories = General.GetAllCategories();
+                //foreach (var category in allCategories)
+                //{
+                //    var selectedCat = CategoriesDefinitions.FirstOrDefault(cd => cd.Category == category.Category);
+                //    if (selectedCat != null)
+                //    {
+                //        category.SelectedValueID = selectedCat.SelectedValueID;
+                //    }
+                //} 
+                //return allCategories;
             }
             set 
             {
-                if (value == null)
-                {
-                    return;
-                }
+                General.UpdateStoredCategories(CategoriesDefinitions, value);
+                //if (value == null)
+                //{
+                //    return;
+                //}
 
-                // Update or add categories from the new list
-                foreach (var newCategory in value)
-                {
-                    var existingCategory = CategoriesDefinitions.FirstOrDefault(cd => cd.Category == newCategory.Category);
-                    if (newCategory.SelectedValueID != Guid.Empty)
-                    {
-                        if (existingCategory != null)
-                        {
-                            existingCategory.SelectedValueID = newCategory.SelectedValueID;
-                        }
-                        else
-                        {
-                            CategoriesDefinitions.Add(newCategory);
-                        }
-                    }
-                }
+                //// Update or add categories from the new list
+                //foreach (var newCategory in value)
+                //{
+                //    var existingCategory = CategoriesDefinitions.FirstOrDefault(cd => cd.Category == newCategory.Category);
+                //    if (newCategory.SelectedValueID != Guid.Empty)
+                //    {
+                //        if (existingCategory != null)
+                //        {
+                //            existingCategory.SelectedValueID = newCategory.SelectedValueID;
+                //        }
+                //        else
+                //        {
+                //            CategoriesDefinitions.Add(newCategory);
+                //        }
+                //    }
+                //}
 
-                // Remove categories without a selected value
-                for (int i = CategoriesDefinitions.Count - 1; i >= 0; i--)
-                {
-                    if (CategoriesDefinitions[i].SelectedValueID == Guid.Empty)
-                    {
-                        CategoriesDefinitions.RemoveAt(i);
-                    }
-                }
+                //// Remove categories without a selected value
+                //for (int i = CategoriesDefinitions.Count - 1; i >= 0; i--)
+                //{
+                //    if (CategoriesDefinitions[i].SelectedValueID == Guid.Empty)
+                //    {
+                //        CategoriesDefinitions.RemoveAt(i);
+                //    }
+                //}
             }
         }
 

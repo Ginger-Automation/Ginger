@@ -507,7 +507,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
 
-        
+
         public static string FileContentProvider(string filename)
         {
             Uri url = new Uri(filename);
@@ -571,6 +571,54 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 returnSolutionCategories.Add(new SolutionCategoryDefinition(category));
             }
             return returnSolutionCategories;
+        }
+
+        public static ObservableList<SolutionCategoryDefinition> MergeCategories(ObservableList<SolutionCategoryDefinition> categoriesDefinitions)
+        {
+            ObservableList<SolutionCategoryDefinition> allCategories = General.GetAllCategories();
+            foreach (var category in allCategories)
+            {
+                var selectedCat = categoriesDefinitions.FirstOrDefault(cd => cd.Category == category.Category);
+                if (selectedCat != null)
+                {
+                    category.SelectedValueID = selectedCat.SelectedValueID;
+                }
+            }
+            return allCategories;
+        }
+
+        public static void UpdateStoredCategories(ObservableList<SolutionCategoryDefinition> existingCategoriesDefinitions, ObservableList<SolutionCategoryDefinition> newCategoriesDefinitions)
+        {
+            if (newCategoriesDefinitions == null)
+            {
+                return;
+            }
+
+            // Update or add categories from the new list
+            foreach (var newCategory in newCategoriesDefinitions)
+            {
+                var existingCategory = existingCategoriesDefinitions.FirstOrDefault(cd => cd.Category == newCategory.Category);
+                if (newCategory.SelectedValueID != Guid.Empty)
+                {
+                    if (existingCategory != null)
+                    {
+                        existingCategory.SelectedValueID = newCategory.SelectedValueID;
+                    }
+                    else
+                    {
+                        existingCategoriesDefinitions.Add(newCategory);
+                    }
+                }
+            }
+
+            // Remove categories without a selected value
+            for (int i = existingCategoriesDefinitions.Count - 1; i >= 0; i--)
+            {
+                if (existingCategoriesDefinitions[i].SelectedValueID == Guid.Empty)
+                {
+                    existingCategoriesDefinitions.RemoveAt(i);
+                }
+            }
         }
     }
 }
