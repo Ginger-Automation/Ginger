@@ -1235,7 +1235,7 @@ namespace GingerCore
             }
         }
 
-        private void LoadLinkedActivities()
+        public void LoadLinkedActivities(SolutionRepository solutionRepository = null)
         {
             if (this.Activities.Any(f => f.IsLinkedItem))
             {
@@ -1245,7 +1245,16 @@ namespace GingerCore
                     {
                         return;
                     }
-                    Activity sharedActivity = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(this.Activities[i].ParentGuid);
+                    Activity sharedActivity = null;
+
+                    if (solutionRepository != null)
+                    {
+                        sharedActivity = solutionRepository?.GetRepositoryItemByGuid<Activity>(this.Activities[i].ParentGuid);
+                    }
+                    else
+                    {
+                        sharedActivity = GingerCoreCommonWorkSpace.Instance?.SolutionRepository?.GetRepositoryItemByGuid<Activity>(this.Activities[i].ParentGuid);
+                    }
 
                     if (sharedActivity != null)
                     {

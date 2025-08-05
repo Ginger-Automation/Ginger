@@ -20,24 +20,18 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Functionalities;
-using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
-using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControls;
 using Ginger.Variables;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Activities;
 using GingerCore.Environments;
-using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
-using GingerCoreNET.Application_Models;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -48,11 +42,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Forms.Design;
 using System.Windows.Input;
-using static Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib.BulkUpdateSharedRepositoryActivitiesPage;
 
 namespace Ginger.Functionalities
 {
@@ -248,8 +239,6 @@ namespace Ginger.Functionalities
             }
         }
 
-    
-
         private void BulkUpdateValueForAll(object sender, RoutedEventArgs e)
         {
             try
@@ -265,7 +254,7 @@ namespace Ginger.Functionalities
                 FoundItem highlightedItem = (FoundItem)xFoundItemsGrid.CurrentItem;
                 if (highlightedItem == null)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR,"No selected row is found.");
+                    Reporter.ToLog(eLogLevel.ERROR, "No selected row is found.");
                     return;
                 }
                 foreach (FoundItem item in visibleItems)
@@ -374,7 +363,7 @@ namespace Ginger.Functionalities
 
             mMainItemsTypeList.Add(new FindItemType { Name = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), Type = typeof(BusinessFlow), GetItemsToSearchIn = GetBusinessFlowsToSearchIn });
             mMainItemsTypeList.Add(new FindItemType { Name = GingerDicser.GetTermResValue(eTermResKey.Activity), Type = typeof(Activity), GetItemsToSearchIn = GetActivitiesToSearchIn });
-            mMainItemsTypeList.Add(new FindItemType { Name = "Action", Type = typeof(Act), HasSubType = true, GetItemsToSearchIn = GetActionsToSearchIn, GetSubItems = GetPlatformsActions });
+            mMainItemsTypeList.Add(new FindItemType { Name = ActionName, Type = typeof(Act), HasSubType = true, GetItemsToSearchIn = GetActionsToSearchIn, GetSubItems = GetPlatformsActions });
             mMainItemsTypeList.Add(new FindItemType { Name = GingerDicser.GetTermResValue(eTermResKey.Variable), Type = typeof(VariableBase), HasSubType = true, GetItemsToSearchIn = GetVariablesToSearchIn, GetSubItems = GetVariables });
             if (mContext is eContext.RunsetPage or eContext.SolutionPage)
             {
@@ -487,7 +476,7 @@ namespace Ginger.Functionalities
             winButtons.Add(closeBtn);
         }
 
-        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free, string folderName=null)
+        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free, string folderName = null)
         {
             xFindReplaceBtn.IsChecked = true;
 
@@ -1651,7 +1640,7 @@ namespace Ginger.Functionalities
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to switch to Change Attribute Value mode", ex);
             }
         }
-
+        const string ActionName = "Action";
         private void xMainItemListCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
@@ -1668,6 +1657,11 @@ namespace Ginger.Functionalities
                 if (searchItem != null)
                 {
                     var attributeNameList = mFindAndReplaceUtils.GetSerializableEditableMemberNames(searchItem.OriginItemObject);
+                    if (mMainItemType.Name == ActionName)
+                    {
+                        attributeNameList.Remove(nameof(RepositoryItemBase.Publish));
+                    }
+
                     GingerCore.General.FillComboFromList(xAttributeNameComboBox, attributeNameList);
                 }
 
@@ -1727,7 +1721,7 @@ namespace Ginger.Functionalities
         private async Task FindItemsAsync_item()
         {
             mFindAndReplaceUtils.ProcessingState = FindAndReplaceUtils.eProcessingState.Running;
-
+            IsLoading = true;
             try
             {
                 mFoundItemsList.Clear();
@@ -1748,6 +1742,7 @@ namespace Ginger.Functionalities
             finally
             {
                 mFindAndReplaceUtils.ProcessingState = FindAndReplaceUtils.eProcessingState.Pending;
+                IsLoading = false;
             }
         }
 
@@ -1806,9 +1801,18 @@ namespace Ginger.Functionalities
         }
 
 
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
 
-
-
+                xMainItemListCB.IsEnabled = !value;
+                xAttributeNameComboBox.IsEnabled = !value;
+            }
+        }
 
         private void xAttributeNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

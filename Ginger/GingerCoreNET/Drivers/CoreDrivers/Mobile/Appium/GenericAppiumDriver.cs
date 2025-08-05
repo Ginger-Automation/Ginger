@@ -15,24 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-
-#region License
-/*
-Copyright © 2014-2025 European Support Limited
-
-Licensed under the Apache License, Version 2.0 (the "License")
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
-
-http://www.apache.org/licenses/LICENSE-2.0 
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS, 
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-See the License for the specific language governing permissions and 
-limitations under the License. 
-*/
-#endregion
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
@@ -42,6 +24,7 @@ using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
@@ -602,7 +585,9 @@ namespace Amdocs.Ginger.CoreNET
 
                 if (act.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Element)
                 {
-                    elementInfo = LocateElement(act);  // Locate specific element
+                    act.Status = eRunStatus.Failed;
+                    act.Error = "Element-level mobile accessibility analysis is not supported. Please select 'Page' as the target.";
+                    return;
                 }
                 else if (act.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Page)
                 {
@@ -1252,7 +1237,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.UnlockDevice:
-                        PerformLockButtonPress(eLockOperation.UnLock,act);
+                        PerformLockButtonPress(eLockOperation.UnLock, act);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceBattery:
@@ -1416,11 +1401,17 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PushFileToDevice:
-                        PushFileToDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                        if (ValidateAndroidOnlyOperation(act, "Push file to device"))
+                        {
+                            PushFileToDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                        }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PullFileFromDevice:
-                        PullFileFromDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                        if (ValidateAndroidOnlyOperation(act, "Pull file to device"))
+                        {
+                            PullFileFromDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                        }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SetClipboardText:
@@ -1432,9 +1423,12 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceLogs:
-                        string deviceLogsPath = GetDeviceLogs(act.FolderPathInput.ValueForDriver);
-                        act.AddOrUpdateReturnParamActual("DeviceLogFilePath", deviceLogsPath);
-                        Act.AddArtifactToAction(Path.GetFileName(deviceLogsPath), act, deviceLogsPath);
+                        if (ValidateAndroidOnlyOperation(act, "Get Device Logs"))
+                        {
+                            string deviceLogsPath = GetDeviceLogs(act.FolderPathInput.ValueForDriver);
+                            act.AddOrUpdateReturnParamActual("DeviceLogFilePath", deviceLogsPath);
+                            Act.AddArtifactToAction(Path.GetFileName(deviceLogsPath), act, deviceLogsPath);
+                        }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetSpecificPerformanceData:
@@ -1552,7 +1546,17 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        public string SimulatePhotoOrBarcode(string photoString, string action)
+        private bool ValidateAndroidOnlyOperation(ActMobileDevice act, string operationName)
+        {
+            if (DevicePlatformType != eDevicePlatformType.Android)
+            {
+                act.Error = $"{operationName} not supported for this mobile OS or application type.";
+                return false;
+            }
+            return true;
+        }
+
+public string SimulatePhotoOrBarcode(string photoString, string action)
         {
             Bitmap picture = null;
             string response = string.Empty;
@@ -1745,7 +1749,7 @@ namespace Amdocs.Ginger.CoreNET
                     }
 
                     screenshots.Add(croppedBmp);// keep reference for merge
-
+                    string beforeScrollSource = Driver.PageSource;
                     try
                     {
                         ScrollDown(Driver);
@@ -1756,7 +1760,14 @@ namespace Amdocs.Ginger.CoreNET
                     }
 
                     scrollCount++;
-                    Thread.Sleep(500);
+                    Thread.Sleep(1000);
+                    string afterScrollSource = Driver.PageSource;
+
+                    if (beforeScrollSource == afterScrollSource)
+                    {
+                        // No change in content — end of scroll
+                        break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -1800,9 +1811,7 @@ namespace Amdocs.Ginger.CoreNET
 
 
 
-
-
-        private Tuple<int?, int?> GetUserCustomeScreenshotSize()
+    private Tuple<int?, int?> GetUserCustomeScreenshotSize()
         {
             int? customeWidth = null;
             int? customeHeight = null;
@@ -2148,7 +2157,7 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        public void PerformLockButtonPress(eLockOperation LockOperation, ActMobileDevice act=null)
+        public void PerformLockButtonPress(eLockOperation LockOperation, ActMobileDevice act = null)
         {
             switch (DevicePlatformType)
             {
@@ -2159,22 +2168,22 @@ namespace Amdocs.Ginger.CoreNET
                             ((AndroidDriver)Driver).Lock();
                             break;
                         case eLockOperation.UnLock:
-                            if(act != null)
+                            if (act != null)
                             {
                                 try
                                 {
                                     switch (act.UnLockType)
                                     {
                                         case ActMobileDevice.eUnlockType.none:
+                                        {
+                                            if (((AndroidDriver)Driver).IsLocked())
                                             {
-                                                if (((AndroidDriver)Driver).IsLocked())
-                                                {
-                                                    ((AndroidDriver)Driver).Unlock("none", "none", "uiautomator", 5000);
-                                                }
-                                                Thread.Sleep(200);
-                                                SwipeScreen(eSwipeSide.Up, 1, TimeSpan.FromMilliseconds(200));
-                                                break;
+                                                ((AndroidDriver)Driver).Unlock("none", "none", "uiautomator", 5000);
                                             }
+                                            Thread.Sleep(200);
+                                            SwipeScreen(eSwipeSide.Up, 1, TimeSpan.FromMilliseconds(200));
+                                            break;
+                                        }
                                         case ActMobileDevice.eUnlockType.pin:
                                             AndroidUnlock(act, nameof(ActMobileDevice.eUnlockType.pin));
                                             break;
@@ -2210,10 +2219,10 @@ namespace Amdocs.Ginger.CoreNET
                                     switch (act.UnLockType)
                                     {
                                         case ActMobileDevice.eUnlockType.none:
-                                            {
-                                                ((IOSDriver)Driver).Unlock();
-                                            }
-                                            break;
+                                        {
+                                            ((IOSDriver)Driver).Unlock();
+                                        }
+                                        break;
                                         case ActMobileDevice.eUnlockType.pin:
                                         case ActMobileDevice.eUnlockType.password:
                                             System.Threading.Thread.Sleep(200);
@@ -2565,7 +2574,7 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, Bitmap ScreenShot = null)
         {
             if (AppType == eAppType.Web)
             {
@@ -2584,6 +2593,8 @@ namespace Amdocs.Ginger.CoreNET
                 }
 
                 await GetPageSourceDocument(true);
+
+                using var fullImage = ScreenshotToImage(((ITakesScreenshot)Driver).GetScreenshot());
 
                 //Get all elements but only clickable elements= user can interact with them
                 XmlNodeList nodes = pageSourceXml.SelectNodes("//*");
@@ -2639,6 +2650,19 @@ namespace Amdocs.Ginger.CoreNET
                     if (pomSetting.FilteredElementType == null ||
                         (pomSetting.FilteredElementType != null && pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(EI.ElementTypeEnum))))
                     {
+                        if ((EI.XPath).Contains("android") || (EI.XPath).Contains("XCUIElement"))
+                        {
+                            try
+                            {
+                                EI.ScreenShotImage = GingerCoreNET.GeneralLib.General.TakeElementScreenShot(EI, ScreenShot); //TakeElementScreenShot(EI, fullImage);
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, $"Skipping element due to screen-shot error: {ex.Message}", ex);
+                                EI.ScreenShotImage = null;
+                            }
+
+                        }
                         foundElementsList.Add(EI);
                     }
                 }
@@ -2651,6 +2675,15 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
+
+        private Bitmap ScreenshotToImage(Screenshot screenshot)
+        {
+            using (MemoryStream ms = new MemoryStream(screenshot.AsByteArray))
+            using (var original = new Bitmap(ms))
+            {
+                return (Bitmap)original.Clone();
+            }
+        }
         private async Task<ElementInfo> GetElementInfoforXmlNode(XmlNode xmlNode)
         {
             ElementInfo EI = new ElementInfo();

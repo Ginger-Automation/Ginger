@@ -97,6 +97,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 ActBrowserElement.eControlAction.StopMonitoringNetworkLog,
                 ActBrowserElement.eControlAction.SetBlockedUrls,
                 ActBrowserElement.eControlAction.UnblockeUrls,
+                ActBrowserElement.eControlAction.ClearExistingNetworkLog,
             ];
             return browserActElementList;
         }
@@ -594,6 +595,12 @@ namespace GingerCore.Platforms.PlatformsInfo
                     eLocateBy.NA,
                     eLocateBy.Unknown,
                     eLocateBy.ByTagName,
+                    eLocateBy.ByLabel,
+                    eLocateBy.ByPlaceholder,
+                    eLocateBy.ByAltText,
+                    eLocateBy.ByTestID,
+                    eLocateBy.Chained,
+
                 ];
             }
             return mElementLocatorsTypeList;
@@ -645,7 +652,15 @@ namespace GingerCore.Platforms.PlatformsInfo
                 new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false },
                 new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false },
                 new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByDataTestId, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByCSSSelector, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false },
                 new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Less Recommended (sensitive to page design changes)", EnableFriendlyLocator = false },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByPlaceholder, Help = "Less Recommended (sensitive to page design changes)", EnableFriendlyLocator = false },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByClassName, Help = "Less Recommended (sensitive to page design changes)", EnableFriendlyLocator = false },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByLinkText, Help = "Less Recommended (sensitive to page design changes)", EnableFriendlyLocator = false },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByHref, Help = "Less Recommended (sensitive to page design changes)", EnableFriendlyLocator = false },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByAriaLabel, Help = "Less Recommended (sensitive to page design changes)", EnableFriendlyLocator = false },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByTitle, Help = "Less Recommended (sensitive to page design changes)", EnableFriendlyLocator = false },
                 new ElementLocator() { Active = true, LocateBy = eLocateBy.ByTagName, Help = "Less Recommended", EnableFriendlyLocator = true },
             ];
             return learningLocatorsList;

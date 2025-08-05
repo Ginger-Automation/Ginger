@@ -63,18 +63,30 @@
 
             <StackPanel x:Name="xRequestTypePnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
                 <Label x:Name="xRequestTypeLbl" Style="{StaticResource $LabelStyle}">Request Types:</Label>
-                <StackPanel x:Name="xRequestTypeRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="27,0,0,0">
+                <StackPanel x:Name="xRequestTypeRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="11,0,0,0">
                     <UserControlsLib:UCRadioButtons x:Name="xRequestTypeRadioButton" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 </StackPanel>
             </StackPanel>
-            
+
             <StackPanel x:Name="xMonitorURLPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
                 <Label x:Name="xMonitorURLLbl" Style="{StaticResource $LabelStyle}">Monitor Type:</Label>
-                <StackPanel x:Name="xMonitorURLRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="27,0,0,0">
+                <StackPanel x:Name="xMonitorURLRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="18,0,0,0">
                     <UserControlsLib:UCRadioButtons x:Name="xMonitorURLRadioButton" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 </StackPanel>
             </StackPanel>
-
+            <StackPanel x:Name="xSavenetworkLogPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
+                <CheckBox x:Name="xSaveNetworkLog" Content="Save Network Log files" VerticalAlignment="Center" Checked="xSaveNetworkLog_Checked" Unchecked="xSaveNetworkLog_Unchecked" HorizontalAlignment="Left"  Style="{StaticResource $CeckBoxStyle}"/>
+            </StackPanel>
+            <StackPanel x:Name="xLogFileUserDefineName" Orientation="Vertical" DockPanel.Dock="Top" Margin="0,10,0,0">
+                <StackPanel  Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
+                    <Label  Content="Request File Name:" Style="{StaticResource $LabelStyle}"/>
+                    <Actions:UCValueExpression x:Name="xRequestFileName" Margin="18,0,0,0" ToolTip="please provide the request file name" Width="300" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                </StackPanel>
+                <StackPanel  Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
+                    <Label  Content="Response File Name:" Style="{StaticResource $LabelStyle}"/>
+                    <Actions:UCValueExpression x:Name="xResponseFileName" Margin="10,0,0,0" ToolTip="please provide the response file name" Width="300" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                </StackPanel>
+            </StackPanel>
             <Grid x:Name="xUpdateNetworkUrlGridPnl" Visibility="Collapsed" HorizontalAlignment="Stretch" Margin="0,10,0,0" Height="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>

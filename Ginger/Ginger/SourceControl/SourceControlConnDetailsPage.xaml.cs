@@ -49,7 +49,7 @@ namespace Ginger.SourceControl
         }
 
 
-      
+
 
         private void CopyMouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -129,14 +129,9 @@ namespace Ginger.SourceControl
                     {
                         SourceControlClassTextBox.Text = nameof(GingerSolutionSourceControl.SourceControlInfo.Type);
                     }
-                    if (string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.Branch))
-                    {
-                        xSourceControlBranchTextBox.Text = SourceControlIntegration.GetCurrentBranchForSolution(WorkSpace.Instance.Solution.SourceControl);
-                    }
-                    else
-                    {
-                        xSourceControlBranchTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Branch;
-                    }
+                   
+                    xSourceControlBranchTextBox.Text = SourceControlIntegration.GetCurrentBranchForSolution(WorkSpace.Instance.Solution.SourceControl) ?? string.Empty;
+
                     SourceControlUserTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Username;
                     SourceControlPassTextBox.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
                     SourceControlUserAuthorNameTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.AuthorName;
@@ -189,9 +184,10 @@ namespace Ginger.SourceControl
                         return;
                     }
                 }
-                Close();
+                WorkSpace.Instance.UserProfile.SetSourceControlPropertyOnUserProfile(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Guid);
                 WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
                 WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
+                Close();
 
             }
         }
@@ -204,9 +200,6 @@ namespace Ginger.SourceControl
         {
             if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.SourceControl != null)
             {
-
-                WorkSpace.Instance.UserProfile.SetSourceControlPropertyOnUserProfile(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Guid);
-
                 SourceControlIntegration.Disconnect(WorkSpace.Instance.Solution.SourceControl);
             }
             genWin.Close();
