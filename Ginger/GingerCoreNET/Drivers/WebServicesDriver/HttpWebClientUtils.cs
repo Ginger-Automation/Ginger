@@ -797,19 +797,34 @@ namespace GingerCore.Actions.WebAPI
                 if (!string.IsNullOrEmpty(ContentTypeHeader))
                 {
                     RequestMessage.Content ??= new StringContent(string.Empty);
-                    RequestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue(ContentTypeHeader);
+
+                    try
+                    {
+                        RequestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue(ContentTypeHeader);
+                    }
+                    catch (FormatException ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Invalid Content-Type header format: '{ContentTypeHeader}'. Exception: {ex.Message}");
+                        mAct.Error = $"Invalid Content-Type header format: '{ContentTypeHeader}'. Please check the header value.";
+                        mAct.ExInfo = ex.Message;
+                        throw;
+                    }
                 }
                 else
                 {
-                    Client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", ContentTypeHeader);
+                    if (ContentTypeHeader != null)
+                    {
+                        Client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", ContentTypeHeader);
+                    }
                 }
+
             }
             else
             {
                 switch (requestContentType)
                 {
                     case ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded:
-                        if (mAct.RequestKeyValues.Any())
+                        if (mAct.RequestKeyValues.Count != 0)
                         {
                             RequestMessage.Content = new FormUrlEncodedContent(ConstructURLEncoded((ActWebAPIRest)mAct));
                         }
