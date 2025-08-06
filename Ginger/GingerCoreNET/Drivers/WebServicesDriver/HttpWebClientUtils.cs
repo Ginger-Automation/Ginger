@@ -793,17 +793,34 @@ namespace GingerCore.Actions.WebAPI
                     string ValuesURL = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.EndPointURL) + HttpUtility.UrlEncode(GetRequest[..^1]);
                     Client.BaseAddress = new Uri(ValuesURL);
                 }
+                // Ensure Content-Type header is added to RequestMessage.Headers for GET requests
+                if (!string.IsNullOrEmpty(ContentTypeHeader))
+                {
+                    RequestMessage.Content ??= new StringContent(string.Empty);
+                    try
+                    {
+                        RequestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue(ContentTypeHeader);
+                    }
+                    catch (FormatException ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Invalid Content-Type header format: '{ContentTypeHeader}'. Exception: {ex.Message}");
+                        mAct.Error = $"Invalid Content-Type header format: '{ContentTypeHeader}'. Please check the header value.";
+                        mAct.ExInfo = ex.Message;
+                        throw;
+                    }
+                }
                 else
                 {
                     Client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", ContentTypeHeader);
                 }
+
             }
             else
             {
                 switch (requestContentType)
                 {
                     case ApplicationAPIUtils.eRequestContentType.XwwwFormUrlEncoded:
-                        if (mAct.RequestKeyValues.Any())
+                        if (mAct.RequestKeyValues.Count != 0)
                         {
                             RequestMessage.Content = new FormUrlEncodedContent(ConstructURLEncoded((ActWebAPIRest)mAct));
                         }
