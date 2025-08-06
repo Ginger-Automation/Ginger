@@ -27,6 +27,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -115,6 +116,21 @@ namespace GingerCore
             }
         }
         #endregion
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<SolutionCategoryDefinition> CategoriesDefinitions = [];
+
+        public ObservableList<SolutionCategoryDefinition> MergedCategoriesDefinitions
+        {
+            get
+            {
+                return General.MergeCategories(CategoriesDefinitions);
+            }
+            set
+            {
+                General.UpdateStoredCategories(CategoriesDefinitions, value);
+            }
+        }
 
         public bool IsNotGherkinOptimizedActivity { get { return ActivitiesGroupID is not "Optimized Activities" and not "Optimized Activities - Not in Use"; } }
 

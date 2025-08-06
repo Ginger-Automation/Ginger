@@ -18,14 +18,17 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.BusinessFlowWindows;
+using Ginger.SolutionCategories;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -44,6 +47,7 @@ namespace GingerWPF.BusinessFlowsLib
         Context mContext;
         Ginger.General.eRIPageViewMode mPageViewMode;
         private readonly bool _ignoreValidationRules;
+        SolutionCategoriesPage mSolutionCategoriesPage = null;
 
         public BusinessFlowConfigurationsPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode, bool ignoreValidationRules = false)
         {
@@ -173,6 +177,13 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xCreatedByTextBox, TextBox.TextProperty, mBusinessFlow.RepositoryItemHeader, nameof(RepositoryItemHeader.CreatedBy));
             BindingHandler.ObjFieldBinding(xAutoPrecentageTextBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.AutomationPrecentage), System.Windows.Data.BindingMode.OneWay);
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mBusinessFlow, nameof(RepositoryItemBase.Publish));
+            if (mSolutionCategoriesPage == null)
+            {
+                mSolutionCategoriesPage = new SolutionCategoriesPage();
+                xCategoriesFrame.ClearAndSetContent(mSolutionCategoriesPage);
+                mSolutionCategoriesPage.CategoryValueChanged += CategoriesPage_CategoryValueChanged;
+            }
+            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mBusinessFlow.MergedCategoriesDefinitions);
             //// Per source we can show specific source page info
             //if (mBusinessFlow.Source == BusinessFlow.eSource.Gherkin)
             //{
@@ -181,6 +192,14 @@ namespace GingerWPF.BusinessFlowsLib
             //}
 
             SetGridView();
+        }
+
+        private void CategoriesPage_CategoryValueChanged(object sender, EventArgs e)
+        {
+            if (sender is ObservableList<SolutionCategoryDefinition> categories && mBusinessFlow != null)
+            {
+                mBusinessFlow.MergedCategoriesDefinitions = categories;
+            }
         }
 
         private void ClearBindings()
@@ -192,6 +211,11 @@ namespace GingerWPF.BusinessFlowsLib
             BindingOperations.ClearAllBindings(xCreatedByTextBox);
             BindingOperations.ClearAllBindings(xAutoPrecentageTextBox);
             BindingOperations.ClearAllBindings(xPublishcheckbox);
+            if (mSolutionCategoriesPage != null)
+            {
+                mSolutionCategoriesPage.CategoryValueChanged -= CategoriesPage_CategoryValueChanged;
+            }
+            xCategoriesFrame.ClearControlsBindings();
         }
 
         public void UpdateBusinessFlow(BusinessFlow updateBusinessFlow)

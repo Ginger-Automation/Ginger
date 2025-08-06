@@ -20,7 +20,9 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
+using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Ginger.Activities;
+using Ginger.SolutionCategories;
 using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Activities;
@@ -47,6 +49,7 @@ namespace Ginger.BusinessFlowPages
         Activity mActivity;
         Context mContext;
         General.eRIPageViewMode mPageViewMode;
+        SolutionCategoriesPage mSolutionCategoriesPage = null;
 
         public ActivityDetailsPage(Activity activity, Context context, General.eRIPageViewMode pageViewMode)
         {
@@ -138,11 +141,24 @@ namespace Ginger.BusinessFlowPages
             BindingOperations.ClearAllBindings(xConsumerCB);
             BindingOperations.ClearAllBindings(xAutomationStatusCombo);
             BindingOperations.ClearAllBindings(xMandatoryActivityCB);
-            BindingOperations.ClearAllBindings(xPublishcheckbox);
+            BindingOperations.ClearAllBindings(xPublishcheckbox);   
             BindingOperations.ClearAllBindings(xHandlerTypeCombo);
             BindingOperations.ClearAllBindings(xErrorHandlerMappingCmb);
             BindingOperations.ClearAllBindings(xHandlerPostExecutionCombo);
             BindingOperations.ClearAllBindings(xHandlerTriggerOnCombo);
+            if (mSolutionCategoriesPage != null)
+            {
+                mSolutionCategoriesPage.CategoryValueChanged -= CategoriesPage_CategoryValueChanged;
+            }
+            xCategoriesFrame.ClearControlsBindings();
+        }
+
+        private void CategoriesPage_CategoryValueChanged(object sender, EventArgs e)
+        {
+            if (sender is ObservableList<SolutionCategoryDefinition> categories && mActivity != null)
+            {
+                mActivity.MergedCategoriesDefinitions = categories;
+            }
         }
 
         private void BindControls()
@@ -162,7 +178,13 @@ namespace Ginger.BusinessFlowPages
             xAutomationStatusCombo.BindControl(mActivity, nameof(Activity.AutomationStatus));
             BindingHandler.ObjFieldBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Mandatory));
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Publish));
-
+            if (mSolutionCategoriesPage == null)
+            {
+                mSolutionCategoriesPage = new SolutionCategoriesPage();
+                xCategoriesFrame.ClearAndSetContent(mSolutionCategoriesPage);
+                mSolutionCategoriesPage.CategoryValueChanged += CategoriesPage_CategoryValueChanged;
+            }
+            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mActivity.MergedCategoriesDefinitions);
 
             xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
             if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ApplicationPlatforms != null)
