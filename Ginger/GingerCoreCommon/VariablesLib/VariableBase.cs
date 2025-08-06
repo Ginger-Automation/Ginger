@@ -625,6 +625,7 @@ namespace GingerCore.Variables
                     OnPropertyChanged(nameof(MappedOutputValue));
                 }
                 if (String.IsNullOrEmpty(value) == false || VarValChanged == true)
+                if (!string.IsNullOrEmpty(value) && value != GetInitialValue())
                     DiffrentFromOrigin = true;
                 else
                     DiffrentFromOrigin = false;

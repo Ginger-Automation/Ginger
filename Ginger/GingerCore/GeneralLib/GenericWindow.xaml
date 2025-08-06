@@ -55,7 +55,7 @@
 
             <GridSplitter Height="1" ResizeDirection="Rows" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0" IsEnabled="False" Background="LightGray" />
 
-            <DockPanel x:Name="BottomPanel" Grid.Row="2" Background="Transparent">
+            <DockPanel x:Name="BottomPanel" Grid.Row="2" Background="Transparent" >
                 <Button x:Name="CloseBtn" IsCancel="True" Content="Close" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,10,0" Click="CloseBtn_Click" Style="{StaticResource $RoundTextButtonStyle_Generic_Highlight}" Visibility="Collapsed" />
             </DockPanel>
         </Grid>
