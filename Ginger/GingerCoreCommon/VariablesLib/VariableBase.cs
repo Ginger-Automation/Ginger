@@ -80,7 +80,8 @@ namespace GingerCore.Variables
             ApplicationModelParameter,
             DataSource,
             ActivityOutputVariable,
-            ValueExpression
+            ValueExpression,
+            Value
         }
 
         private bool mSetAsInputValue = true;
@@ -156,8 +157,25 @@ namespace GingerCore.Variables
         public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(nameof(Description)); } } }
 
         private string mValue;
-        public virtual string Value { get { return mValue; } set { if (mValue != value) { mValue = value; OnPropertyChanged(nameof(Value)); } } }
+        public virtual string Value { get { return mValue; } set { if (mValue != value) { mValue = value; OnPropertyChanged(nameof(Value)); OnPropertyChanged(nameof(CurrentEffectiveValue)); } } }
 
+        /// <summary>
+        /// Gets the effective current value that should be displayed - either the mapped value if it's a "Value" type mapping, or the regular value
+        /// </summary>
+        public string CurrentEffectiveValue
+        {
+            get
+            {
+                // If there's a "Value" type mapping with a value, return the mapped value
+                // This is what the user should see as the current value during configuration
+                if (MappedOutputType == eOutputType.Value && !string.IsNullOrEmpty(MappedOutputValue))
+                {
+                    return MappedOutputValue;
+                }
+                // Otherwise return the regular value
+                return Value;
+            }
+        }
 
         public override void PostDeserialization()
         {
@@ -607,7 +625,19 @@ namespace GingerCore.Variables
 
         private eOutputType mMappedOutputType;
         [IsSerializedForLocalRepository]
-        public eOutputType MappedOutputType { get { return mMappedOutputType; } set { if (mMappedOutputType != value) { mMappedOutputType = value; OnPropertyChanged(nameof(MappedOutputType)); } } }
+        public eOutputType MappedOutputType 
+        { 
+            get { return mMappedOutputType; } 
+            set 
+            { 
+                if (mMappedOutputType != value) 
+                { 
+                    mMappedOutputType = value; 
+                    OnPropertyChanged(nameof(MappedOutputType)); 
+                    OnPropertyChanged(nameof(CurrentEffectiveValue));
+                } 
+            } 
+        }
 
         private string mMappedOutputValue;
         [IsSerializedForLocalRepository]
@@ -623,9 +653,9 @@ namespace GingerCore.Variables
                 {
                     mMappedOutputValue = value;
                     OnPropertyChanged(nameof(MappedOutputValue));
+                    OnPropertyChanged(nameof(CurrentEffectiveValue));
                 }
                 if (String.IsNullOrEmpty(value) == false || VarValChanged == true)
-                if (!string.IsNullOrEmpty(value) && value != GetInitialValue())
                     DiffrentFromOrigin = true;
                 else
                     DiffrentFromOrigin = false;

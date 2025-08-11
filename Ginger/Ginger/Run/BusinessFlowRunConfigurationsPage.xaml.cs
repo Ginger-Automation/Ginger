@@ -163,8 +163,7 @@ namespace Ginger.Run
                 new GridColView() { Field = nameof(VariableBase.Image), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 },
                 new GridColView() { Field = nameof(VariableBase.Name), Header = "Name", WidthWeight = 20, ReadOnly = true, BindingMode = BindingMode.OneWay },
                 new GridColView() { Field = nameof(VariableBase.MandatoryIndication), Header = " ", WidthWeight = 1, ReadOnly = true, BindingMode = BindingMode.OneWay, Style = FindResource("$GridColumnRedTextStyle") as Style },
-                // Show Initial Value for VariableString, otherwise fallback to VariableBase.Value
-                new GridColView() { Field = "InitialStringValue", Header = "Initial Value", WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true },
+                new GridColView() { Field = nameof(VariableBase.Value), Header = "Initial Value", WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true },
             ]
             };
             if (mWindowMode == eWindowMode.Configuration)
@@ -210,6 +209,7 @@ namespace Ginger.Run
 
         private void LoadGridData()
         {
+            //TODO: check if Summary view is used...
             switch (mWindowMode)
             {
                 case eWindowMode.Configuration:
@@ -217,34 +217,30 @@ namespace Ginger.Run
                     grdVariables.Title = "'" + mBusinessFlow.Name + "' Run " + GingerDicser.GetTermResValue(eTermResKey.Variables);
                     ObservableList<VariableBase> bfInputVariables = mBusinessFlow.GetBFandActivitiesVariabeles(true, true);
 
+                    //**Legacy--- set the Variabels can be used- user should use Global Variabels/ Output Variabels instead
                     ObservableList<string> optionalVars =
                     [
-                        string.Empty,
+                        string.Empty,//default value for clear selection
                     ];
                     foreach (VariableBase var in ((GingerExecutionEngine)mGingerRunner.Executor).GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, mBusinessFlow, includeGlobalVars: true, includePrevRunnersVars: false))
                     {
                         optionalVars.Add(var.Name);
                     }
+                    //allow setting  vars options only to variables types which supports setting value
                     foreach (VariableBase inputVar in bfInputVariables)
                     {
                         if (inputVar.SupportSetValue)
                         {
                             inputVar.PossibleVariables = optionalVars;
                         }
-                        // Ensure Customized? is only true if Value != InitialValue
-                        inputVar.DiffrentFromOrigin = inputVar.Value != inputVar.GetInitialValue();
-                        // Ensure MappedOutputType/Value are set for customized variables
-                        if (inputVar.DiffrentFromOrigin && inputVar.MappedOutputType == VariableBase.eOutputType.None)
-                        {
-                            inputVar.MappedOutputType = VariableBase.eOutputType.Value;
-                            inputVar.MappedOutputValue = inputVar.Value;
-                        }
                     }
 
+                    //Set Output Variabels can be used
                     ObservableList<VariableBase> optionalOutputVars =
                     [
                         .. ((GingerExecutionEngine)mGingerRunner.Executor).GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, mBusinessFlow, includeGlobalVars: false, includePrevRunnersVars: true),
                     ];
+                    //allow setting output vars options only to variables types which supports setting value
                     foreach (VariableBase inputVar in bfInputVariables)
                     {
                         if (inputVar.SupportSetValue)

@@ -35,9 +35,9 @@
                 </ToolTip>
             </ComboBox.ToolTip>
         </ComboBox>
+        <TextBox x:Name="xValueTextBox" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBoxStyle}" FontWeight="Bold" Height="21" BorderThickness="0,0,0,1" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" Visibility="Collapsed"></TextBox>
         <Button x:Name="xDSConfigBtn" Grid.Column="1" VerticalAlignment="Top" Click="xDSConfigBtn_Click" HorizontalAlignment="Right" Height="21" Width="20" Margin="0,0,0.6,0" Style="{StaticResource $InputButtonStyle}" Visibility="Visible">...</Button>
         <TextBox x:Name="xDSExpressionTxtbox" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBoxStyle}" FontWeight="Bold" Height="21" Margin="0,0,22,0" IsReadOnly="True" BorderThickness="0,0,0,1" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" Visibility="Visible"></TextBox>
         <Actions:UCValueExpression x:Name="xDBValueExpression" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontWeight="Bold" Height="21"  Visibility="Visible"/>
-        <TextBox x:Name="xValueInputTextBox" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBoxStyle}" FontWeight="Bold" Height="21" Margin="0,0,0,0" BorderThickness="0,0,0,1" ToolTip="Enter value" Visibility="Collapsed"/>
     </Grid>
 </UserControl>

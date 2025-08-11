@@ -311,6 +311,12 @@ namespace Ginger.Run
                 originalVar.Value = customizedVar.Value;
             }
 
+            // Handle "Value" mapping type - copy the mapped value to the current value
+            if (customizedVar.MappedOutputType == VariableBase.eOutputType.Value && !string.IsNullOrEmpty(customizedVar.MappedOutputValue))
+            {
+                originalVar.Value = customizedVar.MappedOutputValue;
+            }
+
             //Restore original description values
             originalVar.Name = originalCopy.Name;
             originalVar.Description = originalCopy.Description;

@@ -208,6 +208,7 @@ namespace Ginger.UserControlsLib
             BindingOperations.ClearAllBindings(xVariablesComboBox);
             BindingOperations.ClearAllBindings(xOptionalValuesComboBox);
             BindingOperations.ClearAllBindings(xDSExpressionTxtbox);
+            BindingOperations.ClearAllBindings(xValueTextBox);
             if (MappedType == eDataType.Variable.ToString())
             {
                 BindingHandler.ObjFieldBinding(xVariablesComboBox, ComboBox.SelectedValueProperty, this, nameof(MappedValue));
@@ -235,9 +236,7 @@ namespace Ginger.UserControlsLib
             }
             else if (MappedType == eDataType.Value.ToString())
             {
-                // Show a textbox for direct value input
-                xValueInputTextBox.Visibility = Visibility.Visible;
-                BindingHandler.ObjFieldBinding(xValueInputTextBox, TextBox.TextProperty, this, nameof(MappedValue));
+                BindingHandler.ObjFieldBinding(xValueTextBox, TextBox.TextProperty, this, nameof(MappedValue));
             }
 
             SetValueControlsData();
@@ -286,6 +285,15 @@ namespace Ginger.UserControlsLib
                     xOptionalValuesComboBox.Visibility = Visibility.Hidden;
                 }
 
+                if (MappedType == eDataType.Value.ToString() && xValueTextBox != null)
+                {
+                    xValueTextBox.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    xValueTextBox.Visibility = Visibility.Hidden;
+                }
+
                 if (MappedType == eDataType.DataSource.ToString()  && xDSExpressionTxtbox != null)
                 {
                     xDSExpressionTxtbox.Visibility = Visibility.Visible;
@@ -305,21 +313,6 @@ namespace Ginger.UserControlsLib
                 {
                     xDBValueExpression.Visibility = Visibility.Hidden;
                 }
-
-                if (MappedType == eDataType.Value.ToString() && xValueInputTextBox != null)
-                {
-                    xValueInputTextBox.Visibility = Visibility.Visible;
-                }
-                else if (xValueInputTextBox != null)
-                {
-                    xValueInputTextBox.Visibility = Visibility.Hidden;
-                }
-            }
-
-            // Hide the value input textbox for other types
-            if (MappedType != eDataType.Value.ToString() && xValueInputTextBox != null)
-            {
-                xValueInputTextBox.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -343,15 +336,6 @@ namespace Ginger.UserControlsLib
                 OnPropertyChanged(nameof(MappedValue));
             }
 
-            var dataContextVar = this.DataContext as VariableBase;
-            if (MappedType == eDataType.Value.ToString() && dataContextVar != null)
-            {
-                // Set the variable's runtime value for this runset
-                dataContextVar.Value = MappedValue;
-                // Mark as customized if different from initial value
-                dataContextVar.DiffrentFromOrigin = (MappedValue != dataContextVar.GetInitialValue());
-            }
-            // For other mapping types, keep existing logic
             MarkMappedValueValidation();
         }
 
@@ -359,7 +343,7 @@ namespace Ginger.UserControlsLib
         {
             bool isValid = true;
 
-            if ((MappedType != eDataType.None.ToString() && MappedValue == string.Empty)
+            if ((MappedType != eDataType.None.ToString() && MappedType != eDataType.Value.ToString() && MappedValue == string.Empty)
                 || (MappedType == eDataType.Variable.ToString() && !GingerCore.General.CheckComboItemExist(xVariablesComboBox, MappedValue))
                 || ((MappedType == eDataType.OutputVariable.ToString() && !GingerCore.General.CheckComboItemExist(xOptionalValuesComboBox, MappedValue, nameof(VariableBase.VariableInstanceInfo)))
                 || (MappedType == eDataType.GlobalVariable.ToString() || MappedType == eDataType.ApplicationModelParameter.ToString()) && !GingerCore.General.CheckComboItemExist(xOptionalValuesComboBox, MappedValue, "Guid"))
@@ -468,6 +452,7 @@ namespace Ginger.UserControlsLib
             GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.ApplicationModelParameter);
             GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.DataSource);
             GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.ValueExpression);
+            GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.Value);
             xDSConfigBtn.IsEnabled = false;
             xDBValueExpression.Visibility = Visibility.Collapsed;
         }
@@ -491,6 +476,7 @@ namespace Ginger.UserControlsLib
                 ucDataMapping.SetValue(UCDataMapping.VariabelsSourceProperty, options._VariabelsSourceList);
             }
 
+
             if (!string.IsNullOrEmpty(options._OutputVariabelsSourceProperty))
             {
                 Binding outputVariabelsSourceBinding = new Binding(options._OutputVariabelsSourceProperty)
@@ -508,28 +494,12 @@ namespace Ginger.UserControlsLib
             };
             ucDataMapping.SetBinding(UCDataMapping.MappedTypeProperty, mappedItemTypeBinding);
 
-            // Bind MappedValueProperty to Value if mapping type is 'Value', otherwise to MappedOutputValue
-            Binding mappedValueBinding;
-            if (options._DataValueProperty == nameof(VariableBase.MappedOutputValue))
+            Binding mappedValueBinding = new Binding(options._DataValueProperty)
             {
-                mappedValueBinding = new Binding()
-                {
-                    Path = new PropertyPath("Value"),
-                    Mode = BindingMode.TwoWay,
-                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-                    Converter = new UCDataMappingValueConverter()
-                };
-                ucDataMapping.SetBinding(UCDataMapping.MappedValueProperty, mappedValueBinding);
-            }
-            else
-            {
-                mappedValueBinding = new Binding(options._DataValueProperty)
-                {
-                    Mode = BindingMode.TwoWay,
-                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-                };
-                ucDataMapping.SetBinding(UCDataMapping.MappedValueProperty, mappedValueBinding);
-            }
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            ucDataMapping.SetBinding(UCDataMapping.MappedValueProperty, mappedValueBinding);
 
             if (!string.IsNullOrEmpty(options._EnableDataMappingProperty))
             {
@@ -712,18 +682,5 @@ namespace Ginger.UserControlsLib
         }
         #endregion Database
 
-    }
-
-    // Add a value converter to handle binding to Value only when mapping type is 'Value'
-    public class UCDataMappingValueConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            return value;
-        }
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            return value;
-        }
     }
 }
