@@ -62,9 +62,10 @@ namespace Ginger.BusinessFlowPages
             BindControls();
         }
 
-        public void UpdatePageViewMode(Ginger.General.eRIPageViewMode pageViewMode)
+        public void UpdatePageViewMode(Ginger.General.eRIPageViewMode pageViewMode, Activity activity)
         {
             mPageViewMode = pageViewMode;
+            mActivity = activity;
             SetUI();
         }
         private void SetUI()
@@ -87,6 +88,9 @@ namespace Ginger.BusinessFlowPages
                 xSpecificErrorHandlerBtn.IsEnabled = false;
                 xSharedRepoInstanceUC.IsEnabled = false;
                 xConsumerCB.IsEnabled = false;
+                xCategoriesExpander.Visibility = Visibility.Visible;
+                xCategoriesExpander.IsExpanded = true;
+                xCategoriesExpander.IsEnabled = false;
             }
             else
             {
@@ -106,11 +110,21 @@ namespace Ginger.BusinessFlowPages
                 xSpecificErrorHandlerBtn.IsEnabled = true;
                 xSharedRepoInstanceUC.IsEnabled = true;
                 xConsumerCB.IsEnabled = true;
+                if (mActivity.Type == Amdocs.Ginger.Repository.eSharedItemType.Link || mActivity.ParentGuid != Guid.Empty)
+                {
+                    xCategoriesExpander.Visibility = Visibility.Visible;
+                    xCategoriesExpander.IsEnabled = true;
+                }
+                else
+                {
+                    xCategoriesExpander.Visibility = Visibility.Collapsed;
+                }
             }
 
 
             if (mPageViewMode == Ginger.General.eRIPageViewMode.SharedReposiotry)
             {
+                xCategoriesExpander.Visibility = Visibility.Visible;
                 xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;
                 xSharedRepoInstanceUCCol.Width = new GridLength(0);
             }
