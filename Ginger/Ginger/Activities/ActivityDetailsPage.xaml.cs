@@ -110,7 +110,7 @@ namespace Ginger.BusinessFlowPages
                 xSpecificErrorHandlerBtn.IsEnabled = true;
                 xSharedRepoInstanceUC.IsEnabled = true;
                 xConsumerCB.IsEnabled = true;
-                if (mActivity.Type == Amdocs.Ginger.Repository.eSharedItemType.Link || mActivity.ParentGuid != Guid.Empty)
+                if (mActivity != null && (mActivity.IsLinkedItem || mActivity.ParentGuid != Guid.Empty))
                 {
                     xCategoriesExpander.Visibility = Visibility.Visible;
                     xCategoriesExpander.IsEnabled = true;
@@ -125,6 +125,7 @@ namespace Ginger.BusinessFlowPages
             if (mPageViewMode == Ginger.General.eRIPageViewMode.SharedReposiotry)
             {
                 xCategoriesExpander.Visibility = Visibility.Visible;
+                xCategoriesExpander.IsEnabled = true;
                 xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;
                 xSharedRepoInstanceUCCol.Width = new GridLength(0);
             }
