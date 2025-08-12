@@ -65,7 +65,10 @@ namespace Ginger.BusinessFlowPages
         public void UpdatePageViewMode(Ginger.General.eRIPageViewMode pageViewMode, Activity activity)
         {
             mPageViewMode = pageViewMode;
-            mActivity = activity;
+            if (!ReferenceEquals(mActivity, activity))
+            {
+                UpdateActivity(activity);
+            }
             SetUI();
         }
         private void SetUI()
