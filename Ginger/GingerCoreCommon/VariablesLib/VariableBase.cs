@@ -177,6 +177,17 @@ namespace GingerCore.Variables
             }
         }
 
+        /// <summary>
+        /// Gets the initial value of the variable as a property for data binding
+        /// </summary>
+        public string InitialValue
+        {
+            get
+            {
+                return GetInitialValue();
+            }
+        }
+
         public override void PostDeserialization()
         {
             ResetValue();

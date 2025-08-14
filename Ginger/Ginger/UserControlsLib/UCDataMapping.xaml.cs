@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2025 European Support Limited
 
@@ -28,10 +28,13 @@ using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Ginger.UserControlsLib
@@ -56,6 +59,16 @@ namespace Ginger.UserControlsLib
         public static readonly DependencyProperty RestrictedMappingTypesProperty = DependencyProperty.Register("RestrictedMappingTypes",
             typeof(IEnumerable<RestrictedMappingType>), typeof(UCDataMapping));
 
+        // Add a new dependency property to hold the target variable type context
+        public static readonly DependencyProperty TargetVariableTypeProperty = DependencyProperty.Register("TargetVariableType",
+            typeof(Type), typeof(UCDataMapping));
+
+        public Type TargetVariableType
+        {
+            get { return (Type)GetValue(TargetVariableTypeProperty); }
+            set { SetValue(TargetVariableTypeProperty, value); }
+        }
+
         public enum eDataType
         {
             None,
@@ -77,6 +90,18 @@ namespace Ginger.UserControlsLib
             {
                 Name = name;
                 Reason = reason;
+            }
+        }
+
+        public sealed class ValidationResult
+        {
+            public bool IsValid { get; }
+            public string ErrorMessage { get; }
+
+            public ValidationResult(bool isValid, string errorMessage = null)
+            {
+                IsValid = isValid;
+                ErrorMessage = errorMessage;
             }
         }
 
@@ -174,6 +199,17 @@ namespace Ginger.UserControlsLib
             this.IsEnabled = false;
             InitTypeOptions();
             InitValuesOptions();
+            
+            // Subscribe to the Unloaded event to clean up event handlers
+            this.Unloaded += UCDataMapping_Unloaded;
+        }
+
+        private void UCDataMapping_Unloaded(object sender, RoutedEventArgs e)
+        {
+            // Clean up event handlers to prevent memory leaks
+            xValueTextBox.TextChanged -= xValueTextBox_TextChanged;
+            xValueTextBox.PreviewTextInput -= xValueTextBox_PreviewTextInput;
+            this.Unloaded -= UCDataMapping_Unloaded;
         }
 
         #region Global
@@ -209,6 +245,11 @@ namespace Ginger.UserControlsLib
             BindingOperations.ClearAllBindings(xOptionalValuesComboBox);
             BindingOperations.ClearAllBindings(xDSExpressionTxtbox);
             BindingOperations.ClearAllBindings(xValueTextBox);
+            
+            // Remove previous event handlers to avoid multiple subscriptions
+            xValueTextBox.TextChanged -= xValueTextBox_TextChanged;
+            xValueTextBox.PreviewTextInput -= xValueTextBox_PreviewTextInput;
+            
             if (MappedType == eDataType.Variable.ToString())
             {
                 BindingHandler.ObjFieldBinding(xVariablesComboBox, ComboBox.SelectedValueProperty, this, nameof(MappedValue));
@@ -237,6 +278,10 @@ namespace Ginger.UserControlsLib
             else if (MappedType == eDataType.Value.ToString())
             {
                 BindingHandler.ObjFieldBinding(xValueTextBox, TextBox.TextProperty, this, nameof(MappedValue));
+                
+                // Add input validation for number variables
+                xValueTextBox.TextChanged += xValueTextBox_TextChanged;
+                xValueTextBox.PreviewTextInput += xValueTextBox_PreviewTextInput;
             }
 
             SetValueControlsData();
@@ -342,6 +387,7 @@ namespace Ginger.UserControlsLib
         private void MarkMappedValueValidation()
         {
             bool isValid = true;
+            string validationMessage = null;
 
             if ((MappedType != eDataType.None.ToString() && MappedType != eDataType.Value.ToString() && MappedValue == string.Empty)
                 || (MappedType == eDataType.Variable.ToString() && !GingerCore.General.CheckComboItemExist(xVariablesComboBox, MappedValue))
@@ -351,17 +397,138 @@ namespace Ginger.UserControlsLib
             {
                 isValid = false;
             }
+            else if (MappedType == eDataType.Value.ToString())
+            {
+                var valueValidationResult = ValidateValueForVariableType();
+                isValid = valueValidationResult.IsValid;
+                validationMessage = valueValidationResult.ErrorMessage;
+            }
 
             if (isValid == false)
             {
                 this.BorderThickness = new Thickness(1);
                 this.BorderBrush = Brushes.Red;
+                
+                // Set tooltip with validation message if available
+                if (!string.IsNullOrEmpty(validationMessage))
+                {
+                    xValueTextBox.ToolTip = validationMessage;
+                }
             }
             else
             {
                 this.BorderThickness = new Thickness(0);
                 this.BorderBrush = null;
+                
+                // Clear tooltip when valid
+                if (MappedType == eDataType.Value.ToString())
+                {
+                    xValueTextBox.ToolTip = null;
+                }
             }
+        }
+
+        private void xValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            MarkMappedValueValidation();
+        }
+
+        private void xValueTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (IsNumberVariable())
+            {
+                TextBox textBox = (TextBox)sender;
+                e.Handled = !IsValidNumericInput(e.Text, textBox);
+            }
+        }
+
+        private bool IsNumberVariable()
+        {
+            // Check if the target variable type is VariableNumber
+            if (TargetVariableType != null && TargetVariableType == typeof(VariableNumber))
+            {
+                return true;
+            }
+
+            // Fallback: Check DataContext if it's a VariableNumber
+            if (DataContext is VariableNumber)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool IsValidNumericInput(string inputText, TextBox textBox)
+        {
+            // Get the current text and construct what the new text would be
+            string currentText = textBox.Text ?? "";
+            int selectionStart = textBox.SelectionStart;
+            int selectionLength = textBox.SelectionLength;
+            
+            // Construct the new text after the input
+            string newText = currentText.Remove(selectionStart, selectionLength).Insert(selectionStart, inputText);
+            
+            // Allow empty string (user can delete everything)
+            if (string.IsNullOrEmpty(newText))
+            {
+                return true;
+            }
+            
+            // Allow single minus sign at the beginning for negative numbers
+            if (newText == "-")
+            {
+                return true;
+            }
+            
+            // Allow single decimal point
+            if (newText == ".")
+            {
+                return true;
+            }
+            
+            // Use regex to check for valid numeric input (including decimal numbers)
+            // This allows: optional minus, digits, optional decimal point with digits
+            var numericRegex = new Regex(@"^-?(\d+\.?\d*|\.\d+)$");
+            return numericRegex.IsMatch(newText);
+        }
+
+        private ValidationResult ValidateValueForVariableType()
+        {
+            if (string.IsNullOrEmpty(MappedValue))
+            {
+                return new ValidationResult(true); // Empty value is valid for Value type
+            }
+
+            // For generic value validation, we'll do basic checks
+            // In a more specific implementation, you might have more context about the expected variable type
+            
+            // Check if the value contains only valid characters
+            if (MappedValue.Any(c => char.IsControl(c) && c != '\t' && c != '\n' && c != '\r'))
+            {
+                return new ValidationResult(false, "Value contains invalid control characters");
+            }
+
+            // If we know this is a number variable, validate it as a number
+            if (IsNumberVariable())
+            {
+                return ValidateNumericValue(MappedValue);
+            }
+
+            return new ValidationResult(true); // Default validation passes
+        }
+
+        private ValidationResult ValidateNumericValue(string value)
+        {
+            if (!double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double numericValue))
+            {
+                return new ValidationResult(false, "Invalid numeric format");
+            }
+
+            // Additional numeric validation can be added here
+            // For example, range checks if we have access to min/max values
+            
+            return new ValidationResult(true);
         }
 
         private void xMappedTypeComboBox_DropDownOpened(object sender, EventArgs e)
@@ -678,7 +845,7 @@ namespace Ginger.UserControlsLib
             {
                 GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.ValueExpression);
             }
-            xDBValueExpression.Visibility = Visibility.Visible;
+            // Removed: xDBValueExpression.Visibility = Visibility.Visible; - this was causing interference
         }
         #endregion Database
 
