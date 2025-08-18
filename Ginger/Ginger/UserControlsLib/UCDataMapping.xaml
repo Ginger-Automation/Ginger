@@ -4,6 +4,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:Actions="clr-namespace:Ginger.Actions"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:window="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              mc:Ignorable="d" 
              d:DesignHeight="30" d:DesignWidth="320">
     <Grid>
@@ -35,6 +37,16 @@
                 </ToolTip>
             </ComboBox.ToolTip>
         </ComboBox>
+        <ComboBox x:Name="xSelectionListComboBox" Grid.Column="1" VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Height="20" FontWeight="Bold" Visibility="Collapsed" SelectionChanged="xSelectionListComboBox_SelectionChanged">
+            <ComboBox.ToolTip>
+                <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}">
+                    <TextBlock Text="{Binding SelectionBoxItem}"/>
+                </ToolTip>
+            </ComboBox.ToolTip>
+        </ComboBox>
+        <window:WindowsFormsHost x:Name="xDateTimePickerHost" Grid.Column="1" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Visibility="Collapsed" Height="21">
+            <wf:DateTimePicker x:Name="xDateTimePicker" TextChanged="xDateTimePicker_TextChanged" Format="Custom"/>
+        </window:WindowsFormsHost>
         <TextBox x:Name="xValueTextBox" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBoxStyle}" FontWeight="Bold" Height="21" BorderThickness="0,0,0,1" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" Visibility="Collapsed"></TextBox>
         <Button x:Name="xDSConfigBtn" Grid.Column="1" VerticalAlignment="Top" Click="xDSConfigBtn_Click" HorizontalAlignment="Right" Height="21" Width="20" Margin="0,0,0.6,0" Style="{StaticResource $InputButtonStyle}" Visibility="Visible">...</Button>
         <TextBox x:Name="xDSExpressionTxtbox" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBoxStyle}" FontWeight="Bold" Height="21" Margin="0,0,22,0" IsReadOnly="True" BorderThickness="0,0,0,1" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" Visibility="Visible"></TextBox>

@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 Copyright © 2014-2025 European Support Limited
 
@@ -58,16 +58,6 @@ namespace Ginger.UserControlsLib
 
         public static readonly DependencyProperty RestrictedMappingTypesProperty = DependencyProperty.Register("RestrictedMappingTypes",
             typeof(IEnumerable<RestrictedMappingType>), typeof(UCDataMapping));
-
-        // Add a new dependency property to hold the target variable type context
-        public static readonly DependencyProperty TargetVariableTypeProperty = DependencyProperty.Register("TargetVariableType",
-            typeof(Type), typeof(UCDataMapping));
-
-        public Type TargetVariableType
-        {
-            get { return (Type)GetValue(TargetVariableTypeProperty); }
-            set { SetValue(TargetVariableTypeProperty, value); }
-        }
 
         public enum eDataType
         {
@@ -164,6 +154,13 @@ namespace Ginger.UserControlsLib
             set
             {
                 SetValue(RestrictedMappingTypesProperty, value);
+                
+                // Whenever restrictions are set, ensure fundamental options remain available
+                if (xMappedTypeComboBox != null)
+                {
+                    GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.None);
+                    GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.Value);
+                }
             }
         }
 
@@ -209,6 +206,7 @@ namespace Ginger.UserControlsLib
             // Clean up event handlers to prevent memory leaks
             xValueTextBox.TextChanged -= xValueTextBox_TextChanged;
             xValueTextBox.PreviewTextInput -= xValueTextBox_PreviewTextInput;
+            // Note: xSelectionListComboBox_SelectionChanged is managed manually in UpdateSelectionListComboBoxSelection
             this.Unloaded -= UCDataMapping_Unloaded;
         }
 
@@ -231,6 +229,31 @@ namespace Ginger.UserControlsLib
             DisableAllTypeOptions();
         }
 
+        private void DisableAllTypeOptions()
+        {
+            // Disable all data type options initially - they will be enabled based on context availability
+            GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.Variable);
+            GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.GlobalVariable);
+            GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.OutputVariable);
+            GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.ApplicationModelParameter);
+            GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.DataSource);
+            GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.ValueExpression);
+            
+            // Always enable "None" and "Value" options - these should always be available
+            GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.None);
+            GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.Value);
+
+            // Force refresh of combo box items to ensure changes are applied
+            try
+            {
+                xMappedTypeComboBox.Items.Refresh();
+            }
+            catch
+            {
+                // Ignore any refresh errors
+            }
+        }
+
         private static void OnMappedTypePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             var control = (UCDataMapping)sender;
@@ -243,6 +266,7 @@ namespace Ginger.UserControlsLib
             //set relevant value control binding
             BindingOperations.ClearAllBindings(xVariablesComboBox);
             BindingOperations.ClearAllBindings(xOptionalValuesComboBox);
+            BindingOperations.ClearAllBindings(xSelectionListComboBox);
             BindingOperations.ClearAllBindings(xDSExpressionTxtbox);
             BindingOperations.ClearAllBindings(xValueTextBox);
             
@@ -277,11 +301,24 @@ namespace Ginger.UserControlsLib
             }
             else if (MappedType == eDataType.Value.ToString())
             {
-                BindingHandler.ObjFieldBinding(xValueTextBox, TextBox.TextProperty, this, nameof(MappedValue));
-                
-                // Add input validation for number variables
-                xValueTextBox.TextChanged += xValueTextBox_TextChanged;
-                xValueTextBox.PreviewTextInput += xValueTextBox_PreviewTextInput;
+                if (IsSelectionListVariable())
+                {
+                    // For selection list variables, don't bind directly - handle through selection event
+                    // The ComboBox selection will update MappedValue through the SelectionChanged event
+                }
+                else if (IsDateTimeVariable())
+                {
+                    // For DateTime variables, don't bind directly - handle through DateTimePicker event
+                    // The DateTimePicker will update MappedValue through the TextChanged event
+                }
+                else
+                {
+                    BindingHandler.ObjFieldBinding(xValueTextBox, TextBox.TextProperty, this, nameof(MappedValue));
+                    
+                    // Add input validation for number variables
+                    xValueTextBox.TextChanged += xValueTextBox_TextChanged;
+                    xValueTextBox.PreviewTextInput += xValueTextBox_PreviewTextInput;
+                }
             }
 
             SetValueControlsData();
@@ -330,13 +367,33 @@ namespace Ginger.UserControlsLib
                     xOptionalValuesComboBox.Visibility = Visibility.Hidden;
                 }
 
-                if (MappedType == eDataType.Value.ToString() && xValueTextBox != null)
+                // Handle Selection List ComboBox visibility for VariableSelectionList
+                if (MappedType == eDataType.Value.ToString() && IsSelectionListVariable() && xSelectionListComboBox != null)
                 {
-                    xValueTextBox.Visibility = Visibility.Visible;
+                    xSelectionListComboBox.Visibility = Visibility.Visible;
+                    xValueTextBox.Visibility = Visibility.Hidden;
+                    xDateTimePickerHost.Visibility = Visibility.Hidden;
+                }
+                // Handle DateTime Picker visibility for VariableDateTime
+                else if (MappedType == eDataType.Value.ToString() && IsDateTimeVariable() && xDateTimePickerHost != null)
+                {
+                    xDateTimePickerHost.Visibility = Visibility.Visible;
+                    xValueTextBox.Visibility = Visibility.Hidden;
+                    xSelectionListComboBox.Visibility = Visibility.Hidden;
                 }
                 else
                 {
-                    xValueTextBox.Visibility = Visibility.Hidden;
+                    xSelectionListComboBox.Visibility = Visibility.Hidden;
+                    xDateTimePickerHost.Visibility = Visibility.Hidden;
+                    
+                    if (MappedType == eDataType.Value.ToString() && xValueTextBox != null)
+                    {
+                        xValueTextBox.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        xValueTextBox.Visibility = Visibility.Hidden;
+                    }
                 }
 
                 if (MappedType == eDataType.DataSource.ToString()  && xDSExpressionTxtbox != null)
@@ -379,6 +436,17 @@ namespace Ginger.UserControlsLib
             else
             {
                 OnPropertyChanged(nameof(MappedValue));
+            }
+
+            // Update selection list combo box if we're in Value mode with a selection list variable
+            if (MappedType == eDataType.Value.ToString() && IsSelectionListVariable())
+            {
+                UpdateSelectionListComboBoxSelection();
+            }
+            // Update DateTime picker if we're in Value mode with a DateTime variable
+            else if (MappedType == eDataType.Value.ToString() && IsDateTimeVariable())
+            {
+                UpdateDateTimePickerSelection();
             }
 
             MarkMappedValueValidation();
@@ -435,28 +503,13 @@ namespace Ginger.UserControlsLib
 
         private void xValueTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            if (IsNumberVariable())
+            // Check if this is a number variable context based on the DataContext
+            if (DataContext is VariableNumber)
             {
+                // Allow only valid numeric input for number variables
                 TextBox textBox = (TextBox)sender;
                 e.Handled = !IsValidNumericInput(e.Text, textBox);
             }
-        }
-
-        private bool IsNumberVariable()
-        {
-            // Check if the target variable type is VariableNumber
-            if (TargetVariableType != null && TargetVariableType == typeof(VariableNumber))
-            {
-                return true;
-            }
-
-            // Fallback: Check DataContext if it's a VariableNumber
-            if (DataContext is VariableNumber)
-            {
-                return true;
-            }
-
-            return false;
         }
 
         private bool IsValidNumericInput(string inputText, TextBox textBox)
@@ -500,17 +553,14 @@ namespace Ginger.UserControlsLib
                 return new ValidationResult(true); // Empty value is valid for Value type
             }
 
-            // For generic value validation, we'll do basic checks
-            // In a more specific implementation, you might have more context about the expected variable type
-            
             // Check if the value contains only valid characters
             if (MappedValue.Any(c => char.IsControl(c) && c != '\t' && c != '\n' && c != '\r'))
             {
                 return new ValidationResult(false, "Value contains invalid control characters");
             }
 
-            // If we know this is a number variable, validate it as a number
-            if (IsNumberVariable())
+            // If the DataContext is a number variable, validate it as a number
+            if (DataContext is VariableNumber)
             {
                 return ValidateNumericValue(MappedValue);
             }
@@ -525,9 +575,6 @@ namespace Ginger.UserControlsLib
                 return new ValidationResult(false, "Invalid numeric format");
             }
 
-            // Additional numeric validation can be added here
-            // For example, range checks if we have access to min/max values
-            
             return new ValidationResult(true);
         }
 
@@ -538,12 +585,17 @@ namespace Ginger.UserControlsLib
 
         private void xMappedTypeComboBox_DropDownClosed(object sender, EventArgs e)
         {
+            // Handle restricted mapping types, but never restrict "Value" or "None" options
             if (RestrictedMappingTypes != null)
             {
                 RestrictedMappingType? restrictedMappingType = RestrictedMappingTypes
                     .FirstOrDefault(restrictedType => string.Equals(restrictedType.Name, MappedType));
 
-                if (restrictedMappingType != null && !string.Equals(_prevMappedType, MappedType))
+                // Never restrict "Value" or "None" options as they are fundamental
+                if (restrictedMappingType != null && 
+                    !string.Equals(_prevMappedType, MappedType) &&
+                    MappedType != eDataType.Value.ToString() &&
+                    MappedType != eDataType.None.ToString())
                 {
                     MappedType = _prevMappedType!;
                     string? reason = restrictedMappingType.Reason;
@@ -565,6 +617,9 @@ namespace Ginger.UserControlsLib
             {
                 MappedValue = string.Empty;
             }
+
+            // Ensure "Value" option is always available after any restriction processing
+            GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.Value);
         }
 
         private static void OnEnableDataMappingPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
@@ -580,6 +635,10 @@ namespace Ginger.UserControlsLib
             if (EnableDataMapping == true)
             {
                 this.IsEnabled = true;
+                
+                // When data mapping is enabled, ensure fundamental options are available
+                GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.None);
+                GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.Value);
             }
         }
 
@@ -607,88 +666,289 @@ namespace Ginger.UserControlsLib
                 xOptionalValuesComboBox.SelectedValuePath = nameof(GlobalAppModelParameter.Guid);
                 xOptionalValuesComboBox.ItemsSource = mModelGlobalParamsList.OrderBy(nameof(GlobalAppModelParameter.PlaceHolder));
             }
+            else if (MappedType == eDataType.Value.ToString() && IsSelectionListVariable())
+            {
+                SetupSelectionListComboBox();
+            }
+            else if (MappedType == eDataType.Value.ToString() && IsDateTimeVariable())
+            {
+                SetupDateTimePicker();
+            }
 
             MarkMappedValueValidation();
         }
 
-        private void DisableAllTypeOptions()
+        private bool IsSelectionListVariable()
         {
-            GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.Variable);
-            GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.OutputVariable);
-            GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.GlobalVariable);
-            GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.ApplicationModelParameter);
-            GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.DataSource);
-            GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.ValueExpression);
-            GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.Value);
-            xDSConfigBtn.IsEnabled = false;
-            xDBValueExpression.Visibility = Visibility.Collapsed;
+            // Check if the DataContext is a VariableSelectionList or VariableList
+            return DataContext is VariableSelectionList || DataContext is VariableList;
         }
 
-        public static DataTemplate GetTemplate(TemplateOptions options)
+        private bool IsDateTimeVariable()
         {
-            DataTemplate template = new DataTemplate();
-            FrameworkElementFactory ucDataMapping = new FrameworkElementFactory(typeof(UCDataMapping));
+            // Check if the DataContext is a VariableDateTime
+            return DataContext is VariableDateTime;
+        }
 
-            if (!string.IsNullOrEmpty(options._VariabelsSourceProperty))
+        private void SetupSelectionListComboBox()
+        {
+            if (DataContext is VariableSelectionList selectionListVariable)
             {
-                Binding variablesSourceBinding = new Binding(options._VariabelsSourceProperty)
+                // Clear any existing items
+                xSelectionListComboBox.ItemsSource = null;
+                
+                // Create a list of option values from the VariableSelectionList
+                ObservableList<string> optionValues = [];
+                
+                foreach (var optionalValue in selectionListVariable.OptionalValuesList)
                 {
-                    Mode = BindingMode.OneWay,
-                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-                };
-                ucDataMapping.SetBinding(UCDataMapping.VariabelsSourceProperty, variablesSourceBinding);
-            }
-            else if (options._VariabelsSourceList != null)
-            {
-                ucDataMapping.SetValue(UCDataMapping.VariabelsSourceProperty, options._VariabelsSourceList);
-            }
-
-
-            if (!string.IsNullOrEmpty(options._OutputVariabelsSourceProperty))
-            {
-                Binding outputVariabelsSourceBinding = new Binding(options._OutputVariabelsSourceProperty)
+                    optionValues.Add(optionalValue.Value);
+                }
+                
+                // Set the ComboBox items
+                xSelectionListComboBox.ItemsSource = optionValues;
+                
+                // Set the current selection if it exists in the list
+                if (!string.IsNullOrEmpty(MappedValue) && optionValues.Contains(MappedValue))
                 {
-                    Mode = BindingMode.OneWay,
-                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-                };
-                ucDataMapping.SetBinding(UCDataMapping.OutputVariabelsSourceProperty, outputVariabelsSourceBinding);
-            }
-
-            Binding mappedItemTypeBinding = new Binding(options._DataTypeProperty)
-            {
-                Mode = BindingMode.TwoWay,
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-            };
-            ucDataMapping.SetBinding(UCDataMapping.MappedTypeProperty, mappedItemTypeBinding);
-
-            Binding mappedValueBinding = new Binding(options._DataValueProperty)
-            {
-                Mode = BindingMode.TwoWay,
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-            };
-            ucDataMapping.SetBinding(UCDataMapping.MappedValueProperty, mappedValueBinding);
-
-            if (!string.IsNullOrEmpty(options._EnableDataMappingProperty))
-            {
-                Binding allowDataMappingBinding = new Binding(options._EnableDataMappingProperty)
+                    xSelectionListComboBox.SelectedItem = MappedValue;
+                }
+                else if (optionValues.Count > 0)
                 {
-                    Mode = BindingMode.OneWay,
-                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-                };
-                ucDataMapping.SetBinding(UCDataMapping.EnableDataMappingProperty, allowDataMappingBinding);
+                    // Default to the first option and update the MappedValue
+                    xSelectionListComboBox.SelectedIndex = 0;
+                    MappedValue = optionValues[0];
+                }
             }
-            else
+            else if (DataContext is VariableList listVariable)
             {
-                ucDataMapping.SetValue(UCDataMapping.EnableDataMappingProperty, true);
+                // Clear any existing items
+                xSelectionListComboBox.ItemsSource = null;
+                
+                // Create a list of option values from the VariableList
+                ObservableList<string> optionValues = [];
+                
+                // Parse the ValueList (which can be comma-separated or newline-separated)
+                string formula = listVariable.GetFormula();
+                if (!string.IsNullOrEmpty(formula))
+                {
+                    string[] values = formula.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var value in values)
+                    {
+                        string trimmedValue = value.Trim();
+                        if (!string.IsNullOrEmpty(trimmedValue))
+                        {
+                            optionValues.Add(trimmedValue);
+                        }
+                    }
+                }
+                
+                // Set the ComboBox items
+                xSelectionListComboBox.ItemsSource = optionValues;
+                
+                // Set the current selection if it exists in the list
+                if (!string.IsNullOrEmpty(MappedValue) && optionValues.Contains(MappedValue))
+                {
+                    xSelectionListComboBox.SelectedItem = MappedValue;
+                }
+                else if (optionValues.Count > 0)
+                {
+                    // Default to the first option and update the MappedValue
+                    xSelectionListComboBox.SelectedIndex = 0;
+                    MappedValue = optionValues[0];
+                }
             }
+        }
 
-            if (options._RestrictedMappingTypes != null)
+        private void SetupDateTimePicker()
+        {
+            if (DataContext is VariableDateTime dateTimeVariable)
             {
-                ucDataMapping.SetValue(UCDataMapping.RestrictedMappingTypesProperty, options._RestrictedMappingTypes);
+                // Set up the DateTimePicker with the variable's properties
+                xDateTimePicker.CustomFormat = dateTimeVariable.DateTimeFormat;
+                
+                try
+                {
+                    xDateTimePicker.MinDate = Convert.ToDateTime(dateTimeVariable.MinDateTime);
+                    xDateTimePicker.MaxDate = Convert.ToDateTime(dateTimeVariable.MaxDateTime);
+                    
+                    // Set the current value
+                    if (!string.IsNullOrEmpty(MappedValue))
+                    {
+                        if (DateTime.TryParse(MappedValue, out DateTime parsedDate))
+                        {
+                            xDateTimePicker.Value = parsedDate;
+                        }
+                        else
+                        {
+                            // If MappedValue can't be parsed, use the variable's current value or initial value
+                            string valueToUse = !string.IsNullOrEmpty(dateTimeVariable.Value) ? dateTimeVariable.Value : dateTimeVariable.InitialDateTime;
+                            if (DateTime.TryParse(valueToUse, out DateTime defaultDate))
+                            {
+                                xDateTimePicker.Value = defaultDate;
+                                MappedValue = defaultDate.ToString(dateTimeVariable.DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // If no MappedValue, use the variable's current value or initial value
+                        string valueToUse = !string.IsNullOrEmpty(dateTimeVariable.Value) ? dateTimeVariable.Value : dateTimeVariable.InitialDateTime;
+                        if (DateTime.TryParse(valueToUse, out DateTime defaultDate))
+                        {
+                            xDateTimePicker.Value = defaultDate;
+                            MappedValue = defaultDate.ToString(dateTimeVariable.DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle any date parsing errors gracefully
+                    Reporter.ToLog(eLogLevel.WARN, $"Error setting up DateTime picker: {ex.Message}");
+                    try
+                    {
+                        xDateTimePicker.Value = DateTime.Now;
+                        MappedValue = DateTime.Now.ToString(dateTimeVariable.DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
+                    }
+                    catch
+                    {
+                        // Last resort - use default format
+                        xDateTimePicker.Value = DateTime.Now;
+                        MappedValue = DateTime.Now.ToString("MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                    }
+                }
             }
+        }
 
-            template.VisualTree = ucDataMapping;
-            return template;
+        /// <summary>
+        /// Updates only the DateTime picker value without triggering events
+        /// </summary>
+        private void UpdateDateTimePickerSelection()
+        {
+            if (xDateTimePicker != null && DataContext is VariableDateTime dateTimeVariable)
+            {
+                // Temporarily disable the text changed event to prevent loops
+                xDateTimePicker.TextChanged -= xDateTimePicker_TextChanged;
+                
+                try
+                {
+                    if (!string.IsNullOrEmpty(MappedValue))
+                    {
+                        if (DateTime.TryParse(MappedValue, out DateTime parsedDate))
+                        {
+                            xDateTimePicker.Value = parsedDate;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, $"Error updating DateTime picker selection: {ex.Message}");
+                }
+                finally
+                {
+                    // Re-enable the text changed event
+                    xDateTimePicker.TextChanged += xDateTimePicker_TextChanged;
+                }
+            }
+        }
+
+        private void xDateTimePicker_TextChanged(object sender, EventArgs e)
+        {
+            if (DataContext is VariableDateTime dateTimeVariable)
+            {
+                try
+                {
+                    // Validate the date is within the allowed range
+                    if (!dateTimeVariable.CheckDateTimeWithInRange(xDateTimePicker.Value.ToString()))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Selected date is not in range: Min=[{dateTimeVariable.MinDateTime}], Max=[{dateTimeVariable.MaxDateTime}]");
+                        return;
+                    }
+                    
+                    // Convert the selected date to the proper format and update MappedValue
+                    string formattedDate = xDateTimePicker.Value.ToString(dateTimeVariable.DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
+                    if (MappedValue != formattedDate)
+                    {
+                        MappedValue = formattedDate;
+                        
+                        // Update the actual variable value as well
+                        dateTimeVariable.Value = formattedDate;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error updating DateTime value: {ex.Message}");
+                }
+            }
+        }
+
+        private void xSelectionListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox.SelectedItem != null)
+            {
+                // Update the MappedValue when the user selects a different option
+                string selectedValue = comboBox.SelectedItem.ToString();
+                if (MappedValue != selectedValue)
+                {
+                    MappedValue = selectedValue;
+                    
+                    // Update the actual variable value as well
+                    if (DataContext is VariableSelectionList selectionListVariable)
+                    {
+                        selectionListVariable.Value = selectedValue;
+                    }
+                    else if (DataContext is VariableList listVariable)
+                    {
+                        listVariable.Value = selectedValue;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Updates only the selection in the selection list combo box without rebuilding the entire list
+        /// </summary>
+        private void UpdateSelectionListComboBoxSelection()
+        {
+            if (xSelectionListComboBox?.ItemsSource != null)
+            {
+                // Temporarily disable the selection changed event to prevent loops
+                xSelectionListComboBox.SelectionChanged -= xSelectionListComboBox_SelectionChanged;
+                
+                try
+                {
+                    // Update the selection to match the current MappedValue
+                    if (!string.IsNullOrEmpty(MappedValue))
+                    {
+                        // Check if the value exists in the combo box items
+                        bool valueFound = false;
+                        foreach (var item in xSelectionListComboBox.ItemsSource)
+                        {
+                            if (item.ToString() == MappedValue)
+                            {
+                                xSelectionListComboBox.SelectedItem = MappedValue;
+                                valueFound = true;
+                                break;
+                            }
+                        }
+                        
+                        // If value not found, clear selection
+                        if (!valueFound)
+                        {
+                            xSelectionListComboBox.SelectedItem = null;
+                        }
+                    }
+                    else
+                    {
+                        xSelectionListComboBox.SelectedItem = null;
+                    }
+                }
+                finally
+                {
+                    // Re-enable the selection changed event
+                    xSelectionListComboBox.SelectionChanged += xSelectionListComboBox_SelectionChanged;
+                }
+            }
         }
         #endregion Global
 
@@ -848,6 +1108,87 @@ namespace Ginger.UserControlsLib
             // Removed: xDBValueExpression.Visibility = Visibility.Visible; - this was causing interference
         }
         #endregion Database
+
+        #region Template Creation
+        /// <summary>
+        /// Creates a DataTemplate for UCDataMapping control to be used in grid views
+        /// </summary>
+        /// <param name="options">Template configuration options</param>
+        /// <returns>DataTemplate for the control</returns>
+        public static DataTemplate GetTemplate(TemplateOptions options)
+        {
+            DataTemplate template = new DataTemplate();
+            FrameworkElementFactory ucDataMapping = new FrameworkElementFactory(typeof(UCDataMapping));
+
+            // Bind data type property
+            if (!string.IsNullOrEmpty(options._DataTypeProperty))
+            {
+                Binding dataTypeBinding = new Binding(options._DataTypeProperty)
+                {
+                    Mode = BindingMode.TwoWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
+                ucDataMapping.SetBinding(MappedTypeProperty, dataTypeBinding);
+            }
+
+            // Bind data value property
+            if (!string.IsNullOrEmpty(options._DataValueProperty))
+            {
+                Binding dataValueBinding = new Binding(options._DataValueProperty)
+                {
+                    Mode = BindingMode.TwoWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
+                ucDataMapping.SetBinding(MappedValueProperty, dataValueBinding);
+            }
+
+            // Bind enable data mapping property
+            if (!string.IsNullOrEmpty(options._EnableDataMappingProperty))
+            {
+                Binding enableDataMappingBinding = new Binding(options._EnableDataMappingProperty)
+                {
+                    Mode = BindingMode.OneWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
+                ucDataMapping.SetBinding(EnableDataMappingProperty, enableDataMappingBinding);
+            }
+
+            // Bind variables source property
+            if (!string.IsNullOrEmpty(options._VariabelsSourceProperty))
+            {
+                Binding variablesSourceBinding = new Binding(options._VariabelsSourceProperty)
+                {
+                    Mode = BindingMode.OneWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
+                ucDataMapping.SetBinding(VariabelsSourceProperty, variablesSourceBinding);
+            }
+            else if (options._VariabelsSourceList != null)
+            {
+                ucDataMapping.SetValue(VariabelsSourceProperty, options._VariabelsSourceList);
+            }
+
+            // Bind output variables source property
+            if (!string.IsNullOrEmpty(options._OutputVariabelsSourceProperty))
+            {
+                Binding outputVariablesSourceBinding = new Binding(options._OutputVariabelsSourceProperty)
+                {
+                    Mode = BindingMode.OneWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
+                ucDataMapping.SetBinding(OutputVariabelsSourceProperty, outputVariablesSourceBinding);
+            }
+
+            // Set restricted mapping types
+            if (options._RestrictedMappingTypes != null)
+            {
+                ucDataMapping.SetValue(RestrictedMappingTypesProperty, options._RestrictedMappingTypes);
+            }
+
+            template.VisualTree = ucDataMapping;
+            return template;
+        }
+        #endregion Template Creation
 
     }
 }
