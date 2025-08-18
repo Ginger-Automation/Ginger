@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Ginger.UserControls;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -38,6 +39,7 @@ namespace Ginger.SolutionCategories
         ObservableList<SolutionCategory> mSolutionCategories;
         ObservableList<SolutionCategoryDefinition> mCategoriesDefinitions;
         bool mReadOnly;
+        public event EventHandler CategoryValueChanged;
 
         public SolutionCategoriesPage()
         {
@@ -77,7 +79,7 @@ namespace Ginger.SolutionCategories
             {
                 SetOptionalValues();
                 view.GridColsView.Add(new GridColView() { Field = nameof(SolutionCategoryDefinition.Description), Header = "Description", ReadOnly = true, WidthWeight = 25 });
-                view.GridColsView.Add(new GridColView() { Field = nameof(SolutionCategoryDefinition.SelectedValueID), Header = "Selected Value", ReadOnly = mReadOnly, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(valuesListField: nameof(SolutionCategoryDefinition.CategoryOptionalValues), selectedValueField: nameof(SolutionCategoryDefinition.SelectedValueID), selectedValuePathField: nameof(SolutionCategoryValue.Guid), displayMemberPathField: nameof(SolutionCategoryValue.Value), style: this.FindResource("$FlatInputComboBoxInGridCellStyle") as Style) });
+                view.GridColsView.Add(new GridColView() { Field = nameof(SolutionCategoryDefinition.SelectedValueID), Header = "Selected Value", ReadOnly = mReadOnly, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(valuesListField: nameof(SolutionCategoryDefinition.CategoryOptionalValues), selectedValueField: nameof(SolutionCategoryDefinition.SelectedValueID), selectedValuePathField: nameof(SolutionCategoryValue.Guid), displayMemberPathField: nameof(SolutionCategoryValue.Value), style: this.FindResource("$FlatInputComboBoxInGridCellStyle") as Style, comboSelectionChangedHandler: ValueChangedHandler_Click) });
             }
             xCategoriesGrid.SetAllColumnsDefaultView(view);
             xCategoriesGrid.InitViewItems();
@@ -90,7 +92,7 @@ namespace Ginger.SolutionCategories
             xCategoriesGrid.ShowDelete = Visibility.Collapsed;
             xCategoriesGrid.ShowCopyCutPast = Visibility.Collapsed;
 
-            xCategoriesGrid.SetRefreshBtnHandler(new RoutedEventHandler(RefreshCategories));
+            xCategoriesGrid.SetRefreshBtnHandler(new RoutedEventHandler(RefreshCategories));            
 
             if (mPageMode == eSolutionCategoriesPageMode.OptionalValuesDefinition)
             {
@@ -118,6 +120,10 @@ namespace Ginger.SolutionCategories
                     }
                 }
             }
+        }
+        private void ValueChangedHandler_Click(object sender, RoutedEventArgs e)
+        {
+            CategoryValueChanged?.Invoke(mCategoriesDefinitions, EventArgs.Empty);
         }
 
         private void RefreshCategories(object sender, RoutedEventArgs e)

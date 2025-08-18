@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
@@ -55,7 +56,6 @@ namespace GingerCore
             Activities = [];
             Variables = [];
             TargetApplications = [];
-
             Activity a = new Activity
             {
                 Active = true,
@@ -1973,6 +1973,21 @@ namespace GingerCore
                 }
             }
 
+        }
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<SolutionCategoryDefinition> CategoriesDefinitions = [];
+
+        public ObservableList<SolutionCategoryDefinition> MergedCategoriesDefinitions
+        {
+            get
+            {
+                return General.MergeCategories(CategoriesDefinitions);
+            }
+            set
+            {
+                General.UpdateStoredCategories(CategoriesDefinitions, value);
+            }
         }
 
         public override void PostDeserialization()
