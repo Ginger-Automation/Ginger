@@ -62,11 +62,16 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Install Mono - for Ubuntu as pre-requisite for building Ginger
 # ------------------------------------------------------------------------------------------------------
-        -   name: 'Install Mono'
+        -   name: 'Install Mono - Linux'
             if: runner.os == 'Linux'
             run: |
                 sudo apt-get update
-                sudo apt-get install -y mono-complete         
+                sudo apt-get install -y mono-complete
+
+
+        -   name: 'Install Mono - macOS'
+            if: runner.os == 'macOS'
+            run: brew install mono      
 # ------------------------------------------------------------------------------------------------------
 # Install Nuget tool v1.0.5
 # ------------------------------------------------------------------------------------------------------
