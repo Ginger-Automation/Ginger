@@ -490,16 +490,18 @@ namespace GingerCoreNET.GeneralLib
 
         public static string GetSolutionCategoryValue(SolutionCategoryDefinition solutionCategoryDefinition)
         {
-            SolutionCategory cat = WorkSpace.Instance.Solution.SolutionCategories.FirstOrDefault(x => x.Category == solutionCategoryDefinition.Category);
-            if (cat != null)
+            if (WorkSpace.Instance.Solution.SolutionCategories != null)
             {
-                SolutionCategoryValue catValue = cat.CategoryOptionalValues.FirstOrDefault(x => x.Guid == solutionCategoryDefinition.SelectedValueID);
-                if (catValue != null)
+                SolutionCategory cat = WorkSpace.Instance.Solution.SolutionCategories.FirstOrDefault(x => x.Category == solutionCategoryDefinition.Category);
+                if (cat != null)
                 {
-                    return catValue.Value;
+                    SolutionCategoryValue catValue = cat.CategoryOptionalValues.FirstOrDefault(x => x.Guid == solutionCategoryDefinition.SelectedValueID);
+                    if (catValue != null)
+                    {
+                        return catValue.Value;
+                    }
                 }
             }
-
             return null;
         }
         public static string RemoveSpecialCharactersInColumnHeader(string columnHeader)
