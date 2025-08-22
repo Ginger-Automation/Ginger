@@ -370,7 +370,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
 
             // Also subscribe when the selected agent changes
-            if (e.PropertyName == nameof(ucAgentControl.SelectedAgent))
+            if (e.PropertyName == nameof(ucAgentControl.SelectedAgent) && xAgentControlUC.SelectedAgent != null)
             {
                 SubscribeToCurrentSeleniumDriver();
             }

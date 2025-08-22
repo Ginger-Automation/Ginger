@@ -85,8 +85,21 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
 
         public string GetPropertyValue(string propertyName)
         {
-            var property = typeof(ElementwrapperProperties).GetProperty(propertyName);
-            return property?.GetValue(this)?.ToString();
+            if (string.IsNullOrWhiteSpace(propertyName)) return null;
+            var t = typeof(ElementwrapperProperties);
+            // Try direct, case-insensitive
+            var prop = t.GetProperty(propertyName,System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.IgnoreCase);
+            if (prop != null) return prop.GetValue(this)?.ToString();
+            // Try by JsonProperty attribute match
+            foreach (var p in t.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+            {
+                var jp = (JsonPropertyAttribute)Attribute.GetCustomAttribute(p, typeof(JsonPropertyAttribute));
+                if (jp != null && string.Equals(jp.PropertyName, propertyName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return p.GetValue(this)?.ToString();
+                }
+            }
+            return null;
         }
 
     }
@@ -109,7 +122,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
         public string ByAriaLabel { get; set; }
         public string ByDataTestId { get; set; }
         public string ByTitle { get; set; }
-        public object EnhanceLocatorsByAI { get; set; }
+        public Newtonsoft.Json.Linq.JToken EnhanceLocatorsByAI { get; set; }
 
 
     }

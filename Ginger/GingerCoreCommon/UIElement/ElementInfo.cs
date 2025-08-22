@@ -95,7 +95,9 @@ namespace Amdocs.Ginger.Common.UIElement
 
 
         private bool _isProcessed;
-
+        /// <summary>
+        /// Indicates whether this element has been processed by AI workflows.
+        /// </summary>
         public bool IsProcessed
         {
             get => _isProcessed;

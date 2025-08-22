@@ -33,7 +33,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
     internal sealed class POMUtils
     {
 
-        private static readonly List<string> FilterProperties = new List<string> { "name", "Platform Element Type", "Element Type", "TagName", "Text", "Value", "AutomationID", "Title", "AriaLabel", "DataTestId", "Placeholder", "ID" };
+        private static readonly HashSet<string> FilterProperties = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
+        {
+            "name", "Platform Element Type", "Element Type", "TagName", "Text", "Value",
+            "AutomationID", "Title", "AriaLabel", "DataTestId", "Placeholder", "ID"
+        };
+
         public ElementWrapperInfo GenerateJsonToSendAIRequestByList(PomSetting pomSetting, ObservableList<ElementInfo> foundElementList)
         {
             ElementWrapperInfo elementWrapperInfo = new ElementWrapperInfo();
@@ -57,7 +62,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     foreach (var prop in elementInfo.Properties)
                     {
 
-                        if (FilterProperties.Contains(prop.Name, StringComparer.InvariantCultureIgnoreCase) &&
+                        if (FilterProperties.Contains(prop.Name) &&
                                 !string.IsNullOrWhiteSpace(prop.Value?.ToString()))
 
                         {
@@ -83,7 +88,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     }
                     element.elementinfo.locators = Locators;
                     elementWrapperInfo.elements.Add(element);
-                    elementInfo.IsProcessed = true;
                 }
             }
             return elementWrapperInfo;
@@ -91,6 +95,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
         public async Task<string> SendInBatchesList(ElementWrapperInfo elementWrapperInfo, ObservableList<ElementInfo> list, string url, ePomElementCategory? PomCategory, int batchSize = 2000)
         {
             var responses = new List<string>();
+            var errors = new List<string>();
             var currentBatch = new List<string>();
             int currentSize = 2; // For opening and closing brackets of JSON array
 
@@ -103,7 +108,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 {
                     // Send current batch
                     string batchPayload = "[" + string.Join(",", currentBatch) + "]";
-                    await GetResponseFromGenAI(list, url, batchPayload,PomCategory);
+                    try
+                    {
+                        await GetResponseFromGenAI(list, url, batchPayload, PomCategory);
+                        responses.Add($"Batch processed successfully with {currentBatch.Count} elements");
+                    }
+                    catch (Exception ex)
+                    {
+                        errors.Add($"Batch processing failed: {ex.Message}");
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to process batch", ex);
+                    }
 
                     // Reset batch
                     currentBatch.Clear();
@@ -118,7 +132,21 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             if (currentBatch.Count > 0)
             {
                 string batchPayload = "[" + string.Join(",", currentBatch) + "]";
-                await GetResponseFromGenAI(list, url, batchPayload,PomCategory);
+                try
+                {
+                    await GetResponseFromGenAI(list, url, batchPayload, PomCategory);
+                    responses.Add($"Final batch processed successfully with {currentBatch.Count} elements");
+                }
+                catch (Exception ex)
+                {
+                    errors.Add($"Final batch processing failed: {ex.Message}");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to process final batch", ex);
+                }
+            }
+
+            if (errors.Count > 0)
+            {
+                responses.Add($"Errors encountered: {string.Join("; ", errors)}");
             }
 
             return string.Join("\n---\n", responses);
@@ -126,7 +154,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
         public async Task GetResponseFromGenAI(ObservableList<ElementInfo> list, string url, string batchPayload, ePomElementCategory? PomCategory)
         {
-            string response = GingerCoreNET.GeneralLib.General.GetResponseForprocess_extracted_elementsByOpenAI(batchPayload).GetAwaiter().GetResult();
+            string response = await GingerCoreNET.GeneralLib.General.GetResponseForprocess_extracted_elementsByOpenAI(batchPayload);
             ProcessGenAIResponseAndUpdatePOM(list, response,PomCategory);
         }
         public void ProcessGenAIResponseAndUpdatePOM(ObservableList<ElementInfo> list, string response , ePomElementCategory? PomCategory)
@@ -160,11 +188,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
                             existingElement.ElementName = enhancedName ?? existingElement.ElementName;
                             existingElement.Description = enhancedDescription ?? existingElement.Description;
+                            existingElement.IsProcessed = true;
                             if (ele.elementinfo.locators.EnhanceLocatorsByAI != null)
                             {
                                 // Deserialize the EnhanceLocatorsByAI property
-                                
-                                Dictionary<string, string> enhanceLocators = JsonConvert.DeserializeObject<Dictionary<string, string>>(ele.elementinfo.locators.EnhanceLocatorsByAI.ToString());
+
+                                string enhanceLocatorsJson = (string)ele.elementinfo.locators.EnhanceLocatorsByAI ?? ele.elementinfo.locators.EnhanceLocatorsByAI?.ToString();
+                                if (string.IsNullOrWhiteSpace(enhanceLocatorsJson))
+                                    {
+                                        continue;
+                                    }
+                                Dictionary<string, string> enhanceLocators = JsonConvert.DeserializeObject<Dictionary<string, string>>(enhanceLocatorsJson);
 
                                 if (enhanceLocators != null)
                                 {
@@ -175,6 +209,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                                         // Try to parse the key to the enum, fallback to Unknown
                                         if (!Enum.TryParse(kvp.Key, true, out locateBy))
                                         {
+                                            Reporter.ToLog(eLogLevel.DEBUG, $"Unknown locator type '{kvp.Key}', defaulting to ByRelXPath");
                                             locateBy = eLocateBy.ByRelXPath;
                                         }
 
@@ -206,12 +241,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
         private bool IsErrorResponse(string response)
         {
             return string.IsNullOrWhiteSpace(response) ||
-                   response.Contains("unauthorized", StringComparison.OrdinalIgnoreCase);
+                   response.Contains("unauthorized", StringComparison.OrdinalIgnoreCase) || response.Contains("Error:", StringComparison.OrdinalIgnoreCase); ;
         }
 
         private string CleanAIResponse(string response)
         {
-            if (string.IsNullOrWhiteSpace(response)) return string.Empty;
+            if (string.IsNullOrWhiteSpace(response)) 
+            { 
+                return string.Empty; 
+            }
+            
 
             return response
                 .Replace("```json", "", StringComparison.OrdinalIgnoreCase)

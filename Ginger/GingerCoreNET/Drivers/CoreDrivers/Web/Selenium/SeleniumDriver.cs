@@ -168,23 +168,33 @@ namespace GingerCore.Drivers
             Severe = 4
         }
 
-        private static readonly List<string> FilterProperties = new List<string> { "name", "Platform Element Type", "Element Type", "TagName", "Text", "Value", "AutomationID", "Title", "AriaLabel", "DataTestId", "Placeholder", "ID" };
-
+        
         ConcurrentQueue<ElementInfo> processingQueue = new ConcurrentQueue<ElementInfo>();
 
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private bool _isProcessing = false;
+        private volatile bool _isProcessing = false;
         public bool IsProcessing
         {
             get => _isProcessing;
             private set
             {
-                if (_isProcessing != value)
+                bool changed;
+                lock (lockObj)
                 {
+                    changed = _isProcessing != value;
                     _isProcessing = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsProcessing)));
+                }
+                if (changed)
+                {
+                    // Marshal to UI thread if there’s a sync context
+                    var context = System.Threading.SynchronizationContext.Current;
+                    void notify() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsProcessing)));
+                    if (context != null && context != System.Threading.SynchronizationContext.Current)
+                        context.Post(_ => notify(), null);
+                    else
+                        notify();
                 }
             }
         }
@@ -4564,7 +4574,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to locate element", ex);
+                Reporter.ToLog(eLogLevel.ERROR,$"Failed to locate element '{currentPOMElementInfo?.ElementName}' ActiveLocators=[{string.Join(", ", currentPOMElementInfo?.Locators?.Where(l => l.Active).Select(l => $"{l.LocateBy}='{l.LocateValue}'") ?? Enumerable.Empty<string>())}]",ex);
             }
             finally
             {
@@ -5400,17 +5410,6 @@ namespace GingerCore.Drivers
             });
         }
 
-        private List<string> SplitIntoChunks(string text, int chunkSize)
-        {
-            var chunks = new List<string>();
-            for (int i = 0; i < text.Length; i += chunkSize)
-            {
-                chunks.Add(text.Substring(i, Math.Min(chunkSize, text.Length - i)));
-            }
-            return chunks;
-        }
-
-
         public void EnhanceElementLocators(ElementInfo element)
         {
             // Skip visually hidden or off-screen elements
@@ -5717,12 +5716,15 @@ namespace GingerCore.Drivers
 
         private void TriggerBatchProcessing(PomSetting pomSetting)
         {
-            lock (lockObj)
+            if (processingQueue.Count < 10)
             {
-                if (!IsProcessing && processingQueue.Count >= 10)
+                lock (lockObj)
                 {
-                    IsProcessing = true;
-                    _ = Task.Run(() => ProcessBatchAsync(pomSetting));
+                    if (!IsProcessing && processingQueue.Count >= 10)
+                    {
+                        IsProcessing = true;
+                        _ = Task.Run(() => ProcessBatchAsync(pomSetting));
+                    }
                 }
             }
         }
@@ -5733,12 +5735,10 @@ namespace GingerCore.Drivers
         {
             try
             {
-
                 //AIFineTuneStartTimer();
-                while (processingQueue.Count >= 10)
+                while (true)
                 {
-                    ObservableList<ElementInfo> batch = new ObservableList<ElementInfo>();
-
+                    var batch = new ObservableList<ElementInfo>();
                     while (batch.Count < 10 && processingQueue.TryDequeue(out var item))
                     {
                         if (!item.IsProcessed)
@@ -5747,10 +5747,9 @@ namespace GingerCore.Drivers
                         }
                     }
 
-                    if (batch.Count > 0)
-                    {
-                        await UpdateAndMarkElementsAsync(pomSetting,batch);
-                    }
+                    if (batch.Count == 0)
+                        break;
+                    await UpdateAndMarkElementsAsync(pomSetting, batch);
                 }
                 await FlushRemainingAsync(pomSetting);
             }
@@ -5766,12 +5765,10 @@ namespace GingerCore.Drivers
         private async Task FlushRemainingAsync(PomSetting pomSetting)
         {
             ObservableList<ElementInfo> remaining = new ObservableList<ElementInfo>();
-
             while (processingQueue.TryDequeue(out var item))
             {
                 if (!item.IsProcessed)
                 {
-                    IsProcessing = true;
                     remaining.Add(item);
                 }
             }
@@ -5789,13 +5786,8 @@ namespace GingerCore.Drivers
         {
             POMUtils pOMUtils = new POMUtils();
             ElementWrapperInfo elementWrapperInfo = pOMUtils.GenerateJsonToSendAIRequestByList(pomSetting, foundElementList);
-            string url = ""; // Your local API endpoint
             string Response = string.Empty;
-
-            // Call SendInBatches instead of direct API call
-            Response = await pOMUtils.SendInBatchesList(elementWrapperInfo, foundElementList, url, this.PomCategory);
-
-            await Task.Delay(100);
+            await pOMUtils.SendInBatchesList(elementWrapperInfo, foundElementList, string.Empty, this.PomCategory);
         }
 
 

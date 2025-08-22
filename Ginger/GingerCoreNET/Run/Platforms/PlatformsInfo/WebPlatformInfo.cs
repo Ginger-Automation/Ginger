@@ -24,7 +24,6 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;

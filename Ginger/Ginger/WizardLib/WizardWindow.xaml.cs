@@ -381,6 +381,11 @@ namespace GingerWPF.WizardLib
         private void CloseWizard()
         {
             mWizard.mWizardWindow = null;
+            if (_subscribedSeleniumDriver != null)
+            {
+                _subscribedSeleniumDriver.PropertyChanged -= SeleniumDriver_PropertyChanged;
+                _subscribedSeleniumDriver = null;
+            }
             this.Close();
             CurrentWizardWindow = null;
         }
@@ -476,7 +481,7 @@ namespace GingerWPF.WizardLib
             AIFineTuneelapsedTime = AIFineTuneelapsedTime.Add(TimeSpan.FromSeconds(1));
 
             // Update the timer display
-            //FineTunetimerText.Text = $"{(int)AIFineTuneelapsedTime.TotalMinutes:00}:{AIFineTuneelapsedTime.Seconds:00}";
+            xAIProcessingText.Text = $"{xAIProcessingText.Text} => {(int)AIFineTuneelapsedTime.TotalMinutes:00}:{AIFineTuneelapsedTime.Seconds:00}";
         }
 
         // You can stop the timer if needed
@@ -495,12 +500,16 @@ namespace GingerWPF.WizardLib
             }
         }
 
+        private SeleniumDriver _subscribedSeleniumDriver;
         public void SubscribeToSeleniumDriver(SeleniumDriver seleniumDriver)
         {
-            if (seleniumDriver != null)
+            if (seleniumDriver == null) return;
+            if (!ReferenceEquals(_subscribedSeleniumDriver, null))
             {
-                seleniumDriver.PropertyChanged += SeleniumDriver_PropertyChanged;
+                _subscribedSeleniumDriver.PropertyChanged -= SeleniumDriver_PropertyChanged;
             }
+            _subscribedSeleniumDriver = seleniumDriver;
+            _subscribedSeleniumDriver.PropertyChanged += SeleniumDriver_PropertyChanged;
         }
 
         private void SeleniumDriver_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -508,13 +517,13 @@ namespace GingerWPF.WizardLib
             if (e.PropertyName == nameof(SeleniumDriver.IsProcessing))
             {
                 var seleniumDriver = sender as SeleniumDriver;
-                if (seleniumDriver?.IsProcessing == true)
+                if (sender is SeleniumDriver seleniumDriverdata && seleniumDriverdata.IsProcessing)
                 {
-                    AIProcessStarted();
+                    Dispatcher.Invoke(AIProcessStarted);
                 }
                 else
                 {
-                    AIProcessStopped();
+                    Dispatcher.Invoke(AIProcessStopped);
                 }
             }
         }
@@ -526,6 +535,7 @@ namespace GingerWPF.WizardLib
                 xAIProcessingImage.Visibility = Visibility.Visible;
                 xAIProcessingText.Visibility = Visibility.Visible;
             });
+            StartAIFineTuneTimer();
         }
 
         public void AIProcessStopped()
@@ -535,6 +545,7 @@ namespace GingerWPF.WizardLib
                 xAIProcessingImage.Visibility = Visibility.Collapsed;
                 xAIProcessingText.Visibility = Visibility.Collapsed;
             });
+            AIFineTuneStopTimer();
         }
     }
 }

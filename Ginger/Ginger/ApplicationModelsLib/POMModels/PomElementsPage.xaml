@@ -13,6 +13,17 @@
 
     <Grid x:Name="PageGrid">
         <Grid.Resources>
+
+            <Style x:Key="AIRowStyle" TargetType="DataGridRow">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsAIGenerated}" Value="True">
+                        <Setter Property="Background" Value="#FFE6F7FF"/>
+                        <!-- Light blue -->
+                        <Setter Property="FontWeight" Value="Bold"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
             <local1:ButtonToDisableConverter x:Key="ButtonToDisableConverter"/>
 
             <DataTemplate x:Key="OpenEditOptionalValuesPage">

@@ -106,7 +106,7 @@
                         <TextBlock x:Name="xLocatorsTextBlock" Text="Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed" EnableAIGeneratedRowStyling="True" RowChangedEvent="xLocatorsGrid_RowChangedEvent"/>
+                <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed" RowChangedEvent="xLocatorsGrid_RowChangedEvent"/>
             </TabItem>
             <TabItem x:Name="xFriendlyLocatorTab" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>

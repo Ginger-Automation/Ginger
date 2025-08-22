@@ -2734,51 +2734,5 @@ namespace Ginger
             //do nothing
         }
 
-        public bool EnableAIGeneratedRowStyling
-        {
-            get { return (bool)GetValue(EnableAIGeneratedRowStylingProperty); }
-            set { SetValue(EnableAIGeneratedRowStylingProperty, value); }
-        }
-
-        public static readonly DependencyProperty EnableAIGeneratedRowStylingProperty =
-            DependencyProperty.Register("EnableAIGeneratedRowStyling", typeof(bool),
-            typeof(ucGrid), new PropertyMetadata(false, OnEnableAIGeneratedRowStylingChanged));
-
-        private static void OnEnableAIGeneratedRowStylingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var grid = d as ucGrid;
-            if (grid != null && (bool)e.NewValue)
-            {
-                grid.ApplyAIGeneratedRowStyle();
-            }
-        }
-
-        private void ApplyAIGeneratedRowStyle()
-        {
-            if (grdMain != null)
-            {
-                Style aiRowStyle = (Style)this.Resources["AIGeneratedRowStyle"];
-                if (aiRowStyle != null)
-                {
-                    // Create a new style that combines the AI style with existing requirements
-                    Style combinedStyle = new Style(typeof(DataGridRow), aiRowStyle);
-                    combinedStyle.Setters.Add(new Setter(DataGridRow.MaxHeightProperty, 70.0));
-
-                    // Add event setter through the style's triggers collection
-                    EventSetter eventSetter = new EventSetter(DataGridRow.MouseDoubleClickEvent, new MouseButtonEventHandler(Row_DoubleClick));
-                    combinedStyle.Setters.Add(eventSetter);
-
-                    grdMain.RowStyle = combinedStyle;
-
-                    // Debug: Force a refresh
-                    grdMain.Items.Refresh();
-                }
-                else
-                {
-                    // Debug: Check if style is found
-                    System.Diagnostics.Debug.WriteLine("AIGeneratedRowStyle not found in resources");
-                }
-            }
-        }
     }
 }

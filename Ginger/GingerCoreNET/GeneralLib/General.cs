@@ -1366,7 +1366,7 @@ namespace GingerCoreNET.GeneralLib
             if (isAuthorized || !string.IsNullOrEmpty(url))
             {
                 string baseURI = GetAIServiceBaseUrl();
-                string path = GetAIServicePOMExtraLocatorAndName();
+                string path = GetAIServicePOMProcessExtractedElementsPath();
                 var payload = new
                 {
                     elements = jsonstring,// Your current JSON string
@@ -1424,7 +1424,7 @@ namespace GingerCoreNET.GeneralLib
             {
                 baseURI += "/";
             }
-            return $"{baseURI}";
+            return baseURI;
         }
         public static string GetAIServicePOMExtractpath()
         {
@@ -1432,9 +1432,9 @@ namespace GingerCoreNET.GeneralLib
             return POMExtractpath;
         }
 
-        public static string GetAIServicePOMExtraLocatorAndName()
+        public static string GetAIServicePOMProcessExtractedElementsPath()
         {
-            var POMExtractpath = GingerPlayEndPointManager.GetAIServicePOMExtraLocatorAndName();
+            var POMExtractpath = GingerPlayEndPointManager.GetAIServicePOMProcessExtractedElementsPath();
             return POMExtractpath;
         }
     }

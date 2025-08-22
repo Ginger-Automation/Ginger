@@ -8,19 +8,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="400"  d:DesignWidth="600">
     <UserControl.Resources>
-        <Style TargetType="DataGridRow" x:Key="AIGeneratedRowStyle">
-            <Setter Property="Background" Value="White"/>
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsAIGenerated}" Value="True">
-                    <Setter Property="Background" Value="#E6F3FF"/>
-                    <!-- Light blue for AI-generated -->
-                </DataTrigger>
-                <DataTrigger Binding="{Binding IsAIGenerated}" Value="False">
-                    <Setter Property="Background" Value="White"/>
-                    <!-- White for manual -->
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
         <Image x:Key="Mark" Source="{StaticResource @CheckAllColumn_16x16.png}"></Image>
         <Image x:Key="UnMark" Source="{StaticResource @UnCheckAllColumn_16x16.png}"></Image>
     </UserControl.Resources>
@@ -131,7 +118,7 @@
                   ScrollViewer.ScrollChanged="grdMain_ScrollChanged"
                  >
                 <DataGrid.RowStyle>
-                    <Style TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource AIGeneratedRowStyle}">
+                    <Style TargetType="{x:Type DataGridRow}">
                         <Setter Property="MaxHeight" Value="70"/>
                         <EventSetter Event="MouseDoubleClick" Handler="Row_DoubleClick"/>
                     </Style>
