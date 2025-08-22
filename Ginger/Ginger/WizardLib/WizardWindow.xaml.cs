@@ -503,7 +503,7 @@ namespace GingerWPF.WizardLib
         private SeleniumDriver _subscribedSeleniumDriver;
         public void SubscribeToSeleniumDriver(SeleniumDriver seleniumDriver)
         {
-            if (seleniumDriver == null) return;
+            if (seleniumDriver == null) { return};
             if (!ReferenceEquals(_subscribedSeleniumDriver, null))
             {
                 _subscribedSeleniumDriver.PropertyChanged -= SeleniumDriver_PropertyChanged;

@@ -241,7 +241,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
         private bool IsErrorResponse(string response)
         {
             return string.IsNullOrWhiteSpace(response) ||
-                   response.Contains("unauthorized", StringComparison.OrdinalIgnoreCase) || response.Contains("Error:", StringComparison.OrdinalIgnoreCase); ;
+                   response.Contains("unauthorized", StringComparison.OrdinalIgnoreCase) || response.Contains("Error:", StringComparison.OrdinalIgnoreCase);
         }
 
         private string CleanAIResponse(string response)
