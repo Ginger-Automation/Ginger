@@ -7,6 +7,16 @@
 
     <Grid Grid.Row="3" x:Name="xSelectedElementSectionGrid" Margin="0,2,0,-2">
         <Grid.Resources>
+
+            <Style TargetType="DataGridRow" x:Key="AIGeneratedRowStyle">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsAIGenerated}" Value="True">
+                        <Setter Property="Background" Value="#FFE6F7FF"/>
+                        <!-- Light blue -->
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
             <DataTemplate x:Key="xLocateValueVETemplate">
                 <Button x:Name="xLocateValueVEButton" Click="XLocateValueVEButton_Click" Content="..." ToolTip="Locate Value Expression" Style="{StaticResource DataGridCellButtonStyle}" ></Button>
             </DataTemplate>
@@ -96,7 +106,7 @@
                         <TextBlock x:Name="xLocatorsTextBlock" Text="Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed" RowChangedEvent="xLocatorsGrid_RowChangedEvent"/>
+                <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed" EnableAIGeneratedRowStyling="True" RowChangedEvent="xLocatorsGrid_RowChangedEvent"/>
             </TabItem>
             <TabItem x:Name="xFriendlyLocatorTab" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>

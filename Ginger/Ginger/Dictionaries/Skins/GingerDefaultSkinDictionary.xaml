@@ -13,6 +13,7 @@
     <SolidColorBrush x:Key="$BackgroundColor_LightGray" Color="#E3E3E8" />
     <SolidColorBrush x:Key="$BackgroundColor_VeryLightGray" Color="#f8f8f8" /> 
     <SolidColorBrush x:Key="$BackgroundColor_DarkGray" Color="#818398" />
+    <SolidColorBrush x:Key="$BackgroundColor_Purple" Color="#C63F42" />
     <!--Selection Colors-->
 
     <SolidColorBrush x:Key="$SelectionColor_Pink" Color="#F05C62" />

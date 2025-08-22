@@ -18,14 +18,19 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.UserControls;
 using Ginger.Agents;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.DataSource;
+using GingerCore.Drivers;
+using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -37,6 +42,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
@@ -49,9 +56,15 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         public ePlatformType mAppPlatform;
         public bool isEnableFriendlyLocator = false;
         private const double AGENT_CONFIGS_ROW_HEIGHT = 90;
+
+        public eImageType IconType { get; set; } = eImageType.GingerPlayLogo;
+
+
+
         public POMLearnConfigWizardPage()
         {
             InitializeComponent();
+            this.DataContext = this;
             xTAlabel.Content = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}:";
         }
 
@@ -89,10 +102,46 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     SetElementLocatorsSettingsGridView();
                     UpdateConfigsBasedOnAgentStatus();
                     PlatformSpecificUIManipulations();
+                    // Subscribe to SeleniumDriver events for AI processing
+                    SubscribeToCurrentSeleniumDriver();
                     break;
                 case EventType.LeavingForNextPage:
                     UpdateCustomTemplateList();
                     break;
+            }
+        }
+
+        private void SubscribeToCurrentSeleniumDriver()
+        {
+            try
+            {
+                // Get the agent from the wizard's PomLearnUtils
+                Agent currentAgent = mBasePOMWizard?.mPomLearnUtils?.Agent;
+
+                // Alternative: Get from the agent control if available
+                if (currentAgent == null && xAgentControlUC != null)
+                {
+                    currentAgent = xAgentControlUC.SelectedAgent;
+                }
+
+                // Check if agent is running and has a driver
+                if (currentAgent?.AgentOperations is AgentOperations agentOps && agentOps.Driver is SeleniumDriver seleniumDriver)
+                {
+                    // Get the wizard window and subscribe to driver events
+                    if (mBasePOMWizard?.mWizardWindow is WizardWindow wizardWindow)
+                    {
+                        wizardWindow.SubscribeToSeleniumDriver(seleniumDriver);
+                        Reporter.ToLog(eLogLevel.DEBUG, "Successfully subscribed to SeleniumDriver AI processing events");
+                    }
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "SeleniumDriver not available for AI processing subscription");
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error subscribing to SeleniumDriver events", ex);
             }
         }
 
@@ -309,12 +358,24 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     }
                 }
             }
-
             if (e.PropertyName == nameof(ucAgentControl.AgentIsRunning))
             {
                 UpdateConfigsBasedOnAgentStatus();
+
+                // Subscribe to SeleniumDriver when agent becomes available
+                if (xAgentControlUC.AgentIsRunning)
+                {
+                    SubscribeToCurrentSeleniumDriver();
+                }
+            }
+
+            // Also subscribe when the selected agent changes
+            if (e.PropertyName == nameof(ucAgentControl.SelectedAgent))
+            {
+                SubscribeToCurrentSeleniumDriver();
             }
         }
+        
         private async void NavigateAgentToHtml(Agent agent, Uri uri)
         {
             try
@@ -360,6 +421,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xElementLocatorsSettingsExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
             xElementLocatorsSettingsExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
             xSpecificFrameConfigPanel.IsEnabled = xAgentControlUC.AgentIsRunning;
+            xLearnPOMByAI.IsEnabled = xAgentControlUC.AgentIsRunning;
+
         }
 
         private void ClearAutoMapElementTypesSection()

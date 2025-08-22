@@ -18,10 +18,12 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Ginger;
+using GingerCore.Drivers;
 using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -47,7 +49,7 @@ namespace GingerWPF.WizardLib
             WizardWindow wizardWindow = new WizardWindow(wizard);
             wizardWindow.Dispatcher.Invoke(() =>
             {
-                wizardWindow.MaxHeight = height;
+                wizardWindow.Height = height;
                 wizardWindow.Width = width;
                 if (!wizard.IsNavigationListEnabled)
                 {
@@ -441,6 +443,98 @@ namespace GingerWPF.WizardLib
         void IWizardWindow.SetPrevButtonEnabled(bool isEnabled)
         {
             xPrevButton.IsEnabled = isEnabled;
+        }
+
+        private DispatcherTimer AIFineTunetimer;
+        private TimeSpan AIFineTuneelapsedTime;
+        private void StartAIFineTuneTimer()
+        {
+            // Create and configure the DispatcherTimer
+            AIFineTunetimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1) // Update every second
+            };
+            AIFineTunetimer.Tick += AIFineTuneTimer_Tick;
+
+            // Initialize elapsed time
+            AIFineTuneelapsedTime = TimeSpan.Zero;
+
+            // Start the timer
+            try
+            {
+                AIFineTunetimer.Start();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error while starting the timer", ex);
+            }
+        }
+
+        private void AIFineTuneTimer_Tick(object sender, EventArgs e)
+        {
+            // Increment elapsed time by 1 second
+            AIFineTuneelapsedTime = AIFineTuneelapsedTime.Add(TimeSpan.FromSeconds(1));
+
+            // Update the timer display
+            //FineTunetimerText.Text = $"{(int)AIFineTuneelapsedTime.TotalMinutes:00}:{AIFineTuneelapsedTime.Seconds:00}";
+        }
+
+        // You can stop the timer if needed
+        private void AIFineTuneStopTimer()
+        {
+            if (AIFineTunetimer != null)
+            {
+                try
+                {
+                    AIFineTunetimer.Stop();
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error while stopping the timer", ex);
+                }
+            }
+        }
+
+        public void SubscribeToSeleniumDriver(SeleniumDriver seleniumDriver)
+        {
+            if (seleniumDriver != null)
+            {
+                seleniumDriver.PropertyChanged += SeleniumDriver_PropertyChanged;
+            }
+        }
+
+        private void SeleniumDriver_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(SeleniumDriver.IsProcessing))
+            {
+                var seleniumDriver = sender as SeleniumDriver;
+                if (seleniumDriver?.IsProcessing == true)
+                {
+                    AIProcessStarted();
+                }
+                else
+                {
+                    AIProcessStopped();
+                }
+            }
+        }
+
+        public void AIProcessStarted()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xAIProcessingImage.Visibility = Visibility.Visible;
+                xAIProcessingText.Visibility = Visibility.Visible;
+            });
+        }
+
+        public void AIProcessStopped()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xAIProcessingImage.Visibility = Visibility.Collapsed;
+                xAIProcessingText.Visibility = Visibility.Collapsed;
+            });
         }
     }
 }

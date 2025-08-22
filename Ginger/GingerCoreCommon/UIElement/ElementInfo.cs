@@ -93,6 +93,24 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
+
+        private bool _isProcessed;
+
+        public bool IsProcessed
+        {
+            get => _isProcessed;
+            set
+            {
+                if (_isProcessed != value)
+                {
+                    _isProcessed = value;
+                    OnPropertyChanged(nameof(IsProcessed));
+                }
+            }
+        }
+
+
+
         private SelfHealingInfoEnum mSelfHealingInfo;
         public string GetSelfHealingInfo
         {
@@ -622,7 +640,14 @@ namespace Amdocs.Ginger.Common.UIElement
         [EnumValueDescription("By ARIA Label")]
         ByAriaLabel,
         [EnumValueDescription("By DataTest Id")]
-        ByDataTestId
+        ByDataTestId,
+        [EnumValueDescription("By Partial LinkText")]
+        ByPartialLinkText,
+        [EnumValueDescription("By Custom XPath")]
+        ByCustomXPath,
+        [EnumValueDescription("By Data Attribute")]
+        ByDataAttribute
+
     }
 
     public enum eElementType

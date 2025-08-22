@@ -38,6 +38,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
 
     public class Element
     {
+        public Guid elementGuid { get; set; }
         public ElementwrapperProperties Properties { get; set; }
         public ElementwrapperLocators locators { get; set; }
         public ElementwrapperContext context { get; set; }
@@ -78,6 +79,16 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
         public string Height { get; set; }
         public string X { get; set; }
         public string Y { get; set; }
+        public string EnhanceName { get; set; }
+        public string EnhanceDescription { get; set; }
+
+
+        public string GetPropertyValue(string propertyName)
+        {
+            var property = typeof(ElementwrapperProperties).GetProperty(propertyName);
+            return property?.GetValue(this)?.ToString();
+        }
+
     }
 
     public class ElementwrapperLocators
@@ -98,6 +109,9 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
         public string ByAriaLabel { get; set; }
         public string ByDataTestId { get; set; }
         public string ByTitle { get; set; }
+        public object EnhanceLocatorsByAI { get; set; }
+
+
     }
 
 

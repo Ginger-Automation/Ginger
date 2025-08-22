@@ -22,17 +22,13 @@
                     <Label x:Name="xTAlabel" Style="{StaticResource @LabelStyle}"/>
                     <ComboBox x:Name="xTargetApplicationComboBox"  AutomationProperties.AutomationId="TargetApplication AID" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" SelectionChanged="XTargetApplicationComboBox_SelectionChanged" />
                 </StackPanel>
-                
+
                 <StackPanel Orientation="Horizontal" Margin="5,10,0,0">
                     <Label Grid.Column="0" VerticalAlignment="Center" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Content="Page Elements Setup Method:" />
                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                         <RadioButton x:Name="xAutomaticElementConfigurationRadioButton" GroupName="ElementConfigRadioButtonsGroup"  Style="{StaticResource $InputRadioButtonStyle}" IsChecked="True" Checked="xAutomaticElementConfigurationRadioButton_Checked" Content="Automatic Learning" FontWeight="Bold"></RadioButton>
                         <RadioButton x:Name="xManualElementConfigurationRadioButton" GroupName="ElementConfigRadioButtonsGroup" Style="{StaticResource $InputRadioButtonStyle}" IsChecked="False" Checked="xAutomaticElementConfigurationRadioButton_Checked" Margin="10,0,0,0"  Content="Manual" FontWeight="Bold"></RadioButton>
                     </StackPanel>
-                </StackPanel>
-                
-                <StackPanel Orientation="Horizontal">
-                    <CheckBox x:Name="xLearnPOMByAI" AutomationProperties.AutomationId="xLearnPOMByAICheckBox AID" Content="POM Learning By AI" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" IsEnabled="True" Visibility="Collapsed" Style="{StaticResource $CeckBoxStyle}"/>
                 </StackPanel>
 
 
@@ -70,9 +66,44 @@
                                 <CheckBox x:Name="xLearnOnlyMappedElements" AutomationProperties.AutomationId="LearnOnlyMappedElementsCheckBox AID" Content="Only Mapped Elements" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" IsEnabled="False" Style="{StaticResource $CeckBoxStyle}"/>
                                 <CheckBox x:Name="xLearnShadowDOMElements" AutomationProperties.AutomationId="LearnShadowDOMElementsCheckBox AID" Content="Shadow DOM Elements" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="False" IsEnabled="False" Style="{StaticResource $CeckBoxStyle}"/>
                             </StackPanel>
-                            
-                            
-                            
+
+
+                            <StackPanel Margin="10">
+                                <!-- Image + Text horizontally aligned -->
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Viewbox Width="24" Height="24" Margin="0,0,5,0">
+                                        <usercontrols:ImageMakerControl 
+                                            SetAsFontImageWithSize="12" 
+                                            ImageType="{Binding Path=IconType}" 
+                                            HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center" 
+                                            SetBorder="False" 
+                                            ImageForeground="{StaticResource $BackgroundColor_DarkGray}" />
+                                    </Viewbox>
+                                    
+                                    <TextBlock 
+                                        Text="AI Fine-Tuning Options" 
+                                        FontWeight="Bold" 
+                                        FontSize="14" 
+                                        VerticalAlignment="Center" />
+                                </StackPanel>
+
+                                <!-- ToggleButton below -->
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox 
+                                        x:Name="xLearnPOMByAI" 
+                                        AutomationProperties.AutomationId="xLearnPOMByAICheckBox AID" 
+                                        Content="Activate Smart Fine-Tuning Elements" 
+                                        Margin="7,10,0,10" 
+                                        IsChecked="False" 
+                                        IsEnabled="False" 
+                                        Visibility="Visible"
+                                        Style="{StaticResource $CeckBoxStyle}"/>
+                                </StackPanel>
+                            </StackPanel>
+
+
+
                             <Expander x:Name="xAutoMapElementTypesExpander" DockPanel.Dock="Top" Visibility="Visible" IsEnabled="False" IsExpanded="False" Margin="5,0,0,0">
                                 <Expander.Header>
                                     <Label x:Name="xPropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12" Content="Elements Types to Auto Map"/>

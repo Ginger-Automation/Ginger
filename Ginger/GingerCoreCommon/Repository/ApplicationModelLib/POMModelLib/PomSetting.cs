@@ -65,5 +65,16 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib
             get;
             set;
         }
+
+        private string _processingTime;
+        public string ProcessingTime
+        {
+            get => _processingTime;
+            set
+            {
+                _processingTime = value;
+                OnPropertyChanged(nameof(ProcessingTime));
+            }
+        }
     }
 }

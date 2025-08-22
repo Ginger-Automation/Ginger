@@ -24,6 +24,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -600,6 +601,11 @@ namespace GingerCore.Platforms.PlatformsInfo
                     eLocateBy.ByAltText,
                     eLocateBy.ByTestID,
                     eLocateBy.Chained,
+                    eLocateBy.ByAriaLabel,
+                    eLocateBy.ByPartialLinkText,
+                    eLocateBy.ByCustomXPath,
+                    eLocateBy.ByDataAttribute,
+                    eLocateBy.ByDataTestId
 
                 ];
             }

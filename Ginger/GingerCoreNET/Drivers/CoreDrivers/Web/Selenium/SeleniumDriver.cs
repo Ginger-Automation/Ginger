@@ -26,6 +26,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib;
@@ -43,10 +44,8 @@ using HtmlAgilityPack;
 using InputSimulatorStandard;
 using Microsoft.VisualStudio.Services.Common;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
-using OpenQA.Selenium.BiDi.Modules.BrowsingContext;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Chromium;
 using OpenQA.Selenium.Common;
@@ -59,6 +58,7 @@ using OpenQA.Selenium.Safari;
 using OpenQA.Selenium.Support.UI;
 using Protractor;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -70,6 +70,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -166,6 +167,28 @@ namespace GingerCore.Drivers
             Warning = 3,
             Severe = 4
         }
+
+        private static readonly List<string> FilterProperties = new List<string> { "name", "Platform Element Type", "Element Type", "TagName", "Text", "Value", "AutomationID", "Title", "AriaLabel", "DataTestId", "Placeholder", "ID" };
+
+        ConcurrentQueue<ElementInfo> processingQueue = new ConcurrentQueue<ElementInfo>();
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private bool _isProcessing = false;
+        public bool IsProcessing
+        {
+            get => _isProcessing;
+            private set
+            {
+                if (_isProcessing != value)
+                {
+                    _isProcessing = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsProcessing)));
+                }
+            }
+        }
+        private readonly object lockObj = new object();
 
         public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA, IEnumerable<DriverConfigParam> driverConfigParams = null)
         {
@@ -4541,13 +4564,13 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,$"Failed to locate element", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to locate element", ex);
             }
             finally
             {
                 Driver.Manage().Timeouts().ImplicitWait = ImpWait;//reset Implicit wait
             }
-            
+
             return elem;
         }
 
@@ -5312,7 +5335,7 @@ namespace GingerCore.Drivers
         public bool ExtraLocatorsRequired = true;
         async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, Bitmap ScreenShot = null)
         {
-            return await Task.Run(() =>
+            return await Task.Run(async () =>
             {
                 mIsDriverBusy = true;
 
@@ -5324,6 +5347,8 @@ namespace GingerCore.Drivers
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
                     List<ElementInfo> list = General.ConvertObservableListToList<ElementInfo>(FindAllElementsFromPOM("", pomSetting, Driver, Guid.Empty, foundElementsList, PomMetaData, ScreenShot: ScreenShot));
+                    ElementWrapperInfo elementWrapperInfo = new ElementWrapperInfo();
+                    elementWrapperInfo.elements = new List<ElementWrapper>();
                     for (int i = 0; i < list.Count; i++)
                     {
                         ElementInfo elementInfo = list[i];
@@ -5362,6 +5387,11 @@ namespace GingerCore.Drivers
                     Driver.SwitchTo().DefaultContent();
                     return list;
                 }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting visible controls", ex);
+                    return new List<ElementInfo>();
+                }
                 finally
                 {
                     mIsDriverBusy = false;
@@ -5369,6 +5399,17 @@ namespace GingerCore.Drivers
                 }
             });
         }
+
+        private List<string> SplitIntoChunks(string text, int chunkSize)
+        {
+            var chunks = new List<string>();
+            for (int i = 0; i < text.Length; i += chunkSize)
+            {
+                chunks.Add(text.Substring(i, Math.Min(chunkSize, text.Length - i)));
+            }
+            return chunks;
+        }
+
 
         public void EnhanceElementLocators(ElementInfo element)
         {
@@ -5378,7 +5419,6 @@ namespace GingerCore.Drivers
 
             string primary = null;
             string fallback = null;
-            //var friendly = element.FriendlyLocators?.FirstOrDefault()?.Value;
             double score = 0.0;
 
             var idLocator = element.Locators?.FirstOrDefault(l => l.LocateBy == eLocateBy.ByID);
@@ -5548,6 +5588,7 @@ namespace GingerCore.Drivers
             return int.TryParse(value, out int result) ? result : 0;
         }
 
+
         /// <summary>
         /// Finds all elements from the POM based on the provided settings and context.
         /// </summary>
@@ -5577,87 +5618,7 @@ namespace GingerCore.Drivers
                     .Where(x => !x.Name.StartsWith('#') && !excludedElementNames.Contains(x.Name)
                                 && !x.XPath.Contains("/noscript", StringComparison.OrdinalIgnoreCase));
             List<HtmlNode> formElementsList = [];
-            if (WorkSpace.Instance.BetaFeatures.ShowPOMForAI)
-            {
-                if (pomSetting.LearnPOMByAI)
-                {
-                    try
-                    {
-                        var rawHtml = string.Join("\n",
-                     htmlDoc.DocumentNode
-                     .Descendants()
-                     .Where(x => !x.Name.StartsWith('#')
-                     && !excludedElementNames.Contains(x.Name)
-                     && !x.XPath.Contains("/noscript", StringComparison.OrdinalIgnoreCase))
-                     .Select(x => x.OuterHtml));
-                        var payload = new
-                        {
-                            dom = rawHtml // Replace with your actual DOM string
-                        };
-                        string Response = string.Empty;
-                        //GenAI service
-                        Response = GingerCoreNET.GeneralLib.General.GetResponseByOpenAI(payload).GetAwaiter().GetResult();
-
-                        if (IsErrorResponse(Response))
-                        {
-                            Reporter.ToLog(eLogLevel.INFO, "Failed to connect to OpenAI API. Please check your internet connection or firewall settings");
-                            return foundElementsList;
-                        }
-
-                        string cleanedResponse = CleanAIResponse(Response);
-
-                        // Step 1: Parse the outer JSON
-                        var outerJson = JObject.Parse(cleanedResponse); // 'Response' is your raw JSON string
-                        Reporter.ToLog(eLogLevel.DEBUG, $"cleanedResponse: {cleanedResponse} ");
-                        // Step 2: Extract the inner JSON string
-                        string innerJsonString = outerJson["data"]?["genai_result"]?.ToString();
-                        if (innerJsonString == null)
-                        {
-                            innerJsonString = outerJson.ToString();
-                        }
-                        // Step 3: Validate and clean the inner JSON string
-                        if (!string.IsNullOrWhiteSpace(innerJsonString) && innerJsonString.TrimStart().StartsWith("{"))
-                        {
-                            string cleanedJson = innerJsonString;
-
-                            try
-                            {
-                                var elementWrapperInfo = JsonConvert.DeserializeObject<ElementWrapperInfo>(cleanedJson);
-
-                                if (elementWrapperInfo?.elements == null || !elementWrapperInfo.elements.Any())
-                                {
-                                    Reporter.ToLog(eLogLevel.WARN, "No elements found in AI response");
-                                    return foundElementsList;
-                                }
-
-                                var processedElements = ProcessAIElements(elementWrapperInfo.elements);
-                                foundElementsList.AddRange(processedElements);
-                                return foundElementsList;
-                            }
-                            catch (JsonException ex)
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, "Failed to parse inner JSON: " + ex.Message, ex);
-                                return foundElementsList;
-                            }
-                        }
-                        else
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, "genai_result does not contain valid JSON.");
-                            return foundElementsList;
-                        }
-
-
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to parse JSON,Please check genai_result does not contain valid JSON.", ex);
-                        return foundElementsList;
-                    }
-                }
-            }
-
-            //List<HtmlNode> formElementsList = [];
-            // Process HTML elements
+            
             foreach (HtmlNode htmlElemNode in htmlElements)
             {
                 try
@@ -5694,6 +5655,21 @@ namespace GingerCore.Drivers
                         foundElementsList.Add(foundElementInfo);
                         allReadElem.Add(foundElementInfo);
 
+                        if (pomSetting.LearnPOMByAI)
+                        {
+
+                            // Only enqueue if not already processed
+                            if (!foundElementInfo.IsProcessed)
+                            {
+                                processingQueue.Enqueue(foundElementInfo);
+                            }
+
+                            // Trigger batch processing
+                            TriggerBatchProcessing(pomSetting);
+                        }
+
+
+
                         // Recursively find elements within shadow DOM
                         if (pomSetting.LearnShadowDomElements && elementTypeEnum.Item2 != eElementType.Iframe)
                         {
@@ -5718,12 +5694,112 @@ namespace GingerCore.Drivers
                     Reporter.ToLog(eLogLevel.DEBUG, $"Failed to learn the Web Element '{htmlElemNode.Name}'", ex);
                 }
             }
-
+            if (pomSetting.LearnPOMByAI)
+            {
+                if (processingQueue.Count < 10 && !IsProcessing)
+                {
+                    _ = Task.Run(() => TriggerDelayedProcessing(pomSetting));
+                }
+            }
             // Process form elements and add metadata
             ProcessFormElements(formElementsList, Driver, pomSetting, foundElementsList, PomMetaData);
 
             return foundElementsList;
         }
+
+
+        private async Task TriggerDelayedProcessing(PomSetting pomSetting)
+        {
+            await ProcessBatchAsync(pomSetting);
+        }
+
+
+
+        private void TriggerBatchProcessing(PomSetting pomSetting)
+        {
+            lock (lockObj)
+            {
+                if (!IsProcessing && processingQueue.Count >= 10)
+                {
+                    IsProcessing = true;
+                    _ = Task.Run(() => ProcessBatchAsync(pomSetting));
+                }
+            }
+        }
+
+
+
+        private async Task ProcessBatchAsync(PomSetting pomSetting)
+        {
+            try
+            {
+
+                //AIFineTuneStartTimer();
+                while (processingQueue.Count >= 10)
+                {
+                    ObservableList<ElementInfo> batch = new ObservableList<ElementInfo>();
+
+                    while (batch.Count < 10 && processingQueue.TryDequeue(out var item))
+                    {
+                        if (!item.IsProcessed)
+                        {
+                            batch.Add(item);
+                        }
+                    }
+
+                    if (batch.Count > 0)
+                    {
+                        await UpdateAndMarkElementsAsync(pomSetting,batch);
+                    }
+                }
+                await FlushRemainingAsync(pomSetting);
+            }
+            finally
+            {
+                lock (lockObj)
+                {
+                    IsProcessing = false;
+                }
+            }
+        }
+
+        private async Task FlushRemainingAsync(PomSetting pomSetting)
+        {
+            ObservableList<ElementInfo> remaining = new ObservableList<ElementInfo>();
+
+            while (processingQueue.TryDequeue(out var item))
+            {
+                if (!item.IsProcessed)
+                {
+                    IsProcessing = true;
+                    remaining.Add(item);
+                }
+            }
+
+            if (remaining.Count > 0)
+            {
+                await UpdateAndMarkElementsAsync(pomSetting,remaining);
+            }
+        }
+
+
+
+
+        private async Task UpdateAndMarkElementsAsync(PomSetting pomSetting, ObservableList<ElementInfo> foundElementList)
+        {
+            POMUtils pOMUtils = new POMUtils();
+            ElementWrapperInfo elementWrapperInfo = pOMUtils.GenerateJsonToSendAIRequestByList(pomSetting, foundElementList);
+            string url = ""; // Your local API endpoint
+            string Response = string.Empty;
+
+            // Call SendInBatches instead of direct API call
+            Response = await pOMUtils.SendInBatchesList(elementWrapperInfo, foundElementList, url, this.PomCategory);
+
+            await Task.Delay(100);
+        }
+
+
+
 
         // Method to determine if the element should be learned
         private ObservableList<ElementInfo> ProcessAIElements(List<ElementWrapper> elements)
@@ -5767,7 +5843,6 @@ namespace GingerCore.Drivers
         private bool IsErrorResponse(string response)
         {
             return string.IsNullOrWhiteSpace(response) ||
-                   response.Contains("error", StringComparison.OrdinalIgnoreCase) ||
                    response.Contains("unauthorized", StringComparison.OrdinalIgnoreCase);
         }
 
@@ -7090,7 +7165,7 @@ namespace GingerCore.Drivers
                 {
                     list.Add(new ControlProperty() { Name = $"CSS: {prop}", Value = value?.ToString() });
                 }
-                
+
             }
         }
 
