@@ -451,7 +451,8 @@ namespace GingerWPF.WizardLib
         }
 
         private DispatcherTimer AIFineTunetimer;
-        private TimeSpan AIFineTuneelapsedTime;
+        private TimeSpan AIFineTuneelapsedTime; 
+        private string AIFineTuneBaseText;
         private void StartAIFineTuneTimer()
         {
             // Create and configure the DispatcherTimer
@@ -463,7 +464,9 @@ namespace GingerWPF.WizardLib
 
             // Initialize elapsed time
             AIFineTuneelapsedTime = TimeSpan.Zero;
-
+            // Capture base label once and initialize displayed text
+            AIFineTuneBaseText = string.IsNullOrWhiteSpace(xAIProcessingText.Text) ? "AI Fine-Tuning Processing" : xAIProcessingText.Text;
+            xAIProcessingText.Text = $"{AIFineTuneBaseText} => 00:00";
             // Start the timer
             try
             {
@@ -481,7 +484,7 @@ namespace GingerWPF.WizardLib
             AIFineTuneelapsedTime = AIFineTuneelapsedTime.Add(TimeSpan.FromSeconds(1));
 
             // Update the timer display
-            xAIProcessingText.Text = $"{xAIProcessingText.Text} => {(int)AIFineTuneelapsedTime.TotalMinutes:00}:{AIFineTuneelapsedTime.Seconds:00}";
+            xAIProcessingText.Text = $"{AIFineTuneBaseText} => {(int)AIFineTuneelapsedTime.TotalMinutes:00}:{AIFineTuneelapsedTime.Seconds:00}";
         }
 
         // You can stop the timer if needed
@@ -492,6 +495,11 @@ namespace GingerWPF.WizardLib
                 try
                 {
                     AIFineTunetimer.Stop();
+                    // Reset label to base text when stopping
+                    if (!string.IsNullOrWhiteSpace(AIFineTuneBaseText))
+                    {
+                        xAIProcessingText.Text = AIFineTuneBaseText;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -503,7 +511,7 @@ namespace GingerWPF.WizardLib
         private SeleniumDriver _subscribedSeleniumDriver;
         public void SubscribeToSeleniumDriver(SeleniumDriver seleniumDriver)
         {
-            if (seleniumDriver == null) { return};
+            if (seleniumDriver == null) { return; }
             if (!ReferenceEquals(_subscribedSeleniumDriver, null))
             {
                 _subscribedSeleniumDriver.PropertyChanged -= SeleniumDriver_PropertyChanged;
@@ -516,7 +524,6 @@ namespace GingerWPF.WizardLib
         {
             if (e.PropertyName == nameof(SeleniumDriver.IsProcessing))
             {
-                var seleniumDriver = sender as SeleniumDriver;
                 if (sender is SeleniumDriver seleniumDriverdata && seleniumDriverdata.IsProcessing)
                 {
                     Dispatcher.Invoke(AIProcessStarted);

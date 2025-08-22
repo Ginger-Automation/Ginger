@@ -5716,11 +5716,11 @@ namespace GingerCore.Drivers
 
         private void TriggerBatchProcessing(PomSetting pomSetting)
         {
-            if (processingQueue.Count < 10)
+            if (processingQueue.Count >= 10)
             {
                 lock (lockObj)
                 {
-                    if (!IsProcessing && processingQueue.Count >= 10)
+                    if (!IsProcessing)
                     {
                         IsProcessing = true;
                         _ = Task.Run(() => ProcessBatchAsync(pomSetting));
@@ -5735,7 +5735,6 @@ namespace GingerCore.Drivers
         {
             try
             {
-                //AIFineTuneStartTimer();
                 while (true)
                 {
                     var batch = new ObservableList<ElementInfo>();

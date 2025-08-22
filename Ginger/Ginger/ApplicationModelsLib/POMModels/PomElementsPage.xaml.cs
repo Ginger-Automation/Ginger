@@ -638,36 +638,65 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 handler: LocatorsGrid_LoadingRow);
         }
 
+        //private void LocatorsGrid_LoadingRow(object sender, DataGridRowEventArgs e)
+        //{
+        //    if (e.Row.DataContext is ElementLocator locator && locator.IsAIGenerated)
+        //    {
+        //        // Use a more visible color and set multiple properties
+        //        var aiBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#8A57EA")); // purple
+
+        //        e.Row.Background = aiBrush;
+
+        //        // Force the style to take precedence
+        //        e.Row.Style = null;
+
+        //        // Apply to individual cells if needed
+        //        Dispatcher.BeginInvoke(new Action(() =>
+        //        {
+        //            try
+        //            {
+        //                for (int i = 0; i < xElementDetails.xLocatorsGrid.grdMain.Columns.Count; i++)
+        //                {
+        //                    var cellContent = xElementDetails.xLocatorsGrid.grdMain.Columns[i].GetCellContent(e.Row);
+        //                    if (cellContent?.Parent is DataGridCell cell)
+        //                    {
+        //                        cell.Background = aiBrush;
+        //                    }
+        //                }
+        //            }
+        //            catch { /* Ignore any errors in cell styling */ }
+        //        }), System.Windows.Threading.DispatcherPriority.Loaded);
+        //    }
+        //}
+
         private void LocatorsGrid_LoadingRow(object sender, DataGridRowEventArgs e)
         {
             if (e.Row.DataContext is ElementLocator locator && locator.IsAIGenerated)
             {
-                // Use a more visible color and set multiple properties
-                var aiBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#8A57EA")); // purple
-
-                e.Row.Background = aiBrush;
-
-                // Force the style to take precedence
-                e.Row.Style = null;
-
-                // Apply to individual cells if needed
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
                     try
                     {
                         for (int i = 0; i < xElementDetails.xLocatorsGrid.grdMain.Columns.Count; i++)
                         {
-                            var cellContent = xElementDetails.xLocatorsGrid.grdMain.Columns[i].GetCellContent(e.Row);
+                            var column = xElementDetails.xLocatorsGrid.grdMain.Columns[i];
+                            var cellContent = column.GetCellContent(e.Row);
+
                             if (cellContent?.Parent is DataGridCell cell)
                             {
-                                cell.Background = aiBrush;
+                                // Apply foreground (text color) only to LocateValue column
+                                if (column.Header?.ToString() == "Locate Value")
+                                {
+                                    cell.Foreground = new SolidColorBrush(Colors.Purple); // or any contrasting color
+                                }
                             }
                         }
                     }
-                    catch { /* Ignore any errors in cell styling */ }
+                    catch { /* Ignore styling errors */ }
                 }), System.Windows.Threading.DispatcherPriority.Loaded);
             }
         }
+
 
         private List<ComboEnumItem> GetPossibleCategories()
         {

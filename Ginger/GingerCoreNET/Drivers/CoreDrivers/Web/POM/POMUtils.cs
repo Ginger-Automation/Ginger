@@ -172,15 +172,33 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             }
             else
             {
-                // Parse the response and update the locators
+                // LLMs sometimes return JSON wrapped as a JSON string or fenced. Add a fallback parse before failing the whole batch
 
                 try
                 {
-                    List<ElementWrapper> responseElements = JsonConvert.DeserializeObject<List<ElementWrapper>>(cleanedResponse);
+                    List<ElementWrapper> responseElements = null;
+                    try
+                    {
+                        responseElements = JsonConvert.DeserializeObject<List<ElementWrapper>>(cleanedResponse);
+                    }
+                    catch (JsonException)
+                    {
+                        // Fallback: response is a JSON string containing the payload
+                        var inner = JsonConvert.DeserializeObject<string>(cleanedResponse);
+                        if (!string.IsNullOrWhiteSpace(inner))
+                        {
+                            responseElements = JsonConvert.DeserializeObject<List<ElementWrapper>>(inner);
+                        }
+                    }
+                    if (responseElements == null)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "AI response could not be parsed into ElementWrapper list.");
+                        return;
+                    }
 
                     foreach (var ele in responseElements)
                     {
-                        var existingElement = list.FirstOrDefault(x => x.Guid.ToString() == ele.elementinfo.elementGuid.ToString());
+                        var existingElement = list.FirstOrDefault(x => x.Guid == ele.elementinfo.elementGuid);
                         if (existingElement != null)
                         {
                             var enhancedName = ele.elementinfo.Properties.EnhanceName;
@@ -250,16 +268,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             { 
                 return string.Empty; 
             }
-            
+
 
             return response
                 .Replace("```json", "", StringComparison.OrdinalIgnoreCase)
                 .Replace("```", "")
-                .Replace("\\\"", "'")
-                .Replace("\\n", "")
-                .Replace("\\r", "")
-                .Replace("\r", "")
-                .Replace("\n", "")
                 .Trim();
         }
 
