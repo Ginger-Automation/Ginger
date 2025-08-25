@@ -412,7 +412,7 @@ namespace GingerCore.Drivers
         [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Allow ZAP to Perform Security Testing")]
-        public bool UseZAP { get; set; }
+        public bool UseSecurityTesting { get; set; }
 
         protected IWebDriver Driver;
         protected AppiumDriver MobDriver;
@@ -603,33 +603,35 @@ namespace GingerCore.Drivers
                 SeleniumUserArgs = SeleniumUserArguments.Split(';');
             }
 
-            if (this.UseZAP)
+            if (this.UseSecurityTesting)
             {
 
                 ZAPConfiguration zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count == 0 ? new ZAPConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
 
-                if (!string.IsNullOrEmpty(zAPConfiguration.ZAPUrl))
+                if (string.IsNullOrEmpty(zAPConfiguration.ZAPUrl))
                 {
-                    Proxy = zAPConfiguration.ZAPUrl;
+                    Reporter.ToLog(eLogLevel.WARN, "UseZAP is enabled but ZAP Url is empty. Traffic will not be routed through ZAP.");
+                }
+                else
+                {
+
+                    // Normalize to host:port for Selenium Proxy
+                    string zapHostPort = CoerceZapHostPort(zAPConfiguration.ZAPUrl);
+                    Proxy = zapHostPort; // keep legacy string in sync if used elsewhere
                     if (mProxy == null)
                     {
 
-                        mProxy = new Proxy
-                        {
-                            Kind = ProxyKind.Manual,
-                            HttpProxy = Proxy,
-                            FtpProxy = Proxy,
-                            SslProxy = Proxy,
-                            SocksProxy = Proxy,
-                            SocksVersion = 5
-                        };
+                        mProxy = new Proxy();
                     }
-                    else
+                    mProxy.Kind = ProxyKind.Manual;
+                    mProxy.HttpProxy = Proxy;
+                    mProxy.FtpProxy = Proxy;
+                    mProxy.SslProxy = Proxy;
+                    mProxy.SocksProxy = Proxy;
+
+                    if (!string.IsNullOrEmpty(ByPassProxy))
                     {
-                        mProxy.HttpProxy = Proxy;
-                        mProxy.FtpProxy = Proxy;
-                        mProxy.SslProxy = Proxy;
-                        mProxy.SocksProxy = Proxy;
+                        mProxy.AddBypassAddresses(AddByPassAddress());
                     }
                 }
             }
@@ -1430,14 +1432,11 @@ namespace GingerCore.Drivers
             var proxy = new Proxy();
 
             options.Proxy = proxy;
-            if (this.UseZAP)
+            if (this.UseSecurityTesting)
             {
                 options.AcceptInsecureCertificates = true;
             }
-            else
-            {
-                options.AcceptInsecureCertificates = false;
-            }
+
 
             switch (mProxy.Kind)
             {
@@ -11834,6 +11833,24 @@ namespace GingerCore.Drivers
         {
             //overridden method from GingerWebDriver, need to implement this when we refactor SeleniumDriver to be in the similar structure as PlaywrightDriver
             throw new NotImplementedException();
+        }
+
+        // for Security Testing
+        // Helper: accept "localhost:8080", "http://localhost:8080", "https://zap:8443", or raw host
+        private static string CoerceZapHostPort(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return string.Empty;
+            if (Uri.TryCreate(input, UriKind.Absolute, out var uri))
+            {
+                var port = uri.IsDefaultPort ? 8080 : uri.Port;
+                return $"{uri.Host}:{port}";
+            }
+            // If it already looks like host:port or host, return as-is
+            var trimmed = input.Trim();
+            trimmed = trimmed.Replace("http://", "", StringComparison.OrdinalIgnoreCase)
+                             .Replace("https://", "", StringComparison.OrdinalIgnoreCase)
+                             .Trim('/');
+            return trimmed;
         }
     }
 }

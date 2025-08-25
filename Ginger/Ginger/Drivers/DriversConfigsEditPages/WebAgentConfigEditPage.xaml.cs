@@ -346,10 +346,16 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             #endregion
 
 
-            #region ZAP Config
-            DriverConfigParam useZAP = mAgent.GetOrCreateParam(nameof(SeleniumDriver.UseZAP));
-            BindingHandler.ObjFieldBinding(xEnableZAPCheckBox, CheckBox.IsCheckedProperty, useZAP, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xEnableZAPCheckBox, CheckBox.ToolTipProperty, useZAP, nameof(DriverConfigParam.Description));
+            #region UseSecurityTesting ZAP Config
+            DriverConfigParam UseSecurityTesting = mAgent.GetOrCreateParam(nameof(SeleniumDriver.UseSecurityTesting), "false");
+            BindingHandler.ObjFieldBinding(xEnableZAPCheckBox, CheckBox.IsCheckedProperty, UseSecurityTesting, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xEnableZAPCheckBox, CheckBox.ToolTipProperty, UseSecurityTesting, nameof(DriverConfigParam.Description));
+
+            // show only for Selenium Driver
+            if (mAgent.DriverType != Agent.eDriverType.Selenium)
+            {
+                xZAPConfigExpander.Visibility = Visibility.Collapsed;
+            }
             #endregion
             if (!string.IsNullOrEmpty(proxyName.Value))
             {

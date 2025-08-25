@@ -137,7 +137,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             #endregion
 
             #region ZAP Security Testing Configuration
-            DriverConfigParam useZAP = mAgent.GetOrCreateParam(nameof(WebServicesDriver.UseZAP));
+            DriverConfigParam useZAP = mAgent.GetOrCreateParam(nameof(WebServicesDriver.UseSecurityTesting));
             BindingHandler.ObjFieldBinding(xEnableZAPCheckBox, CheckBox.IsCheckedProperty, useZAP, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xEnableZAPCheckBox, CheckBox.ToolTipProperty, useZAP, nameof(DriverConfigParam.Description));
 
@@ -146,7 +146,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xScanTypeComboBox, ComboBox.TextProperty, zapScanType, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xScanTypeComboBox, ComboBox.ToolTipProperty, zapScanType, nameof(DriverConfigParam.Description));
 
-            GingerCore.General.FillComboItemsFromEnumType(xVulnerabilityTypeComboBox, typeof(WebServicesDriver.eZapVulnerability));
+            GingerCore.General.FillComboFromEnumType(xVulnerabilityTypeComboBox, typeof(WebServicesDriver.eZapVulnerability));
             DriverConfigParam zapVulnerability = mAgent.GetOrCreateParam(nameof(WebServicesDriver.ZapVulnerabilitySetting));
             BindingHandler.ObjFieldBinding(xVulnerabilityTypeComboBox, ComboBox.TextProperty, zapVulnerability, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xVulnerabilityTypeComboBox, ComboBox.ToolTipProperty, zapVulnerability, nameof(DriverConfigParam.Description));

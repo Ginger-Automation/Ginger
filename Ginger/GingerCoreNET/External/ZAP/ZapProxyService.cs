@@ -1,4 +1,6 @@
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.VariablesLib;
 using OWASPZAPDotNetAPI;
 using System;
@@ -13,18 +15,15 @@ namespace GingerCoreNET.External.ZAP
     {
         private readonly ClientApi _zapClient;
         private readonly string _zapApiKey;
+        private readonly ZAPConfiguration zAPConfiguration;
         private readonly string _zapHost;
         private readonly int _zapPort;
         public ZapProxyService()
         {
-            //zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count == 0 ? new ZAPConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
-            //if (zAPConfiguration == null)
-            //{
-            //    throw new ArgumentNullException(nameof(zAPConfiguration), "ZAP Configuration cannot be null.");
-            //}
-            _zapHost = "127.0.0.1";
-            _zapPort = 8080;
-            _zapApiKey = "lq79gvufmrchhjr54a2qc7ruth";
+            zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count == 0 ? new ZAPConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
+            _zapHost = GetHostFromUrl(zAPConfiguration.ZAPUrl);
+            _zapPort = (int)GetPortFromUrl(zAPConfiguration.ZAPUrl);
+            _zapApiKey = zAPConfiguration.ZAPApiKey;
             _zapClient = new ClientApi(_zapHost, _zapPort, _zapApiKey);
 
         }
@@ -33,7 +32,7 @@ namespace GingerCoreNET.External.ZAP
         /// Checks if OWASP ZAP is running and accessible via its API.
         /// </summary>
         /// <returns>True if ZAP is running and accessible, false otherwise.</returns>
-        public bool IsZapRunningAsync()
+        public bool IsZapRunning()
         {
             try
             {
@@ -43,7 +42,7 @@ namespace GingerCoreNET.External.ZAP
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error connecting to ZAP: {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error connecting to ZAP: {ex.Message}", ex);
                 return false;
             }
         }
@@ -63,7 +62,7 @@ namespace GingerCoreNET.External.ZAP
             }
             catch (Exception ex)
             {
-                throw new Exception("Error during passive scan: " + ex.Message, ex);
+                throw new InvalidOperationException("Error during passive scan: " + ex.Message, ex);
             }
         }
 
@@ -139,7 +138,9 @@ namespace GingerCoreNET.External.ZAP
         public static string GetHostFromUrl(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
+            {
                 return null;
+            }
 
             try
             {
@@ -181,15 +182,22 @@ namespace GingerCoreNET.External.ZAP
         /// <param name="siteToTest">The site URL to add to the scan tree.</param>
         public void AddUrlToScanTree(string siteToTest)
         {
-            _zapClient.core.accessUrl(siteToTest, "false");
-            var urls = GetUrlsFromScanTree(siteToTest);
-            if (urls.Contains(siteToTest))
+            try
             {
-                Reporter.ToLog(eLogLevel.INFO, $"{siteToTest} has been added to scan tree");
+                _zapClient.core.accessUrl(siteToTest, "false");
+                var urls = GetUrlsFromScanTree(siteToTest);
+                if (urls.Contains(siteToTest))
+                {
+                    Reporter.ToLog(eLogLevel.INFO, $"{siteToTest} has been added to scan tree");
+                }
+                else
+                {
+                    throw new InvalidOperationException($"{siteToTest} not added to scan tree, active scan will not be possible");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                throw new Exception($"{siteToTest} not added to scan tree, active scan will not be possible");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to add {siteToTest} to scan tree: {ex.Message}", ex);
             }
         }
 

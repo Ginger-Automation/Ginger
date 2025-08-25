@@ -157,7 +157,7 @@
                 </Expander.Header>
                 <Expander.Content>
                     <StackPanel Margin="10, 15, 0, 0">
-                        <CheckBox x:Name="xEnableZAPCheckBox" Content="Enable ZAP Security Testing" Style="{StaticResource $CeckBoxStyle}" />
+                        <CheckBox x:Name="xEnableZAPCheckBox" Content="Enable Security Testing" Style="{StaticResource $CeckBoxStyle}" />
                         <Grid Margin="0,5,0,0" Visibility="{Binding IsChecked, ElementName=xEnableZAPCheckBox, Converter={StaticResource B2V}}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>

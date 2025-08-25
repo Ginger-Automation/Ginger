@@ -803,12 +803,13 @@ namespace GingerCoreNET.GeneralLib
                 }
                 else
                 {
+                    Reporter.ToLog(eLogLevel.DEBUG, "ZAP configuration already exists; skipping creation.");
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error creating GingerPlay configuration", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error creating ZAP configuration", ex);
                 return false;
             }
         }

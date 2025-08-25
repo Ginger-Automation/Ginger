@@ -43,8 +43,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         public new static partial class Fields
         {
             public static string ScanType = "ScanType";
-            public static string Target = "Target";
-
         }
         public override String ActionType
         {
@@ -71,7 +69,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 if (mPlatforms.Count == 0)
                 {
                     mPlatforms.Add(ePlatformType.Web);
-                    mPlatforms.Add(ePlatformType.WebServices);
                 }
                 return mPlatforms;
             }
@@ -194,7 +191,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
 
         private ZAPConfiguration zAPConfiguration;
-        private ZapProxyService zapProxyService;
         public ZAPConfiguration ZAPConfiguration
         {
             get
@@ -214,11 +210,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         public void ExecuteActiveZapScan(string testURL)
         {
             Status = eRunStatus.Running;
-            zapProxyService = new ZapProxyService();
+            ZapProxyService zapProxyService = new ZapProxyService();
             try
             {
 
-                if (zapProxyService.IsZapRunningAsync())
+                if (zapProxyService.IsZapRunning())
                 {
                     zapProxyService.AddUrlToScanTree(testURL);
                     zapProxyService.PerformActiveScan(testURL);
@@ -274,10 +270,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         {
             bool isPassed = false;
             Status = eRunStatus.Running;
-            zapProxyService = new ZapProxyService();
+            ZapProxyService zapProxyService = new ZapProxyService();
             try
             {
-                if (zapProxyService.IsZapRunningAsync())
+                if (zapProxyService.IsZapRunning())
                 {
 
                     zapProxyService.WaitTillPassiveScanCompleted();
@@ -318,10 +314,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         public void ExecuteApiSecurityTestWithOpenApi(string apiEndpointURL, Act act)
         {
             Status = eRunStatus.Running;
-            zapProxyService = new ZapProxyService();
+            ZapProxyService zapProxyService = new ZapProxyService();
             try
             {
-                if (zapProxyService.IsZapRunningAsync())
+                if (zapProxyService.IsZapRunning())
                 {
                     if (!string.IsNullOrEmpty(apiEndpointURL))
                     {

@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.ActionsLib.Webservices;
 using Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter;
@@ -151,7 +152,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Configure ZAP Security Testing")]
-        public bool UseZAP { get; set; }
+        public bool UseSecurityTesting { get; set; }
 
         public enum eZapScanType
         {
@@ -166,7 +167,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         {
             get
             {
-                return (eZapScanType)Enum.Parse(typeof(eZapScanType), ZapScanTypeSetting, true);
+                return Enum.TryParse<eZapScanType>(ZapScanTypeSetting, true, out var v) ? v : eZapScanType.Passive;
             }
         }
 
@@ -177,18 +178,19 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             Medium,
             Low,
             Informational,
+            [EnumValueDescription("False Positive")]
             FalsePositive
         }
 
         [UserConfigured]
         [UserConfiguredDefault("None")]
-        [UserConfiguredDescription("ZAP Vulnerability Level: Critical, High, Medium, Low, Informational, FalsePositive")]
+        [UserConfiguredDescription("ZAP Vulnerability Level: None, High, Medium, Low, Informational, False Positive")]
         public string ZapVulnerabilitySetting { get; set; }
         private eZapVulnerability mZapVulnerabilitySetting
         {
             get
             {
-                return (eZapVulnerability)Enum.Parse(typeof(eZapVulnerability), ZapVulnerabilitySetting, true);
+                return Enum.TryParse<eZapVulnerability>(ZapVulnerabilitySetting, true, out var v) ? v : eZapVulnerability.None;
             }
         }
 
@@ -303,10 +305,13 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
             if (act is ActWebAPISoap or ActWebAPIRest)
             {
-                if (this.UseZAP)
+                if (this.UseSecurityTesting)
                 {
                     ZAPConfiguration zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count == 0 ? new ZAPConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
-                    WebServicesProxy = zAPConfiguration.ZAPUrl;
+                    if (!string.IsNullOrEmpty(zAPConfiguration.ZAPUrl))
+                    {
+                        WebServicesProxy = ToHostPort(zAPConfiguration.ZAPUrl);
+                    }
                 }
                 if (WebAPI.RequestConstructor((ActWebAPIBase)act, WebServicesProxy, UseServerProxySettings))
                 {
@@ -423,16 +428,30 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
                 //Post Execution Copy execution result fields from actWebAPI to ActWebAPIModel (act)
                 CopyExecutionAttributes(act, actWebAPI);
-                if (this.UseZAP)
+                if (this.UseSecurityTesting)
                 {
                     if (string.Equals(this.mZapScanTypeSetting, eZapScanType.Passive))
                     {
                         string endpointUrl = mActWebAPI.GetInputParamValue(ActWebAPIBase.Fields.EndPointURL);
-                        ActSecurityTesting mActSecTest = new();
-                        mActSecTest.ExecutePassiveZapScan(endpointUrl, mActWebAPI);
+                        if (string.IsNullOrWhiteSpace(endpointUrl))
+                        {
+                            Reporter.ToLog(eLogLevel.WARN, "ZAP scan skipped: endpoint URL is empty");
+                        }
+                        else if (this.mZapScanTypeSetting == eZapScanType.Passive)
+                        {
+                            var mActSecTest = new ActSecurityTesting
+                            {
+                                AlertList = BuildAlertListFromThreshold(mZapVulnerabilitySetting)
+                            };
+                            mActSecTest.ExecutePassiveZapScan(endpointUrl, mActWebAPI);
+                        }
                     }
                     else
                     {
+                        var mActSecTest = new ActSecurityTesting
+                        {
+                            AlertList = BuildAlertListFromThreshold(mZapVulnerabilitySetting)
+                        };
                         HandleAPISecurityTesting(mActWebAPI);
                     }
                 }
@@ -446,15 +465,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 ActDiameter mActDiameter = act as ActDiameter;
                 HandleDiameterRequest(mActDiameter);
             }
-            else if (act is ActSecurityTesting)
-            {
-                if (mActWebAPI != null)
-                {
-                    ActSecurityTesting mActSecTest = act as ActSecurityTesting;
-                    HandleAPISecurityTesting(mActWebAPI, mActSecTest);
-                }
-
-            }
             else
             {
                 throw new Exception("The Action from type '" + act.GetType().ToString() + "' is unknown/Not Implemented by the Driver - " + this.GetType().ToString());
@@ -464,7 +474,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
         private void HandleAPISecurityTesting(ActWebAPIBase mActWebAPI, ActSecurityTesting mActSecTest = null)
         {
-            string endpointUrl = mActWebAPI.GetInputParamValue(ActWebAPIBase.Fields.EndPointURL);
+            string endpointUrl = mActWebAPI.GetInputParamCalculatedValue(ActWebAPIBase.Fields.EndPointURL);
             if (mActSecTest == null)
             {
                 mActSecTest = new();
@@ -578,11 +588,10 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         {
             mWebAPI = new HttpWebClientUtils();
 
-            if (this.UseZAP)
+            if (this.UseSecurityTesting)
             {
                 ZAPConfiguration zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count == 0 ? new ZAPConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
                 WebServicesProxy = zAPConfiguration.ZAPUrl;
-                WebServicesProxy = "localhost:8080";
             }
             //Call for Request Construction
             if (mWebAPI.RequestConstructor(act, WebServicesProxy, UseServerProxySettings))
@@ -1027,6 +1036,56 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         private bool IsTCPConnectionDetailsValid()
         {
             return !string.IsNullOrEmpty(TcpHostname) && !string.IsNullOrEmpty(TcpPort);
+        }
+
+        //added method to support security testing
+        private static string ToHostPort(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url)) return null;
+            if (Uri.TryCreate(url, UriKind.Absolute, out var u))
+                return u.IsDefaultPort ? u.Host : $"{u.Host}:{u.Port}";
+            // Already host:port?
+            return url.Contains("://") ? null : url;
+        }
+
+        private static ObservableList<OperationValues> BuildAlertListFromThreshold(eZapVulnerability threshold)
+        {
+            var list = new ObservableList<OperationValues>();
+            // Pass/fail if any alert at or above the threshold
+            // High -> [High]; Medium -> [High, Medium]; Low -> [High, Medium, Low]; Informational -> [High, Medium, Low, Informational]; FalsePositive -> include all; None -> empty (never fail)
+            void add(string v) => list.Add(new OperationValues { Value = v });
+            switch (threshold)
+            {
+                case eZapVulnerability.High:
+                    add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.High));
+                    break;
+                case eZapVulnerability.Medium:
+                    add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.High));
+                    add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Medium));
+                    break;
+                case eZapVulnerability.Low:
+                    add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.High));
+                    add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Medium));
+                    add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Low));
+                    break;
+                case eZapVulnerability.Informational:
+                    add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.High));
+                    add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Medium));
+                    add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Low));
+                    add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Informational));
+                    break;
+                case eZapVulnerability.FalsePositive:
+                    add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.High));
+                    add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Medium));
+                    add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Low));
+                    add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Informational));
+                    add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.FalsePositive));
+                    break;
+                case eZapVulnerability.None:
+                default:
+                    break;
+            }
+            return list;
         }
     }
 }

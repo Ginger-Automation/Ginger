@@ -23,8 +23,9 @@
                 <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
             </StackPanel>
             <StackPanel Orientation="Vertical" Grid.Row="1">
-                <Grid Margin="10,10,0,0" x:Name="xAnalyticsGrid" >
+                <Grid Margin="10,10,0,0" x:Name="xZAPGrid" >
                     <Grid.RowDefinitions>
+                        <RowDefinition  Height="50"/>
                         <RowDefinition  Height="50"/>
                         <RowDefinition  Height="50"/>
                     </Grid.RowDefinitions>
@@ -39,11 +40,11 @@
                     </StackPanel>
                     <Activities:UCValueExpression x:Name="xZAPURLTextBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="GingerOps Account URL" Margin="10,0,0,0"  Width="400"/>
 
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="3">
+                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1">
                         <Label x:Name="xZAPAPIkeyLabel" Content="ZAP API KEY:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
                         <Label x:Name="xZAPAPIkeyValidation" Content="*" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
                     </StackPanel>
-                    <Activities:UCValueExpression x:Name="xZAPAPIkeyTextBox" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Secret" Margin="10,0,0,0" Width="400" LostKeyboardFocus="xZAPAPIkeyTextBox_LostKeyboardFocus"/>
+                    <Activities:UCValueExpression x:Name="xZAPAPIkeyTextBox" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Secret" Margin="10,0,0,0" Width="400" LostKeyboardFocus="xZAPAPIkeyTextBox_LostKeyboardFocus"/>
                 </Grid>
                 <Grid>
                     <usercontrols:ucButton x:Name="xTestConBtn" IsEnabled="True" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="10,25,0,0" ButtonType="RoundTextAndImageButton" ButtonText="Test Connection" ButtonImageType="Run" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xTestConBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" ToolTip="Test ZAP Connection"/>

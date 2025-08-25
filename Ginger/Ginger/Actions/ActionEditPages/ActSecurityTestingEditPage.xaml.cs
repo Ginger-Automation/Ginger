@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
-using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Linq;
@@ -35,7 +34,6 @@ namespace Ginger.Actions
     public partial class ActSecurityTestingEditPage : Page
     {
         private ActSecurityTesting mAct;
-        readonly PlatformInfoBase mPlatform;
 
         public ActSecurityTestingEditPage(ActSecurityTesting act)
         {
@@ -45,7 +43,6 @@ namespace Ginger.Actions
             {
                 act.Platform = GetActionPlatform();
             }
-            mPlatform = PlatformInfoBase.GetPlatformImpl(act.Platform);
 
             //bind controls
             ObservableList<OperationValues> AlertList = GetAlertList();
@@ -91,6 +88,7 @@ namespace Ginger.Actions
                     mAct.ScanType = (ActSecurityTesting.eScanType)scanTypeEnum;
                 }
             }
+        }
 
 
         public ObservableList<OperationValues> GetAlertList()
@@ -98,8 +96,8 @@ namespace Ginger.Actions
             ObservableList<OperationValues> SeverityList =
             [
                 new OperationValues() { Value = nameof(ActSecurityTesting.eAlertTypes.High) },
-                new OperationValues() { Value = nameof(ActSecurityTesting.eAlertTypes.Low) },
                 new OperationValues() { Value = nameof(ActSecurityTesting.eAlertTypes.Medium) },
+                new OperationValues() { Value = nameof(ActSecurityTesting.eAlertTypes.Low) },
                 new OperationValues() { Value = nameof(ActSecurityTesting.eAlertTypes.FalsePositive) },
                 new OperationValues() { Value = nameof(ActSecurityTesting.eAlertTypes.Informational) },
             ];

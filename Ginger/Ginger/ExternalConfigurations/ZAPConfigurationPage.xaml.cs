@@ -145,15 +145,20 @@ namespace Ginger.ExternalConfigurations
 
                 if (!response.IsSuccessStatusCode)
                 {
+                    Reporter.ToLog(eLogLevel.ERROR, $"ZAP connection failed. Status code: {response.StatusCode}");
                     return false;
                 }
 
                 string content = await response.Content.ReadAsStringAsync();
+
                 // Optionally, check if content contains "version" field
-                return content.Contains("version");
+                bool hasVersion = content.Contains("version");
+                Reporter.ToLog(eLogLevel.DEBUG, $"ZAP response contains 'version': {hasVersion}");
+                return hasVersion;
             }
-            catch
+            catch (Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, $"Exception during ZAP connection test: {ex.Message}", ex);
                 return false;
             }
         }
