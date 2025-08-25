@@ -21,6 +21,8 @@ using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Common.WorkSpaceLib;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.Repository;
 using Ginger;
@@ -49,7 +51,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         Config, Dynamic, Script, Arguments
     }
 
-    public class CLIHelper : INotifyPropertyChanged
+    public class CLIHelper : INotifyPropertyChanged, IDisposable
     {
         public string Solution;
         public string Env;
@@ -83,6 +85,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         ProgressStatus progressStatus;
         public bool SelfHealingCheckInConfigured;
         public static event EventHandler<string> GitProgresStatus;
+        RepoFolderManager _repoFolderManager;
+
+        static readonly string _processId = Environment.ProcessId.ToString();
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
         public bool ShowAutoRunWindow
         {
@@ -307,7 +312,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         void SetSourceControlParaOnUserProfile()
         {
-           
+
             WorkSpace.Instance.UserProfile.RecentDownloadedSolutionGuid = WorkSpace.Instance.Solution.Guid;
             var SetSourceControlParaOnUserProfile = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             SetSourceControlParaOnUserProfile.SourceControlInfo.Type = WorkSpace.Instance.UserProfile.Type;
@@ -441,9 +446,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (mRunSetConfig.ReRunConfigurations.ReferenceExecutionID != null)
             {
                 if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes
-                    && !string.IsNullOrEmpty(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl))
+                    && !string.IsNullOrEmpty(GingerPlayEndPointManager.GetAccountReportServiceUrl()))
                 {
-                    AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+                    AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(GingerPlayEndPointManager.GetAccountReportServiceUrl());
                     if (mRunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.RunSet)
                     {
                         List<RunsetHLInfoResponse> accountReportRunset = accountReportApiHandler.GetRunsetExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
@@ -630,13 +635,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
                     if (WorkSpace.Instance.GingerCLIMode == eGingerCLIMode.run)
                     {
-                        solutionDownloadedSuccessfully=SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier);
+                        solutionDownloadedSuccessfully = SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier);
                     }
                     else
                     {
                         solutionDownloadedSuccessfully = await Task.Run(() => SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier));
                     }
-                    
+
                     if (!solutionDownloadedSuccessfully)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
@@ -1050,27 +1055,88 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         /// <summary>
         /// Constructs a temporary folder path by appending the repository name (extracted from the source control URL) 
-        /// to the system's temporary directory.
+        /// to the system's temporary directory. Uses managed folder assignment when CLIProcessor is available.
         /// </summary>
         /// <param name="sourceControlUrl"> The source control URL used to extract the repository name. If null, the instance's SourceControlURL property will be used. </param>
         /// <returns>
         /// A string representing the path to a temporary folder, combining the system's temp directory 
         /// with the repository name extracted from the source control URL.
         /// </returns>
-        public string GetTempFolderPathForRepo(string sourceControlUrl = null)
+        public string GetTempFolderPathForRepo(string sourceControlUrl, string branchName)
         {
-            string urlToUse = sourceControlUrl ?? SourceControlURL;
             string repoName = string.Empty;
-
-            if (!string.IsNullOrEmpty(urlToUse))
+            try
             {
-                // Remove trailing slash if present
-                urlToUse = urlToUse.TrimEnd('/');
+                sourceControlUrl = sourceControlUrl ?? this.SourceControlURL;
 
-                repoName = Path.GetFileNameWithoutExtension(urlToUse.Split('/').Last());
+                if (!string.IsNullOrEmpty(sourceControlUrl))
+                {
+                    // Remove trailing slash if present
+                    sourceControlUrl = sourceControlUrl.TrimEnd('/');
+
+                    repoName = Path.GetFileNameWithoutExtension(sourceControlUrl.Split('/').Last());
+                    repoName = !string.IsNullOrEmpty(branchName) ? $"{repoName}_{branchName}" : $"{repoName}";
+                }
+
+                // Initialize RepoFolderManager if not already done
+                if (_repoFolderManager == null)
+                {
+                    string baseWorkingFolder = Path.GetTempPath();
+                    _repoFolderManager = new RepoFolderManager(baseWorkingFolder, _processId);
+                }
+
+                string assignedFolder = _repoFolderManager.AssignFolder(repoName);
+                Reporter.ToLog(eLogLevel.DEBUG, $"Process {_processId} assigned folder: {assignedFolder}");
+                return assignedFolder;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to get repo folder path from Repo Folder Manager, using the random temp folder", ex);
+                return Path.Combine(Path.GetTempPath(), Path.GetRandomFileName(), repoName);
+            }
+        }
+
+        /// <summary>
+        /// Releases the folder assigned to this process.
+        /// Should be called when the execution is complete.
+        /// </summary>
+        public void ReleaseTempFolder()
+        {
+            if (_repoFolderManager != null)
+            {
+                _repoFolderManager.ReleaseFolder();
+                Reporter.ToLog(eLogLevel.DEBUG, $"Process {_processId} released folder");
+            }
+        }
+
+        // Add a flag to prevent multiple disposals
+        private bool _disposed = false;
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                try
+                {
+                    _repoFolderManager?.Dispose();
+                    _repoFolderManager = null;
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception instead of silently swallowing it
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error disposing RepoFolderManager", ex);
+                }
             }
 
-            return Path.Combine(Path.GetTempPath(), repoName);
+            _disposed = true;
         }
     }
 }

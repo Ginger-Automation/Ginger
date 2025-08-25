@@ -172,5 +172,10 @@ namespace Amdocs.Ginger.Common.UIElement
 
         [IsSerializedForLocalRepository]
         public bool EnableFriendlyLocator { get { return mEnableFriendlyLocator; } set { if (mEnableFriendlyLocator != value) { mEnableFriendlyLocator = value; OnPropertyChanged(nameof(EnableFriendlyLocator)); } } }
+
+        private bool mIsAIGenerated { get; set; }
+
+        [IsSerializedForLocalRepository]
+        public bool IsAIGenerated { get { return mIsAIGenerated; } set { if (mIsAIGenerated != value) { mIsAIGenerated = value; OnPropertyChanged(nameof(IsAIGenerated)); } } }
     }
 }

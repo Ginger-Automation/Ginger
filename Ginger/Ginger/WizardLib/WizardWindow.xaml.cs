@@ -18,10 +18,12 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Ginger;
+using GingerCore.Drivers;
 using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -47,7 +49,7 @@ namespace GingerWPF.WizardLib
             WizardWindow wizardWindow = new WizardWindow(wizard);
             wizardWindow.Dispatcher.Invoke(() =>
             {
-                wizardWindow.MaxHeight = height;
+                wizardWindow.Height = height;
                 wizardWindow.Width = width;
                 if (!wizard.IsNavigationListEnabled)
                 {
@@ -379,6 +381,11 @@ namespace GingerWPF.WizardLib
         private void CloseWizard()
         {
             mWizard.mWizardWindow = null;
+            if (_subscribedSeleniumDriver != null)
+            {
+                _subscribedSeleniumDriver.PropertyChanged -= SeleniumDriver_PropertyChanged;
+                _subscribedSeleniumDriver = null;
+            }
             this.Close();
             CurrentWizardWindow = null;
         }
@@ -441,6 +448,111 @@ namespace GingerWPF.WizardLib
         void IWizardWindow.SetPrevButtonEnabled(bool isEnabled)
         {
             xPrevButton.IsEnabled = isEnabled;
+        }
+
+        private DispatcherTimer AIFineTunetimer;
+        private TimeSpan AIFineTuneelapsedTime; 
+        private string AIFineTuneBaseText;
+        private void StartAIFineTuneTimer()
+        {
+            // Create and configure the DispatcherTimer
+            AIFineTunetimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1) // Update every second
+            };
+            AIFineTunetimer.Tick += AIFineTuneTimer_Tick;
+
+            // Initialize elapsed time
+            AIFineTuneelapsedTime = TimeSpan.Zero;
+            // Capture base label once and initialize displayed text
+            AIFineTuneBaseText = string.IsNullOrWhiteSpace(xAIProcessingText.Text) ? "AI Fine-Tuning Processing" : xAIProcessingText.Text;
+            xAIProcessingText.Text = $"{AIFineTuneBaseText} => 00:00";
+            // Start the timer
+            try
+            {
+                AIFineTunetimer.Start();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error while starting the timer", ex);
+            }
+        }
+
+        private void AIFineTuneTimer_Tick(object sender, EventArgs e)
+        {
+            // Increment elapsed time by 1 second
+            AIFineTuneelapsedTime = AIFineTuneelapsedTime.Add(TimeSpan.FromSeconds(1));
+
+            // Update the timer display
+            xAIProcessingText.Text = $"{AIFineTuneBaseText} => {(int)AIFineTuneelapsedTime.TotalMinutes:00}:{AIFineTuneelapsedTime.Seconds:00}";
+        }
+
+        // You can stop the timer if needed
+        private void AIFineTuneStopTimer()
+        {
+            if (AIFineTunetimer != null)
+            {
+                try
+                {
+                    AIFineTunetimer.Stop();
+                    // Reset label to base text when stopping
+                    if (!string.IsNullOrWhiteSpace(AIFineTuneBaseText))
+                    {
+                        xAIProcessingText.Text = AIFineTuneBaseText;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error while stopping the timer", ex);
+                }
+            }
+        }
+
+        private SeleniumDriver _subscribedSeleniumDriver;
+        public void SubscribeToSeleniumDriver(SeleniumDriver seleniumDriver)
+        {
+            if (seleniumDriver == null) { return; }
+            if (!ReferenceEquals(_subscribedSeleniumDriver, null))
+            {
+                _subscribedSeleniumDriver.PropertyChanged -= SeleniumDriver_PropertyChanged;
+            }
+            _subscribedSeleniumDriver = seleniumDriver;
+            _subscribedSeleniumDriver.PropertyChanged += SeleniumDriver_PropertyChanged;
+        }
+
+        private void SeleniumDriver_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(SeleniumDriver.IsProcessing))
+            {
+                if (sender is SeleniumDriver seleniumDriverdata && seleniumDriverdata.IsProcessing)
+                {
+                    Dispatcher.Invoke(AIProcessStarted);
+                }
+                else
+                {
+                    Dispatcher.Invoke(AIProcessStopped);
+                }
+            }
+        }
+
+        public void AIProcessStarted()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xAIProcessingImage.Visibility = Visibility.Visible;
+                xAIProcessingText.Visibility = Visibility.Visible;
+            });
+            StartAIFineTuneTimer();
+        }
+
+        public void AIProcessStopped()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xAIProcessingImage.Visibility = Visibility.Collapsed;
+                xAIProcessingText.Visibility = Visibility.Collapsed;
+            });
+            AIFineTuneStopTimer();
         }
     }
 }

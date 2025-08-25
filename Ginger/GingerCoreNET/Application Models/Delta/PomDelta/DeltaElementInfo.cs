@@ -50,6 +50,9 @@ namespace GingerCoreNET.Application_Models
 
         public ObservableList<DeltaControlProperty> Properties = [];
 
+        public string ScreenShotImage { get { return ElementInfo.ScreenShotImage; } }
+
+
         public object OriginalElementGroup { get { return ElementInfo.ElementGroup; } }
 
         public object mElementGroup = null;

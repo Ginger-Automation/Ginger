@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
@@ -32,6 +33,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.ALM.RQM;
 using GingerCore.DataSource;
+using GingerCore.Drivers.CommunicationProtocol;
 using GingerCore.Environments;
 using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -39,12 +41,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Security;
+using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
@@ -486,16 +491,18 @@ namespace GingerCoreNET.GeneralLib
 
         public static string GetSolutionCategoryValue(SolutionCategoryDefinition solutionCategoryDefinition)
         {
-            SolutionCategory cat = WorkSpace.Instance.Solution.SolutionCategories.FirstOrDefault(x => x.Category == solutionCategoryDefinition.Category);
-            if (cat != null)
+            if (WorkSpace.Instance.Solution.SolutionCategories != null)
             {
-                SolutionCategoryValue catValue = cat.CategoryOptionalValues.FirstOrDefault(x => x.Guid == solutionCategoryDefinition.SelectedValueID);
-                if (catValue != null)
+                SolutionCategory cat = WorkSpace.Instance.Solution.SolutionCategories.FirstOrDefault(x => x.Category == solutionCategoryDefinition.Category);
+                if (cat != null)
                 {
-                    return catValue.Value;
+                    SolutionCategoryValue catValue = cat.CategoryOptionalValues.FirstOrDefault(x => x.Guid == solutionCategoryDefinition.SelectedValueID);
+                    if (catValue != null)
+                    {
+                        return catValue.Value;
+                    }
                 }
             }
-
             return null;
         }
         public static string RemoveSpecialCharactersInColumnHeader(string columnHeader)
@@ -743,6 +750,29 @@ namespace GingerCoreNET.GeneralLib
                 return false;
             }
         }
+
+        public static bool CreateGingerPlayConfiguration()
+        {
+            try
+            {
+                if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Any())
+                {
+                    GingerPlayConfiguration newGingerPlayConfiguration = new GingerPlayConfiguration() { Name = "GingerPlay" };
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newGingerPlayConfiguration);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error creating Ginger Play configuration", ex);
+                return false;
+            }
+        }
+
         public static bool CreateWireMockConfiguration()
         {
             try
@@ -1072,7 +1102,7 @@ namespace GingerCoreNET.GeneralLib
                     {
                         if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.AutoUpdatedPOMList.Contains(elem.ApplicationAPIModel.Guid))
                         {
-                            elem.PomUpdateStatus = $"'{elem.ApplicationAPIModel.Name}' Updated";                           
+                            elem.PomUpdateStatus = $"'{elem.ApplicationAPIModel.Name}' Updated";
                             var aPOMModified = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().FirstOrDefault(aPOM => aPOM.Guid == elem.ApplicationAPIModel.Guid);
                             if (aPOMModified != null)
                             {
@@ -1131,7 +1161,7 @@ namespace GingerCoreNET.GeneralLib
             {
                 if (WorkSpace.Instance.GingerCLIMode == eGingerCLIMode.run)
                 {
-                   await Execute(WorkSpace.Instance.RunsetExecutor);
+                    await Execute(WorkSpace.Instance.RunsetExecutor);
                 }
                 else
                 {
@@ -1162,6 +1192,106 @@ namespace GingerCoreNET.GeneralLib
             await runsetExecutor.RunRunset();
         }
 
+        public static string TakeElementScreenShot(ElementInfo elementInfo, Bitmap fullImage)
+        {
+            try
+            {
+                if (fullImage == null)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Full image cannot be null.");
+                    return null;
+                }
+
+                if (elementInfo == null)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "elementInfo cannot be null.");
+                    return null;
+                }
+
+                int cropX;
+                int cropY;
+                int cropWidth;
+                int cropHeight;
+
+                GetLocationAndSizeOfElement(elementInfo, out cropX, out cropY, out cropWidth, out cropHeight);
+
+                if (cropWidth <= 0 || cropHeight <= 0)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Invalid crop dimensions.");
+                }
+                // Clamp crop rectangle to the bounds of the full image
+                Rectangle cropRect = new Rectangle(cropX, cropY, cropWidth, cropHeight);
+                cropRect.Intersect(new Rectangle(0, 0, fullImage.Width, fullImage.Height));
+                if (cropRect.Width == 0 || cropRect.Height == 0)
+                {
+                    Reporter.ToLog(eLogLevel.WARN,
+                    $"Element bounds {cropX},{cropY},{cropWidth},{cropHeight} are outside the screenshot area {fullImage.Width}x{fullImage.Height}");
+                    return null;
+                }
+
+                using (Bitmap elementImage = fullImage.Clone(cropRect, fullImage.PixelFormat))
+                {
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        elementImage.Save(ms, ImageFormat.Png);
+                        return Convert.ToBase64String(ms.ToArray());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Take element screen-shot: ", ex);
+                return null;
+            }
+        }
+
+        public static void GetLocationAndSizeOfElement(ElementInfo elementInfo, out int cropX, out int cropY, out int cropWidth, out int cropHeight)
+        {
+            var props = elementInfo.Properties.GroupBy(p => p.Name, StringComparer.InvariantCultureIgnoreCase)
+                .Select(g => g.First())
+                .ToDictionary(p => p.Name, p => p.Value, StringComparer.InvariantCultureIgnoreCase);
+
+            string BoundsValue = props.TryGetValue("bounds", out var xBounds) ? xBounds : string.Empty;
+            try
+            {
+                if (!string.IsNullOrEmpty(BoundsValue))
+                {
+                    // Remove the square brackets and split the string
+                    string[] parts = BoundsValue.Replace("[", "").Split(']');
+                    if (parts.Length < 2)
+                    {
+                        throw new FormatException($"Unexpected bounds format: {BoundsValue}");
+                    }
+                    // Parse the first part as x and y
+                    string[] xy = parts[0].Split(',');
+
+                    // Parse the second part as width and height
+                    string[] wh = parts[1].Split(',');
+
+                    if (!int.TryParse(xy[0], out cropX) || !int.TryParse(xy[1], out cropY) || !int.TryParse(wh[0], out int x2) || !int.TryParse(wh[1], out int y2))
+                    {
+                        throw new FormatException($"Unable to parse bounds string: {BoundsValue}");
+                    }
+
+                    cropWidth = Math.Max(0, x2 - cropX);
+                    cropHeight = Math.Max(0, y2 - cropY);
+                }
+                else
+                {
+                    cropX = props.TryGetValue("x", out var xVal) ? Convert.ToInt32(xVal) : 0;
+                    cropY = props.TryGetValue("y", out var yVal) ? Convert.ToInt32(yVal) : 0;
+                    cropWidth = props.TryGetValue("width", out var widthVal) ? Convert.ToInt32(widthVal) : 0;
+                    cropHeight = props.TryGetValue("height", out var heightVal) ? Convert.ToInt32(heightVal) : 0;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                cropX = 0; cropY = 0; cropWidth = 0; cropHeight = 0;
+                Reporter.ToLog(eLogLevel.DEBUG, $"Failed to parse bounds string: {BoundsValue}", ex);
+            }
+        }
+
         internal static string SetupRelativePath(string FileName)
         {
             if (FileName.StartsWith(WorkSpace.Instance.SolutionRepository.SolutionFolder))
@@ -1173,8 +1303,141 @@ namespace GingerCoreNET.GeneralLib
                 return FileName;
             }
         }
-    }
 
+        public static async Task<string> GetResponseByOpenAI(object payload, string url = null)
+        {
+            string Response = string.Empty;
+            GingerPlayAPITokenManager gingerPlayAPITokenManager = new GingerPlayAPITokenManager();
+            bool isAuthorized = await gingerPlayAPITokenManager.GetOrValidateToken();
+            if (isAuthorized || !string.IsNullOrEmpty(url))
+            {
+                string baseURI = GetAIServiceBaseUrl();
+                string path = GetAIServicePOMExtractpath();
+
+                using (var client = new HttpClient())
+                {
+                    var json = System.Text.Json.JsonSerializer.Serialize(payload);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    // Add Bearer token to the Authorization header
+                    string bearerToken = gingerPlayAPITokenManager.GetValidToken();
+                    if (!string.IsNullOrEmpty(bearerToken))
+                    {
+                        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Response: Invalid token");
+                        Response = $"Response: Invalid token";
+                    }
+                    try
+                    {
+                        baseURI += path;
+                        if (!string.IsNullOrEmpty(url))
+                        {
+                            baseURI = url;
+                        }
+                        var response = await client.PostAsync(baseURI, content);
+                        response.EnsureSuccessStatusCode();
+                        var responseContent = await response.Content.ReadAsStringAsync();
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Response: {responseContent}");
+                        return responseContent;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Response: Failed to fetch response", ex);
+                        Response = $"Response: Failed to fetch response";
+                    }
+                }
+            }
+            else
+            {
+                Response = $"unauthorized user, please check Credentials";
+            }
+
+            return Response;
+        }
+
+        public static async Task<string> GetResponseForprocess_extracted_elementsByOpenAI(string jsonstring, string url = null)
+        {
+            string Response = string.Empty;
+            GingerPlayAPITokenManager gingerPlayAPITokenManager = new GingerPlayAPITokenManager();
+            bool isAuthorized = await gingerPlayAPITokenManager.GetOrValidateToken();
+            if (isAuthorized || !string.IsNullOrEmpty(url))
+            {
+                string baseURI = GetAIServiceBaseUrl();
+                string path = GetAIServicePOMProcessExtractedElementsPath();
+                var payload = new
+                {
+                    elements = jsonstring,// Your current JSON string
+                    platform = "web"  // or "mobileAndroid", "mobileIos"
+                };
+
+                using (var client = new HttpClient())
+                {
+                    var json = System.Text.Json.JsonSerializer.Serialize(payload);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    // Add Bearer token to the Authorization header //For local setup commented authorization part
+                    string bearerToken = gingerPlayAPITokenManager.GetValidToken();
+                    if (!string.IsNullOrEmpty(bearerToken))
+                    {
+                        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Response: Invalid token");
+                        Response = $"Response: Invalid token";
+                    }
+                    try
+                    {
+                        baseURI += path;
+                        if (!string.IsNullOrEmpty(url))
+                        {
+                            baseURI = url;
+                        }
+                        var response = await client.PostAsync(baseURI, content);
+                        response.EnsureSuccessStatusCode();
+                        var responseContent = await response.Content.ReadAsStringAsync();
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Response: {responseContent}");
+                        return responseContent;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Response: Failed to fetch response", ex);
+                        Response = $"Response: Failed to fetch response";
+                    }
+                }
+            }
+            else
+            {
+                Response = $"unauthorized user, please check Credentials";
+            }
+
+            return Response;
+        }
+
+        public static string GetAIServiceBaseUrl()
+        {
+            var baseURI = GingerPlayEndPointManager.GetAIServiceUrl();
+            if (!string.IsNullOrEmpty(baseURI) && !baseURI.EndsWith('/'))
+            {
+                baseURI += "/";
+            }
+            return baseURI;
+        }
+        public static string GetAIServicePOMExtractpath()
+        {
+            var POMExtractpath = GingerPlayEndPointManager.GetAIServicePOMExtractpath();
+            return POMExtractpath;
+        }
+
+        public static string GetAIServicePOMProcessExtractedElementsPath()
+        {
+            var POMExtractpath = GingerPlayEndPointManager.GetAIServicePOMProcessExtractedElementsPath();
+            return POMExtractpath;
+        }
+    }
 }
 
 

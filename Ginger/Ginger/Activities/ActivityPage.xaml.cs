@@ -164,7 +164,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
             mActionsPage?.UpdatePageViewMode(mPageViewMode);
             mVariabelsPage?.UpdatePageViewMode(mPageViewMode);
-            mConfigurationsPage?.UpdatePageViewMode(mPageViewMode);
+            mConfigurationsPage?.UpdatePageViewMode(mPageViewMode, mActivity);
 
             //if (mPageViewMode == Ginger.General.eRIPageViewMode.View)
             //{

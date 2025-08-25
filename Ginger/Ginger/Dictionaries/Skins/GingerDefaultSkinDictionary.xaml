@@ -13,6 +13,7 @@
     <SolidColorBrush x:Key="$BackgroundColor_LightGray" Color="#E3E3E8" />
     <SolidColorBrush x:Key="$BackgroundColor_VeryLightGray" Color="#f8f8f8" /> 
     <SolidColorBrush x:Key="$BackgroundColor_DarkGray" Color="#818398" />
+    <SolidColorBrush x:Key="$BackgroundColor_Purple" Color="#8A57EA" />
     <!--Selection Colors-->
 
     <SolidColorBrush x:Key="$SelectionColor_Pink" Color="#F05C62" />
@@ -1724,7 +1725,7 @@
 
     <Style TargetType="TabItem" x:Key="$RoundedTabAI">
         <Setter Property="Height" Value="33"/>
-        <Setter Property="Background" Value="#8a57ea"/>
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_Purple}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TabItem">
@@ -1738,11 +1739,11 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="#8a57ea" />
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource $BackgroundColor_Purple}" />
                             <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_White}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="False">
-                            <Setter TargetName="Border" Property="Background" Value="#8a57ea" />
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource $BackgroundColor_Purple}" />
                             <Setter Property="Foreground" Value="{StaticResource $PrimaryColor_Black}" />
                         </Trigger>
                     </ControlTemplate.Triggers>

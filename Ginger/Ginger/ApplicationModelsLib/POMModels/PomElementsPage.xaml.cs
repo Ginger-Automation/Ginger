@@ -615,10 +615,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.EnableFriendlyLocator), Visible = isEnableFriendlyLocator, Header = "Friendly Locator", WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Category), Header = nameof(ElementLocator.Category), WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GetPossibleCategories(), BindingMode = BindingMode.TwoWay });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAIGenerated), Header = "AI Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.StatusIcon), Header = "Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
             xElementDetails.xLocatorsGrid.SetAllColumnsDefaultView(defView);
             xElementDetails.xLocatorsGrid.InitViewItems();
+
+            
 
             xElementDetails.xLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
             xElementDetails.xLocatorsGrid.AddToolbarTool(eImageType.Run, "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
@@ -627,7 +630,42 @@ namespace Ginger.ApplicationModelsLib.POMModels
             WeakEventManager<DataGrid, DataGridPreparingCellForEditEventArgs>.AddHandler(source: xElementDetails.xLocatorsGrid.grdMain, eventName: nameof(DataGrid.PreparingCellForEdit), handler: LocatorsGrid_PreparingCellForEdit);
 
             xElementDetails.xLocatorsGrid.PasteItemEvent += PasteLocatorEvent;
+
+            // Wire up row loading event for AI styling
+            WeakEventManager<DataGrid, DataGridRowEventArgs>.AddHandler(
+                source: xElementDetails.xLocatorsGrid.grdMain,
+                eventName: nameof(DataGrid.LoadingRow),
+                handler: LocatorsGrid_LoadingRow);
         }
+
+        private void LocatorsGrid_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            if (e.Row.DataContext is ElementLocator locator && locator.IsAIGenerated)
+            {
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    try
+                    {
+                        for (int i = 0; i < xElementDetails.xLocatorsGrid.grdMain.Columns.Count; i++)
+                        {
+                            var column = xElementDetails.xLocatorsGrid.grdMain.Columns[i];
+                            var cellContent = column.GetCellContent(e.Row);
+
+                            if (cellContent?.Parent is DataGridCell cell)
+                            {
+                                // Apply foreground (text color) only to LocateValue column
+                                if (column.Header?.ToString() == "Locate Value")
+                                {
+                                    cell.Foreground = new SolidColorBrush(Colors.Purple); // or any contrasting color
+                                }
+                            }
+                        }
+                    }
+                    catch { /* Ignore styling errors */ }
+                }), System.Windows.Threading.DispatcherPriority.Loaded);
+            }
+        }
+
 
         private List<ComboEnumItem> GetPossibleCategories()
         {
@@ -939,7 +977,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
                 //update screenshot
                 BitmapSource source = null;
-                if (mSelectedElement.ScreenShotImage != null)
+                if (!string.IsNullOrEmpty(mSelectedElement.ScreenShotImage))
                 {
                     source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mSelectedElement.ScreenShotImage.ToString()));
                 }

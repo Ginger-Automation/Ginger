@@ -77,6 +77,19 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             }
         }
 
+        bool mLearnPOMByAI = false;
+        public bool LearnPOMByAI
+        {
+            get
+            {
+                return mLearnPOMByAI;
+            }
+            set
+            {
+                mLearnPOMByAI = value;
+            }
+        }
+
         private Agent mAgent = null;
         public Agent Agent
         {
@@ -238,6 +251,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 POM.PomSetting.SpecificFramePath = POM.PomSetting.SpecificFramePath != null ? POM.PomSetting.SpecificFramePath : SpecificFramePath;
                 POM.PomSetting.LearnScreenshotsOfElements = POM.PomSetting.LearnScreenshotsOfElements ? POM.PomSetting.LearnScreenshotsOfElements : LearnScreenshotsOfElements;
                 POM.PomSetting.LearnShadowDomElements = POM.PomSetting.LearnShadowDomElements ? POM.PomSetting.LearnShadowDomElements : LearnShadowDomElements;
+                POM.PomSetting.LearnPOMByAI = POM.PomSetting.LearnPOMByAI || LearnPOMByAI;
                 POM.PomSetting = POM.PomSetting;
             }
             else
@@ -253,8 +267,10 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 pomSetting.SpecificFramePath = SpecificFramePath;
                 pomSetting.LearnScreenshotsOfElements = LearnScreenshotsOfElements;
                 pomSetting.LearnShadowDomElements = LearnShadowDomElements;
+                pomSetting.LearnPOMByAI = LearnPOMByAI;
                 POM.PomSetting = pomSetting;
             }
+            POM.AIGenerated = POM.PomSetting.LearnPOMByAI;
         }
 
         public void LearnScreenShot()
@@ -311,13 +327,14 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 if (SelectedElementTypesList.Count > 0)
                 {
-                    await IWindowExplorerDriver.GetVisibleControls(POM.PomSetting, mElementsList, POM.ApplicationPOMMetaData);
+                    await IWindowExplorerDriver.GetVisibleControls(POM.PomSetting, mElementsList, POM.ApplicationPOMMetaData, ScreenShot);
+
                 }
             }
             else
             {
                 POM.PomSetting.FilteredElementType = null;
-                await IWindowExplorerDriver.GetVisibleControls(POM.PomSetting, mElementsList, POM.ApplicationPOMMetaData);
+                await IWindowExplorerDriver.GetVisibleControls(POM.PomSetting, mElementsList, POM.ApplicationPOMMetaData, ScreenShot);
             }
 
             featureTracker.Metadata.Add("MappedElementCount", POM.MappedUIElements != null ? POM.MappedUIElements.Count.ToString() : "");
@@ -389,7 +406,9 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 if (curElement != null)
                 {
                     //remove invalid chars
-                    string name = curElement.ElementName.Trim().Replace(".", "").Replace("?", "").Replace("\n", "").Replace("\r", "").Replace("#", "").Replace("!", " ").Replace(",", " ").Replace("   ", "");
+                    string name = string.IsNullOrEmpty(curElement.ElementName) ? 
+                        string.Empty : 
+                        curElement.ElementName.Trim().Replace(".", "").Replace("?", "").Replace("\n", "").Replace("\r", "").Replace("#", "").Replace("!", " ").Replace(",", " ").Replace("   ", "");
                     foreach (char chr in Path.GetInvalidFileNameChars())
                     {
                         name = name.Replace(chr.ToString(), string.Empty);
