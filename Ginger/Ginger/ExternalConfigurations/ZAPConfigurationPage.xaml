@@ -16,7 +16,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition  Height="30"/>
                 <RowDefinition  Height="1*"/>
-                <RowDefinition Height="1*"/> 
+                <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" Grid.Row="0">
                 <Label Content="ZAP Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
@@ -35,24 +35,24 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
-                        <Label x:Name="xZAPURLLabel" Content="ZAP URL:"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>
+                        <Label x:Name="xZAPURLLabel" Content="ZAP URL :"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>
                         <Label x:Name="xZAPURLLabelValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
                     </StackPanel>
-                    <Activities:UCValueExpression x:Name="xZAPURLTextBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="GingerOps Account URL" Margin="10,0,0,0"  Width="400"/>
+                    <Activities:UCValueExpression x:Name="xZAPURLTextBox" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="GingerOps Account URL" Margin="139,0,0,0"  Width="414" Grid.ColumnSpan="2"/>
 
                     <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1">
-                        <Label x:Name="xZAPAPIkeyLabel" Content="ZAP API KEY:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
+                        <Label x:Name="xZAPAPIkeyLabel" Content="ZAP API KEY :" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
                         <Label x:Name="xZAPAPIkeyValidation" Content="*" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
                     </StackPanel>
-                    <Activities:UCValueExpression x:Name="xZAPAPIkeyTextBox" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Secret" Margin="10,0,0,0" Width="400" LostKeyboardFocus="xZAPAPIkeyTextBox_LostKeyboardFocus"/>
+                    <Activities:UCValueExpression x:Name="xZAPAPIkeyTextBox" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Secret" Margin="139,0,0,0" Width="414" LostKeyboardFocus="xZAPAPIkeyTextBox_LostKeyboardFocus" Grid.ColumnSpan="2"/>
                 </Grid>
                 <Grid>
-                    <usercontrols:ucButton x:Name="xTestConBtn" IsEnabled="True" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="10,25,0,0" ButtonType="RoundTextAndImageButton" ButtonText="Test Connection" ButtonImageType="Run" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xTestConBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" ToolTip="Test ZAP Connection"/>
-                    <usercontrols:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="187,28,0,3" HorizontalAlignment="Left" Height="25" Width="20" Visibility="Collapsed"></usercontrols:ImageMakerControl>
+                    <usercontrols:ucButton x:Name="xTestConBtn" IsEnabled="True" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="10,-41,0,66" ButtonType="RoundTextAndImageButton" ButtonText="Test Connection" ButtonImageType="Run" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xTestConBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" ToolTip="Test ZAP Connection"/>
+                    <usercontrols:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="192,-38,0,69" HorizontalAlignment="Left" Height="25" Width="20" Visibility="Visible"></usercontrols:ImageMakerControl>
 
                 </Grid>
             </StackPanel>
-        
+
 
             <StackPanel Orientation="Horizontal" Grid.Row="2" >
                 <Grid>
@@ -68,30 +68,8 @@
                                 <Expander.Header>
                                     <Label Content="About ZAP" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                                 </Expander.Header>
-                                <Expander.Content >
 
-                                    <TextBlock x:Name="xZapInfo" TextWrapping="Wrap" Width="581" Height="250" Padding="10,5,5,5" HorizontalAlignment="Left">
-                                        Zed Attack Proxy (ZAP) by Checkmarx is a free, open-source penetration testing tool. ZAP is
-                                        designed specifically for testing web applications and is both flexible and extensible.
-                                        At its core, ZAP is what is known as a “manipulator-in-the-middle proxy.” It stands between
-                                        the tester’s browser and the web application so that it can intercept and inspect messages
-                                        sent between browser and web application, modify the contents if needed.
-
-                                        <LineBreak/>
-                                        <Bold>- Passive Scan:</Bold> ZAP automatically analyzes all traffic passing through the proxy without altering requests or responses. It looks for vulnerabilities in a non-intrusive way, ensuring no impact on the target application.
-                                        <LineBreak/>
-                                        <Bold>- Active Scan:</Bold> ZAP actively interacts with the target application by sending additional requests to discover vulnerabilities. This scan is more intrusive and can potentially affect the application.
-
-                                        <LineBreak/>
-                                        <Bold>Alerts:</Bold>
-                                        ZAP generates alerts when it detects potential security issues during scanning. Each alert provides details about the vulnerability, its risk level, and recommendations for remediation.
-
-                                        <LineBreak/>
-                                        <Hyperlink NavigateUri="https://www.zaproxy.org/" RequestNavigate="Hyperlink_RequestNavigate">
-                                            Learn more about ZAP
-                                        </Hyperlink>
-                                    </TextBlock>
-                                </Expander.Content>
+                                <TextBlock x:Name="xZapInfo" TextWrapping="Wrap" Width="581" Height="250" Padding="10,5,5,5" HorizontalAlignment="Left"><Run Text="Zed Attack Proxy (ZAP) by Checkmarx is a free, open-source penetration testing tool. ZAP is designed specifically for testing web applications and is both flexible and extensible. At its core, ZAP is what is known as a “manipulator-in-the-middle proxy.” It stands between the tester’s browser and the web application so that it can intercept and inspect messages sent between browser and web application, modify the contents if needed."/><LineBreak/><Bold><Run Text="- Passive Scan:"/></Bold><Run Text=" ZAP automatically analyzes all traffic passing through the proxy without altering requests or responses. It looks for vulnerabilities in a non-intrusive way, ensuring no impact on the target application."/><LineBreak/><Bold><Run Text="- Active Scan:"/></Bold><Run Text=" ZAP actively interacts with the target application by sending additional requests to discover vulnerabilities. This scan is more intrusive and can potentially affect the application."/><LineBreak/><Bold><Run Text="Alerts:"/></Bold><Run Text=" ZAP generates alerts when it detects potential security issues during scanning. Each alert provides details about the vulnerability, its risk level, and recommendations for remediation."/><LineBreak/><Hyperlink NavigateUri="https://www.zaproxy.org/" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="Learn more about ZAP"/></Hyperlink></TextBlock>
                             </Expander>
                         </StackPanel>
                     </Grid>
