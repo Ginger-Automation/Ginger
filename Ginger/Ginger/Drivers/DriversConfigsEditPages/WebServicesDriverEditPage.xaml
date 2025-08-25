@@ -4,8 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:Actions="clr-namespace:Ginger.Activities"
-        xmlns:local="clr-namespace:Ginger.Actions.ActionConversion"
-        mc:Ignorable="d"
+        xmlns:local="clr-namespace:Ginger.Actions.ActionConversion" xmlns:usercontrolslib="clr-namespace:Ginger.UserControlsLib" d:DataContext="{d:DesignInstance Type=usercontrolslib:UCSourceVariable}"
+      mc:Ignorable="d"
         d:DesignHeight="600" d:DesignWidth="800"
         Title="WebServicesDriverEditPage">
 
@@ -147,6 +147,32 @@
                             <CheckBox x:Name="xSoapUINoWindowCheckBox" Content="SoapUI process create no window" Style="{StaticResource $CeckBoxStyle}" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,15,0,0"/>
                             <CheckBox x:Name="xSoapUIRedirectOutputCheckBox" Content="SoapUI process redirect standard output" Style="{StaticResource $CeckBoxStyle}" Grid.Row="7" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,15,5,0"/>
                             <CheckBox x:Name="xSoapUIRedirectErrorCheckBox" Content="SoapUI process redirect standard error" Style="{StaticResource $CeckBoxStyle}" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,15,0,0"/>
+                        </Grid>
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
+            <Expander x:Name="xZAPConfigExpander" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" Margin="0,0,0,0" BorderThickness="0">
+                <Expander.Header>
+                    <Label Content="Security Testing Configurations" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                </Expander.Header>
+                <Expander.Content>
+                    <StackPanel Margin="10, 15, 0, 0">
+                        <CheckBox x:Name="xEnableZAPCheckBox" Content="Enable ZAP Security Testing" Style="{StaticResource $CeckBoxStyle}" />
+                        <Grid Margin="0,5,0,0" Visibility="{Binding IsChecked, ElementName=xEnableZAPCheckBox, Converter={StaticResource B2V}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="TextBoxColumn"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Label Content="Scan type : " Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left"/>
+                            <ComboBox x:Name="xScanTypeComboBox" IsEditable="False" Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Column="1" Grid.Row="0" Width="120" HorizontalAlignment="Left"/>
+                           
+                            <Label Content="Failure Vulnerability Threshold : " Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left"/>
+                            <ComboBox x:Name="xVulnerabilityTypeComboBox" IsEditable="False" Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Column="1" Grid.Row="1" Width="120" HorizontalAlignment="Left"/>
+                          
                         </Grid>
                     </StackPanel>
                 </Expander.Content>

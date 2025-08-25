@@ -5,6 +5,7 @@ namespace Amdocs.Ginger.Common.External.Configurations
     public class ZAPConfiguration : RepositoryItemBase
     {
         private string mZAPApiKey;
+        [IsSerializedForLocalRepository]
         public string ZAPApiKey
         {
             get { return mZAPApiKey; }
@@ -55,6 +56,17 @@ namespace Amdocs.Ginger.Common.External.Configurations
                 }
             }
         }
-        public override string ItemName { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public override string ItemName
+        {
+            get
+            {
+                return this.Name;
+            }
+            set
+            {
+                this.Name = value;
+            }
+        }
+        public override string GetNameForFileName() { return Name; }
     }
 }

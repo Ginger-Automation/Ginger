@@ -313,7 +313,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
 
                 case eImageType.Shield:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Shield);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ShieldHalved);
                     break;
                 #endregion
 

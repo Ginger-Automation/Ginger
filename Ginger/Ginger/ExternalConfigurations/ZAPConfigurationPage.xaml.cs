@@ -43,8 +43,9 @@ namespace Ginger.ExternalConfigurations
         private void Init()
         {
             zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count == 0 ? new ZAPConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
-            zAPConfiguration.StartDirtyTracking();
             SetControls();
+            zAPConfiguration.StartDirtyTracking();
+
         }
 
         private void SetControls()
@@ -155,6 +156,12 @@ namespace Ginger.ExternalConfigurations
             {
                 return false;
             }
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            e.Handled = true;
         }
     }
 }

@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
@@ -46,7 +47,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
-using OpenQA.Selenium.BiDi.Modules.BrowsingContext;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Chromium;
 using OpenQA.Selenium.Common;
@@ -409,6 +409,11 @@ namespace GingerCore.Drivers
         public string RemoteWebDriverUrl { get; set; }
 
 
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Allow ZAP to Perform Security Testing")]
+        public bool UseZAP { get; set; }
+
         protected IWebDriver Driver;
         protected AppiumDriver MobDriver;
         protected eBrowserType mBrowserType;
@@ -596,6 +601,37 @@ namespace GingerCore.Drivers
             if (!string.IsNullOrEmpty(SeleniumUserArguments))
             {
                 SeleniumUserArgs = SeleniumUserArguments.Split(';');
+            }
+
+            if (this.UseZAP)
+            {
+
+                ZAPConfiguration zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count == 0 ? new ZAPConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
+
+                if (!string.IsNullOrEmpty(zAPConfiguration.ZAPUrl))
+                {
+                    Proxy = zAPConfiguration.ZAPUrl;
+                    if (mProxy == null)
+                    {
+
+                        mProxy = new Proxy
+                        {
+                            Kind = ProxyKind.Manual,
+                            HttpProxy = Proxy,
+                            FtpProxy = Proxy,
+                            SslProxy = Proxy,
+                            SocksProxy = Proxy,
+                            SocksVersion = 5
+                        };
+                    }
+                    else
+                    {
+                        mProxy.HttpProxy = Proxy;
+                        mProxy.FtpProxy = Proxy;
+                        mProxy.SslProxy = Proxy;
+                        mProxy.SocksProxy = Proxy;
+                    }
+                }
             }
 
             //TODO: launch the driver/agent per combo selection
@@ -1394,6 +1430,14 @@ namespace GingerCore.Drivers
             var proxy = new Proxy();
 
             options.Proxy = proxy;
+            if (this.UseZAP)
+            {
+                options.AcceptInsecureCertificates = true;
+            }
+            else
+            {
+                options.AcceptInsecureCertificates = false;
+            }
 
             switch (mProxy.Kind)
             {
@@ -1901,11 +1945,26 @@ namespace GingerCore.Drivers
                 case ActAccessibilityTesting accessibilityTesting:
                     ActAccessibility(accessibilityTesting);
                     break;
-
+                case ActSecurityTesting securityTesting:
+                    ActSecurity(securityTesting);
+                    break;
                 default:
                     act.Error = "Run Action Failed due to unrecognized action type - " + actType.ToString();
                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                     break;
+            }
+        }
+
+        private void ActSecurity(ActSecurityTesting act)
+        {
+            string testURL = Driver.Url;
+            if (act.ScanType == ActSecurityTesting.eScanType.Active)
+            {
+                act.ExecuteActiveZapScan(testURL);
+            }
+            else
+            {
+                act.ExecutePassiveZapScan("", act);
             }
         }
 
@@ -3520,19 +3579,19 @@ namespace GingerCore.Drivers
                     }
                     break;
                 case ActGenElement.eGenElementAction.SetAttributeUsingJs:
+                {
+                    e = LocateElement(act);
+                    char[] delimit = new char[] { '=' };
+                    string insertval = act.GetInputParamCalculatedValue("Value");
+                    string[] vals = insertval.Split(delimit, 2);
+                    if (vals.Length != 2)
                     {
-                        e = LocateElement(act);
-                        char[] delimit = new char[] { '=' };
-                        string insertval = act.GetInputParamCalculatedValue("Value");
-                        string[] vals = insertval.Split(delimit, 2);
-                        if (vals.Length != 2)
-                        {
-                            Reporter.ToLog(eLogLevel.DEBUG, @"Input string should be in the format : attribute=value");
-                            return;
-                        }
-                        ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
+                        Reporter.ToLog(eLogLevel.DEBUG, @"Input string should be in the format : attribute=value");
+                        return;
                     }
-                    break;
+                        ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
+                }
+                break;
                 default:
                     Reporter.ToLog(eLogLevel.DEBUG, "Action unknown/not implemented for the Driver: " + this.GetType().ToString());
                     break;
@@ -4541,13 +4600,13 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,$"Failed to locate element", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to locate element", ex);
             }
             finally
             {
                 Driver.Manage().Timeouts().ImplicitWait = ImpWait;//reset Implicit wait
             }
-            
+
             return elem;
         }
 
@@ -7090,7 +7149,7 @@ namespace GingerCore.Drivers
                 {
                     list.Add(new ControlProperty() { Name = $"CSS: {prop}", Value = value?.ToString() });
                 }
-                
+
             }
         }
 

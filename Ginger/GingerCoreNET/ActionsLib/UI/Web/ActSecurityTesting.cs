@@ -26,12 +26,14 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
+using GingerCore.Actions.WebServices;
 using GingerCore.Platforms;
 using GingerCoreNET.External.ZAP;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
@@ -107,8 +109,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
         public enum eScanType
         {
-            [EnumValueDescription("Active")]
-            Active
+            [EnumValueDescription("Perform Active Scan")]
+            Active,
+            [EnumValueDescription("Pull Passive Scan Report")]
+            Passive
         }
 
         public enum eAlertTypes
@@ -171,6 +175,20 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             }
         }
 
+        private bool mPullReport;
+        [IsSerializedForLocalRepository]
+        public bool PullReport
+        {
+            get { return mPullReport; }
+            set
+            {
+                if (mPullReport != value)
+                {
+                    mPullReport = value;
+                    OnPropertyChanged(nameof(PullReport));
+                }
+            }
+        }
 
         public override eImageType Image { get { return eImageType.Shield; } }
 
@@ -199,13 +217,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             zapProxyService = new ZapProxyService();
             try
             {
-                
+
                 if (zapProxyService.IsZapRunningAsync())
                 {
                     zapProxyService.AddUrlToScanTree(testURL);
                     zapProxyService.PerformActiveScan(testURL);
 
                     ProcessResultAsync(zapProxyService, this, testURL);
+                    AddZapAlertOutputValues(zapProxyService, this, testURL);
                     if (AlertList != null)
                     {
                         bool isPassed = zapProxyService.EvaluateScanResult(testURL, AlertList);
@@ -251,7 +270,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
         }
 
-        public void ExecutePassiveZapScan(string testURL)
+        public void ExecutePassiveZapScan(string testURL, Act act)
         {
             bool isPassed = false;
             Status = eRunStatus.Running;
@@ -262,7 +281,9 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 {
 
                     zapProxyService.WaitTillPassiveScanCompleted();
-                    ProcessResultAsync(zapProxyService, (Act)this, testURL);
+
+                    ProcessResultAsync(zapProxyService, act, testURL);
+                    AddZapAlertOutputValues(zapProxyService, act, testURL);
                     isPassed = zapProxyService.EvaluateScanResult(testURL, AlertList);
 
                 }
@@ -289,7 +310,63 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 {
                     Status = eRunStatus.Failed;
                     Error = "Security testing Failed with some alerts .";
+                    act.ExInfo = "Vulnerability Issues Found, Please check the report in Output Values Artifact ";
                 }
+            }
+        }
+
+        public void ExecuteApiSecurityTestWithOpenApi(string apiEndpointURL, Act act)
+        {
+            Status = eRunStatus.Running;
+            zapProxyService = new ZapProxyService();
+            try
+            {
+                if (zapProxyService.IsZapRunningAsync())
+                {
+                    if (!string.IsNullOrEmpty(apiEndpointURL))
+                    {
+
+                        zapProxyService.ActiveScanAPI(apiEndpointURL);
+                    }
+
+
+                    ProcessResultAsync(zapProxyService, act, apiEndpointURL);
+                    AddZapAlertOutputValues(zapProxyService, act, apiEndpointURL);
+                    bool isPassed = AlertList != null
+                        ? zapProxyService.EvaluateScanResult(apiEndpointURL, AlertList)
+                        : zapProxyService.EvaluateScanResult(apiEndpointURL);
+
+
+                    Status = isPassed ? eRunStatus.Passed : eRunStatus.Failed;
+                    if (!isPassed)
+                    {
+                        Error = "Vulnerability Issues Found, Please check the report in Output Values Artifact ";
+                        act.ExInfo = "Vulnerability Issues Found, Please check the report in Output Values Artifact ";
+                    }
+
+                    if (act is ActWebAPIBase)
+                    {
+
+                        var alertSummary = zapProxyService.GetAlertSummary(apiEndpointURL);
+
+                        int totalAlerts = alertSummary.Sum(a => a.Count);
+                        if (totalAlerts > 0)
+                        {
+                            act.ExInfo = "Vulnerability Issues Found, Please check the report in Output Values Artifact ";
+                        }
+                    }
+
+                }
+                else
+                {
+                    Status = eRunStatus.Failed;
+                    Error = "ZAP Proxy is not running. Please start ZAP Proxy before executing the scan.";
+                }
+            }
+            catch (Exception ex)
+            {
+                Status = eRunStatus.Failed;
+                Error = $"Error while executing ZAP API security scan: {ex.Message}";
             }
         }
 
@@ -299,7 +376,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             string path = String.Empty;
 
             string solutionDir = WorkSpace.Instance.Solution.Folder;
-            string folderPath = Path.Combine(solutionDir, "ExternalConfigurations", "ZAPConfiguration", "Report");
+            string folderPath = Path.Combine(solutionDir, "ExecutionResults", "Artifacts", "ZAPReport");
             // Ensure the directory exists
             if (!System.IO.Directory.Exists(folderPath))
             {
@@ -307,10 +384,32 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             }
             string DatetimeFormate = DateTime.Now.ToString("ddMMyyyy_HHmmssfff");
             string reportname = $"{_act.ItemName}_SecurityTestingReport_{DatetimeFormate}.html";
-            path = $"{folderPath}{Path.DirectorySeparatorChar}{reportname}";
+            path = Path.Combine(folderPath, reportname);
 
             zps.GenerateZapReport(testURL, folderPath, reportname);
             Act.AddArtifactToAction(Path.GetFileName(path), _act, path);
+            _act.AddOrUpdateReturnParamActual(ParamName: "Security Testing Report", ActualValue: path);
+        }
+
+        private static void AddZapAlertOutputValues(ZapProxyService zapProxyService, Act act, string testURL)
+        {
+            var alertSummary = zapProxyService.GetAlertSummary(testURL);
+
+            int totalAlerts = alertSummary.Sum(a => a.Count);
+
+            // Build the summary string: "High=2,Medium=3,Low=2,FalsePositive=3,Informational=2"
+            string vulnerabilitiesSummary = string.Join(
+                ",",
+                alertSummary.Select(a => $"{a.AlertName}={a.Count}")
+            );
+            // Add a single output value row for Vulnerabilities Summary
+            act.AddNewReturnParams = true;
+
+            act.AddOrUpdateReturnParamActualWithPath(
+                "Vulnerabilities Summary",
+                vulnerabilitiesSummary,
+                totalAlerts.ToString()
+            );
         }
     }
 }

@@ -25,6 +25,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Linq;
 using System.Windows.Controls;
+using static Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting;
 
 namespace Ginger.Actions
 {
@@ -60,8 +61,8 @@ namespace Ginger.Actions
             xSeverityCB.ItemsSource = mAct.AlertItems;
             xSeverityCB.Init(mAct, nameof(mAct.AlertList));
 
-            //xTargetRadioButton.Init(typeof(ActSecurityTesting.eTarget), xTargetRadioButtonPnl, mAct.GetOrCreateInputParam(ActSecurityTesting.Fields.Target, nameof(ActSecurityTesting.eTarget.Full)), TargetRadioButton_Clicked);
-            GingerCore.General.FillComboFromEnumObj(xScanTypeComboBox, mAct.ScanType);
+            GingerCore.General.FillComboFromEnumType(xScanTypeComboBox, typeof(eScanType), null);
+            xScanTypeComboBox.Text = GingerCore.General.GetEnumValueDescription(typeof(eScanType), eScanType.Active);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xScanTypeComboBox, ComboBox.SelectedValueProperty, mAct, ActSecurityTesting.Fields.ScanType);
 
         }
@@ -90,15 +91,7 @@ namespace Ginger.Actions
                     mAct.ScanType = (ActSecurityTesting.eScanType)scanTypeEnum;
                 }
             }
-        }
 
-        //private void TargetRadioButton_Clicked(object sender, System.Windows.RoutedEventArgs e)
-        //{
-        //    if (sender is RadioButton radioButton && radioButton.Tag is ActSecurityTesting.eTarget selectedTarget)
-        //    {
-        //        mAct.TargetType = selectedTarget;
-        //    }
-        //}
 
         public ObservableList<OperationValues> GetAlertList()
         {

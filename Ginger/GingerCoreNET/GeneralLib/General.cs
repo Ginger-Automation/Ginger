@@ -48,7 +48,6 @@ using System.Net.Http;
 using System.Reflection;
 using System.Security;
 using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
@@ -796,9 +795,9 @@ namespace GingerCoreNET.GeneralLib
         {
             try
             {
-                if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Any())
+                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count == 0)
                 {
-                    ZAPConfiguration newZAPConfiguration = new ZAPConfiguration() { Name = "ZAP" };
+                    ZAPConfiguration newZAPConfiguration = new ZAPConfiguration() { Name = "ZAPConfig" };
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newZAPConfiguration);
                     return true;
                 }
@@ -1268,7 +1267,7 @@ namespace GingerCoreNET.GeneralLib
         {
             var props = elementInfo.Properties.GroupBy(p => p.Name, StringComparer.InvariantCultureIgnoreCase)
                 .Select(g => g.First())
-                .ToDictionary(p => p.Name,p => p.Value, StringComparer.InvariantCultureIgnoreCase);
+                .ToDictionary(p => p.Name, p => p.Value, StringComparer.InvariantCultureIgnoreCase);
 
             string BoundsValue = props.TryGetValue("bounds", out var xBounds) ? xBounds : string.Empty;
             try
@@ -1340,7 +1339,7 @@ namespace GingerCoreNET.GeneralLib
 
                     // Add Bearer token to the Authorization header
                     string bearerToken = gingerPlayAPITokenManager.GetValidToken();
-                    if(!string.IsNullOrEmpty(bearerToken))
+                    if (!string.IsNullOrEmpty(bearerToken))
                     {
                         client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
                     }

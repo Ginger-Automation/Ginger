@@ -142,6 +142,16 @@
                                 </StackPanel>
                             </Expander.Content>
                         </Expander>
+                        <Expander x:Name="xZAPConfigExpander" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" Margin="0,0,0,0" BorderThickness="0">
+                            <Expander.Header>
+                                <Label Content="Security Testing Configurations" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                            </Expander.Header>
+                            <Expander.Content>
+                                <StackPanel Margin="10, 15, 0, 0">
+                                    <CheckBox x:Name="xEnableZAPCheckBox" Content="Enable ZAP Security Testing" Style="{StaticResource $CeckBoxStyle}"/>
+                                </StackPanel>
+                            </Expander.Content>
+                        </Expander>
                     </StackPanel>
                 </Grid>
 

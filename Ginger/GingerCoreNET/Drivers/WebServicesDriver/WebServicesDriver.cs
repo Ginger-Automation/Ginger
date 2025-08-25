@@ -19,8 +19,10 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.APIModelLib;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.ActionsLib.Webservices;
 using Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter;
 using Amdocs.Ginger.CoreNET.DiameterLib;
@@ -145,6 +147,51 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         [UserConfiguredDescription("Tcp client port")]
         public string TcpPort { get; set; }
 
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Configure ZAP Security Testing")]
+        public bool UseZAP { get; set; }
+
+        public enum eZapScanType
+        {
+            Active = 0,
+            Passive = 1
+        }
+        [UserConfigured]
+        [UserConfiguredDefault("Passive")]
+        [UserConfiguredDescription("ZAP Scan Type: Active or Passive")]
+        public string ZapScanTypeSetting { get; set; }
+        private eZapScanType mZapScanTypeSetting
+        {
+            get
+            {
+                return (eZapScanType)Enum.Parse(typeof(eZapScanType), ZapScanTypeSetting, true);
+            }
+        }
+
+        public enum eZapVulnerability
+        {
+            None,
+            High,
+            Medium,
+            Low,
+            Informational,
+            FalsePositive
+        }
+
+        [UserConfigured]
+        [UserConfiguredDefault("None")]
+        [UserConfiguredDescription("ZAP Vulnerability Level: Critical, High, Medium, Low, Informational, FalsePositive")]
+        public string ZapVulnerabilitySetting { get; set; }
+        private eZapVulnerability mZapVulnerabilitySetting
+        {
+            get
+            {
+                return (eZapVulnerability)Enum.Parse(typeof(eZapVulnerability), ZapVulnerabilitySetting, true);
+            }
+        }
+
         private bool mIsDriverWindowLaunched
         {
             get
@@ -256,6 +303,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
             if (act is ActWebAPISoap or ActWebAPIRest)
             {
+                if (this.UseZAP)
+                {
+                    ZAPConfiguration zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count == 0 ? new ZAPConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
+                    WebServicesProxy = zAPConfiguration.ZAPUrl;
+                }
                 if (WebAPI.RequestConstructor((ActWebAPIBase)act, WebServicesProxy, UseServerProxySettings))
                 {
                     WebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
@@ -287,7 +339,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 {
                     throw new Exception("The Action from type '" + act.GetType().ToString() + "' is unknown/Not Implemented by the Driver - " + this.GetType().ToString());
                 }
-
                 if (WebAPI.RequestConstructor(actWebAPI, WebServicesProxy, UseServerProxySettings))
                 {
                     WebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
@@ -372,6 +423,19 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
                 //Post Execution Copy execution result fields from actWebAPI to ActWebAPIModel (act)
                 CopyExecutionAttributes(act, actWebAPI);
+                if (this.UseZAP)
+                {
+                    if (string.Equals(this.mZapScanTypeSetting, eZapScanType.Passive))
+                    {
+                        string endpointUrl = mActWebAPI.GetInputParamValue(ActWebAPIBase.Fields.EndPointURL);
+                        ActSecurityTesting mActSecTest = new();
+                        mActSecTest.ExecutePassiveZapScan(endpointUrl, mActWebAPI);
+                    }
+                    else
+                    {
+                        HandleAPISecurityTesting(mActWebAPI);
+                    }
+                }
 
             }
             else if (act is ActScreenShot)
@@ -382,12 +446,33 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 ActDiameter mActDiameter = act as ActDiameter;
                 HandleDiameterRequest(mActDiameter);
             }
+            else if (act is ActSecurityTesting)
+            {
+                if (mActWebAPI != null)
+                {
+                    ActSecurityTesting mActSecTest = act as ActSecurityTesting;
+                    HandleAPISecurityTesting(mActWebAPI, mActSecTest);
+                }
+
+            }
             else
             {
                 throw new Exception("The Action from type '" + act.GetType().ToString() + "' is unknown/Not Implemented by the Driver - " + this.GetType().ToString());
             }
 
         }
+
+        private void HandleAPISecurityTesting(ActWebAPIBase mActWebAPI, ActSecurityTesting mActSecTest = null)
+        {
+            string endpointUrl = mActWebAPI.GetInputParamValue(ActWebAPIBase.Fields.EndPointURL);
+            if (mActSecTest == null)
+            {
+                mActSecTest = new();
+            }
+
+            mActSecTest.ExecuteApiSecurityTestWithOpenApi(endpointUrl, mActWebAPI);
+        }
+
         private void HandleDiameterRequest(ActDiameter act)
         {
             Reporter.ToLog(eLogLevel.INFO, $"Starting Diameter Action");
@@ -493,6 +578,12 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         {
             mWebAPI = new HttpWebClientUtils();
 
+            if (this.UseZAP)
+            {
+                ZAPConfiguration zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count == 0 ? new ZAPConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
+                WebServicesProxy = zAPConfiguration.ZAPUrl;
+                WebServicesProxy = "localhost:8080";
+            }
             //Call for Request Construction
             if (mWebAPI.RequestConstructor(act, WebServicesProxy, UseServerProxySettings))
             {

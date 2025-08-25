@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace GingerCoreNET.External.ZAP
 {
@@ -47,7 +48,7 @@ namespace GingerCoreNET.External.ZAP
             }
         }
 
-        public void WaitTillPassiveScanCompleted()
+        public async Task WaitTillPassiveScanCompleted()
         {
             try
             {
@@ -68,12 +69,11 @@ namespace GingerCoreNET.External.ZAP
 
         public void GenerateZapReport(string siteToTest, string reportDir, string reportfilename)
         {
-            string title = "Security Test Report";
-            string template = "traditional-html";
+
             try
             {
                 _zapClient.reports.generate(
-                    title, template, "", "Security scan report", "", siteToTest, "", "", "",
+                    "Security Test Report", "traditional-html", "", "Security scan report", "", siteToTest, "", "", "",
                     reportfilename, "", reportDir, ""
                 );
             }
@@ -244,6 +244,13 @@ namespace GingerCoreNET.External.ZAP
             Reporter.ToLog(eLogLevel.INFO, "Active scan has completed");
         }
 
+        public void ActiveScanAPI(string targetHost)
+        {
+            AddUrlToScanTree(targetHost);
+
+
+            PerformActiveScan(targetHost);
+        }
         public bool EvaluateScanResult(string targetUrl, ObservableList<OperationValues> allowedAlertNames)
         {
             var summaryResponse = _zapClient.alert.alertsSummary(targetUrl);
@@ -274,6 +281,24 @@ namespace GingerCoreNET.External.ZAP
             var alertSummary = (ApiResponseSet)summaryResponse;
             return !string.IsNullOrEmpty(alertSummary.ToString());
 
+        }
+
+        public List<(string AlertName, int Count)> GetAlertSummary(string targetUrl)
+        {
+            var summaryResponse = _zapClient.alert.alertsSummary(targetUrl);
+            var alertSummary = (ApiResponseSet)summaryResponse;
+            var result = new List<(string, int)>();
+
+            foreach (var alertEntry in alertSummary.Dictionary)
+            {
+                string alertName = alertEntry.Key;
+                string valueString = alertEntry.Value is ApiResponseElement element ? element.Value : alertEntry.Value?.ToString();
+                if (int.TryParse(valueString, out int count))
+                {
+                    result.Add((alertName, count));
+                }
+            }
+            return result;
         }
 
     }

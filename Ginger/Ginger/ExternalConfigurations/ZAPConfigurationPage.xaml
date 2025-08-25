@@ -16,6 +16,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition  Height="30"/>
                 <RowDefinition  Height="1*"/>
+                <RowDefinition Height="1*"/> 
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" Grid.Row="0">
                 <Label Content="ZAP Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
@@ -48,6 +49,51 @@
                     <usercontrols:ucButton x:Name="xTestConBtn" IsEnabled="True" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="10,25,0,0" ButtonType="RoundTextAndImageButton" ButtonText="Test Connection" ButtonImageType="Run" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xTestConBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" ToolTip="Test ZAP Connection"/>
                     <usercontrols:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="187,28,0,3" HorizontalAlignment="Left" Height="25" Width="20" Visibility="Collapsed"></usercontrols:ImageMakerControl>
 
+                </Grid>
+            </StackPanel>
+        
+
+            <StackPanel Orientation="Horizontal" Grid.Row="2" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left Side -->
+                    <Grid Grid.Column="0" >
+                        <StackPanel Margin="0,0,-80,0" >
+                            <Expander x:Name="xAboutZAP" ExpandDirection="Down"  Style="{StaticResource $ExpanderStyle}"   IsExpanded="True" Width="591">
+                                <Expander.Header>
+                                    <Label Content="About ZAP" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                                </Expander.Header>
+                                <Expander.Content >
+
+                                    <TextBlock x:Name="xZapInfo" TextWrapping="Wrap" Width="581" Height="250" Padding="10,5,5,5" HorizontalAlignment="Left">
+                                        Zed Attack Proxy (ZAP) by Checkmarx is a free, open-source penetration testing tool. ZAP is
+                                        designed specifically for testing web applications and is both flexible and extensible.
+                                        At its core, ZAP is what is known as a “manipulator-in-the-middle proxy.” It stands between
+                                        the tester’s browser and the web application so that it can intercept and inspect messages
+                                        sent between browser and web application, modify the contents if needed.
+
+                                        <LineBreak/>
+                                        <Bold>- Passive Scan:</Bold> ZAP automatically analyzes all traffic passing through the proxy without altering requests or responses. It looks for vulnerabilities in a non-intrusive way, ensuring no impact on the target application.
+                                        <LineBreak/>
+                                        <Bold>- Active Scan:</Bold> ZAP actively interacts with the target application by sending additional requests to discover vulnerabilities. This scan is more intrusive and can potentially affect the application.
+
+                                        <LineBreak/>
+                                        <Bold>Alerts:</Bold>
+                                        ZAP generates alerts when it detects potential security issues during scanning. Each alert provides details about the vulnerability, its risk level, and recommendations for remediation.
+
+                                        <LineBreak/>
+                                        <Hyperlink NavigateUri="https://www.zaproxy.org/" RequestNavigate="Hyperlink_RequestNavigate">
+                                            Learn more about ZAP
+                                        </Hyperlink>
+                                    </TextBlock>
+                                </Expander.Content>
+                            </Expander>
+                        </StackPanel>
+                    </Grid>
                 </Grid>
             </StackPanel>
         </Grid>
