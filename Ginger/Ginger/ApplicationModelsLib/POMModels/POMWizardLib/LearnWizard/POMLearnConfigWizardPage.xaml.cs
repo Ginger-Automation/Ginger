@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models;
@@ -56,6 +57,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         public ePlatformType mAppPlatform;
         public bool isEnableFriendlyLocator = false;
         private const double AGENT_CONFIGS_ROW_HEIGHT = 90;
+        private GingerPlayConfiguration GingerPlayConfiguration;
 
         public eImageType IconType { get; set; } = eImageType.GingerPlayLogo;
 
@@ -73,14 +75,15 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-
+                    GingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count == 0
+                        ? new GingerPlayConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
                     ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList(WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList());
                     mBasePOMWizard = (BasePOMWizard)WizardEventArgs.Wizard;
                     xTargetApplicationComboBox.BindControl<ApplicationPlatform>(mBasePOMWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.TargetApplicationKey), TargetApplications, nameof(ApplicationPlatform.AppName), nameof(ApplicationPlatform.Key));
                     xLearnOnlyMappedElements.BindControl(mBasePOMWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
                     xLearnScreenshotsOfElements.BindControl(mBasePOMWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnScreenshotsOfElements));
                     xLearnShadowDOMElements.BindControl(mBasePOMWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnShadowDomElements));
-                    if(WorkSpace.Instance.BetaFeatures.ShowPOMForAI)
+                    if(GingerPlayConfiguration.IsGingerPlayConfigured())
                     {
                         xLearnPOMByAI.BindControl(mBasePOMWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnPOMByAI));
                     }
@@ -213,7 +216,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (mAppPlatform == ePlatformType.Web)
             {
                 xLearnScreenshotsOfElements.Visibility = Visibility.Visible;
-                if(WorkSpace.Instance.BetaFeatures.ShowPOMForAI)
+                if(GingerPlayConfiguration.IsGingerPlayConfigured())
                 {
                     xLearnPOMByAI.Visibility = Visibility.Visible;
                 }
@@ -421,7 +424,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xElementLocatorsSettingsExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
             xElementLocatorsSettingsExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
             xSpecificFrameConfigPanel.IsEnabled = xAgentControlUC.AgentIsRunning;
-            xLearnPOMByAI.IsEnabled = xAgentControlUC.AgentIsRunning;
+            xLearnPOMByAI.IsEnabled = xAgentControlUC.AgentIsRunning && GingerPlayConfiguration.IsGingerPlayConfigured();
 
         }
 
