@@ -33,6 +33,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.ALM.RQM;
 using GingerCore.DataSource;
+using GingerCore.Drivers.CommunicationProtocol;
 using GingerCore.Environments;
 using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -489,16 +490,18 @@ namespace GingerCoreNET.GeneralLib
 
         public static string GetSolutionCategoryValue(SolutionCategoryDefinition solutionCategoryDefinition)
         {
-            SolutionCategory cat = WorkSpace.Instance.Solution.SolutionCategories.FirstOrDefault(x => x.Category == solutionCategoryDefinition.Category);
-            if (cat != null)
+            if (WorkSpace.Instance.Solution.SolutionCategories != null)
             {
-                SolutionCategoryValue catValue = cat.CategoryOptionalValues.FirstOrDefault(x => x.Guid == solutionCategoryDefinition.SelectedValueID);
-                if (catValue != null)
+                SolutionCategory cat = WorkSpace.Instance.Solution.SolutionCategories.FirstOrDefault(x => x.Category == solutionCategoryDefinition.Category);
+                if (cat != null)
                 {
-                    return catValue.Value;
+                    SolutionCategoryValue catValue = cat.CategoryOptionalValues.FirstOrDefault(x => x.Guid == solutionCategoryDefinition.SelectedValueID);
+                    if (catValue != null)
+                    {
+                        return catValue.Value;
+                    }
                 }
             }
-
             return null;
         }
         public static string RemoveSpecialCharactersInColumnHeader(string columnHeader)
@@ -1377,18 +1380,86 @@ namespace GingerCoreNET.GeneralLib
             return Response;
         }
 
+        public static async Task<string> GetResponseForprocess_extracted_elementsByOpenAI(string jsonstring, string url = null)
+        {
+            string Response = string.Empty;
+            GingerPlayAPITokenManager gingerPlayAPITokenManager = new GingerPlayAPITokenManager();
+            bool isAuthorized = await gingerPlayAPITokenManager.GetOrValidateToken();
+            if (isAuthorized || !string.IsNullOrEmpty(url))
+            {
+                string baseURI = GetAIServiceBaseUrl();
+                string path = GetAIServicePOMProcessExtractedElementsPath();
+                var payload = new
+                {
+                    elements = jsonstring,// Your current JSON string
+                    platform = "web"  // or "mobileAndroid", "mobileIos"
+                };
+
+                using (var client = new HttpClient())
+                {
+                    var json = System.Text.Json.JsonSerializer.Serialize(payload);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    // Add Bearer token to the Authorization header //For local setup commented authorization part
+                    string bearerToken = gingerPlayAPITokenManager.GetValidToken();
+                    if (!string.IsNullOrEmpty(bearerToken))
+                    {
+                        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Response: Invalid token");
+                        Response = $"Response: Invalid token";
+                    }
+                    try
+                    {
+                        baseURI += path;
+                        if (!string.IsNullOrEmpty(url))
+                        {
+                            baseURI = url;
+                        }
+                        var response = await client.PostAsync(baseURI, content);
+                        response.EnsureSuccessStatusCode();
+                        var responseContent = await response.Content.ReadAsStringAsync();
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Response: {responseContent}");
+                        return responseContent;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Response: Failed to fetch response", ex);
+                        Response = $"Response: Failed to fetch response";
+                    }
+                }
+            }
+            else
+            {
+                Response = $"unauthorized user, please check Credentials";
+            }
+
+            return Response;
+        }
+
         public static string GetAIServiceBaseUrl()
         {
             var baseURI = GingerPlayEndPointManager.GetAIServiceUrl();
-            return $"{baseURI}/";
+            if (!string.IsNullOrEmpty(baseURI) && !baseURI.EndsWith('/'))
+            {
+                baseURI += "/";
+            }
+            return baseURI;
         }
         public static string GetAIServicePOMExtractpath()
         {
             var POMExtractpath = GingerPlayEndPointManager.GetAIServicePOMExtractpath();
             return POMExtractpath;
         }
-    }
 
+        public static string GetAIServicePOMProcessExtractedElementsPath()
+        {
+            var POMExtractpath = GingerPlayEndPointManager.GetAIServicePOMProcessExtractedElementsPath();
+            return POMExtractpath;
+        }
+    }
 }
 
 

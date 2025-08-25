@@ -29,5 +29,8 @@ namespace GingerWPF.WizardLib
         void SetFinishButtonEnabled(bool isEnabled);
 
         void SetPrevButtonEnabled(bool isEnabled);
+
+        void AIProcessStarted();
+        void AIProcessStopped();
     }
 }

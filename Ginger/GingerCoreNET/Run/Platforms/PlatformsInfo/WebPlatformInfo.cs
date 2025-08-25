@@ -600,6 +600,11 @@ namespace GingerCore.Platforms.PlatformsInfo
                     eLocateBy.ByAltText,
                     eLocateBy.ByTestID,
                     eLocateBy.Chained,
+                    eLocateBy.ByAriaLabel,
+                    eLocateBy.ByPartialLinkText,
+                    eLocateBy.ByCustomXPath,
+                    eLocateBy.ByDataAttribute,
+                    eLocateBy.ByDataTestId
 
                 ];
             }

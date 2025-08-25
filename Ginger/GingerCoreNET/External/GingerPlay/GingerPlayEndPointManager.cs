@@ -41,6 +41,7 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
         private static readonly string AI_SERVICE_HEALTH_PATH = $"{AI_SERVICE_URL}/health";
         private static readonly string GENERATE_TOKEN_URL = $"{IDENTITY_SERVICE}/connect/token";
         private static readonly string EXECUTION_SERVICE_GENERATIVEPOM_URL = "generative-ai/extract_dom_elements";
+        private static readonly string EXECUTION_SERVICE_GENERATIVEPOM_PROCESS_EXTRACTED_ELEMENTS = "generative-ai/process_extracted_elements";
 
 
         private static readonly ExecutionLoggerConfiguration LoggerConfig = WorkSpace.Instance.Solution.LoggerConfigurations;
@@ -210,6 +211,11 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
         public static string GetAIServicePOMExtractpath()
         {
             return EXECUTION_SERVICE_GENERATIVEPOM_URL;
+        }
+
+        public static string GetAIServicePOMProcessExtractedElementsPath()
+        {
+            return EXECUTION_SERVICE_GENERATIVEPOM_PROCESS_EXTRACTED_ELEMENTS;
         }
 
         private static string BuildServiceUrl(string path)
