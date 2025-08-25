@@ -198,7 +198,7 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                             ? new GingerPlayConfiguration()
                             : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
                     }
-                return GingerPlayConfiguration?.Token ?? string.Empty;
+                return  GingerPlayConfiguration?.Token ?? string.Empty;
         }
     }
 }

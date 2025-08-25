@@ -1384,7 +1384,7 @@ namespace GingerCoreNET.GeneralLib
         {
             string Response = string.Empty;
             GingerPlayAPITokenManager gingerPlayAPITokenManager = new GingerPlayAPITokenManager();
-            bool isAuthorized = await gingerPlayAPITokenManager.GetOrValidateToken();
+            bool isAuthorized = GetLocalSetup() == "True" ? true : await gingerPlayAPITokenManager.GetOrValidateToken();
             if (isAuthorized || !string.IsNullOrEmpty(url))
             {
                 string baseURI = GetAIServiceBaseUrl();
@@ -1401,15 +1401,22 @@ namespace GingerCoreNET.GeneralLib
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                     // Add Bearer token to the Authorization header //For local setup commented authorization part
-                    string bearerToken = gingerPlayAPITokenManager.GetValidToken();
+                    string bearerToken = GetLocalSetup() == "True" ? GetLocalToken() : gingerPlayAPITokenManager.GetValidToken();
                     if (!string.IsNullOrEmpty(bearerToken))
                     {
                         client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, $"Response: Invalid token");
-                        Response = $"Response: Invalid token";
+                        if(GetLocalSetup() == "True")
+                        {
+                            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Response: Invalid token");
+                            Response = $"Response: Invalid token";
+                        }
                     }
                     try
                     {
@@ -1459,6 +1466,18 @@ namespace GingerCoreNET.GeneralLib
             var POMExtractpath = GingerPlayEndPointManager.GetAIServicePOMProcessExtractedElementsPath();
             return POMExtractpath;
         }
+
+        public static string GetLocalSetup()
+        {
+            return GingerPlayEndPointManager.GetLocalSetupValue();
+        }
+
+        public static string GetLocalToken()
+        {
+            return GingerPlayEndPointManager.GetLocalSetupToken();
+        }
+
+       
     }
 }
 
