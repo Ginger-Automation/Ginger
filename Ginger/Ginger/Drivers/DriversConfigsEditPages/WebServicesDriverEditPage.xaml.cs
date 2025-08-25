@@ -30,6 +30,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
     public partial class WebServicesDriverEditPage : Page
     {
         Agent mAgent = null;
+
         public WebServicesDriverEditPage(Agent webServicesAgent)
         {
             InitializeComponent();
@@ -133,6 +134,23 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             DriverConfigParam soapUINoWindow = mAgent.GetOrCreateParam(nameof(WebServicesDriver.SoapUIProcessCreateNoWindow));
             BindingHandler.ObjFieldBinding(xSoapUINoWindowCheckBox, CheckBox.IsCheckedProperty, soapUINoWindow, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xSoapUINoWindowCheckBox, CheckBox.ToolTipProperty, soapUINoWindow, nameof(DriverConfigParam.Description));
+            #endregion
+
+            #region ZAP Security Testing Configuration
+            DriverConfigParam useZAP = mAgent.GetOrCreateParam(nameof(WebServicesDriver.UseSecurityTesting));
+            BindingHandler.ObjFieldBinding(xEnableZAPCheckBox, CheckBox.IsCheckedProperty, useZAP, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xEnableZAPCheckBox, CheckBox.ToolTipProperty, useZAP, nameof(DriverConfigParam.Description));
+
+            GingerCore.General.FillComboFromEnumType(xScanTypeComboBox, typeof(WebServicesDriver.eZapScanType));
+            DriverConfigParam zapScanType = mAgent.GetOrCreateParam(nameof(WebServicesDriver.ZapScanTypeSetting));
+            BindingHandler.ObjFieldBinding(xScanTypeComboBox, ComboBox.TextProperty, zapScanType, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xScanTypeComboBox, ComboBox.ToolTipProperty, zapScanType, nameof(DriverConfigParam.Description));
+
+            GingerCore.General.FillComboFromEnumType(xVulnerabilityTypeComboBox, typeof(WebServicesDriver.eZapVulnerability));
+            DriverConfigParam zapVulnerability = mAgent.GetOrCreateParam(nameof(WebServicesDriver.ZapVulnerabilitySetting));
+            BindingHandler.ObjFieldBinding(xVulnerabilityTypeComboBox, ComboBox.TextProperty, zapVulnerability, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xVulnerabilityTypeComboBox, ComboBox.ToolTipProperty, zapVulnerability, nameof(DriverConfigParam.Description));
+
             #endregion
         }
 

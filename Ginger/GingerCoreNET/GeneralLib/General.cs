@@ -49,7 +49,6 @@ using System.Net.Http;
 using System.Reflection;
 using System.Security;
 using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
@@ -791,6 +790,29 @@ namespace GingerCoreNET.GeneralLib
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error creating WireMock configuration", ex);
+                return false;
+            }
+        }
+
+        public static bool CreateZAPConfiguration()
+        {
+            try
+            {
+                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count == 0)
+                {
+                    ZAPConfiguration newZAPConfiguration = new ZAPConfiguration() { Name = "ZAPConfig" };
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newZAPConfiguration);
+                    return true;
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "ZAP configuration already exists; skipping creation.");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error creating ZAP configuration", ex);
                 return false;
             }
         }

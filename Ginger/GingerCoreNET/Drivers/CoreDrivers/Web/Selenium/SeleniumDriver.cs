@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
@@ -442,6 +443,11 @@ namespace GingerCore.Drivers
         public string RemoteWebDriverUrl { get; set; }
 
 
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Allow ZAP to Perform Security Testing")]
+        public bool UseSecurityTesting { get; set; }
+
         protected IWebDriver Driver;
         protected AppiumDriver MobDriver;
         protected eBrowserType mBrowserType;
@@ -629,6 +635,39 @@ namespace GingerCore.Drivers
             if (!string.IsNullOrEmpty(SeleniumUserArguments))
             {
                 SeleniumUserArgs = SeleniumUserArguments.Split(';');
+            }
+
+            if (this.UseSecurityTesting)
+            {
+
+                ZAPConfiguration zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count == 0 ? new ZAPConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
+
+                if (string.IsNullOrEmpty(zAPConfiguration.ZAPUrl))
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "UseZAP is enabled but ZAP Url is empty. Traffic will not be routed through ZAP.");
+                }
+                else
+                {
+
+                    // Normalize to host:port for Selenium Proxy
+                    string zapHostPort = CoerceZapHostPort(zAPConfiguration.ZAPUrl);
+                    Proxy = zapHostPort; // keep legacy string in sync if used elsewhere
+                    if (mProxy == null)
+                    {
+
+                        mProxy = new Proxy();
+                    }
+                    mProxy.Kind = ProxyKind.Manual;
+                    mProxy.HttpProxy = Proxy;
+                    mProxy.FtpProxy = Proxy;
+                    mProxy.SslProxy = Proxy;
+                    mProxy.SocksProxy = Proxy;
+
+                    if (!string.IsNullOrEmpty(ByPassProxy))
+                    {
+                        mProxy.AddBypassAddresses(AddByPassAddress());
+                    }
+                }
             }
 
             //TODO: launch the driver/agent per combo selection
@@ -1427,6 +1466,11 @@ namespace GingerCore.Drivers
             var proxy = new Proxy();
 
             options.Proxy = proxy;
+            if (this.UseSecurityTesting)
+            {
+                options.AcceptInsecureCertificates = true;
+            }
+
 
             switch (mProxy.Kind)
             {
@@ -1934,11 +1978,26 @@ namespace GingerCore.Drivers
                 case ActAccessibilityTesting accessibilityTesting:
                     ActAccessibility(accessibilityTesting);
                     break;
-
+                case ActSecurityTesting securityTesting:
+                    ActSecurity(securityTesting);
+                    break;
                 default:
                     act.Error = "Run Action Failed due to unrecognized action type - " + actType.ToString();
                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                     break;
+            }
+        }
+
+        private void ActSecurity(ActSecurityTesting act)
+        {
+            string testURL = Driver.Url;
+            if (act.ScanType == ActSecurityTesting.eScanType.Active)
+            {
+                act.ExecuteActiveZapScan(testURL);
+            }
+            else
+            {
+                act.ExecutePassiveZapScan("", act);
             }
         }
 
@@ -3553,19 +3612,19 @@ namespace GingerCore.Drivers
                     }
                     break;
                 case ActGenElement.eGenElementAction.SetAttributeUsingJs:
+                {
+                    e = LocateElement(act);
+                    char[] delimit = new char[] { '=' };
+                    string insertval = act.GetInputParamCalculatedValue("Value");
+                    string[] vals = insertval.Split(delimit, 2);
+                    if (vals.Length != 2)
                     {
-                        e = LocateElement(act);
-                        char[] delimit = new char[] { '=' };
-                        string insertval = act.GetInputParamCalculatedValue("Value");
-                        string[] vals = insertval.Split(delimit, 2);
-                        if (vals.Length != 2)
-                        {
-                            Reporter.ToLog(eLogLevel.DEBUG, @"Input string should be in the format : attribute=value");
-                            return;
-                        }
-                        ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
+                        Reporter.ToLog(eLogLevel.DEBUG, @"Input string should be in the format : attribute=value");
+                        return;
                     }
-                    break;
+                        ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
+                }
+                break;
                 default:
                     Reporter.ToLog(eLogLevel.DEBUG, "Action unknown/not implemented for the Driver: " + this.GetType().ToString());
                     break;
@@ -11841,6 +11900,24 @@ namespace GingerCore.Drivers
         {
             //overridden method from GingerWebDriver, need to implement this when we refactor SeleniumDriver to be in the similar structure as PlaywrightDriver
             throw new NotImplementedException();
+        }
+
+        // for Security Testing
+        // Helper: accept "localhost:8080", "http://localhost:8080", "https://zap:8443", or raw host
+        private static string CoerceZapHostPort(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return string.Empty;
+            if (Uri.TryCreate(input, UriKind.Absolute, out var uri))
+            {
+                var port = uri.IsDefaultPort ? 8080 : uri.Port;
+                return $"{uri.Host}:{port}";
+            }
+            // If it already looks like host:port or host, return as-is
+            var trimmed = input.Trim();
+            trimmed = trimmed.Replace("http://", "", StringComparison.OrdinalIgnoreCase)
+                             .Replace("https://", "", StringComparison.OrdinalIgnoreCase)
+                             .Trim('/');
+            return trimmed;
         }
     }
 }

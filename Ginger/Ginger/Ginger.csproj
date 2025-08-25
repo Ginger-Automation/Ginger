@@ -641,6 +641,7 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\WireMockLogo16x16.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\xml.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\xml.svg" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\ZAPLogo.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -2575,6 +2576,9 @@
 
   <ItemGroup>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\WireMockLogo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\ZAPLogo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
