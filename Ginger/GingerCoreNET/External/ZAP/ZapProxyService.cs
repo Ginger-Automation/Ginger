@@ -2,6 +2,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.VariablesLib;
+using GingerCore;
 using OWASPZAPDotNetAPI;
 using System;
 using System.Collections.Generic;
@@ -21,9 +22,9 @@ namespace GingerCoreNET.External.ZAP
         public ZapProxyService()
         {
             zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count == 0 ? new ZAPConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
-            _zapHost = GetHostFromUrl(zAPConfiguration.ZAPUrl);
-            _zapPort = (int)GetPortFromUrl(zAPConfiguration.ZAPUrl);
-            _zapApiKey = zAPConfiguration.ZAPApiKey;
+            _zapHost = GetHostFromUrl(ValueExpression.PasswordCalculation(zAPConfiguration.ZAPUrl));
+            _zapPort = (int)GetPortFromUrl(ValueExpression.PasswordCalculation(zAPConfiguration.ZAPUrl));
+            _zapApiKey = ValueExpression.PasswordCalculation(zAPConfiguration.ZAPApiKey);
             _zapClient = new ClientApi(_zapHost, _zapPort, _zapApiKey);
 
         }
