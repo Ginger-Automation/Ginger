@@ -27,6 +27,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Amdocs.Ginger.Repository;
+using Newtonsoft.Json.Linq;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 {
@@ -177,14 +178,23 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 try
                 {
                     List<ElementWrapper> responseElements = null;
+                    var jObject = JObject.Parse(cleanedResponse);
+                    var genaiResultToken = jObject["data"]?["genai_result"].ToString();
                     try
                     {
-                        responseElements = JsonConvert.DeserializeObject<List<ElementWrapper>>(cleanedResponse);
+                        if (genaiResultToken != null)
+                        {
+                            responseElements = JsonConvert.DeserializeObject<List<ElementWrapper>>((string)genaiResultToken);
+                        }
+                        else
+                        {
+                            responseElements = JsonConvert.DeserializeObject<List<ElementWrapper>>(cleanedResponse);
+                        }
                     }
                     catch (JsonException)
                     {
                         // Fallback: response is a JSON string containing the payload
-                        var inner = JsonConvert.DeserializeObject<string>(cleanedResponse);
+                        var inner = JsonConvert.DeserializeObject<string>((string)genaiResultToken);
                         if (!string.IsNullOrWhiteSpace(inner))
                         {
                             responseElements = JsonConvert.DeserializeObject<List<ElementWrapper>>(inner);
@@ -211,7 +221,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                             {
                                 // Deserialize the EnhanceLocatorsByAI property
 
-                                string enhanceLocatorsJson = (string)ele.elementinfo.locators.EnhanceLocatorsByAI ?? ele.elementinfo.locators.EnhanceLocatorsByAI?.ToString();
+                                string enhanceLocatorsJson = ele.elementinfo.locators.EnhanceLocatorsByAI?.ToString();
+
                                 if (string.IsNullOrWhiteSpace(enhanceLocatorsJson))
                                     {
                                         continue;
