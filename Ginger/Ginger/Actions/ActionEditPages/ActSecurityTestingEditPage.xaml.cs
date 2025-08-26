@@ -91,16 +91,14 @@ namespace Ginger.Actions
         }
 
 
-        public ObservableList<OperationValues> GetAlertList()
+        public static ObservableList<OperationValues> GetAlertList()
         {
-            ObservableList<OperationValues> SeverityList =
-            [
-                new OperationValues() { Value = nameof(ActSecurityTesting.eAlertTypes.High) },
-                new OperationValues() { Value = nameof(ActSecurityTesting.eAlertTypes.Medium) },
-                new OperationValues() { Value = nameof(ActSecurityTesting.eAlertTypes.Low) },
-                new OperationValues() { Value = nameof(ActSecurityTesting.eAlertTypes.FalsePositive) },
-                new OperationValues() { Value = nameof(ActSecurityTesting.eAlertTypes.Informational) },
-            ];
+            ObservableList<OperationValues> SeverityList = [];
+            foreach (ActSecurityTesting.eAlertTypes alertType in Enum.GetValues(typeof(ActSecurityTesting.eAlertTypes)))
+            {
+                string description = GingerCore.General.GetEnumValueDescription(typeof(ActSecurityTesting.eAlertTypes), alertType);
+                SeverityList.Add(new OperationValues() { Value = description });
+            }
             return SeverityList;
         }
     }

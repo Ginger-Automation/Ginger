@@ -17,19 +17,11 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <DockPanel Margin="10,0,0,0">
-            <StackPanel x:Name="xSeverityStack" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
-                <Label x:Name="xSeveritylbl" Width="140" Style="{StaticResource $LabelStyle}" Margin="0,10,0,0" Content="Acceptable Alerts :"/>
-                <UserControlsLib:MultiSelectComboBox x:Name="xSeverityCB" Margin="8,0,0,0" HorizontalAlignment="Left" Width="Auto" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Height="100" DockPanel.Dock="Top" Margin="15,0,10,250">
-                <Label Style="{StaticResource $LabelStyle}" Width="140" Height="32" Content="Operation Type :"/>
-                <ComboBox x:Name="xScanTypeComboBox" Width="Auto" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="xScanTypeComboBox_SelectionChanged"/>
-            </StackPanel>
-        </DockPanel>
+        <Label Style="{StaticResource $LabelStyle}" Width="140" Grid.Column="0" Grid.Row="0" Height="32" Content="Operation Type :" Margin="10,10,0,0"/>
+        <ComboBox x:Name="xScanTypeComboBox"  Width="Auto" Grid.Row="0" Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="xScanTypeComboBox_SelectionChanged" Margin="0,8,916,8" />
+        <Label x:Name="xSeveritylbl" Width="140" Style="{StaticResource $LabelStyle}"  Content="Acceptable Alerts :" Height="32" Grid.Column="0" Grid.Row="1" Margin="10,10,0,530" />
+        <UserControlsLib:MultiSelectComboBox x:Name="xSeverityCB"  Width="Auto" Grid.Row="1" Grid.Column="1" Height="26" HorizontalAlignment="Stretch" Margin="0,0,916,528"/>
     </Grid>
-
 </Page>
 
