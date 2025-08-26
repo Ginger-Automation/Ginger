@@ -199,6 +199,33 @@ namespace Ginger.UserControlsLib
             
             // Subscribe to the Unloaded event to clean up event handlers
             this.Unloaded += UCDataMapping_Unloaded;
+            
+            // Subscribe to the Loaded event to ensure proper initialization
+            this.Loaded += UCDataMapping_Loaded;
+            
+            // Subscribe to DataContext changes to refresh the control when the variable changes
+            this.DataContextChanged += UCDataMapping_DataContextChanged;
+        }
+
+        private void UCDataMapping_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            // When the DataContext changes (e.g., in a grid template), refresh the control
+            if (e.NewValue != null && MappedType == eDataType.Value.ToString())
+            {
+                SetValueControlsData();
+                SetValueControlsView();
+            }
+        }
+
+        private void UCDataMapping_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Force a refresh of the UI when the control is loaded
+            // This ensures DateTime pickers are properly set up if the DataContext was set after initialization
+            if (MappedType == eDataType.Value.ToString())
+            {
+                SetValueControlsData();
+                SetValueControlsView();
+            }
         }
 
         private void UCDataMapping_Unloaded(object sender, RoutedEventArgs e)
@@ -206,8 +233,15 @@ namespace Ginger.UserControlsLib
             // Clean up event handlers to prevent memory leaks
             xValueTextBox.TextChanged -= xValueTextBox_TextChanged;
             xValueTextBox.PreviewTextInput -= xValueTextBox_PreviewTextInput;
-            // Note: xSelectionListComboBox_SelectionChanged is managed manually in UpdateSelectionListComboBoxSelection
+            xSelectionListComboBox.SelectionChanged -= xSelectionListComboBox_SelectionChanged;
+            xDatePickerWPF.SelectedDateChanged -= xDatePickerWPF_SelectedDateChanged;
+            if (xDateTimePicker != null)
+            {
+                xDateTimePicker.TextChanged -= xDateTimePicker_TextChanged;
+            }
             this.Unloaded -= UCDataMapping_Unloaded;
+            this.Loaded -= UCDataMapping_Loaded;
+            this.DataContextChanged -= UCDataMapping_DataContextChanged;
         }
 
         #region Global
@@ -332,89 +366,69 @@ namespace Ginger.UserControlsLib
             {
                 return;
             }
+            
+            if (MappedType == eDataType.None.ToString())
+            {
+                xMappedTypeColumn.Width = new GridLength(50, GridUnitType.Star);
+                xMappedTypeColumn.MaxWidth = double.MaxValue;
+                xMappedValueColumn.Width = new GridLength(0);
+            }
             else
             {
-                if (MappedType == eDataType.None.ToString())
-                {
-                    xMappedTypeColumn.Width = new GridLength(50, GridUnitType.Star);
-                    xMappedTypeColumn.MaxWidth = double.MaxValue;
-                    xMappedValueColumn.Width = new GridLength(0);
-                }
-                else
-                {
-                    xMappedTypeColumn.Width = new GridLength(50, GridUnitType.Star);
-                    xMappedTypeColumn.MaxWidth = 180;
-                    xMappedValueColumn.Width = new GridLength(50, GridUnitType.Star);
-                }
+                xMappedTypeColumn.Width = new GridLength(50, GridUnitType.Star);
+                xMappedTypeColumn.MaxWidth = 180;
+                xMappedValueColumn.Width = new GridLength(50, GridUnitType.Star);
+            }
 
-                if (MappedType == eDataType.Variable.ToString()
-                    && xVariablesComboBox != null)
-                {
-                    xVariablesComboBox.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    xVariablesComboBox.Visibility = Visibility.Hidden;
-                }
+            // Hide all controls first
+            xVariablesComboBox.Visibility = Visibility.Hidden;
+            xOptionalValuesComboBox.Visibility = Visibility.Hidden;
+            xSelectionListComboBox.Visibility = Visibility.Hidden;
+            xDatePickerWPF.Visibility = Visibility.Hidden;
+            xDateTimeWindow.Visibility = Visibility.Hidden;
+            xValueTextBox.Visibility = Visibility.Hidden;
+            xDSExpressionTxtbox.Visibility = Visibility.Hidden;
+            xDSConfigBtn.Visibility = Visibility.Hidden;
+            xDBValueExpression.Visibility = Visibility.Hidden;
 
-                if ((MappedType == eDataType.OutputVariable.ToString() || MappedType == eDataType.GlobalVariable.ToString() || MappedType == eDataType.ApplicationModelParameter.ToString())
-                    && xOptionalValuesComboBox != null)
-                {
-                    xOptionalValuesComboBox.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    xOptionalValuesComboBox.Visibility = Visibility.Hidden;
-                }
-
+            if (MappedType == eDataType.Variable.ToString() && xVariablesComboBox != null)
+            {
+                xVariablesComboBox.Visibility = Visibility.Visible;
+            }
+            else if ((MappedType == eDataType.OutputVariable.ToString() || MappedType == eDataType.GlobalVariable.ToString() || MappedType == eDataType.ApplicationModelParameter.ToString())
+                && xOptionalValuesComboBox != null)
+            {
+                xOptionalValuesComboBox.Visibility = Visibility.Visible;
+            }
+            else if (MappedType == eDataType.Value.ToString())
+            {
                 // Handle Selection List ComboBox visibility for VariableSelectionList
-                if (MappedType == eDataType.Value.ToString() && IsSelectionListVariable() && xSelectionListComboBox != null)
+                if (IsSelectionListVariable() && xSelectionListComboBox != null)
                 {
                     xSelectionListComboBox.Visibility = Visibility.Visible;
-                    xValueTextBox.Visibility = Visibility.Hidden;
-                    xDateTimePickerHost.Visibility = Visibility.Hidden;
+                    Reporter.ToLog(eLogLevel.DEBUG, "UCDataMapping: Showing Selection List ComboBox");
                 }
-                // Handle DateTime Picker visibility for VariableDateTime
-                else if (MappedType == eDataType.Value.ToString() && IsDateTimeVariable() && xDateTimePickerHost != null)
+                // Handle DateTime picker visibility for VariableDateTime - Use WPF DatePicker
+                else if (IsDateTimeVariable() && xDatePickerWPF != null)
                 {
-                    xDateTimePickerHost.Visibility = Visibility.Visible;
-                    xValueTextBox.Visibility = Visibility.Hidden;
-                    xSelectionListComboBox.Visibility = Visibility.Hidden;
+                    xDatePickerWPF.Visibility = Visibility.Visible;
+                    SetupWPFDatePicker();
+                    Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: Showing WPF DateTime picker for variable type: {DataContext?.GetType().Name}");
                 }
-                else
+                else if (xValueTextBox != null)
                 {
-                    xSelectionListComboBox.Visibility = Visibility.Hidden;
-                    xDateTimePickerHost.Visibility = Visibility.Hidden;
-                    
-                    if (MappedType == eDataType.Value.ToString() && xValueTextBox != null)
-                    {
-                        xValueTextBox.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        xValueTextBox.Visibility = Visibility.Hidden;
-                    }
+                    xValueTextBox.Visibility = Visibility.Visible;
+                    Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: Showing TextBox for variable type: {DataContext?.GetType().Name}");
                 }
-
-                if (MappedType == eDataType.DataSource.ToString()  && xDSExpressionTxtbox != null)
-                {
-                    xDSExpressionTxtbox.Visibility = Visibility.Visible;
-                    xDSConfigBtn.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    xDSExpressionTxtbox.Visibility = Visibility.Hidden;
-                    xDSConfigBtn.Visibility = Visibility.Hidden;
-                }
-
-                if (MappedType == eDataType.ValueExpression.ToString() && xDBValueExpression != null)
-                {
-                    xDBValueExpression.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    xDBValueExpression.Visibility = Visibility.Hidden;
-                }
+            }
+            else if (MappedType == eDataType.DataSource.ToString() && xDSExpressionTxtbox != null)
+            {
+                xDSExpressionTxtbox.Visibility = Visibility.Visible;
+                xDSConfigBtn.Visibility = Visibility.Visible;
+            }
+            else if (MappedType == eDataType.ValueExpression.ToString() && xDBValueExpression != null)
+            {
+                xDBValueExpression.Visibility = Visibility.Visible;
             }
         }
 
@@ -450,6 +464,14 @@ namespace Ginger.UserControlsLib
             }
 
             MarkMappedValueValidation();
+        }
+
+        private void UpdateDateTimePickerSelection()
+        {
+            if (IsDateTimeVariable())
+            {
+                SetupWPFDatePicker();
+            }
         }
 
         private void MarkMappedValueValidation()
@@ -642,6 +664,40 @@ namespace Ginger.UserControlsLib
             }
         }
 
+        private static void OnVariabelsSourcePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            if (sender is UCDataMapping control)
+            {
+                control.VariabelsSourcePropertyChanged((ObservableList<string>)args.NewValue);
+            }
+        }
+
+        private void VariabelsSourcePropertyChanged(ObservableList<string> variablesList)
+        {
+            if (variablesList != null)
+            {
+                mVariablesList = variablesList;
+                GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.Variable);
+            }
+        }
+
+        private static void OnOutputVariabelsSourcePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            if (sender is UCDataMapping control)
+            {
+                control.OutputVariabelsSourcePropertyChanged((ObservableList<VariableBase>)args.NewValue);
+            }
+        }
+
+        private void OutputVariabelsSourcePropertyChanged(ObservableList<VariableBase> outputVariablesList)
+        {
+            if (outputVariablesList != null)
+            {
+                mOutputVariablesList = outputVariablesList;
+                GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.OutputVariable);
+            }
+        }
+
         private void SetValueControlsData()
         {
             if (MappedType == eDataType.Variable.ToString())
@@ -672,7 +728,7 @@ namespace Ginger.UserControlsLib
             }
             else if (MappedType == eDataType.Value.ToString() && IsDateTimeVariable())
             {
-                SetupDateTimePicker();
+                SetupWPFDatePicker();
             }
 
             MarkMappedValueValidation();
@@ -687,7 +743,33 @@ namespace Ginger.UserControlsLib
         private bool IsDateTimeVariable()
         {
             // Check if the DataContext is a VariableDateTime
-            return DataContext is VariableDateTime;
+            bool isDateTime = false;
+            
+            try 
+            {
+                if (DataContext is VariableDateTime)
+                {
+                    isDateTime = true;
+                }
+                // Also check by VariableType string if available
+                else if (DataContext is VariableBase variable)
+                {
+                    isDateTime = variable.VariableType?.Equals("DateTime", StringComparison.OrdinalIgnoreCase) == true;
+                    
+                    // Additional check - see if the variable has DateTime-specific properties
+                    if (!isDateTime && variable.GetType().Name.Contains("DateTime"))
+                    {
+                        isDateTime = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: Error in IsDateTimeVariable: {ex.Message}");
+                isDateTime = false;
+            }
+            
+            return isDateTime;
         }
 
         private void SetupSelectionListComboBox()
@@ -760,325 +842,85 @@ namespace Ginger.UserControlsLib
             }
         }
 
-        private void SetupDateTimePicker()
+        private void SetupWPFDatePicker()
         {
-            if (DataContext is VariableDateTime dateTimeVariable)
+            if (xDatePickerWPF != null && DataContext is VariableDateTime dateTimeVariable)
             {
-                // Set up the DateTimePicker with the variable's properties
-                xDateTimePicker.CustomFormat = dateTimeVariable.DateTimeFormat;
-                
-                try
+                try 
                 {
-                    xDateTimePicker.MinDate = Convert.ToDateTime(dateTimeVariable.MinDateTime);
-                    xDateTimePicker.MaxDate = Convert.ToDateTime(dateTimeVariable.MaxDateTime);
-                    
-                    // Set the current value
-                    if (!string.IsNullOrEmpty(MappedValue))
-                    {
-                        if (DateTime.TryParse(MappedValue, out DateTime parsedDate))
-                        {
-                            xDateTimePicker.Value = parsedDate;
-                        }
-                        else
-                        {
-                            // If MappedValue can't be parsed, use the variable's current value or initial value
-                            string valueToUse = !string.IsNullOrEmpty(dateTimeVariable.Value) ? dateTimeVariable.Value : dateTimeVariable.InitialDateTime;
-                            if (DateTime.TryParse(valueToUse, out DateTime defaultDate))
-                            {
-                                xDateTimePicker.Value = defaultDate;
-                                MappedValue = defaultDate.ToString(dateTimeVariable.DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // If no MappedValue, use the variable's current value or initial value
-                        string valueToUse = !string.IsNullOrEmpty(dateTimeVariable.Value) ? dateTimeVariable.Value : dateTimeVariable.InitialDateTime;
-                        if (DateTime.TryParse(valueToUse, out DateTime defaultDate))
-                        {
-                            xDateTimePicker.Value = defaultDate;
-                            MappedValue = defaultDate.ToString(dateTimeVariable.DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // Handle any date parsing errors gracefully
-                    Reporter.ToLog(eLogLevel.WARN, $"Error setting up DateTime picker: {ex.Message}");
+                    // Set min and max dates if specified
                     try
                     {
-                        xDateTimePicker.Value = DateTime.Now;
-                        MappedValue = DateTime.Now.ToString(dateTimeVariable.DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
-                    }
-                    catch
-                    {
-                        // Last resort - use default format
-                        xDateTimePicker.Value = DateTime.Now;
-                        MappedValue = DateTime.Now.ToString("MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Updates only the DateTime picker value without triggering events
-        /// </summary>
-        private void UpdateDateTimePickerSelection()
-        {
-            if (xDateTimePicker != null && DataContext is VariableDateTime dateTimeVariable)
-            {
-                // Temporarily disable the text changed event to prevent loops
-                xDateTimePicker.TextChanged -= xDateTimePicker_TextChanged;
-                
-                try
-                {
-                    if (!string.IsNullOrEmpty(MappedValue))
-                    {
-                        if (DateTime.TryParse(MappedValue, out DateTime parsedDate))
+                        if (!string.IsNullOrEmpty(dateTimeVariable.MinDateTime) && DateTime.TryParse(dateTimeVariable.MinDateTime, out DateTime minDate))
                         {
-                            xDateTimePicker.Value = parsedDate;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.WARN, $"Error updating DateTime picker selection: {ex.Message}");
-                }
-                finally
-                {
-                    // Re-enable the text changed event
-                    xDateTimePicker.TextChanged += xDateTimePicker_TextChanged;
-                }
-            }
-        }
-
-        private void xDateTimePicker_TextChanged(object sender, EventArgs e)
-        {
-            if (DataContext is VariableDateTime dateTimeVariable)
-            {
-                try
-                {
-                    // Validate the date is within the allowed range
-                    if (!dateTimeVariable.CheckDateTimeWithInRange(xDateTimePicker.Value.ToString()))
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Selected date is not in range: Min=[{dateTimeVariable.MinDateTime}], Max=[{dateTimeVariable.MaxDateTime}]");
-                        return;
-                    }
-                    
-                    // Convert the selected date to the proper format and update MappedValue
-                    string formattedDate = xDateTimePicker.Value.ToString(dateTimeVariable.DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
-                    if (MappedValue != formattedDate)
-                    {
-                        MappedValue = formattedDate;
-                        
-                        // Update the actual variable value as well
-                        dateTimeVariable.Value = formattedDate;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Error updating DateTime value: {ex.Message}");
-                }
-            }
-        }
-
-        private void xSelectionListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (sender is ComboBox comboBox && comboBox.SelectedItem != null)
-            {
-                // Update the MappedValue when the user selects a different option
-                string selectedValue = comboBox.SelectedItem.ToString();
-                if (MappedValue != selectedValue)
-                {
-                    MappedValue = selectedValue;
-                    
-                    // Update the actual variable value as well
-                    if (DataContext is VariableSelectionList selectionListVariable)
-                    {
-                        selectionListVariable.Value = selectedValue;
-                    }
-                    else if (DataContext is VariableList listVariable)
-                    {
-                        listVariable.Value = selectedValue;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Updates only the selection in the selection list combo box without rebuilding the entire list
-        /// </summary>
-        private void UpdateSelectionListComboBoxSelection()
-        {
-            if (xSelectionListComboBox?.ItemsSource != null)
-            {
-                // Temporarily disable the selection changed event to prevent loops
-                xSelectionListComboBox.SelectionChanged -= xSelectionListComboBox_SelectionChanged;
-                
-                try
-                {
-                    // Update the selection to match the current MappedValue
-                    if (!string.IsNullOrEmpty(MappedValue))
-                    {
-                        // Check if the value exists in the combo box items
-                        bool valueFound = false;
-                        foreach (var item in xSelectionListComboBox.ItemsSource)
-                        {
-                            if (item.ToString() == MappedValue)
-                            {
-                                xSelectionListComboBox.SelectedItem = MappedValue;
-                                valueFound = true;
-                                break;
-                            }
+                            xDatePickerWPF.DisplayDateStart = minDate;
                         }
                         
-                        // If value not found, clear selection
-                        if (!valueFound)
+                        if (!string.IsNullOrEmpty(dateTimeVariable.MaxDateTime) && DateTime.TryParse(dateTimeVariable.MaxDateTime, out DateTime maxDate))
                         {
-                            xSelectionListComboBox.SelectedItem = null;
+                            xDatePickerWPF.DisplayDateEnd = maxDate;
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Error setting date range: {ex.Message}");
+                    }
+                    
+                    // Set the current value - priority: MappedValue -> Variable.Value -> InitialDateTime -> Today
+                    DateTime? currentValue = null;
+                    bool valueWasSet = false;
+                    
+                    if (!string.IsNullOrEmpty(MappedValue) && DateTime.TryParse(MappedValue, out DateTime parsedMappedValue))
+                    {
+                        currentValue = parsedMappedValue;
+                        valueWasSet = true;
+                    }
+                    else if (!string.IsNullOrEmpty(dateTimeVariable.Value) && DateTime.TryParse(dateTimeVariable.Value, out DateTime parsedVarValue))
+                    {
+                        currentValue = parsedVarValue;
+                        valueWasSet = true;
+                    }
+                    else if (!string.IsNullOrEmpty(dateTimeVariable.InitialDateTime) && DateTime.TryParse(dateTimeVariable.InitialDateTime, out DateTime parsedInitialValue))
+                    {
+                        currentValue = parsedInitialValue;
+                        valueWasSet = true;
                     }
                     else
                     {
-                        xSelectionListComboBox.SelectedItem = null;
+                        currentValue = DateTime.Today;
+                    }
+                    
+                    // Ensure the value is within the allowed range
+                    if (currentValue.HasValue)
+                    {
+                        if (xDatePickerWPF.DisplayDateStart.HasValue && currentValue < xDatePickerWPF.DisplayDateStart)
+                        {
+                            currentValue = xDatePickerWPF.DisplayDateStart;
+                        }
+                        else if (xDatePickerWPF.DisplayDateEnd.HasValue && currentValue > xDatePickerWPF.DisplayDateEnd)
+                        {
+                            currentValue = xDatePickerWPF.DisplayDateEnd;
+                        }
+                        
+                        xDatePickerWPF.SelectedDate = currentValue;
+                        
+                        // If no mapped value was set yet, update it with the current picker value
+                        if (!valueWasSet && string.IsNullOrEmpty(MappedValue))
+                        {
+                            string format = !string.IsNullOrEmpty(dateTimeVariable.DateTimeFormat) ? dateTimeVariable.DateTimeFormat : "MM/dd/yyyy";
+                            string formattedValue = currentValue.Value.ToString(format, System.Globalization.CultureInfo.InvariantCulture);
+                            MappedValue = formattedValue;
+                        }
                     }
                 }
-                finally
+                catch (Exception ex)
                 {
-                    // Re-enable the selection changed event
-                    xSelectionListComboBox.SelectionChanged += xSelectionListComboBox_SelectionChanged;
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error setting up WPF DatePicker: {ex.Message}", ex);
                 }
             }
-        }
-        #endregion Global
-
-        #region Variables
-        private static void OnVariabelsSourcePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            if (sender is UCDataMapping control)
+            else
             {
-                control.VariabelsSourcePropertyChanged((ObservableList<string>)args.NewValue);
-            }
-        }
-        private void VariabelsSourcePropertyChanged(ObservableList<string> variabelsSourceList)
-        {
-            if (variabelsSourceList == null || variabelsSourceList.Count == 0 || (variabelsSourceList.Count == 1 && variabelsSourceList[0] == string.Empty))
-            {
-                GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.Variable);
-            }
-            if (variabelsSourceList != null && variabelsSourceList.Where(x => string.IsNullOrEmpty(x) == false).ToList().Count > 0)
-            {
-                if (EnableDataMapping)
-                {
-                    GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.Variable);
-                }
-                mVariablesList = variabelsSourceList;
-                mVariablesList.CollectionChanged += VariabelsSourceList_CollectionChanged;
-                SetValueControlsData();
-            }
-        }
-        private void VariabelsSourceList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            SetValueControlsData();
-        }
-        #endregion Variables
-
-        #region Output Variables
-        private static void OnOutputVariabelsSourcePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            if (sender is UCDataMapping control)
-            {
-                control.OutputVariabelsSourcePropertyChanged((ObservableList<VariableBase>)args.NewValue);
-            }
-        }
-        private void OutputVariabelsSourcePropertyChanged(ObservableList<VariableBase> outputVariabelsSourceList)
-        {
-            if (outputVariabelsSourceList == null || outputVariabelsSourceList.Count == 0)
-            {
-                GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.OutputVariable);
-            }
-
-            if (outputVariabelsSourceList != null && outputVariabelsSourceList.Count > 0)
-            {
-                if (EnableDataMapping)
-                {
-                    GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.OutputVariable);
-                }
-                mOutputVariablesList = outputVariabelsSourceList;
-                mOutputVariablesList.CollectionChanged += OutputVariabelsSourceList_CollectionChanged;
-                SetValueControlsData();
-            }
-        }
-        private void OutputVariabelsSourceList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            SetValueControlsData();
-        }
-        #endregion Output Variables
-
-        #region Global Variables
-        private void SetGlobalVariabelsListValues()
-        {
-            mGlobalVariablesList = [];
-            WorkSpace.Instance.Solution.Variables.CollectionChanged += GlobalVariables_CollectionChanged;
-            foreach (VariableBase var in WorkSpace.Instance.Solution.Variables.Where(x => x.SupportSetValue == true).ToList())
-            {
-                mGlobalVariablesList.Add(var);
-            }
-
-            if (mGlobalVariablesList.Count > 0)
-            {
-                GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.GlobalVariable);
-            }
-        }
-
-        private void GlobalVariables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            //update list
-            foreach (VariableString var in WorkSpace.Instance.Solution.Variables.Where(x => x is VariableString).ToList())
-            {
-                if (mGlobalVariablesList.Contains(var) == false)
-                {
-                    mGlobalVariablesList.Add(var);
-                }
-            }
-            for (int indx = 0; indx < mGlobalVariablesList.Count; indx++)
-            {
-                if (WorkSpace.Instance.Solution.Variables.Contains(mGlobalVariablesList[indx]) == false)
-                {
-                    mGlobalVariablesList.Remove(mGlobalVariablesList[indx]);
-                    indx--;
-                }
-            }
-
-            SetValueControlsData();
-        }
-        #endregion Global Variables
-
-        #region Model Global Parameters
-        private void SetModelGlobalParametersListValues()
-        {
-            mModelGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
-            mModelGlobalParamsList.CollectionChanged += MModelGlobalParamsList_CollectionChanged;
-
-            if (mModelGlobalParamsList.Count > 0)
-            {
-                GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.ApplicationModelParameter);
-            }
-        }
-
-        private void MModelGlobalParamsList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            SetValueControlsData();
-        }
-        #endregion Model Global Parameters
-
-        #region DataSource
-        private void SetDataSourceValues()
-        {
-            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().Any())
-            {
-                GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.DataSource);
-                xDSConfigBtn.IsEnabled = true;
+                Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: WPF DatePicker setup skipped - xDatePickerWPF: {xDatePickerWPF != null}, DataContext type: {DataContext?.GetType().Name}");
             }
         }
 
@@ -1096,6 +938,108 @@ namespace Ginger.UserControlsLib
             ADSP.ShowAsWindow();
         }
 
+        private void xSelectionListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox comboBox = (ComboBox)sender;
+            if (comboBox.Items.Count > 0 && comboBox.SelectedItem != null)
+            {
+                string selectedValue = comboBox.SelectedItem.ToString();
+                MappedValue = selectedValue;
+            }
+        }
+
+        private void UpdateSelectionListComboBoxSelection()
+        {
+            if (IsSelectionListVariable() && !string.IsNullOrEmpty(MappedValue))
+            {
+                if (xSelectionListComboBox.ItemsSource != null)
+                {
+                    xSelectionListComboBox.SelectedItem = MappedValue;
+                }
+            }
+        }
+
+        private void xDateTimePicker_TextChanged(object sender, EventArgs e)
+        {
+            if (DataContext is VariableDateTime dateTimeVariable)
+            {
+                try
+                {
+                    // Validate the date is within range
+                    if (!dateTimeVariable.CheckDateTimeWithInRange(xDateTimePicker.Value.ToString()))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Input Value is not in range:- Maximum date :[{dateTimeVariable.MaxDateTime}], Minimum Date:[{dateTimeVariable.MinDateTime}]");
+                        return;
+                    }
+                    
+                    // Update the MappedValue with the formatted date
+                    string format = !string.IsNullOrEmpty(dateTimeVariable.DateTimeFormat) ? dateTimeVariable.DateTimeFormat : "MM/dd/yyyy";
+                    string formattedValue = xDateTimePicker.Value.ToString(format, System.Globalization.CultureInfo.InvariantCulture);
+                    MappedValue = formattedValue;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error handling DateTimePicker text changed: {ex.Message}", ex);
+                }
+            }
+        }
+
+        private void xDatePickerWPF_SelectedDateChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (DataContext is VariableDateTime dateTimeVariable && xDatePickerWPF.SelectedDate.HasValue)
+            {
+                try
+                {
+                    DateTime selectedDate = xDatePickerWPF.SelectedDate.Value;
+                    
+                    // Validate the date is within range using the variable's validation method
+                    if (!dateTimeVariable.CheckDateTimeWithInRange(selectedDate.ToString()))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Input Value is not in range:- Maximum date :[{dateTimeVariable.MaxDateTime}], Minimum Date:[{dateTimeVariable.MinDateTime}]");
+                        return;
+                    }
+                    
+                    // Update the MappedValue with the formatted date
+                    string format = !string.IsNullOrEmpty(dateTimeVariable.DateTimeFormat) ? dateTimeVariable.DateTimeFormat : "MM/dd/yyyy";
+                    string formattedValue = selectedDate.ToString(format, System.Globalization.CultureInfo.InvariantCulture);
+                    MappedValue = formattedValue;
+                    
+                    Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: WPF DatePicker selected date: {selectedDate}, formatted value: {formattedValue}");
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error handling WPF DatePicker selection changed: {ex.Message}", ex);
+                }
+            }
+        }
+
+        private void SetGlobalVariabelsListValues()
+        {
+            mGlobalVariablesList = [];
+            if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.Variables != null && WorkSpace.Instance.Solution.Variables.Count > 0)
+            {
+                mGlobalVariablesList = WorkSpace.Instance.Solution.Variables;
+                GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.GlobalVariable);
+            }
+        }
+
+        private void SetModelGlobalParametersListValues()
+        {
+            mModelGlobalParamsList = [];
+            if (WorkSpace.Instance.SolutionRepository != null && WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Any())
+            {
+                mModelGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
+                GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.ApplicationModelParameter);
+            }
+        }
+
+        private void SetDataSourceValues()
+        {
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().Any())
+            {
+                GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.DataSource);
+            }
+        }
         #endregion DataSource
 
         #region Database
@@ -1105,7 +1049,6 @@ namespace Ginger.UserControlsLib
             {
                 GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.ValueExpression);
             }
-            // Removed: xDBValueExpression.Visibility = Visibility.Visible; - this was causing interference
         }
         #endregion Database
 
@@ -1119,6 +1062,10 @@ namespace Ginger.UserControlsLib
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory ucDataMapping = new FrameworkElementFactory(typeof(UCDataMapping));
+
+            // CRITICAL: Bind the DataContext to the current row data (the VariableBase object)
+            // This ensures the UCDataMapping control gets the actual variable object as its DataContext
+            ucDataMapping.SetBinding(FrameworkElement.DataContextProperty, new Binding());
 
             // Bind data type property
             if (!string.IsNullOrEmpty(options._DataTypeProperty))
