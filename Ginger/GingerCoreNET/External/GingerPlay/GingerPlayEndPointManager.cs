@@ -40,7 +40,7 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
 
         private static readonly string LocalSetupToken = System.Configuration.ConfigurationManager.AppSettings["LocalSetupToken"]?.ToString() ?? "";
 
-        private static readonly string AIBatchSize = System.Configuration.ConfigurationManager.AppSettings["AIBatchSize"]?.ToString() ?? "";
+        private static readonly string AIBatchSize = System.Configuration.ConfigurationManager.AppSettings["AIBatchSize"]?.ToString() ?? "2000";
 
         private static readonly string REPORT_SERVICE_HEALTH_PATH = $"{ACCOUNT_REPORT_SERVICE_URL}/health";
         private static readonly string EXECUTION_SERVICE_HEALTH_PATH = $"{EXECUTION_SERVICE}/health";

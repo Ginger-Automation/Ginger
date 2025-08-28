@@ -63,7 +63,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public bool IsAutoLearned
         {
             get { return mIsAutoLearned; }
-            set { if (mIsAutoLearned != value) { mIsAutoLearned = value; OnPropertyChanged(nameof(IsAutoLearned)); } }
+            set { if (mIsAutoLearned != value) { mIsAutoLearned = value; OnPropertyChanged(nameof(IsAutoLearned)); OnPropertyChanged(nameof(LearnedType)); } }
         }
 
         private string mLocateValue { get; set; }
@@ -176,7 +176,7 @@ namespace Amdocs.Ginger.Common.UIElement
         private bool mIsAIGenerated { get; set; }
 
         [IsSerializedForLocalRepository]
-        public bool IsAIGenerated { get { return mIsAIGenerated; } set { if (mIsAIGenerated != value) { mIsAIGenerated = value; OnPropertyChanged(nameof(IsAIGenerated)); } } }
+        public bool IsAIGenerated { get { return mIsAIGenerated; } set { if (mIsAIGenerated != value) { mIsAIGenerated = value; OnPropertyChanged(nameof(IsAIGenerated)); OnPropertyChanged(nameof(LearnedType)); } } }
 
 
         public string LearnedType
@@ -184,11 +184,18 @@ namespace Amdocs.Ginger.Common.UIElement
             get
             {
                 if (IsAIGenerated)
+                {
                     return "AI";
+                } 
                 else if (IsAutoLearned)
+                {
                     return "Auto";
+                }  
                 else
+                {
                     return "Manual";
+                }
+                    
             }
         }
 
