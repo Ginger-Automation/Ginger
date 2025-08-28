@@ -76,7 +76,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using static GingerCoreNET.GeneralLib.General;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V136.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V139.DevToolsSessionDomains;
+using DevToolsVersion = OpenQA.Selenium.DevTools.V139;
 
 
 
@@ -104,7 +105,7 @@ namespace GingerCore.Drivers
         private const string BRAVE_64BIT_BINARY_PATH = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
         private const string EDGE_32BIT_BINARY_PATH = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
         private const string EDGE_64BIT_BINARY_PATH = "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe";
-        private const int DevToolsProtocolVersion = 136;
+        private const int DevToolsProtocolVersion = 139;
         String[] SeleniumUserArgs = null;
         DriverService driverService = null;
         private readonly List<string> HighlightStyleList = ["arguments[0].style.outline='3px dashed rgb(239, 183, 247)'", "arguments[0].style.backgroundColor='rgb(239, 183, 247)'", "arguments[0].style.border='3px dashed rgb(239, 183, 247)'"];
@@ -11637,9 +11638,9 @@ namespace GingerCore.Drivers
                 try
                 {
                     //DevTool Session 
-                    devToolsSession = devTools.GetDevToolsSession(DevToolsProtocolVersion);
+                    devToolsSession = devTools.GetDevToolsSession();
                     devToolsDomains = devToolsSession.GetVersionSpecificDomains<DevToolsDomains>();
-                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V136.Network.EnableCommandSettings());
+                    devToolsDomains.Network.Enable(new DevToolsVersion.Network.EnableCommandSettings());
                     blockOrUnblockUrls();
                 }
                 catch (Exception ex)
@@ -11695,11 +11696,11 @@ namespace GingerCore.Drivers
             {
                 if (mAct.ControlAction == ActBrowserElement.eControlAction.SetBlockedUrls)
                 {
-                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V136.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
+                    devToolsDomains.Network.SetBlockedURLs(new DevToolsVersion.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
                 }
                 else if (mAct.ControlAction == ActBrowserElement.eControlAction.UnblockeUrls)
                 {
-                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V136.Network.SetBlockedURLsCommandSettings() { Urls = [] });
+                    devToolsDomains.Network.SetBlockedURLs(new DevToolsVersion.Network.SetBlockedURLsCommandSettings() { Urls = [] });
                 }
                 Thread.Sleep(300);
             }
@@ -11806,7 +11807,7 @@ namespace GingerCore.Drivers
                 interceptor.NetworkResponseReceived -= OnNetworkResponseReceived;
                 interceptor.ClearRequestHandlers();
                 interceptor.ClearResponseHandlers();
-                await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V136.Network.DisableCommandSettings());
+                await devToolsDomains.Network.Disable(new DevToolsVersion.Network.DisableCommandSettings());
                 devToolsSession.Dispose();
                 devTools.CloseDevToolsSession();
             }

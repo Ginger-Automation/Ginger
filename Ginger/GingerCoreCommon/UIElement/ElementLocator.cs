@@ -177,5 +177,21 @@ namespace Amdocs.Ginger.Common.UIElement
 
         [IsSerializedForLocalRepository]
         public bool IsAIGenerated { get { return mIsAIGenerated; } set { if (mIsAIGenerated != value) { mIsAIGenerated = value; OnPropertyChanged(nameof(IsAIGenerated)); } } }
+
+
+        public string LearnedType
+        {
+            get
+            {
+                if (IsAIGenerated)
+                    return "AI";
+                else if (IsAutoLearned)
+                    return "Auto";
+                else
+                    return "Manual";
+            }
+        }
+
+
     }
 }

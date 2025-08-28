@@ -466,7 +466,7 @@ namespace GingerWPF.WizardLib
             AIFineTuneelapsedTime = TimeSpan.Zero;
             // Capture base label once and initialize displayed text
             AIFineTuneBaseText = string.IsNullOrWhiteSpace(xAIProcessingText.Text) ? "AI Fine-Tuning Processing" : xAIProcessingText.Text;
-            xAIProcessingText.Text = $"{AIFineTuneBaseText} => 00:00";
+            xAIProcessingText.Text = $"{AIFineTuneBaseText},00:00";
             // Start the timer
             try
             {
@@ -484,7 +484,7 @@ namespace GingerWPF.WizardLib
             AIFineTuneelapsedTime = AIFineTuneelapsedTime.Add(TimeSpan.FromSeconds(1));
 
             // Update the timer display
-            xAIProcessingText.Text = $"{AIFineTuneBaseText} => {(int)AIFineTuneelapsedTime.TotalMinutes:00}:{AIFineTuneelapsedTime.Seconds:00}";
+            xAIProcessingText.Text = $"{AIFineTuneBaseText}, {(int)AIFineTuneelapsedTime.TotalMinutes:00}:{AIFineTuneelapsedTime.Seconds:00}";
         }
 
         // You can stop the timer if needed
@@ -539,7 +539,6 @@ namespace GingerWPF.WizardLib
         {
             Dispatcher.Invoke(() =>
             {
-                xAIProcessingImage.Visibility = Visibility.Visible;
                 xAIProcessingText.Visibility = Visibility.Visible;
             });
             StartAIFineTuneTimer();
@@ -549,7 +548,6 @@ namespace GingerWPF.WizardLib
         {
             Dispatcher.Invoke(() =>
             {
-                xAIProcessingImage.Visibility = Visibility.Collapsed;
                 xAIProcessingText.Visibility = Visibility.Collapsed;
             });
             AIFineTuneStopTimer();

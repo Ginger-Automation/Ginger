@@ -68,7 +68,7 @@
                             </StackPanel>
 
 
-                            <StackPanel Margin="10">
+                            <StackPanel Margin="10" ToolTip="This feature requires Ginger Play to be configured and AI to be enabled" >
                                 <!-- Image + Text horizontally aligned -->
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Viewbox Width="24" Height="24" Margin="0,0,5,0">
@@ -82,7 +82,7 @@
                                     </Viewbox>
                                     
                                     <TextBlock 
-                                        Text="AI Fine-Tuning Options" 
+                                        Text="AI Integration Options"
                                         FontWeight="Bold" 
                                         FontSize="14" 
                                         VerticalAlignment="Center" />
@@ -93,7 +93,7 @@
                                     <CheckBox 
                                         x:Name="xLearnPOMByAI" 
                                         AutomationProperties.AutomationId="xLearnPOMByAICheckBox AID" 
-                                        Content="Activate Smart Fine-Tuning Elements" 
+                                        Content="Activate Smart Fine-Tuning Elements"
                                         Margin="7,10,0,10" 
                                         IsChecked="False" 
                                         IsEnabled="False" 
