@@ -146,10 +146,15 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xScanTypeComboBox, ComboBox.TextProperty, zapScanType, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xScanTypeComboBox, ComboBox.ToolTipProperty, zapScanType, nameof(DriverConfigParam.Description));
 
-            GingerCore.General.FillComboFromEnumType(xVulnerabilityTypeComboBox, typeof(WebServicesDriver.eZapVulnerability));
+            GingerCore.General.FillComboItemsFromEnumType(xVulnerabilityTypeComboBox, typeof(WebServicesDriver.eZapVulnerability));
             DriverConfigParam zapVulnerability = mAgent.GetOrCreateParam(nameof(WebServicesDriver.ZapVulnerabilitySetting));
             BindingHandler.ObjFieldBinding(xVulnerabilityTypeComboBox, ComboBox.TextProperty, zapVulnerability, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xVulnerabilityTypeComboBox, ComboBox.ToolTipProperty, zapVulnerability, nameof(DriverConfigParam.Description));
+
+            GingerCore.General.FillComboFromEnumType(xActionFaliureSecurityComboBox, typeof(WebServicesDriver.eFailActionOnSecurityIssue));
+            DriverConfigParam actionFailOnSecurityIssue = mAgent.GetOrCreateParam(nameof(WebServicesDriver.FailActionOnSecurityIssue));
+            BindingHandler.ObjFieldBinding(xActionFaliureSecurityComboBox, ComboBox.TextProperty, actionFailOnSecurityIssue, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xActionFaliureSecurityComboBox, ComboBox.ToolTipProperty, actionFailOnSecurityIssue, nameof(DriverConfigParam.Description));
 
             #endregion
         }

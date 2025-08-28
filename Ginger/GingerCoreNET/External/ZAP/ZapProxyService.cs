@@ -260,7 +260,7 @@ namespace GingerCoreNET.External.ZAP
 
             PerformActiveScan(targetHost);
         }
-        public bool EvaluateScanResult(string targetUrl, ObservableList<OperationValues> allowedAlertNames)
+        public bool EvaluateScanResultWeb(string targetUrl, ObservableList<OperationValues> allowedAlertNames)
         {
             var summaryResponse = _zapClient.alert.alertsSummary(targetUrl);
             var alertSummary = (ApiResponseSet)summaryResponse;
@@ -277,6 +277,30 @@ namespace GingerCoreNET.External.ZAP
                 }
 
                 if (!allowedAlertNames.Any(a => a.Value == alertName))
+                {
+                    testPassed = false;
+                }
+            }
+            return testPassed;
+        }
+
+        public bool EvaluateScanResultAPI(string targetUrl, ObservableList<OperationValues> allowedAlertNames)
+        {
+            var summaryResponse = _zapClient.alert.alertsSummary(targetUrl);
+            var alertSummary = (ApiResponseSet)summaryResponse;
+
+            bool testPassed = true;
+
+            foreach (var alertEntry in alertSummary.Dictionary)
+            {
+                string alertName = alertEntry.Key;
+                string valueString = alertEntry.Value is ApiResponseElement element ? element.Value : alertEntry.Value?.ToString();
+                if (!int.TryParse(valueString, out int count))
+                {
+                    continue;
+                }
+
+                if (allowedAlertNames.Any(a => a.Value == alertName))
                 {
                     testPassed = false;
                 }

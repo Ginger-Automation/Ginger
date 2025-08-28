@@ -166,13 +166,15 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
                                 <RowDefinition/>
+                                <RowDefinition/>
                             </Grid.RowDefinitions>
                             <Label Content="Scan type : " Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left"/>
                             <ComboBox x:Name="xScanTypeComboBox" IsEditable="False" Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Column="1" Grid.Row="0" Width="120" HorizontalAlignment="Left"/>
                            
-                            <Label Content="Failure Vulnerability Threshold : " Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left"/>
+                            <Label Content="Vulnerability Threshold : " Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left"/>
                             <ComboBox x:Name="xVulnerabilityTypeComboBox" IsEditable="False" Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Column="1" Grid.Row="1" Width="120" HorizontalAlignment="Left"/>
-                          
+                            <Label Content="Fail action if selected or higher vulnerability is found ? :" Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left"/>
+                            <ComboBox x:Name="xActionFaliureSecurityComboBox" IsEditable="False" Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Column="1" Grid.Row="2" Width="120" HorizontalAlignment="Left"/>
                         </Grid>
                     </StackPanel>
                 </Expander.Content>

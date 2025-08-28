@@ -48,7 +48,7 @@
                 </Grid>
                 <Grid>
                     <usercontrols:ucButton x:Name="xTestConBtn" IsEnabled="True" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="10,-41,0,66" ButtonType="RoundTextAndImageButton" ButtonText="Test Connection" ButtonImageType="Run" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xTestConBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" ToolTip="Test ZAP Connection"/>
-                    <usercontrols:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="192,-38,0,69" HorizontalAlignment="Left" Height="25" Width="20" Visibility="Visible"></usercontrols:ImageMakerControl>
+                    <usercontrols:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="192,-38,0,69" HorizontalAlignment="Left" Height="25" Width="20" Visibility="Collapsed"></usercontrols:ImageMakerControl>
 
                 </Grid>
             </StackPanel>

@@ -173,13 +173,13 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
         public enum eZapVulnerability
         {
-            None,
             High,
             Medium,
             Low,
             Informational,
             [EnumValueDescription("False Positive")]
-            FalsePositive
+            FalsePositive,
+            None,
         }
 
         [UserConfigured]
@@ -193,6 +193,25 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 return Enum.TryParse<eZapVulnerability>(ZapVulnerabilitySetting, true, out var v) ? v : eZapVulnerability.None;
             }
         }
+
+        public enum eFailActionOnSecurityIssue
+        {
+            Yes,
+            No
+        }
+
+        [UserConfigured]
+        [UserConfiguredDefault("No")]
+        [UserConfiguredDescription("Action Failed on Security Testing Vulnerability Found")]
+        public string FailActionOnSecurityIssue { get; set; }
+        private eFailActionOnSecurityIssue mFailActionOnSecurityIssue
+        {
+            get
+            {
+                return Enum.TryParse<eFailActionOnSecurityIssue>(FailActionOnSecurityIssue, true, out var v) ? v : eFailActionOnSecurityIssue.No;
+            }
+        }
+
 
         private bool mIsDriverWindowLaunched
         {
@@ -357,6 +376,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public override void RunAction(Act act)
         {
             //TODO: add func to Act + Enum for switch
+            //TODO: Clear the Sites tree of ZAP here
             act.Artifacts = [];
             if (act is ActWebService)
             {
@@ -426,8 +446,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 mActWebAPI = actWebAPI;
                 HandleWebApiRequest(actWebAPI);
 
-                //Post Execution Copy execution result fields from actWebAPI to ActWebAPIModel (act)
-                CopyExecutionAttributes(act, actWebAPI);
                 if (this.UseSecurityTesting)
                 {
                     if (string.Equals(this.mZapScanTypeSetting, eZapScanType.Passive))
@@ -452,11 +470,13 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                         {
                             AlertList = BuildAlertListFromThreshold(mZapVulnerabilitySetting)
                         };
-                        HandleAPISecurityTesting(mActWebAPI);
+                        HandleAPISecurityTesting(mActWebAPI, mActSecTest);
                     }
                 }
-
+                //Post Execution Copy execution result fields from actWebAPI to ActWebAPIModel (act)
+                CopyExecutionAttributes(act, actWebAPI);
             }
+
             else if (act is ActScreenShot)
             {
             }
@@ -479,8 +499,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             {
                 mActSecTest = new();
             }
-
-            mActSecTest.ExecuteApiSecurityTestWithOpenApi(endpointUrl, mActWebAPI);
+            mActSecTest.ExecuteApiSecurityTestWithOpenApi(endpointUrl, mActWebAPI, this.FailActionOnSecurityIssue);
         }
 
         private void HandleDiameterRequest(ActDiameter act)
