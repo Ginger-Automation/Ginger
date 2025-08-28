@@ -284,7 +284,7 @@ namespace GingerCoreNET.External.ZAP
             return testPassed;
         }
 
-        public bool EvaluateScanResultAPI(string targetUrl, ObservableList<OperationValues> allowedAlertNames)
+        public bool EvaluateScanResultAPI(string targetUrl, ObservableList<OperationValues> VulnerabilityThresholdList)
         {
             var summaryResponse = _zapClient.alert.alertsSummary(targetUrl);
             var alertSummary = (ApiResponseSet)summaryResponse;
@@ -300,7 +300,7 @@ namespace GingerCoreNET.External.ZAP
                     continue;
                 }
 
-                if (allowedAlertNames.Any(a => a.Value == alertName))
+                if (count > 0 && (VulnerabilityThresholdList?.Any(a => string.Equals(a.Value, alertName, StringComparison.OrdinalIgnoreCase)) ?? false))
                 {
                     testPassed = false;
                 }

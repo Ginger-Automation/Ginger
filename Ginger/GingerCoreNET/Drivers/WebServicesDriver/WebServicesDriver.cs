@@ -204,13 +204,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         [UserConfiguredDefault("No")]
         [UserConfiguredDescription("Action Failed on Security Testing Vulnerability Found")]
         public string FailActionOnSecurityIssue { get; set; }
-        private eFailActionOnSecurityIssue mFailActionOnSecurityIssue
-        {
-            get
-            {
-                return Enum.TryParse<eFailActionOnSecurityIssue>(FailActionOnSecurityIssue, true, out var v) ? v : eFailActionOnSecurityIssue.No;
-            }
-        }
 
 
         private bool mIsDriverWindowLaunched

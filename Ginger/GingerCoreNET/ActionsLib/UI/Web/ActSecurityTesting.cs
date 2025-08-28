@@ -337,7 +337,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                     AddZapAlertOutputValues(zapProxyService, act, apiEndpointURL);
                     bool isPassed = zapProxyService.EvaluateScanResultAPI(apiEndpointURL, AlertList);
 
-                    if (string.Equals(failAction, "Yes"))
+                    if (string.Equals(failAction, "Yes", StringComparison.OrdinalIgnoreCase))
                     {
                         act.Status = isPassed ? eRunStatus.Passed : eRunStatus.Failed;
                     }

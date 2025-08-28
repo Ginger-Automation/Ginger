@@ -560,7 +560,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 // Disable AutoDetect Proxy and set manual proxy as required
                 xAutoDetectProxyCB.IsChecked = false;
                 xAutoDetectProxyCB.IsEnabled = false;
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Enabling Security Testing will disable the Auto Detect Proxy and All the Configured Proxy will be override by the ZAP Proxy");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Enabling Security Testing will disable the Auto Detect Proxy. All configured proxy settings will be overridden by the ZAP Proxy");
                 ProxyPnlVisbility();
             }
             else
