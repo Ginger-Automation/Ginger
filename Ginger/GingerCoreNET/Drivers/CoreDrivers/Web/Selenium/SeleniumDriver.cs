@@ -11806,9 +11806,15 @@ namespace GingerCore.Drivers
                 interceptor.NetworkResponseReceived -= OnNetworkResponseReceived;
                 interceptor.ClearRequestHandlers();
                 interceptor.ClearResponseHandlers();
-                await devToolsDomains.Network.Disable(new DevToolsVersion.Network.DisableCommandSettings());
-                devToolsSession.Dispose();
-                devTools.CloseDevToolsSession();
+                if (devToolsDomains != null)
+                {
+                    await devToolsDomains.Network.Disable(new DevToolsVersion.Network.DisableCommandSettings());
+                }
+                if (devToolsSession != null)
+                {
+                    devToolsSession.Dispose();
+                }
+                devTools?.CloseDevToolsSession();
             }
             catch (Exception ex)
             {

@@ -179,25 +179,21 @@ namespace Amdocs.Ginger.Common.UIElement
         public bool IsAIGenerated { get { return mIsAIGenerated; } set { if (mIsAIGenerated != value) { mIsAIGenerated = value; OnPropertyChanged(nameof(IsAIGenerated)); OnPropertyChanged(nameof(LearnedType)); } } }
 
 
-        public string LearnedType
+        public enum eLearnedType { Manual, Auto, AI }
+
+        // Non-breaking addition:
+        public eLearnedType LearnedTypeEnum
         {
             get
             {
-                if (IsAIGenerated)
-                {
-                    return "AI";
-                } 
-                else if (IsAutoLearned)
-                {
-                    return "Auto";
-                }  
-                else
-                {
-                    return "Manual";
-                }
-                    
+                if (IsAIGenerated) { return eLearnedType.AI; }
+                if (IsAutoLearned) { return eLearnedType.Auto; }
+                return eLearnedType.Manual;
             }
         }
+
+        // Keep existing string property as-is, or derive from the enum:
+        public string LearnedType => LearnedTypeEnum.ToString();
 
 
     }
