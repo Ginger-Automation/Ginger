@@ -123,7 +123,6 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
         public string ByDataTestId { get; set; }
         public string ByTitle { get; set; }
         public object EnhanceLocatorsByAI { get; set; }
-        //public Newtonsoft.Json.Linq.JToken EnhanceLocatorsByAI { get; set; }
 
 
 
