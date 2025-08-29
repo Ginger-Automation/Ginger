@@ -12,13 +12,6 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
        private string CurrentVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationBackendVersion;
         private string tempFile;
 
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            // Set the ApplicationBackendVersion for testing
-         //   Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationBackendVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertApplicationVersionToRecord(;
-        }
-
         [TestCleanup]
         public void TestCleanup()
         {
