@@ -172,13 +172,16 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 return $"{Major}.{Minor}.{Build}.{Revision}";
             }
         }
+
+        private static readonly Regex s_FourPart = new(@"^(\d+)\.(\d+)\.(\d+)\.(\d+)$", RegexOptions.Compiled);
+        private static readonly Regex s_TwoPart = new(@"^(\d+)\.(\d+)$", RegexOptions.Compiled);
+
         public static long ConvertApplicationVersionToLong(string appVersion)
         {
             try
             {
                 int iMajor = 0, iMinor = 0, iBuild = 0, iRevision = 0;
-                Regex regex = new Regex(@"(\d+)\.(\d+)\.(\d+)\.(\d+)");
-                Match match = regex.Match(appVersion);
+                Match match = s_FourPart.Match(appVersion);
                 if (match.Success)
                 {
                     try { iMajor = Int32.Parse(match.Groups[1].Value); }
@@ -192,8 +195,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 }
                 else
                 {
-                    regex = new Regex(@"(\d+)\.(\d+)");
-                    match = regex.Match(appVersion);
+                    match = s_TwoPart.Match(appVersion);
                     if (match.Success)
                     {
                         try { iMajor = Int32.Parse(match.Groups[1].Value); }
@@ -228,7 +230,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
         {
             try
             {
-                var fourPart = Regex.Match(appVersion, @"^(\d+)\.(\d+)\.(\d+)\.(\d+)$");
+                var fourPart = s_FourPart.Match(appVersion);
                 if (fourPart.Success)
                 {
                     if (int.TryParse(fourPart.Groups[1].Value, out int maj) &&
@@ -238,11 +240,10 @@ namespace Amdocs.Ginger.Common.GeneralLib
                     {
                         return new VersionParts(maj, min, bld, rev);
                     }
-
                 }
 
                 // 2-part: "X.Y" -> default Build/Revision to 99
-                var twoPart = Regex.Match(appVersion, @"^(\d+)\.(\d+)$");
+                var twoPart = s_TwoPart.Match(appVersion);
                 if (twoPart.Success)
                 {
                     if (int.TryParse(twoPart.Groups[1].Value, out int maj) &&

@@ -236,8 +236,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                     return eGingerVersionComparisonResult.LowerVersion;
                 }
 
-                var fileVersionAsRecord = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertApplicationVersionToRecord(fileGingerVersion);
-                //var currentVersionAsRecord = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertApplicationVersionToRecord(Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationBackendVersion);
+                var fileVersionAsRecord = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertApplicationVersionToRecord(fileGingerVersion);                
 
                 if (fileVersionAsRecord.Major == 0)
                 {
