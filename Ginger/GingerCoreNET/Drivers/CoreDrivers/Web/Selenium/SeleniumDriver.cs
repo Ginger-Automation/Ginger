@@ -4408,6 +4408,15 @@ namespace GingerCore.Drivers
                             elem = LocateElementByLocators(currentPOMElementInfo, currentPOM.MappedUIElements, false, pomExcutionUtil);
                             if (elem != null)
                             {
+                                currentPOM.AllowAutoSave = true;
+                                if (currentPOM != null)
+                                {
+                                    SaveHandler.Save(currentPOM);
+                                }
+                                else
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, $"Cannot find POM with GUID '{currentPOM.Guid}' to save");
+                                }
                                 act.ExInfo += "Broken element was auto updated by Self healing operation";
                             }
                         }
@@ -11739,6 +11748,11 @@ namespace GingerCore.Drivers
         {
             if (mAct != null)
             {
+                if (devToolsDomains == null)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "DevTools domains not initialized; cannot (un)block URLs.");
+                    return;
+                }
                 if (mAct.ControlAction == ActBrowserElement.eControlAction.SetBlockedUrls)
                 {
                     devToolsDomains.Network.SetBlockedURLs(new DevToolsVersion.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) }).GetAwaiter().GetResult();
