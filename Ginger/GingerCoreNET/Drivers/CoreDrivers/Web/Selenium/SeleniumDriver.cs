@@ -4408,9 +4408,9 @@ namespace GingerCore.Drivers
                             elem = LocateElementByLocators(currentPOMElementInfo, currentPOM.MappedUIElements, false, pomExcutionUtil);
                             if (elem != null)
                             {
-                                currentPOM.AllowAutoSave = true;
                                 if (currentPOM != null)
                                 {
+                                    currentPOM.AllowAutoSave = true;
                                     SaveHandler.Save(currentPOM);
                                 }
                                 else
