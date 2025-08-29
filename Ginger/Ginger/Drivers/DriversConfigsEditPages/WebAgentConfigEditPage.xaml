@@ -142,7 +142,7 @@
                                 </StackPanel>
                             </Expander.Content>
                         </Expander>
-                        <Expander x:Name="xZAPConfigExpander" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" Margin="0,0,0,0" BorderThickness="0">
+                        <Expander x:Name="xZAPConfigExpander" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" Margin="0,0,0,0" BorderThickness="0">
                             <Expander.Header>
                                 <Label Content="Security Testing Configurations" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                             </Expander.Header>

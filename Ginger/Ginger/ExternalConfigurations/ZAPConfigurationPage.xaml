@@ -64,7 +64,7 @@
                     <!-- Left Side -->
                     <Grid Grid.Column="0" >
                         <StackPanel Margin="0,0,-80,0" >
-                            <Expander x:Name="xAboutZAP" ExpandDirection="Down"  Style="{StaticResource $ExpanderStyle}"   IsExpanded="True" Width="591">
+                            <Expander x:Name="xAboutZAP" ExpandDirection="Down"  Style="{StaticResource $ExpanderStyle}"   IsExpanded="False" Width="591">
                                 <Expander.Header>
                                     <Label Content="About ZAP" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                                 </Expander.Header>
