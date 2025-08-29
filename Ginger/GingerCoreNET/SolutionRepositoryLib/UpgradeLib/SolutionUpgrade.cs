@@ -26,6 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static Amdocs.Ginger.Common.GeneralLib.ApplicationInfo;
 
 public enum SolutionUpgradePageViewMode
 {
@@ -72,7 +73,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                 Parallel.ForEach(solutionFiles, FileName =>
                     {
                         string fileVer = string.Empty;
-                        eGingerVersionComparisonResult versionRes = CompareSolutionFileGingerVersionToCurrent(FileName, ref fileVer);
+                        eGingerVersionComparisonResult versionRes = CompareSolutionFileGingerVersionToCurrentByRecord(FileName, ref fileVer);
 
                         if (addInfoExtention)
                         {
@@ -211,6 +212,102 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
             }
         }
 
+        public static VersionParts CurrentVersionAsRecord = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertApplicationVersionToRecord(Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationBackendVersion);
+
+        /// <summary>
+        /// Checks the Ginger version in the file and compare it to current Ginger version.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="fileGingerVersion"></param>
+        /// <returns></returns>
+        public static eGingerVersionComparisonResult CompareSolutionFileGingerVersionToCurrentByRecord(string filePath, ref string fileGingerVersion)
+        {
+            try
+            {
+                fileGingerVersion = GetSolutonFileGingerVersion(filePath);
+                if (fileGingerVersion == null)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to read and compare the Ginger version for the file: '{0}'", filePath));
+                    return eGingerVersionComparisonResult.ComparisonFailed;//failed to identify and compare the version
+                }
+
+                if (fileGingerVersion == "3.0.0.0Beta")//Workaround needed due to move to new repository serializer in middle of release 
+                {
+                    return eGingerVersionComparisonResult.LowerVersion;
+                }
+
+                var fileVersionAsRecord = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertApplicationVersionToRecord(fileGingerVersion);
+                //var currentVersionAsRecord = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertApplicationVersionToRecord(Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationBackendVersion);
+
+                if (fileVersionAsRecord.Major == 0)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to read and compare the Ginger version for the file: '{0}'", filePath));
+                    return eGingerVersionComparisonResult.ComparisonFailed; ;//failed to identify and compare the version
+                }
+
+                var result = CompareVersionsByRecord(CurrentVersionAsRecord, fileVersionAsRecord);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to read and compare the Ginger version for the file: '{0}'", filePath), ex);
+                return eGingerVersionComparisonResult.ComparisonFailed;//failed to identify and compare the version
+            }
+
+        }
+
+        // --------------- Comparison ---------------
+        // Compares two VersionParts instances.
+        // Returns VersionComparisonResult: SameVersion, LowerVersion, HigherVersion
+        public static eGingerVersionComparisonResult CompareVersionsByRecord(VersionParts appVersion, VersionParts fileVersion)
+        {
+            // If all version components are equal, the versions are the same
+            if (appVersion.Major == fileVersion.Major &&
+                appVersion.Minor == fileVersion.Minor &&
+                appVersion.Build == fileVersion.Build &&
+                appVersion.Revision == fileVersion.Revision)
+            {
+                return eGingerVersionComparisonResult.SameVersion;
+            }
+
+            // If the app's major version is less than the file's major version,
+            // the app version is considered higher (newer) in this logic
+            if (appVersion.Major < fileVersion.Major)
+            {
+                return eGingerVersionComparisonResult.HigherVersion;
+            }
+
+            // If the major versions are equal but the app's minor version is less than the file's minor version,
+            // the app version is considered higher (newer)
+            if (appVersion.Major <= fileVersion.Major && appVersion.Minor < fileVersion.Minor)
+            {
+                return eGingerVersionComparisonResult.HigherVersion;
+            }
+
+            // Normalize build for comparison: treat 0 as 99 to indicate a higher-than-zero placeholder
+            int aBuild = appVersion.Build == 0 ? 99 : appVersion.Build;
+
+            // If major and minor versions are less-equal and the (normalized) app build is less than
+            // the file's build, the app version is considered higher (newer)
+            if (appVersion.Major <= fileVersion.Major && appVersion.Minor <= fileVersion.Minor && aBuild < fileVersion.Build)
+            {
+                return eGingerVersionComparisonResult.HigherVersion;
+            }
+
+            // Normalize revision for comparison: treat 0 as 99 to indicate a higher-than-zero placeholder
+            int aRevision = appVersion.Revision == 0 ? 99 : appVersion.Revision;
+
+            // If the major/minor are greater-than-or-equal and the (normalized) app build is >= file's build
+            // but the app's revision is less than the file's revision, consider the app version newer
+            if (appVersion.Major >= fileVersion.Major && appVersion.Minor >= fileVersion.Minor && aBuild >= fileVersion.Build
+                && aRevision < fileVersion.Revision)
+            {
+                return eGingerVersionComparisonResult.HigherVersion;
+            }
+
+            // If none of the above conditions matched, the app version is considered lower (older)
+            return eGingerVersionComparisonResult.LowerVersion;
+        }
 
 
         /// <summary>
