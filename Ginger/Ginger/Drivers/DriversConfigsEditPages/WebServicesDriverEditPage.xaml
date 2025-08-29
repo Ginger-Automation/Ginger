@@ -151,7 +151,7 @@
                     </StackPanel>
                 </Expander.Content>
             </Expander>
-            <Expander x:Name="xZAPConfigExpander" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" Margin="0,0,0,0" BorderThickness="0">
+            <Expander x:Name="xZAPConfigExpander" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" Margin="0,0,0,0" BorderThickness="0">
                 <Expander.Header>
                     <Label Content="Security Testing Configurations" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                 </Expander.Header>
@@ -174,7 +174,14 @@
                             <Label Content="Vulnerability Threshold : " Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left"/>
                             <ComboBox x:Name="xVulnerabilityTypeComboBox" IsEditable="False" Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Column="1" Grid.Row="1" Width="120" HorizontalAlignment="Left"/>
                             <Label Content="Fail action if selected or higher vulnerability is found ? :" Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left"/>
-                            <ComboBox x:Name="xActionFaliureSecurityComboBox" IsEditable="False" Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Column="1" Grid.Row="2" Width="120" HorizontalAlignment="Left"/>
+                            <ComboBox x:Name="xActionFailureSecurityComboBox" IsEditable="False" Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Column="1" Grid.Row="2" Width="120" HorizontalAlignment="Left" SelectedValuePath="Value" SelectedValue="{Binding FailActionOnSecurityIssue, Mode=TwoWay}" >
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Key}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            
                         </Grid>
                     </StackPanel>
                 </Expander.Content>

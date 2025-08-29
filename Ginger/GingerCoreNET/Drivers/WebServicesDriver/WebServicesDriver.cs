@@ -154,31 +154,38 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         [UserConfiguredDescription("Configure ZAP Security Testing")]
         public bool UseSecurityTesting { get; set; }
 
-        public enum eZapScanType
+        public enum eSecurityTestingScanType
         {
-            Active = 0,
-            Passive = 1
+            [EnumValueDescription("Active")]
+            Active,
+            [EnumValueDescription("Passive")]
+            Passive
         }
         [UserConfigured]
         [UserConfiguredDefault("Passive")]
         [UserConfiguredDescription("ZAP Scan Type: Active or Passive")]
         public string ZapScanTypeSetting { get; set; }
-        private eZapScanType mZapScanTypeSetting
+        private eSecurityTestingScanType mZapScanTypeSetting
         {
             get
             {
-                return Enum.TryParse<eZapScanType>(ZapScanTypeSetting, true, out var v) ? v : eZapScanType.Passive;
+                return Enum.TryParse<eSecurityTestingScanType>(ZapScanTypeSetting, true, out var v) ? v : eSecurityTestingScanType.Passive;
             }
         }
 
-        public enum eZapVulnerability
+        public enum eSecurityTestingVulnerability
         {
+            [EnumValueDescription("High")]
             High,
+            [EnumValueDescription("Medium")]
             Medium,
+            [EnumValueDescription("Low")]
             Low,
+            [EnumValueDescription("Informational")]
             Informational,
             [EnumValueDescription("False Positive")]
             FalsePositive,
+            [EnumValueDescription("None")]
             None,
         }
 
@@ -186,24 +193,18 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         [UserConfiguredDefault("None")]
         [UserConfiguredDescription("ZAP Vulnerability Level: None, High, Medium, Low, Informational, False Positive")]
         public string ZapVulnerabilitySetting { get; set; }
-        private eZapVulnerability mZapVulnerabilitySetting
+        private eSecurityTestingVulnerability mZapVulnerabilitySetting
         {
             get
             {
-                return Enum.TryParse<eZapVulnerability>(ZapVulnerabilitySetting, true, out var v) ? v : eZapVulnerability.None;
+                return Enum.TryParse<eSecurityTestingVulnerability>(ZapVulnerabilitySetting, true, out var v) ? v : eSecurityTestingVulnerability.None;
             }
-        }
-
-        public enum eFailActionOnSecurityIssue
-        {
-            Yes,
-            No
         }
 
         [UserConfigured]
         [UserConfiguredDefault("No")]
         [UserConfiguredDescription("Action Failed on Security Testing Vulnerability Found")]
-        public string FailActionOnSecurityIssue { get; set; }
+        public bool FailActionOnSecurityIssue { get; set; } = true;
 
 
         private bool mIsDriverWindowLaunched
@@ -441,14 +442,14 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
                 if (this.UseSecurityTesting)
                 {
-                    if (string.Equals(this.mZapScanTypeSetting, eZapScanType.Passive))
+                    if (string.Equals(this.mZapScanTypeSetting, eSecurityTestingScanType.Passive))
                     {
                         string endpointUrl = mActWebAPI.GetInputParamValue(ActWebAPIBase.Fields.EndPointURL);
                         if (string.IsNullOrWhiteSpace(endpointUrl))
                         {
                             Reporter.ToLog(eLogLevel.WARN, "ZAP scan skipped: endpoint URL is empty");
                         }
-                        else if (this.mZapScanTypeSetting == eZapScanType.Passive)
+                        else if (this.mZapScanTypeSetting == eSecurityTestingScanType.Passive)
                         {
                             var mActSecTest = new ActSecurityTesting
                             {
@@ -492,7 +493,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             {
                 mActSecTest = new();
             }
-            mActSecTest.ExecuteApiSecurityTestWithOpenApi(endpointUrl, mActWebAPI, this.FailActionOnSecurityIssue);
+            mActSecTest.ExecuteApiSecurityTesting(endpointUrl, mActWebAPI, this.FailActionOnSecurityIssue);
         }
 
         private void HandleDiameterRequest(ActDiameter act)
@@ -1060,7 +1061,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             return url.Contains("://") ? null : url;
         }
 
-        private static ObservableList<OperationValues> BuildAlertListFromThreshold(eZapVulnerability threshold)
+        private static ObservableList<OperationValues> BuildAlertListFromThreshold(eSecurityTestingVulnerability threshold)
         {
             var list = new ObservableList<OperationValues>();
             // Pass/fail if any alert at or above the threshold
@@ -1068,32 +1069,32 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             void add(string v) => list.Add(new OperationValues { Value = v });
             switch (threshold)
             {
-                case eZapVulnerability.High:
+                case eSecurityTestingVulnerability.High:
                     add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.High));
                     break;
-                case eZapVulnerability.Medium:
+                case eSecurityTestingVulnerability.Medium:
                     add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.High));
                     add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Medium));
                     break;
-                case eZapVulnerability.Low:
+                case eSecurityTestingVulnerability.Low:
                     add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.High));
                     add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Medium));
                     add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Low));
                     break;
-                case eZapVulnerability.Informational:
+                case eSecurityTestingVulnerability.Informational:
                     add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.High));
                     add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Medium));
                     add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Low));
                     add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Informational));
                     break;
-                case eZapVulnerability.FalsePositive:
+                case eSecurityTestingVulnerability.FalsePositive:
                     add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.High));
                     add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Medium));
                     add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Low));
                     add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.Informational));
                     add(nameof(Amdocs.Ginger.CoreNET.ActionsLib.UI.Web.ActSecurityTesting.eAlertTypes.FalsePositive));
                     break;
-                case eZapVulnerability.None:
+                case eSecurityTestingVulnerability.None:
                 default:
                     break;
             }

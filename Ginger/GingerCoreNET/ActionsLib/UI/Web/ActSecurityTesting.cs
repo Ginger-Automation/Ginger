@@ -318,7 +318,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         /// </summary>
         /// <param name="apiEndpointURL"></param>
         /// <param name="act"></param>
-        public void ExecuteApiSecurityTestWithOpenApi(string apiEndpointURL, Act act, string failAction = "No")
+        public void ExecuteApiSecurityTesting(string apiEndpointURL, Act act, bool failAction = false)
         {
             Status = eRunStatus.Running;
             ZapProxyService zapProxyService = new ZapProxyService();
@@ -337,7 +337,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                     AddZapAlertOutputValues(zapProxyService, act, apiEndpointURL);
                     bool isPassed = zapProxyService.EvaluateScanResultAPI(apiEndpointURL, AlertList);
 
-                    if (string.Equals(failAction, "Yes", StringComparison.OrdinalIgnoreCase))
+                    if (failAction)
                     {
                         act.Status = isPassed ? eRunStatus.Passed : eRunStatus.Failed;
                     }
