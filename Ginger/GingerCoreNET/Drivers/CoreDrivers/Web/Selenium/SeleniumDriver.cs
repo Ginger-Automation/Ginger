@@ -4370,9 +4370,9 @@ namespace GingerCore.Drivers
 
             if (locateBy == eLocateBy.POMElement)
             {
-                POMExecutionUtils pomExcutionUtil = new POMExecutionUtils(act, RetrieveActionValue(act));
-
-                var currentPOM = pomExcutionUtil.GetCurrentPOM();
+                POMExecutionUtils pomExcutionUtil;
+                ApplicationPOMModel currentPOM;
+                GetCurrentPOM(act, out pomExcutionUtil, out currentPOM);
 
                 if (currentPOM != null)
                 {
@@ -4441,6 +4441,12 @@ namespace GingerCore.Drivers
             }
 
             return elem;
+        }
+
+        private static void GetCurrentPOM(Act act, out POMExecutionUtils pomExcutionUtil, out ApplicationPOMModel currentPOM)
+        {
+            pomExcutionUtil = new POMExecutionUtils(act, RetrieveActionValue(act));
+            currentPOM = pomExcutionUtil.GetCurrentPOM();
         }
 
         private static string RetrieveActionValue(Act act)
@@ -9619,8 +9625,36 @@ namespace GingerCore.Drivers
                     e = LocateElement(act);
                     if (e == null)
                     {
-                        act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
-                        return;
+                        if (act.ElementLocateBy == eLocateBy.POMElement)
+                        {
+                            POMExecutionUtils pomExcutionUtil;
+                            ApplicationPOMModel currentPOM;
+                            GetCurrentPOM(act, out pomExcutionUtil, out currentPOM);
+
+                            if (currentPOM != null)
+                            {
+                                ElementInfo currentPOMElementInfo = null;
+                                if (isAppiumSession)
+                                {
+                                    currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo(this.PomCategory);//consider the Category only in case of Mobile flow for now
+                                }
+                                else
+                                {
+                                    currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
+                                }
+
+                                if (currentPOMElementInfo != null)
+                                {
+                                    act.Error = $"{act.Error}Element not found: {act.ElementLocateBy} = POM {currentPOM.Name} and element name = {currentPOMElementInfo.ElementName} ";
+                                    return;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                            return;
+                        }
                     }
                 }
             }
@@ -11636,10 +11670,21 @@ namespace GingerCore.Drivers
             {
                 try
                 {
-                    //DevTool Session 
+                    //DevTool Session
                     devToolsSession = devTools.GetDevToolsSession();
+                    if (devToolsSession == null)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "DevTools session is not available; skipping CDP setup.");
+                        mAct?.AddOrUpdateReturnParamActual("DevToolsInit", "SessionUnavailable");
+                        return;
+                    }
                     devToolsDomains = devToolsSession.GetVersionSpecificDomains<DevToolsDomains>();
-                    //devToolsDomains.Network.Enable(new DevToolsVersion.Network.EnableCommandSettings());
+                    if (devToolsDomains == null)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "DevTools domains are not available for this CDP version.");
+                        mAct?.AddOrUpdateReturnParamActual("DevToolsInit", "DomainsUnavailable");
+                        return;
+                    }
                     devToolsDomains.Network.Enable(new DevToolsVersion.Network.EnableCommandSettings()).GetAwaiter().GetResult();
                     blockOrUnblockUrls();
                 }
