@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright;
@@ -550,6 +551,23 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         private void xEnableVideoRecordingCheckBox_Click(object sender, RoutedEventArgs e)
         {
             xVideoRecordingControlsPnl.IsEnabled = (bool)xEnableVideoRecordingCheckBox.IsChecked;
+        }
+
+        private void xEnableZAPCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (xEnableZAPCheckBox.IsChecked == true)
+            {
+                // Disable AutoDetect Proxy and set manual proxy as required
+                xAutoDetectProxyCB.IsChecked = false;
+                xAutoDetectProxyCB.IsEnabled = false;
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Enabling Security Testing will disable the Auto Detect Proxy. All configured proxy settings will be overridden by the ZAP Proxy");
+                ProxyPnlVisbility();
+            }
+            else
+            {
+                xAutoDetectProxyCB.IsEnabled = true;
+                ProxyPnlVisbility();
+            }
         }
     }
 }

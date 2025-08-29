@@ -223,7 +223,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                     AddZapAlertOutputValues(zapProxyService, this, testURL);
                     if (AlertList != null)
                     {
-                        bool isPassed = zapProxyService.EvaluateScanResult(testURL, AlertList);
+                        bool isPassed = zapProxyService.EvaluateScanResultWeb(testURL, AlertList);
                         if (isPassed)
                         {
                             Status = eRunStatus.Passed;
@@ -280,7 +280,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
                     ProcessResultAsync(zapProxyService, act, testURL);
                     AddZapAlertOutputValues(zapProxyService, act, testURL);
-                    isPassed = zapProxyService.EvaluateScanResult(testURL, AlertList);
+                    isPassed = zapProxyService.EvaluateScanResultWeb(testURL, AlertList);
 
                 }
                 else
@@ -311,7 +311,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             }
         }
 
-        public void ExecuteApiSecurityTestWithOpenApi(string apiEndpointURL, Act act)
+        /// <summary>
+        /// Since We are calling this method from Agent, giving the null optional to ActSecurity,
+        /// need to change if calling from BF in future.
+        /// this is for getting the alert list use set at agent level
+        /// </summary>
+        /// <param name="apiEndpointURL"></param>
+        /// <param name="act"></param>
+        public void ExecuteApiSecurityTesting(string apiEndpointURL, Act act, bool failAction = false)
         {
             Status = eRunStatus.Running;
             ZapProxyService zapProxyService = new ZapProxyService();
@@ -328,15 +335,15 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
                     ProcessResultAsync(zapProxyService, act, apiEndpointURL);
                     AddZapAlertOutputValues(zapProxyService, act, apiEndpointURL);
-                    bool isPassed = AlertList != null
-                        ? zapProxyService.EvaluateScanResult(apiEndpointURL, AlertList)
-                        : zapProxyService.EvaluateScanResult(apiEndpointURL);
+                    bool isPassed = zapProxyService.EvaluateScanResultAPI(apiEndpointURL, AlertList);
 
-
-                    Status = isPassed ? eRunStatus.Passed : eRunStatus.Failed;
+                    if (failAction)
+                    {
+                        act.Status = isPassed ? eRunStatus.Passed : eRunStatus.Failed;
+                    }
                     if (!isPassed)
                     {
-                        Error = "Vulnerability Issues Found, Please check the report in Output Values Artifact ";
+                        act.Error = "Vulnerability Issues Found, Please check the report in Output Values Artifact ";
                         act.ExInfo = "Vulnerability Issues Found, Please check the report in Output Values Artifact ";
                     }
 

@@ -141,15 +141,20 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xEnableZAPCheckBox, CheckBox.IsCheckedProperty, useZAP, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xEnableZAPCheckBox, CheckBox.ToolTipProperty, useZAP, nameof(DriverConfigParam.Description));
 
-            GingerCore.General.FillComboFromEnumType(xScanTypeComboBox, typeof(WebServicesDriver.eZapScanType));
+            GingerCore.General.FillComboFromEnumType(xScanTypeComboBox, typeof(WebServicesDriver.eSecurityTestingScanType));
             DriverConfigParam zapScanType = mAgent.GetOrCreateParam(nameof(WebServicesDriver.ZapScanTypeSetting));
             BindingHandler.ObjFieldBinding(xScanTypeComboBox, ComboBox.TextProperty, zapScanType, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xScanTypeComboBox, ComboBox.ToolTipProperty, zapScanType, nameof(DriverConfigParam.Description));
 
-            GingerCore.General.FillComboFromEnumType(xVulnerabilityTypeComboBox, typeof(WebServicesDriver.eZapVulnerability));
+            GingerCore.General.FillComboItemsFromEnumType(xVulnerabilityTypeComboBox, typeof(WebServicesDriver.eSecurityTestingVulnerability));
             DriverConfigParam zapVulnerability = mAgent.GetOrCreateParam(nameof(WebServicesDriver.ZapVulnerabilitySetting));
             BindingHandler.ObjFieldBinding(xVulnerabilityTypeComboBox, ComboBox.TextProperty, zapVulnerability, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xVulnerabilityTypeComboBox, ComboBox.ToolTipProperty, zapVulnerability, nameof(DriverConfigParam.Description));
+
+            GingerCore.General.FillComboWithYesNo(xActionFailureSecurityComboBox);
+            DriverConfigParam actionFailOnSecurityIssue = mAgent.GetOrCreateParam(nameof(WebServicesDriver.FailActionOnSecurityIssue));
+            BindingHandler.ObjFieldBinding(xActionFailureSecurityComboBox, ComboBox.SelectedValueProperty, actionFailOnSecurityIssue, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xActionFailureSecurityComboBox, ComboBox.ToolTipProperty, actionFailOnSecurityIssue, nameof(DriverConfigParam.Description));
 
             #endregion
         }
