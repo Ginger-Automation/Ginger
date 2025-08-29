@@ -63,7 +63,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public bool IsAutoLearned
         {
             get { return mIsAutoLearned; }
-            set { if (mIsAutoLearned != value) { mIsAutoLearned = value; OnPropertyChanged(nameof(IsAutoLearned)); } }
+            set { if (mIsAutoLearned != value) { mIsAutoLearned = value; OnPropertyChanged(nameof(IsAutoLearned)); OnPropertyChanged(nameof(LearnedType)); } }
         }
 
         private string mLocateValue { get; set; }
@@ -176,6 +176,25 @@ namespace Amdocs.Ginger.Common.UIElement
         private bool mIsAIGenerated { get; set; }
 
         [IsSerializedForLocalRepository]
-        public bool IsAIGenerated { get { return mIsAIGenerated; } set { if (mIsAIGenerated != value) { mIsAIGenerated = value; OnPropertyChanged(nameof(IsAIGenerated)); } } }
+        public bool IsAIGenerated { get { return mIsAIGenerated; } set { if (mIsAIGenerated != value) { mIsAIGenerated = value; OnPropertyChanged(nameof(IsAIGenerated)); OnPropertyChanged(nameof(LearnedType)); } } }
+
+
+        public enum eLearnedType { Manual, Auto, AI }
+
+        // Non-breaking addition:
+        public eLearnedType LearnedTypeEnum
+        {
+            get
+            {
+                if (IsAIGenerated) { return eLearnedType.AI; }
+                if (IsAutoLearned) { return eLearnedType.Auto; }
+                return eLearnedType.Manual;
+            }
+        }
+
+        // Keep existing string property as-is, or derive from the enum:
+        public string LearnedType => LearnedTypeEnum.ToString();
+
+
     }
 }

@@ -49,6 +49,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Security;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
@@ -1477,7 +1478,12 @@ namespace GingerCoreNET.GeneralLib
             return GingerPlayEndPointManager.GetLocalSetupToken();
         }
 
-       
+        public static string GetAIBatchsize()
+        {
+            return GingerPlayEndPointManager.GetAIBatchsize();
+        }
+
+
     }
 }
 

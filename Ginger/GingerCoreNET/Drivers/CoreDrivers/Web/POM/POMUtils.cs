@@ -28,6 +28,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Amdocs.Ginger.Repository;
 using Newtonsoft.Json.Linq;
+using System.Reflection;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 {
@@ -62,16 +63,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     // Filter and assign properties
                     foreach (var prop in elementInfo.Properties)
                     {
-
+                        // Check if property name is in the filter list AND value is not null or whitespace
                         if (FilterProperties.Contains(prop.Name) &&
-                                !string.IsNullOrWhiteSpace(prop.Value?.ToString()))
-
+                            !string.IsNullOrWhiteSpace(prop.Value?.ToString()))
                         {
-                            typeof(ElementwrapperProperties)
-                                .GetProperty(prop.Name, System.Reflection.BindingFlags.IgnoreCase | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
-                                ?.SetValue(props, prop.Value);
+                            var propertyInfo = typeof(ElementwrapperProperties)
+                                .GetProperty(prop.Name, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+
+                            if (propertyInfo != null && propertyInfo.CanWrite)
+                            {
+                                propertyInfo.SetValue(props, prop.Value);
+                            }
                         }
                     }
+
 
                     element.elementinfo.Properties = props;
 
@@ -99,6 +104,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             var errors = new List<string>();
             var currentBatch = new List<string>();
             int currentSize = 2; // For opening and closing brackets of JSON array
+            batchSize = !string.IsNullOrEmpty(GingerCoreNET.GeneralLib.General.GetAIBatchsize()) ? Convert.ToInt32(GingerCoreNET.GeneralLib.General.GetAIBatchsize()) : batchSize;
 
             foreach (var element in elementWrapperInfo.elements)
             {
@@ -156,9 +162,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
         public async Task GetResponseFromGenAI(ObservableList<ElementInfo> list, string url, string batchPayload, ePomElementCategory? PomCategory)
         {
             string response = await GingerCoreNET.GeneralLib.General.GetResponseForprocess_extracted_elementsByOpenAI(batchPayload);
-            ProcessGenAIResponseAndUpdatePOM(list, response,PomCategory);
+            ProcessGenAIResponseAndUpdatePOM(list, response, PomCategory);
         }
-        public void ProcessGenAIResponseAndUpdatePOM(ObservableList<ElementInfo> list, string response , ePomElementCategory? PomCategory)
+        public void ProcessGenAIResponseAndUpdatePOM(ObservableList<ElementInfo> list, string response, ePomElementCategory? PomCategory)
         {
             string cleanedResponse = CleanAIResponse(response);
             Reporter.ToLog(eLogLevel.DEBUG, $"cleanedResponse : {cleanedResponse}");
@@ -178,10 +184,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 try
                 {
                     List<ElementWrapper> responseElements = null;
-                    var jObject = JObject.Parse(cleanedResponse);
-                    var genaiResultToken = jObject["data"]?["genai_result"].ToString();
+                    
                     try
                     {
+                        var jObject = JObject.Parse(cleanedResponse);
+                        var genaiResultToken = jObject["data"]?["genai_result"].ToString();
                         if (genaiResultToken != null)
                         {
                             responseElements = JsonConvert.DeserializeObject<List<ElementWrapper>>((string)genaiResultToken);
@@ -194,7 +201,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     catch (JsonException)
                     {
                         // Fallback: response is a JSON string containing the payload
-                        var inner = JsonConvert.DeserializeObject<string>((string)genaiResultToken);
+                        var inner = JsonConvert.DeserializeObject<string>(cleanedResponse);
                         if (!string.IsNullOrWhiteSpace(inner))
                         {
                             responseElements = JsonConvert.DeserializeObject<List<ElementWrapper>>(inner);
@@ -242,17 +249,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                                             locateBy = eLocateBy.ByRelXPath;
                                         }
 
-                                        var locator = new ElementLocator
+                                        if(!string.IsNullOrEmpty(kvp.Value))
                                         {
-                                            LocateBy = locateBy,
-                                            LocateValue = kvp.Value,
-                                            IsAutoLearned = true,
-                                            Category = PomCategory,
-                                            IsAIGenerated = true,
-                                            Active = true
-                                        };
-
-                                        existingElement.Locators.Add(locator);
+                                            var locator = new ElementLocator
+                                            {
+                                                LocateBy = locateBy,
+                                                LocateValue = kvp.Value,
+                                                IsAutoLearned = true,
+                                                Category = PomCategory,
+                                                IsAIGenerated = true,
+                                                Active = true
+                                            };
+                                            existingElement.Locators.Add(locator);
+                                        }
                                     }
                                 }
                             }

@@ -76,7 +76,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using static GingerCoreNET.GeneralLib.General;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V136.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V139.DevToolsSessionDomains;
+using DevToolsVersion = OpenQA.Selenium.DevTools.V139;
 
 
 
@@ -104,7 +105,6 @@ namespace GingerCore.Drivers
         private const string BRAVE_64BIT_BINARY_PATH = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
         private const string EDGE_32BIT_BINARY_PATH = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
         private const string EDGE_64BIT_BINARY_PATH = "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe";
-        private const int DevToolsProtocolVersion = 136;
         String[] SeleniumUserArgs = null;
         DriverService driverService = null;
         private readonly List<string> HighlightStyleList = ["arguments[0].style.outline='3px dashed rgb(239, 183, 247)'", "arguments[0].style.backgroundColor='rgb(239, 183, 247)'", "arguments[0].style.border='3px dashed rgb(239, 183, 247)'"];
@@ -4370,9 +4370,9 @@ namespace GingerCore.Drivers
 
             if (locateBy == eLocateBy.POMElement)
             {
-                POMExecutionUtils pomExcutionUtil = new POMExecutionUtils(act, RetrieveActionValue(act));
-
-                var currentPOM = pomExcutionUtil.GetCurrentPOM();
+                POMExecutionUtils pomExcutionUtil;
+                ApplicationPOMModel currentPOM;
+                GetCurrentPOM(act, out pomExcutionUtil, out currentPOM);
 
                 if (currentPOM != null)
                 {
@@ -4408,6 +4408,15 @@ namespace GingerCore.Drivers
                             elem = LocateElementByLocators(currentPOMElementInfo, currentPOM.MappedUIElements, false, pomExcutionUtil);
                             if (elem != null)
                             {
+                                if (currentPOM != null)
+                                {
+                                    currentPOM.AllowAutoSave = true;
+                                    SaveHandler.Save(currentPOM);
+                                }
+                                else
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, $"Cannot find POM with GUID '{currentPOM.Guid}' to save");
+                                }
                                 act.ExInfo += "Broken element was auto updated by Self healing operation";
                             }
                         }
@@ -4441,6 +4450,12 @@ namespace GingerCore.Drivers
             }
 
             return elem;
+        }
+
+        private static void GetCurrentPOM(Act act, out POMExecutionUtils pomExcutionUtil, out ApplicationPOMModel currentPOM)
+        {
+            pomExcutionUtil = new POMExecutionUtils(act, RetrieveActionValue(act));
+            currentPOM = pomExcutionUtil.GetCurrentPOM();
         }
 
         private static string RetrieveActionValue(Act act)
@@ -4639,7 +4654,7 @@ namespace GingerCore.Drivers
             {
                 Driver.Manage().Timeouts().ImplicitWait = ImpWait;//reset Implicit wait
             }
-
+            
             return elem;
         }
 
@@ -9619,8 +9634,36 @@ namespace GingerCore.Drivers
                     e = LocateElement(act);
                     if (e == null)
                     {
-                        act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
-                        return;
+                        if (act.ElementLocateBy == eLocateBy.POMElement)
+                        {
+                            POMExecutionUtils pomExcutionUtil;
+                            ApplicationPOMModel currentPOM;
+                            GetCurrentPOM(act, out pomExcutionUtil, out currentPOM);
+
+                            if (currentPOM != null)
+                            {
+                                ElementInfo currentPOMElementInfo = null;
+                                if (isAppiumSession)
+                                {
+                                    currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo(this.PomCategory);//consider the Category only in case of Mobile flow for now
+                                }
+                                else
+                                {
+                                    currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
+                                }
+
+                                if (currentPOMElementInfo != null)
+                                {
+                                    act.Error = $"{act.Error}Element not found: {act.ElementLocateBy} = POM {currentPOM.Name} and element name = {currentPOMElementInfo.ElementName} ";
+                                    return;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                            return;
+                        }
                     }
                 }
             }
@@ -11636,10 +11679,22 @@ namespace GingerCore.Drivers
             {
                 try
                 {
-                    //DevTool Session 
-                    devToolsSession = devTools.GetDevToolsSession(DevToolsProtocolVersion);
+                    //DevTool Session
+                    devToolsSession = devTools.GetDevToolsSession();
+                    if (devToolsSession == null)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "DevTools session is not available; skipping CDP setup.");
+                        mAct?.AddOrUpdateReturnParamActual("DevToolsInit", "SessionUnavailable");
+                        return;
+                    }
                     devToolsDomains = devToolsSession.GetVersionSpecificDomains<DevToolsDomains>();
-                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V136.Network.EnableCommandSettings());
+                    if (devToolsDomains == null)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "DevTools domains are not available for this CDP version.");
+                        mAct?.AddOrUpdateReturnParamActual("DevToolsInit", "DomainsUnavailable");
+                        return;
+                    }
+                    devToolsDomains.Network.Enable(new DevToolsVersion.Network.EnableCommandSettings()).GetAwaiter().GetResult();
                     blockOrUnblockUrls();
                 }
                 catch (Exception ex)
@@ -11693,15 +11748,19 @@ namespace GingerCore.Drivers
         {
             if (mAct != null)
             {
+                if (devToolsDomains == null)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "DevTools domains not initialized; cannot (un)block URLs.");
+                    return;
+                }
                 if (mAct.ControlAction == ActBrowserElement.eControlAction.SetBlockedUrls)
                 {
-                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V136.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
+                    devToolsDomains.Network.SetBlockedURLs(new DevToolsVersion.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) }).GetAwaiter().GetResult();
                 }
                 else if (mAct.ControlAction == ActBrowserElement.eControlAction.UnblockeUrls)
                 {
-                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V136.Network.SetBlockedURLsCommandSettings() { Urls = [] });
+                    devToolsDomains.Network.SetBlockedURLs(new DevToolsVersion.Network.SetBlockedURLsCommandSettings() { Urls = [] }).GetAwaiter().GetResult();
                 }
-                Thread.Sleep(300);
             }
         }
 
@@ -11806,9 +11865,15 @@ namespace GingerCore.Drivers
                 interceptor.NetworkResponseReceived -= OnNetworkResponseReceived;
                 interceptor.ClearRequestHandlers();
                 interceptor.ClearResponseHandlers();
-                await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V136.Network.DisableCommandSettings());
-                devToolsSession.Dispose();
-                devTools.CloseDevToolsSession();
+                if (devToolsDomains != null)
+                {
+                    await devToolsDomains.Network.Disable(new DevToolsVersion.Network.DisableCommandSettings());
+                }
+                if (devToolsSession != null)
+                {
+                    devToolsSession.Dispose();
+                }
+                devTools?.CloseDevToolsSession();
             }
             catch (Exception ex)
             {

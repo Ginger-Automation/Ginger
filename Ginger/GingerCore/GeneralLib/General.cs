@@ -352,6 +352,18 @@ namespace GingerCore
             comboBox.ItemsSource = list;
         }
 
+        //Use this When You need Yes/No to show on UI but need to save boolean in backend
+        public static void FillComboWithYesNo(ComboBox combo)
+        {
+
+            combo.ItemsSource = new List<KeyValuePair<string, bool>>
+                        {
+                        new("Yes", true),
+                        new("No", false)
+                        };
+        }
+
+
         public static bool CheckComboItems(ComboBox comboBox, List<string> ls)
         {
             if (comboBox.Items.Count != ls.Count)
@@ -1556,7 +1568,7 @@ namespace GingerCore
                 ImageFormat.Jpeg => System.Drawing.Imaging.ImageFormat.Jpeg,
                 _ => throw new Exception($"Unknown ImageFormat '{imageFormat}'"),
             };
-        }       
+        }
     }
 }
 

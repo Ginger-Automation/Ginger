@@ -260,28 +260,68 @@ namespace GingerCoreNET.External.ZAP
 
             PerformActiveScan(targetHost);
         }
-        public bool EvaluateScanResult(string targetUrl, ObservableList<OperationValues> allowedAlertNames)
+        public bool EvaluateScanResultWeb(string targetUrl, ObservableList<OperationValues> allowedAlertNames)
         {
-            var summaryResponse = _zapClient.alert.alertsSummary(targetUrl);
-            var alertSummary = (ApiResponseSet)summaryResponse;
-
-            bool testPassed = true;
-
-            foreach (var alertEntry in alertSummary.Dictionary)
+            try
             {
-                string alertName = alertEntry.Key;
-                string valueString = alertEntry.Value is ApiResponseElement element ? element.Value : alertEntry.Value?.ToString();
-                if (!int.TryParse(valueString, out int count))
-                {
-                    continue;
-                }
+                var summaryResponse = _zapClient.alert.alertsSummary(targetUrl);
+                var alertSummary = (ApiResponseSet)summaryResponse;
 
-                if (!allowedAlertNames.Any(a => a.Value == alertName))
+                bool testPassed = true;
+
+                foreach (var alertEntry in alertSummary.Dictionary)
                 {
-                    testPassed = false;
+                    string alertName = alertEntry.Key;
+                    string valueString = alertEntry.Value is ApiResponseElement element ? element.Value : alertEntry.Value?.ToString();
+                    if (!int.TryParse(valueString, out int count))
+                    {
+                        continue;
+                    }
+
+                    if (!allowedAlertNames.Any(a => a.Value == alertName))
+                    {
+                        testPassed = false;
+                    }
                 }
+                return testPassed;
             }
-            return testPassed;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error evaluating scan result for Web: {ex.Message}", ex);
+                return false;
+            }
+        }
+
+        public bool EvaluateScanResultAPI(string targetUrl, ObservableList<OperationValues> VulnerabilityThresholdList)
+        {
+            try
+            {
+                var summaryResponse = _zapClient.alert.alertsSummary(targetUrl);
+                var alertSummary = (ApiResponseSet)summaryResponse;
+
+                bool testPassed = true;
+
+                foreach (var alertEntry in alertSummary.Dictionary)
+                {
+                    string alertName = alertEntry.Key;
+                    string valueString = alertEntry.Value is ApiResponseElement element ? element.Value : alertEntry.Value?.ToString();
+                    if (!int.TryParse(valueString, out int count))
+                    {
+                        continue;
+                    }
+
+                    if (count > 0 && (VulnerabilityThresholdList?.Any(a => string.Equals(a.Value, alertName, StringComparison.OrdinalIgnoreCase)) ?? false))
+                    {
+                        testPassed = false;
+                    }
+                }
+                return testPassed;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error evaluating scan result for API: {ex.Message}", ex);
+                return false;
+            }
         }
 
         public bool EvaluateScanResult(string targetUrl)
