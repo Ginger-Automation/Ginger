@@ -5943,7 +5943,7 @@ namespace GingerCore.Drivers
                 return true;
             }
 
-            return AutoMapBasicElementTypesList.Any(x => x.ElementType.Equals(elementType));
+            return AutoMapBasicElementTypesList.Any(x => x.Selected && x.ElementType.Equals(elementType));
         }
 
         // Method to retrieve the web element corresponding to the HTML node
