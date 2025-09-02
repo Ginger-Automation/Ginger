@@ -327,14 +327,14 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 if (SelectedElementTypesList.Count > 0)
                 {
-                    await IWindowExplorerDriver.GetVisibleControls(POM.PomSetting, mElementsList, POM.ApplicationPOMMetaData, ScreenShot,AutoMapBasicElementTypesList);
+                    await IWindowExplorerDriver.GetVisibleControls(POM.PomSetting, mElementsList, POM.ApplicationPOMMetaData, ScreenShot, AutoMapBasicElementTypesList);
 
                 }
             }
             else
             {
                 POM.PomSetting.FilteredElementType = null;
-                await IWindowExplorerDriver.GetVisibleControls(POM.PomSetting, mElementsList, POM.ApplicationPOMMetaData, ScreenShot,AutoMapBasicElementTypesList);
+                await IWindowExplorerDriver.GetVisibleControls(POM.PomSetting, mElementsList, POM.ApplicationPOMMetaData, ScreenShot, AutoMapBasicElementTypesList);
             }
 
             featureTracker.Metadata.Add("MappedElementCount", POM.MappedUIElements != null ? POM.MappedUIElements.Count.ToString() : "");
