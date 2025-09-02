@@ -733,7 +733,7 @@ namespace GingerCore.Drivers.MainFrame
             throw new System.NotImplementedException();
         }
 
-        public async Task<System.Collections.Generic.List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, Bitmap ScreenShot = null)
+        public async Task<System.Collections.Generic.List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, Bitmap ScreenShot = null, ObservableList<UIElementFilter> AutoMapBasicElementTypesList = null)
         {
             return await Task.Run(() =>
             {

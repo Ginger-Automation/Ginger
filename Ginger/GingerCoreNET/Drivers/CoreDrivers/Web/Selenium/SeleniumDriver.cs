@@ -5417,7 +5417,7 @@ namespace GingerCore.Drivers
         /// Else, it'll be skipped - Checking the performance
         /// </summary>
         public bool ExtraLocatorsRequired = true;
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, Bitmap ScreenShot = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, Bitmap ScreenShot = null,ObservableList<UIElementFilter> AutoMapBasicElementTypesList = null)
         {
             return await Task.Run(async () =>
             {
@@ -5430,7 +5430,7 @@ namespace GingerCore.Drivers
                     Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
-                    List<ElementInfo> list = General.ConvertObservableListToList<ElementInfo>(FindAllElementsFromPOM("", pomSetting, Driver, Guid.Empty, foundElementsList, PomMetaData, ScreenShot: ScreenShot));
+                    List<ElementInfo> list = General.ConvertObservableListToList<ElementInfo>(FindAllElementsFromPOM("", pomSetting, Driver, Guid.Empty, foundElementsList, PomMetaData, ScreenShot: ScreenShot, AutoMapBasicElementTypesList : AutoMapBasicElementTypesList));
                     ElementWrapperInfo elementWrapperInfo = new ElementWrapperInfo();
                     elementWrapperInfo.elements = new List<ElementWrapper>();
                     for (int i = 0; i < list.Count; i++)
@@ -5675,7 +5675,7 @@ namespace GingerCore.Drivers
         /// <param name="pageSource">HTML source of the page.</param>
         /// <param name="ScreenShot">Screenshot of the page.</param>
         /// <returns>List of found elements.</returns>
-        private ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null, Bitmap ScreenShot = null)
+        private ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null, Bitmap ScreenShot = null,ObservableList<UIElementFilter> AutoMapBasicElementTypesList = null)
         {
             // Initialize lists if null
             PomMetaData ??= [];
@@ -5728,7 +5728,7 @@ namespace GingerCore.Drivers
                         foundElementsList.Add(foundElementInfo);
                         allReadElem.Add(foundElementInfo);
 
-                        if (pomSetting.LearnPOMByAI)
+                        if (pomSetting.LearnPOMByAI && ShouldSendToAI(AutoMapBasicElementTypesList,elementTypeEnum.Item2))
                         {
 
                             // Only enqueue if not already processed
@@ -5934,6 +5934,16 @@ namespace GingerCore.Drivers
             }
 
             return pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(elementType));
+        }
+
+        private bool ShouldSendToAI(ObservableList<UIElementFilter> AutoMapBasicElementTypesList, eElementType elementType)
+        {
+            if (AutoMapBasicElementTypesList == null)
+            {
+                return true;
+            }
+
+            return AutoMapBasicElementTypesList.Any(x => x.ElementType.Equals(elementType));
         }
 
         // Method to retrieve the web element corresponding to the HTML node

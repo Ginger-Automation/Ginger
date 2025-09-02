@@ -895,7 +895,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return Task.Run(() => GetActiveWindowAsync().Result).Result;
         }
 
-        public async Task<List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo>? foundElementsList = null, ObservableList<POMPageMetaData>? PomMetaData = null, Bitmap ScreenShot = null)
+        public async Task<List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo>? foundElementsList = null, ObservableList<POMPageMetaData>? PomMetaData = null, Bitmap ScreenShot = null, ObservableList<UIElementFilter> AutoMapBasicElementTypesList = null)
         {
             ThrowIfClosed();
 

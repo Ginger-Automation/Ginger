@@ -1145,7 +1145,7 @@ namespace GingerCore.Drivers.WindowsLib
             return EI;
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, Bitmap ScreenShot = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, Bitmap ScreenShot = null, ObservableList<UIElementFilter> AutoMapBasicElementTypesList = null)
         {
             return await Task.Run(async () =>
             {

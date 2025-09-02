@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.Common.UIElement
         string GetFocusedControl();
         ElementInfo GetControlFromMousePosition();
         AppWindow GetActiveWindow();
-        Task<List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, Bitmap ScreenShot = null);
+        Task<List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, Bitmap ScreenShot = null,ObservableList<UIElementFilter> AutoMapBasicElementTypesList = null);
         List<ElementInfo> GetElementChildren(ElementInfo ElementInfo);
         // Get All element properties to be displayed in properties 
         ObservableList<ControlProperty> GetElementProperties(ElementInfo ElementInfo);
