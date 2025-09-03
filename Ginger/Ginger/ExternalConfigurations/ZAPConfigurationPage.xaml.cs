@@ -43,9 +43,9 @@ namespace Ginger.ExternalConfigurations
         private void Init()
         {
             zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count == 0 ? new ZAPConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
-            SetControls();
             zAPConfiguration.StartDirtyTracking();
-
+            WorkSpace.Instance.CurrentSelectedItem = zAPConfiguration;
+            SetControls();
         }
 
         private void SetControls()
