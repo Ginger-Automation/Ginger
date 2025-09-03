@@ -36,8 +36,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 {
     public class AccountReportApiHandler
     {
-
-
         private string EndPointUrl { get; set; }
 
         RestClient restClient;
@@ -49,11 +47,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         private const string SEND_RUNNER_EXECUTION_DATA = "api/AccountReport/runner/";
         private const string UPLOAD_FILES = "api/AccountReport/UploadFiles/";
         private const string UPLOAD_ARTIFACTS = "api/AccountReport/UploadArtifacts/";
-        private const string EXECUTION_ID_VALIDATION = "api/AccountReport/ExecutionIdValidation/";
-        private const string GET_BUSINESSFLOW_EXECUTION_DATA = "api/AccountReport/GetAccountReportBusinessflowsByExecutionId/";
-        private const string GET_RUNSET_EXECUTION_DATA = "api/AccountReport/GetRunsetHLExecutionInfo/";
-        private const string GET_RUNNER_EXECUTION_DATA = "api/AccountReport/GetAccountReportRunnersByExecutionId/";
-        private const string GET_ACCOUNT_HTML_REPORT = "/api/AccountReport/GetAccountHtmlReport/";
+        private const string EXECUTION_ID_VALIDATION = "api/HtmlReport/ExecutionIdValidation/";
+        private const string GET_BUSINESSFLOW_EXECUTION_DATA = "api/HtmlReport/GetAccountReportBusinessflowsByExecutionId/";
+        private const string GET_RUNSET_EXECUTION_DATA = "api/HtmlReport/GetRunsetHLExecutionInfo/";
+        private const string GET_RUNNER_EXECUTION_DATA = "api/HtmlReport/GetAccountReportRunnersByExecutionId/";
+        private const string GET_ACCOUNT_HTML_REPORT = "/api/HtmlReport/GetAccountHtmlReport/";
 
 
 
