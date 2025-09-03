@@ -42,13 +42,12 @@ namespace GingerCore.Actions.VisualTesting
             MagickImage magickBaseImg = new MagickImage(General.ImageToByteArray(mAct.baseImage, System.Drawing.Imaging.ImageFormat.Bmp));//Not tested after code change
             MagickImage magickTargetImg = new MagickImage(General.ImageToByteArray(mAct.targetImage, System.Drawing.Imaging.ImageFormat.Bmp));//Not tested after code change
 
-            MagickImage diffImg = new MagickImage();
-
             double percentageDifference;
 
             ErrorMetric eErrorMetric = ErrorMetric.Fuzz;
             Enum.TryParse<ErrorMetric>(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ErrorMetric).Value, out eErrorMetric);
-            percentageDifference = magickBaseImg.Compare(magickTargetImg, eErrorMetric, diffImg, Channels.Red);
+
+            IMagickImage diffImg = magickBaseImg.Compare(magickTargetImg, eErrorMetric, Channels.Red, out percentageDifference);
             percentageDifference = percentageDifference * 100;
             percentageDifference = Math.Round(percentageDifference, 2);
 

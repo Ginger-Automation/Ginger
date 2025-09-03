@@ -107,12 +107,11 @@ namespace GingerTest
             MagickImage magickBaseImg = new MagickImage(BaseImageFileName);
             MagickImage magickTargetImg = new MagickImage(TargetImageFileName);
 
-            var diffImg = new MagickImage();
 
             double percentageDifference;
             ErrorMetric EM = ErrorMetric.Fuzz;   // Fuzz !?
 
-            percentageDifference = magickBaseImg.Compare(magickTargetImg, EM, diffImg, Channels.Red);
+            IMagickImage diffImg = magickBaseImg.Compare(magickTargetImg, EM, Channels.Red, out percentageDifference);
             percentageDifference = percentageDifference * 100;
             percentageDifference = Math.Round(percentageDifference, 2);
 
