@@ -25,9 +25,9 @@ namespace Amdocs.Ginger.CoreNET.External.ZAP
 
         public IApiResponse GenerateReport(string title, string template, string theme, string description, string contextName, string sites, string sections, string includedconfidences, string includedrisks, string reportfilename, string reportfilenamepattern, string reportdir, string display)
         {
-            return _client.reports.generate(title, template, "", description, contextName, sites,
-                                     sections, includedconfidences, includedrisks,
-                                     reportfilename, "", reportdir, "");
+            return _client.reports.generate(title, template, theme, description, contextName, sites,
+                                           sections, includedconfidences, includedrisks,
+                                           reportfilename, reportfilenamepattern, reportdir, display);
         }
     }
 

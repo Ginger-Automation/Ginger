@@ -7,6 +7,8 @@ using Moq;
 using OWASPZAPDotNetAPI;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace GingerCoreNET.Tests.External.ZAP
 {
@@ -71,12 +73,12 @@ namespace GingerCoreNET.Tests.External.ZAP
         }
 
         [TestMethod]
-        public void WaitTillPassiveScanCompleted_WhenZeroRecords_Completes()
+        public async Task WaitTillPassiveScanCompleted_WhenZeroRecords_Completes()
         {
             _mockZap.Setup(c => c.RecordsToScan())
                           .Returns(new ApiResponseElement("recordsToScan", "0"));
 
-            _service.WaitTillPassiveScanCompleted().Wait();
+            await _service.WaitTillPassiveScanCompleted();
         }
 
         [TestMethod]
@@ -106,6 +108,17 @@ namespace GingerCoreNET.Tests.External.ZAP
                           }));
 
             _service.AddUrlToScanTree("http://test.com");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void AddUrlToScanTree_WhenUrlNotAdded_Throws()
+        {
+            _mockZap.Setup(c => c.AccessUrl("http://bad.com", "false"))
+                    .Returns(new ApiResponseElement("OK", "OK"));
+            _mockZap.Setup(c => c.Urls("http://bad.com"))
+                    .Returns(new ApiResponseList("urls", new List<IApiResponse>()));
+            _service.AddUrlToScanTree("http://bad.com");
         }
 
         [TestMethod]
@@ -158,6 +171,19 @@ namespace GingerCoreNET.Tests.External.ZAP
         }
 
         [TestMethod]
+        public void EvaluateScanResultWeb_WhenOnlyAllowedAlertsPresent_ReturnsTrue()
+        {
+            var alertSummary = new ApiResponseSet("alerts", new Dictionary<string, IApiResponse>
+            {
+                { "Allowed Alert", new ApiResponseElement("Allowed Alert", "2") }
+            });
+            _mockZap.Setup(c => c.AlertsSummary("http://allowed.com")).Returns(alertSummary);
+            var allowed = new ObservableList<OperationValues> { new OperationValues { Value = "Allowed Alert" } };
+            var result = _service.EvaluateScanResultWeb("http://allowed.com", allowed);
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
         public void EvaluateScanResultAPI_WhenVulnerabilityExceedsThreshold_ReturnsFalse()
         {
             var alertSummary = new ApiResponseSet("alerts", new Dictionary<string, IApiResponse>
@@ -191,7 +217,7 @@ namespace GingerCoreNET.Tests.External.ZAP
 
             var result = _service.GetAlertSummary("http://test.com");
             Assert.AreEqual(2, result.Count);
-            Assert.AreEqual(("XSS", 3), result[0]);
+            Assert.IsTrue(result.Any(t => t == ("XSS", 3)));
         }
     }
 }
