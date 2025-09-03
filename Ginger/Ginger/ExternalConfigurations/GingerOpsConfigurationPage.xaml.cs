@@ -45,6 +45,7 @@ namespace Ginger.ExternalConfigurations
             OpsAPI = new GingerOpsAPI();
             gingerOpsUserConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerOpsConfiguration>().Count == 0 ? new GingerOpsConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerOpsConfiguration>();
             gingerOpsUserConfig.StartDirtyTracking();
+            WorkSpace.Instance.CurrentSelectedItem = gingerOpsUserConfig;
             SetControls();
 
         }
