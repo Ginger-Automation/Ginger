@@ -16,35 +16,54 @@
             <ColumnDefinition x:Name="xMappedTypeColumn" Width="50*" MaxWidth="180"/>            
             <ColumnDefinition x:Name="xMappedValueColumn" Width="50*"/>
         </Grid.ColumnDefinitions>
-        <ComboBox x:Name="xMappedTypeComboBox" Grid.Column="0" VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" DropDownOpened="xMappedTypeComboBox_DropDownOpened" DropDownClosed="xMappedTypeComboBox_DropDownClosed" Height="20" >
+        
+        <!-- Mapping Type ComboBox -->
+        <ComboBox x:Name="xMappedTypeComboBox" Grid.Column="0" VerticalAlignment="Top" 
+                  Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" 
+                  DropDownOpened="xMappedTypeComboBox_DropDownOpened" 
+                  DropDownClosed="xMappedTypeComboBox_DropDownClosed" Height="20">
             <ComboBox.ToolTip>
                 <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}">
                     <TextBlock Text="{Binding SelectionBoxItem}"/>
                 </ToolTip>
             </ComboBox.ToolTip>
         </ComboBox>
-        <ComboBox x:Name="xVariablesComboBox" Grid.Column="1"  VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Height="20" FontWeight="Bold" Visibility="Collapsed">
+        
+        <!-- Variables ComboBox -->
+        <ComboBox x:Name="xVariablesComboBox" Grid.Column="1" VerticalAlignment="Top" 
+                  Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" 
+                  Height="20" FontWeight="Bold" Visibility="Collapsed">
             <ComboBox.ToolTip>
                 <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}">
                     <TextBlock Text="{Binding SelectionBoxItem}"/>
                 </ToolTip>
             </ComboBox.ToolTip>
         </ComboBox>
-        <ComboBox x:Name="xOptionalValuesComboBox" Grid.Column="1"  VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Height="20" FontWeight="Bold" Visibility="Collapsed">
+        
+        <!-- Optional Values ComboBox -->
+        <ComboBox x:Name="xOptionalValuesComboBox" Grid.Column="1" VerticalAlignment="Top" 
+                  Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" 
+                  Height="20" FontWeight="Bold" Visibility="Collapsed">
             <ComboBox.ToolTip>
                 <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}">
                     <TextBlock Text="{Binding SelectionBoxItem}"/>
                 </ToolTip>
             </ComboBox.ToolTip>
         </ComboBox>
-        <ComboBox x:Name="xSelectionListComboBox" Grid.Column="1" VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Height="20" FontWeight="Bold" Visibility="Collapsed" SelectionChanged="xSelectionListComboBox_SelectionChanged">
+        
+        <!-- Selection List ComboBox -->
+        <ComboBox x:Name="xSelectionListComboBox" Grid.Column="1" VerticalAlignment="Top" 
+                  Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" 
+                  Height="20" FontWeight="Bold" Visibility="Collapsed" 
+                  SelectionChanged="xSelectionListComboBox_SelectionChanged">
             <ComboBox.ToolTip>
                 <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}">
                     <TextBlock Text="{Binding SelectionBoxItem}"/>
                 </ToolTip>
             </ComboBox.ToolTip>
         </ComboBox>
-        <!-- DateTime picker using WPF DatePicker instead of WinForms -->
+        
+        <!-- WPF DatePicker - ALLOWS ALL PAST DATES -->
         <DatePicker x:Name="xDatePickerWPF" Grid.Column="1" VerticalAlignment="Top" 
                    Height="20" FontWeight="Bold" Visibility="Collapsed"
                    SelectedDateChanged="xDatePickerWPF_SelectedDateChanged">
@@ -54,13 +73,40 @@
                 </ToolTip>
             </DatePicker.ToolTip>
         </DatePicker>
-        <!-- Keep the WinForms version as fallback -->
-        <window:WindowsFormsHost x:Name="xDateTimeWindow" Grid.Column="1" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Visibility="Collapsed">
-            <wf:DateTimePicker x:Name="xDateTimePicker" TextChanged="xDateTimePicker_TextChanged" Format="Custom"/>
+        
+        <!-- WinForms DateTimePicker as fallback -->
+        <window:WindowsFormsHost x:Name="xDateTimeWindow" Grid.Column="1" 
+                                Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" 
+                                Visibility="Collapsed">
+            <wf:DateTimePicker x:Name="xDateTimePicker" 
+                              TextChanged="xDateTimePicker_TextChanged" 
+                              Format="Custom"/>
         </window:WindowsFormsHost>
-        <TextBox x:Name="xValueTextBox" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBoxStyle}" FontWeight="Bold" Height="21" BorderThickness="0,0,0,1" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" Visibility="Collapsed"></TextBox>
-        <Button x:Name="xDSConfigBtn" Grid.Column="1" VerticalAlignment="Top" Click="xDSConfigBtn_Click" HorizontalAlignment="Right" Height="21" Width="20" Margin="0,0,0.6,0" Style="{StaticResource $InputButtonStyle}" Visibility="Collapsed">...</Button>
-        <TextBox x:Name="xDSExpressionTxtbox" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBoxStyle}" FontWeight="Bold" Height="21" Margin="0,0,22,0" IsReadOnly="True" BorderThickness="0,0,0,1" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" Visibility="Collapsed"></TextBox>
-        <Actions:UCValueExpression x:Name="xDBValueExpression" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontWeight="Bold" Height="21"  Visibility="Collapsed"/>
+        
+        <!-- Value TextBox -->
+        <TextBox x:Name="xValueTextBox" Grid.Column="1" VerticalAlignment="Top" 
+                 HorizontalAlignment="Stretch" Style="{StaticResource $TextBoxStyle}" 
+                 FontWeight="Bold" Height="21" BorderThickness="0,0,0,1" 
+                 ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" 
+                 Visibility="Collapsed"/>
+        
+        <!-- DataSource Configuration Button -->
+        <Button x:Name="xDSConfigBtn" Grid.Column="1" VerticalAlignment="Top" 
+                Click="xDSConfigBtn_Click" HorizontalAlignment="Right" 
+                Height="21" Width="20" Margin="0,0,0.6,0" 
+                Style="{StaticResource $InputButtonStyle}" Visibility="Collapsed">...</Button>
+        
+        <!-- DataSource Expression TextBox -->
+        <TextBox x:Name="xDSExpressionTxtbox" Grid.Column="1" VerticalAlignment="Top" 
+                 HorizontalAlignment="Stretch" Style="{StaticResource $TextBoxStyle}" 
+                 FontWeight="Bold" Height="21" Margin="0,0,22,0" IsReadOnly="True" 
+                 BorderThickness="0,0,0,1" 
+                 ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" 
+                 Visibility="Collapsed"/>
+        
+        <!-- Value Expression Control -->
+        <Actions:UCValueExpression x:Name="xDBValueExpression" Grid.Column="1" 
+                                  VerticalAlignment="Top" HorizontalAlignment="Stretch" 
+                                  FontWeight="Bold" Height="21" Visibility="Collapsed"/>
     </Grid>
 </UserControl>

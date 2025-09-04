@@ -197,6 +197,18 @@ namespace Ginger.UserControlsLib
             InitTypeOptions();
             InitValuesOptions();
             
+            // IMMEDIATELY configure DatePicker to allow past dates
+            if (xDatePickerWPF != null)
+            {
+                try
+                {
+                    xDatePickerWPF.DisplayDateStart = null;
+                    xDatePickerWPF.DisplayDateEnd = null;
+                    xDatePickerWPF.BlackoutDates.Clear();
+                }
+                catch { /* Ignore initialization errors */ }
+            }
+            
             // Subscribe to the Unloaded event to clean up event handlers
             this.Unloaded += UCDataMapping_Unloaded;
             
@@ -221,6 +233,19 @@ namespace Ginger.UserControlsLib
         {
             // Force a refresh of the UI when the control is loaded
             // This ensures DateTime pickers are properly set up if the DataContext was set after initialization
+            
+            // FORCE DatePicker to allow past dates IMMEDIATELY on load
+            if (xDatePickerWPF != null)
+            {
+                try
+                {
+                    xDatePickerWPF.DisplayDateStart = null;
+                    xDatePickerWPF.DisplayDateEnd = null;  
+                    xDatePickerWPF.BlackoutDates.Clear();
+                }
+                catch { /* Ignore any setup errors */ }
+            }
+            
             if (MappedType == eDataType.Value.ToString())
             {
                 SetValueControlsData();
@@ -411,9 +436,40 @@ namespace Ginger.UserControlsLib
                 // Handle DateTime picker visibility for VariableDateTime - Use WPF DatePicker
                 else if (IsDateTimeVariable() && xDatePickerWPF != null)
                 {
+                    // TRIPLE-FORCE past dates before showing
+                    try
+                    {
+                        xDatePickerWPF.DisplayDateStart = null;
+                        xDatePickerWPF.DisplayDateEnd = null;
+                        xDatePickerWPF.BlackoutDates.Clear();
+                        
+                        // Force immediate refresh
+                        xDatePickerWPF.InvalidateVisual();
+                        xDatePickerWPF.UpdateLayout();
+                    }
+                    catch { /* Ignore any setup errors */ }
+                    
+                    // Now show the control
                     xDatePickerWPF.Visibility = Visibility.Visible;
+                    
+                    // Setup with full configuration
                     SetupWPFDatePicker();
-                    Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: Showing WPF DateTime picker for variable type: {DataContext?.GetType().Name}");
+                    
+                    // FINAL CHECK - ensure constraints are still clear
+                    try
+                    {
+                        if (DataContext is not VariableDateTime dateTimeVar || 
+                            (string.IsNullOrEmpty(dateTimeVar.MinDateTime) && string.IsNullOrEmpty(dateTimeVar.MaxDateTime)))
+                        {
+                            // No variable constraints = no date restrictions
+                            xDatePickerWPF.DisplayDateStart = null;
+                            xDatePickerWPF.DisplayDateEnd = null;
+                        }
+                        xDatePickerWPF.BlackoutDates.Clear();
+                    }
+                    catch { /* Ignore final check errors */ }
+                    
+                    Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: DateTime picker shown with UNLIMITED past date access");
                 }
                 else if (xValueTextBox != null)
                 {
@@ -755,12 +811,6 @@ namespace Ginger.UserControlsLib
                 else if (DataContext is VariableBase variable)
                 {
                     isDateTime = variable.VariableType?.Equals("DateTime", StringComparison.OrdinalIgnoreCase) == true;
-                    
-                    // Additional check - see if the variable has DateTime-specific properties
-                    if (!isDateTime && variable.GetType().Name.Contains("DateTime"))
-                    {
-                        isDateTime = true;
-                    }
                 }
             }
             catch (Exception ex)
@@ -844,83 +894,112 @@ namespace Ginger.UserControlsLib
 
         private void SetupWPFDatePicker()
         {
-            if (xDatePickerWPF != null && DataContext is VariableDateTime dateTimeVariable)
+            if (xDatePickerWPF != null)
             {
                 try 
                 {
-                    // Set min and max dates if specified
-                    try
+                    if (DataContext is VariableDateTime dateTimeVariable)
                     {
-                        if (!string.IsNullOrEmpty(dateTimeVariable.MinDateTime) && DateTime.TryParse(dateTimeVariable.MinDateTime, out DateTime minDate))
+                        Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: Setting up WPF DatePicker for {dateTimeVariable.Name}");
+                        
+                        // For runtime configuration (Value mapping), completely remove all date restrictions
+                        bool isRuntimeConfiguration = MappedType == eDataType.Value.ToString();
+                        
+                        if (isRuntimeConfiguration)
                         {
-                            xDatePickerWPF.DisplayDateStart = minDate;
+                            // RUNTIME CONFIGURATION: Allow ALL dates (just like the regular variable editor)
+                            xDatePickerWPF.DisplayDateStart = null;
+                            xDatePickerWPF.DisplayDateEnd = null;
+                            xDatePickerWPF.BlackoutDates.Clear();
+                            
+                            Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: Runtime configuration - allowing ALL dates including past dates");
+                        }
+                        else
+                        {
+                            // Non-runtime configuration: Apply the computed constraints (original behavior)
+                            xDatePickerWPF.DisplayDateStart = null;
+                            xDatePickerWPF.DisplayDateEnd = null;
+                            xDatePickerWPF.BlackoutDates.Clear();
+                            
+                            if (!string.IsNullOrEmpty(dateTimeVariable.MinDateTime))
+                            {
+                                if (DateTime.TryParse(dateTimeVariable.MinDateTime, out DateTime minDate))
+                                {
+                                    xDatePickerWPF.DisplayDateStart = minDate;
+                                    Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: Applied computed MinDate constraint: {minDate}");
+                                }
+                            }
+                            
+                            if (!string.IsNullOrEmpty(dateTimeVariable.MaxDateTime))
+                            {
+                                if (DateTime.TryParse(dateTimeVariable.MaxDateTime, out DateTime maxDate))
+                                {
+                                    xDatePickerWPF.DisplayDateEnd = maxDate;
+                                    Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: Applied computed MaxDate constraint: {maxDate}");
+                                }
+                            }
                         }
                         
-                        if (!string.IsNullOrEmpty(dateTimeVariable.MaxDateTime) && DateTime.TryParse(dateTimeVariable.MaxDateTime, out DateTime maxDate))
+                        // Set current value
+                        DateTime? currentValue = null;
+                        
+                        if (!string.IsNullOrEmpty(MappedValue) && DateTime.TryParse(MappedValue, out DateTime parsedMappedValue))
                         {
-                            xDatePickerWPF.DisplayDateEnd = maxDate;
+                            currentValue = parsedMappedValue;
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.DEBUG, $"Error setting date range: {ex.Message}");
-                    }
-                    
-                    // Set the current value - priority: MappedValue -> Variable.Value -> InitialDateTime -> Today
-                    DateTime? currentValue = null;
-                    bool valueWasSet = false;
-                    
-                    if (!string.IsNullOrEmpty(MappedValue) && DateTime.TryParse(MappedValue, out DateTime parsedMappedValue))
-                    {
-                        currentValue = parsedMappedValue;
-                        valueWasSet = true;
-                    }
-                    else if (!string.IsNullOrEmpty(dateTimeVariable.Value) && DateTime.TryParse(dateTimeVariable.Value, out DateTime parsedVarValue))
-                    {
-                        currentValue = parsedVarValue;
-                        valueWasSet = true;
-                    }
-                    else if (!string.IsNullOrEmpty(dateTimeVariable.InitialDateTime) && DateTime.TryParse(dateTimeVariable.InitialDateTime, out DateTime parsedInitialValue))
-                    {
-                        currentValue = parsedInitialValue;
-                        valueWasSet = true;
+                        else if (!string.IsNullOrEmpty(dateTimeVariable.Value) && DateTime.TryParse(dateTimeVariable.Value, out DateTime parsedVarValue))
+                        {
+                            currentValue = parsedVarValue;
+                        }
+                        else if (!string.IsNullOrEmpty(dateTimeVariable.InitialDateTime) && DateTime.TryParse(dateTimeVariable.InitialDateTime, out DateTime parsedInitialValue))
+                        {
+                            currentValue = parsedInitialValue;
+                        }
+                        else
+                        {
+                            currentValue = DateTime.Today;
+                        }
+                        
+                        // Set the selected date
+                        if (currentValue.HasValue)
+                        {
+                            xDatePickerWPF.SelectedDate = currentValue;
+                            
+                            // Update MappedValue
+                            string format = !string.IsNullOrEmpty(dateTimeVariable.DateTimeFormat) ? dateTimeVariable.DateTimeFormat : "MM/dd/yyyy";
+                            string formattedValue = currentValue.Value.ToString(format, System.Globalization.CultureInfo.InvariantCulture);
+                            
+                            if (string.IsNullOrEmpty(MappedValue))
+                            {
+                                MappedValue = formattedValue;
+                            }
+                        }
                     }
                     else
                     {
-                        currentValue = DateTime.Today;
+                        // No DateTime variable context - ensure past dates are allowed
+                        xDatePickerWPF.DisplayDateStart = null;
+                        xDatePickerWPF.DisplayDateEnd = null;
+                        xDatePickerWPF.BlackoutDates.Clear();
+                        xDatePickerWPF.SelectedDate = DateTime.Today;
                     }
                     
-                    // Ensure the value is within the allowed range
-                    if (currentValue.HasValue)
-                    {
-                        if (xDatePickerWPF.DisplayDateStart.HasValue && currentValue < xDatePickerWPF.DisplayDateStart)
-                        {
-                            currentValue = xDatePickerWPF.DisplayDateStart;
-                        }
-                        else if (xDatePickerWPF.DisplayDateEnd.HasValue && currentValue > xDatePickerWPF.DisplayDateEnd)
-                        {
-                            currentValue = xDatePickerWPF.DisplayDateEnd;
-                        }
-                        
-                        xDatePickerWPF.SelectedDate = currentValue;
-                        
-                        // If no mapped value was set yet, update it with the current picker value
-                        if (!valueWasSet && string.IsNullOrEmpty(MappedValue))
-                        {
-                            string format = !string.IsNullOrEmpty(dateTimeVariable.DateTimeFormat) ? dateTimeVariable.DateTimeFormat : "MM/dd/yyyy";
-                            string formattedValue = currentValue.Value.ToString(format, System.Globalization.CultureInfo.InvariantCulture);
-                            MappedValue = formattedValue;
-                        }
-                    }
+                    Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: DatePicker configured - DisplayDateStart: {xDatePickerWPF.DisplayDateStart}, DisplayDateEnd: {xDatePickerWPF.DisplayDateEnd}");
                 }
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Error setting up WPF DatePicker: {ex.Message}", ex);
+                    
+                    // EMERGENCY FALLBACK - Force unrestricted dates
+                    try
+                    {
+                        xDatePickerWPF.DisplayDateStart = null;
+                        xDatePickerWPF.DisplayDateEnd = null;
+                        xDatePickerWPF.BlackoutDates.Clear();
+                        xDatePickerWPF.SelectedDate = DateTime.Today;
+                    }
+                    catch { /* Even fallback failed, ignore */ }
                 }
-            }
-            else
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: WPF DatePicker setup skipped - xDatePickerWPF: {xDatePickerWPF != null}, DataContext type: {DataContext?.GetType().Name}");
             }
         }
 
@@ -965,11 +1044,17 @@ namespace Ginger.UserControlsLib
             {
                 try
                 {
-                    // Validate the date is within range
-                    if (!dateTimeVariable.CheckDateTimeWithInRange(xDateTimePicker.Value.ToString()))
+                    // For runtime configuration (Value mapping), skip all validation - allow any date
+                    bool isRuntimeConfiguration = MappedType == eDataType.Value.ToString();
+                    
+                    if (!isRuntimeConfiguration)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Input Value is not in range:- Maximum date :[{dateTimeVariable.MaxDateTime}], Minimum Date:[{dateTimeVariable.MinDateTime}]");
-                        return;
+                        // Only validate for non-runtime configuration
+                        if (!dateTimeVariable.CheckDateTimeWithInRange(xDateTimePicker.Value.ToString()))
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Input Value is not in range:- Maximum date :[{dateTimeVariable.MaxDateTime}], Minimum Date:[{dateTimeVariable.MinDateTime}]");
+                            return;
+                        }
                     }
                     
                     // Update the MappedValue with the formatted date
@@ -992,11 +1077,17 @@ namespace Ginger.UserControlsLib
                 {
                     DateTime selectedDate = xDatePickerWPF.SelectedDate.Value;
                     
-                    // Validate the date is within range using the variable's validation method
-                    if (!dateTimeVariable.CheckDateTimeWithInRange(selectedDate.ToString()))
+                    // For runtime configuration (Value mapping), skip all validation - allow any date
+                    bool isRuntimeConfiguration = MappedType == eDataType.Value.ToString();
+                    
+                    if (!isRuntimeConfiguration)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Input Value is not in range:- Maximum date :[{dateTimeVariable.MaxDateTime}], Minimum Date:[{dateTimeVariable.MinDateTime}]");
-                        return;
+                        // Only validate for non-runtime configuration
+                        if (!dateTimeVariable.CheckDateTimeWithInRange(selectedDate.ToString()))
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Input Value is not in range:- Maximum date :[{dateTimeVariable.MaxDateTime}], Minimum Date:[{dateTimeVariable.MinDateTime}]");
+                            return;
+                        }
                     }
                     
                     // Update the MappedValue with the formatted date
@@ -1040,7 +1131,7 @@ namespace Ginger.UserControlsLib
                 GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.DataSource);
             }
         }
-        #endregion DataSource
+        #endregion
 
         #region Database
         private void SetDatabaseValues()
@@ -1136,6 +1227,5 @@ namespace Ginger.UserControlsLib
             return template;
         }
         #endregion Template Creation
-
     }
 }
