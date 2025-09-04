@@ -87,7 +87,7 @@
                         <TextBlock x:Name="xPropertiesTextBlock" Text="Properties" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Ginger:ucGrid x:Name="xPropertiesGrid" Title="Control Properties"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" ShowRefresh="Collapsed" />
+                <Ginger:ucGrid x:Name="xPropertiesGrid" Title="Control Properties" ScrollViewer.VerticalScrollBarVisibility="Visible"  ScrollViewer.CanContentScroll="True"  ShowAdd="Visible" ShowClearAll="Collapsed" ShowDelete="Visible" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" ShowRefresh="Collapsed" />
             </TabItem>
             <TabItem Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>

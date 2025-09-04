@@ -72,7 +72,16 @@ namespace Amdocs.Ginger.Common.UIElement
         public bool IsAutoLearned
         {
             get { return mIsAutoLearned; }
-            set { if (mIsAutoLearned != value) { mIsAutoLearned = value; OnPropertyChanged(nameof(IsAutoLearned)); } }
+            set
+            {
+                if (mIsAutoLearned != value)
+                {
+                    mIsAutoLearned = value;
+                    OnPropertyChanged(nameof(IsAutoLearned));
+                    OnPropertyChanged(nameof(LearnedTypeEnum));
+                    OnPropertyChanged(nameof(LearnedType));
+                }
+            }
         }
 
         private string mLastUpdatedTime;
@@ -669,7 +678,7 @@ namespace Amdocs.Ginger.Common.UIElement
 
     public enum eElementType
     {
-        [EnumValueDescription("Unknown")]
+        [EnumValueDescription("")]
         Unknown,
         [EnumValueDescription("Text Box")]
         TextBox,
@@ -719,6 +728,7 @@ namespace Amdocs.Ginger.Common.UIElement
         [EnumValueDescription("Date Picker")]
         DatePicker,
         Document,
+        [EnumValueDescription("SVG")]
         Svg,
         
     }

@@ -345,7 +345,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             view.GridColsView.Add(new GridColView()
             {
-                Field = nameof(ElementLocator.LearnedType),
+                Field = nameof(ElementInfo.LearnedType),
                 Header = "Learned Type",
                 WidthWeight = 10,
                 MaxWidth = 100,
@@ -836,7 +836,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xElementDetails.xPropertiesGrid.SetAllColumnsDefaultView(view);
             xElementDetails.xPropertiesGrid.InitViewItems();
             xElementDetails.xPropertiesGrid.SetTitleLightStyle = true;
-            xElementDetails.xPropertiesGrid.btnAdd.AddHandler(System.Windows.Controls.Button.ClickEvent, new RoutedEventHandler(AddPropertyHandler));
+            xElementDetails.xPropertiesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddPropertiesButtonClicked));
+            xElementDetails.xPropertiesGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeletePropertyClicked));
             WeakEventManager<DataGrid, DataGridPreparingCellForEditEventArgs>.AddHandler(source: xElementDetails.xPropertiesGrid.grdMain, eventName: nameof(DataGrid.PreparingCellForEdit), handler: PropertiesGrid_PreparingCellForEdit);
             WeakEventManager<DataGrid, DataGridCellEditEndingEventArgs>.AddHandler(source: xElementDetails.xPropertiesGrid.grdMain, eventName: nameof(DataGrid.CellEditEnding), handler: PropertiesGrid_CellEditEnding);
 
@@ -859,23 +860,41 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        private void AddPropertyHandler(object sender, RoutedEventArgs e)
+        private void AddPropertiesButtonClicked(object sender, RoutedEventArgs e)
         {
             xElementDetails.xPropertiesGrid.Grid.CommitEdit();
-
-            //for java Swing ParentIframe is not required
             if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey).Equals(ePlatformType.Java) && !mSelectedElement.GetType().Equals(typeof(HTMLElementInfo)))
             {
                 return;
             }
+            ControlProperty property = new ControlProperty();
+            mSelectedElement.Properties.Add(property);
 
-            ControlProperty elemProp = new ControlProperty() { Name = ElementProperty.ParentIFrame };
-            mSelectedElement.Properties.Add(elemProp);
-            xElementDetails.xPropertiesGrid.Grid.SelectedItem = elemProp;
+            xElementDetails.xPropertiesGrid.Grid.SelectedItem = property;
             xElementDetails.xPropertiesGrid.ScrollToViewCurrentItem();
-
-            xElementDetails.xPropertiesGrid.ShowAdd = Visibility.Collapsed;
         }
+
+        private void DeletePropertyClicked(object sender, RoutedEventArgs e)
+        {
+            bool msgShowen = false;
+            List<ControlProperty> PropertyToDelete = xElementDetails.xPropertiesGrid.Grid.SelectedItems.Cast<ControlProperty>().ToList();
+            foreach (ControlProperty Property in PropertyToDelete)
+            {
+                if (!string.IsNullOrEmpty(Property.Category?.ToString()))
+                {
+                    if (!msgShowen)
+                    {
+                        Reporter.ToUser(eUserMsgKey.POMCannotDeleteAutoLearnedElement);
+                        msgShowen = true;
+                    }
+                }
+                else
+                {
+                    mSelectedElement.Properties.Remove(Property);
+                }
+            }
+        }
+
         bool collapsed = false;
 
         private void HandelElementSelectionChange()

@@ -5730,7 +5730,7 @@ namespace GingerCore.Drivers
                         // Special handling for SVG elements to capture child elements
                         if (IsSvgElement(elementTypeEnum.Item2))
                         {
-                            ProcessSvgChildElements(pomSetting, htmlElemNode, foundElementInfo, path, foundElementsList, PomMetaData, isShadowRootDetected, ScreenShot);
+                            ProcessSvgChildElements(parentContext, pomSetting, htmlElemNode, foundElementInfo, path, foundElementsList, PomMetaData, isShadowRootDetected, ScreenShot);
                         }
                         
 
@@ -5795,7 +5795,7 @@ namespace GingerCore.Drivers
             };
         }
 
-        private void ProcessSvgChildElements(PomSetting pomSetting, HtmlNode svgHtmlNode, HTMLElementInfo svgElementInfo, string path, ObservableList<ElementInfo> foundElementsList, ObservableList<POMPageMetaData> PomMetaData, bool isShadowRootDetected = false, Bitmap ScreenShot = null)
+        private void ProcessSvgChildElements(ISearchContext searchContext,PomSetting pomSetting, HtmlNode svgHtmlNode, HTMLElementInfo svgElementInfo, string path, ObservableList<ElementInfo> foundElementsList, ObservableList<POMPageMetaData> PomMetaData, bool isShadowRootDetected = false, Bitmap ScreenShot = null)
         {
             try
             {
@@ -5818,8 +5818,12 @@ namespace GingerCore.Drivers
                             try
                             {
                                 // Try to find the SVG child element
-                                IWebElement svgChildWebElement = Driver.FindElement(By.XPath(svgChildXPath));
-
+                                IWebElement svgChildWebElement = searchContext.FindElement(By.XPath(svgChildXPath));
+                                //skip svg child invisible elements
+                                if (!IsElementVisible(svgChildWebElement))
+                                {
+                                    continue;
+                                }
                                 if (svgChildWebElement != null)
                                 {
                                     HTMLElementInfo svgChildElementInfo = CreateHTMLElementInfo(
@@ -5980,16 +5984,16 @@ namespace GingerCore.Drivers
                         var classes = value.Split(' ').Where(c => !string.IsNullOrWhiteSpace(c));
                         foreach (var className in classes)
                         {
-                            conditions.Add($"contains(@class, '{className}')");
+                            conditions.Add($"contains(@class, '{EscapeXPathString(className)}')");
                         }
                     }
                     else if (attr == "href" && value.StartsWith("#"))
                     {
-                        conditions.Add($"@{attr}='{value}'");
+                        conditions.Add($"@{attr}='{EscapeXPathString(value)}'");
                     }
                     else if (!IsLikelyDynamic(value))
                     {
-                        conditions.Add($"@{attr}='{value}'");
+                        conditions.Add($"@{attr}='{EscapeXPathString(value)}'");
                     }
                 }
             }
@@ -6012,7 +6016,7 @@ namespace GingerCore.Drivers
                 elementInfo.Locators.Add(new ElementLocator
                 {
                     LocateBy = eLocateBy.ByXPath,
-                    LocateValue = $"//*[local-name()='{svgNode.Name.ToLower()}' and @data-node-id='{dataNodeId}']",
+                    LocateValue = $"//*[local-name()='{svgNode.Name.ToLower()}' and @data-node-id='{EscapeXPathString(dataNodeId)}']",
                     IsAutoLearned = true,
                     Active = true
                 });
@@ -6025,7 +6029,7 @@ namespace GingerCore.Drivers
                 elementInfo.Locators.Add(new ElementLocator
                 {
                     LocateBy = eLocateBy.ByXPath,
-                    LocateValue = $"//*[local-name()='{svgNode.Name.ToLower()}' and @data-backend-id='{dataBackendId}']",
+                    LocateValue = $"//*[local-name()='{svgNode.Name.ToLower()}' and @data-backend-id='{EscapeXPathString(dataBackendId)}']",
                     IsAutoLearned = true,
                     Active = true
                 });
@@ -6041,7 +6045,7 @@ namespace GingerCore.Drivers
                     elementInfo.Locators.Add(new ElementLocator
                     {
                         LocateBy = eLocateBy.ByXPath,
-                        LocateValue = $"//*[local-name()='{svgNode.Name.ToLower()}' and contains(@class, '{cls}')]",
+                        LocateValue = $"//*[local-name()='{svgNode.Name.ToLower()}' and contains(@class, '{EscapeXPathString(cls)}')]",
                         IsAutoLearned = true,
                         Active = false // Set as backup locator
                     });
@@ -6078,14 +6082,14 @@ namespace GingerCore.Drivers
                     
                     if (!string.IsNullOrEmpty(parentDataNodeId))
                     {
-                        parentSelector = $"*[@data-node-id='{parentDataNodeId}']";
+                        parentSelector = $"*[@data-node-id='{EscapeXPathString(parentDataNodeId)}']";
                     }
                     else if (!string.IsNullOrEmpty(parentClass))
                     {
                         var firstClass = parentClass.Split(' ').FirstOrDefault();
                         if (!string.IsNullOrEmpty(firstClass))
                         {
-                            parentSelector = $"*[contains(@class, '{firstClass}')]";
+                            parentSelector = $"*[contains(@class, '{EscapeXPathString(firstClass)}')]";
                         }
                     }
 
@@ -6097,14 +6101,14 @@ namespace GingerCore.Drivers
 
                         if (!string.IsNullOrEmpty(dataNodeId))
                         {
-                            return $"//{parentSelector}//*[local-name()='{childSelector}' and @data-node-id='{dataNodeId}']";
+                            return $"//{parentSelector}//*[local-name()='{childSelector}' and @data-node-id='{EscapeXPathString(dataNodeId)}']";
                         }
                         else if (!string.IsNullOrEmpty(className))
                         {
                             var firstClass = className.Split(' ').FirstOrDefault();
                             if (!string.IsNullOrEmpty(firstClass))
                             {
-                                return $"//{parentSelector}//*[local-name()='{childSelector}' and contains(@class, '{firstClass}')]";
+                                return $"//{parentSelector}//*[local-name()='{childSelector}' and contains(@class, '{EscapeXPathString(firstClass)}')]";
                             }
                         }
                     }
@@ -6337,7 +6341,7 @@ namespace GingerCore.Drivers
                     xpath = string.Concat(htmlElemNode.ParentNode.XPath, "//*[local-name()='svg']");
                 }
             }
-            else if (IsSvgElement(elementType))
+            else
             {
                 // For SVG child elements, use local-name() in XPath
                 xpath = CreateSvgElementXPath(htmlElemNode);
@@ -10486,7 +10490,9 @@ namespace GingerCore.Drivers
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error: Unknown Action: {act.ElementAction}");
+                act.Status = eRunStatus.Failed;
+                act.Error = $"Action '{act.ElementAction}' failed: {ex.Message}";
+                Reporter.ToLog(eLogLevel.ERROR, $"Action '{act.ElementAction}' failed", ex);
             }
             finally
             {

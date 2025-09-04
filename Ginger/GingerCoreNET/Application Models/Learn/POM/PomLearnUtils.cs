@@ -157,8 +157,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         {
             foreach (UIElementFilter element in elements)
             {
-                var selectedFilter = filterList.FirstOrDefault(filter => filter.ElementType.Equals(element.ElementType));                
-                element.Selected = selectedFilter?.Selected ?? false;
+                element.Selected = filterList.FirstOrDefault(f => f.ElementType == element.ElementType)?.Selected ?? false;
             }
         }
 
@@ -266,7 +265,8 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 pomSetting.RelativeXpathTemplateList = GetRelativeXpathTemplateList();
                 pomSetting.SpecificFramePath = SpecificFramePath;
                 pomSetting.LearnScreenshotsOfElements = LearnScreenshotsOfElements;
-                pomSetting.LearnShadowDomElements = LearnShadowDomElements;pomSetting.LearnPOMByAI = LearnPOMByAI;
+                pomSetting.LearnShadowDomElements = LearnShadowDomElements;
+                pomSetting.LearnPOMByAI = LearnPOMByAI;
                 POM.PomSetting = pomSetting;
             }
             POM.AIGenerated = POM.PomSetting.LearnPOMByAI;
