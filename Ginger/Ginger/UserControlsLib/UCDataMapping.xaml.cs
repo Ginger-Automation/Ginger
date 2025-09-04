@@ -62,7 +62,6 @@ namespace Ginger.UserControlsLib
         public enum eDataType
         {
             None,
-            Variable,
             GlobalVariable,
             OutputVariable,
             ApplicationModelParameter,
@@ -291,7 +290,6 @@ namespace Ginger.UserControlsLib
         private void DisableAllTypeOptions()
         {
             // Disable all data type options initially - they will be enabled based on context availability
-            GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.Variable);
             GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.GlobalVariable);
             GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.OutputVariable);
             GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.ApplicationModelParameter);
@@ -333,11 +331,7 @@ namespace Ginger.UserControlsLib
             xValueTextBox.TextChanged -= xValueTextBox_TextChanged;
             xValueTextBox.PreviewTextInput -= xValueTextBox_PreviewTextInput;
             
-            if (MappedType == eDataType.Variable.ToString())
-            {
-                BindingHandler.ObjFieldBinding(xVariablesComboBox, ComboBox.SelectedValueProperty, this, nameof(MappedValue));
-            }
-            else if (MappedType == eDataType.GlobalVariable.ToString())
+            if (MappedType == eDataType.GlobalVariable.ToString())
             {
                 BindingHandler.ObjFieldBinding(xOptionalValuesComboBox, ComboBox.SelectedValueProperty, this, nameof(MappedValueGUID));
             }
@@ -416,11 +410,7 @@ namespace Ginger.UserControlsLib
             xDSConfigBtn.Visibility = Visibility.Hidden;
             xDBValueExpression.Visibility = Visibility.Hidden;
 
-            if (MappedType == eDataType.Variable.ToString() && xVariablesComboBox != null)
-            {
-                xVariablesComboBox.Visibility = Visibility.Visible;
-            }
-            else if ((MappedType == eDataType.OutputVariable.ToString() || MappedType == eDataType.GlobalVariable.ToString() || MappedType == eDataType.ApplicationModelParameter.ToString())
+            if ((MappedType == eDataType.OutputVariable.ToString() || MappedType == eDataType.GlobalVariable.ToString() || MappedType == eDataType.ApplicationModelParameter.ToString())
                 && xOptionalValuesComboBox != null)
             {
                 xOptionalValuesComboBox.Visibility = Visibility.Visible;
@@ -536,7 +526,6 @@ namespace Ginger.UserControlsLib
             string validationMessage = null;
 
             if ((MappedType != eDataType.None.ToString() && MappedType != eDataType.Value.ToString() && MappedValue == string.Empty)
-                || (MappedType == eDataType.Variable.ToString() && !GingerCore.General.CheckComboItemExist(xVariablesComboBox, MappedValue))
                 || ((MappedType == eDataType.OutputVariable.ToString() && !GingerCore.General.CheckComboItemExist(xOptionalValuesComboBox, MappedValue, nameof(VariableBase.VariableInstanceInfo)))
                 || (MappedType == eDataType.GlobalVariable.ToString() || MappedType == eDataType.ApplicationModelParameter.ToString()) && !GingerCore.General.CheckComboItemExist(xOptionalValuesComboBox, MappedValue, "Guid"))
                 || (MappedType == eDataType.DataSource.ToString() && GingerCoreNET.GeneralLib.General.CheckDataSource(MappedValue, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>()) != string.Empty))
@@ -733,7 +722,7 @@ namespace Ginger.UserControlsLib
             if (variablesList != null)
             {
                 mVariablesList = variablesList;
-                GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.Variable);
+                // Variable option has been removed - no longer enable it
             }
         }
 
@@ -756,11 +745,7 @@ namespace Ginger.UserControlsLib
 
         private void SetValueControlsData()
         {
-            if (MappedType == eDataType.Variable.ToString())
-            {
-                xVariablesComboBox.ItemsSource = mVariablesList;
-            }
-            else if (MappedType == eDataType.GlobalVariable.ToString())
+            if (MappedType == eDataType.GlobalVariable.ToString())
             {
                 xOptionalValuesComboBox.DisplayMemberPath = nameof(VariableBase.Name);
                 xOptionalValuesComboBox.SelectedValuePath = nameof(VariableBase.Guid);
