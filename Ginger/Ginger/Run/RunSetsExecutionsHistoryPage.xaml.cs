@@ -878,7 +878,7 @@ namespace Ginger.Run
             else if (((RunSetReport)xGridExecutionsHistory.CurrentItem).DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.Remote)
             {
                 var executionGuid = ((RunSetReport)xGridExecutionsHistory.CurrentItem).GUID;
-                new GingerRemoteExecutionUtils().GenerateHTMLReport(executionGuid);
+                GingerRemoteExecutionUtils.GenerateHTMLReport(executionGuid);
             }
             else
             {
