@@ -53,6 +53,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         private const string GET_RUNNER_EXECUTION_DATA = "api/HtmlReport/GetAccountReportRunnersByExecutionId/";
         private const string GET_ACCOUNT_HTML_REPORT = "/api/HtmlReport/GetAccountHtmlReport/";
 
+        private static bool RunSetDataWasSentSuccessfully = false;
 
 
         public AccountReportApiHandler(string apiUrl)
@@ -121,9 +122,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 if (!isUpdate)
                 {
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Starting to publish execution data to central DB for Runset- '{0}'", accountReportRunSet.Name));
+                    RunSetDataWasSentSuccessfully = true;
                 }
                 else
                 {
+                    if (!RunSetDataWasSentSuccessfully)
+                    {
+                        return false;
+                    }
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Finishing to publish execution data to central DB for Runset- '{0}'", accountReportRunSet.Name));
                 }
                 string message = string.Format("execution data to Central DB for the Runset:'{0}' (Execution Id:'{1}')", accountReportRunSet.Name, accountReportRunSet.ExecutionId);
@@ -141,10 +147,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 if (isResponseSuccessful)
                 {
                     Reporter.ToLog(eLogLevel.INFO, $"Successfully sent {message}");
+                    RunSetDataWasSentSuccessfully = true;
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to send {message}");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to send data for RunSet Execution {message}");
                 }
                 return isResponseSuccessful;
             }
@@ -158,8 +165,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task SendRunnerExecutionDataToCentralDBAsync(AccountReportRunner accountReportRunner, bool isUpdate = false)
         {
-            if (restClient != null)
-            {
+            if (restClient != null && RunSetDataWasSentSuccessfully)
+            {               
                 string message = string.Format("execution data to Central DB for the Runner:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportRunner.Name, accountReportRunner.Id, accountReportRunner.AccountReportDbRunSetId);
                 try
                 {
@@ -182,7 +189,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task SendBusinessflowExecutionDataToCentralDBAsync(AccountReportBusinessFlow accountReportBusinessFlow, bool isUpdate = false)
         {
-            if (restClient != null)
+            if (restClient != null && RunSetDataWasSentSuccessfully)
             {
                 string message = string.Format("execution data to Central DB for the Business Flow:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportBusinessFlow.Name, accountReportBusinessFlow.Id, accountReportBusinessFlow.AccountReportDbRunnerId);
                 bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_BUSINESSFLOW_EXECUTION_DATA, accountReportBusinessFlow, isUpdate).ConfigureAwait(false);
@@ -199,7 +206,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task SendActivityGroupExecutionDataToCentralDBAsync(AccountReportActivityGroup accountReportActivityGroup, bool isUpdate = false)
         {
-            if (restClient != null)
+            if (restClient != null && RunSetDataWasSentSuccessfully)
             {
                 RestRequest restRequest = new RestRequest(SEND_ACTIVITYGROUP_EXECUTION_DATA, isUpdate ? Method.Put : Method.Post) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReportActivityGroup);
                 string message = string.Format("execution data to Central DB for the Activities Group:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportActivityGroup.Name, accountReportActivityGroup.Id, accountReportActivityGroup.AccountReportDbBusinessFlowId);
@@ -224,7 +231,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task SendActivityExecutionDataToCentralDBAsync(AccountReportActivity accountReportActivity, bool isUpdate = false)
         {
-            if (restClient != null)
+            if (restClient != null && RunSetDataWasSentSuccessfully)
             {
                 string message = string.Format("execution data to Central DB for the Activity:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportActivity.Name, accountReportActivity.Id, accountReportActivity.AccountReportDbActivityGroupId);
                 try
@@ -248,7 +255,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task SendActionExecutionDataToCentralDBAsync(AccountReportAction accountReportAction, bool isUpdate = false)
         {
-            if (restClient != null)
+            if (restClient != null && RunSetDataWasSentSuccessfully)
             {
                 string message = string.Format("execution data to Central DB for the Action:'{0}' (Execution Id:'{1}', Parent Activity Id:'{2}')", accountReportAction.Name, accountReportAction.Id, accountReportAction.AccountReportDbActivityId);
                 try
@@ -300,7 +307,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task SendScreenShotsToCentralDBAsync(Guid executionId, List<string> filePaths)
         {
-            if (restClient != null)
+            if (restClient != null && RunSetDataWasSentSuccessfully)
             {
                 if (filePaths != null && filePaths.Count > 0)
                 {
@@ -341,7 +348,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task UploadImageAsync(Guid executionId, List<string> filePaths)
         {
-            if (restClient != null)
+            if (restClient != null && RunSetDataWasSentSuccessfully)
             {
                 string message = string.Format("screenshot/s to Central DB for Execution Id:'{0}'", executionId);
                 try
@@ -375,7 +382,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task SendArtifactsToCentralDBAsync(Guid executionId, ObservableList<ArtifactDetails> artifactDetails)
         {
-            if (restClient != null)
+            if (restClient != null && RunSetDataWasSentSuccessfully)
             {
                 if (artifactDetails != null && artifactDetails.Count > 0)
                 {
@@ -423,7 +430,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task UploadArtifactsAsync(Guid executionId, List<ArtifactDetails> artifactDetails)
         {
-            if (restClient != null)
+            if (restClient != null && RunSetDataWasSentSuccessfully)
             {
                 string message = string.Format("artifact/s to Central DB for Execution Id:'{0}'", executionId);
                 try
