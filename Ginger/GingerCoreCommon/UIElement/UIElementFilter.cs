@@ -65,6 +65,9 @@ namespace Amdocs.Ginger.Common.UIElement
                 }
             }
         }
+
+        private bool mIsCommonElementType;
+        public bool IsCommonElementType { get { return mIsCommonElementType; } set { mIsCommonElementType = value; } }
         public string ElementExtraInfo { get; set; }
         public override string ItemName { get; set; }
 

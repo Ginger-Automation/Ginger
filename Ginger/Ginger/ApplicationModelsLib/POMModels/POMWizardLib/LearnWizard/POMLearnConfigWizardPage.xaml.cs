@@ -83,7 +83,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xLearnOnlyMappedElements.BindControl(mBasePOMWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
                     xLearnScreenshotsOfElements.BindControl(mBasePOMWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnScreenshotsOfElements));
                     xLearnShadowDOMElements.BindControl(mBasePOMWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnShadowDomElements));
-                    if(GingerPlayConfiguration.IsGingerPlayConfigured())
+                    if (GingerPlayConfiguration.IsGingerPlayConfigured())
                     {
                         xLearnPOMByAI.BindControl(mBasePOMWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnPOMByAI));
                     }

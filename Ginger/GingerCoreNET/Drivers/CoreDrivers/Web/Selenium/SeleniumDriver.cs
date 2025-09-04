@@ -5713,8 +5713,8 @@ namespace GingerCore.Drivers
 
                         IWebElement webElement = GetWebElement(parentContext, htmlElemNode, elementTypeEnum.Item2, isShadowRootDetected);
 
-                        // Skip invisible elements
-                        if (!IsElementVisible(webElement))
+                        /// Skip invisible elements (but allow SVG elements even if they might appear invisible)
+                        if (!IsElementVisible(webElement) && !IsSvgElement(elementTypeEnum.Item2))
                         {
                             continue;
                         }
@@ -5727,10 +5727,15 @@ namespace GingerCore.Drivers
                         // Add element to found elements list
                         foundElementsList.Add(foundElementInfo);
                         allReadElem.Add(foundElementInfo);
+                        // Special handling for SVG elements to capture child elements
+                        if (IsSvgElement(elementTypeEnum.Item2))
+                        {
+                            ProcessSvgChildElements(pomSetting, htmlElemNode, foundElementInfo, path, foundElementsList, PomMetaData, isShadowRootDetected, ScreenShot);
+                        }
+                        
 
                         if (pomSetting.LearnPOMByAI)
                         {
-
                             // Only enqueue if not already processed
                             if (!foundElementInfo.IsProcessed)
                             {
@@ -5778,6 +5783,392 @@ namespace GingerCore.Drivers
             ProcessFormElements(formElementsList, Driver, pomSetting, foundElementsList, PomMetaData);
 
             return foundElementsList;
+        }
+
+
+        private bool IsSvgElement(eElementType elementType)
+        {
+            return elementType switch
+            {
+                eElementType.Svg => true,
+                _ => false
+            };
+        }
+
+        private void ProcessSvgChildElements(PomSetting pomSetting, HtmlNode svgHtmlNode, HTMLElementInfo svgElementInfo, string path, ObservableList<ElementInfo> foundElementsList, ObservableList<POMPageMetaData> PomMetaData, bool isShadowRootDetected = false, Bitmap ScreenShot = null)
+        {
+            try
+            {
+                // Get all child elements of the SVG
+                var svgChildElements = svgHtmlNode.Descendants()
+                    .Where(x => !x.Name.StartsWith('#') && IsSvgChildElement(x.Name));
+
+                foreach (HtmlNode svgChildNode in svgChildElements)
+                {
+                    try
+                    {
+                        Tuple<string, eElementType> childElementType = GetElementTypeEnum(htmlNode: svgChildNode,TypeAtt:nameof(eElementType.Svg));
+
+                        // Check if this SVG child element should be learned
+                        if (ShouldLearnElement(pomSetting, childElementType.Item2))
+                        {
+                            // Create enhanced XPath for SVG child element
+                            string svgChildXPath = CreateEnhancedSvgElementXPath(svgChildNode);
+
+                            try
+                            {
+                                // Try to find the SVG child element
+                                IWebElement svgChildWebElement = Driver.FindElement(By.XPath(svgChildXPath));
+
+                                if (svgChildWebElement != null)
+                                {
+                                    HTMLElementInfo svgChildElementInfo = CreateHTMLElementInfo(
+                                        svgChildWebElement,
+                                        path,
+                                        svgChildNode,
+                                        childElementType.Item1,
+                                        childElementType.Item2,
+                                        svgElementInfo.Guid,
+                                        pomSetting,
+                                        foundElementsList.Count.ToString(),
+                                        ScreenShot: ScreenShot
+                                    );
+
+                                    // Add SVG-specific locators and properties
+                                    AddSvgSpecificLocators(svgChildElementInfo, svgChildNode);
+                                    AddSvgSpecificProperties(svgChildElementInfo, svgChildNode);
+
+                                    // Set parent SVG element
+                                    svgChildElementInfo.Properties.Add(new ControlProperty
+                                    {
+                                        Name = "ParentSVGElement",
+                                        Value = svgElementInfo.Guid.ToString(),
+                                        ShowOnUI = false
+                                    });
+
+                                    foundElementsList.Add(svgChildElementInfo);
+                                    allReadElem.Add(svgChildElementInfo);
+
+                                    if (pomSetting.LearnPOMByAI)
+                                    {
+                                        if (!svgChildElementInfo.IsProcessed)
+                                        {
+                                            processingQueue.Enqueue(svgChildElementInfo);
+                                        }
+                                        TriggerBatchProcessing(pomSetting);
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, $"Failed to locate SVG child element '{svgChildNode.Name}': {ex.Message}");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Failed to process SVG child element '{svgChildNode.Name}': {ex.Message}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to process SVG child elements: {ex.Message}");
+            }
+        }
+
+        private bool IsSvgChildElement(string elementName)
+        {
+            var svgChildElements = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                // Basic SVG shapes
+                "rect", "path", "g", "text", "circle", "ellipse", "line", "polygon", "polyline",
+        
+                // SVG containers and groups
+                "defs", "use", "symbol", "marker", "pattern", "clipPath", "mask", "image",
+                "foreignObject", "switch", "title", "desc",
+        
+                // SVG text elements
+                "tspan", "textPath",
+        
+                // SVG gradients and filters
+                "linearGradient", "radialGradient", "stop", "filter", "feGaussianBlur",
+        
+                // SVG animations
+                "animate", "animateTransform", "animateMotion"
+            };
+
+            return svgChildElements.Contains(elementName);
+        }
+
+        private string CreateEnhancedSvgElementXPath(HtmlNode svgElement)
+        {
+            // First try to create XPath using unique attributes
+            string xpathWithAttributes = CreateSvgXPathWithAttributes(svgElement);
+            if (!string.IsNullOrEmpty(xpathWithAttributes))
+            {
+                return xpathWithAttributes;
+            }
+
+            // Fallback to position-based XPath
+            return CreateSvgElementXPath(svgElement);
+        }
+
+        private string CreateSvgElementXPath(HtmlNode svgElement)
+        {
+            // Build XPath using local-name() for SVG elements
+            var pathParts = new List<string>();
+            HtmlNode current = svgElement;
+
+            while (current != null && current.Name != "#document")
+            {
+                string nodeName = current.Name.ToLower();
+
+                if (IsSvgChildElement(nodeName) || nodeName == "svg")
+                {
+                    // Count siblings with same name
+                    int position = 1;
+                    var siblings = current.ParentNode?.ChildNodes
+                        .Where(n => n.Name.Equals(current.Name, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+
+                    if (siblings?.Count > 1)
+                    {
+                        position = siblings.IndexOf(current) + 1;
+                        pathParts.Insert(0, $"*[local-name()='{nodeName}'][{position}]");
+                    }
+                    else
+                    {
+                        pathParts.Insert(0, $"*[local-name()='{nodeName}']");
+                    }
+                }
+                else
+                {
+                    // For non-SVG elements, use regular XPath
+                    pathParts.Insert(0, current.Name.ToLower());
+                }
+
+                current = current.ParentNode;
+
+                // Stop at SVG root or HTML element
+                if (current?.Name.Equals("svg", StringComparison.OrdinalIgnoreCase) == true ||
+                    current?.Name.Equals("html", StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    break;
+                }
+            }
+
+            return "//" + string.Join("/", pathParts);
+        }
+
+        private string CreateSvgXPathWithAttributes(HtmlNode svgElement)
+        {
+            string nodeName = svgElement.Name.ToLower();
+            var conditions = new List<string>();
+
+            // Priority order for SVG attributes
+            var svgAttributes = new[] { "data-node-id", "data-backend-id", "data-parent-id", "class", "id", "transform", "href" };
+
+            foreach (var attr in svgAttributes)
+            {
+                string value = svgElement.GetAttributeValue(attr, null);
+                if (!string.IsNullOrEmpty(value))
+                {
+                    if (attr == "class")
+                    {
+                        // Handle multiple classes
+                        var classes = value.Split(' ').Where(c => !string.IsNullOrWhiteSpace(c));
+                        foreach (var className in classes)
+                        {
+                            conditions.Add($"contains(@class, '{className}')");
+                        }
+                    }
+                    else if (attr == "href" && value.StartsWith("#"))
+                    {
+                        conditions.Add($"@{attr}='{value}'");
+                    }
+                    else if (!IsLikelyDynamic(value))
+                    {
+                        conditions.Add($"@{attr}='{value}'");
+                    }
+                }
+            }
+
+            if (conditions.Count > 0)
+            {
+                string xpath = $"//*[local-name()='{nodeName}' and {string.Join(" and ", conditions)}]";
+                return xpath;
+            }
+
+            return null;
+        }
+
+        private void AddSvgSpecificLocators(HTMLElementInfo elementInfo, HtmlNode svgNode)
+        {
+            // Add data-node-id locator
+            string dataNodeId = svgNode.GetAttributeValue("data-node-id", null);
+            if (!string.IsNullOrEmpty(dataNodeId))
+            {
+                elementInfo.Locators.Add(new ElementLocator
+                {
+                    LocateBy = eLocateBy.ByXPath,
+                    LocateValue = $"//*[local-name()='{svgNode.Name.ToLower()}' and @data-node-id='{dataNodeId}']",
+                    IsAutoLearned = true,
+                    Active = true
+                });
+            }
+
+            // Add data-backend-id locator
+            string dataBackendId = svgNode.GetAttributeValue("data-backend-id", null);
+            if (!string.IsNullOrEmpty(dataBackendId))
+            {
+                elementInfo.Locators.Add(new ElementLocator
+                {
+                    LocateBy = eLocateBy.ByXPath,
+                    LocateValue = $"//*[local-name()='{svgNode.Name.ToLower()}' and @data-backend-id='{dataBackendId}']",
+                    IsAutoLearned = true,
+                    Active = true
+                });
+            }
+
+            // Add class-based locator for SVG
+            string className = svgNode.GetAttributeValue("class", null);
+            if (!string.IsNullOrEmpty(className))
+            {
+                var classes = className.Split(' ').Where(c => !string.IsNullOrWhiteSpace(c));
+                foreach (var cls in classes.Take(2)) // Take first 2 classes to avoid overly complex locators
+                {
+                    elementInfo.Locators.Add(new ElementLocator
+                    {
+                        LocateBy = eLocateBy.ByXPath,
+                        LocateValue = $"//*[local-name()='{svgNode.Name.ToLower()}' and contains(@class, '{cls}')]",
+                        IsAutoLearned = true,
+                        Active = false // Set as backup locator
+                    });
+                }
+            }
+
+            // Add relative XPath based on parent
+            string relativeXPath = CreateSvgRelativeXPath(svgNode);
+            if (!string.IsNullOrEmpty(relativeXPath))
+            {
+                elementInfo.Locators.Add(new ElementLocator
+                {
+                    LocateBy = eLocateBy.ByRelXPath,
+                    LocateValue = relativeXPath,
+                    IsAutoLearned = true,
+                    Active = true
+                });
+            }
+        }
+
+        private string CreateSvgRelativeXPath(HtmlNode svgNode)
+        {
+            try
+            {
+                // Create relative XPath using parent context
+                var parent = svgNode.ParentNode;
+                if (parent != null)
+                {
+                    string parentSelector = "";
+                    
+                    // Try to find unique parent identifier
+                    string parentClass = parent.GetAttributeValue("class", null);
+                    string parentDataNodeId = parent.GetAttributeValue("data-node-id", null);
+                    
+                    if (!string.IsNullOrEmpty(parentDataNodeId))
+                    {
+                        parentSelector = $"*[@data-node-id='{parentDataNodeId}']";
+                    }
+                    else if (!string.IsNullOrEmpty(parentClass))
+                    {
+                        var firstClass = parentClass.Split(' ').FirstOrDefault();
+                        if (!string.IsNullOrEmpty(firstClass))
+                        {
+                            parentSelector = $"*[contains(@class, '{firstClass}')]";
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(parentSelector))
+                    {
+                        string childSelector = svgNode.Name.ToLower();
+                        string dataNodeId = svgNode.GetAttributeValue("data-node-id", null);
+                        string className = svgNode.GetAttributeValue("class", null);
+
+                        if (!string.IsNullOrEmpty(dataNodeId))
+                        {
+                            return $"//{parentSelector}//*[local-name()='{childSelector}' and @data-node-id='{dataNodeId}']";
+                        }
+                        else if (!string.IsNullOrEmpty(className))
+                        {
+                            var firstClass = className.Split(' ').FirstOrDefault();
+                            if (!string.IsNullOrEmpty(firstClass))
+                            {
+                                return $"//{parentSelector}//*[local-name()='{childSelector}' and contains(@class, '{firstClass}')]";
+                            }
+                        }
+                    }
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Failed to create SVG relative XPath: {ex.Message}");
+                return null;
+            }
+        }
+
+        private void AddSvgSpecificProperties(HTMLElementInfo elementInfo, HtmlNode svgNode)
+        {
+            // Add SVG-specific attributes as properties
+            var svgSpecificAttributes = new[] 
+            { 
+                "data-node-id", "data-backend-id", "data-parent-id", 
+                "transform", "href", "fill", "style", "text-anchor",
+                "x", "y", "class"
+            };
+
+            foreach (var attr in svgSpecificAttributes)
+            {
+                string value = svgNode.GetAttributeValue(attr, null);
+                if (!string.IsNullOrEmpty(value))
+                {
+                    elementInfo.Properties.Add(new ControlProperty
+                    {
+                        Name = $"svg-{attr}",
+                        Value = value,
+                        ShowOnUI = true
+                    });
+                }
+            }
+
+            // Add text content if available
+            if (!string.IsNullOrEmpty(svgNode.InnerText?.Trim()))
+            {
+                elementInfo.Properties.Add(new ControlProperty
+                {
+                    Name = "svg-text",
+                    Value = svgNode.InnerText.Trim(),
+                    ShowOnUI = true
+                });
+            }
+
+            // Add position information from transform attribute
+            string transform = svgNode.GetAttributeValue("transform", null);
+            if (!string.IsNullOrEmpty(transform))
+            {
+                var translateMatch = System.Text.RegularExpressions.Regex.Match(transform, @"translate\(([^)]+)\)");
+                if (translateMatch.Success)
+                {
+                    elementInfo.Properties.Add(new ControlProperty
+                    {
+                        Name = "svg-translate",
+                        Value = translateMatch.Groups[1].Value,
+                        ShowOnUI = true
+                    });
+                }
+            }
         }
 
 
@@ -5932,7 +6323,6 @@ namespace GingerCore.Drivers
             {
                 return true; // Learn all elements if no filtering is specified
             }
-
             return pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(elementType));
         }
 
@@ -5946,6 +6336,11 @@ namespace GingerCore.Drivers
                 {
                     xpath = string.Concat(htmlElemNode.ParentNode.XPath, "//*[local-name()='svg']");
                 }
+            }
+            else if (IsSvgElement(elementType))
+            {
+                // For SVG child elements, use local-name() in XPath
+                xpath = CreateSvgElementXPath(htmlElemNode);
             }
 
             return parentContext is ShadowRoot shadowRoot ? shadowRoot.FindElement(By.CssSelector(shadowDOM.ConvertXPathToCssSelector(xpath))) :
@@ -6283,6 +6678,10 @@ namespace GingerCore.Drivers
                 {
                     elementTypeAtt = htmlNode.Attributes["type"].Value;
                 }
+                else
+                {
+                    elementTypeAtt = !string.IsNullOrEmpty(TypeAtt) ? TypeAtt : string.Empty;
+                }
             }
             else
             {
@@ -6297,7 +6696,7 @@ namespace GingerCore.Drivers
             return returnTuple;
         }
 
-        private static eElementType GetElementType(string elementTagName, string elementTypeAtt)
+        private static eElementType GetElementType(string elementTagName, string elementTypeAtt)//elementTag = g ,typeatt = svg
         {
             eElementType elementType;
             elementType = elementTagName.ToUpper() switch
@@ -6332,7 +6731,9 @@ namespace GingerCore.Drivers
                 "MENU" => eElementType.MenuBar,
                 "H1" or "H2" or "H3" or "H4" or "H5" or "H6" or "P" => eElementType.Text,
                 "SVG" => eElementType.Svg,
-                _ => eElementType.Unknown,
+                "G" or "PATH" or "RECT" or "CIRCLE" or "ELLIPSE" or "LINE" or "POLYGON" or "POLYLINE" or "USE" when elementTypeAtt.Equals(nameof(eElementType.Svg),StringComparison.InvariantCultureIgnoreCase) => eElementType.Svg,
+
+               _ => eElementType.Unknown,
             };
             return elementType;
         }
@@ -9889,8 +10290,7 @@ namespace GingerCore.Drivers
 
 
                     case ActUIElement.eElementAction.DoubleClick:
-                        OpenQA.Selenium.Interactions.Actions actionDoubleClick = new OpenQA.Selenium.Interactions.Actions(Driver);
-                        actionDoubleClick.Click(e).Click(e).Build().Perform();
+                        DoUIElementClick(act.ElementAction, e);
                         break;
 
                     case ActUIElement.eElementAction.MouseRightClick:
@@ -10084,6 +10484,10 @@ namespace GingerCore.Drivers
                         break;
                 }
             }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error: Unknown Action: {act.ElementAction}");
+            }
             finally
             {
                 if (act.ElementLocateBy == eLocateBy.POMElement && HandelIFramShiftAutomaticallyForPomElement)
@@ -10202,16 +10606,21 @@ namespace GingerCore.Drivers
             switch (clickType)
             {
                 case ActUIElement.eElementAction.Click:
-                    clickElement.Click();
+                        clickElement.Click();
                     break;
 
-                case ActUIElement.eElementAction.JavaScriptClick:
-                    ((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].click()", clickElement);
+                case ActUIElement.eElementAction.JavaScriptClick:                    
+                        ((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].click()", clickElement);
                     break;
 
-                case ActUIElement.eElementAction.MouseClick:
-                    OpenQA.Selenium.Interactions.Actions action = new OpenQA.Selenium.Interactions.Actions(Driver);
-                    action.MoveToElement(clickElement).Click().Build().Perform();
+                case ActUIElement.eElementAction.MouseClick:                    
+                        OpenQA.Selenium.Interactions.Actions action = new OpenQA.Selenium.Interactions.Actions(Driver);
+                        action.MoveToElement(clickElement).Click().Build().Perform();                    
+                    break;
+
+                case ActUIElement.eElementAction.DoubleClick:
+                        OpenQA.Selenium.Interactions.Actions actionDoubleClick = new OpenQA.Selenium.Interactions.Actions(Driver);
+                        actionDoubleClick.Click(clickElement).Click(clickElement).Build().Perform();  
                     break;
 
                 case ActUIElement.eElementAction.MousePressRelease:
@@ -10223,7 +10632,7 @@ namespace GingerCore.Drivers
                 case ActUIElement.eElementAction.AsyncClick:
                     try
                     {
-                        ((IJavaScriptExecutor)Driver).ExecuteScript("var el=arguments[0]; setTimeout(function() { el.click(); }, 100);", clickElement);
+                            ((IJavaScriptExecutor)Driver).ExecuteScript("var el=arguments[0]; setTimeout(function() { el.click(); }, 100);", clickElement);
                     }
                     catch (Exception)
                     {
@@ -10233,6 +10642,19 @@ namespace GingerCore.Drivers
             }
         }
 
+        private bool IsSvgElementByWebElement(IWebElement element)
+        {
+            try
+            {
+                string tagName = element.TagName?.ToLower();
+                var svgTags = new HashSet<string> { "svg", "g", "path", "rect", "circle", "ellipse", "line", "polygon", "polyline", "text", "use" };
+                return svgTags.Contains(tagName);
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         public bool ClickAndValidteHandler(ActUIElement act)
         {
