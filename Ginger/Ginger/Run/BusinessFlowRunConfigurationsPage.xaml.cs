@@ -88,7 +88,8 @@ namespace Ginger.Run
             grdVariables.AddToolbarTool("@Undo_16x16.png", "Reset " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " to Original Configurations", new RoutedEventHandler(ResetBusFlowVariables));
             grdVariables.AddToolbarTool("@Share_16x16.png", "Share Selected " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Value to all Similar " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " in " + GingerDicser.GetTermResValue(eTermResKey.RunSet), new RoutedEventHandler(CopyBusFlowVariables));
             grdVariables.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Rules, "Rules page", new RoutedEventHandler(ShowRulesPage));
-            grdVariables.RowDoubleClick += VariablesGrid_grdMain_MouseDoubleClick;
+            // Removed: grdVariables.RowDoubleClick += VariablesGrid_grdMain_MouseDoubleClick;
+            // Double-click to edit variables is disabled in Run Set Configurations to prevent unintended variable edits
 
             SetVariablesGridView();
             LoadGridData();
@@ -365,11 +366,6 @@ namespace Ginger.Run
             {
                 Reporter.ToUser(eUserMsgKey.AskToSelectVariable);
             }
-        }
-
-        private void VariablesGrid_grdMain_MouseDoubleClick(object sender, EventArgs e)
-        {
-            EditVar();
         }
 
         private void EditVar()
