@@ -72,6 +72,18 @@ namespace GingerCoreNET.Tests.External.ZAP
             Assert.IsFalse(_service.IsZapRunning());
         }
 
+
+        [TestMethod]
+        public async Task WaitTillPassiveScanCompleted_WhenNonZeroThenZero_PollsUntilZero()
+        {
+            _mockZap.SetupSequence(c => c.RecordsToScan())
+                    .Returns(new ApiResponseElement("recordsToScan", "3"))
+                    .Returns(new ApiResponseElement("recordsToScan", "0"));
+
+            await _service.WaitTillPassiveScanCompleted();
+
+            _mockZap.Verify(c => c.RecordsToScan(), Times.AtLeast(2));
+        }
         [TestMethod]
         public async Task WaitTillPassiveScanCompleted_WhenZeroRecords_Completes()
         {
@@ -108,6 +120,10 @@ namespace GingerCoreNET.Tests.External.ZAP
                           }));
 
             _service.AddUrlToScanTree("http://test.com");
+
+            _mockZap.Verify(c => c.AccessUrl("http://test.com", "false"), Times.Once);
+            _mockZap.Verify(c => c.Urls("http://test.com"), Times.Once);
+
         }
 
         [TestMethod]
@@ -118,7 +134,7 @@ namespace GingerCoreNET.Tests.External.ZAP
                     .Returns(new ApiResponseElement("OK", "OK"));
             _mockZap.Setup(c => c.Urls("http://bad.com"))
                     .Returns(new ApiResponseList("urls", new List<IApiResponse>()));
-            _service.AddUrlToScanTree("http://bad.com");
+            _service.AddUrlToScanTree("http://bad.com"); // Pass the same URL as mocked, not empty string
         }
 
         [TestMethod]
@@ -133,6 +149,7 @@ namespace GingerCoreNET.Tests.External.ZAP
 
             var result = _service.GetUrlsFromScanTree("http://test.com");
             Assert.AreEqual(2, result.Count);
+            CollectionAssert.AreEquivalent(new List<string> { "http://test.com", "http://another.com" }, result);
         }
 
         [TestMethod]
@@ -184,23 +201,36 @@ namespace GingerCoreNET.Tests.External.ZAP
         }
 
         [TestMethod]
-        public void EvaluateScanResultAPI_WhenVulnerabilityExceedsThreshold_ReturnsFalse()
+        public void EvaluateScanResultAPI_WhenListedAlertHasFindings_ReturnsFalse()
         {
             var alertSummary = new ApiResponseSet("alerts", new Dictionary<string, IApiResponse>
-            {
-                { "SQL Injection", new ApiResponseElement("SQL Injection", "5") }
-            });
+          {
+              { "SQL Injection", new ApiResponseElement("SQL Injection", "5") }
+          });
 
             _mockZap.Setup(c => c.AlertsSummary("http://test.com"))
                           .Returns(alertSummary);
 
             var thresholds = new ObservableList<OperationValues>
-            {
-                new OperationValues { Value = "SQL Injection" }
-            };
+          {
+              new OperationValues { Value = "SQL Injection" }
+          };
 
             var result = _service.EvaluateScanResultAPI("http://test.com", thresholds);
             Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void EvaluateScanResultAPI_WhenAlertNotListed_ReturnsTrue()
+        {
+            var alertSummary = new ApiResponseSet("alerts", new Dictionary<string, IApiResponse>
+          {
+              { "XSS", new ApiResponseElement("XSS", "2") }
+          });
+            _mockZap.Setup(c => c.AlertsSummary("http://api.test")).Returns(alertSummary);
+            var thresholds = new ObservableList<OperationValues> { new OperationValues { Value = "SQL Injection" } };
+            var result = _service.EvaluateScanResultAPI("http://api.test", thresholds);
+            Assert.IsTrue(result);
         }
 
         [TestMethod]
@@ -218,6 +248,19 @@ namespace GingerCoreNET.Tests.External.ZAP
             var result = _service.GetAlertSummary("http://test.com");
             Assert.AreEqual(2, result.Count);
             Assert.IsTrue(result.Any(t => t == ("XSS", 3)));
+            Assert.IsTrue(result.Any(t => t == ("SQL Injection", 1)));
+        }
+
+        [TestMethod]
+        public void GetAlertSummary_IgnoresNonIntegerCounts()
+        {
+            var alertSummary = new ApiResponseSet("alerts", new Dictionary<string, IApiResponse>
+            {
+                { "Weird Alert", new ApiResponseElement("Weird Alert", "abc") }
+            });
+            _mockZap.Setup(c => c.AlertsSummary("http://weird.com")).Returns(alertSummary);
+            var result = _service.GetAlertSummary("http://weird.com");
+            Assert.AreEqual(0, result.Count);
         }
     }
 }

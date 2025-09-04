@@ -14,6 +14,7 @@ namespace Amdocs.Ginger.CoreNET.External.ZAP
         public IApiResponse Version() => _client.core.version();
         public IApiResponse RecordsToScan() => _client.pscan.recordsToScan();
 
+        // NOTE: ZAP API requires boolean flags as strings ("true"/"false") by design.
         public IApiResponse AccessUrl(string site, string recurse) => _client.core.accessUrl(site, recurse);
         public IApiResponse Urls(string baseUrl) => _client.core.urls(baseUrl);
         public IApiResponse Scan(string url, string recurse, string inscopeonly,

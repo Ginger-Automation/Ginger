@@ -199,23 +199,17 @@ namespace GingerCoreNET.External.ZAP
         /// <param name="siteToTest">The site URL to add to the scan tree.</param>
         public void AddUrlToScanTree(string siteToTest)
         {
-            try
+            _zapClient.AccessUrl(siteToTest, "false");
+            var urls = GetUrlsFromScanTree(siteToTest);
+            if (urls.Contains(siteToTest))
             {
-                _zapClient.AccessUrl(siteToTest, "false");
-                var urls = GetUrlsFromScanTree(siteToTest);
-                if (urls.Contains(siteToTest))
-                {
-                    Reporter.ToLog(eLogLevel.INFO, $"{siteToTest} has been added to scan tree");
-                }
-                else
-                {
-                    throw new InvalidOperationException($"{siteToTest} not added to scan tree, active scan will not be possible");
-                }
+                Reporter.ToLog(eLogLevel.INFO, $"{siteToTest} has been added to scan tree");
             }
-            catch (Exception ex)
+            else
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to add {siteToTest} to scan tree: {ex.Message}", ex);
+                throw new InvalidOperationException($"{siteToTest} not added to scan tree, active scan will not be possible");
             }
+
         }
 
         /// <summary>
