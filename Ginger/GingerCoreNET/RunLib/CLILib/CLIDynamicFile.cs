@@ -123,10 +123,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     }
                     cliHelper.SetSourceControlBranch(exeConfiguration.SolutionScmDetails.Branch);
 
-                }
-                if (exeConfiguration.UseTempFolder)
-                {
-                    exeConfiguration.SolutionLocalPath = cliHelper.GetTempFolderPathForRepo();
+                    if (exeConfiguration.UseTempFolder)
+                    {
+                        exeConfiguration.SolutionLocalPath = cliHelper.GetTempFolderPathForRepo(exeConfiguration.SolutionScmDetails.SolutionRepositoryUrl,exeConfiguration.SolutionScmDetails.Branch);
+                    }
                 }
                 if (!string.IsNullOrEmpty(exeConfiguration.SolutionLocalPath))
                 {

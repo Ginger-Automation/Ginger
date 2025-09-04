@@ -84,10 +84,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             AccountReportAction accountReportAction = new AccountReportAction();
             List<string> newScreenShotsList = [];
             accountReportAction.Id = action.ExecutionId;
-            accountReportAction.EntityId = action.Guid;
-            accountReportAction.AccountReportDbActivityId = action.ParentExecutionId;
-            accountReportAction.ExecutionId = (Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
-            accountReportAction.Name = action.Description;
+            //accountReportAction.EntityId = action.Guid;
+            //accountReportAction.AccountReportDbActivityId = action.ParentExecutionId;
+            //accountReportAction.ExecutionId = (Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
+            //accountReportAction.Name = action.Description;
+            accountReportAction.StartTimeStamp = action.StartTimeStamp;
             accountReportAction.EndTimeStamp = action.EndTimeStamp;
             accountReportAction.ElapsedEndTimeStamp = action.Elapsed;
             accountReportAction.RunStatus = (eExecutionStatus)action.Status;
@@ -162,10 +163,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             AccountReportActivity accountReportActivity = new AccountReportActivity
             {
                 Id = activity.ExecutionId,
-                EntityId = activity.Guid,
-                AccountReportDbActivityGroupId = activity.ParentExecutionId,
-                ExecutionId = (Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID,
-                Name = activity.ActivityName,
+                //EntityId = activity.Guid,
+                //AccountReportDbActivityGroupId = activity.ParentExecutionId,
+                //ExecutionId = (Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID,
+                //Name = activity.ActivityName,
+                StartTimeStamp = activity.StartTimeStamp,
                 EndTimeStamp = activity.EndTimeStamp,
                 ElapsedEndTimeStamp = activity.Elapsed,
                 RunStatus = (eExecutionStatus)activity.Status,
@@ -241,10 +243,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             AccountReportActivityGroup accountReportActivityGroup = new AccountReportActivityGroup
             {
                 Id = activitiesGroup.ExecutionId,
-                EntityId = activitiesGroup.Guid,
-                AccountReportDbBusinessFlowId = activitiesGroup.ParentExecutionId,
-                ExecutionId = (Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID,
-                Name = activitiesGroup.Name,
+                //EntityId = activitiesGroup.Guid,
+                //AccountReportDbBusinessFlowId = activitiesGroup.ParentExecutionId,
+                //ExecutionId = (Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID,
+                //Name = activitiesGroup.Name,
+                StartTimeStamp = activitiesGroup.StartTimeStamp,
                 EndTimeStamp = activitiesGroup.EndTimeStamp,
                 ElapsedEndTimeStamp = activitiesGroup.Elapsed,
                 RunStatus = (eExecutionStatus)activitiesGroup.RunStatus,
@@ -311,6 +314,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 AccountReportDbRunnerId = businessFlow.ParentExecutionId,
                 ExecutionId = (Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID,
                 Name = businessFlow.Name,
+                StartTimeStamp = businessFlow.StartTimeStamp,
                 EndTimeStamp = businessFlow.EndTimeStamp,
                 ElapsedEndTimeStamp = businessFlow.Elapsed,
                 RunStatus = (eExecutionStatus)businessFlow.RunStatus,
@@ -441,6 +445,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             };
             accountReportRunner.Name = gingerRunner.Name;
             accountReportRunner.ElapsedEndTimeStamp = gingerRunner.Executor.Elapsed;
+            accountReportRunner.StartTimeStamp = gingerRunner.Executor.StartTimeStamp;
             accountReportRunner.EndTimeStamp = gingerRunner.Executor.EndTimeStamp;
             accountReportRunner.ExternalID = gingerRunner.ExternalID;
             accountReportRunner.ExternalID2 = gingerRunner.ExternalID2;
@@ -497,15 +502,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 ExecutedByUser = System.Environment.UserName.ToString(),
                 GingerVersion = ApplicationInfo.ApplicationUIversion,
                 Account = WorkSpace.Instance.Solution.Account,
-                Product = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.Product)),
-                Release = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.Release)),
-                Iteration = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.Iteration)),
-                TestType = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.TestType)),
-                UserCategory1 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory1)),
-                UserCategory2 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory2)),
-                UserCategory3 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory3)),
-                BusinessProcessTag = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.BusinessProcessTag)),
-                SubBusinessProcessTag = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.SubBusinessProcessTag)),
+                Product = runSetConfig.CategoriesDefinitions.Any(x => x.Category == SolutionCategory.eSolutionCategories.Product) ? GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.Product)) : string.Empty,
+                Release = runSetConfig.CategoriesDefinitions.Any(x => x.Category == SolutionCategory.eSolutionCategories.Release) ? GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.Release)) : string.Empty,
+                Iteration = runSetConfig.CategoriesDefinitions.Any(x => x.Category == SolutionCategory.eSolutionCategories.Iteration) ? GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.Iteration)) : string.Empty,
+                TestType = runSetConfig.CategoriesDefinitions.Any(x => x.Category == SolutionCategory.eSolutionCategories.TestType) ? GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.TestType)) : string.Empty,
+                UserCategory1 = runSetConfig.CategoriesDefinitions.Any(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory1) ? GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory1)) : string.Empty,
+                UserCategory2 = runSetConfig.CategoriesDefinitions.Any(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory2) ? GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory2)) : string.Empty,
+                UserCategory3 = runSetConfig.CategoriesDefinitions.Any(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory3) ? GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory3)) : string.Empty,
+                BusinessProcessTag = runSetConfig.CategoriesDefinitions.Any(x => x.Category == SolutionCategory.eSolutionCategories.BusinessProcessTag) ? GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.BusinessProcessTag)) : string.Empty,
+                SubBusinessProcessTag = runSetConfig.CategoriesDefinitions.Any(x => x.Category == SolutionCategory.eSolutionCategories.SubBusinessProcessTag) ? GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.SubBusinessProcessTag)) : string.Empty,
                 RunStatus = eExecutionStatus.InProgress
             };
             valueExpression.Value = runSetConfig.RunDescription;
@@ -525,6 +530,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 GingerSolutionGuid = WorkSpace.Instance.Solution.Guid,
                 Name = runSetConfig.Name,
                 ElapsedEndTimeStamp = runSetConfig.Elapsed,
+                StartTimeStamp = runSetConfig.StartTimeStamp,
                 EndTimeStamp = runSetConfig.EndTimeStamp,
                 ExternalID = runSetConfig.ExternalID,
                 ExternalID2 = runSetConfig.ExternalID2

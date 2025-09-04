@@ -308,6 +308,15 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             }
         }
 
+        private void xLearnScreenshotsOfElementsCheckBox_StateChanged(object sender, RoutedEventArgs e)
+        {
+            if (mWizard != null)
+            {
+                mWizard.mPomDeltaUtils.PomLearnUtils.POM.PomSetting.LearnScreenshotsOfElements = (bool)xLearnScreenshotsOfElements.IsChecked;
+
+            }
+        }
+
         private void BindWindowFrameCombox()
         {
             mWizard.mPomDeltaUtils.SpecificFramePath = null;

@@ -214,6 +214,12 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.WireMock_Logo:
                     SetAsStaticImage("WireMock_Logo.png");
                     break;
+                case eImageType.GingerPlayLogo:
+                    SetAsStaticImage("GingerPlayLogo.png");
+                    break;
+                case eImageType.ZAP:
+                    SetAsStaticImage("ZAPLogo.png");
+                    break;
                 case eImageType.WireMockLogo16x16:
                     SetAsStaticImage("WireMockLogo16x16.png");
                     break;
@@ -304,6 +310,10 @@ namespace Amdocs.Ginger.UserControls
 
                 case eImageType.Accessibility:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UniversalAccess);
+                    break;
+
+                case eImageType.Shield:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ShieldHalved);
                     break;
                 #endregion
 

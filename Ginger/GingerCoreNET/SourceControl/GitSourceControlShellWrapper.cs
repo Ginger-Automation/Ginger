@@ -151,7 +151,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
                 Uri url = new Uri(URI);
                 string scheme = url.Scheme;
 
-                return url.Scheme + @"://" + Username + ":" + Password + "@" + url.Host + url.AbsolutePath;
+                return url.Scheme + @"://" + Uri.EscapeDataString(Username) + ":" + Uri.EscapeDataString(Password) + "@" + url.Host + url.AbsolutePath;
             }
         }
 

@@ -142,6 +142,22 @@
                                 </StackPanel>
                             </Expander.Content>
                         </Expander>
+                        <Expander x:Name="xZAPConfigExpander" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" Margin="0,0,0,0" BorderThickness="0">
+                            <Expander.Header>
+                                <Label Content="Security Testing Configurations" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                            </Expander.Header>
+                            <Expander.Content>
+                                <StackPanel Margin="10, 15, 0, 0" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <CheckBox x:Name="xEnableZAPCheckBox" Content="Enable ZAP Security Testing" Style="{StaticResource $CeckBoxStyle}" Checked="xEnableZAPCheckBox_Checked" Unchecked="xEnableZAPCheckBox_Checked"/>
+                                    <TextBlock Margin="8,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock.ToolTip>
+                                            <ToolTip Content="Enabling ZAP Security Testing will disable Auto Detect Proxy. Configure ZAP proxy settings as needed."/>
+                                        </TextBlock.ToolTip>
+                                        <TextBlock Text="&#xE946;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="Gray" Cursor="Hand"/>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Expander.Content>
+                        </Expander>
                     </StackPanel>
                 </Grid>
 
@@ -208,6 +224,9 @@
                                         <StackPanel  x:Name="xHideConsoleWindowPanel" Orientation="Horizontal" Margin="{StaticResource ChildGap}">
                                             <CheckBox x:Name="xHideConsoleWindowCB" Content="Hide Console Window" VerticalAlignment="Center" Margin="{StaticResource ChildGap}" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" Width="{StaticResource LabelWidth}"/>
                                             <CheckBox x:Name="xFrameWindowScreenShotCB" Content="Capture active frame/window on failure" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="{StaticResource ChildGap}" Style="{StaticResource $CeckBoxStyle}"/>
+                                        </StackPanel>
+                                        <StackPanel  x:Name="xNetworkLogPnl" Visibility="Collapsed" Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                            <CheckBox x:Name="xNetworklogCB" Content="Start Network Monitoring Log" VerticalAlignment="Center" Margin="{StaticResource ChildGap}" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" Width="{StaticResource LabelWidth}"/>
                                         </StackPanel>
                                         <StackPanel x:Name="xRemoteWebDriverUrlPanel" Orientation="Horizontal" Margin="{StaticResource ChildGap}">
                                             <Label x:Name="xRemoteWebDriverUrlLabel" Content="Remote Web Driver Url:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>

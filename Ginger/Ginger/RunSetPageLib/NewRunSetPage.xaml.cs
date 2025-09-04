@@ -21,11 +21,11 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
-using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
@@ -917,10 +917,18 @@ namespace Ginger.Run
             {
                 mSolutionCategoriesPage = new SolutionCategoriesPage();
                 xCategoriesFrame.ClearAndSetContent(mSolutionCategoriesPage);
+                mSolutionCategoriesPage.CategoryValueChanged += CategoriesPage_CategoryValueChanged;
             }
-            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mRunSetConfig.CategoriesDefinitions);
+            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mRunSetConfig.MergedCategoriesDefinitions);
             PropertyChangedEventManager.AddHandler(source: mRunSetConfig, handler: RunSetConfig_PropertyChanged, propertyName: allProperties);
             CollectionChangedEventManager.AddHandler(source: mRunSetConfig.Tags, handler: RunSetTags_CollectionChanged);
+        }
+        private void CategoriesPage_CategoryValueChanged(object sender, EventArgs e)
+        {
+            if (sender is ObservableList<SolutionCategoryDefinition> categories && mRunSetConfig != null)
+            {
+                mRunSetConfig.MergedCategoriesDefinitions = categories;
+            }
         }
 
         private void mRunSetConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)

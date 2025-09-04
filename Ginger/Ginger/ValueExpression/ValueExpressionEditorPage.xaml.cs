@@ -376,6 +376,7 @@ namespace Ginger
                 "Name" => eImageType.IdBadge,
                 "Phone" => eImageType.Phone,
                 "Random" => eImageType.Operations,
+                "Database" => eImageType.Database,
                 _ => throw new KeyNotFoundException(),
             };
             return eImageTypeCat;
@@ -572,7 +573,6 @@ namespace Ginger
         {
             TreeViewItem Parent = AddOrGetCategory("Data");
             TreeViewItem tviEnvs = new TreeViewItem();
-            tviEnvs.Selected += CleanHelpText;
             SetItemView(tviEnvs, "Environments", "", eImageType.Environment);
             Parent.Items.Add(tviEnvs);
 
@@ -582,22 +582,36 @@ namespace Ginger
             {
                 TreeViewItem tviEnv = new TreeViewItem();
                 SetItemView(tviEnv, env.Name, "", eImageType.Environment);
-                tviEnv.Selected += CleanHelpText;
                 tviEnvs.Items.Add(tviEnv);
 
-                foreach (EnvApplication a in env.Applications)
+                foreach (EnvApplication envApplication in env.Applications)
                 {
                     TreeViewItem tviEnvApp = new TreeViewItem();
-                    SetItemView(tviEnvApp, a.Name, "", eImageType.Window);
+                    SetItemView(tviEnvApp, envApplication.Name, "", eImageType.Window);
                     tviEnv.Items.Add(tviEnvApp);
-                    tviEnvApp.Selected += CleanHelpText;
                     //Add Env URL
                     TreeViewItem tviEnvAppURL = new TreeViewItem();
-                    string URLval = "{EnvURL App=" + a.Name + "}";
-                    SetItemView(tviEnvAppURL, a.Name + " URL =" + a.Url, URLval, eImageType.Browser);
+                    string URLval = "{EnvURL App=" + envApplication.Name + "}";
+                    SetItemView(tviEnvAppURL, envApplication.Name + " URL =" + envApplication.Url, URLval, eImageType.Browser);
                     tviEnvApp.Items.Add(tviEnvAppURL);
                     tviEnvAppURL.MouseDoubleClick += tvi_MouseDoubleClick;
 
+                    //Add Env DB
+                    TreeViewItem EnvDatabases = new TreeViewItem();
+                    SetItemView(EnvDatabases, "Databases", "", eImageType.Database);
+                    tviEnvApp.Items.Add(EnvDatabases);
+
+                    foreach (var db in envApplication.Dbs)
+                    {
+                        TreeViewItem envDb = new TreeViewItem();
+                        string Paramval = "{EnvDB App=" + envApplication.Name + " Param=" + db.Name + "}";
+                        SetItemView(envDb, db.Name, Paramval, eImageType.Database);
+                        EnvDatabases.Items.Add(envDb);
+                        envDb.MouseDoubleClick += (sender, e) => DatabaseValueExpression(sender, e, envApplication.Name, db.Name);
+                        envDb.Selected += EnvDb_Selected;
+                        envDb.Unselected += CleanHelpText;
+
+                    }
                     //Add App Global Params
                     TreeViewItem tviEnvAppGlobalParam = new TreeViewItem();
                     SetItemView(tviEnvAppGlobalParam, "Global Params", "", eImageType.Parameter);
@@ -605,12 +619,12 @@ namespace Ginger
                     tviEnvAppGlobalParam.MouseDoubleClick += tvi_MouseDoubleClick;
 
                     // Add all App General Params
-                    a.ConvertGeneralParamsToVariable();
-                    foreach (VariableBase vb in a.Variables)
+                    envApplication.ConvertGeneralParamsToVariable();
+                    foreach (VariableBase vb in envApplication.Variables)
                     {
 
                         TreeViewItem tviEnvAppParam = new TreeViewItem();
-                        string Paramval = "{EnvParam App=" + a.Name + " Param=" + vb.Name + "}";
+                        string Paramval = "{EnvParam App=" + envApplication.Name + " Param=" + vb.Name + "}";
                         SetItemView(tviEnvAppParam, vb.Name + " =" + vb.Value, Paramval, eImageType.Parameter);
                         tviEnvAppGlobalParam.Items.Add(tviEnvAppParam);
                         tviEnvAppParam.MouseDoubleClick += tvi_MouseDoubleClick;
@@ -619,6 +633,26 @@ namespace Ginger
                 }
             }
         }
+
+        private void EnvDb_Selected(object sender, RoutedEventArgs e)
+        {
+            ShowSpecificHelp("Only select query supported.", "", "Syntax", "{EnvApp=<EnvName> EnvAppDB=<DBName> Query=<TypeQuery>}\nExample:\n{ EnvApp=web EnvAppDB=classicmodels Query=select customerName from customers where customerNumber=103 }\n It will fetch one value at time.", "Expression:" + System.Environment.NewLine + "Configure the Database in Environment with username, password and table");
+        }
+
+        private void DatabaseValueExpression(object sender, MouseButtonEventArgs e, string envApp, string dbName)
+        {
+            var value = $"{{EnvApp={envApp} EnvAppDB={dbName} Query={"<TypeQuery>"}}}";
+            if (value != null)
+            {
+                xExpressionUCTextEditor.textEditor.TextArea.Selection.ReplaceSelectionWithText(value);
+
+                xExpressionUCTextEditor.textEditor.TextArea.Caret.Offset = 10;
+
+                xExpressionUCTextEditor.textEditor.TextArea.Caret.BringCaretToView();
+
+            }
+        }
+
 
         private void AddVariables()
         {

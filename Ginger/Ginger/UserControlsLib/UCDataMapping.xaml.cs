@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using GingerCore.DataSource;
+using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using System;
@@ -62,7 +63,8 @@ namespace Ginger.UserControlsLib
             GlobalVariable,
             OutputVariable,
             ApplicationModelParameter,
-            DataSource
+            DataSource,
+            ValueExpression
         }
 
         public sealed class RestrictedMappingType
@@ -90,7 +92,7 @@ namespace Ginger.UserControlsLib
             public TemplateOptions(string dataTypeProperty, string dataValueProperty)
             {
                 _DataTypeProperty = dataTypeProperty;
-                _DataValueProperty = dataValueProperty;
+                _DataValueProperty = dataValueProperty;               
             }
         }
 
@@ -181,6 +183,7 @@ namespace Ginger.UserControlsLib
             SetGlobalVariabelsListValues();
             SetModelGlobalParametersListValues();
             SetDataSourceValues();
+            SetDatabaseValues();
         }
 
         private void InitTypeOptions()
@@ -223,6 +226,11 @@ namespace Ginger.UserControlsLib
             else if (MappedType == eDataType.DataSource.ToString())
             {
                 BindingHandler.ObjFieldBinding(xDSExpressionTxtbox, TextBox.TextProperty, this, nameof(MappedValue));
+            }
+            else if (MappedType == eDataType.ValueExpression.ToString())
+            {
+               var  mContext = Context.GetAsContext( WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault());
+                xDBValueExpression.BindControl(mContext, this, nameof(MappedValue));
             }
 
             SetValueControlsData();
@@ -271,8 +279,7 @@ namespace Ginger.UserControlsLib
                     xOptionalValuesComboBox.Visibility = Visibility.Hidden;
                 }
 
-                if (MappedType == eDataType.DataSource.ToString()
-                    && xDSExpressionTxtbox != null)
+                if (MappedType == eDataType.DataSource.ToString()  && xDSExpressionTxtbox != null)
                 {
                     xDSExpressionTxtbox.Visibility = Visibility.Visible;
                     xDSConfigBtn.Visibility = Visibility.Visible;
@@ -281,6 +288,15 @@ namespace Ginger.UserControlsLib
                 {
                     xDSExpressionTxtbox.Visibility = Visibility.Hidden;
                     xDSConfigBtn.Visibility = Visibility.Hidden;
+                }
+
+                if (MappedType == eDataType.ValueExpression.ToString() && xDBValueExpression != null)
+                {
+                    xDBValueExpression.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    xDBValueExpression.Visibility = Visibility.Hidden;
                 }
             }
         }
@@ -420,7 +436,9 @@ namespace Ginger.UserControlsLib
             GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.GlobalVariable);
             GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.ApplicationModelParameter);
             GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.DataSource);
+            GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.ValueExpression);
             xDSConfigBtn.IsEnabled = false;
+            xDBValueExpression.Visibility = Visibility.Collapsed;
         }
 
         public static DataTemplate GetTemplate(TemplateOptions options)
@@ -637,6 +655,16 @@ namespace Ginger.UserControlsLib
 
         #endregion DataSource
 
+        #region Database
+        private void SetDatabaseValues()
+        {
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Any())
+            {
+                GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.ValueExpression);
+            }
+            xDBValueExpression.Visibility = Visibility.Visible;
+        }
+        #endregion Database
 
     }
 }
