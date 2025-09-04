@@ -130,21 +130,38 @@ namespace Amdocs.Ginger.CoreNET
             return runSetReports;
         }
 
-        public void GenerateHTMLReport(string executionGuid)
+        public static void GenerateHTMLReport(string executionGuid)
         {
             var htmlServiceUrl = GetReportHTMLServiceUrl();
             if (!string.IsNullOrEmpty(htmlServiceUrl))
             {
-                Process.Start(new ProcessStartInfo() { FileName = htmlServiceUrl + "?ExecutionId=" + executionGuid, UseShellExecute = true });
+                string url = htmlServiceUrl + "?ExecutionId=" + executionGuid;
+
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = url,
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage,
+                        $"Failed to open report URL.\nURL: {url}\nError: {ex.Message}");
+                }
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Centralized Html Report Service URL is missing in General Report Configurations.\nPlease go to Configurations > Reports > Execution Logger Configurations to configure the HTML Report URL");
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage,
+                    "Centralized Html Report Service URL is missing in General Report Configurations.\n" +
+                    "Please go to Configurations > Reports > Execution Logger Configurations to configure the HTML Report URL");
             }
         }
+
         public static string GetReportHTMLServiceUrl()
         {
-            var baseURI = GingerPlayEndPointManager.GetHTMLReportServiceUrl();
+            var baseURI = GingerPlayEndPointManager.GetHTMLReportServiceUrl()?.Trim();
 
             if (!string.IsNullOrEmpty(baseURI))
             {
@@ -159,6 +176,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             return baseURI;
         }
+
 
         public static string GetOnlineHTMLReportlink(Guid? executionGuid)
         {
