@@ -1041,7 +1041,7 @@ namespace GingerCore.Drivers
                 {
                     Driver.Manage().Window.Size = new Size() { Height = Convert.ToInt32(BrowserHeight), Width = Convert.ToInt32(BrowserWidth) };
                 }
-                else if (HeadlessBrowserMode)
+                else if (HeadlessBrowserMode || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
                     Driver.Manage().Window.Size = new Size() { Height = Convert.ToInt32(1080), Width = Convert.ToInt32(1920) };
                 }
