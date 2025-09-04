@@ -2349,7 +2349,7 @@ namespace Ginger.Run
                 var executionId = data.Data.Runsets.Nodes[0].ExecutionId.ToString();
                 if (!string.IsNullOrEmpty(executionId))
                 {
-                    new GingerRemoteExecutionUtils().GenerateHTMLReport(executionId);
+                    GingerRemoteExecutionUtils.GenerateHTMLReport(executionId);
                 }
             }
             catch (Exception ex)

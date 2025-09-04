@@ -2,6 +2,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.VariablesLib;
+using Amdocs.Ginger.CoreNET.External.ZAP;
 using GingerCore;
 using OWASPZAPDotNetAPI;
 using System;
@@ -14,21 +15,36 @@ namespace GingerCoreNET.External.ZAP
 {
     public class ZapProxyService
     {
-        private readonly ClientApi _zapClient;
-        private readonly string _zapApiKey;
+        private readonly IZapClient _zapClient;
         private readonly ZAPConfiguration zAPConfiguration;
         private readonly string _zapHost;
         private readonly int _zapPort;
+        private readonly string _zapApiKey;
+
+        #region Constructors
+
+        // Default constructor uses the real ZAP client
         public ZapProxyService()
         {
-            zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count == 0 ? new ZAPConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
+            zAPConfiguration = WorkSpace.Instance.SolutionRepository
+                .GetAllRepositoryItems<ZAPConfiguration>().Count == 0
+                ? new ZAPConfiguration()
+                : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
+
             _zapHost = GetHostFromUrl(ValueExpression.PasswordCalculation(zAPConfiguration.ZAPUrl));
             _zapPort = (int)GetPortFromUrl(ValueExpression.PasswordCalculation(zAPConfiguration.ZAPUrl));
             _zapApiKey = ValueExpression.PasswordCalculation(zAPConfiguration.ZAPApiKey);
-            _zapClient = new ClientApi(_zapHost, _zapPort, _zapApiKey);
 
+            _zapClient = new ZapClientWrapper(_zapHost, _zapPort, _zapApiKey);
         }
 
+        // Overloaded constructor for dependency injection (used in unit tests)
+        public ZapProxyService(IZapClient zapClient)
+        {
+            _zapClient = zapClient;
+        }
+
+        #endregion
         /// <summary>
         /// Checks if OWASP ZAP is running and accessible via its API.
         /// </summary>
@@ -38,7 +54,7 @@ namespace GingerCoreNET.External.ZAP
             try
             {
                 // A simple API call to check connectivity [4]
-                IApiResponse version = _zapClient.core.version();
+                IApiResponse version = _zapClient.Version();
                 return !string.IsNullOrEmpty(version.ToString());
             }
             catch (Exception ex)
@@ -52,12 +68,12 @@ namespace GingerCoreNET.External.ZAP
         {
             try
             {
-                IApiResponse apiResponse = _zapClient.pscan.recordsToScan();
+                IApiResponse apiResponse = _zapClient.RecordsToScan();
                 string tempVal = ((ApiResponseElement)apiResponse).Value;
                 while (!tempVal.Equals("0"))
                 {
                     Thread.Sleep(1000);
-                    apiResponse = _zapClient.pscan.recordsToScan();
+                    apiResponse = _zapClient.RecordsToScan();
                     tempVal = ((ApiResponseElement)apiResponse).Value;
                 }
             }
@@ -72,7 +88,7 @@ namespace GingerCoreNET.External.ZAP
 
             try
             {
-                _zapClient.reports.generate(
+                _zapClient.GenerateReport(
                     "Security Test Report", "traditional-html", "", "Security scan report", "", siteToTest, "", "", "",
                     reportfilename, "", reportDir, ""
                 );
@@ -183,23 +199,17 @@ namespace GingerCoreNET.External.ZAP
         /// <param name="siteToTest">The site URL to add to the scan tree.</param>
         public void AddUrlToScanTree(string siteToTest)
         {
-            try
+            _zapClient.AccessUrl(siteToTest, "false");
+            var urls = GetUrlsFromScanTree(siteToTest);
+            if (urls.Contains(siteToTest))
             {
-                _zapClient.core.accessUrl(siteToTest, "false");
-                var urls = GetUrlsFromScanTree(siteToTest);
-                if (urls.Contains(siteToTest))
-                {
-                    Reporter.ToLog(eLogLevel.INFO, $"{siteToTest} has been added to scan tree");
-                }
-                else
-                {
-                    throw new InvalidOperationException($"{siteToTest} not added to scan tree, active scan will not be possible");
-                }
+                Reporter.ToLog(eLogLevel.INFO, $"{siteToTest} has been added to scan tree");
             }
-            catch (Exception ex)
+            else
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to add {siteToTest} to scan tree: {ex.Message}", ex);
+                throw new InvalidOperationException($"{siteToTest} not added to scan tree, active scan will not be possible");
             }
+
         }
 
         /// <summary>
@@ -208,7 +218,7 @@ namespace GingerCoreNET.External.ZAP
         /// <returns>List of URLs as strings.</returns>
         public List<string> GetUrlsFromScanTree(string baseUrl)
         {
-            var apiResponse = _zapClient.core.urls(baseUrl);
+            var apiResponse = _zapClient.Urls(baseUrl);
             var responses = ((ApiResponseList)apiResponse).List;
             return responses.Select(r => ((ApiResponseElement)r).Value).ToList();
         }
@@ -227,7 +237,7 @@ namespace GingerCoreNET.External.ZAP
             string postdata = "";       // or actual POST data
             string contextId = "";      // or context ID as string
 
-            var apiResponse = _zapClient.ascan.scan(url, recurse, inscopeonly, scanpolicyname, method, postdata, contextId);
+            var apiResponse = _zapClient.Scan(url, recurse, inscopeonly, scanpolicyname, method, postdata, contextId);
             string scanId = ((ApiResponseElement)apiResponse).Value;
 
             WaitTillActiveScanIsCompleted(scanId);
@@ -239,13 +249,13 @@ namespace GingerCoreNET.External.ZAP
         /// <param name="scanId">The scan ID.</param>
         private void WaitTillActiveScanIsCompleted(string scanId)
         {
-            var apiResponse = _zapClient.ascan.status(scanId);
+            var apiResponse = _zapClient.ScanStatus(scanId);
             string status = ((ApiResponseElement)apiResponse).Value;
 
             while (!status.Equals("100"))
             {
                 Thread.Sleep(1000);
-                apiResponse = _zapClient.ascan.status(scanId);
+                apiResponse = _zapClient.ScanStatus(scanId);
                 status = ((ApiResponseElement)apiResponse).Value;
                 Reporter.ToLog(eLogLevel.INFO, "Active scan is in progress");
             }
@@ -264,7 +274,7 @@ namespace GingerCoreNET.External.ZAP
         {
             try
             {
-                var summaryResponse = _zapClient.alert.alertsSummary(targetUrl);
+                var summaryResponse = _zapClient.AlertsSummary(targetUrl);
                 var alertSummary = (ApiResponseSet)summaryResponse;
 
                 bool testPassed = true;
@@ -296,7 +306,7 @@ namespace GingerCoreNET.External.ZAP
         {
             try
             {
-                var summaryResponse = _zapClient.alert.alertsSummary(targetUrl);
+                var summaryResponse = _zapClient.AlertsSummary(targetUrl);
                 var alertSummary = (ApiResponseSet)summaryResponse;
 
                 bool testPassed = true;
@@ -326,7 +336,7 @@ namespace GingerCoreNET.External.ZAP
 
         public bool EvaluateScanResult(string targetUrl)
         {
-            var summaryResponse = _zapClient.alert.alertsSummary(targetUrl);
+            var summaryResponse = _zapClient.AlertsSummary(targetUrl);
             var alertSummary = (ApiResponseSet)summaryResponse;
             return !string.IsNullOrEmpty(alertSummary.ToString());
 
@@ -334,7 +344,7 @@ namespace GingerCoreNET.External.ZAP
 
         public List<(string AlertName, int Count)> GetAlertSummary(string targetUrl)
         {
-            var summaryResponse = _zapClient.alert.alertsSummary(targetUrl);
+            var summaryResponse = _zapClient.AlertsSummary(targetUrl);
             var alertSummary = (ApiResponseSet)summaryResponse;
             var result = new List<(string, int)>();
 
