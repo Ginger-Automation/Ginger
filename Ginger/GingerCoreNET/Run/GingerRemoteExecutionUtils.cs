@@ -149,6 +149,7 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     Reporter.ToUser(eUserMsgKey.StaticErrorMessage,
                         $"Failed to open report URL.\nURL: {url}\nError: {ex.Message}");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to open HTML report URL: {url}", ex);
                 }
             }
             else
