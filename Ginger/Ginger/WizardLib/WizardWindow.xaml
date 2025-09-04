@@ -121,15 +121,53 @@
                         
                         
                     </StackPanel>
-                    <StackPanel x:Name="stackNaveRightSide"  Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,5">
-                        <UserControls:ImageMakerControl x:Name="xProcessingImage" Grid.Column="0" Grid.Row="0" ImageType="Processing" Height="30" Width="30" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Visibility="Collapsed"/>
+                    <Grid x:Name="gridNavRightSide" HorizontalAlignment="Right" Margin="0,5,0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- AI Loader Text -->
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Processing Loader -->
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Previous -->
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Next -->
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Finish -->
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Cancel -->
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="xAIProcessingText" Grid.Column="0" 
+                           Text="AI Fine-Tuning Processing" 
+                           AutomationProperties.AutomationId="AIProcessingText AID"
+                           VerticalAlignment="Center" 
+                           Margin="0,0,5,0"
+                           FontSize="12"
+                           Foreground="{StaticResource $BackgroundColor_Purple}" Visibility="Collapsed"/>
+                        <UserControls:ImageMakerControl x:Name="xProcessingImage" Grid.Column="1" ImageType="Processing"
+                                    Height="30" Width="30" Margin="0,0,10,0"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
 
-                        <UserControls:ucButton x:Name="xPrevButton" ButtonType="RoundTextAndImageButton" ButtonText="Previous" ButtonImageType="GoBack" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="PrevButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" IsEnabled="False"/>
-                        <UserControls:ucButton x:Name="xNextButton" ButtonType="RoundTextAndImageButton" ButtonText="Next" ButtonImageType="GoNext" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="NextButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
-                        <UserControls:ucButton x:Name="xFinishButton" ButtonType="RoundTextAndImageButton" ButtonText="Finish" ButtonImageType="Finish" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" IsEnabled="True"  Click="FinishButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
-                        <UserControls:ucButton x:Name="xCancelButton" ButtonType="RoundTextAndImageButton" ButtonText="Cancel" ButtonImageType="Cancel" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="CancelButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+                        <UserControls:ucButton x:Name="xPrevButton" Grid.Column="2" ButtonType="RoundTextAndImageButton"
+                           ButtonText="Previous" ButtonImageType="GoBack" ButtonFontImageSize="15"
+                           ButtonImageWidth="15" ButtonImageHeight="15" Click="PrevButton_Click"
+                           ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" IsEnabled="False"/>
 
-                    </StackPanel>
+                        <UserControls:ucButton x:Name="xNextButton" Grid.Column="3" ButtonType="RoundTextAndImageButton"
+                           ButtonText="Next" ButtonImageType="GoNext" ButtonFontImageSize="15"
+                           ButtonImageWidth="15" ButtonImageHeight="15" Click="NextButton_Click"
+                           ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+
+                        <UserControls:ucButton x:Name="xFinishButton" Grid.Column="4" ButtonType="RoundTextAndImageButton"
+                           ButtonText="Finish" ButtonImageType="Finish" ButtonFontImageSize="15"
+                           ButtonImageWidth="15" ButtonImageHeight="15" IsEnabled="True"
+                           Click="FinishButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+
+                        <UserControls:ucButton x:Name="xCancelButton" Grid.Column="5" ButtonType="RoundTextAndImageButton"
+                           ButtonText="Cancel" ButtonImageType="Cancel" ButtonFontImageSize="15"
+                           ButtonImageWidth="15" ButtonImageHeight="15" Click="CancelButton_Click"
+                           ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+                    </Grid>
+
                 </Grid>
             </Border>
         </Grid>

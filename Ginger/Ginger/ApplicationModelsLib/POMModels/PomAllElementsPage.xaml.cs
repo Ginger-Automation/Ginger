@@ -89,6 +89,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             CollectionChangedEventManager.AddHandler(source: mPOM.MappedUIElements, handler: MappedUIElements_CollectionChanged);
             CollectionChangedEventManager.AddHandler(source: mPOM.UnMappedUIElements, handler: UnMappedUIElements_CollectionChanged);
+            
 
 
             mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped, AddSelfHealingColumn, editMode);

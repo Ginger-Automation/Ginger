@@ -70,7 +70,6 @@ namespace Amdocs.Ginger
             gingerRunner.Executor = gingerExecutionEngine;
 
             runSetConfig.GingerRunners.Add(gingerRunner);
-            runSetConfig.AddCategories();
 
             if (runSetsFolder == null)
             {

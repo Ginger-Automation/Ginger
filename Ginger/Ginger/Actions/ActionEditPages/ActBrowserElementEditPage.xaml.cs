@@ -72,6 +72,12 @@ namespace Ginger.Actions
             xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy);
             xImplicitWaitVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.ImplicitWait);
             VEBlockedUrls.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.BlockedUrls);
+
+            xRequestFileName.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.RequestFileName);
+            xResponseFileName.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.ResponseFileName);
+
+            xSaveNetworkLog.BindControl(mAct, nameof(ActBrowserElement.Fields.SaveLogToFile));
+
             SetGridView();
             SetVisibleControlsForAction();
         }
@@ -87,7 +93,8 @@ namespace Ginger.Actions
             xRequestTypePnl.Visibility = System.Windows.Visibility.Collapsed;
             xUpdateNetworkUrlGridPnl.Visibility = System.Windows.Visibility.Collapsed;
             xBlockedUrlsGrid.Visibility = System.Windows.Visibility.Collapsed;
-
+            xLogFileUserDefineName.Visibility = System.Windows.Visibility.Collapsed;
+            xSavenetworkLogPnl.Visibility = System.Windows.Visibility.Collapsed;
         }
 
         private void ResetPOMView()
@@ -189,11 +196,24 @@ namespace Ginger.Actions
             {
                 ResetPOMView();
             }
-            else if(mAct.ControlAction == ActBrowserElement.eControlAction.SetAlertBoxText)
+            else if (mAct.ControlAction == ActBrowserElement.eControlAction.SetAlertBoxText)
             {
                 xValueGrid.Visibility = System.Windows.Visibility.Visible;
                 xValueLabel.Content = "Value:";
-                
+            }
+            else if (mAct.ControlAction == ActBrowserElement.eControlAction.GetNetworkLog)
+            {
+                xSavenetworkLogPnl.Visibility = System.Windows.Visibility.Visible;
+                if ((bool)xSaveNetworkLog.IsChecked)
+                {
+                    xSaveNetworkLog_Checked(null, null);
+                }
+            }
+            else if (mAct.ControlAction == ActBrowserElement.eControlAction.StopMonitoringNetworkLog)
+            {
+                xSaveNetworkLog.IsChecked = true;
+                xSaveNetworkLog_Checked(null, null);
+                xSavenetworkLogPnl.Visibility = System.Windows.Visibility.Visible;
             }
             else
             {
@@ -208,7 +228,7 @@ namespace Ginger.Actions
                     }
                 }
             }
-            
+
         }
 
         private void ElementLocateByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -325,6 +345,26 @@ namespace Ginger.Actions
             ActInputValue cosmosPatchInput = (ActInputValue)UpdateNetworkUrlGrid.CurrentItem;
             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(cosmosPatchInput, nameof(ActInputValue.Param), Context.GetAsContext(mAct.Context));
             VEEW.ShowAsWindow();
+        }
+
+        private void xSaveNetworkLog_Checked(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(xResponseFileName.ValueTextBox.Text))
+            {
+                xResponseFileName.ValueTextBox.Text = "Network log Response";
+            }
+            if (string.IsNullOrEmpty(xRequestFileName.ValueTextBox.Text))
+            {
+                xRequestFileName.ValueTextBox.Text = "Network log Request";
+            }
+            xLogFileUserDefineName.Visibility = System.Windows.Visibility.Visible;
+        }
+
+        private void xSaveNetworkLog_Unchecked(object sender, RoutedEventArgs e)
+        {
+            xLogFileUserDefineName.Visibility = System.Windows.Visibility.Collapsed;
+            xResponseFileName.ValueTextBox.Text = string.Empty;
+            xRequestFileName.ValueTextBox.Text = string.Empty;
         }
     }
 }

@@ -25,6 +25,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
+using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
@@ -38,6 +39,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using static GingerCore.Environments.Database;
 
 
 namespace GingerCore
@@ -101,6 +103,7 @@ namespace GingerCore
 
         private static Regex rxDSPattern = new(@"{(\bDS Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
         public static Regex rxEnvParamPattern = new(@"{(\bEnvParam App=)\w+\b[^{}]*}", RegexOptions.Compiled);
+        public static readonly Regex rxEnvDB = new(@"{\s*(EnvApp=\w+)\s+(EnvAppDB=\w+)\s+(Query=[^{}]+)\s*}", RegexOptions.Compiled);
         public static Regex rxEnvUrlPattern = new(@"{(\bEnvURL App=)\w+\b[^{}]*}", RegexOptions.Compiled);
         private static Regex rxFDPattern = new(@"{(\bFD Object=)\w+\b[^{}]*}", RegexOptions.Compiled);
         private static Regex rxExecutionJsonDataPattern = new(@"{ExecutionJsonData}", RegexOptions.Compiled);
@@ -237,6 +240,7 @@ namespace GingerCore
                 ReplaceGlobalParameters();
                 //replace environment parameters which embedded into functions like VBS
                 ReplaceEnvVars();
+                ReplaceEnvDB();
                 CalculateComplexFormulas();
                 ReplaceDataSources();
                 ProcessGeneralFuncations();
@@ -245,6 +249,7 @@ namespace GingerCore
                 EvaluateBogusDataGenrateFunctions();
 
             }
+
             if (!string.IsNullOrEmpty(SolutionFolder))
             {
 
@@ -1379,7 +1384,14 @@ namespace GingerCore
 
             return extraParamDict;
         }
-
+        private void ReplaceEnvDB()
+        {
+            MatchCollection envParamMatches = rxEnvDB.Matches(mValueCalculated);
+            foreach (Match match in envParamMatches)
+            {
+                ReplaceEnvDBWithValue(match.Value);
+            }
+        }
         private void ReplaceEnvVars()
         {
             MatchCollection envParamMatches = rxEnvParamPattern.Matches(mValueCalculated);
@@ -1513,6 +1525,136 @@ namespace GingerCore
                 mValueCalculated = mValueCalculated.Replace(p, "");
             }
         }
+        private void ReplaceEnvDBWithValue(string str)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(str))
+                {
+                    throw new InvalidDataException("Input string is null or empty.");
+                }
+
+                var match = Regex.Match(str, @"\{EnvApp=(.*?)\s+EnvAppDB=(.*?)\s+Query=(.*)\}", RegexOptions.Singleline);
+
+                if (!match.Success)
+                {
+                    throw new InvalidDataException("Error: Missing required parameters, please check input");
+                }
+                string envApp = match.Groups[1].Value.Trim();
+                string envAppDB = match.Groups[2].Value.Trim();
+                string query = match.Groups[3].Value.Trim();
+
+                var envApplication = Env.GetApplication(envApp);
+                if (envApplication == null)
+                {
+                    throw new InvalidDataException($"Application '{envApp}' not found.");
+                }
+                var db = envApplication.Dbs.FirstOrDefault(d => d.Name == envAppDB) as Database;
+                if (db == null)
+                {
+                    throw new InvalidDataException($"Database '{envAppDB}' not found.");
+                }
+                if (IsSqlDatabase(db.DBType))
+                {
+                    if (!query.TrimStart().StartsWith("SELECT", StringComparison.OrdinalIgnoreCase))
+                    {
+                        throw new InvalidDataException("Given query is not a valid SELECT query.");
+                    }
+                }
+                query = query.Replace("\\n", " ").Replace("\\\"", "\"").Replace("\\", "").Replace("  ", " ");
+                query = AddSingleRecordLimit(query, db.DBType);
+                db.DatabaseOperations = new DatabaseOperations(db);
+                var dbResponse = db.DatabaseOperations.FreeSQL(query, 50);
+                if (dbResponse == null || dbResponse.Count < 2)
+                {
+                    throw new InvalidDataException("Invalid or empty DB response.");
+                }
+                if (dbResponse[1] is List<List<string>> records && records.Count > 0 && records[0].Count > 0)
+                {
+                    var value1 = records[0][0];
+                    mValueCalculated = mValueCalculated.Replace(str, value1);
+                }
+                else
+                {
+                    throw new InvalidDataException("No records found in DB response.");
+                }
+            }
+            catch (Exception ex)
+            {
+                mValueCalculated = mValueCalculated.Replace(str, $"Error: {ex.Message}");
+
+                Reporter.ToLog(eLogLevel.ERROR, "Error:", ex);
+            }
+        }
+        private static bool IsSqlDatabase(eDBTypes dbType)
+        {
+            return dbType == eDBTypes.Oracle ||
+                   dbType == eDBTypes.MSSQL ||
+                   dbType == eDBTypes.MSAccess ||
+                   dbType == eDBTypes.DB2 ||
+                   dbType == eDBTypes.PostgreSQL ||
+                   dbType == eDBTypes.MySQL;
+        }
+        private static string AddSingleRecordLimit(string query, eDBTypes dbType)
+        {
+            query = query.Trim();
+
+            switch (dbType)
+            {
+                case eDBTypes.MySQL:
+                case eDBTypes.PostgreSQL:
+                    if (Regex.IsMatch(query, @"\bLIMIT\s+(\d+)\b", RegexOptions.IgnoreCase))
+                    {
+                        query = Regex.Replace(query, @"\bLIMIT\s+(\d+)\b", match =>
+                        {
+                            int value = int.Parse(match.Groups[1].Value);
+                            return value > 1 ? "LIMIT 1" : match.Value;
+                        }, RegexOptions.IgnoreCase);
+                    }
+                    else
+                    {
+                        if (query.EndsWith(";"))
+                        {
+                            query = query.Substring(0, query.Length - 1).TrimEnd() + " LIMIT 1;";
+                        }
+                        else
+                        {
+                            query += " LIMIT 1";
+                        }
+                    }
+                    break;
+
+                case eDBTypes.MSSQL:
+                case eDBTypes.MSAccess:
+                    if (!Regex.IsMatch(query, @"\bTOP\s+1\b", RegexOptions.IgnoreCase))
+                    {
+                        query = Regex.Replace(query, @"(?i)^SELECT", "SELECT TOP 1");
+                    }
+                    break;
+
+                case eDBTypes.DB2:
+                case eDBTypes.Oracle:
+                    if (!Regex.IsMatch(query, @"FETCH\s+FIRST\s+1\s+ROWS\s+ONLY", RegexOptions.IgnoreCase))
+                    {
+                        if (query.EndsWith(";"))
+                        {
+                            query = query.Substring(0, query.Length - 1).TrimEnd() + " FETCH FIRST 1 ROWS ONLY;";
+                        }
+                        else
+                        {
+                            query += " FETCH FIRST 1 ROWS ONLY";
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+
+            return query;
+        }
+
+
 
         public static void GetEnvAppAndParam(string EnvValueExp, ref string AppName, ref string GlobalParamName)
         {
@@ -1851,6 +1993,10 @@ namespace GingerCore
                     return true;
                 }
                 else if (MockDataExpPattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (rxEnvDB.IsMatch(mValueCalculated))
                 {
                     return true;
                 }

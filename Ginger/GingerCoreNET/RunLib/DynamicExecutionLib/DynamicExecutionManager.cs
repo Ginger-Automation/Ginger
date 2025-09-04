@@ -777,6 +777,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                         jsonInputVar.VariableCustomizationType = InputValue.eVariableCustomizationType.Variable;
                                         jsonInputVar.VariableCustomizedValue = customizedVar.MappedOutputValue;
                                         break;
+                                    case VariableBase.eOutputType.ValueExpression:
+                                        jsonInputVar.VariableCustomizationType = InputValue.eVariableCustomizationType.ValueExpression;
+                                        jsonInputVar.VariableCustomizedValue = customizedVar.MappedOutputValue;
+                                        break;
                                     default:
                                         jsonInputVar.VariableCustomizationType = InputValue.eVariableCustomizationType.Value;
                                         jsonInputVar.VariableCustomizedValue = customizedVar.Value;
@@ -1024,7 +1028,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     runSetConfig.Guid = (Guid)gingerExecConfig.ExecutionID;
                 }
                 runSetConfig.Name = dynamicRunsetConfigs.Name;
-                runSetConfig.AddCategories();
             }
 
             if (gingerExecConfig.ExecutionID != null)
@@ -1399,6 +1402,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                                 break;
                                             case InputValue.eVariableCustomizationType.DataSource:
                                                 customizedInputVar.MappedOutputType = VariableBase.eOutputType.DataSource;
+                                                customizedInputVar.MappedOutputValue = inputValueConfig.VariableCustomizedValue;
+                                                break;
+                                            case InputValue.eVariableCustomizationType.ValueExpression:
+                                                customizedInputVar.MappedOutputType = VariableBase.eOutputType.ValueExpression;
                                                 customizedInputVar.MappedOutputValue = inputValueConfig.VariableCustomizedValue;
                                                 break;
                                             case InputValue.eVariableCustomizationType.ActivityOutputVariable:

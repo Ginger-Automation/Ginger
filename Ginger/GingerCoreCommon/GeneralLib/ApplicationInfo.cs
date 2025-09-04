@@ -165,35 +165,43 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 return null;//failed to get the version as long
             }
         }
+        public record VersionParts(int Major, int Minor, int Build, int Revision)
+        {
+            public override string ToString()
+            {    
+                return $"{Major}.{Minor}.{Build}.{Revision}";
+            }
+        }
+
+        private static readonly Regex s_FourPart = new(@"^(\d+)\.(\d+)\.(\d+)\.(\d+)$", RegexOptions.Compiled);
+        private static readonly Regex s_TwoPart = new(@"^(\d+)\.(\d+)$", RegexOptions.Compiled);
 
         public static long ConvertApplicationVersionToLong(string appVersion)
         {
             try
             {
                 int iMajor = 0, iMinor = 0, iBuild = 0, iRevision = 0;
-                Regex regex = new Regex(@"(\d+)\.(\d+)\.(\d+)\.(\d+)");
-                Match match = regex.Match(appVersion);
+                Match match = s_FourPart.Match(appVersion);
                 if (match.Success)
                 {
                     try { iMajor = Int32.Parse(match.Groups[1].Value); }
-                    catch (Exception) { }
+                    catch { }
                     try { iMinor = Int32.Parse(match.Groups[2].Value); }
-                    catch (Exception) { }
+                    catch { }
                     try { iBuild = Int32.Parse(match.Groups[3].Value); }
-                    catch (Exception) { }
+                    catch { }
                     try { iRevision = Int32.Parse(match.Groups[4].Value); }
-                    catch (Exception) { }
+                    catch { }
                 }
                 else
                 {
-                    regex = new Regex(@"(\d+)\.(\d+)");
-                    match = regex.Match(appVersion);
+                    match = s_TwoPart.Match(appVersion);
                     if (match.Success)
                     {
                         try { iMajor = Int32.Parse(match.Groups[1].Value); }
-                        catch (Exception) { }
+                        catch { }
                         try { iMinor = Int32.Parse(match.Groups[2].Value); }
-                        catch (Exception) { }
+                        catch { }
                     }
                     else
                     {
@@ -215,6 +223,43 @@ namespace Amdocs.Ginger.Common.GeneralLib
             {
                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to get the '{0}' version as Long", appVersion), ex);
                 return 0;//failed to get the version as long
+            }
+        }
+
+        public static VersionParts ConvertApplicationVersionToRecord(string appVersion)
+        {
+            try
+            {
+                var fourPart = s_FourPart.Match(appVersion);
+                if (fourPart.Success)
+                {
+                    if (int.TryParse(fourPart.Groups[1].Value, out int maj) &&
+                        int.TryParse(fourPart.Groups[2].Value, out int min) &&
+                        int.TryParse(fourPart.Groups[3].Value, out int bld) &&
+                        int.TryParse(fourPart.Groups[4].Value, out int rev))
+                    {
+                        return new VersionParts(maj, min, bld, rev);
+                    }
+                }
+
+                // 2-part: "X.Y" -> default Build/Revision to 99
+                var twoPart = s_TwoPart.Match(appVersion);
+                if (twoPart.Success)
+                {
+                    if (int.TryParse(twoPart.Groups[1].Value, out int maj) &&
+                        int.TryParse(twoPart.Groups[2].Value, out int min))
+                    {
+                        return new VersionParts(maj, min, 99, 99);
+                    }
+                }
+
+                return new VersionParts(0, 0, 0, 0);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to get the '{0}' version as Version Parts Record", appVersion), ex);
+
+                return new VersionParts(0, 0, 0, 0);
             }
         }
     }

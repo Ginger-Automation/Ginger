@@ -93,6 +93,26 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
+
+        private bool _isProcessed;
+        /// <summary>
+        /// Indicates whether this element has been processed by AI workflows.
+        /// </summary>
+        public bool IsProcessed
+        {
+            get => _isProcessed;
+            set
+            {
+                if (_isProcessed != value)
+                {
+                    _isProcessed = value;
+                    OnPropertyChanged(nameof(IsProcessed));
+                }
+            }
+        }
+
+
+
         private SelfHealingInfoEnum mSelfHealingInfo;
         public string GetSelfHealingInfo
         {
@@ -609,6 +629,27 @@ namespace Amdocs.Ginger.Common.UIElement
         iOSPredicateString,
         [EnumValueDescription("iOS Class Chain Strategy")]
         iOSClassChain,
+        [EnumValueDescription("By Label")]
+        ByLabel,
+        [EnumValueDescription("By Placeholder")]
+        ByPlaceholder,
+        [EnumValueDescription("By Alt Text")]
+        ByAltText,
+        [EnumValueDescription("By Test ID")]
+        ByTestID,
+        [EnumValueDescription("By Chained locator")]
+        Chained,
+        [EnumValueDescription("By ARIA Label")]
+        ByAriaLabel,
+        [EnumValueDescription("By DataTest Id")]
+        ByDataTestId,
+        [EnumValueDescription("By Partial LinkText")]
+        ByPartialLinkText,
+        [EnumValueDescription("By Custom XPath")]
+        ByCustomXPath,
+        [EnumValueDescription("By Data Attribute")]
+        ByDataAttribute
+
     }
 
     public enum eElementType

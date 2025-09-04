@@ -62,6 +62,8 @@ namespace Amdocs.Ginger.Common
         // POM
         public bool ShowPOMInWindowExplorer { get { return GetFeature(nameof(ShowPOMInWindowExplorer)).Selected; } set { UpdateFeature(nameof(ShowPOMInWindowExplorer), value); } }
 
+        public bool ShowPOMForAI { get { return GetFeature(nameof(ShowPOMForAI)).Selected; } set { UpdateFeature(nameof(ShowPOMForAI), value); } }
+
 
         // ALM
         public bool Rally { get { return GetFeature(nameof(Rally)).Selected; } set { UpdateFeature(nameof(Rally), value); } }
@@ -88,7 +90,8 @@ namespace Amdocs.Ginger.Common
             mFeatures.Add(new BetaFeature() { Group = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), Description = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activities) + "page hook only new " + GingerDicser.GetTermResValue(eTermResKey.Activities) + "- speed", ID = nameof(BFPageActivitiesHookOnlyNewActivities) });
 
             // POM
-            mFeatures.Add(new BetaFeature() { Group = "POM", Description = "Show POM in Window Explorer", ID = nameof(ShowPOMInWindowExplorer) });
+            mFeatures.Add(new BetaFeature() { Group = "POM", Description = "Show POM in Window Explorer", ID = nameof(ShowPOMInWindowExplorer) }); 
+            mFeatures.Add(new BetaFeature() { Group = "POM", Description = "Show POM Genration By AI", ID = nameof(ShowPOMForAI) });
 
             //ALM
             mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show Rally", ID = nameof(Rally) });

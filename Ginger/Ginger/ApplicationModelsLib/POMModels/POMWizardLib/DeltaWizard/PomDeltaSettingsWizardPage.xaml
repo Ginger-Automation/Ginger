@@ -86,7 +86,7 @@
                 <Label DockPanel.Dock="Top" HorizontalAlignment="Left" Style="{StaticResource $SectionHeaderLabelStyle}" Margin="0,20,0,0" >Elements Update Settings:</Label>
                 <StackPanel>
                     <CheckBox x:Name="xKeepLocatorsOrderCheckBox" Content="Keep original element locators order and activation settings on update" IsChecked="True" Style="{StaticResource @CheckBoxStyle}" Margin="5" Checked="XKeepLocatorsOrderCheckBox_Checked" Unchecked="XKeepLocatorsOrderCheckBox_Checked"/>
-                    <CheckBox x:Name="xLearnScreenshotsOfElements" AutomationProperties.AutomationId="LearnScreenshotsElementsCheckBox AID" Content="Learn Screenshots of Elements" Margin="5" IsChecked="True" Style="{StaticResource $CeckBoxStyle}"/>
+                    <CheckBox x:Name="xLearnScreenshotsOfElements" AutomationProperties.AutomationId="LearnScreenshotsElementsCheckBox AID" Content="Learn Screenshots of Elements" Margin="5" Style="{StaticResource $CeckBoxStyle}" Checked="xLearnScreenshotsOfElementsCheckBox_StateChanged" Unchecked="xLearnScreenshotsOfElementsCheckBox_StateChanged"/>
                 </StackPanel>
             </DockPanel>
         </Grid>
