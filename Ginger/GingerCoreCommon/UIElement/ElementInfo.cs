@@ -546,7 +546,7 @@ namespace Amdocs.Ginger.Common.UIElement
                 eElementType.ComboBox => eImageType.DropList,
                 eElementType.ComboBoxOption => eImageType.List,
                 eElementType.HyperLink => eImageType.Link,
-                eElementType.Image => eImageType.Image,
+                eElementType.Image or eElementType.Svg => eImageType.Image,
                 eElementType.Label or eElementType.Text => eImageType.Label,
                 eElementType.List or eElementType.ListItem => eImageType.List,
                 eElementType.MenuBar or eElementType.MenuItem => eImageType.Menu,

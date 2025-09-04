@@ -869,7 +869,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             ControlProperty property = new ControlProperty();
             mSelectedElement.Properties.Add(property);
-
+            // Refresh filtered list and select the new property
+            xElementDetails.xPropertiesGrid.DataSourceList =
+            GingerCore.General.ConvertListToObservableList(mSelectedElement.Properties.Where(p => p.ShowOnUI).ToList());
             xElementDetails.xPropertiesGrid.Grid.SelectedItem = property;
             xElementDetails.xPropertiesGrid.ScrollToViewCurrentItem();
         }
@@ -880,7 +882,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             List<ControlProperty> PropertyToDelete = xElementDetails.xPropertiesGrid.Grid.SelectedItems.Cast<ControlProperty>().ToList();
             foreach (ControlProperty Property in PropertyToDelete)
             {
-                if (!string.IsNullOrEmpty(Property.Category?.ToString()))
+                if (Property.Category.HasValue)
                 {
                     if (!msgShowen)
                     {
@@ -893,6 +895,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     mSelectedElement.Properties.Remove(Property);
                 }
             }
+            xElementDetails.xPropertiesGrid.DataSourceList = GingerCore.General.ConvertListToObservableList(mSelectedElement.Properties.Where(p => p.ShowOnUI).ToList());
+
         }
 
         bool collapsed = false;

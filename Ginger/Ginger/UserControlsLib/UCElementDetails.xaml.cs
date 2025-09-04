@@ -253,7 +253,7 @@ namespace Ginger
             xPropertiesGrid.ToolTip = "Double click on a row to copy the selected property value";
 
             xPropertiesGrid.SetAllColumnsDefaultView(view);
-            xPropertiesGrid.InitViewItems();            
+            xPropertiesGrid.InitViewItems();
         }
 
         private void XPropertiesGrid_RowDoubleClick(object sender, EventArgs e)

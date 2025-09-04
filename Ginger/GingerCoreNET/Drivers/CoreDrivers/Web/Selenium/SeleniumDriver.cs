@@ -5817,8 +5817,17 @@ namespace GingerCore.Drivers
 
                             try
                             {
-                                // Try to find the SVG child element
-                                IWebElement svgChildWebElement = searchContext.FindElement(By.XPath(svgChildXPath));
+                                // Try to find the SVG child element (ShadowRoot doesn't support XPath)
+                                IWebElement svgChildWebElement = null;
+                                if (searchContext is ShadowRoot)
+                                {
+                                    string css = shadowDOM.ConvertXPathToCssSelector(svgChildXPath);
+                                    svgChildWebElement = ((ShadowRoot)searchContext).FindElement(By.CssSelector(css));
+                                }
+                                else
+                                {
+                                    svgChildWebElement = searchContext.FindElement(By.XPath(svgChildXPath));
+                                }
                                 //skip svg child invisible elements
                                 if (!IsElementVisible(svgChildWebElement))
                                 {
@@ -5984,16 +5993,16 @@ namespace GingerCore.Drivers
                         var classes = value.Split(' ').Where(c => !string.IsNullOrWhiteSpace(c));
                         foreach (var className in classes)
                         {
-                            conditions.Add($"contains(@class, '{EscapeXPathString(className)}')");
+                            conditions.Add($"contains(@class, {EscapeXPathString(className)})");
                         }
                     }
                     else if (attr == "href" && value.StartsWith("#"))
                     {
-                        conditions.Add($"@{attr}='{EscapeXPathString(value)}'");
+                        conditions.Add($"@{attr}={EscapeXPathString(value)}");
                     }
                     else if (!IsLikelyDynamic(value))
                     {
-                        conditions.Add($"@{attr}='{EscapeXPathString(value)}'");
+                        conditions.Add($"@{attr}={EscapeXPathString(value)}");
                     }
                 }
             }
@@ -10626,7 +10635,7 @@ namespace GingerCore.Drivers
 
                 case ActUIElement.eElementAction.DoubleClick:
                         OpenQA.Selenium.Interactions.Actions actionDoubleClick = new OpenQA.Selenium.Interactions.Actions(Driver);
-                        actionDoubleClick.Click(clickElement).Click(clickElement).Build().Perform();  
+                    actionDoubleClick.DoubleClick(clickElement).Build().Perform();
                     break;
 
                 case ActUIElement.eElementAction.MousePressRelease:
@@ -10645,20 +10654,6 @@ namespace GingerCore.Drivers
                         clickElement.Click();
                     }
                     break;
-            }
-        }
-
-        private bool IsSvgElementByWebElement(IWebElement element)
-        {
-            try
-            {
-                string tagName = element.TagName?.ToLower();
-                var svgTags = new HashSet<string> { "svg", "g", "path", "rect", "circle", "ellipse", "line", "polygon", "polyline", "text", "use" };
-                return svgTags.Contains(tagName);
-            }
-            catch
-            {
-                return false;
             }
         }
 
