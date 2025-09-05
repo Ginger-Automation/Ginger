@@ -237,6 +237,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.TextBox:
                     list.Add(ActUIElement.eElementAction.SetValue);
                     list.Add(ActUIElement.eElementAction.GetValue);
+                    list.Add(ActUIElement.eElementAction.GetValueByOCR);
                     break;
                 case eElementType.ComboBox:
                     list.Add(ActUIElement.eElementAction.SetText);
@@ -244,6 +245,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     list.Add(ActUIElement.eElementAction.SetValue);
                     list.Add(ActUIElement.eElementAction.GetText);
                     list.Add(ActUIElement.eElementAction.GetAllValues);
+                    list.Add(ActUIElement.eElementAction.GetValueByOCR);
                     break;
                 case eElementType.CheckBox:
                     list.Add(ActUIElement.eElementAction.SetValue);

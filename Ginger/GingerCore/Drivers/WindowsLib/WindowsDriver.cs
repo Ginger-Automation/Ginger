@@ -449,7 +449,9 @@ namespace GingerCore.Drivers.WindowsLib
                     actionResult = mUIElementOperationsHelper.GetValue(automationElement, elementType);
                     isoutputvalue = true;
                     break;
-
+                case ActUIElement.eElementAction.GetValueByOCR:
+                    actionResult = UIElementOperationsHelper.GetValueByOCR(automationElement);
+                    break;
                 case ActUIElement.eElementAction.GetText:
                     actionResult = mUIElementOperationsHelper.GetText(automationElement);
                     isoutputvalue = true;
@@ -1169,7 +1171,7 @@ namespace GingerCore.Drivers.WindowsLib
                         bool learnElement = true;
                         if (pomSetting.FilteredElementType != null)
                         {
-                            if (!pomSetting.FilteredElementType.Any(x=>x.ElementType.Equals(foundElemntInfo.ElementTypeEnum)))
+                            if (!pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(foundElemntInfo.ElementTypeEnum)))
                             {
                                 learnElement = false;
                             }

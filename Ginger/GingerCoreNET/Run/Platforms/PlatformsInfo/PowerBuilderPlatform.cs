@@ -160,6 +160,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 ActUIElement.eElementAction.Exist,
                 ActUIElement.eElementAction.NotExist,
                 ActUIElement.eElementAction.GetValue,
+                ActUIElement.eElementAction.GetValueByOCR,
             ];
             return list;
         }

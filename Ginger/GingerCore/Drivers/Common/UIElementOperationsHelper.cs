@@ -19,9 +19,12 @@ extern alias UIAComWrapperNetstandard;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions.Common;
+using GingerCore.GingerOCR;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Threading;
 
 using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
@@ -568,6 +571,53 @@ namespace GingerCore.Drivers.Common
 
         }
 
+        public static ActionResult GetValueByOCR(UIAuto.AutomationElement automationElement)
+        {
+            ActionResult actionResult = new ActionResult();
+            string tempImagePath = null;
+            try
+            {
+                BringElementWindowToForeground(automationElement);
+                // 1. Get bounding rectangle
+                Rectangle rect = automationElement.Current.BoundingRectangle;
+                //Rectangle rectangle = new System.Drawing.Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
+                int left = (int)rect.Left;
+                int top = (int)rect.Top;
+                int width = (int)(rect.Right - rect.Left);
+                int height = (int)(rect.Bottom - rect.Top);
+                // 2. Capture screenshot
+                using (var bmp = new Bitmap(width, height))
+                {
+                    using (var g = Graphics.FromImage(bmp))
+                    {
+                        g.CopyFromScreen(left, top, 0, 0, rect.Size);
+                    }
+
+                    // 3. Save to temp file
+                    tempImagePath = Path.Combine(Path.GetTempPath(), $"GingerOCR_{Guid.NewGuid()}.png");
+                    bmp.Save(tempImagePath, System.Drawing.Imaging.ImageFormat.Png);
+                }
+
+                // 4. OCR
+                string ocrText = GingerOcrOperations.ReadTextFromImage(tempImagePath);
+                actionResult.outputValue = ocrText;
+                actionResult.executionInfo = "OCR value extracted successfully";
+            }
+            catch (Exception ex)
+            {
+                actionResult.errorMessage = "Failed to get value by OCR: " + ex.Message;
+            }
+            finally
+            {
+                // 5. Clean up temp file
+                if (!string.IsNullOrEmpty(tempImagePath) && File.Exists(tempImagePath))
+                {
+                    try { File.Delete(tempImagePath); } catch { /* ignore */ }
+                }
+            }
+            return actionResult;
+        }
+
         public ActionResult GetText(UIAuto.AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();
@@ -809,6 +859,21 @@ namespace GingerCore.Drivers.Common
                         result = true;
                     }
                     break;
+                case ActUIElement.eElementAction.GetValueByOCR:
+                    if (elementToValidate == null)
+                    {
+                        result = false;
+                    }
+                    actionResult = GetValueByOCR(elementToValidate);
+                    if (!string.IsNullOrEmpty(actionResult.errorMessage) || string.IsNullOrEmpty(actionResult.outputValue))
+                    {
+                        actionResult = GetText(elementToValidate);
+                    }
+                    if (actionResult.outputValue == validationValue)
+                    {
+                        result = true;
+                    }
+                    break;
             }
 
             return result;
@@ -844,6 +909,37 @@ namespace GingerCore.Drivers.Common
                 actionResult.executionInfo = "Successfully clicked and validated";
             }
             return actionResult;
+        }
+
+        /// <summary>
+        /// Brings the window containing the given AutomationElement to the foreground and optionally resizes it.
+        /// </summary>
+        /// <param name="automationElement">The UI Automation element whose window should be focused.</param>
+        /// <param name="resizeWidth">Optional width to resize the window to.</param>
+        /// <param name="resizeHeight">Optional height to resize the window to.</param>
+        public static void BringElementWindowToForeground(UIAuto.AutomationElement automationElement, int? resizeWidth = null, int? resizeHeight = null)
+        {
+            if (automationElement == null)
+                return;
+
+            try
+            {
+                // Bring window to foreground
+                WinAPIAutomation.ShowWindow(automationElement);
+
+                // Optionally resize
+                if (resizeWidth.HasValue && resizeHeight.HasValue)
+                {
+                    WinAPIAutomation.ResizeExternalWindow(automationElement, resizeWidth.Value, resizeHeight.Value);
+                }
+
+                // Give time to the window to come to the front
+                Thread.Sleep(500);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to bring window to foreground", ex);
+            }
         }
     }
 }

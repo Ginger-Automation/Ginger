@@ -81,6 +81,7 @@ namespace GingerCore.Actions
             {
                 eControlAction.Click => ActUIElement.eElementAction.Click,
                 eControlAction.GetValue => ActUIElement.eElementAction.GetValue,
+                eControlAction.GetValueByOCR => ActUIElement.eElementAction.GetValueByOCR,
                 eControlAction.SetValue => ActUIElement.eElementAction.SetValue,
                 eControlAction.Hover => ActUIElement.eElementAction.Hover,
                 eControlAction.IsVisible => ActUIElement.eElementAction.IsVisible,
@@ -393,7 +394,9 @@ namespace GingerCore.Actions
             [EnumValueDescription("Invoke Script")]
             InvokeScript = 17,
             [EnumValueDescription("Send Keystrokes")]
-            KeyType = 18
+            KeyType = 18,
+            [EnumValueDescription("Get Value By OCR")]
+            GetValueByOCR = 19
         }
 
         public enum eControlProperty

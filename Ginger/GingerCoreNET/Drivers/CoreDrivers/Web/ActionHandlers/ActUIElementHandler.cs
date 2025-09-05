@@ -108,6 +108,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                     case ActUIElement.eElementAction.GetValue:
                         await HandleGetValueOperationAsync();
                         break;
+                    case ActUIElement.eElementAction.GetValueByOCR:
+                        await HandleGetValueByOCROperationAsync();
+                        break;
                     case ActUIElement.eElementAction.GetItemCount:
                         await HandleGetItemCountOperationAsync();
                         break;
@@ -542,6 +545,26 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         /// Handles the asynchronous operation for getting the value of the UI element.
         /// </summary>
         private async Task HandleGetValueOperationAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            string tagName = await element.TagNameAsync();
+            if (string.Equals(tagName, IBrowserElement.AnchorTagName))
+            {
+                string href = await element.AttributeValueAsync(name: "href");
+                _act.AddOrUpdateReturnParamActual("Actual", href);
+                return;
+            }
+            string value = await element.TextContentAsync();
+            if (!string.IsNullOrEmpty(value))
+            {
+                _act.AddOrUpdateReturnParamActual("Actual", value);
+                return;
+            }
+            value = await element.InputValueAsync();
+            _act.AddOrUpdateReturnParamActual("Actual", value);
+        }
+
+        private async Task HandleGetValueByOCROperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
             string tagName = await element.TagNameAsync();
