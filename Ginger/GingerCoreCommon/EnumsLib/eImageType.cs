@@ -368,6 +368,7 @@ namespace Amdocs.Ginger.Common.Enums
         AnglesArrowLeft,
         AnglesArrowRight,
         Katalon,
+        Shield,
 
         #region Comparison Status Images
         Unchanged,
@@ -402,6 +403,9 @@ namespace Amdocs.Ginger.Common.Enums
         SelfHealing,
         #endregion
 
+        #region External Apps Logo
+        ZAP,
+        #endregion
 
     }
 }

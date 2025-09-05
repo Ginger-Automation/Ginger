@@ -50,6 +50,7 @@ namespace Ginger.ExternalConfigurations
             GingerCoreNET.GeneralLib.General.CreateGingerPlayConfiguration();
             gingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count == 0 ? new GingerPlayConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
             gingerPlayConfiguration.StartDirtyTracking();
+            WorkSpace.Instance.CurrentSelectedItem = gingerPlayConfiguration;
             SetControls();
         }
 
@@ -79,12 +80,7 @@ namespace Ginger.ExternalConfigurations
 
         public bool AreRequiredFieldsEmpty()
         {
-            return string.IsNullOrEmpty(gingerPlayConfiguration.GingerPlayGatewayUrl);
-        }
-
-        public bool AreCredentialsFieldsEmpty()
-        {
-            return string.IsNullOrEmpty(gingerPlayConfiguration.GingerPlayClientId) || string.IsNullOrEmpty(gingerPlayConfiguration.GingerPlayClientSecret);
+            return gingerPlayConfiguration.IsGingerPlayConfigured();
         }
 
         private void xAllowGingerPlayCheckBox_Checked(object sender, System.Windows.RoutedEventArgs e)
@@ -99,13 +95,12 @@ namespace Ginger.ExternalConfigurations
             {
                 ShowLoader();
                 xTestConBtn.IsEnabled = false;
-                if (AreRequiredFieldsEmpty())
+                if (!AreRequiredFieldsEmpty())
                 {
                     Reporter.ToUser(eUserMsgKey.RequiredFieldsEmpty);
                     return;
                 }
-
-                if (!AreCredentialsFieldsEmpty())
+                else
                 {
                     bool isAuthorized = await GingerPlayAPITokenManager.GetOrValidateToken();
                     // Show main connection result

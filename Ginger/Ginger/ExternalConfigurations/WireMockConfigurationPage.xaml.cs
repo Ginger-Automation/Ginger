@@ -44,6 +44,7 @@ namespace Ginger.ExternalConfigurations
         {
             wireMockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
             wireMockConfiguration.StartDirtyTracking();
+            WorkSpace.Instance.CurrentSelectedItem = wireMockConfiguration;
             mockAPI = new WireMockAPI();
             SetControls();
         }

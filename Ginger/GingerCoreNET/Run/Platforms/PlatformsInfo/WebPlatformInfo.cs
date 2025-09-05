@@ -286,7 +286,14 @@ namespace GingerCore.Platforms.PlatformsInfo
                 }
                 else
                 {
-                    uIAdvancedElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, false));
+                    if(elementTypeOperation.ElementType.Equals(eElementType.Svg))
+                    {
+                        uIAdvancedElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, "It includes key SVG child elements such as SvgGroup, SvgLine, SvgUse, SvgText, SvgCircle, and SvgPath.", false));
+                    }
+                    else
+                    {
+                        uIAdvancedElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, false));
+                    }                    
                 }
             }
 
@@ -445,6 +452,12 @@ namespace GingerCore.Platforms.PlatformsInfo
                         ActionType = typeof(ActUIElement),
                         ElementOperationsList = [ ActUIElement.eElementAction.GetValue,
                                                                    ActUIElement.eElementAction.SetValue,
+                                                                   ActUIElement.eElementAction.DoubleClick,
+                                                                    ActUIElement.eElementAction.JavaScriptClick,
+                                                                    ActUIElement.eElementAction.MouseClick,
+                                                                    ActUIElement.eElementAction.MousePressRelease,
+                                                                    ActUIElement.eElementAction.ClickAndValidate,
+                                                                    ActUIElement.eElementAction.MultiClicks
                                                                    ]
                     },
                     new ElementTypeData()
@@ -600,6 +613,11 @@ namespace GingerCore.Platforms.PlatformsInfo
                     eLocateBy.ByAltText,
                     eLocateBy.ByTestID,
                     eLocateBy.Chained,
+                    eLocateBy.ByAriaLabel,
+                    eLocateBy.ByPartialLinkText,
+                    eLocateBy.ByCustomXPath,
+                    eLocateBy.ByDataAttribute,
+                    eLocateBy.ByDataTestId
 
                 ];
             }

@@ -36,11 +36,18 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
 
         private static readonly string IDENTITY_SERVICE = System.Configuration.ConfigurationManager.AppSettings["IDENTITY_SERVICE"]?.ToString() ?? "identity";
 
+        private static readonly string LocalSetup = System.Configuration.ConfigurationManager.AppSettings["LocalSetup"]?.ToString() ?? "True";
+
+        private static readonly string LocalSetupToken = System.Configuration.ConfigurationManager.AppSettings["LocalSetupToken"]?.ToString() ?? "";
+
+        private static readonly string AIBatchSize = System.Configuration.ConfigurationManager.AppSettings["AIBatchSize"]?.ToString() ?? "2000";
+
         private static readonly string REPORT_SERVICE_HEALTH_PATH = $"{ACCOUNT_REPORT_SERVICE_URL}/health";
         private static readonly string EXECUTION_SERVICE_HEALTH_PATH = $"{EXECUTION_SERVICE}/health";
         private static readonly string AI_SERVICE_HEALTH_PATH = $"{AI_SERVICE_URL}/health";
         private static readonly string GENERATE_TOKEN_URL = $"{IDENTITY_SERVICE}/connect/token";
         private static readonly string EXECUTION_SERVICE_GENERATIVEPOM_URL = "generative-ai/extract_dom_elements";
+        private static readonly string EXECUTION_SERVICE_GENERATIVEPOM_PROCESS_EXTRACTED_ELEMENTS = "generative-ai/process_extracted_elements";
 
 
         private static readonly ExecutionLoggerConfiguration LoggerConfig = WorkSpace.Instance.Solution.LoggerConfigurations;
@@ -212,6 +219,11 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
             return EXECUTION_SERVICE_GENERATIVEPOM_URL;
         }
 
+        public static string GetAIServicePOMProcessExtractedElementsPath()
+        {
+            return EXECUTION_SERVICE_GENERATIVEPOM_PROCESS_EXTRACTED_ELEMENTS;
+        }
+
         private static string BuildServiceUrl(string path)
         {
             var baseUrl = GingerPlayConfiguration.GingerPlayGatewayUrl;
@@ -224,6 +236,21 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                 baseUrl += "/";
             }
             return baseUrl + path;
+        }
+
+        public static string GetLocalSetupValue()
+        {
+            return LocalSetup;
+        }
+
+        public static string GetLocalSetupToken()
+        {
+            return LocalSetupToken;
+        }
+
+        public static string GetAIBatchsize()
+        {
+            return AIBatchSize;
         }
     }
 }
