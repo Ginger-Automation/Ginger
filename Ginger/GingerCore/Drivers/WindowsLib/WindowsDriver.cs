@@ -451,6 +451,7 @@ namespace GingerCore.Drivers.WindowsLib
                     break;
                 case ActUIElement.eElementAction.GetValueByOCR:
                     actionResult = UIElementOperationsHelper.GetValueByOCR(automationElement);
+                    isoutputvalue = true;
                     break;
                 case ActUIElement.eElementAction.GetText:
                     actionResult = mUIElementOperationsHelper.GetText(automationElement);

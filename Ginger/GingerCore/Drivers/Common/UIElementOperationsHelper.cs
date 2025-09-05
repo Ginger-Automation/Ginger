@@ -617,7 +617,14 @@ namespace GingerCore.Drivers.Common
                 // 5. Clean up temp file
                 if (!string.IsNullOrEmpty(tempImagePath) && File.Exists(tempImagePath))
                 {
-                    try { File.Delete(tempImagePath); } catch { /* ignore */ }
+                    try
+                    {
+                        File.Delete(tempImagePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Unable to delete the error file error : {ex}");
+                    }
                 }
             }
             return actionResult;
@@ -929,7 +936,9 @@ namespace GingerCore.Drivers.Common
         public static void BringElementWindowToForeground(UIAuto.AutomationElement automationElement, int? resizeWidth = null, int? resizeHeight = null)
         {
             if (automationElement == null)
+            {
                 return;
+            }
 
             try
             {

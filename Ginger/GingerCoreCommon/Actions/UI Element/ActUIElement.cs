@@ -458,7 +458,7 @@ namespace GingerCore.Actions.Common
             RightClickXY,
             [EnumValueDescription("Send Keys using XY")]
             SendKeysXY,
-            [EnumValueDescription("Get Value by OCR")]
+            [EnumValueDescription("Get Value By OCR")]
             GetValueByOCR,
             #endregion Generic Action Types
 
