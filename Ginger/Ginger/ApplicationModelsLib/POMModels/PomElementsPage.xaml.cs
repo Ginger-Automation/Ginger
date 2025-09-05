@@ -878,17 +878,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void DeletePropertyClicked(object sender, RoutedEventArgs e)
         {
-            bool msgShowen = false;
             List<ControlProperty> PropertyToDelete = xElementDetails.xPropertiesGrid.Grid.SelectedItems.Cast<ControlProperty>().ToList();
             foreach (ControlProperty Property in PropertyToDelete)
             {
-                if (Property.Category.HasValue)
+                if (mSelectedElement.Properties.Count  <= 1)
                 {
-                    if (!msgShowen)
-                    {
-                        Reporter.ToUser(eUserMsgKey.POMCannotDeleteAutoLearnedElement);
-                        msgShowen = true;
-                    }
+                    Reporter.ToUser(eUserMsgKey.POMAtLeastOneProperty);
+                    return;
                 }
                 else
                 {
