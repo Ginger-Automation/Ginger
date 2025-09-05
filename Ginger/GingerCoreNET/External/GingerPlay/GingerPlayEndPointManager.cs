@@ -28,8 +28,6 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
     {
         private static readonly string ACCOUNT_REPORT_SERVICE_URL = System.Configuration.ConfigurationManager.AppSettings["ACCOUNT_REPORT_SERVICE_URL"]?.ToString() ?? "ginger-report";
 
-        private static readonly string HTML_REPORT_SERVICE_URL = System.Configuration.ConfigurationManager.AppSettings["HTML_REPORT_SERVICE_URL"]?.ToString() ?? "ginger-html-report";
-
         private static readonly string AI_SERVICE_URL = System.Configuration.ConfigurationManager.AppSettings["AI_SERVICE_URL"]?.ToString() ?? "ginger-ai";
 
         private static readonly string EXECUTION_SERVICE = System.Configuration.ConfigurationManager.AppSettings["EXECUTION_SERVICE"]?.ToString() ?? "ginger-execution";
@@ -91,14 +89,14 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                 else
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting Account Report Service URL");
-                    
+
                     return null;
                 }
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while getting Account Report Service URL: {ex.Message}");
-                
+
                 return null;
             }
 
@@ -110,7 +108,7 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
             {
                 if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl) && GingerPlayConfiguration.GingerPlayReportServiceEnabled)
                 {
-                    return GingerPlayConfiguration.GingerPlayGatewayUrl + HTML_REPORT_SERVICE_URL;
+                    return GingerPlayConfiguration.GingerPlayGatewayUrl + ACCOUNT_REPORT_SERVICE_URL;
                 }
                 else if (!string.IsNullOrEmpty(GingerPlayConfiguration.CentralizedHTMLReportServiceURL))
                 {
