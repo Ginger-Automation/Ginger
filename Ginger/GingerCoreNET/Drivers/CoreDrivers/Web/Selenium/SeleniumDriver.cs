@@ -71,7 +71,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -169,7 +168,7 @@ namespace GingerCore.Drivers
             Severe = 4
         }
 
-        
+
         ConcurrentQueue<ElementInfo> processingQueue = new ConcurrentQueue<ElementInfo>();
 
 
@@ -4652,13 +4651,13 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,$"Failed to locate element '{currentPOMElementInfo?.ElementName}' ActiveLocators=[{string.Join(", ", currentPOMElementInfo?.Locators?.Where(l => l.Active).Select(l => $"{l.LocateBy}='{l.LocateValue}'") ?? Enumerable.Empty<string>())}]",ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to locate element '{currentPOMElementInfo?.ElementName}' ActiveLocators=[{string.Join(", ", currentPOMElementInfo?.Locators?.Where(l => l.Active).Select(l => $"{l.LocateBy}='{l.LocateValue}'") ?? Enumerable.Empty<string>())}]", ex);
             }
             finally
             {
                 Driver.Manage().Timeouts().ImplicitWait = ImpWait;//reset Implicit wait
             }
-            
+
             return elem;
         }
 
@@ -5695,7 +5694,7 @@ namespace GingerCore.Drivers
                     .Where(x => !x.Name.StartsWith('#') && !excludedElementNames.Contains(x.Name)
                                 && !x.XPath.Contains("/noscript", StringComparison.OrdinalIgnoreCase));
             List<HtmlNode> formElementsList = [];
-            
+
             foreach (HtmlNode htmlElemNode in htmlElements)
             {
                 try
@@ -6256,7 +6255,7 @@ namespace GingerCore.Drivers
 
             if (remaining.Count > 0)
             {
-                await UpdateAndMarkElementsAsync(pomSetting,remaining);
+                await UpdateAndMarkElementsAsync(pomSetting, remaining);
             }
         }
 
