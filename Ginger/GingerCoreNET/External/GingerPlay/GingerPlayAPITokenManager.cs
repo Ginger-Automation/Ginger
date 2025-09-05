@@ -46,7 +46,6 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                 var host = CredentialsCalculation(GingerPlayEndPointManager.GetGenerateTokenUrl());
                 if (!string.IsNullOrEmpty(host))
                 {
-                    host = !host.EndsWith('/') ? $"{host}/" : host;
                     _httpClient.BaseAddress = new Uri(host);
                 }
                 var data = new[]
