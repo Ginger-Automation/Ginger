@@ -72,7 +72,16 @@ namespace Amdocs.Ginger.Common.UIElement
         public bool IsAutoLearned
         {
             get { return mIsAutoLearned; }
-            set { if (mIsAutoLearned != value) { mIsAutoLearned = value; OnPropertyChanged(nameof(IsAutoLearned)); } }
+            set
+            {
+                if (mIsAutoLearned != value)
+                {
+                    mIsAutoLearned = value;
+                    OnPropertyChanged(nameof(IsAutoLearned));
+                    OnPropertyChanged(nameof(LearnedTypeEnum));
+                    OnPropertyChanged(nameof(LearnedType));
+                }
+            }
         }
 
         private string mLastUpdatedTime;
@@ -551,6 +560,21 @@ namespace Amdocs.Ginger.Common.UIElement
                 _ => eImageType.Element,
             };
         }
+
+        public enum eLearnedType { Manual, Auto, AI }
+
+        // Non-breaking addition:
+        public eLearnedType LearnedTypeEnum
+        {
+            get
+            {
+                if (IsAutoLearned) { return eLearnedType.Auto; }
+                return eLearnedType.Manual;
+            }
+        }
+
+        // Keep existing string property as-is, or derive from the enum:
+        public string LearnedType => LearnedTypeEnum.ToString();
     }
 
     public enum eLocateBy
@@ -704,7 +728,9 @@ namespace Amdocs.Ginger.Common.UIElement
         [EnumValueDescription("Date Picker")]
         DatePicker,
         Document,
-        Svg
+        [EnumValueDescription("SVG")]
+        Svg,
+        
     }
 
     public enum SelfHealingInfoEnum
@@ -729,4 +755,6 @@ namespace Amdocs.Ginger.Common.UIElement
         [EnumValueDescription("Near")]
         near
     }
+
+
 }

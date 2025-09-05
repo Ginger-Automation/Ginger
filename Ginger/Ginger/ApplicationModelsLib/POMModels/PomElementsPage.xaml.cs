@@ -343,7 +343,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.OptionalValuesObjectsListAsString), Header = "Possible Values", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["OpenEditOptionalValuesPage"] });
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true, HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
+            view.GridColsView.Add(new GridColView()
+            {
+                Field = nameof(ElementInfo.LearnedType),
+                Header = "Learned Type",
+                WidthWeight = 10,
+                MaxWidth = 100,
+                ReadOnly = true,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                BindingMode = BindingMode.OneWay  // Add this line to ensure one-way binding
+            });
             view.GridColsView.Add(new GridColView() { Field = "", Header = "Highlight", WidthWeight = 8, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xHighlightButtonTemplate"] });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.StatusIcon), Header = "Status", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
 
@@ -614,8 +623,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
             defView.GridColsView.Add(new GridColView() { Field = "", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xCopyLocatorButtonTemplate"] });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.EnableFriendlyLocator), Visible = isEnableFriendlyLocator, Header = "Friendly Locator", WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Category), Header = nameof(ElementLocator.Category), WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GetPossibleCategories(), BindingMode = BindingMode.TwoWay });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAIGenerated), Header = "AI Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView()
+            {
+                Field = nameof(ElementLocator.LearnedType),
+                Header = "Learned Type",
+                WidthWeight = 10,
+                MaxWidth = 100,
+                ReadOnly = true,
+                BindingMode = BindingMode.OneWay  // Add this line to ensure one-way binding
+            });
             defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.StatusIcon), Header = "Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
             xElementDetails.xLocatorsGrid.SetAllColumnsDefaultView(defView);
@@ -630,42 +646,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             WeakEventManager<DataGrid, DataGridPreparingCellForEditEventArgs>.AddHandler(source: xElementDetails.xLocatorsGrid.grdMain, eventName: nameof(DataGrid.PreparingCellForEdit), handler: LocatorsGrid_PreparingCellForEdit);
 
             xElementDetails.xLocatorsGrid.PasteItemEvent += PasteLocatorEvent;
-
-            // Wire up row loading event for AI styling
-            WeakEventManager<DataGrid, DataGridRowEventArgs>.AddHandler(
-                source: xElementDetails.xLocatorsGrid.grdMain,
-                eventName: nameof(DataGrid.LoadingRow),
-                handler: LocatorsGrid_LoadingRow);
         }
-
-        private void LocatorsGrid_LoadingRow(object sender, DataGridRowEventArgs e)
-        {
-            if (e.Row.DataContext is ElementLocator locator && locator.IsAIGenerated)
-            {
-                Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    try
-                    {
-                        for (int i = 0; i < xElementDetails.xLocatorsGrid.grdMain.Columns.Count; i++)
-                        {
-                            var column = xElementDetails.xLocatorsGrid.grdMain.Columns[i];
-                            var cellContent = column.GetCellContent(e.Row);
-
-                            if (cellContent?.Parent is DataGridCell cell)
-                            {
-                                // Apply foreground (text color) only to LocateValue column
-                                if (column.Header?.ToString() == "Locate Value")
-                                {
-                                    cell.Foreground = new SolidColorBrush(Colors.Purple); // or any contrasting color
-                                }
-                            }
-                        }
-                    }
-                    catch { /* Ignore styling errors */ }
-                }), System.Windows.Threading.DispatcherPriority.Loaded);
-            }
-        }
-
 
         private List<ComboEnumItem> GetPossibleCategories()
         {
@@ -855,7 +836,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xElementDetails.xPropertiesGrid.SetAllColumnsDefaultView(view);
             xElementDetails.xPropertiesGrid.InitViewItems();
             xElementDetails.xPropertiesGrid.SetTitleLightStyle = true;
-            xElementDetails.xPropertiesGrid.btnAdd.AddHandler(System.Windows.Controls.Button.ClickEvent, new RoutedEventHandler(AddPropertyHandler));
+            xElementDetails.xPropertiesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddPropertiesButtonClicked));
+            xElementDetails.xPropertiesGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeletePropertyClicked));
             WeakEventManager<DataGrid, DataGridPreparingCellForEditEventArgs>.AddHandler(source: xElementDetails.xPropertiesGrid.grdMain, eventName: nameof(DataGrid.PreparingCellForEdit), handler: PropertiesGrid_PreparingCellForEdit);
             WeakEventManager<DataGrid, DataGridCellEditEndingEventArgs>.AddHandler(source: xElementDetails.xPropertiesGrid.grdMain, eventName: nameof(DataGrid.CellEditEnding), handler: PropertiesGrid_CellEditEnding);
 
@@ -878,23 +860,41 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        private void AddPropertyHandler(object sender, RoutedEventArgs e)
+        private void AddPropertiesButtonClicked(object sender, RoutedEventArgs e)
         {
             xElementDetails.xPropertiesGrid.Grid.CommitEdit();
-
-            //for java Swing ParentIframe is not required
             if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey).Equals(ePlatformType.Java) && !mSelectedElement.GetType().Equals(typeof(HTMLElementInfo)))
             {
                 return;
             }
-
-            ControlProperty elemProp = new ControlProperty() { Name = ElementProperty.ParentIFrame };
-            mSelectedElement.Properties.Add(elemProp);
-            xElementDetails.xPropertiesGrid.Grid.SelectedItem = elemProp;
+            ControlProperty property = new ControlProperty();
+            mSelectedElement.Properties.Add(property);
+            // Refresh filtered list and select the new property
+            xElementDetails.xPropertiesGrid.DataSourceList =
+            GingerCore.General.ConvertListToObservableList(mSelectedElement.Properties.Where(p => p.ShowOnUI).ToList());
+            xElementDetails.xPropertiesGrid.Grid.SelectedItem = property;
             xElementDetails.xPropertiesGrid.ScrollToViewCurrentItem();
-
-            xElementDetails.xPropertiesGrid.ShowAdd = Visibility.Collapsed;
         }
+
+        private void DeletePropertyClicked(object sender, RoutedEventArgs e)
+        {
+            List<ControlProperty> PropertyToDelete = xElementDetails.xPropertiesGrid.Grid.SelectedItems.Cast<ControlProperty>().ToList();
+            foreach (ControlProperty Property in PropertyToDelete)
+            {
+                if (mSelectedElement.Properties.Count  <= 1)
+                {
+                    Reporter.ToUser(eUserMsgKey.POMAtLeastOneProperty);
+                    return;
+                }
+                else
+                {
+                    mSelectedElement.Properties.Remove(Property);
+                }
+            }
+            xElementDetails.xPropertiesGrid.DataSourceList = GingerCore.General.ConvertListToObservableList(mSelectedElement.Properties.Where(p => p.ShowOnUI).ToList());
+
+        }
+
         bool collapsed = false;
 
         private void HandelElementSelectionChange()

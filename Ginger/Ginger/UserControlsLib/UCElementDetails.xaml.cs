@@ -389,7 +389,6 @@ namespace Ginger
                 }
             }
         }
-
         private void PasteLocatorEvent(PasteItemEventArgs EventArgs)
         {
             ElementLocator copiedLocator = (ElementLocator)EventArgs.Item;

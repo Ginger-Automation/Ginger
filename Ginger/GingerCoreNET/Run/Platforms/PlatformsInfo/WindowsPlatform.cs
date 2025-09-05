@@ -91,6 +91,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.RightClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetSelectedValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByOCR);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetText);
@@ -120,6 +121,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.TextBox:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByOCR);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetText);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SendKeys);
@@ -127,6 +129,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
                 case eElementType.Label:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByOCR);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
                     break;
 
@@ -134,6 +137,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByOCR);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetText);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SendKeys);
@@ -142,6 +146,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.Tab:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByOCR);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
 
                     break;
@@ -152,6 +157,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByOCR);
                     break;
 
 
@@ -170,6 +176,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByOCR);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
 
                     break;
@@ -179,6 +186,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByOCR);
                     break;
 
                 case eElementType.ListItem:
@@ -188,6 +196,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByOCR);
 
                     break;
 
@@ -195,6 +204,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByOCR);
                     break;
 
                 case eElementType.TreeItem:
@@ -206,7 +216,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Expand);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
-
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByOCR);
                     break;
 
 
@@ -214,6 +224,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.DatePicker:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByOCR);
                     break;
 
                 //case eElementType.ScrollBar:
@@ -254,6 +265,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByOCR);
 
                     break;
                 case eElementType.Document:
@@ -262,6 +274,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetText);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SendKeys);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByOCR);
 
                     break;
             }
