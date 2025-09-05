@@ -131,11 +131,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 }
             }
 
+            var args = new List<string> { "--start-maximized" };
+
+            if (HeadlessBrowserMode)
+            {
+                args.Add("--window-size=1920,1080");
+            }
+
             PlaywrightBrowser.Options options = new()
             {
-                Args = new[] { "--start-maximized" },
+                Args = args.ToArray(),
                 Headless = HeadlessBrowserMode,
-                Timeout = DriverLoadWaitingTime * 1000, //convert to milliseconds
+                Timeout = DriverLoadWaitingTime * 1000,
                 EnableVideoRecording = EnableVideoRecording,
                 RecordVideoDir = recordVideoDir,
                 RecordVideoSize = recordVideoSize
@@ -156,6 +163,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             return options;
         }
+      
 
         public override bool IsRunning()
         {

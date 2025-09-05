@@ -739,7 +739,7 @@ namespace GingerCore.Drivers
 
                         if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                         {
-                            FirefoxOption.AddArgument("--headless");
+                            FirefoxOption.AddArgument("--headless");                           
                         }
 
                         if (IsUserProfileFolderPathValid())
@@ -1120,6 +1120,10 @@ namespace GingerCore.Drivers
                 if (!string.IsNullOrEmpty(BrowserHeight) && !string.IsNullOrEmpty(BrowserWidth))
                 {
                     Driver.Manage().Window.Size = new Size() { Height = Convert.ToInt32(BrowserHeight), Width = Convert.ToInt32(BrowserWidth) };
+                }
+                else if (HeadlessBrowserMode || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    Driver.Manage().Window.Size = new Size() { Height = Convert.ToInt32(1080), Width = Convert.ToInt32(1920) };
                 }
                 else
                 {
