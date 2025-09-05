@@ -26,6 +26,7 @@ using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.GeneralLib;
+using GingerCore.GingerOCR;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -2213,7 +2214,7 @@ namespace GingerCore.Drivers
                     {
                         return false;
                     }
-                    if (GetControlValue(AE) == validationValue)
+                    if (GetControlValueByOCR(AE) == validationValue)
                     {
                         return true;
                     }
@@ -4231,6 +4232,45 @@ namespace GingerCore.Drivers
 
             return val;
         }
+
+        protected virtual string GetControlValueByOCR(UIAuto.AutomationElement element)
+        {
+            string tempImagePath = null;
+            try
+            {
+                var rect = element.Current.BoundingRectangle;
+                var rectangle = new System.Drawing.Rectangle(
+                    rect.X, rect.Y, rect.Width, rect.Height);
+
+                using (var bmp = new Bitmap(rectangle.Width, rectangle.Height))
+                {
+                    using (var g = Graphics.FromImage(bmp))
+                    {
+                        g.CopyFromScreen(rectangle.Location, System.Drawing.Point.Empty, rectangle.Size);
+                    }
+                    // 3. Save to temp file
+                    tempImagePath = Path.Combine(Path.GetTempPath(), $"GingerOCR_{Guid.NewGuid()}.png");
+                    bmp.Save(tempImagePath, System.Drawing.Imaging.ImageFormat.Png);
+
+                    return GingerOcrOperations.ReadTextFromImage(tempImagePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "GetValueByOCR fallback to GetControlValue", ex);
+            }
+            finally
+            {
+                // 5. Clean up temp file
+                if (!string.IsNullOrEmpty(tempImagePath) && File.Exists(tempImagePath))
+                {
+                    try { File.Delete(tempImagePath); } catch { /* ignore */ }
+                }
+            }
+            // fallback: use normal value getter
+            return GetControlValue(element);
+        }
+
 
         /// <summary>
         /// This method will try to get the value from child control from the Automation element, basically it is used to get the value by creating the image and fetching text from the image

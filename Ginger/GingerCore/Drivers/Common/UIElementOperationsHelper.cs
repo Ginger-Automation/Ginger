@@ -580,17 +580,22 @@ namespace GingerCore.Drivers.Common
                 BringElementWindowToForeground(automationElement);
                 // 1. Get bounding rectangle
                 Rectangle rect = automationElement.Current.BoundingRectangle;
-                //Rectangle rectangle = new System.Drawing.Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
-                int left = (int)rect.Left;
-                int top = (int)rect.Top;
-                int width = (int)(rect.Right - rect.Left);
-                int height = (int)(rect.Bottom - rect.Top);
+
+                int left = rect.Left;
+                int top = rect.Top;
+                int width = rect.Width;
+                int height = rect.Height;
+                if (width <= 0 || height <= 0)
+                {
+                    actionResult.errorMessage = "Element has zero-sized bounding rectangle.";
+                    return actionResult;
+                }
                 // 2. Capture screenshot
                 using (var bmp = new Bitmap(width, height))
                 {
                     using (var g = Graphics.FromImage(bmp))
                     {
-                        g.CopyFromScreen(left, top, 0, 0, rect.Size);
+                        g.CopyFromScreen(left, top, 0, 0, new Size(width, height));
                     }
 
                     // 3. Save to temp file
@@ -600,7 +605,7 @@ namespace GingerCore.Drivers.Common
 
                 // 4. OCR
                 string ocrText = GingerOcrOperations.ReadTextFromImage(tempImagePath);
-                actionResult.outputValue = ocrText;
+                actionResult.outputValue = string.IsNullOrWhiteSpace(ocrText) ? ocrText : ocrText.Trim();
                 actionResult.executionInfo = "OCR value extracted successfully";
             }
             catch (Exception ex)
@@ -863,13 +868,17 @@ namespace GingerCore.Drivers.Common
                     if (elementToValidate == null)
                     {
                         result = false;
+                        break;
                     }
                     actionResult = GetValueByOCR(elementToValidate);
-                    if (!string.IsNullOrEmpty(actionResult.errorMessage) || string.IsNullOrEmpty(actionResult.outputValue))
+                    var actual = actionResult.outputValue?.Trim();
+                    var expected = validationValue?.Trim();
+                    if (!string.IsNullOrEmpty(actionResult.errorMessage) || string.IsNullOrEmpty(actual))
                     {
                         actionResult = GetText(elementToValidate);
+                        actual = actionResult.outputValue?.Trim();
                     }
-                    if (actionResult.outputValue == validationValue)
+                    if (string.Equals(actual, expected, StringComparison.Ordinal))
                     {
                         result = true;
                     }
