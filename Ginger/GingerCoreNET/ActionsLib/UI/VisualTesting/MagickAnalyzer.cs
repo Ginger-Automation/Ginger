@@ -45,7 +45,7 @@ namespace GingerCore.Actions.VisualTesting
             double percentageDifference;
 
             ErrorMetric eErrorMetric = ErrorMetric.Fuzz;
-            Enum.TryParse<ErrorMetric>(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ErrorMetric).Value, out eErrorMetric);
+            Enum.TryParse<ErrorMetric>(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ErrorMetric).Value, true, out eErrorMetric);
 
             IMagickImage diffImg = magickBaseImg.Compare(magickTargetImg, eErrorMetric, Channels.Red, out percentageDifference);
             percentageDifference = percentageDifference * 100;
