@@ -76,9 +76,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     restClient = new RestClient(options);
 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Centralized DB endpoint url is Invalid");
+                    Reporter.ToLog(eLogLevel.ERROR, "Centralized DB endpoint url is Invalid", ex);
                 }
             }
         }
