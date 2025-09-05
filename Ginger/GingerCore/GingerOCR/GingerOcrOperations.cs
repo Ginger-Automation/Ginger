@@ -110,7 +110,7 @@ namespace GingerCore.GingerOCR
             return ReadTextBetweenTwoLabels(firstLabel, secondLabel, pageObj, ref err);
         }
 
-        private static string ReadTextFromByteArray(byte[] byteArray)
+        public static string ReadTextFromByteArray(byte[] byteArray)
         {
             string txtOutput = string.Empty;
             try

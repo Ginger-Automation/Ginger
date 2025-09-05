@@ -574,23 +574,19 @@ namespace GingerCore.Drivers.Common
         public static ActionResult GetValueByOCR(UIAuto.AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();
-            string tempImagePath = null;
+            byte[] imageBytes = null;
+
             try
             {
                 BringElementWindowToForeground(automationElement);
-                // 1. Get bounding rectangle
-                Rectangle rect = automationElement.Current.BoundingRectangle;
 
-                int left = rect.Left;
-                int top = rect.Top;
+                // 1. Get bounding rectangle
+                var rect = automationElement.Current.BoundingRectangle;
+                int left = rect.X;
+                int top = rect.Y;
                 int width = rect.Width;
                 int height = rect.Height;
-                if (width <= 0 || height <= 0)
-                {
-                    actionResult.errorMessage = "Element has zero-sized bounding rectangle.";
-                    return actionResult;
-                }
-                // 2. Capture screenshot
+
                 using (var bmp = new Bitmap(width, height))
                 {
                     using (var g = Graphics.FromImage(bmp))
@@ -598,13 +594,16 @@ namespace GingerCore.Drivers.Common
                         g.CopyFromScreen(left, top, 0, 0, new Size(width, height));
                     }
 
-                    // 3. Save to temp file
-                    tempImagePath = Path.Combine(Path.GetTempPath(), $"GingerOCR_{Guid.NewGuid()}.png");
-                    bmp.Save(tempImagePath, System.Drawing.Imaging.ImageFormat.Png);
+                    // 2. Convert bitmap to PNG bytes
+                    using (var ms = new MemoryStream())
+                    {
+                        bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                        imageBytes = ms.ToArray();
+                    }
                 }
 
-                // 4. OCR
-                string ocrText = GingerOcrOperations.ReadTextFromImage(tempImagePath);
+                // 3. OCR
+                string ocrText = GingerOcrOperations.ReadTextFromByteArray(imageBytes);
                 actionResult.outputValue = string.IsNullOrWhiteSpace(ocrText) ? ocrText : ocrText.Trim();
                 actionResult.executionInfo = "OCR value extracted successfully";
             }
@@ -614,17 +613,10 @@ namespace GingerCore.Drivers.Common
             }
             finally
             {
-                // 5. Clean up temp file
-                if (!string.IsNullOrEmpty(tempImagePath) && File.Exists(tempImagePath))
+                if (imageBytes != null)
                 {
-                    try
-                    {
-                        File.Delete(tempImagePath);
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Unable to delete the error file error : {ex}");
-                    }
+                    // Overwrite with zeros for cleanup
+                    Array.Clear(imageBytes, 0, imageBytes.Length);
                 }
             }
             return actionResult;
