@@ -18,12 +18,14 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -39,6 +41,10 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         public int ImplicitWait { get; set; }
 
         public bool taskFinished = false;
+        
+        // Console buffer to capture command output when running without UI
+        private StringBuilder mConsoleBuffer = new StringBuilder();
+        
         public override bool IsSTAThread()
         {
             return true;
@@ -148,15 +154,15 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     else
                     {
                         string sRC;
-                        //Send the command via driver
+                        //Send the command via driver - now directly through base class
                         if (ACC.ConsoleCommand == ActConsoleCommand.eConsoleCommand.Script)
                         {
                             //TODO: externalize static const for ~~~GINGER_RC_END~~~ and all hard coded multi use strings
-                            sRC = mConsoleDriverWindow.RunConsoleCommand(command, "~~~GINGER_RC_END~~~");
+                            sRC = RunConsoleCommand(command, "~~~GINGER_RC_END~~~");
                         }
                         else
                         {
-                            sRC = mConsoleDriverWindow.RunConsoleCommand(command);
+                            sRC = RunConsoleCommand(command);
                         }
                         if (mExpString != null && sRC.Contains(mExpString) == false)
                         {
@@ -201,7 +207,6 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     break;
 
                 case "ActScreenShot":
-                    TakeScreenShot(act);
                     break;
 
                 default:
@@ -209,41 +214,130 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             }
         }
 
-        public void TakeScreenShot(Act act)
+        /// <summary>
+        /// Runs a console command directly without requiring the ConsoleDriverWindow
+        /// </summary>
+        /// <param name="command">Command to execute</param>
+        /// <param name="waitForText">Optional text to wait for in output</param>
+        /// <returns>Command output</returns>
+        public virtual string RunConsoleCommand(string command, string waitForText = null)
         {
-            try
+            mConsoleBuffer.Clear();
+            
+            // Log the command being executed
+            Reporter.ToLog(eLogLevel.DEBUG, $"Executing console command: {command}");
+            
+            // Add platform-specific line ending and execute the command
+            string commandWithLineEnding;
+            if (Platform.ToString() == "Unix")
             {
-                int width = (int)mConsoleDriverWindow.Width;
-                int height = (int)mConsoleDriverWindow.Height;
-                RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
-                renderTargetBitmap.Render(mConsoleDriverWindow);
+                commandWithLineEnding = command + "\n";
+            }
+            else
+            {
+                commandWithLineEnding = command + System.Environment.NewLine;
+            }
+            
+            taskFinished = false;
+            SendCommand(commandWithLineEnding);
 
-                //no need to create file (will be created later by the action) so creating only Bitmap
-                using (MemoryStream stream = new MemoryStream())
+            // Get the result from the buffer
+            string rc = mConsoleBuffer.ToString();
+            
+            // Process Ginger-specific markers if present
+            string GingerRCStart = "~~~GINGER_RC_START~~~";
+            string GingerRCEnd = "~~~GINGER_RC_END~~~";
+
+            int i = rc.IndexOf(GingerRCStart);
+            if (i > 0)
+            {
+                int i2 = rc.IndexOf(GingerRCEnd, i);
+                if (i2 > 0)
                 {
-                    BitmapEncoder encoder = new BmpBitmapEncoder();
-                    encoder.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
-                    encoder.Save(stream);
-
-                    using (Bitmap bitmap = new Bitmap(stream))
-                    {
-                        act.AddScreenShot(bitmap);
-                    }
+                    rc = rc.Substring(i + GingerRCStart.Length + 1, i2 - i - GingerRCEnd.Length - 4);
                 }
             }
-            catch (Exception ex)
+            
+            mConsoleBuffer.Clear();
+            return rc;
+        }
+
+        /// <summary>
+        /// Method for writing command output to the console buffer (to be called by derived drivers)
+        /// </summary>
+        /// <param name="text">Text to append to buffer</param>
+        public virtual void WriteToConsoleBuffer(string text)
+        {
+            //mConsoleBuffer.Append(text + System.Environment.NewLine);
+            
+            //// Also write to console window if it exists
+            //if (mConsoleDriverWindow != null)
+            //{
+            //    mConsoleDriverWindow.ConsoleWriteText(text, true);
+            //}
+        }
+
+        /// <summary>
+        /// Method for writing command text to the console buffer (to be called by derived drivers)
+        /// </summary>
+        /// <param name="command">Command text to log</param>
+        public virtual void WriteCommandToConsoleBuffer(string command)
+        {
+            // Log to console window if it exists
+            if (mConsoleDriverWindow != null)
             {
-                act.Error = "Failed to create console window screenshot. Error= " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                mConsoleDriverWindow.ConsoleWriteCommand(command);
             }
+            
+            // Also log for debugging
+            Reporter.ToLog(eLogLevel.DEBUG, $"Command executed: {command}");
+        }
+
+        /// <summary>
+        /// Method for writing error text to the console buffer (to be called by derived drivers)
+        /// </summary>
+        /// <param name="errorText">Error text to log</param>
+        public virtual void WriteErrorToConsoleBuffer(string errorText)
+        {
+            mConsoleBuffer.Append("ERROR:" + errorText);
+            
+            // Also write to console window if it exists
+            if (mConsoleDriverWindow != null)
+            {
+                mConsoleDriverWindow.ConsoleWriteError(errorText);
+            }
+            
+            Reporter.ToLog(eLogLevel.ERROR, errorText);
+        }
+
+        /// <summary>
+        /// Default implementation of GetParameterizedCommand for drivers that support parameterized commands
+        /// </summary>
+        /// <param name="act">Console command action</param>
+        /// <returns>Parameterized command string</returns>
+        protected virtual string GetParameterizedCommand(ActConsoleCommand act)
+        {
+            string command = act.Command;
+            foreach (ActInputValue AIV in act.InputValues)
+            {
+                string calcValue = AIV.ValueForDriver;
+
+                if (command != null)
+                {
+                    command = command + " " + calcValue;
+                }
+                else
+                {
+                    command = calcValue;
+                }
+            }
+            return command;
         }
 
         public override string GetURL()
         {
             return "TBD";
         }
-
-
 
         public override void HighlightActElement(Act act)
         {
@@ -264,6 +358,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         {
             taskFinished = true;
         }
+        
         public bool CanStartAnotherInstance(out string errorMessage)
         {
             errorMessage = string.Empty;

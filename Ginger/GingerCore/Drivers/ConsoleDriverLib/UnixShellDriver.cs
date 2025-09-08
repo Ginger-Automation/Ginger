@@ -218,7 +218,9 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
                 if (UnixClient.IsConnected)
                 {
-                    mConsoleDriverWindow.ConsoleWriteText("Connected!");
+                    // Use the base class method to write to console buffer instead of directly to window
+                    Console.WriteLine(result);
+                    WriteToConsoleBuffer("Connected!");
 
                     s = ss.ReadLine(new TimeSpan(0, 0, 2));
                     while (!String.IsNullOrEmpty(s))
@@ -228,7 +230,8 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                         s = ss.ReadLine(new TimeSpan(0, 0, 2));
 
                     }
-                    mConsoleDriverWindow.ConsoleWriteText(result);
+                    Console.WriteLine(result);
+                    WriteToConsoleBuffer(result);
 
                     return true;
                 }
@@ -361,7 +364,9 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 }
                 if (command != "\u0003\n")
                 {
-                    mConsoleDriverWindow.ConsoleWriteText(reply.ToString(), true);
+                    // Use the base class method to write to console buffer instead of directly to window
+                    Console.WriteLine(reply.ToString());
+                    WriteToConsoleBuffer(reply.ToString());
                     reply.Clear();
                 }
                 taskFinished = true;
@@ -370,8 +375,6 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.Message);
             }
-            mConsoleDriverWindow.ConsoleWriteText(reply.ToString(), true);
-            reply.Clear();
         }
 
         public override string GetCommandText(ActConsoleCommand act)

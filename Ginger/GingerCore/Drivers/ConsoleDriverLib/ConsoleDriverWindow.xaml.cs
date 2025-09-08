@@ -57,7 +57,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             RunCommand();
         }
 
-        private void RunCommand()
+        private void RunCommand()//migrate to the driverBase
         {
             if (string.IsNullOrEmpty(CommandTextBox.Text))
             {

@@ -258,7 +258,6 @@
     <Compile Include="Drivers\Common\TableElementInfo.cs" />
     <Compile Include="Common\Utility.cs" />
     <Compile Include="Drivers\Common\UIElementOperationsHelper.cs" />
-    <Compile Include="Drivers\ConsoleDriverLib\HeadlessConsoleDriverBase.cs" />
     <Compile Include="Drivers\DriverWindowDispatcher.cs" />
     <Compile Include="Drivers\InternalBrowserLib\DeviceEmulation.cs" />
     <Compile Include="Drivers\InternalBrowserLib\WebBrowserPage.xaml.cs">
