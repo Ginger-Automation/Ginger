@@ -76,7 +76,7 @@ namespace GingerCore.Variables
         {
             get { return "PasswordString"; }
         }
-        public override bool SupportSetValue { get { return false; } }
+        public override bool SupportSetValue { get { return true; } }
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
