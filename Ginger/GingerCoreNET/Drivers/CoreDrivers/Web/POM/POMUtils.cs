@@ -198,8 +198,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                             responseElements = JsonConvert.DeserializeObject<List<ElementWrapper>>(cleanedResponse);
                         }
                     }
-                    catch (JsonException)
+                    catch (JsonException ex)
                     {
+                        Reporter.ToLog(eLogLevel.WARN, "AI response could not be parsed into ElementWrapper list.",ex);
                         // Fallback: response is a JSON string containing the payload
                         var inner = JsonConvert.DeserializeObject<string>(cleanedResponse);
                         if (!string.IsNullOrWhiteSpace(inner))
