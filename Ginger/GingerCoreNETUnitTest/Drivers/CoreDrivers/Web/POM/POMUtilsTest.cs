@@ -122,7 +122,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
             // Use reflection to get Properties object
             var propsObj = elementObj.Properties;
             // Title should be copied
-            var titleProp = propsObj.GetType().GetProperty("ByTitle", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+            var titleProp = propsObj.GetType().GetProperty("Title", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
             Assert.IsNotNull(titleProp);
             Assert.AreEqual("MyTitle", titleProp.GetValue(propsObj));
             // Random property should not exist (returns null)
@@ -163,7 +163,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
                 { "CustomUnknown", "//div[@x='y']" }
             };
 
-            var resp = BuildAIResponse(guid, "EnhancedName", "EnhancedDesc", locators, wrapInData: true);
+            var resp = BuildAIResponse(guid, "EnhancedName", "EnhancedDesc", locators);
             _utils.ProcessGenAIResponseAndUpdatePOM(list, resp, ePomElementCategory.Web);
 
             Assert.AreEqual("EnhancedName", ei.ElementName);
@@ -210,7 +210,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
         {
             var list = new ObservableList<ElementInfo>();
             var guid = Guid.NewGuid();
-            var ei = CreateElement(guid, initialName: "OrigName", initialDesc: "OrigDesc");
+            var ei = CreateElement(guid);
             list.Add(ei);
 
             _utils.ProcessGenAIResponseAndUpdatePOM(list, "unauthorized user", ePomElementCategory.Web);
@@ -231,7 +231,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
 
             var locators = new Dictionary<string, string> { { "ID", "after-fence" } };
             var inner = BuildAIResponse(guid, "FenceName", "FenceDesc", locators, wrapInData: false);
-            var fenced = $"```json\n{{\"data\":{{genai_result:{inner}}}}}\n```";
+            var fenced = $"```json\n{{\"data\":{{\"genai_result\":{inner}}}}}\n```";
             _utils.ProcessGenAIResponseAndUpdatePOM(list, fenced, ePomElementCategory.Web);
 
             Assert.AreEqual("FenceName", ei.ElementName);
@@ -248,7 +248,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
             var originalLocatorCount = ei.Locators.Count;
             list.Add(ei);
 
-            var resp = BuildAIResponse(guid, "NoLocName", "NoLocDesc", new Dictionary<string, string>(), wrapInData: true, emptyLocatorsJson: true);
+            var resp = BuildAIResponse(guid, "NoLocName", "NoLocDesc", new Dictionary<string, string>());
             _utils.ProcessGenAIResponseAndUpdatePOM(list, resp, ePomElementCategory.Web);
 
             Assert.AreEqual("NoLocName", ei.ElementName);
@@ -269,7 +269,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
             var locators = new Dictionary<string, string> { { "ID", "present" } };
             var payloadForExisting = BuildAIResponse(guidInList, "NewName", "NewDesc", locators, wrapInData: false);
             var payloadForMissing = BuildAIResponse(guidMissing, "IgnoreName", "IgnoreDesc", locators, wrapInData: false);
-            var combinedArray = $"```json\n{{\"data\":{{genai_result:[{payloadForExisting.Trim('[', ']')},{payloadForMissing.Trim('[', ']')}]}}}}\n```";
+            var combinedArray = $"```json\n{{\"data\":{{\"genai_result\":[{payloadForExisting.Trim('[', ']')},{payloadForMissing.Trim('[', ']')}]}}}}\n```";
             _utils.ProcessGenAIResponseAndUpdatePOM(list, combinedArray, ePomElementCategory.Web);
 
             Assert.AreEqual("NewName", ei.ElementName);

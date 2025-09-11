@@ -346,7 +346,8 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.Selenium
         public void GetElementLocatorForWebSmartSync_UnsupportedLocator_Throws()
         {
             // eLocateBy.NA should trigger exception
-            SeleniumDriver.GetElementLocatorForWebSmartSync(eLocateBy.NA, "x");
+            var ex = Assert.ThrowsException<Exception>(() => SeleniumDriver.GetElementLocatorForWebSmartSync(eLocateBy.NA, "x")); 
+            StringAssert.Contains(ex.Message, "Unsupported locator type");
         }
 
         [TestMethod]
@@ -389,12 +390,11 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.Selenium
         public void GetSearchedWinTitle_ForAct()
         {
             var driver = new SeleniumDriver();
-            var act = new ActUIElement
-            {
-                ElementLocateBy = eLocateBy.ByTitle,
-                ElementLocateValue = "Main App"
-            };
-            string title = driver.GetSearchedWinTitle(act);
+            var act = new ActWebSmartSync 
+            { 
+                ValueForDriver = "Main App"  
+            }; 
+            string title = driver.GetSearchedWinTitle(act); 
             Assert.AreEqual("Main App", title);
         }
 
