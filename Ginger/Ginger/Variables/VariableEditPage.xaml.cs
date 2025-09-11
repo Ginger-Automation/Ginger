@@ -50,6 +50,7 @@ namespace Ginger.Variables
         private RepositoryItemBase mParent;
         bool saveWasDone = false;
         static bool ExpandDetails = false;
+        static bool HasUserSetPreference = false;
 
         GenericWindow _pageGenericWin = null;
 
@@ -66,7 +67,7 @@ namespace Ginger.Variables
 
         Context mContext;
 
-        public VariableEditPage(VariableBase v, Context context, bool setGeneralConfigsAsReadOnly = false, eEditMode mode = eEditMode.Default, RepositoryItemBase parent = null)
+        public VariableEditPage(VariableBase v, Context context, bool setGeneralConfigsAsReadOnly = false, eEditMode mode = eEditMode.Default, RepositoryItemBase parent = null, bool expandDetails = false)
         {
             InitializeComponent();
 
@@ -174,7 +175,10 @@ namespace Ginger.Variables
             }
             xTagsViewer.Init(mVariable.Tags);
 
-            xDetailsExpander.IsExpanded = ExpandDetails;
+            // Use the expandDetails parameter if provided, otherwise use the static ExpandDetails value
+            // For BusinessFlow variables, default to expanded only if user hasn't set a preference yet
+            bool shouldExpand = expandDetails || ExpandDetails || (!HasUserSetPreference && mParent is BusinessFlow);
+            xDetailsExpander.IsExpanded = shouldExpand;
         }
 
         private void XVarNameTxtBox_GotFocus(object sender, RoutedEventArgs e)
@@ -458,6 +462,7 @@ namespace Ginger.Variables
         private void XDetailsExpander_ExpandCollapse(object sender, RoutedEventArgs e)
         {
             ExpandDetails = xDetailsExpander.IsExpanded;
+            HasUserSetPreference = true;
         }
 
         public void UpdateVariableNameChange()
