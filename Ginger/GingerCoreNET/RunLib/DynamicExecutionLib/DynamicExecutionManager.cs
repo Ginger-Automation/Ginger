@@ -781,6 +781,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                         jsonInputVar.VariableCustomizationType = InputValue.eVariableCustomizationType.ValueExpression;
                                         jsonInputVar.VariableCustomizedValue = customizedVar.MappedOutputValue;
                                         break;
+                                    case VariableBase.eOutputType.Value:
+                                        jsonInputVar.VariableCustomizationType = InputValue.eVariableCustomizationType.Value;
+                                        jsonInputVar.VariableCustomizedValue = customizedVar.MappedOutputValue;
+                                        break;
                                     default:
                                         jsonInputVar.VariableCustomizationType = InputValue.eVariableCustomizationType.Value;
                                         jsonInputVar.VariableCustomizedValue = customizedVar.Value;
@@ -1058,7 +1062,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 if (gingerExecConfig.Runset.RerunConfigurations.Active)
                 {
                     runSetConfig.ReRunConfigurations.RerunLevel = (global::Ginger.Run.eReRunLevel)gingerExecConfig.Runset.RerunConfigurations.RerunLevel;
-                    runSetConfig.ReRunConfigurations.ReferenceExecutionID = gingerExecConfig.Runset.RerunConfigurations.ReferenceExecutionID;
+                    runSetConfig.ReRunConfigurations.ReferenceExecutionID = gingerExecConfig.Runset.RerunConfigurations.ReferenceExecutionID.Value;
                 }
             }
 
@@ -1443,20 +1447,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         RunSetActionHTMLReportSendEmail mailOperation = null;
                         if (dynamicRunsetConfigs.Exist)
                         {
-                            try
-                            {
-                                RunSetActionBase oper = FindItemByIDAndName<RunSetActionBase>(
+                            RunSetActionBase oper = FindItemByIDAndName<RunSetActionBase>(
                                                     new Tuple<string, Guid?>(nameof(RunSetActionBase.Guid), runsetOperationConfigMail.ID),
                                                     new Tuple<string, string>(nameof(RunSetActionBase.Name), runsetOperationConfigMail.Name),
                                                     runSetConfig.RunSetActions);
-                                if (oper != null)
-                                {
-                                    mailOperation = (RunSetActionHTMLReportSendEmail)oper;
-                                }
-                            }
-                            catch (Exception ex)
+                            if (oper != null)
                             {
-                                Reporter.ToLog(eLogLevel.INFO, string.Format("{0} operation was not found so configuring new one", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                                mailOperation = (RunSetActionHTMLReportSendEmail)oper;
                             }
                         }
 
