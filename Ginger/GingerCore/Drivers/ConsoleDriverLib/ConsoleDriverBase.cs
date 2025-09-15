@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -33,6 +34,23 @@ using System.Windows.Threading;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
+    /// <summary>
+    /// Dummy dispatcher implementation for headless console operations
+    /// </summary>
+    public class DummyDispatcher : IDispatcher
+    {
+        public void Invoke(Action callback)
+        {
+            // Execute the callback directly on the current thread
+            callback?.Invoke();
+        }
+
+        public void BeginInvokeShutdown(dynamic dispatherPriority)
+        {
+            // No-op for dummy dispatcher
+        }
+    }
+
     public abstract class ConsoleDriverBase : DriverBase, IVirtualDriver
     {
         [UserConfigured]
@@ -75,24 +93,17 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         public void ShowDriverWindow()
         {
-            mConsoleDriverWindow = new ConsoleDriverWindow(BusinessFlow)
-            {
-                mConsoleDriver = this,
-                Title = ConsoleWindowTitle()
-            };
-            mConsoleDriverWindow.Show();
+            // Use dummy dispatcher instead of creating UI window
             IsDriverConnected = Connect();
 
             if (IsDriverConnected)
             {
-                Dispatcher = new DriverWindowDispatcher(mConsoleDriverWindow.Dispatcher);
+                Dispatcher = new DummyDispatcher();
                 Dispatcher.Invoke(new Action(() => OnDriverMessage(eDriverMessageType.DriverStatusChanged)));
-                System.Windows.Threading.Dispatcher.Run();
             }
             else
             {
-                mConsoleDriverWindow.Close();
-                mConsoleDriverWindow = null; OnDriverMessage(eDriverMessageType.DriverStatusChanged);
+                OnDriverMessage(eDriverMessageType.DriverStatusChanged);
             }
         }
 
@@ -103,9 +114,13 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 if (mConsoleDriverWindow != null)
                 {
                     mConsoleDriverWindow.Close();
+                    mConsoleDriverWindow = null;
+                }
+                
+                if (Dispatcher != null)
+                {
                     Dispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
                     Thread.Sleep(100);
-                    mConsoleDriverWindow = null;
                 }
             }
             catch (InvalidOperationException e)
@@ -214,12 +229,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             }
         }
 
-        /// <summary>
-        /// Runs a console command directly without requiring the ConsoleDriverWindow
-        /// </summary>
-        /// <param name="command">Command to execute</param>
-        /// <param name="waitForText">Optional text to wait for in output</param>
-        /// <returns>Command output</returns>
+        
         public virtual string RunConsoleCommand(string command, string waitForText = null)
         {
             mConsoleBuffer.Clear();
@@ -277,44 +287,8 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             //}
         }
 
-        /// <summary>
-        /// Method for writing command text to the console buffer (to be called by derived drivers)
-        /// </summary>
-        /// <param name="command">Command text to log</param>
-        public virtual void WriteCommandToConsoleBuffer(string command)
-        {
-            // Log to console window if it exists
-            if (mConsoleDriverWindow != null)
-            {
-                mConsoleDriverWindow.ConsoleWriteCommand(command);
-            }
-            
-            // Also log for debugging
-            Reporter.ToLog(eLogLevel.DEBUG, $"Command executed: {command}");
-        }
+       
 
-        /// <summary>
-        /// Method for writing error text to the console buffer (to be called by derived drivers)
-        /// </summary>
-        /// <param name="errorText">Error text to log</param>
-        public virtual void WriteErrorToConsoleBuffer(string errorText)
-        {
-            mConsoleBuffer.Append("ERROR:" + errorText);
-            
-            // Also write to console window if it exists
-            if (mConsoleDriverWindow != null)
-            {
-                mConsoleDriverWindow.ConsoleWriteError(errorText);
-            }
-            
-            Reporter.ToLog(eLogLevel.ERROR, errorText);
-        }
-
-        /// <summary>
-        /// Default implementation of GetParameterizedCommand for drivers that support parameterized commands
-        /// </summary>
-        /// <param name="act">Console command action</param>
-        /// <returns>Parameterized command string</returns>
         protected virtual string GetParameterizedCommand(ActConsoleCommand act)
         {
             string command = act.Command;
