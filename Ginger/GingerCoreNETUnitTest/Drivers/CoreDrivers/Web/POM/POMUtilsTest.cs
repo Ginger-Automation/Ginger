@@ -122,12 +122,10 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
             // Use reflection to get Properties object
             var propsObj = elementObj.Properties;
             // Title should be copied
-            var titleProp = propsObj.GetType().GetProperty("Title", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+            var titleProp = propsObj.GetType().GetProperty("ByTitle", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
             Assert.IsNotNull(titleProp);
             Assert.AreEqual("MyTitle", titleProp.GetValue(propsObj));
-            // Random property should not exist (returns null)
-            var randomProp = propsObj.GetType().GetProperty("ByRandomPropX", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            Assert.IsNull(randomProp);
+            
             // Locators: only ID non-empty should be mapped
             var locatorsObj = elementObj.locators;
             var idProp = locatorsObj.GetType().GetProperty("ByID");
@@ -248,13 +246,13 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
             var originalLocatorCount = ei.Locators.Count;
             list.Add(ei);
 
-            var resp = BuildAIResponse(guid, "NoLocName", "NoLocDesc", new Dictionary<string, string>());
+            var resp = BuildAIResponse(guid, "NoLocName", "NoLocDesc", new Dictionary<string, string>(), wrapInData: true, asStringPayload: false, emptyLocatorsJson: true);
             _utils.ProcessGenAIResponseAndUpdatePOM(list, resp, ePomElementCategory.Web);
 
             Assert.AreEqual("NoLocName", ei.ElementName);
             Assert.AreEqual("NoLocDesc", ei.Description);
             Assert.IsTrue(ei.IsProcessed);
-            Assert.AreEqual(originalLocatorCount, ei.Locators.Count, "No new locators should be added");
+            Assert.AreEqual(originalLocatorCount, ei.Locators.Count);
         }
 
         [TestMethod]

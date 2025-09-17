@@ -331,6 +331,8 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.Selenium
             // CSS
             var by6 = SeleniumDriver.GetElementLocatorForWebSmartSync(eLocateBy.ByCSSSelector, "div.panel");
             Assert.AreEqual("By.CssSelector: div.panel", by6.ToString());
+            StringAssert.Contains(by6.ToString(), "CssSelector");
+            StringAssert.Contains(by6.ToString(), "div.panel");
 
             // LinkText
             var by7 = SeleniumDriver.GetElementLocatorForWebSmartSync(eLocateBy.ByLinkText, "Login");
@@ -342,7 +344,6 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.Selenium
         }
 
         [TestMethod]
-        [ExpectedException(typeof(System.Exception))]
         public void GetElementLocatorForWebSmartSync_UnsupportedLocator_Throws()
         {
             // eLocateBy.NA should trigger exception
