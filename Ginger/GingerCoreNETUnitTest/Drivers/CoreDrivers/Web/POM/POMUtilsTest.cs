@@ -246,7 +246,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
             var originalLocatorCount = ei.Locators.Count;
             list.Add(ei);
 
-            var resp = BuildAIResponse(guid, "NoLocName", "NoLocDesc", new Dictionary<string, string>(), wrapInData: true, emptyLocatorsJson: true);
+            var resp = BuildAIResponse(guid, "NoLocName", "NoLocDesc", new Dictionary<string, string>(), emptyLocatorsJson: true);
             _utils.ProcessGenAIResponseAndUpdatePOM(list, resp, ePomElementCategory.Web);
 
             Assert.AreEqual("NoLocName", ei.ElementName);
