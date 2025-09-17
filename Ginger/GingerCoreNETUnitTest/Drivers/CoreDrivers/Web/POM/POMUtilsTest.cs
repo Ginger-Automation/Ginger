@@ -274,5 +274,32 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
             Assert.AreEqual("NewDesc", ei.Description);
             Assert.IsFalse(list.Any(e => e.Guid == guidMissing));
         }
+
+        [TestMethod]
+        public void ProcessGenAIResponseAndUpdatePOM_RawArray_NoChanges()
+        {
+            var list = new ObservableList<ElementInfo> { CreateElement(Guid.NewGuid()) };
+            var guid = list[0].Guid;
+            var locs = new Dictionary<string, string> { { "ID", "x" } };
+            // raw array payload (no data wrapper, not a JSON string)
+            var raw = BuildAIResponse(guid, "X", "Y", locs, wrapInData: false, asStringPayload: false);
+            _utils.ProcessGenAIResponseAndUpdatePOM(list, raw, ePomElementCategory.Web);
+            Assert.AreEqual("OrigName", list[0].ElementName);
+            Assert.AreEqual("OrigDesc", list[0].Description);
+            Assert.IsFalse(list[0].IsProcessed);
+            Assert.IsFalse(list[0].Locators.Any(l => l.IsAIGenerated));
+        }
+
+        [TestMethod]
+        public void ProcessGenAIResponseAndUpdatePOM_MissingGenAIResult_NoChanges()
+        {
+            var list = new ObservableList<ElementInfo> { CreateElement(Guid.NewGuid()) };
+            var payload = "{\"data\":{}}"; // valid JSON object, missing genai_result
+            _utils.ProcessGenAIResponseAndUpdatePOM(list, payload, ePomElementCategory.Web);
+            Assert.AreEqual("OrigName", list[0].ElementName);
+            Assert.AreEqual("OrigDesc", list[0].Description);
+            Assert.IsFalse(list[0].IsProcessed);
+            Assert.IsFalse(list[0].Locators.Any(l => l.IsAIGenerated));
+        }
     }
 }
