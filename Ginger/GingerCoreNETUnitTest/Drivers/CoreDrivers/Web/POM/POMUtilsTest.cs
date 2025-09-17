@@ -122,7 +122,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
             // Use reflection to get Properties object
             var propsObj = elementObj.Properties;
             // Title should be copied
-            var titleProp = propsObj.GetType().GetProperty("ByTitle", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+            var titleProp = propsObj.GetType().GetProperty("Title", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
             Assert.IsNotNull(titleProp);
             Assert.AreEqual("MyTitle", titleProp.GetValue(propsObj));
             
@@ -246,7 +246,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
             var originalLocatorCount = ei.Locators.Count;
             list.Add(ei);
 
-            var resp = BuildAIResponse(guid, "NoLocName", "NoLocDesc", new Dictionary<string, string>(), wrapInData: true, asStringPayload: false, emptyLocatorsJson: true);
+            var resp = BuildAIResponse(guid, "NoLocName", "NoLocDesc", new Dictionary<string, string>(), wrapInData: true, emptyLocatorsJson: true);
             _utils.ProcessGenAIResponseAndUpdatePOM(list, resp, ePomElementCategory.Web);
 
             Assert.AreEqual("NoLocName", ei.ElementName);
