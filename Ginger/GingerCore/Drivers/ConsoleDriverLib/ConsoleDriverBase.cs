@@ -272,13 +272,10 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             return rc;
         }
 
-        /// <summary>
-        /// Method for writing command output to the console buffer (to be called by derived drivers)
-        /// </summary>
-        /// <param name="text">Text to append to buffer</param>
+        
         public virtual void WriteToConsoleBuffer(string text)
         {
-            //mConsoleBuffer.Append(text + System.Environment.NewLine);
+            mConsoleBuffer.Append(text + System.Environment.NewLine);
             
             //// Also write to console window if it exists
             //if (mConsoleDriverWindow != null)
