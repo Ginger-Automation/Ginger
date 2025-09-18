@@ -28,6 +28,7 @@ using System.Threading;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using static GingerCore.Actions.ActConsoleCommand;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -119,6 +120,16 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             return null;
         }
 
+        public static string GetCommandValue(eCommandEndKey key)
+        {
+            var type = typeof(eCommandEndKey);
+            var memberInfo = type.GetMember(key.ToString());
+            var attributes = memberInfo[0].GetCustomAttributes(typeof(CommandValueAttribute), false);
+
+            return attributes.Length > 0 ? ((CommandValueAttribute)attributes[0]).Value : string.Empty;
+        }
+
+
         public override void RunAction(Act act)
         {
             //TODO: add func to Act + Enum for switch
@@ -156,6 +167,18 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                         }
                         else
                         {
+                            if (Platform == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Unix)
+                            {
+                                command = $"{command}{GetCommandValue(ACC.CommandEndKey)}";
+                            }
+                            else if(ACC.CommandEndKey== eCommandEndKey.Enter)
+                            {
+                                command = $"{command}\r{GetCommandValue(ACC.CommandEndKey)}";
+                            }
+                            else
+                            {
+                                command = $"{command}{GetCommandValue(ACC.CommandEndKey)}";
+                            }
                             sRC = mConsoleDriverWindow.RunConsoleCommand(command);
                         }
                         if (mExpString != null && sRC.Contains(mExpString) == false)

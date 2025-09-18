@@ -41,6 +41,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Automation;
 using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace GingerCore.Drivers.WindowsLib
@@ -417,6 +418,12 @@ namespace GingerCore.Drivers.WindowsLib
                     actionResult = mUIElementOperationsHelper.ClickElement(automationElement);
                     break;
 
+                case ActUIElement.eElementAction.DoubleClick:
+                    actionResult = mUIElementOperationsHelper.DoubleClickElement(automationElement);
+                    break;
+                case ActUIElement.eElementAction.MouseDoubleClick:
+                    actionResult = mUIElementOperationsHelper.MouseDoubleClickElement(automationElement);
+                    break;
                 case ActUIElement.eElementAction.MouseClick:
                     actionResult = mUIElementOperationsHelper.MouseClickElement(automationElement);
                     break;
@@ -426,22 +433,19 @@ namespace GingerCore.Drivers.WindowsLib
                     break;
 
                 case ActUIElement.eElementAction.ClickXY:
-                    x = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate));
-                    y = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate));
+                    GetCoOrdinate(actUIElement, automationElement, out x, out y);
                     actionResult = mUIElementOperationsHelper.ClickElementUsingXY(automationElement, x, y);
                     break;
                 case ActUIElement.eElementAction.Collapse:
                     actionResult = mUIElementOperationsHelper.CollapseElement(automationElement);
                     break;
                 case ActUIElement.eElementAction.DoubleClickXY:
-                    x = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate));
-                    y = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate));
+                    GetCoOrdinate(actUIElement, automationElement, out x, out y);
                     actionResult = mUIElementOperationsHelper.DoubleClickElementUsingXY(automationElement, x, y);
                     break;
 
                 case ActUIElement.eElementAction.RightClickXY:
-                    x = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate));
-                    y = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate));
+                    GetCoOrdinate(actUIElement, automationElement, out x, out y);
                     actionResult = mUIElementOperationsHelper.RightClickElementUsingXY(automationElement, x, y);
                     break;
 
@@ -601,6 +605,52 @@ namespace GingerCore.Drivers.WindowsLib
                 actUIElement.Error = actionResult.errorMessage;
             }
         }
+
+        private static void GetCoOrdinate(ActUIElement actUIElement, UIAuto.AutomationElement automationElement, out int x, out int y)
+        {
+            string xStr = actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate);
+            string yStr = actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate);
+
+            if (string.IsNullOrEmpty(xStr) || string.IsNullOrEmpty(yStr))
+            {
+                // Get bounding rectangle
+                System.Drawing.Rectangle drawingRect = automationElement.Current.BoundingRectangle;
+                System.Windows.Rect windowsRect = new System.Windows.Rect(
+                    drawingRect.X,
+                    drawingRect.Y,
+                    drawingRect.Width,
+                    drawingRect.Height
+                );
+
+                // Calculate center point
+                if(string.IsNullOrEmpty(xStr) && string.IsNullOrEmpty(yStr))
+                {
+                    x = (int)(windowsRect.Left + windowsRect.Width / 2);
+                    y = (int)(windowsRect.Top + windowsRect.Height / 2);
+                }
+                else if(string.IsNullOrEmpty(xStr))
+                {
+                    x = (int)(windowsRect.Left + windowsRect.Width / 2);
+                    y = Int32.Parse(yStr);
+                }
+                else if(string.IsNullOrEmpty(yStr))
+                {
+                    x = Int32.Parse(xStr);
+                    y = (int)(windowsRect.Top + windowsRect.Height / 2);
+                }
+                else
+                {
+                    x = Int32.Parse(xStr);
+                    y = Int32.Parse(yStr);
+                }
+            }
+            else
+            {
+                x = Int32.Parse(xStr);
+                y = Int32.Parse(yStr);
+            }
+        }
+
         public ActionResult ClickAndValidte(UIAuto.AutomationElement automationElement, ActUIElement act)
         {
             ActionResult actionResult = new ActionResult();

@@ -318,6 +318,32 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
+        public ActionResult DoubleClickElement(UIAuto.AutomationElement automationElement)
+        {
+            ActionResult actionResult = new ActionResult();
+            bool doubleClickTriggeredFlag = false;
+
+            try
+            {
+                // Try using InvokePattern twice quickly
+                actionResult = ClickUsingInvokePattern(automationElement, ref doubleClickTriggeredFlag);
+                if (!string.IsNullOrEmpty(actionResult.errorMessage))
+                {
+                    doubleClickTriggeredFlag = false;
+                    actionResult = ClickUsingLegacyPattern(automationElement, ref doubleClickTriggeredFlag);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in DoubleClickElement", ex);
+                actionResult.errorMessage = "Failed to double-click the element";
+            }
+
+            return actionResult;
+        }
+
+
+
         public ActionResult MouseClickElement(UIAuto.AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();
@@ -330,6 +356,22 @@ namespace GingerCore.Drivers.Common
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Exception in ClickElement", ex);
                 actionResult.errorMessage = "Failed to click the element";
+            }
+            return actionResult;
+        }
+
+        public ActionResult MouseDoubleClickElement(UIAuto.AutomationElement automationElement)
+        {
+            ActionResult actionResult = new ActionResult();
+            try
+            {
+                winAPI.DoubleSendClick(automationElement);
+                actionResult.executionInfo = "Successfully clicked the element";
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in MouseDoubleClickElement", ex);
+                actionResult.errorMessage = "Failed to double-click the element";
             }
             return actionResult;
         }
