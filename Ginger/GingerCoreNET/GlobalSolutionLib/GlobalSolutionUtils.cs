@@ -31,7 +31,6 @@ using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.Activities;
 using GingerCore.DataSource;
 using GingerCore.Environments;
-using GingerCore.FlowControlLib;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -312,21 +311,45 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
         {
             try
             {
+                // Deserialize the imported activity
                 Activity importedActivity = (Activity)newRepositorySerializer.DeserializeFromFile(itemActivity.ItemFullPath);
+
+                // Add dependencies for the activity
                 AddDependaciesForActivity(importedActivity, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
+
+                // Add Target Application of the imported activity to the current solution
+                if (!string.IsNullOrEmpty(importedActivity.TargetApplication))
+                {
+                    Solution currentSolution = GetSolution();
+                    if (currentSolution != null)
+                    {
+                        ApplicationPlatform targetApp = currentSolution.ApplicationPlatforms.FirstOrDefault(ap => ap.AppName == importedActivity.TargetApplication);
+                        if (targetApp is not null)
+                        {
+                            ApplicationPlatform newTargetApp = new ApplicationPlatform
+                            {
+                                AppName = targetApp.AppName,
+                                Platform = targetApp.Platform
+                            };
+                            WorkSpace.Instance.Solution.ApplicationPlatforms.Add(newTargetApp);
+
+                            // Log the addition
+                            Reporter.ToLog(eLogLevel.INFO, $"Added Target Application '{importedActivity.TargetApplication}' to the current solution.");
+                        }
+
+                        EnsureAgentForTargetApplication(targetApp.AppName, targetApp.Platform);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Global Cross Solution, Import Failed to load dependancy of {itemActivity.ItemFullPath}, Method - {MethodBase.GetCurrentMethod().Name} Error - {ex.Message}", ex);
             }
 
-            //Add dependancies for Env
+            // Add other dependencies
             AddDependaciesForEnvParam(itemActivity.ItemFullPath, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
-            //Add dependancies for GlobalVariables
             AddDependaciesForGlobalVariable(itemActivity.ItemFullPath, ref SelectedItemsListToImport, ref VariableListToImport);
-            //Add dependancies for DS
             AddDependaciesForDataSource(itemActivity.ItemFullPath, ref SelectedItemsListToImport);
-            //Documents
             AddDependaciesForDocuments(itemActivity.ItemFullPath, ref SelectedItemsListToImport);
         }
 
@@ -530,154 +553,55 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             try
             {
                 BusinessFlow importedBF = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(itemBF.ItemFullPath);
+
                 foreach (Activity activity in importedBF.Activities)
                 {
                     AddDependaciesForActivity(activity, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport, importedBF.Name);
-                }
-                //Shared Items
-                //1. Shared ActivitiesGroup
-                List<string> filePaths = [];
-                if (Directory.Exists(Path.Combine(SolutionFolder, "SharedRepository", "ActivitiesGroup")))
-                {
-                    filePaths = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "ActivitiesGroup"), "*.xml", SearchOption.AllDirectories).ToList();
-                }
-                foreach (ActivitiesGroup ag in importedBF.ActivitiesGroups)
-                {
-                    foreach (string file in filePaths)
-                    {
-                        try
-                        {
-                            RepositoryItemBase existingRepoItem = newRepositorySerializer.DeserializeFromFile(file);
-                            if (SharedRepositoryOperations.IsMatchingRepoItem(ag, existingRepoItem, ref linkIsByExternalID, ref linkIsByParentID))
-                            {
-                                GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryActions, file, ConvertToRelativePath(file), true, GetRepositoryItemName(file), importedBF.Name);
-                                AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-
-                                AddDependaciesForSharedActivityGroup(item, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
-                                break;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Global Cross Solution, Import Failed to load dependancy of {file}, Method - {MethodBase.GetCurrentMethod().Name} Error - {ex.Message}", ex);
-                        }
-                    }
-                }
-                //if the solution is cloned, empty foldes will not be created at local
-                List<string> filePathsActivity = [];
-                List<string> filePathsActs = [];
-                List<string> filePathsVars = [];
-
-                if (Directory.Exists(Path.Combine(SolutionFolder, "SharedRepository", "Activities")))
-                {
-                    filePathsActivity = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "Activities"), "*.xml", SearchOption.AllDirectories).ToList();
-                }
-                if (Directory.Exists(Path.Combine(SolutionFolder, "SharedRepository", "Actions")))
-                {
-                    filePathsActs = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "Actions"), "*.xml", SearchOption.AllDirectories).ToList();
-                }
-                if (Directory.Exists(Path.Combine(SolutionFolder, "SharedRepository", "Variables")))
-                {
-                    filePathsVars = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "Variables"), "*.xml", SearchOption.AllDirectories).ToList();
-                }
-                foreach (Activity activity in importedBF.Activities)
-                {
-                    //2. Shared Activities
-                    foreach (string file in filePathsActivity)
-                    {
-                        try
-                        {
-                            RepositoryItemBase existingRepoItem = newRepositorySerializer.DeserializeFromFile(file);
-                            if (SharedRepositoryOperations.IsMatchingRepoItem(activity, existingRepoItem, ref linkIsByExternalID, ref linkIsByParentID))
-                            {
-                                GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryActivities, file, ConvertToRelativePath(file), true, GetRepositoryItemName(file), importedBF.Name);
-                                AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-
-                                AddDependaciesForSharedActivity(item, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
-                                break;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Global Cross Solution, Import Failed to load dependancy of {file}, Method - {MethodBase.GetCurrentMethod().Name} Error - {ex.Message}", ex);
-                        }
-                    }
-                    //3. Shared Actions
-                    foreach (Act act in activity.Acts)
-                    {
-                        foreach (string file in filePathsActs)
-                        {
-                            try
-                            {
-                                RepositoryItemBase existingRepoItem = newRepositorySerializer.DeserializeFromFile(file);
-                                if (SharedRepositoryOperations.IsMatchingRepoItem(act, existingRepoItem, ref linkIsByExternalID, ref linkIsByParentID))
-                                {
-                                    GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryActions, file, ConvertToRelativePath(file), true, GetRepositoryItemName(file), importedBF.Name);
-                                    AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-
-                                    AddDependaciesForSharedAction(item, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
-                                    break;
-                                }
-                                //Check any mapped FlowControl with "RunSharedRepositoryActivity"
-                                FlowControl flowControl = act.FlowControls.FirstOrDefault(x => x.FlowControlAction == eFlowControlAction.RunSharedRepositoryActivity);
-                                if (flowControl != null)
-                                {
-                                    string activityName = flowControl.GetNameFromValue().ToUpper();
-                                    foreach (string filename in filePathsActivity)
-                                    {
-                                        try
-                                        {
-                                            RepositoryItemBase existingSharedActivityRepoItem = newRepositorySerializer.DeserializeFromFile(filename);
-                                            if (((Activity)existingSharedActivityRepoItem).ActivityName.ToUpper() == activityName)
-                                            {
-                                                GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryActivities, filename, ConvertToRelativePath(filename), true, GetRepositoryItemName(filename), importedBF.Name);
-                                                AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-
-                                                AddDependaciesForSharedActivity(item, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
-                                                break;
-                                            }
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Reporter.ToLog(eLogLevel.ERROR, $"Global Cross Solution, Import Failed to load dependancy of {filename}, Method - {MethodBase.GetCurrentMethod().Name} Error - {ex.Message}", ex);
-                                        }
-                                    }
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, $"Global Cross Solution, Import Failed to load dependancy of {file}, Method - {MethodBase.GetCurrentMethod().Name} Error - {ex.Message}", ex);
-                            }
-                        }
-                    }
-                    //4. Shared Activity Variables
-                    AddSharedVariblesDependancies(importedBF.Variables, filePathsVars, ref SelectedItemsListToImport, importedBF.Name);
 
                 }
-                //5. Shared BF Variables
-                AddSharedVariblesDependancies(importedBF.Variables, filePathsVars, ref SelectedItemsListToImport, importedBF.Name);
 
+                // Add other dependencies
                 AddDependaciesForEnvParam(itemBF.ItemFullPath, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
                 AddDependaciesForGlobalVariable(itemBF.ItemFullPath, ref SelectedItemsListToImport, ref VariableListToImport);
                 AddDependaciesForDataSource(itemBF.ItemFullPath, ref SelectedItemsListToImport);
-
-                //Target Applications
-                foreach (TargetBase targetBase in importedBF.TargetApplications)
-                {
-                    GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.TargetApplication, Path.Combine(SolutionFolder, "Ginger.Solution.xml"), ConvertToRelativePath(Path.Combine(SolutionFolder, "Ginger.Solution.xml")), true, targetBase.Name, importedBF.Name);
-                    AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-                }
-                //Agents
-                //TODO: Need to have agents mapping on BF
-
-                //Documents
                 AddDependaciesForDocuments(itemBF.ItemFullPath, ref SelectedItemsListToImport);
+
+                // Add Target Applications of the imported BusinessFlow to the current solution
+                if (importedBF.TargetApplications.Count > 0)
+                {
+                    Solution currentSolution = GetSolution();
+                    if (currentSolution != null)
+                    {
+                        foreach (TargetBase targetApp in importedBF.TargetApplications)
+                        {
+                            // Check if the Target Application already exists in the current solution
+                            bool targetAppExists = currentSolution.ApplicationPlatforms.Any(ap => ap.AppName == targetApp.Name);
+                            if (!targetAppExists)
+                            {
+                                // Add the Target Application to the solution
+                                ApplicationPlatform newTargetApp = new ApplicationPlatform
+                                {
+                                    AppName = targetApp.Name,
+                                    Platform = currentSolution.GetApplicationPlatformForTargetApp(targetApp.Name)
+                                };
+                                WorkSpace.Instance.Solution.ApplicationPlatforms.Add(newTargetApp);
+
+                            }
+
+                            // Ensure an Agent exists for the Target Application
+                            EnsureAgentForTargetApplication(targetApp.Name, currentSolution.GetApplicationPlatformForTargetApp(targetApp.Name));
+                        }
+                    }
+                }
+
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Global Cross Solution, Import Failed to load dependancy of {itemBF.ItemFullPath}, Method - {MethodBase.GetCurrentMethod().Name} Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Global Cross Solution, Import Failed to load dependency of {itemBF.ItemFullPath}, Method - {MethodBase.GetCurrentMethod().Name} Error - {ex.Message}", ex);
             }
         }
+
+
 
         private void AddGlobalVariablesUsedInAction(ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, List<VariableBase> VariableListToImport, string dependancyFor, Act act)
         {
@@ -1232,6 +1156,70 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 Reporter.ToLog(eLogLevel.DEBUG, "Failed to replace relative path sign '~' with Solution path for the path: '" + relativePath + "'", ex);
             }
             return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(relativePath);
+        }
+
+        /// <summary>
+        /// Ensures that an Agent exists for the given Target Application and its platform.
+        /// If the Agent does not exist, it creates and adds one to the solution.
+        /// </summary>
+        /// <param name="targetApplicationName">The name of the Target Application.</param>
+        /// <param name="platform">The platform of the Target Application.</param>
+        public void EnsureAgentForTargetApplication(string targetApplicationName, ePlatformType platform)
+        {
+            try
+            {
+                // Check if an Agent already exists for the given platform
+                bool agentExists = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>()
+                    .Any(agent => agent.Platform == platform);
+
+                if (!agentExists)
+                {
+                    // Create and add an Agent for the Target Application
+                    Agent newAgent = new Agent
+                    {
+                        Name = targetApplicationName,
+                        Platform = platform,
+                        DriverType = GetDefaultDriverType(platform.ToString())
+                    };
+
+                    // Initialize the agent's driver configurations
+                    AgentOperations agentOperations = new AgentOperations(newAgent);
+                    newAgent.AgentOperations = agentOperations;
+                    newAgent.AgentOperations.InitDriverConfigs();
+
+                    // Add the agent to the solution repository
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newAgent);
+
+                    // Log the addition
+                    Reporter.ToLog(eLogLevel.INFO, $"Added Agent '{newAgent.Name}' for platform '{newAgent.Platform}' to the current solution.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to ensure Agent for Target Application '{targetApplicationName}' and platform '{platform}'. Error: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// Helper method to get the default driver type for a platform.
+        /// </summary>
+        /// <param name="platform">The platform type.</param>
+        /// <returns>The default driver type for the platform.</returns>
+        private Agent.eDriverType GetDefaultDriverType(string platform)
+        {
+            return platform switch
+            {
+                "Web" => Agent.eDriverType.Selenium,
+                "Mobile" => Agent.eDriverType.Appium,
+                "Windows" => Agent.eDriverType.WindowsAutomation,
+                "Java" => Agent.eDriverType.JavaDriver,
+                "MainFrame" => Agent.eDriverType.MainFrame3270,
+                "DOS" => Agent.eDriverType.DOSConsole,
+                "Unix" => Agent.eDriverType.UnixShell,
+                "WebServices" => Agent.eDriverType.WebServices,
+                "PowerBuilder" => Agent.eDriverType.PowerBuilder,
+                _ => throw new NotSupportedException($"No default driver type defined for platform '{platform}'")
+            };
         }
     }
 }
