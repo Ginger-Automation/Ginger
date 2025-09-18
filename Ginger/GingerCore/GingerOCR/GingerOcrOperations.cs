@@ -47,11 +47,12 @@ namespace GingerCore.GingerOCR
                 {
                     if (instance == null)
                     {
-                        FullOcrModel model = LocalFullModels.EnglishV3;
+                        FullOcrModel model = LocalFullModels.EnglishV4;
                         instance = new PaddleOcrAll(model)
                         {
                             AllowRotateDetection = true,
-                            Enable180Classification = false
+                            Enable180Classification = false,
+
                         };
                     }
                     return instance;

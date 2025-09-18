@@ -45,10 +45,12 @@
     <EmbeddedResource Remove="Actions\WebServices\**" />
     <EmbeddedResource Remove="Environments\**" />
     <EmbeddedResource Remove="Plugins\**" />
+    <EmbeddedResource Remove="tessdata\**" />
     <None Remove="Actions\REST\**" />
     <None Remove="Actions\WebServices\**" />
     <None Remove="Environments\**" />
     <None Remove="Plugins\**" />
+    <None Remove="tessdata\**" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="ACL_Data_Contract">
@@ -357,12 +359,6 @@
     <Compile Include="XPathParser\XPathScanner.cs" />
     <Compile Include="XPathParser\XPathStringBuilder.cs" />
     <Compile Include="XPathParser\XPathTreeBuilder.cs" />
-    <None Include="tessdata\eng.traineddata">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <Resource Include="tessdata\pdf.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
     <None Include="Resources\%40EmptyStart_16x16.gif" />
     <None Include="Resources\%40Star_16x16.gif" />
     <None Include="Resources\%40StarGray_16x16.gif" />
@@ -549,9 +545,6 @@
     <PackageReference Include="Sdcb.PaddleInference.runtime.win64.mkl" Version="3.1.0.54" />
     <PackageReference Include="Sdcb.PaddleOCR" Version="3.0.1" />
     <PackageReference Include="Sdcb.PaddleOCR.Models.Local" Version="3.0.1" />
-    <PackageReference Include="Sdcb.PaddleOCR.Models.LocalV3" Version="2.7.0.1" />
-    <PackageReference Include="Sdcb.PaddleOCR.Models.LocalV4" Version="2.7.0.1" />
-    <PackageReference Include="Sdcb.PaddleOCR.Models.LocalV5" Version="3.0.0" />
     <PackageReference Include="Sdcb.PaddleOCR.Models.Shared" Version="2.7.0.1" />
     <PackageReference Include="SharpSvn" Version="1.14001.156" />
     <PackageReference Include="SkiaSharp" Version="3.116.1" />
