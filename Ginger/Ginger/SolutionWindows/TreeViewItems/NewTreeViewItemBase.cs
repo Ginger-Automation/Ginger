@@ -293,7 +293,7 @@ namespace GingerWPF.TreeViewItemsLib
                     //refresh cache
                     if (((ITreeViewItem)this).NodeObject() is RepositoryFolderBase repoFolder)
                     {
-                        repoFolder?.ReloadItems();
+                        repoFolder.ReloadItems();
                     }
 
                     //refresh tree
