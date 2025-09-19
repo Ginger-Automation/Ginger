@@ -641,12 +641,7 @@ namespace GingerCore.Drivers.WindowsLib
             bool parsedX = int.TryParse(xStr, out int parsedXVal);
             bool parsedY = int.TryParse(yStr, out int parsedYVal);
 
-            if (string.IsNullOrEmpty(xStr) && string.IsNullOrEmpty(yStr))
-            {
-                x = centerOffsetX;
-                y = centerOffsetY;
-            }
-            else if (!parsedX && !parsedY)
+            if (!parsedX && !parsedY)
             {
                 // Provided values not parseable -> use centers
                 x = centerOffsetX;
