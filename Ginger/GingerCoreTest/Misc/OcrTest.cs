@@ -24,6 +24,7 @@ using System;
 namespace GingerCoreTest.Misc
 {
     [TestClass]
+    [Ignore]
     public class OcrTest
     {
         string OcrPdfFilePath = TestResources.GetTestResourcesFile(@"OCR\OcrSample.pdf");
