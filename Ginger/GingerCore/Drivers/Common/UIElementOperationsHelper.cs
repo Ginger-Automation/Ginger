@@ -318,6 +318,39 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
+        public ActionResult DoubleClickElement(UIAuto.AutomationElement automationElement)
+        {
+            ActionResult actionResult = new ActionResult();
+            bool doubleClickTriggeredFlag = false;
+
+            try
+            {
+                // 1) Try InvokePattern twice
+                actionResult = DoubleClickUsingInvokePattern(automationElement, ref doubleClickTriggeredFlag);
+                if (!string.IsNullOrEmpty(actionResult.errorMessage))
+                {
+                    // 2) Try Legacy default action twice
+                    doubleClickTriggeredFlag = false;
+                    actionResult = DoubleClickUsingLegacyPattern(automationElement, ref doubleClickTriggeredFlag);
+                }
+                if(!string.IsNullOrEmpty(actionResult.errorMessage))
+                {
+                    // 3) Fallback to mouse double-click
+                    winAPI.DoubleSendClick(automationElement);
+                    actionResult.executionInfo = "Successfully double-clicked the element";
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in DoubleClickElement", ex);
+                actionResult.errorMessage = "Failed to double-click the element";
+            }
+
+            return actionResult;
+        }
+
+
+
         public ActionResult MouseClickElement(UIAuto.AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();
@@ -330,6 +363,22 @@ namespace GingerCore.Drivers.Common
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Exception in ClickElement", ex);
                 actionResult.errorMessage = "Failed to click the element";
+            }
+            return actionResult;
+        }
+
+        public ActionResult MouseDoubleClickElement(UIAuto.AutomationElement automationElement)
+        {
+            ActionResult actionResult = new ActionResult();
+            try
+            {
+                winAPI.DoubleSendClick(automationElement);
+                actionResult.executionInfo = "Successfully double-clicked the element";
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in MouseDoubleClickElement", ex);
+                actionResult.errorMessage = "Failed to double-click the element";
             }
             return actionResult;
         }
@@ -516,6 +565,73 @@ namespace GingerCore.Drivers.Common
                 clickTriggeredFlag = false;
                 Reporter.ToLog(eLogLevel.DEBUG, "Exception in ClickElement", ex);
                 actionResult.errorMessage = "Failed to click the element";
+            }
+            return actionResult;
+        }
+
+        internal ActionResult DoubleClickUsingInvokePattern(UIAuto.AutomationElement automationElement, ref Boolean clickTriggeredFlag)
+        {
+            ActionResult actionResult = new ActionResult();
+            object invokePattern;
+            try
+            {
+                if (automationElement.TryGetCurrentPattern(UIAuto.InvokePattern.Pattern, out invokePattern) && invokePattern != null)
+                {
+                    clickTriggeredFlag = true;
+                    ((UIAuto.InvokePattern)invokePattern).Invoke();
+                    Thread.Sleep(100);
+                    ((UIAuto.InvokePattern)invokePattern).Invoke();
+                    actionResult.executionInfo = "Successfully double-click the element";
+                }
+                else
+                {
+                    actionResult.errorMessage = "Failed to double-click the element";
+                }
+            }
+            catch (Exception ex)
+            {
+                clickTriggeredFlag = false;
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in DoubleClickElement", ex);
+                actionResult.errorMessage = "Failed to double-click the element";
+            }
+            return actionResult;
+        }
+
+        internal ActionResult DoubleClickUsingLegacyPattern(UIAuto.AutomationElement automationElement, ref Boolean clickTriggeredFlag)
+        {
+            ActionResult actionResult = new ActionResult();
+            object legacyPattern;
+            try
+            {
+                if (automationElement.TryGetCurrentPattern(UIAuto.LegacyIAccessiblePattern.Pattern, out legacyPattern) && legacyPattern != null)
+                {
+                    actionResult = GetPropertyValue(automationElement, UIAuto.LegacyIAccessiblePatternIdentifiers.DefaultActionProperty);
+                    if (string.IsNullOrEmpty(actionResult.errorMessage))
+                    {
+                        if (!string.IsNullOrEmpty(actionResult.outputValue))
+                        {
+                            clickTriggeredFlag = true;
+                            ((UIAuto.LegacyIAccessiblePattern)legacyPattern).DoDefaultAction();
+                            Thread.Sleep(100);
+                            ((UIAuto.LegacyIAccessiblePattern)legacyPattern).DoDefaultAction();
+                            actionResult.executionInfo = "Successfully double-click  the element";
+                        }
+                        else
+                        {
+                            actionResult.errorMessage = "Failed to double-click the element";
+                        }
+                    }
+                }
+                else
+                {
+                    actionResult.errorMessage = "Failed to double-click the element";
+                }
+            }
+            catch (Exception ex)
+            {
+                clickTriggeredFlag = false;
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in DoubleClickElement", ex);
+                actionResult.errorMessage = "Failed to double-click the element";
             }
             return actionResult;
         }

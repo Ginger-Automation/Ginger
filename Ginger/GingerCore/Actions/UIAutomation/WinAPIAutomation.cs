@@ -383,6 +383,25 @@ namespace GingerCore.Drivers
             System.Windows.Forms.Cursor.Position = p;
         }
 
+        public void DoubleSendClick(UIAuto.AutomationElement element, bool flag = true)
+        {
+            if (flag == true)
+            {
+                int targetProcessID = element.Current.ProcessId;
+                SetForeGroundWindow(targetProcessID);
+            }
+            //TODO: FIXME - do not change cursor position or set foreground window, maybe needed only for PB + Calc clickable point and not +3 + send Button Up
+            System.Drawing.Point p = System.Windows.Forms.Cursor.Position;
+            int x = element.Current.BoundingRectangle.X + (element.Current.BoundingRectangle.Width / 2);
+            int y = element.Current.BoundingRectangle.Y + (element.Current.BoundingRectangle.Height / 2);
+
+            ClickLeftMouseButton(x, y);
+            System.Threading.Thread.Sleep(100);
+            ClickLeftMouseButton(x, y);
+            System.Threading.Thread.Sleep(500);
+            System.Windows.Forms.Cursor.Position = p;
+        }
+
         [DllImport("user32.dll")]
         static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
 

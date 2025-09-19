@@ -233,6 +233,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     break;
                 case eElementType.Button:
                     list.Add(ActUIElement.eElementAction.Click);
+                    list.Add(ActUIElement.eElementAction.DoubleClick);
                     break;
                 case eElementType.TextBox:
                     list.Add(ActUIElement.eElementAction.SetValue);
