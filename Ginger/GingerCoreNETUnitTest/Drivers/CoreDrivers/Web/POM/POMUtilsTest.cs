@@ -175,7 +175,8 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
             Assert.IsNotNull(idLoc);
             Assert.AreEqual("new-id-val", idLoc.LocateValue);
             Assert.AreEqual(ePomElementCategory.Web, idLoc.Category);
-
+            Assert.IsTrue(idLoc.Active);
+            Assert.IsTrue(idLoc.IsAutoLearned);
             var unknownLoc = addedLocators.FirstOrDefault(l => l.LocateValue == "//div[@x='y']");
             Assert.IsNotNull(unknownLoc);
             Assert.AreEqual(eLocateBy.ByRelXPath, unknownLoc.LocateBy);
