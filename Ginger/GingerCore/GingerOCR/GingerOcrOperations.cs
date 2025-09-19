@@ -53,19 +53,16 @@ namespace GingerCore.GingerOCR
                             AllowRotateDetection = true,
                             Enable180Classification = false,
 
+
                         };
                     }
                     return instance;
                 }
             }
         }
-
-        private static readonly System.Threading.SemaphoreSlim _ocrGate = new(1, 1);
-        private static PaddleOcrResult SafeRun(Mat mat)
+        public static byte[] FileToByteArray(string filePath)
         {
-            _ocrGate.Wait();
-            try { return Instance.Run(mat); }
-            finally { _ocrGate.Release(); }
+            return File.ReadAllBytes(filePath);
         }
 
         public static string ReadTextFromImage(string imageFilePath)
@@ -75,7 +72,7 @@ namespace GingerCore.GingerOCR
             {
                 using (Mat mat = Cv2.ImRead(imageFilePath, ImreadModes.Color))
                 {
-                    var ocrResult = SafeRun(mat);
+                    var ocrResult = Instance.Run(mat);
                     textOutput = ocrResult.Text;
                     Reporter.ToLog(eLogLevel.INFO, $"Text obtained from image {imageFilePath} is successful.");
                 }
@@ -94,7 +91,7 @@ namespace GingerCore.GingerOCR
             {
                 using (Mat mat = Cv2.ImRead(imageFilePath, ImreadModes.Color))
                 {
-                    var ocrResult = SafeRun(mat);
+                    var ocrResult = Instance.Run(mat);
 
                     foreach (var region in ocrResult.Regions)
                     {
@@ -119,7 +116,7 @@ namespace GingerCore.GingerOCR
         {
             using (Mat mat = Cv2.ImRead(imageFilePath, ImreadModes.Color))
             {
-                var ocrResult = SafeRun(mat);
+                var ocrResult = Instance.Run(mat);
                 return ReadTextBetweenTwoLabels(firstLabel, secondLabel, ocrResult, ref err);
             }
         }
@@ -131,7 +128,7 @@ namespace GingerCore.GingerOCR
             {
                 using (Mat src = Cv2.ImDecode(byteArray, ImreadModes.Color))
                 {
-                    var result = SafeRun(src);
+                    var result = Instance.Run(src);
                     txtOutput = result.Text;
                 }
             }
@@ -150,7 +147,7 @@ namespace GingerCore.GingerOCR
                 using (var img = (Bitmap)Image.FromStream(ms))
                 using (Mat mat = OpenCvSharp.Extensions.BitmapConverter.ToMat(img))
                 {
-                    return SafeRun(mat);
+                    return Instance.Run(mat);
                 }
             }
             catch (Exception ex)
@@ -290,7 +287,7 @@ namespace GingerCore.GingerOCR
                 {
                     using (Mat src = Cv2.ImDecode(pageBytes, ImreadModes.Color))
                     {
-                        var ocrResult = SafeRun(src);
+                        var ocrResult = Instance.Run(src);
                         result.AppendLine(string.Join(Environment.NewLine, ocrResult.Regions.Select(r => r.Text)));
                     }
                 }
@@ -315,7 +312,7 @@ namespace GingerCore.GingerOCR
                 {
                     using (Mat src = Cv2.ImDecode(pngByte, ImreadModes.Color))
                     {
-                        var ocrResult = SafeRun(src);
+                        var ocrResult = Instance.Run(src);
 
                         foreach (var region in ocrResult.Regions)
                         {
@@ -349,7 +346,7 @@ namespace GingerCore.GingerOCR
                 {
                     using (Mat src = Cv2.ImDecode(pngByte, ImreadModes.Color))
                     {
-                        var ocrResult = SafeRun(src);
+                        var ocrResult = Instance.Run(src);
                         bool started = false;
 
                         foreach (var region in ocrResult.Regions)
@@ -410,7 +407,7 @@ namespace GingerCore.GingerOCR
                 {
                     using (Mat src = Cv2.ImDecode(pages[i], ImreadModes.Color))
                     {
-                        var ocrResult = SafeRun(src);
+                        var ocrResult = Instance.Run(src);
                         result[$"Page_{i + 1}"] = string.Join(Environment.NewLine, ocrResult.Regions.Select(r => r.Text));
                     }
                 }
