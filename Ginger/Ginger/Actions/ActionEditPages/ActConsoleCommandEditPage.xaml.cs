@@ -60,22 +60,12 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtWait, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.WaitTime);
             xDelimiterVE.BindControl(Context.GetAsContext(actConsoleCommand.Context), actConsoleCommand, nameof(ActConsoleCommand.Delimiter));
             txtExpected.Init(Context.GetAsContext(mActConsoleCommand.Context), mActConsoleCommand, ActConsoleCommand.Fields.ExpString);
-            List<object> CommandList = GetCommandKey();
-            GingerCore.General.FillComboFromEnumObj(CommandTerminatorComboBox, actConsoleCommand.CommandEndKey, CommandList);
+            GingerCore.General.FillComboFromEnumObj(CommandTerminatorComboBox, actConsoleCommand.CommandEndKey);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CommandTerminatorComboBox, ComboBox.SelectedValueProperty, actConsoleCommand, nameof(ActConsoleCommand.CommandEndKey));
         }
 
 
         
-        private List<object> GetCommandKey()
-        {
-            List<object> CommandList = new List<object>();
-            foreach (var val in Enum.GetValues(typeof(eCommandEndKey)))
-            {
-                CommandList.Add(val);
-            }
-            return CommandList;
-        }
         private List<object> GetActionListPlatform()
         {
             if (mActConsoleCommand.Platform == ePlatformType.NA)
@@ -140,7 +130,9 @@ namespace Ginger.Actions
         private void CommandTerminatorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (CommandTerminatorComboBox.SelectedValue is ActConsoleCommand.eCommandEndKey key)
+            {
                 mActConsoleCommand.CommandEndKey = key;
+            }
         }
         private void FillScriptNameCombo()
         {

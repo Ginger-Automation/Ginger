@@ -131,8 +131,8 @@ namespace GingerCore.Actions
 
     }
 
-    [AttributeUsage(AttributeTargets.Field)]
-    public class CommandValueAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+    internal sealed class CommandValueAttribute : Attribute
     {
         public string Value { get; }
 

@@ -127,7 +127,10 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             {
                 var type = typeof(eCommandEndKey);
                 var members = type.GetMember(k.ToString());
-                if (members == null || members.Length == 0) return string.Empty;
+                if (members == null || members.Length == 0) 
+                { 
+                    return string.Empty; 
+                }
                 var attrs = members[0].GetCustomAttributes(typeof(CommandValueAttribute), false);
                 return attrs.Length > 0 ? ((CommandValueAttribute)attrs[0]).Value : string.Empty;
             });

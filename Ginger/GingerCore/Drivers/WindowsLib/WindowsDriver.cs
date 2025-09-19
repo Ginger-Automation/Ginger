@@ -619,8 +619,16 @@ namespace GingerCore.Drivers.WindowsLib
             {
                 // Use element bounding rectangle size to compute center offsets (relative to element)
                 System.Drawing.Rectangle drawingRect = automationElement.Current.BoundingRectangle;
-                centerOffsetX = (int)(drawingRect.Width / 2);
-                centerOffsetY = (int)(drawingRect.Height / 2);
+                if (drawingRect.Width > 0 && drawingRect.Height > 0)
+                {
+                    centerOffsetX = drawingRect.Width / 2;
+                    centerOffsetY = drawingRect.Height / 2;
+                }
+                else
+                {
+                    centerOffsetX = 5;
+                    centerOffsetY = 5;
+                }
             }
             catch
             {
