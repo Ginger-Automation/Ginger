@@ -316,8 +316,12 @@ namespace GingerCore.SourceControl
                 MergeResult result;
                 result = Pull(progressNotifier);
 
+                if (result == null)
+                {
+                    return false;
+                }
 
-                if (result != null && result.Status != MergeStatus.Conflicts)
+                if (result.Status != MergeStatus.Conflicts)
                 {
                     using var repo = new Repository(RepositoryRootFolder);
                     if (supressMessage == true)
@@ -330,7 +334,7 @@ namespace GingerCore.SourceControl
                     }
                     return true;
                 }
-                else
+                else if (result.Status == MergeStatus.Conflicts)
                 {
                     conflictsPaths = GetConflictPaths();
 
@@ -344,7 +348,7 @@ namespace GingerCore.SourceControl
                     }
                     return false;
                 }
-
+                return false;
             }
             catch (Exception ex)
             {
@@ -1501,7 +1505,7 @@ namespace GingerCore.SourceControl
                         previousPercentage = percentage;
                         return !cancellationToken.IsCancellationRequested;
                     };
-               
+
                     cloneOptions.OnCheckoutProgress = (_, completedSteps, totalSteps) =>
                     {
                         progressNotifier?.NotifyProgressDetailText($"Checkout solution status: {completedSteps}/{totalSteps}");
@@ -1619,7 +1623,7 @@ namespace GingerCore.SourceControl
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while pulling the latest changes.", ex);
-                return null;
+                throw;
             }
         }
 

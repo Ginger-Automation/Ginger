@@ -63,7 +63,9 @@ namespace Amdocs.Ginger.Common.GeneralLib
             {
                 try
                 {
-                    using var client = new HttpClient(handler);
+                    ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
+                    handler.ServerCertificateCustomValidationCallback += (_, _, _, _) => { return true; };                   
+                    using var client = new HttpClient(handler);                                
                     var response = await client.GetAsync(url);
                     string content = await response.Content.ReadAsStringAsync();
 
@@ -92,7 +94,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
             var handlerWithProxy = new HttpClientHandler
             {
                 Proxy = WebRequest.GetSystemWebProxy(),
-                UseProxy = true
+                UseProxy = true,                
             };
             var result = await TryFetchAsync(handlerWithProxy);
             if (result.Item1 != null)

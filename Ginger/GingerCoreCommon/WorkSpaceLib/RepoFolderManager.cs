@@ -35,13 +35,13 @@ namespace Amdocs.Ginger.Common.WorkSpaceLib
         private readonly int _maxLockRetryAttempts;
         private readonly TimeSpan _initialRetryDelay;
 
-        public RepoFolderManager(string baseWorkingFolder, string processId, 
-            TimeSpan? lockAcquisitionTimeout = null, 
+        public RepoFolderManager(string processId, string baseWorkingFolder = null,
+            TimeSpan? lockAcquisitionTimeout = null,
             TimeSpan? staleAssignmentTimeout = null,
             int maxLockRetryAttempts = 100,
             TimeSpan? initialRetryDelay = null)
         {
-            _baseWorkingFolder = baseWorkingFolder ?? throw new ArgumentNullException(nameof(baseWorkingFolder));
+            _baseWorkingFolder = baseWorkingFolder ?? GeneralLib.General.DefaultGingerReposFolder;
             _processId = processId ?? throw new ArgumentNullException(nameof(processId));
 
             // Set default timeouts if not provided
@@ -50,16 +50,15 @@ namespace Amdocs.Ginger.Common.WorkSpaceLib
             _maxLockRetryAttempts = maxLockRetryAttempts;
             _initialRetryDelay = initialRetryDelay ?? TimeSpan.FromMilliseconds(100);
 
-            // Use CommonApplicationData\YourAppName for shared data files
-            string appDataFolder = GeneralLib.General.CommonApplicationDataFolderPath;
-
-            if (!Directory.Exists(appDataFolder))
+            // Use dedicated subfolder for coordination to avoid clutter and allow permissions handling.
+            string dataFolder = Path.Combine(GeneralLib.General.LocalUserApplicationDataFolderPath, "RepoFolderManagerData");
+            if (!Directory.Exists(dataFolder))
             {
-                Directory.CreateDirectory(appDataFolder);
+                Directory.CreateDirectory(dataFolder);
             }
 
-            _lockFilePath = Path.Combine(appDataFolder, "repo_folder_pool.lock");
-            _assignmentFilePath = Path.Combine(appDataFolder, "repo_folder_pool_assignments.json");
+            _lockFilePath = Path.Combine(dataFolder, "repo_folder_pool.lock");
+            _assignmentFilePath = Path.Combine(dataFolder, "repo_folder_pool_assignments.json");
         }
 
 
@@ -101,7 +100,7 @@ namespace Amdocs.Ginger.Common.WorkSpaceLib
                 {
                     string subFolderPath = Path.Combine(repoBaseFolder, folderNum.ToString());
 
-                    bool inUse = _assignments.Values.Any(assignment => 
+                    bool inUse = _assignments.Values.Any(assignment =>
                         string.Equals(assignment.FolderPath, subFolderPath, StringComparison.OrdinalIgnoreCase));
 
                     if (!inUse)
@@ -200,13 +199,13 @@ namespace Amdocs.Ginger.Common.WorkSpaceLib
                 {
                     // Try to acquire the lock
                     _lockFileStream = new FileStream(_lockFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
-                    
+
                     // Use a platform-safe locking mechanism
                     if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                     {
                         _lockFileStream.Lock(0, 0);
                     }
-                    
+
                     return; // Successfully acquired lock
                 }
                 catch (IOException)
@@ -214,7 +213,7 @@ namespace Amdocs.Ginger.Common.WorkSpaceLib
                     // Lock is held by another process, dispose the stream and retry
                     _lockFileStream?.Dispose();
                     _lockFileStream = null;
-                    
+
                     attempt++;
                     if (attempt < _maxLockRetryAttempts && stopwatch.Elapsed < _lockAcquisitionTimeout)
                     {
@@ -274,8 +273,15 @@ namespace Amdocs.Ginger.Common.WorkSpaceLib
                 return;
             }
 
-            string json = File.ReadAllText(_assignmentFilePath);
-            _assignments = JsonSerializer.Deserialize<Dictionary<string, AssignmentInfo>>(json) ?? [];
+            try
+            {
+                string json = File.ReadAllText(_assignmentFilePath);
+                _assignments = JsonSerializer.Deserialize<Dictionary<string, AssignmentInfo>>(json) ?? [];
+            }
+            catch (Exception ex) when (ex is IOException || ex is JsonException || ex is UnauthorizedAccessException)
+            {
+                _assignments = [];
+            }
 
         }
 
@@ -303,7 +309,7 @@ namespace Amdocs.Ginger.Common.WorkSpaceLib
             {
                 // Ignore errors during cleanup
             }
-            
+
             ReleaseLock();
         }
     }
