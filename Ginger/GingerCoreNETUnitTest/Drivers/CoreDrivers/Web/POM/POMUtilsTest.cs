@@ -44,7 +44,8 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
         private ElementInfo CreateElement(Guid? guid = null, string title = "MyTitle", string initialName = "OrigName", string initialDesc = "OrigDesc")
         {
             var ei = new ElementInfo();
-            typeof(ElementInfo).GetProperty("Guid").SetValue(ei, guid ?? Guid.NewGuid());
+            var guidProp = typeof(ElementInfo).GetProperty("Guid", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            guidProp?.SetValue(ei, guid ?? Guid.NewGuid());
 
             ei.ElementName = initialName;
             ei.Description = initialDesc;
@@ -128,10 +129,10 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
             
             // Locators: only ID non-empty should be mapped
             var locatorsObj = elementObj.locators;
-            var idProp = locatorsObj.GetType().GetProperty("ByID");
+            var idProp = locatorsObj.GetType().GetProperty("ByID", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
             Assert.IsNotNull(idProp);
             Assert.AreEqual("elem-id-1", idProp.GetValue(locatorsObj));
-            var nameProp = locatorsObj.GetType().GetProperty("ByName");
+            var nameProp = locatorsObj.GetType().GetProperty("ByName", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
             if (nameProp != null)
             {
                 Assert.IsTrue(string.IsNullOrEmpty(Convert.ToString(nameProp.GetValue(locatorsObj))), "Empty locator should not be assigned a value");
@@ -202,6 +203,8 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
             Assert.AreEqual("Desc2", ei.Description);
             Assert.IsTrue(ei.IsProcessed);
             Assert.IsTrue(ei.Locators.Any(l => l.IsAIGenerated && l.LocateValue.Contains("@id='x'")));
+            Assert.IsTrue(ei.Locators.Any(l => l.IsAIGenerated && l.Active));
+            Assert.IsTrue(ei.Locators.Any(l => l.IsAIGenerated && l.Category == ePomElementCategory.Web));
         }
 
         [TestMethod]
