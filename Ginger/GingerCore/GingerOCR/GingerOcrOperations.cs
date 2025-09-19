@@ -60,12 +60,12 @@ namespace GingerCore.GingerOCR
             }
         }
 
+        private static readonly System.Threading.SemaphoreSlim _ocrGate = new(1, 1);
         private static PaddleOcrResult SafeRun(Mat mat)
         {
-            lock (lockObject)
-            {
-                return Instance.Run(mat);
-            }
+            _ocrGate.Wait();
+            try { return Instance.Run(mat); }
+            finally { _ocrGate.Release(); }
         }
 
         public static string ReadTextFromImage(string imageFilePath)
@@ -73,8 +73,7 @@ namespace GingerCore.GingerOCR
             string textOutput = string.Empty;
             try
             {
-                using (var img = new Bitmap(imageFilePath))
-                using (Mat mat = OpenCvSharp.Extensions.BitmapConverter.ToMat(img))
+                using (Mat mat = Cv2.ImRead(imageFilePath, ImreadModes.Color))
                 {
                     var ocrResult = SafeRun(mat);
                     textOutput = ocrResult.Text;
@@ -93,17 +92,17 @@ namespace GingerCore.GingerOCR
             string txtOutput = string.Empty;
             try
             {
-                using (var img = new Bitmap(imageFilePath))
-                using (Mat mat = OpenCvSharp.Extensions.BitmapConverter.ToMat(img))
+                using (Mat mat = Cv2.ImRead(imageFilePath, ImreadModes.Color))
                 {
                     var ocrResult = SafeRun(mat);
 
                     foreach (var region in ocrResult.Regions)
                     {
-                        if (region.Text.Contains(label))
+                        var txt = region.Text ?? string.Empty;
+                        int indexOf = txt.IndexOf(label, StringComparison.OrdinalIgnoreCase);
+                        if (indexOf >= 0)
                         {
-                            int indexOf = region.Text.IndexOf(label) + label.Length;
-                            txtOutput = region.Text.Substring(indexOf).Trim();
+                            txtOutput = txt.Substring(indexOf + label.Length).Trim();
                             break;
                         }
                     }
@@ -118,8 +117,7 @@ namespace GingerCore.GingerOCR
 
         public static string ReadTextFromImageBetweenStrings(string imageFilePath, string firstLabel, string secondLabel, ref string err)
         {
-            using (var img = new Bitmap(imageFilePath))
-            using (Mat mat = OpenCvSharp.Extensions.BitmapConverter.ToMat(img))
+            using (Mat mat = Cv2.ImRead(imageFilePath, ImreadModes.Color))
             {
                 var ocrResult = SafeRun(mat);
                 return ReadTextBetweenTwoLabels(firstLabel, secondLabel, ocrResult, ref err);
@@ -177,15 +175,15 @@ namespace GingerCore.GingerOCR
             {
                 foreach (var region in ocrResult.Regions)
                 {
-                    string lineTxt = region.Text;
+                    string lineTxt = region.Text ?? string.Empty;
 
                     if (!startedReading)
                     {
-                        int firstIndexOf = lineTxt.IndexOf(firstLabel);
+                        int firstIndexOf = lineTxt.IndexOf(firstLabel, StringComparison.OrdinalIgnoreCase);
                         if (firstIndexOf != -1)
                         {
                             startedReading = true;
-                            int secondIndexOf = lineTxt.IndexOf(secondLabel, firstIndexOf + firstLabel.Length);
+                            int secondIndexOf = lineTxt.IndexOf(secondLabel, firstIndexOf + firstLabel.Length, StringComparison.OrdinalIgnoreCase);
 
                             if (secondIndexOf != -1)
                             {
@@ -475,7 +473,9 @@ namespace GingerCore.GingerOCR
                         {
                             var targetRow = tableRows[rowNumber];
                             if (colIndex < targetRow.Count)
+                            {
                                 return targetRow[colIndex].Text;
+                            }
                         }
                     }
                     else if (!string.IsNullOrEmpty(conditionColumnName) && !string.IsNullOrEmpty(conditionColumnValue))
@@ -490,7 +490,9 @@ namespace GingerCore.GingerOCR
                                 if (condIndex < row.Count && row[condIndex].Text.Contains(conditionColumnValue))
                                 {
                                     if (colIndex < row.Count)
+                                    {
                                         return row[colIndex].Text;
+                                    }
                                 }
                             }
                         }
@@ -509,7 +511,10 @@ namespace GingerCore.GingerOCR
         private static void GetTableDataFromPageArea(string columnName, bool useRowNumber, int rowNumber, string conditionColumnName, string conditionColumnValue, ref string txtOutput, Table table, ActOcr.eTableElementRunColOperator elementLocateBy)
         {
             var rows = table.Rows;
-            if (rows.Count == 0) return;
+            if (rows.Count == 0)
+            {
+                return;
+            }
 
             var header = rows.First().Select(cell => cell.GetText()).ToList();
             if (!header.Contains(columnName)) return;
