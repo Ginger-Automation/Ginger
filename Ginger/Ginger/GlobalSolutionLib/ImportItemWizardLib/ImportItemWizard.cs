@@ -188,6 +188,9 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 if (appPlatform == null)
                 {
                     WorkSpace.Instance.Solution.ApplicationPlatforms.Add(applicationPlatform);
+
+                    // Ensure an Agent exists for the Target Application
+                    GlobalSolutionUtils.Instance.EnsureAgentForTargetApplication(applicationPlatform.AppName, applicationPlatform.Platform);
                 }
                 return;
             }
