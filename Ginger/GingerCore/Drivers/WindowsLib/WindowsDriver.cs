@@ -605,7 +605,14 @@ namespace GingerCore.Drivers.WindowsLib
                 actUIElement.Error = actionResult.errorMessage;
             }
         }
-
+        /// <summary>
+        /// Calculates element-relative coordinates for UI automation actions.
+        /// Returns center offsets when coordinates are invalid or missing.
+        /// </summary>
+        /// <param name="actUIElement">UI element action containing coordinate parameters</param>
+        /// <param name="automationElement">Target automation element for coordinate calculation</param>
+        /// <param name="x">Output element-relative X coordinate</param>
+        /// <param name="y">Output element-relative Y coordinate</param>
         private static void GetCoOrdinate(ActUIElement actUIElement, UIAuto.AutomationElement automationElement, out int x, out int y)
         {
             string xStr = actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate);
