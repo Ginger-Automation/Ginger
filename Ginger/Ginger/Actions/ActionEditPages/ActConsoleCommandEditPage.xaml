@@ -3,7 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      xmlns:UserControlsLib="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="500" d:DesignWidth="600"
 	Title="ActConsoleCommandEditPage">
@@ -38,7 +38,7 @@
             <StackPanel Orientation="Horizontal" Margin="0,20,0,20">
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Command Terminator:</Label>
                 <ComboBox x:Name="CommandTerminatorComboBox" Margin="10,0,0,0" SelectionChanged="CommandTerminatorComboBox_SelectionChanged"  Width="80" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
-                <UserControlsLib:ImageMakerControl Grid.Column="3" x:Name="CommandTerminatorNote" ToolTip="Note - Enter key (\n) - Executes the command, Tab key (\t) - Autocomplete or navigate fields , "Space key (\" \") - Inserts a space,Empty (\"\") - No command assigned" SetAsFontImageWithSize="12" ImageType="Info" Width="12" Height="12" FontWeight="Bold" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_DarkGray}" Margin="2,0,5,0"/>
+                <UserControlsLib:ImageMakerControl Grid.Column="3" x:Name="CommandTerminatorNote" ToolTip="Note - Enter (\n): executes the command; Tab (\t): autocomplete/navigate; Space (&quot; &quot;): inserts a space; Empty (&quot;&quot;): no key sent" SetAsFontImageWithSize="12" ImageType="Info" Width="12" Height="12" FontWeight="Bold" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_DarkGray}" Margin="2,0,5,0"/>
             </StackPanel>
         </StackPanel>
     </Grid>

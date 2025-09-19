@@ -23,6 +23,7 @@ using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace GingerCore.Actions
 {
@@ -78,7 +79,7 @@ namespace GingerCore.Actions
             [EnumValueDescription("Space")]
             Space,
             [CommandValue("")]
-            [EnumValueDescription("")]
+            [EnumValueDescription("None")]
             Empty,
         }
 
@@ -101,8 +102,8 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string Delimiter { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public eCommandEndKey CommandEndKey { get; set; }
+        [IsSerializedForLocalRepository(DefaultValue: eCommandEndKey.Enter)]
+        public eCommandEndKey CommandEndKey { get; set; } = eCommandEndKey.Enter;
 
         public override String ActionType
         {

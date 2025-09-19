@@ -120,13 +120,17 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             return null;
         }
 
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<eCommandEndKey, string> s_cmdMap = new();
         public static string GetCommandValue(eCommandEndKey key)
         {
-            var type = typeof(eCommandEndKey);
-            var memberInfo = type.GetMember(key.ToString());
-            var attributes = memberInfo[0].GetCustomAttributes(typeof(CommandValueAttribute), false);
-
-            return attributes.Length > 0 ? ((CommandValueAttribute)attributes[0]).Value : string.Empty;
+           return s_cmdMap.GetOrAdd(key, k =>
+            {
+                var type = typeof(eCommandEndKey);
+                var members = type.GetMember(k.ToString());
+                if (members == null || members.Length == 0) return string.Empty;
+                var attrs = members[0].GetCustomAttributes(typeof(CommandValueAttribute), false);
+                return attrs.Length > 0 ? ((CommandValueAttribute)attrs[0]).Value : string.Empty;
+            });
         }
 
 

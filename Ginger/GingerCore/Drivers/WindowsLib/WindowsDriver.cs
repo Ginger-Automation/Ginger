@@ -611,43 +611,53 @@ namespace GingerCore.Drivers.WindowsLib
             string xStr = actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate);
             string yStr = actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate);
 
-            if (string.IsNullOrEmpty(xStr) || string.IsNullOrEmpty(yStr))
-            {
-                // Get bounding rectangle
-                System.Drawing.Rectangle drawingRect = automationElement.Current.BoundingRectangle;
-                System.Windows.Rect windowsRect = new System.Windows.Rect(
-                    drawingRect.X,
-                    drawingRect.Y,
-                    drawingRect.Width,
-                    drawingRect.Height
-                );
+            // Default to element-relative center offsets
+            int centerOffsetX = 0;
+            int centerOffsetY = 0;
 
-                // Calculate center point
-                if(string.IsNullOrEmpty(xStr) && string.IsNullOrEmpty(yStr))
-                {
-                    x = (int)(windowsRect.Left + windowsRect.Width / 2);
-                    y = (int)(windowsRect.Top + windowsRect.Height / 2);
-                }
-                else if(string.IsNullOrEmpty(xStr))
-                {
-                    x = (int)(windowsRect.Left + windowsRect.Width / 2);
-                    y = Int32.Parse(yStr);
-                }
-                else if(string.IsNullOrEmpty(yStr))
-                {
-                    x = Int32.Parse(xStr);
-                    y = (int)(windowsRect.Top + windowsRect.Height / 2);
-                }
-                else
-                {
-                    x = Int32.Parse(xStr);
-                    y = Int32.Parse(yStr);
-                }
+            try
+            {
+                // Use element bounding rectangle size to compute center offsets (relative to element)
+                System.Drawing.Rectangle drawingRect = automationElement.Current.BoundingRectangle;
+                centerOffsetX = (int)(drawingRect.Width / 2);
+                centerOffsetY = (int)(drawingRect.Height / 2);
+            }
+            catch
+            {
+                // If unable to read bounding rect, fallback to small defaults
+                centerOffsetX = 5;
+                centerOffsetY = 5;
+            }
+
+            // Try parse provided coordinates; if valid use them as element-relative offsets, otherwise use center offsets
+            bool parsedX = int.TryParse(xStr, out int parsedXVal);
+            bool parsedY = int.TryParse(yStr, out int parsedYVal);
+
+            if (string.IsNullOrEmpty(xStr) && string.IsNullOrEmpty(yStr))
+            {
+                x = centerOffsetX;
+                y = centerOffsetY;
+            }
+            else if (!parsedX && !parsedY)
+            {
+                // Provided values not parseable -> use centers
+                x = centerOffsetX;
+                y = centerOffsetY;
+            }
+            else if (!parsedX)
+            {
+                x = centerOffsetX;
+                y = parsedYVal;
+            }
+            else if (!parsedY)
+            {
+                x = parsedXVal;
+                y = centerOffsetY;
             }
             else
             {
-                x = Int32.Parse(xStr);
-                y = Int32.Parse(yStr);
+                x = parsedXVal;
+                y = parsedYVal;
             }
         }
 

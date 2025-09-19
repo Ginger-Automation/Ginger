@@ -62,6 +62,7 @@ namespace Ginger.Actions
             txtExpected.Init(Context.GetAsContext(mActConsoleCommand.Context), mActConsoleCommand, ActConsoleCommand.Fields.ExpString);
             List<object> CommandList = GetCommandKey();
             GingerCore.General.FillComboFromEnumObj(CommandTerminatorComboBox, actConsoleCommand.CommandEndKey, CommandList);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CommandTerminatorComboBox, ComboBox.SelectedValueProperty, actConsoleCommand, nameof(ActConsoleCommand.CommandEndKey));
         }
 
 
@@ -138,7 +139,8 @@ namespace Ginger.Actions
 
         private void CommandTerminatorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mActConsoleCommand.CommandEndKey = (ActConsoleCommand.eCommandEndKey)Enum.Parse(typeof(ActConsoleCommand.eCommandEndKey), CommandTerminatorComboBox.SelectedItem.ToString());
+            if (CommandTerminatorComboBox.SelectedValue is ActConsoleCommand.eCommandEndKey key)
+                mActConsoleCommand.CommandEndKey = key;
         }
         private void FillScriptNameCombo()
         {
