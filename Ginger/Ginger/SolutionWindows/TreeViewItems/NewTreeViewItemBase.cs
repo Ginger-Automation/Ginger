@@ -291,10 +291,9 @@ namespace GingerWPF.TreeViewItemsLib
                 {
                     mBulkOperationIsInProcess = true;
                     //refresh cache
-                    RepositoryFolderBase repoFolder = (RepositoryFolderBase)(((ITreeViewItem)this).NodeObject());
-                    if (repoFolder != null)
+                    if (((ITreeViewItem)this).NodeObject() is RepositoryFolderBase repoFolder)
                     {
-                        repoFolder.ReloadItems(); // .RefreshFolderCache();
+                        repoFolder.ReloadItems();
                     }
 
                     //refresh tree
@@ -778,10 +777,9 @@ namespace GingerWPF.TreeViewItemsLib
             bool showConfirmation = true;
             int itemsSavedCount = 0;
             FindAndReplacePage mfindAndReplacePageAutomate = new FindAndReplacePage(FindAndReplacePage.eContext.FolderItems, childNodes: childNodes);
-            
+
             mfindAndReplacePageAutomate.ShowAsWindow(folderName: mTreeView.Tree.GetSelectedTreeNodeName());
         }
     }
 }
- 
-  
+
