@@ -17,10 +17,12 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using DocumentFormat.OpenXml.EMMA;
+using GingerCore.Actions;
 using OpenCvSharp;
 using Sdcb.PaddleOCR;
 using Sdcb.PaddleOCR.Models;
-using Sdcb.PaddleOCR.Models.Local;
+using Sdcb.PaddleOCR.Models.Online;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -28,6 +30,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Tabula;
+using Tabula.Detectors;
+using Tabula.Extractors;
+using UglyToad.PdfPig;
 using UglyToad.PdfPig.Content;
 using PdfDocument = PdfiumViewer.PdfDocument;
 using PdfPigDocument = UglyToad.PdfPig.PdfDocument;
@@ -39,7 +44,7 @@ namespace GingerCore.GingerOCR
         private static readonly object lockObject = new object();
         private static PaddleOcrAll instance = null;
 
-        public static PaddleOcrAll Instance
+        public static  PaddleOcrAll Instance
         {
             get
             {
@@ -47,8 +52,7 @@ namespace GingerCore.GingerOCR
                 {
                     if (instance == null)
                     {
-                        FullOcrModel model = LocalFullModels.EnglishV4;
-                        instance = new PaddleOcrAll(model)
+                        instance = new PaddleOcrAll(GetOCRModel())
                         {
                             AllowRotateDetection = true,
                             Enable180Classification = false,
@@ -60,10 +64,15 @@ namespace GingerCore.GingerOCR
                 }
             }
         }
-        public static byte[] FileToByteArray(string filePath)
+
+        public static FullOcrModel GetOCRModel()
         {
-            return File.ReadAllBytes(filePath);
+            // Path to the local Paddle OCR model directory
+            Settings.GlobalModelDirectory= Path.Combine(Path.GetDirectoryName(typeof(GingerOcrOperations).Assembly.Location), "OcrModels");
+            return  OnlineFullModels.EnglishV4.DownloadAsync().Result;
+
         }
+  
 
         public static string ReadTextFromImage(string imageFilePath)
         {
@@ -255,6 +264,7 @@ namespace GingerCore.GingerOCR
             return list;
         }
 
+
         private static List<byte[]> GetListOfPngByteArrayFromPdf(string pdfFilePath, int dpi, string password = null)
         {
             var list = new List<byte[]>();
@@ -282,13 +292,29 @@ namespace GingerCore.GingerOCR
             StringBuilder result = new StringBuilder();
             try
             {
-                var pages = GetPngByteArrayFromPdf(pdfFilePath, pageNum, dpi, password);
-                foreach (var pageBytes in pages)
+                if (!string.IsNullOrEmpty(pageNum))
                 {
-                    using (Mat src = Cv2.ImDecode(pageBytes, ImreadModes.Color))
+
+                    List<byte[]> pages = GetPngByteArrayFromPdf(pdfFilePath, pageNum, dpi, password);
+                    foreach (byte[] pageBytes in pages)
                     {
-                        var ocrResult = Instance.Run(src);
-                        result.AppendLine(string.Join(Environment.NewLine, ocrResult.Regions.Select(r => r.Text)));
+                        using (Mat src = Cv2.ImDecode(pageBytes, ImreadModes.Color))
+                        {
+                            var ocrResult = Instance.Run(src);
+                            result.AppendLine(string.Join(Environment.NewLine, ocrResult.Regions.Select(r => r.Text)));
+                        }
+                    }
+                }
+                else
+                {
+                    List<byte[]> lstByteArray = GetListOfPngByteArrayFromPdf(pdfFilePath, dpi, password);
+                    foreach (byte[] byteArray in lstByteArray)
+                    {
+                        using (Mat src = Cv2.ImDecode(byteArray, ImreadModes.Color))
+                        {
+                            var ocrResult = Instance.Run(src);
+                            result.AppendLine(string.Join(Environment.NewLine, ocrResult.Regions.Select(r => r.Text)));
+                        }
                     }
                 }
             }
@@ -420,121 +446,202 @@ namespace GingerCore.GingerOCR
         }
 
         // ---------------- Table extraction (with Tabula) ----------------
-        public static string ReadTextFromPdfTable(
-      string pdfFilePath,
-      string columnName,
-      string pageNumber,
-      bool useRowNumber,
-      int rowNumber,
-      ActOcr.eTableElementRunColOperator elementLocateBy,
-      string conditionColumnName,
-      string conditionColumnValue,
-      string password = null)
+        public static string ReadTextFromPdfTable(string pdfFilePath, string columnName, string pageNumber, bool useRowNumber,
+                                                 int rowNumber, ActOcr.eTableElementRunColOperator elementLocateBy, string conditionColumnName,
+                                                 string conditionColumnValue, string password = null)
         {
+            string txtOutput = string.Empty;
             try
             {
-                using (PdfPigDocument document = PdfPigDocument.Open(pdfFilePath))
+                using (PdfPigDocument document = PdfPigDocument.Open(pdfFilePath, new ParsingOptions() { ClipPaths = true, Password = password }))
                 {
-                    int pageIndex = string.IsNullOrEmpty(pageNumber) ? 1 : int.Parse(pageNumber);
-                    Page page = document.GetPage(pageIndex);
-
-                    // Extract words with bounding boxes
-                    var words = page.GetWords();
-
-                    // Group words by line (using Y coordinate)
-                    var rows = words
-                        .GroupBy(w => Math.Round(w.BoundingBox.Bottom, 1)) // group by Y
-                        .OrderByDescending(g => g.Key) // top to bottom
-                        .ToList();
-
-                    // Convert to row -> list of words (sorted left to right)
-                    var tableRows = rows.Select(r => r.OrderBy(w => w.BoundingBox.Left).ToList()).ToList();
-
-                    // Try to locate column index by columnName
-                    int colIndex = -1;
-                    if (!string.IsNullOrEmpty(columnName) && tableRows.Count > 0)
+                    ObjectExtractor oe = new ObjectExtractor(document);
+                    if (!string.IsNullOrEmpty(pageNumber))
                     {
-                        var headerRow = tableRows.First();
-                        colIndex = headerRow.FindIndex(w => w.Text.Equals(columnName, StringComparison.OrdinalIgnoreCase));
-                    }
-
-                    if (colIndex == -1)
-                    {
-                        Reporter.ToLog(eLogLevel.WARN, $"Column '{columnName}' not found in PDF table.");
-                        return string.Empty;
-                    }
-
-                    if (useRowNumber)
-                    {
-                        if (rowNumber < tableRows.Count)
+                        List<string> lstPageNum = GetListOfPageNos(pageNumber);
+                        foreach (string pageNum in lstPageNum)
                         {
-                            var targetRow = tableRows[rowNumber];
-                            if (colIndex < targetRow.Count)
+                            PageArea page = oe.Extract(int.Parse(pageNum));
+
+                            // detect canditate table zones
+                            GetTableDataFromPageArea(columnName, useRowNumber, rowNumber, conditionColumnName, conditionColumnValue, ref txtOutput, page, elementLocateBy);
+                            if (!string.IsNullOrEmpty(txtOutput))
                             {
-                                return targetRow[colIndex].Text;
+                                return txtOutput;
                             }
                         }
-                    }
-                    else if (!string.IsNullOrEmpty(conditionColumnName) && !string.IsNullOrEmpty(conditionColumnValue))
-                    {
-                        // Locate condition column index
-                        int condIndex = tableRows.First().FindIndex(w => w.Text.Equals(conditionColumnName, StringComparison.OrdinalIgnoreCase));
 
-                        if (condIndex != -1)
+                    }
+                    else
+                    {
+                        PageIterator pgIterator = oe.Extract();
+                        using (pgIterator)
                         {
-                            foreach (var row in tableRows.Skip(1))
+                            pgIterator.MoveNext();
+                            while (pgIterator.Current != null)
                             {
-                                if (condIndex < row.Count && row[condIndex].Text.Contains(conditionColumnValue))
+                                PageArea pgArea = pgIterator.Current;
+                                GetTableDataFromPageArea(columnName, useRowNumber, rowNumber, conditionColumnName, conditionColumnValue, ref txtOutput, pgArea, elementLocateBy);
+                                if (!string.IsNullOrEmpty(txtOutput))
                                 {
-                                    if (colIndex < row.Count)
-                                    {
-                                        return row[colIndex].Text;
-                                    }
+                                    return txtOutput;
+                                }
+                                if (!pgIterator.MoveNext())
+                                {
+                                    break;
                                 }
                             }
                         }
                     }
-
-                    return string.Empty;
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error reading table from PDF: {ex.Message}", ex);
-                return string.Empty;
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
+
+            Reporter.ToLog(eLogLevel.ERROR, "Unable to find text in tables", null);
+            return txtOutput;
         }
 
-        private static void GetTableDataFromPageArea(string columnName, bool useRowNumber, int rowNumber, string conditionColumnName, string conditionColumnValue, ref string txtOutput, Table table, ActOcr.eTableElementRunColOperator elementLocateBy)
+
+        private static void GetTableDataFromPageArea(string columnName, bool useRowNumber, int rowNumber, string conditionColumnName, string conditionColumnValue, ref string txtOutput, PageArea page, ActOcr.eTableElementRunColOperator elementLocateBy)
         {
-            var rows = table.Rows;
-            if (rows.Count == 0)
+            SpreadsheetDetectionAlgorithm detector = new SpreadsheetDetectionAlgorithm();
+
+            IExtractionAlgorithm ea = new SpreadsheetExtractionAlgorithm();
+
+            List<Table> tables = ea.Extract(page);
+            foreach (Table table in tables)
             {
-                return;
-            }
-
-            var header = rows.First().Select(cell => cell.GetText()).ToList();
-            if (!header.Contains(columnName)) return;
-
-            int colIndex = header.IndexOf(columnName);
-
-            for (int i = 1; i < rows.Count; i++)
-            {
-                var row = rows[i];
-
-                if (useRowNumber && i == rowNumber)
+                if (useRowNumber)
                 {
-                    txtOutput = row[colIndex].GetText();
-                    break;
-                }
-
-                if (!string.IsNullOrEmpty(conditionColumnName) && header.Contains(conditionColumnName))
-                {
-                    int condIndex = header.IndexOf(conditionColumnName);
-                    if (row[condIndex].GetText().Equals(conditionColumnValue, StringComparison.OrdinalIgnoreCase))
+                    IReadOnlyList<IReadOnlyList<Cell>> rows = table.Rows;
+                    for (int i = 0; i < rows[0].Count; i++)
                     {
-                        txtOutput = row[colIndex].GetText();
-                        break;
+                        Cell cellObj = rows[0][i];
+                        if (cellObj.GetText(false).Equals(columnName))
+                        {
+                            txtOutput = rows[rowNumber + 1][i].GetText(false);
+                            return;
+                        }
+                    }
+
+                    for (int i = 0; i < rows[1].Count; i++)
+                    {
+                        Cell cellObj = rows[1][i];
+                        if (cellObj.GetText(false).Equals(columnName))
+                        {
+                            txtOutput = rows[rowNumber + 1][i].GetText(false);
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    IReadOnlyList<IReadOnlyList<Cell>> rows = table.Rows;
+
+                    int columnNameIndex = -1;
+                    int i, j;
+                    for (i = 0; i < rows[0].Count; i++)
+                    {
+                        Cell cellObj = rows[0][i];
+                        if (cellObj.GetText(false).Equals(columnName))
+                        {
+                            columnNameIndex = i;
+                            break;
+                        }
+                    }
+                    for (i = 0; i < rows[1].Count; i++)
+                    {
+                        Cell cellObj = rows[1][i];
+                        if (cellObj.GetText(false).Equals(columnName))
+                        {
+                            columnNameIndex = i;
+                            break;
+                        }
+                    }
+                    for (i = 0; i < rows.Count; i++)
+                    {
+                        bool bIsConditionValFound = false;
+                        for (j = 0; j < rows[i].Count; j++)
+                        {
+                            Cell cellObj = rows[i][j];
+                            if (rows[0][j].GetText(false).Equals(conditionColumnName))
+                            {
+                                switch (elementLocateBy)
+                                {
+                                    case ActOcr.eTableElementRunColOperator.Equals:
+                                        if (cellObj.GetText(false).Equals(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
+                                            break;
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.NotEquals:
+                                        if (!cellObj.GetText(false).Equals(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
+                                            break;
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.Contains:
+                                        if (cellObj.GetText(false).Contains(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
+                                            break;
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.NotContains:
+                                        if (!cellObj.GetText(false).Contains(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
+                                            break;
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.StartsWith:
+                                        if (cellObj.GetText(false).StartsWith(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
+                                            break;
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.NotStartsWith:
+                                        if (!cellObj.GetText(false).StartsWith(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
+                                            break;
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.EndsWith:
+                                        if (cellObj.GetText(false).EndsWith(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
+                                            break;
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.NotEndsWith:
+                                        if (!cellObj.GetText(false).Equals(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
+                                            break;
+                                        }
+                                        break;
+                                    default:
+                                        //do nothing
+                                        break;
+                                }
+                            }
+                            if (bIsConditionValFound)
+                            {
+                                break;
+                            }
+                        }
+                        if (bIsConditionValFound)
+                        {
+                            txtOutput = rows[i][columnNameIndex].GetText(false);
+                            return;
+                        }
                     }
                 }
             }

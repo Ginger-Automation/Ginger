@@ -19,12 +19,13 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.GeneralLib;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using static GingerCore.ActOcr;
+using static GingerCore.Actions.ActOcr;
 
 namespace Ginger.Actions
 {
