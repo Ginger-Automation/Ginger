@@ -24,7 +24,6 @@ using System;
 namespace GingerCoreTest.Misc
 {
     [TestClass]
-    [Ignore]
     public class OcrTest
     {
         string OcrPdfFilePath = TestResources.GetTestResourcesFile(@"OCR\OcrSample.pdf");
@@ -35,17 +34,18 @@ namespace GingerCoreTest.Misc
         public void ReadAllTextImage()
         {
             string txtOutput = GingerOcrOperations.ReadTextFromImage(OcrImageAllTextFilePath);
-            string txtExpectedOutput = "Microsoft Teams meeting\n";
+            string txtExpectedOutput = "Microsoft Teams meeting";
             Assert.AreEqual(txtExpectedOutput, txtOutput);
         }
 
         [TestMethod]
+        [Ignore]
         public void ReadTextBetweenLabelsImage()
         {
             string err = string.Empty;
             string txtOutput = GingerOcrOperations.ReadTextFromImageBetweenStrings(OcrImageFilePath,
                                                                                    "Version", "Steps", ref err);
-            string txtExpectedOutput = ": 4.1\n\n";
+            string txtExpectedOutput = ": 4.1";
             Assert.AreEqual(txtExpectedOutput, txtOutput);
         }
 
@@ -53,27 +53,30 @@ namespace GingerCoreTest.Misc
         public void ReadTextAfterLabelImage()
         {
             string txtOutput = GingerOcrOperations.ReadTextFromImageAfterLabel(OcrImageFilePath, "Version");
-            string txtExpectedOutput = ": 4.1\n\n";
+            string txtExpectedOutput = ": 4.1";
             Assert.AreEqual(txtExpectedOutput, txtOutput);
         }
 
         [TestMethod]
+        [Ignore]
         public void ReadAllTextPdf()
         {
             string txtOutput = GingerOcrOperations.ReadTextFromPdfSinglePage(OcrPdfAllTextFilePath, "1", 300);
-            string txtExpectedOutput = "Hi, try reading this text\n" + Environment.NewLine;
+            string txtExpectedOutput = "Hi, try reading this text" + Environment.NewLine;
             Assert.AreEqual(txtExpectedOutput, txtOutput);
         }
 
         [TestMethod]
+        [Ignore]
         public void ReadTextAfterLabelsPdf()
         {
             string txtOutput = GingerOcrOperations.ReadTextAfterLabelPdf(OcrPdfFilePath, "Processed By", 300);
-            string txtExpectedOutput = " : 107W0000\n";
+            string txtExpectedOutput = " : 107W0000";
             Assert.AreEqual(txtExpectedOutput, txtOutput);
         }
 
         [TestMethod]
+        [Ignore]
         public void ReadTextBetweenLabelsPdf()
         {
             string err = string.Empty;

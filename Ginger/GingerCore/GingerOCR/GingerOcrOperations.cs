@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using DocumentFormat.OpenXml.EMMA;
 using GingerCore.Actions;
 using OpenCvSharp;
 using Sdcb.PaddleOCR;
@@ -33,7 +32,6 @@ using Tabula;
 using Tabula.Detectors;
 using Tabula.Extractors;
 using UglyToad.PdfPig;
-using UglyToad.PdfPig.Content;
 using PdfDocument = PdfiumViewer.PdfDocument;
 using PdfPigDocument = UglyToad.PdfPig.PdfDocument;
 
@@ -44,7 +42,7 @@ namespace GingerCore.GingerOCR
         private static readonly object lockObject = new object();
         private static PaddleOcrAll instance = null;
 
-        public static  PaddleOcrAll Instance
+        public static PaddleOcrAll Instance
         {
             get
             {
@@ -67,12 +65,21 @@ namespace GingerCore.GingerOCR
 
         public static FullOcrModel GetOCRModel()
         {
-            // Path to the local Paddle OCR model directory
-            Settings.GlobalModelDirectory= Path.Combine(Path.GetDirectoryName(typeof(GingerOcrOperations).Assembly.Location), "OcrModels");
-            return  OnlineFullModels.EnglishV4.DownloadAsync().Result;
+            try
+            {
+                // Path to the local Paddle OCR model directory
+                Settings.GlobalModelDirectory = Path.Combine(Path.GetDirectoryName(typeof(GingerOcrOperations).Assembly.Location), "OcrModels");
+                var downloadTask = OnlineFullModels.EnglishV4.DownloadAsync();
+                return downloadTask.GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to download OCR model: {ex.Message}", ex);
+                throw new InvalidOperationException("OCR model download failed. Please check internet connection and try again.", ex);
+            }
 
         }
-  
+
 
         public static string ReadTextFromImage(string imageFilePath)
         {
@@ -301,7 +308,13 @@ namespace GingerCore.GingerOCR
                         using (Mat src = Cv2.ImDecode(pageBytes, ImreadModes.Color))
                         {
                             var ocrResult = Instance.Run(src);
-                            result.AppendLine(string.Join(Environment.NewLine, ocrResult.Regions.Select(r => r.Text)));
+                            foreach (var region in ocrResult.Regions)
+                            {
+                                if (!string.IsNullOrEmpty(region.Text))
+                                {
+                                    result.AppendLine(region.Text);
+                                }
+                            }
                         }
                     }
                 }
@@ -500,16 +513,18 @@ namespace GingerCore.GingerOCR
                 Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
 
-            Reporter.ToLog(eLogLevel.ERROR, "Unable to find text in tables", null);
+            if (string.IsNullOrEmpty(txtOutput))
+            {
+                Reporter.ToLog(eLogLevel.INFO, $"No matching text found in PDF table for column '{columnName}' with specified conditions");
+            }
             return txtOutput;
         }
 
 
         private static void GetTableDataFromPageArea(string columnName, bool useRowNumber, int rowNumber, string conditionColumnName, string conditionColumnValue, ref string txtOutput, PageArea page, ActOcr.eTableElementRunColOperator elementLocateBy)
         {
-            SpreadsheetDetectionAlgorithm detector = new SpreadsheetDetectionAlgorithm();
 
-            IExtractionAlgorithm ea = new SpreadsheetExtractionAlgorithm();
+            SpreadsheetExtractionAlgorithm ea = new SpreadsheetExtractionAlgorithm();
 
             List<Table> tables = ea.Extract(page);
             foreach (Table table in tables)
@@ -517,6 +532,10 @@ namespace GingerCore.GingerOCR
                 if (useRowNumber)
                 {
                     IReadOnlyList<IReadOnlyList<Cell>> rows = table.Rows;
+                    if (rows.Count < 2 || rowNumber + 1 >= rows.Count)
+                    {
+                        continue; // Skip this table if not enough rows
+                    }
                     for (int i = 0; i < rows[0].Count; i++)
                     {
                         Cell cellObj = rows[0][i];
@@ -567,7 +586,7 @@ namespace GingerCore.GingerOCR
                         for (j = 0; j < rows[i].Count; j++)
                         {
                             Cell cellObj = rows[i][j];
-                            if (rows[0][j].GetText(false).Equals(conditionColumnName))
+                            if (rows.Count > 0 && j < rows[0].Count && rows[0][j].GetText(false).Equals(conditionColumnName))
                             {
                                 switch (elementLocateBy)
                                 {
@@ -621,7 +640,7 @@ namespace GingerCore.GingerOCR
                                         }
                                         break;
                                     case ActOcr.eTableElementRunColOperator.NotEndsWith:
-                                        if (!cellObj.GetText(false).Equals(conditionColumnValue))
+                                        if (!cellObj.GetText(false).EndsWith(conditionColumnValue))
                                         {
                                             bIsConditionValFound = true;
                                             break;
@@ -639,7 +658,11 @@ namespace GingerCore.GingerOCR
                         }
                         if (bIsConditionValFound)
                         {
-                            txtOutput = rows[i][columnNameIndex].GetText(false);
+                            if (columnNameIndex == -1)
+                            {
+                                break; // col not found
+                            }
+                                txtOutput = rows[i][columnNameIndex].GetText(false);
                             return;
                         }
                     }
