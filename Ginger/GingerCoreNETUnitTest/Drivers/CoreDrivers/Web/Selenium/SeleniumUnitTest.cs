@@ -21,7 +21,9 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.Drivers;
+using HtmlAgilityPack;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -301,6 +303,155 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.Selenium
             Assert.AreEqual(locators[1].LocateBy, result[1].LocateBy);
             Assert.AreEqual(locators[2].LocateValue, result[2].LocateValue);
             Assert.AreEqual(locators[2].LocateBy, result[2].LocateBy);
+        }
+
+        [TestMethod]
+        public void GetElementLocatorForWebSmartSync_AllSupportedMappings()
+        {
+            // XPath
+            var by1 = SeleniumDriver.GetElementLocatorForWebSmartSync(eLocateBy.ByXPath, "//div[@id='a']");
+            Assert.AreEqual("By.XPath: //div[@id='a']", by1.ToString());
+
+            // Rel XPath
+            var by2 = SeleniumDriver.GetElementLocatorForWebSmartSync(eLocateBy.ByRelXPath, "//span");
+            Assert.AreEqual("By.XPath: //span", by2.ToString());
+
+            // ID
+            var by3 = SeleniumDriver.GetElementLocatorForWebSmartSync(eLocateBy.ByID, "user");
+            Assert.AreEqual("By.Id: user", by3.ToString());
+
+            // Name
+            var by4 = SeleniumDriver.GetElementLocatorForWebSmartSync(eLocateBy.ByName, "country");
+            Assert.AreEqual("By.Name: country", by4.ToString());
+
+            // ClassName
+            var by5 = SeleniumDriver.GetElementLocatorForWebSmartSync(eLocateBy.ByClassName, "mainCls");
+            Assert.AreEqual("By.ClassName[Contains](" + "mainCls)", by5.ToString().Replace("By.ClassName[Contains]: mainCls", "By.ClassName[Contains](mainCls)")); // some drivers format differently
+
+            // CSS
+            var by6 = SeleniumDriver.GetElementLocatorForWebSmartSync(eLocateBy.ByCSSSelector, "div.panel");
+            Assert.AreEqual("By.CssSelector: div.panel", by6.ToString());
+            StringAssert.Contains(by6.ToString(), "CssSelector");
+            StringAssert.Contains(by6.ToString(), "div.panel");
+
+            // LinkText
+            var by7 = SeleniumDriver.GetElementLocatorForWebSmartSync(eLocateBy.ByLinkText, "Login");
+            Assert.AreEqual("By.LinkText: Login", by7.ToString());
+
+            // TagName
+            var by8 = SeleniumDriver.GetElementLocatorForWebSmartSync(eLocateBy.ByTagName, "input");
+            Assert.AreEqual("By.TagName: input", by8.ToString());
+        }
+
+        [TestMethod]
+        public void GetElementLocatorForWebSmartSync_UnsupportedLocator_Throws()
+        {
+            // eLocateBy.NA should trigger exception
+            var ex = Assert.ThrowsException<Exception>(() => SeleniumDriver.GetElementLocatorForWebSmartSync(eLocateBy.NA, "x")); 
+            StringAssert.Contains(ex.Message, "Unsupported locator type");
+        }
+
+        [TestMethod]
+        public void WebSmartSyncGetMaxTimeout_UsesActionTimeout()
+        {
+            var driver = new SeleniumDriver();
+            driver.ImplicitWait = 25;
+
+            var act = new ActWebSmartSync
+            {
+                Timeout = 7,
+                SyncOperations = ActWebSmartSync.eSyncOperation.ElementExists,
+                ElementLocateBy = eLocateBy.ByXPath,
+                ElementLocateValue = "//div"
+            };
+
+            int timeout = driver.WebSmartSyncGetMaxTimeout(act);
+            Assert.AreEqual(7, timeout);
+        }
+
+        [TestMethod]
+        public void WebSmartSyncGetMaxTimeout_FallbackToImplicitWait()
+        {
+            var driver = new SeleniumDriver();
+            driver.ImplicitWait = 18;
+
+            var act = new ActWebSmartSync
+            {
+                Timeout = 0,
+                SyncOperations = ActWebSmartSync.eSyncOperation.ElementExists,
+                ElementLocateBy = eLocateBy.ByXPath,
+                ElementLocateValue = "//div"
+            };
+
+            int timeout = driver.WebSmartSyncGetMaxTimeout(act);
+            Assert.AreEqual(18, timeout);
+        }
+
+        [TestMethod]
+        public void GetSearchedWinTitle_ForAct()
+        {
+            var driver = new SeleniumDriver();
+            var act = new ActWebSmartSync 
+            { 
+                ValueForDriver = "Main App"  
+            }; 
+            string title = driver.GetSearchedWinTitle(act); 
+            Assert.AreEqual("Main App", title);
+        }
+
+        [TestMethod]
+        public void GetSearchedWinTitle_ForActUIElement()
+        {
+            var driver = new SeleniumDriver();
+            var actUI = new ActUIElement
+            {
+                ElementLocateValue = "Popup Dialog",
+                ElementLocateBy = eLocateBy.ByTitle
+            };
+            string title = driver.GetSearchedWinTitle(actUI);
+            Assert.AreEqual("Popup Dialog", title);
+        }
+
+        [TestMethod]
+        public void GetElementTypeEnum_InputText_ReturnsTextBox()
+        {
+            var doc = new HtmlDocument();
+            doc.LoadHtml("<html><body><input id='u1' type='text' /></body></html>");
+            var node = doc.DocumentNode.SelectSingleNode("//input");
+            var tup = SeleniumDriver.GetElementTypeEnum(htmlNode: node);
+            Assert.AreEqual("input", tup.Item1.ToLower());
+            Assert.AreEqual(eElementType.TextBox, tup.Item2);
+        }
+
+        [TestMethod]
+        public void GetElementTypeEnum_SvgRoot_ReturnsSvg()
+        {
+            var doc = new HtmlDocument();
+            doc.LoadHtml("<html><body><svg id='chart'></svg></body></html>");
+            var node = doc.DocumentNode.SelectSingleNode("//svg");
+            var tup = SeleniumDriver.GetElementTypeEnum(htmlNode: node);
+            Assert.AreEqual(eElementType.Svg, tup.Item2);
+        }
+
+        [TestMethod]
+        public void GetElementTypeEnum_SvgChild_GWithTypeAttribute_ReturnsSvg()
+        {
+            // Simulate a <g> element flagged as SVG via TypeAtt
+            var doc = new HtmlDocument();
+            doc.LoadHtml("<html><body><svg><g id='groupA'></g></svg></body></html>");
+            var node = doc.DocumentNode.SelectSingleNode("//g");
+            var tup = SeleniumDriver.GetElementTypeEnum(htmlNode: node, TypeAtt: "Svg");
+            Assert.AreEqual(eElementType.Svg, tup.Item2);
+        }
+
+        [TestMethod]
+        public void GetElementTypeEnum_UnknownTag_ReturnsUnknown()
+        {
+            var doc = new HtmlDocument();
+            doc.LoadHtml("<html><body><custom-widget data-x='1'></custom-widget></body></html>");
+            var node = doc.DocumentNode.SelectSingleNode("//custom-widget");
+            var tup = SeleniumDriver.GetElementTypeEnum(htmlNode: node);
+            Assert.AreEqual(eElementType.Unknown, tup.Item2);
         }
     }
 }
