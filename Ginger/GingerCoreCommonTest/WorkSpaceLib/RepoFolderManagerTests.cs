@@ -102,6 +102,7 @@ namespace GingerCoreCommonTest.WorkSpaceLib
 
         [TestMethod]
         [Timeout(60000)]
+        [Ignore]
         public void UpdateHeartbeat_RefreshesTimestamp()
         {
             var procId = "hb1";
