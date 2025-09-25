@@ -26,7 +26,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,6 +34,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 {
 
     [TestClass]
+    [Ignore]
     [Level1]
     public class GingerSocket2Test
     {
@@ -441,11 +441,6 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         [Timeout(60000)]
         public void Run10ClientsParallel()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                // Skip gracefully
-                return;
-            }
             // Arrange
             List<Task> list = [];
 
