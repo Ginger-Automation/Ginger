@@ -18,8 +18,9 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.ActionsLib;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
+using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Renci.SshNet;
 using System;
@@ -31,7 +32,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GingerCore.Drivers.ConsoleDriverLib
+namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
 {
     public class UnixShellDriver : ConsoleDriverBase
     {
@@ -80,12 +81,12 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         string mScriptsFolder;
         public UnixShellDriver(BusinessFlow BF)
         {
-            this.BusinessFlow = BF;
+            BusinessFlow = BF;
         }
         public UnixShellDriver(BusinessFlow BF, Environments.ProjEnvironment env)
         {
-            this.BusinessFlow = BF;
-            this.Environment = env;
+            BusinessFlow = BF;
+            Environment = env;
         }
 
         public override void InitDriver(Agent agent)
@@ -152,7 +153,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
                 try
                 {
-                    System.Net.Sockets.TcpClient client = new System.Net.Sockets.TcpClient(Host, Port);
+                    var client = new System.Net.Sockets.TcpClient(Host, Port);
                 }
                 catch (Exception)
                 {
@@ -190,7 +191,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 connectionInfo.Timeout = new TimeSpan(0, 0, SSHConnectionTimeout);
                 UnixClient = new SshClient(connectionInfo);
 
-                Task task = Task.Factory.StartNew(() =>
+                var task = Task.Factory.StartNew(() =>
                  {
                      try
                      {
@@ -208,7 +209,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                      }
                  });
 
-                Stopwatch st = Stopwatch.StartNew();
+                var st = Stopwatch.StartNew();
 
                 while (!task.IsCompleted && st.ElapsedMilliseconds < SSHConnectionTimeout * 1000)
                 {
@@ -223,7 +224,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     WriteToConsoleBuffer("Connected!");
 
                     s = ss.ReadLine(new TimeSpan(0, 0, 2));
-                    while (!String.IsNullOrEmpty(s))
+                    while (!string.IsNullOrEmpty(s))
                     {
                         result = result + "\n" + s;
 
@@ -251,8 +252,8 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         private ConnectionInfo KeyboardInteractiveAuthConnectionInfo()
         {
             ConnectionInfo connectionInfo;
-            KeyboardInteractiveAuthenticationMethod keyboardIntractiveAuth = new KeyboardInteractiveAuthenticationMethod(UserName);
-            PasswordAuthenticationMethod pauth = new PasswordAuthenticationMethod(UserName, Password);
+            var keyboardIntractiveAuth = new KeyboardInteractiveAuthenticationMethod(UserName);
+            var pauth = new PasswordAuthenticationMethod(UserName, Password);
 
             keyboardIntractiveAuth.AuthenticationPrompt += HandleIntractiveKeyBoardEvent;
 
@@ -260,9 +261,9 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             return connectionInfo;
         }
 
-        void HandleIntractiveKeyBoardEvent(Object sender, Renci.SshNet.Common.AuthenticationPromptEventArgs e)
+        void HandleIntractiveKeyBoardEvent(object sender, Renci.SshNet.Common.AuthenticationPromptEventArgs e)
         {
-            foreach (Renci.SshNet.Common.AuthenticationPrompt prompt in e.Prompts)
+            foreach (var prompt in e.Prompts)
             {
                 if (prompt.Request.IndexOf("Password:", StringComparison.InvariantCultureIgnoreCase) != -1)
                 {
@@ -273,15 +274,15 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         public void SSHRunCommand(string command)
         {
-            StringBuilder reply = new StringBuilder();
+            var reply = new StringBuilder();
             ss.Flush();
-            StreamReader sreader = new StreamReader(ss);
+            var sreader = new StreamReader(ss);
             sreader.ReadToEnd();
             if (command != "\u0003\n")
             {
                 while (!sreader.EndOfStream)
                 {
-                    if (!this.IsDriverRunning)
+                    if (!IsDriverRunning)
                     {
                         break;
                     }
@@ -295,7 +296,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 command = command.Replace("CHAR_", "").Replace("\n", "");
                 try
                 {
-                    ss.WriteByte(System.Convert.ToByte(Convert.ToInt32(command)));
+                    ss.WriteByte(Convert.ToByte(Convert.ToInt32(command)));
                 }
                 catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             }
@@ -307,7 +308,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             {
                 if (mWait is 0 or null)
                 {
-                    mWait = this.ImplicitWait;
+                    mWait = ImplicitWait;
                 }
 
                 if (mWait == 0)
@@ -315,8 +316,8 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     mWait = 30;
                 }
 
-                DateTime startingTime = DateTime.Now;
-                bool expOut = false;
+                var startingTime = DateTime.Now;
+                var expOut = false;
                 Regex regExp;
                 mExpString = string.IsNullOrEmpty(mExpString) ? "" : mExpString;
                 if (mExpString != "" && command != "\u0003\n")
@@ -330,7 +331,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
                 while ((DateTime.Now - startingTime).TotalSeconds <= mWait && taskFinished != true)
                 {
-                    if (!this.IsDriverRunning)
+                    if (!IsDriverRunning)
                     {
                         break;
                     }
@@ -379,7 +380,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         public override string GetCommandText(ActConsoleCommand act)
         {
-            string cmd = "";
+            var cmd = "";
             switch (act.ConsoleCommand)
             {
                 case ActConsoleCommand.eConsoleCommand.FreeCommand:
@@ -396,8 +397,8 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                         UnixFTPClient.CreateDirectory(workdir + @"/Ginger");
                     }
 
-                    string SHFilesPath = mScriptsFolder;
-                    string UnixScriptFilePath = workdir + @"/Ginger/" + act.ScriptName;
+                    var SHFilesPath = mScriptsFolder;
+                    var UnixScriptFilePath = workdir + @"/Ginger/" + act.ScriptName;
                     using (var f = File.OpenRead(SHFilesPath + act.ScriptName))
                     {
                         UnixFTPClient.UploadFile(f, UnixScriptFilePath, null);
@@ -430,8 +431,8 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         private string GetParameterizedCommand(ActConsoleCommand act)
         {
-            string command = act.Command;
-            foreach (ActInputValue AIV in act.InputValues)
+            var command = act.Command;
+            foreach (var AIV in act.InputValues)
             {
                 string calcValue;
                 if (string.IsNullOrEmpty(AIV.Value) == false && AIV.Value.StartsWith("~"))//workaround for keeping the ~ to work on linux

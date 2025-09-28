@@ -29,9 +29,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using static Amdocs.Ginger.CoreNET.ActionsLib.ActConsoleCommand;
+using Amdocs.Ginger.CoreNET.ActionsLib;
+using GingerCore;
+using GingerCore.Drivers;
 
-
-namespace GingerCore.Drivers.ConsoleDriverLib
+namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
 {
     /// <summary>
     /// Dummy dispatcher implementation for headless console operations
@@ -68,7 +71,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         public string GetDriverWindowName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
         {
             // Window moved from GingerCore to Ginger project under Drivers/DriverWindow
-            return "Ginger.Drivers.DriverWindow.ConsoleDriverWindow";
+            return "ConsoleDriverWindow";
         }
 
         public bool taskFinished = false;
@@ -168,20 +171,20 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         public override void RunAction(Act act)
         {
-            string actClass = act.GetType().ToString();
+            var actClass = act.GetType().ToString();
             actClass = actClass.Replace("GingerCore.Actions.", "");
             switch (actClass)
             {
                 case "ActConsoleCommand":
                     mWait = ((ActConsoleCommand)act).WaitTime;
 
-                    ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+                    var VE = new ValueExpression(Environment, BusinessFlow);
 
-                    string ExpString = ((ActConsoleCommand)act).ExpString;
+                    var ExpString = ((ActConsoleCommand)act).ExpString;
                     VE.Value = ExpString;
                     mExpString = VE.ValueCalculated;
-                    ActConsoleCommand ACC = (ActConsoleCommand)act;
-                    string command = GetCommandText(ACC);
+                    var ACC = (ActConsoleCommand)act;
+                    var command = GetCommandText(ACC);
                     act.ExInfo = command;
                     taskFinished = false;
                     if (command.StartsWith("GINGER_RC="))
@@ -191,7 +194,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     else
                     {
                         string sRC;
-                        if (ACC.ConsoleCommand == ActConsoleCommand.eConsoleCommand.Script)
+                        if (ACC.ConsoleCommand == eConsoleCommand.Script)
                         {
                             sRC = RunConsoleCommand(command, "~~~GINGER_RC_END~~~");
                         }
@@ -214,7 +217,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                         if (mExpString != null && sRC.Contains(mExpString) == false)
                         {
                             act.Error = "Expected String \"" + mExpString + "\" not found in command output";
-                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                            act.Status = Execution.eRunStatus.Failed;
                             return;
                         }
 
@@ -222,14 +225,14 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
                         sRC = sRC.Replace("\r", "");
                         sRC = sRC.Replace("\t", "");
-                        string[] RCValues = sRC.Split('\n');
-                        foreach (string RCValue in RCValues)
+                        var RCValues = sRC.Split('\n');
+                        foreach (var RCValue in RCValues)
                         {
                             if (RCValue.Trim().Length > 0)
                             {
                                 string Param;
                                 string Value;
-                                int i = -1;
+                                var i = -1;
                                 if (!string.IsNullOrEmpty(ACC.Delimiter))
                                 {
                                     i = RCValue.IndexOf(ACC.Delimiter);
@@ -239,9 +242,9 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                                     i = RCValue.IndexOf('=');
                                 }
 
-                                if ((i > 0) && (i != RCValue.IndexOf("==")) && (i != RCValue.IndexOf("!=") + 1))
+                                if (i > 0 && i != RCValue.IndexOf("==") && i != RCValue.IndexOf("!=") + 1)
                                 {
-                                    Param = (RCValue[..i]).Trim();
+                                    Param = RCValue[..i].Trim();
                                     Value = RCValue[(Param.Length + 1)..];
                                     Value = new string(Value.Where(ch => !char.IsControl(ch)).ToArray());
                                     act.AddOrUpdateReturnParamActual(Param, Value);
@@ -255,7 +258,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     break;
 
                 default:
-                    throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
+                    throw new Exception("Action unknown/not implemented for the Driver: " + GetType().ToString());
             }
         }
 
@@ -263,16 +266,16 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         {
             mConsoleBuffer.Clear();
             Reporter.ToLog(eLogLevel.DEBUG, $"Executing console command: {command}");
-            string commandWithLineEnding = Platform.ToString() == "Unix" ? command + "\n" : command + System.Environment.NewLine;
+            var commandWithLineEnding = Platform.ToString() == "Unix" ? command + "\n" : command + System.Environment.NewLine;
             taskFinished = false;
             SendCommand(commandWithLineEnding);
-            string rc = mConsoleBuffer.ToString();
-            string GingerRCStart = "~~~GINGER_RC_START~~~";
-            string GingerRCEnd = "~~~GINGER_RC_END~~~";
-            int i = rc.IndexOf(GingerRCStart);
+            var rc = mConsoleBuffer.ToString();
+            var GingerRCStart = "~~~GINGER_RC_START~~~";
+            var GingerRCEnd = "~~~GINGER_RC_END~~~";
+            var i = rc.IndexOf(GingerRCStart);
             if (i > 0)
             {
-                int i2 = rc.IndexOf(GingerRCEnd, i);
+                var i2 = rc.IndexOf(GingerRCEnd, i);
                 if (i2 > 0)
                 {
                     rc = rc.Substring(i + GingerRCStart.Length + 1, i2 - i - GingerRCEnd.Length - 4);
@@ -289,10 +292,10 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         protected virtual string GetParameterizedCommand(ActConsoleCommand act)
         {
-            string command = act.Command;
-            foreach (ActInputValue AIV in act.InputValues)
+            var command = act.Command;
+            foreach (var AIV in act.InputValues)
             {
-                string calcValue = AIV.ValueForDriver;
+                var calcValue = AIV.ValueForDriver;
                 if (command != null)
                 {
                     command = command + " " + calcValue;

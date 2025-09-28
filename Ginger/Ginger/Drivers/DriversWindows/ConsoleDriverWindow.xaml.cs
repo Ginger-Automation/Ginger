@@ -18,7 +18,8 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using GingerCore.Actions;
+using Amdocs.Ginger.CoreNET.ActionsLib;
+using GingerCore;
 using System;
 using System.Text;
 using System.Windows;
@@ -26,7 +27,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace GingerCore.Drivers.ConsoleDriverLib
+namespace Ginger.Drivers.DriversWindows
 {
     /// <summary>
     /// Interaction logic for ConsoleDriverWindow.xaml
@@ -228,7 +229,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             try
             {
                 mConsoleDriver.Disconnect();
-                mConsoleDriver.mConsoleDriverWindow = null;
+                //mConsoleDriver.mConsoleDriverWindow = null;
                 mConsoleDriver.CloseDriver();
             }
             catch (Exception ex)

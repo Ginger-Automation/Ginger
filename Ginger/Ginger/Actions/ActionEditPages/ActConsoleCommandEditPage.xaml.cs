@@ -18,7 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using GingerCore.Actions;
+using Amdocs.Ginger.CoreNET.ActionsLib;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
-using static GingerCore.Actions.ActConsoleCommand;
+using static Amdocs.Ginger.CoreNET.ActionsLib.ActConsoleCommand;
 
 namespace Ginger.Actions
 {
