@@ -1299,7 +1299,6 @@
 
   <ItemGroup>
     <Folder Include="ActionsLib\UI\UI Element\" />
-    <Folder Include="Drivers\CoreDrivers\Console\" />
     <Folder Include="Reports\Ginger-Web-Client\assets\artifacts\" />
     <Folder Include="SolutionRepositoryLib\RepositoryObjectsLib\PlatformsLib\" />
   </ItemGroup>

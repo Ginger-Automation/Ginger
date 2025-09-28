@@ -142,14 +142,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Drivers\ConsoleDriverLib\ConsoleDriverWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Drivers\ConsoleDriverLib\ConsoleNewActionPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Drivers\InternalBrowserLib\CreateNewActionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -203,7 +195,6 @@
     <Compile Include="Actions\ActCreatePDFChart.cs" />
     <Compile Include="Actions\ActActivateRow.cs" />
     <Compile Include="Actions\ActGetMsgboxText.cs" />
-    <Compile Include="Actions\ActConsoleCommand.cs" />
     <Compile Include="Actions\ActLaunchJavaWSApplication.cs" />
     <Compile Include="Actions\ActGenerateFileFromTemplate.cs" />
     <Compile Include="Actions\ActionFlowControl.cs" />
@@ -301,14 +292,6 @@
     </Compile>
     <Compile Include="DragDrop\VisualDrag.xaml.cs">
       <DependentUpon>VisualDrag.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Drivers\ConsoleDriverLib\ConsoleNewActionPage.xaml.cs">
-      <DependentUpon>ConsoleNewActionPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Drivers\ConsoleDriverLib\UnixShellDriver.cs" />
-    <Compile Include="Drivers\ConsoleDriverLib\ConsoleDriverBase.cs" />
-    <Compile Include="Drivers\ConsoleDriverLib\ConsoleDriverWindow.xaml.cs">
-      <DependentUpon>ConsoleDriverWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Drivers\ConsoleDriverLib\UnixServerSimulator.cs" />
     <Compile Include="Drivers\ConsoleDriverLib\DOSConsoleDriver.cs" />

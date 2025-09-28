@@ -28,9 +28,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
+
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -68,7 +66,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             return true;
         }
 
-        public ConsoleDriverWindow mConsoleDriverWindow;
+        //public ConsoleDriverWindow mConsoleDriverWindow;
 
         public abstract bool Connect();
         public abstract void Disconnect();
@@ -111,17 +109,18 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         {
             try
             {
-                if (mConsoleDriverWindow != null)
-                {
-                    mConsoleDriverWindow.Close();
-                    mConsoleDriverWindow = null;
-                }
+                //if (mConsoleDriverWindow != null)
+                //{
+                //    mConsoleDriverWindow.Close();
+                //    mConsoleDriverWindow = null;
+                //}
                 
                 if (Dispatcher != null)
                 {
-                    Dispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
+                    //Dispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
                     Thread.Sleep(100);
                 }
+                Disconnect();
             }
             catch (InvalidOperationException e)
             {
@@ -285,7 +284,6 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         }
 
        
-
         protected virtual string GetParameterizedCommand(ActConsoleCommand act)
         {
             string command = act.Command;
