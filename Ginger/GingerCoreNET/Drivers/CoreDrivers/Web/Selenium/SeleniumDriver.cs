@@ -82,7 +82,7 @@ using DevToolsVersion = OpenQA.Selenium.DevTools.V139;
 
 namespace GingerCore.Drivers
 {
-    public class SeleniumDriver : GingerWebDriver, IVirtualDriver, IWindowExplorer, IVisualTestingDriver, IXPath, IPOM, IRecord
+    public class SeleniumDriver : GingerWebDriver, IVirtualDriver, IWindowExplorer, IVisualTestingDriver, IXPath, IPOM, IRecord, INotifyPropertyChanged
     {
         protected IDevToolsSession Session;
         DevToolsSession devToolsSession;
@@ -175,31 +175,26 @@ namespace GingerCore.Drivers
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private volatile bool _isProcessing = false;
+        private readonly object lockObj = new object();
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private bool _isProcessing;
         public bool IsProcessing
         {
             get => _isProcessing;
-            private set
+            set
             {
-                bool changed;
-                lock (lockObj)
+                if (_isProcessing != value)
                 {
-                    changed = _isProcessing != value;
                     _isProcessing = value;
-                }
-                if (changed)
-                {
-                    // Marshal to UI thread if there’s a sync context
-                    var context = System.Threading.SynchronizationContext.Current;
-                    void notify() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsProcessing)));
-                    if (context != null && context != System.Threading.SynchronizationContext.Current)
-                        context.Post(_ => notify(), null);
-                    else
-                        notify();
+                    OnPropertyChanged(nameof(IsProcessing));
                 }
             }
         }
-        private readonly object lockObj = new object();
 
         public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA, IEnumerable<DriverConfigParam> driverConfigParams = null)
         {
@@ -503,7 +498,8 @@ namespace GingerCore.Drivers
 
         public SeleniumDriver()
         {
-
+            POMUtils = new POMUtils();
+            POMUtils.ProcessingStatusChanged += POMUtils_ProcessingStatusChanged;
         }
 
         ~SeleniumDriver()
@@ -511,6 +507,15 @@ namespace GingerCore.Drivers
             if (Driver != null)
             {
                 CloseDriver();
+            }
+        }
+
+        private void POMUtils_ProcessingStatusChanged(object sender, bool isProcessing)
+        {
+            if (IsProcessing != isProcessing)
+            {
+                IsProcessing = isProcessing;
+                OnPropertyChanged(nameof(IsProcessing));
             }
         }
 
@@ -1519,6 +1524,11 @@ namespace GingerCore.Drivers
         {
             try
             {
+                if (POMUtils != null)
+                {
+                    POMUtils.ProcessingStatusChanged -= POMUtils_ProcessingStatusChanged;
+                }
+
                 if (Driver != null)
                 {
                     Driver.Close();
@@ -5738,7 +5748,6 @@ namespace GingerCore.Drivers
                         }
 
                         POMUtils.TiggerFineTuneWithAI(pomSetting, foundElementInfo,this.PomCategory,null);
-                        //TiggerFineTuneWithAI(pomSetting, foundElementInfo,this.PomCategory);
 
 
                         // Recursively find elements within shadow DOM

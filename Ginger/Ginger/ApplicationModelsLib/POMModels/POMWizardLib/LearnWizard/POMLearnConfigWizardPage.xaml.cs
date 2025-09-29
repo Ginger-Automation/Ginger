@@ -230,7 +230,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 if(GingerPlayConfiguration.IsGingerPlayConfigured())
                 {
                     xLearnPOMByAI.Visibility = Visibility.Visible;
-                    xLearnPOMByAI.IsEnabled = true;
+                    xLearnPOMByAI.IsEnabled = xAgentControlUC.AgentIsRunning;
                 }
                 isEnableFriendlyLocator = true;
             }

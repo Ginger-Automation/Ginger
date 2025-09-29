@@ -337,13 +337,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             }
         }
 
-        public void TiggerDelayProcessingfinetuneWithAI(PomSetting pomSetting, ePomElementCategory? PomCategory)
+        public void TiggerDelayProcessingfinetuneWithAI(PomSetting pomSetting, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
         {
             if (pomSetting.LearnPOMByAI)
             {
                 if (processingQueue.Count < 10 && !IsProcessing)
                 {
-                    _ = Task.Run(() => TriggerDelayedProcessing(pomSetting,PomCategory));
+                    _ = Task.Run(() => TriggerDelayedProcessing(pomSetting,PomCategory, DevicePlatformType));
                 }
             }
         }

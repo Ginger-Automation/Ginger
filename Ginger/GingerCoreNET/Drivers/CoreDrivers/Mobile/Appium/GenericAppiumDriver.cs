@@ -70,7 +70,7 @@ using PointerInputDevice = OpenQA.Selenium.Interactions.PointerInputDevice;
 
 namespace Amdocs.Ginger.CoreNET
 {
-    public class GenericAppiumDriver : DriverBase, IWindowExplorer, IRecord, IDriverWindow, IMobileDriverWindow, IVisualTestingDriver
+    public class GenericAppiumDriver : DriverBase, IWindowExplorer, IRecord, IDriverWindow, IMobileDriverWindow, IVisualTestingDriver, INotifyPropertyChanged
     {
         public override ePlatformType Platform { get { return ePlatformType.Mobile; } }
 
@@ -173,27 +173,22 @@ namespace Amdocs.Ginger.CoreNET
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private volatile bool _isProcessing = false;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private bool _isProcessing;
         public bool IsProcessing
         {
             get => _isProcessing;
-            private set
+            set
             {
-                bool changed;
-                lock (lockObj)
+                if (_isProcessing != value)
                 {
-                    changed = _isProcessing != value;
                     _isProcessing = value;
-                }
-                if (changed)
-                {
-                    // Marshal to UI thread if there’s a sync context
-                    var context = System.Threading.SynchronizationContext.Current;
-                    void notify() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsProcessing)));
-                    if (context != null && context != System.Threading.SynchronizationContext.Current)
-                        context.Post(_ => notify(), null);
-                    else
-                        notify();
+                    OnPropertyChanged(nameof(IsProcessing));
                 }
             }
         }
@@ -2714,7 +2709,7 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                 }
 
                 
-                POMUtils.TiggerDelayProcessingfinetuneWithAI(pomSetting,this.PomCategory);
+                POMUtils.TiggerDelayProcessingfinetuneWithAI(pomSetting,this.PomCategory, DevicePlatformType);
 
                 return foundElementsList.ToList();
             }
