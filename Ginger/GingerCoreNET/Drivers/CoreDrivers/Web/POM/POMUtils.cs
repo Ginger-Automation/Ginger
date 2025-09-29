@@ -44,6 +44,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
         };
 
         ConcurrentQueue<ElementInfo> processingQueue = new ConcurrentQueue<ElementInfo>();
+        private readonly ConcurrentDictionary<Guid, byte> _enqueuedIds = new();
 
 
         private readonly object lockObj = new object();
@@ -51,17 +52,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
         public event EventHandler<bool> ProcessingStatusChanged;
 
         private volatile bool _isProcessing;
-        public bool IsProcessing
+        public bool IsProcessing => _isProcessing;
+        private void SetProcessing(bool value)
         {
-            get => _isProcessing;
-            private set
+            bool changed = false;
+            lock (lockObj)
             {
                 if (_isProcessing != value)
                 {
                     _isProcessing = value;
-                    ProcessingStatusChanged?.Invoke(this, _isProcessing);
+                    changed = true;
                 }
             }
+            if (changed) ProcessingStatusChanged?.Invoke(this, _isProcessing);
         }
 
         public ElementWrapperInfo GenerateJsonToSendAIRequestByList(PomSetting pomSetting, ObservableList<ElementInfo> foundElementList)
@@ -325,7 +328,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             if (pomSetting.LearnPOMByAI)
             {
                 // Only enqueue if not already processed
-                if (!foundElementInfo.IsProcessed)
+                if (!foundElementInfo.IsProcessed && _enqueuedIds.TryAdd(foundElementInfo.Guid, 0))
                 {
                     processingQueue.Enqueue(foundElementInfo);
                 }
@@ -343,6 +346,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 {
                     if (processingQueue.Count < 10 && !IsProcessing)
                     {
+                        SetProcessing(true);
                         _ = Task.Run(() => TriggerDelayedProcessing(pomSetting, PomCategory, DevicePlatformType));
                     }
                 }
@@ -354,7 +358,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             {
                 if (processingQueue.Count >= 10 && !IsProcessing)
                 {
-                    IsProcessing = true;
+                    SetProcessing(true);
                     _ = Task.Run(() => ProcessBatchAsync(pomSetting, PomCategory, DevicePlatformType));
                 }
             }
@@ -385,7 +389,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             {
                 lock (lockObj)
                 {
-                    IsProcessing = false;
+                    SetProcessing(false);
                 }
             }
         }
@@ -409,6 +413,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
         private async Task TriggerDelayedProcessing(PomSetting pomSetting, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
         {
+            await Task.Delay(750);
             await ProcessBatchAsync(pomSetting, PomCategory, DevicePlatformType);
         }
 
