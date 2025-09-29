@@ -197,10 +197,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     LoadALMDetailsFromJSON(exeConfiguration);
                 }
-                //if (exeConfiguration.SealightsDetails != null)
-                //{
-                //    LoadSealightsDetailsFromJSON(exeConfiguration);
-                //}
                 if (exeConfiguration.GlobalVariables != null)
                 {
                     LoadGlobalVariableValues(exeConfiguration);
@@ -240,17 +236,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             await runsetExecutor.RunRunset();
         }
 
-
-        //private void LoadSealightsDetailsFromJSON(GingerExecConfig gingerExecConfig)
-        //{
-        //    WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog = (bool)gingerExecConfig.SealightsDetails.SealightsEnable ? SealightsConfiguration.eSealightsLog.Yes : SealightsConfiguration.eSealightsLog.No;
-        //    WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLabId = gingerExecConfig.SealightsDetails.SealightsLabId;
-        //    WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID = gingerExecConfig.SealightsDetails.SealightsBSId;
-        //    WorkSpace.Instance.Solution.SealightsConfiguration.SealightsTestStage = gingerExecConfig.SealightsDetails.SealightsTestStage;
-        //    WorkSpace.Instance.Solution.SealightsConfiguration.SealightsSessionTimeout = gingerExecConfig.SealightsDetails.SealightsSessionTimeout.ToString();
-        //    WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel = (SealightsConfiguration.eSealightsEntityLevel)gingerExecConfig.SealightsDetails.SealightsEntityLevel;
-        //    WorkSpace.Instance.Solution.SealightsConfiguration.SealightsAgentToken = gingerExecConfig.SealightsDetails.SealightsAgentToken;
-        //}
         private void LoadGlobalVariableValues(GingerExecConfig gingerExecConfig)
         {
             try
