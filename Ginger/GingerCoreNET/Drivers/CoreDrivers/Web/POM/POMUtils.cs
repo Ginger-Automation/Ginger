@@ -377,6 +377,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                         {
                             batch.Add(item);
                         }
+                        _enqueuedIds.TryRemove(item.Guid, out _);
                     }
 
                     if (batch.Count == 0)
@@ -387,10 +388,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             }
             finally
             {
-                lock (lockObj)
-                {
-                    SetProcessing(false);
-                }
+                SetProcessing(false);
             }
         }
 
@@ -403,6 +401,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 {
                     remaining.Add(item);
                 }
+                _enqueuedIds.TryRemove(item.Guid, out _);
             }
 
             if (remaining.Count > 0)
