@@ -731,7 +731,6 @@
     <PackageReference Include="FontAwesome6.Svg" Version="2.5.1" />
     <PackageReference Include="Gherkin" Version="5.1.0" />
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="2024.4.1.6" />
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="25.3.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
     <PackageReference Include="IdentityModel" Version="7.0.0" />
     <PackageReference Include="LiteDB" Version="5.0.21" />
@@ -807,6 +806,9 @@
     </Reference>
     <Reference Include="CredentialManagement">
       <HintPath>DLLs\CredentialManagement.dll</HintPath>
+    </Reference>
+    <Reference Include="Ginger.ExecuterService.Contracts">
+      <HintPath>..\..\..\ginger-execution-services\Ginger.ExecuterService.Contracts\bin\Debug\net8.0\Ginger.ExecuterService.Contracts.dll</HintPath>
     </Reference>
 
     <Reference Include="GingerExternal">

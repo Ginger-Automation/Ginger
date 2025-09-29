@@ -18,14 +18,17 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
+using Ginger.Configurations;
 using Ginger.ExecuterService.Contracts;
 using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Requests;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration.RunsetOperations;
+using Ginger.ExecuterService.Contracts.V1.ExternalConfiguration;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
@@ -539,44 +542,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
             }
 
-            if (cliHelper.SetSealightsSettings)
-            {
-                SealightsDetails sealightsDetails = new SealightsDetails
-                {
-                    SealightsEnable = solution.SealightsConfiguration.SealightsLog == eSealightsLog.Yes,
-                    SealightsUrl = solution.SealightsConfiguration.SealightsURL,
-                    SealightsLabId = solution.SealightsConfiguration.SealightsLabId,
-                    SealightsBSId = solution.SealightsConfiguration.SealightsBuildSessionID,
-                    SealightsTestStage = solution.SealightsConfiguration.SealightsTestStage,
-                    SealightsSessionTimeout = Convert.ToInt32(solution.SealightsConfiguration.SealightsSessionTimeout),
-                    SealightsEntityLevel = (SealightsDetails.eSealightsEntityLevel)solution.SealightsConfiguration.SealightsReportedEntityLevel,
-                    SealightsAgentToken = solution.SealightsConfiguration.SealightsAgentToken,
-                    SealightsTestRecommendations = solution.SealightsConfiguration.SealightsTestRecommendations == eSealightsTestRecommendations.Yes
-                };
-
-
-                //  Check Sealights's values on run-set levels
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId != null)
-                {
-                    sealightsDetails.SealightsLabId = runsetExecutor.RunSetConfig.SealightsLabId;
-                }
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID != null)
-                {
-                    sealightsDetails.SealightsBSId = runsetExecutor.RunSetConfig.SealightsBuildSessionID;
-                }
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage != null)
-                {
-                    sealightsDetails.SealightsTestStage = runsetExecutor.RunSetConfig.SealightsTestStage;
-                }
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestRecommendationsRunsetOverrideFlag)
-                {
-                    sealightsDetails.SealightsTestRecommendations = runsetExecutor.RunSetConfig.SealightsTestRecommendations == eSealightsTestRecommendations.Yes;
-                }
-
-                executionConfig.SealightsDetails = sealightsDetails;
-            }
-
-            executionConfig.SolutionLocalPath = solution.Folder;
+                     executionConfig.SolutionLocalPath = solution.Folder;
 
             executionConfig.ShowAutoRunWindow = cliHelper.ShowAutoRunWindow;
             executionConfig.VerboseLevel = GingerExecConfig.eVerboseLevel.normal;
@@ -692,7 +658,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runner.RunInSimulationMode = gingerRunner.RunInSimulationMode;
                 runner.RunInVisualTestingMode = gingerRunner.RunInVisualTestingMode;
                 runner.KeepAgentsOpen = gingerRunner.KeepAgentsOn;
-
+                runner.TakeScreenShot = gingerRunner.TakeScreenShot;
                 if (gingerRunner.BusinessFlowsRunList.Count > 0)
                 {
                     runner.BusinessFlows = [];
@@ -981,6 +947,122 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             }
 
             executionConfig.Runset = runset;
+
+            // For All the External configurations present in Ginger
+            if (cliHelper.SetExternalConfigurationSettings)
+            {
+                executionConfig.ExternalConfigurationDetails = new()
+                {
+                    ExternalConfigurations = []
+                };
+
+
+                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count > 0)
+                {
+                    GingerPlayConfiguration gingerPlayConfig = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+                    GingerPlayDetails gingerPlayDetails = new GingerPlayDetails
+                    {
+                        GingerPlayEnable = gingerPlayConfig.GingerPlayEnabled,
+                        GingerPlayUrl = gingerPlayConfig.GingerPlayGatewayUrl,
+                        GingerPlayClientId = gingerPlayConfig.GingerPlayClientId,
+                        GingerPlayClientSecret = gingerPlayConfig.GingerPlayClientSecret,
+                        EnableAccountReportService = gingerPlayConfig.GingerPlayReportServiceEnabled,
+                        EnableAIService = gingerPlayConfig.GingerPlayAIServiceEnabled,
+                        EnableHTMLReportService = gingerPlayConfig.GingerPlayReportServiceEnabled
+
+                    };
+                    executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(gingerPlayDetails);
+
+                }
+                if (WorkSpace.Instance.Solution.SealightsConfiguration != null)
+                {
+                    SealightsDetails sealightsDetails = new SealightsDetails
+                    {
+                        SealightsEnable = solution.SealightsConfiguration.SealightsLog == eSealightsLog.Yes,
+                        SealightsUrl = solution.SealightsConfiguration.SealightsURL,
+                        SealightsLabId = solution.SealightsConfiguration.SealightsLabId,
+                        SealightsBSId = solution.SealightsConfiguration.SealightsBuildSessionID,
+                        SealightsTestStage = solution.SealightsConfiguration.SealightsTestStage,
+                        SealightsSessionTimeout = Convert.ToInt32(solution.SealightsConfiguration.SealightsSessionTimeout),
+                        SealightsEntityLevel = (SealightsDetails.eSealightsEntityLevel)solution.SealightsConfiguration.SealightsReportedEntityLevel,
+                        SealightsAgentToken = solution.SealightsConfiguration.SealightsAgentToken,
+                        SealightsTestRecommendations = solution.SealightsConfiguration.SealightsTestRecommendations == eSealightsTestRecommendations.Yes
+                    };
+
+                    executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(sealightsDetails);
+
+                }
+                if(WorkSpace.Instance.Solution.AskLisaConfiguration != null)
+                {
+                    if (solution.AskLisaConfiguration.EnableChat == AskLisaConfiguration.eEnableChatBot.Yes)
+                    {
+                        AskLisaDetails askLisaDetails = new AskLisaDetails
+                        {
+                            AskLisaEnable = (AskLisaDetails.eEnableChatBot)solution.AskLisaConfiguration.EnableChat,
+                            AskLisaHostURL = solution.AskLisaConfiguration.Host,
+                            AuthenticationServiceURL = solution.AskLisaConfiguration.AuthenticationServiceURL,
+                            ClientID = solution.AskLisaConfiguration.ClientId,
+                            ClientSecret = solution.AskLisaConfiguration.ClientSecret,
+                            StartNewChatEndpointURL = solution.AskLisaConfiguration.StartNewChat,
+                            ContinueChatEndpointURL = solution.AskLisaConfiguration.ContinueChat,
+                            AccountType = solution.AskLisaConfiguration.Account,
+                            DomainType = solution.AskLisaConfiguration.DomainType,
+                            TemparatureLevel = solution.AskLisaConfiguration.TemperatureLevel,
+                            MaxResponseTokens = solution.AskLisaConfiguration.MaxTokenValue,
+                            DataPath = solution.AskLisaConfiguration.DataPath,
+                            GrantType = solution.AskLisaConfiguration.GrantType,
+
+                        };
+                        executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(askLisaDetails);
+
+                    }
+
+                }
+                if (WorkSpace.Instance.Solution.VRTConfiguration != null)
+                {
+                    VRTDetails vrtDetails = new VRTDetails
+                    {
+                        VRTAPIURL = solution.VRTConfiguration.ApiUrl,
+                        VRTAPIKey = solution.VRTConfiguration.ApiKey,
+                        ProjectName = solution.VRTConfiguration.Project,
+                        BranchName = solution.VRTConfiguration.BranchName,
+                        DifferenceTolerance = solution.VRTConfiguration.DifferenceTolerance,
+                        IsFailCheckPoint = (VRTDetails.eFailActionOnCheckpointMismatch)solution.VRTConfiguration.FailActionOnCheckpointMismatch,
+
+                    };
+                    executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(vrtDetails);
+
+                }
+                if (WorkSpace.Instance.Solution.ApplitoolsConfiguration != null)
+                {
+                    ApplitoolsDetails applitoolsDetails = new ApplitoolsDetails
+                    {
+                        ApplitoolsApiUrl = solution.ApplitoolsConfiguration.ApiUrl,
+                        ApplitoolsApiKey = solution.ApplitoolsConfiguration.ApiKey,
+                    };
+                    executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(applitoolsDetails);
+                }
+                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count > 0)
+                {
+                    WireMockConfiguration wireMockConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
+                    WireMockDetails wireMockDetails = new WireMockDetails
+                    {
+                        WireMockURL = wireMockConfiguration.WireMockUrl
+                    };
+                    executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(wireMockDetails);
+                }
+                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count > 0)
+                {
+                    ZAPConfiguration zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
+                    ZAPDetails zAPDetails = new ZAPDetails
+                    {
+                        ZAPURL = zAPConfiguration.ZAPUrl,
+                        ZAPAPIKey = zAPConfiguration.ZAPApiKey,
+                    };
+                    executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(zAPDetails);
+                }
+
+            }
             return executionConfig;
         }
 
@@ -1036,21 +1118,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Using provided ExecutionID '{0}'.", runSetConfig.ExecutionID.ToString()));
             }
 
-            if (gingerExecConfig.SealightsDetails != null)
-            {
-                runSetConfig.SealightsBuildSessionID = gingerExecConfig.SealightsDetails.SealightsBSId;
-                runSetConfig.SealightsLabId = gingerExecConfig.SealightsDetails.SealightsLabId;
-                runSetConfig.SealightsTestStage = gingerExecConfig.SealightsDetails.SealightsTestStage;
-                if (gingerExecConfig.SealightsDetails.SealightsTestRecommendations != null)
-                {
-                    runSetConfig.SealightsTestRecommendations = (bool)gingerExecConfig.SealightsDetails.SealightsTestRecommendations ? eSealightsTestRecommendations.Yes : eSealightsTestRecommendations.No;
-                }
-                else
-                {
-                    runSetConfig.SealightsTestRecommendations = eSealightsTestRecommendations.No;
-                }
-            }
-
+         
             if (gingerExecConfig.Runset.RerunConfigurations != null)
             {
                 runSetConfig.ReRunConfigurations.Active = gingerExecConfig.Runset.RerunConfigurations.Active;

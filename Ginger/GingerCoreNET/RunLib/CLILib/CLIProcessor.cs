@@ -473,15 +473,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.ShowAutoRunWindow = runOptions.ShowUI;
             mCLIHelper.TestArtifactsFolder = runOptions.TestArtifactsPath;
             mCLIHelper.SelfHealingCheckInConfigured = runOptions.SelfHealingCheckInConfigured;
-            mCLIHelper.SealightsEnable = runOptions.SealightsEnable;
-            mCLIHelper.SealightsUrl = runOptions.SealightsUrl;
-            mCLIHelper.SealightsAgentToken = runOptions.SealightsAgentToken;
-            mCLIHelper.SealightsLabID = runOptions.SealightsLabID;
-            mCLIHelper.SealightsSessionID = runOptions.SealightsSessionID;
-            mCLIHelper.SealightsSessionTimeOut = runOptions.SealightsSessionTimeOut;
-            mCLIHelper.SealightsTestStage = runOptions.SealightsTestStage;
-            mCLIHelper.SealightsEntityLevel = runOptions.SealightsEntityLevel?.ToString() == "None" ? null : runOptions.SealightsEntityLevel?.ToString();
-            mCLIHelper.SealightsTestRecommendations = runOptions.SealightsTestRecommendations;
             mCLIHelper.SourceApplication = runOptions.SourceApplication;
             mCLIHelper.SourceApplicationUser = runOptions.SourceApplicationUser;
 
@@ -674,12 +665,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     return false; // Failed to perform execution preparations
                 }
 
-                // Check for any Sealights Settings
-                if (!mCLIHelper.SetSealights())
-                {
-                    return false;
-                }
-
+                
                 // set source app and user
                 mCLIHelper.SetSourceAppAndUser();
 
