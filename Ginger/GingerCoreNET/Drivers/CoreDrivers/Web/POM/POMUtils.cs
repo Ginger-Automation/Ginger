@@ -16,24 +16,21 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.GeneralLib;
+using Amdocs.Ginger.Repository;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Amdocs.Ginger.Repository;
-using Newtonsoft.Json.Linq;
-using System.Reflection;
-using GingerCore.Drivers.Common;
-using System.Collections.Concurrent;
-using System.ComponentModel;
-using Microsoft.Graph;
-using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 {
@@ -53,7 +50,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
         public event EventHandler<bool> ProcessingStatusChanged;
 
-        private bool _isProcessing;
+        private volatile bool _isProcessing;
         public bool IsProcessing
         {
             get => _isProcessing;
@@ -143,7 +140,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     string batchPayload = "[" + string.Join(",", currentBatch) + "]";
                     try
                     {
-                        await GetResponseFromGenAI(list, url, batchPayload, PomCategory,DevicePlatformType);
+                        await GetResponseFromGenAI(list, url, batchPayload, PomCategory, DevicePlatformType);
                         responses.Add($"Batch processed successfully with {currentBatch.Count} elements");
                     }
                     catch (Exception ex)
@@ -187,7 +184,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
         public async Task GetResponseFromGenAI(ObservableList<ElementInfo> list, string url, string batchPayload, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
         {
-            string response = await GingerCoreNET.GeneralLib.General.GetResponseForprocess_extracted_elementsByOpenAI(batchPayload, DevicePlatformType);
+            string response = await GingerCoreNET.GeneralLib.General.GetResponseForprocess_extracted_elementsByOpenAI(batchPayload, DevicePlatformType, url);
             ProcessGenAIResponseAndUpdatePOM(list, response, PomCategory);
         }
         public void ProcessGenAIResponseAndUpdatePOM(ObservableList<ElementInfo> list, string response, ePomElementCategory? PomCategory)
@@ -210,7 +207,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 try
                 {
                     List<ElementWrapper> responseElements = null;
-                    
+
                     try
                     {
                         var jObject = JObject.Parse(cleanedResponse);
@@ -257,9 +254,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                                 string enhanceLocatorsJson = ele.elementinfo.locators.EnhanceLocatorsByAI?.ToString();
 
                                 if (string.IsNullOrWhiteSpace(enhanceLocatorsJson))
-                                    {
-                                        continue;
-                                    }
+                                {
+                                    continue;
+                                }
                                 Dictionary<string, string> enhanceLocators = JsonConvert.DeserializeObject<Dictionary<string, string>>(enhanceLocatorsJson);
 
                                 if (enhanceLocators != null)
@@ -275,7 +272,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                                             locateBy = eLocateBy.ByRelXPath;
                                         }
 
-                                        if(!string.IsNullOrEmpty(kvp.Value))
+                                        if (!string.IsNullOrEmpty(kvp.Value))
                                         {
                                             var locator = new ElementLocator
                                             {
@@ -310,9 +307,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
         private string CleanAIResponse(string response)
         {
-            if (string.IsNullOrWhiteSpace(response)) 
-            { 
-                return string.Empty; 
+            if (string.IsNullOrWhiteSpace(response))
+            {
+                return string.Empty;
             }
 
 
@@ -322,7 +319,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             .Trim();
         }
 
-        public void TiggerFineTuneWithAI(PomSetting pomSetting, ElementInfo foundElementInfo, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
+        public void TriggerFineTuneWithAI(PomSetting pomSetting, ElementInfo foundElementInfo, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
         {
             if (pomSetting.LearnPOMByAI)
             {
@@ -333,36 +330,33 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 }
 
                 // Trigger batch processing
-                TriggerBatchProcessing(pomSetting,PomCategory, DevicePlatformType);
+                TriggerBatchProcessing(pomSetting, PomCategory, DevicePlatformType);
             }
         }
 
-        public void TiggerDelayProcessingfinetuneWithAI(PomSetting pomSetting, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
+        public void TriggerDelayProcessingfinetuneWithAI(PomSetting pomSetting, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
         {
             if (pomSetting.LearnPOMByAI)
             {
                 if (processingQueue.Count < 10 && !IsProcessing)
                 {
-                    _ = Task.Run(() => TriggerDelayedProcessing(pomSetting,PomCategory, DevicePlatformType));
+                    _ = Task.Run(() => TriggerDelayedProcessing(pomSetting, PomCategory, DevicePlatformType));
                 }
             }
         }
         private void TriggerBatchProcessing(PomSetting pomSetting, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
         {
-            if (processingQueue.Count >= 10)
+            lock (lockObj)
             {
-                lock (lockObj)
+                if (processingQueue.Count >= 10 && !IsProcessing)
                 {
-                    if (!IsProcessing)
-                    {
-                        IsProcessing = true;
-                        _ = Task.Run(() => ProcessBatchAsync(pomSetting,PomCategory, DevicePlatformType));
-                    }
+                    IsProcessing = true;
+                    _ = Task.Run(() => ProcessBatchAsync(pomSetting, PomCategory, DevicePlatformType));
                 }
             }
         }
 
-        private async Task ProcessBatchAsync(PomSetting pomSetting, ePomElementCategory? PomCategory,eDevicePlatformType? DevicePlatformType = null)
+        private async Task ProcessBatchAsync(PomSetting pomSetting, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
         {
             try
             {
@@ -378,10 +372,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     }
 
                     if (batch.Count == 0)
-                        { break; }
-                    await UpdateAndMarkElementsAsync(pomSetting, batch,PomCategory, DevicePlatformType);
+                    { break; }
+                    await UpdateAndMarkElementsAsync(pomSetting, batch, PomCategory, DevicePlatformType);
                 }
-                await FlushRemainingAsync(pomSetting,PomCategory, DevicePlatformType);
+                await FlushRemainingAsync(pomSetting, PomCategory, DevicePlatformType);
             }
             finally
             {
@@ -392,7 +386,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             }
         }
 
-        private async Task FlushRemainingAsync(PomSetting pomSetting, ePomElementCategory? PomCategory,eDevicePlatformType? DevicePlatformType = null)
+        private async Task FlushRemainingAsync(PomSetting pomSetting, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
         {
             ObservableList<ElementInfo> remaining = new ObservableList<ElementInfo>();
             while (processingQueue.TryDequeue(out var item))
@@ -409,18 +403,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             }
         }
 
-        private async Task TriggerDelayedProcessing(PomSetting pomSetting, ePomElementCategory? PomCategory,eDevicePlatformType? DevicePlatformType = null)
+        private async Task TriggerDelayedProcessing(PomSetting pomSetting, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
         {
             await ProcessBatchAsync(pomSetting, PomCategory, DevicePlatformType);
         }
 
 
-        private async Task UpdateAndMarkElementsAsync(PomSetting pomSetting, ObservableList<ElementInfo> foundElementList, ePomElementCategory? PomCategory,eDevicePlatformType? DevicePlatformType = null)
+        private async Task UpdateAndMarkElementsAsync(PomSetting pomSetting, ObservableList<ElementInfo> foundElementList, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
         {
-            POMUtils pOMUtils = new POMUtils();
-            ElementWrapperInfo elementWrapperInfo = pOMUtils.GenerateJsonToSendAIRequestByList(pomSetting, foundElementList);
-            string Response = string.Empty;
-            await pOMUtils.SendInBatchesList(elementWrapperInfo, foundElementList, string.Empty, PomCategory, DevicePlatformType);
+            ElementWrapperInfo elementWrapperInfo = GenerateJsonToSendAIRequestByList(pomSetting, foundElementList);
+            await SendInBatchesList(elementWrapperInfo, foundElementList, string.Empty, PomCategory, DevicePlatformType);
         }
 
 

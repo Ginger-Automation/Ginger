@@ -5747,7 +5747,7 @@ namespace GingerCore.Drivers
                             ProcessSvgChildElements(parentContext, pomSetting, htmlElemNode, foundElementInfo, path, foundElementsList, PomMetaData, isShadowRootDetected, ScreenShot);
                         }
 
-                        POMUtils.TiggerFineTuneWithAI(pomSetting, foundElementInfo,this.PomCategory,null);
+                        POMUtils.TriggerFineTuneWithAI(pomSetting, foundElementInfo,this.PomCategory,null);
 
 
                         // Recursively find elements within shadow DOM
@@ -5774,7 +5774,7 @@ namespace GingerCore.Drivers
                     Reporter.ToLog(eLogLevel.DEBUG, $"Failed to learn the Web Element '{htmlElemNode.Name}'", ex);
                 }
             }
-            POMUtils.TiggerDelayProcessingfinetuneWithAI(pomSetting, this.PomCategory);
+            POMUtils.TriggerDelayProcessingfinetuneWithAI(pomSetting, this.PomCategory);
             // Process form elements and add metadata
             ProcessFormElements(formElementsList, Driver, pomSetting, foundElementsList, PomMetaData);
 
@@ -5858,16 +5858,7 @@ namespace GingerCore.Drivers
                                     foundElementsList.Add(svgChildElementInfo);
                                     allReadElem.Add(svgChildElementInfo);
 
-                                    //if (pomSetting.LearnPOMByAI)
-                                    //{
-                                    //    if (!svgChildElementInfo.IsProcessed)
-                                    //    {
-                                    //        processingQueue.Enqueue(svgChildElementInfo);
-                                    //    }
-                                    //    TriggerBatchProcessing(pomSetting);
-                                    //}
-
-                                    POMUtils.TiggerFineTuneWithAI(pomSetting, svgChildElementInfo, this.PomCategory);
+                                    POMUtils.TriggerFineTuneWithAI(pomSetting, svgChildElementInfo, this.PomCategory);
                                 }
                             }
                             catch (Exception ex)

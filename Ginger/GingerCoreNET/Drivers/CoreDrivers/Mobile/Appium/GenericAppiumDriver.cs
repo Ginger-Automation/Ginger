@@ -2698,7 +2698,7 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
 
                         try
                         {
-                            POMUtils.TiggerFineTuneWithAI(pomSetting, EI, this.PomCategory, DevicePlatformType);
+                            POMUtils.TriggerFineTuneWithAI(pomSetting, EI, this.PomCategory, DevicePlatformType);
                         }
                         catch(Exception ex)
                         {
@@ -2707,9 +2707,7 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                         
                     }
                 }
-
-                
-                POMUtils.TiggerDelayProcessingfinetuneWithAI(pomSetting,this.PomCategory, DevicePlatformType);
+                POMUtils.TriggerDelayProcessingfinetuneWithAI(pomSetting,this.PomCategory, DevicePlatformType);
 
                 return foundElementsList.ToList();
             }
