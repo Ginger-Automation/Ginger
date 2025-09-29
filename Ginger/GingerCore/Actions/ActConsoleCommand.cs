@@ -16,12 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace GingerCore.Actions
 {
@@ -65,6 +67,23 @@ namespace GingerCore.Actions
             ParametrizedCommand = 19
         }
 
+        public enum eCommandEndKey
+        {
+            [CommandValue("\n")]
+            [EnumValueDescription("Enter")]
+            Enter,
+            [CommandValue("\t")]
+            [EnumValueDescription("Tab")]
+            Tab,
+            [CommandValue(" ")]
+            [EnumValueDescription("Space")]
+            Space,
+            [CommandValue("")]
+            [EnumValueDescription("None")]
+            Empty,
+        }
+
+
         [IsSerializedForLocalRepository]
         public eConsoleCommand ConsoleCommand { get; set; }
 
@@ -83,6 +102,8 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string Delimiter { get; set; }
 
+        [IsSerializedForLocalRepository(DefaultValue: eCommandEndKey.Enter)]
+        public eCommandEndKey CommandEndKey { get; set; } = eCommandEndKey.Enter;
 
         public override String ActionType
         {
@@ -109,4 +130,16 @@ namespace GingerCore.Actions
         public override eImageType Image { get { return eImageType.CodeFile; } }
 
     }
+
+    [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+    internal sealed class CommandValueAttribute : Attribute
+    {
+        public string Value { get; }
+
+        public CommandValueAttribute(string value)
+        {
+            Value = value;
+        }
+    }
+
 }

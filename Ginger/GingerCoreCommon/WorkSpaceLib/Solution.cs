@@ -496,6 +496,11 @@ namespace Ginger.SolutionGeneral
             }
             if (!string.IsNullOrEmpty(LoggerConfigurations.GetCentralizedHtmlReportServiceURLBackwardCompatibility()) || !string.IsNullOrEmpty(LoggerConfigurations.GetCentralLoggerEndPointURLBackwardCompatibility()) || !string.IsNullOrEmpty(LoggerConfigurations.GetExecutionServiceURLBackwardCompatibility()))
             {
+                if (GingerCoreCommonWorkSpace.Instance.UserProfile == null)
+                {
+                    return;
+                }
+
                 if (GingerCoreCommonWorkSpace.Instance?.SolutionRepository != null)
                 {
                     if (!GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Any())

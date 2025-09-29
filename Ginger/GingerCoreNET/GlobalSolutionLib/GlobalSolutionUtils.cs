@@ -314,6 +314,11 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             {
                 Activity importedActivity = (Activity)newRepositorySerializer.DeserializeFromFile(itemActivity.ItemFullPath);
                 AddDependaciesForActivity(importedActivity, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
+
+                //for target app
+                GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.TargetApplication, Path.Combine(SolutionFolder, "Ginger.Solution.xml"), ConvertToRelativePath(Path.Combine(SolutionFolder, "Ginger.Solution.xml")), true, importedActivity.TargetApplication, importedActivity.ActivityName);
+                AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
+
             }
             catch (Exception ex)
             {
@@ -669,6 +674,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 }
                 //Agents
                 //TODO: Need to have agents mapping on BF
+
 
                 //Documents
                 AddDependaciesForDocuments(itemBF.ItemFullPath, ref SelectedItemsListToImport);
@@ -1232,6 +1238,69 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 Reporter.ToLog(eLogLevel.DEBUG, "Failed to replace relative path sign '~' with Solution path for the path: '" + relativePath + "'", ex);
             }
             return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(relativePath);
+        }
+
+        /// <summary>
+        /// Ensures that an Agent exists for the given Target Application and its platform.
+        /// If the Agent does not exist, it creates and adds one to the solution.
+        /// </summary>
+        /// <param name="targetApplicationName">The name of the Target Application.</param>
+        /// <param name="platform">The platform of the Target Application.</param>
+        public void EnsureAgentForTargetApplication(string targetApplicationName, ePlatformType platform)
+        {
+            try
+            {
+                // Check if an Agent already exists for the given platform
+                bool agentExists = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>()
+                    .Any(agent => agent.Platform == platform);
+
+                if (!agentExists)
+                {
+                    // Create and add an Agent for the Target Application
+                    Agent newAgent = new Agent
+                    {
+                        Name = targetApplicationName,
+                        Platform = platform,
+                        DriverType = GetDefaultDriverType(platform.ToString())
+                    };
+
+                    // Initialize the agent's driver configurations
+                    AgentOperations agentOperations = new AgentOperations(newAgent);
+                    newAgent.AgentOperations = agentOperations;
+                    newAgent.AgentOperations.InitDriverConfigs();
+
+                    // Add the agent to the solution repository
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newAgent);
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to ensure Agent for Target Application '{targetApplicationName}' and platform '{platform}'. Error: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// Helper method to get the default driver type for a platform.
+        /// </summary>
+        /// <param name="platform">The platform type.</param>
+        /// <returns>The default driver type for the platform.</returns>
+        private Agent.eDriverType GetDefaultDriverType(string platform)
+        {
+            return platform switch
+            {
+                "Web" => Agent.eDriverType.Selenium,
+                "Mobile" => Agent.eDriverType.Appium,
+                "Windows" => Agent.eDriverType.WindowsAutomation,
+                "Java" => Agent.eDriverType.JavaDriver,
+                "MainFrame" => Agent.eDriverType.MainFrame3270,
+                "DOS" => Agent.eDriverType.DOSConsole,
+                "Unix" => Agent.eDriverType.UnixShell,
+                "WebServices" => Agent.eDriverType.WebServices,
+                "PowerBuilder" => Agent.eDriverType.PowerBuilder,
+                _ => throw new NotSupportedException($"No default driver type defined for platform '{platform}'")
+            };
         }
     }
 }
