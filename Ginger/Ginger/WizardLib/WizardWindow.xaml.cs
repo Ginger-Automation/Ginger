@@ -536,9 +536,13 @@ namespace GingerWPF.WizardLib
         private void POMUtils_ProcessingStatusChanged(object sender, bool isProcessing)
         {
             if (isProcessing)
+            {
                 AIProcessStarted();
+            }
             else
+            {
                 AIProcessStopped();
+            }
         }
 
         private void SeleniumDriver_PropertyChanged(object sender, PropertyChangedEventArgs e)

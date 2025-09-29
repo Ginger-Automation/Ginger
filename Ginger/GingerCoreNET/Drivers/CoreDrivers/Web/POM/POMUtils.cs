@@ -49,9 +49,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
         ConcurrentQueue<ElementInfo> processingQueue = new ConcurrentQueue<ElementInfo>();
 
 
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private readonly object lockObj = new object();
 
         public event EventHandler<bool> ProcessingStatusChanged;
@@ -381,7 +378,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     }
 
                     if (batch.Count == 0)
-                        break;
+                        { break; }
                     await UpdateAndMarkElementsAsync(pomSetting, batch,PomCategory, DevicePlatformType);
                 }
                 await FlushRemainingAsync(pomSetting,PomCategory, DevicePlatformType);
