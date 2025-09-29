@@ -339,9 +339,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
         {
             if (pomSetting.LearnPOMByAI)
             {
-                if (processingQueue.Count < 10 && !IsProcessing)
+                lock (lockObj)
                 {
-                    _ = Task.Run(() => TriggerDelayedProcessing(pomSetting, PomCategory, DevicePlatformType));
+                    if (processingQueue.Count < 10 && !IsProcessing)
+                    {
+                        _ = Task.Run(() => TriggerDelayedProcessing(pomSetting, PomCategory, DevicePlatformType));
+                    }
                 }
             }
         }
