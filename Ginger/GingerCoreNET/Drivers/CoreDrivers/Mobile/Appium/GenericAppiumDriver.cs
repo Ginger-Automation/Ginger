@@ -23,8 +23,10 @@ using Amdocs.Ginger.CoreNET.ActionsLib.UI.Mobile;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
@@ -32,6 +34,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
+using GingerCore.Drivers.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -46,9 +49,12 @@ using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
+using Protractor;
 using RestSharp;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -159,9 +165,39 @@ namespace Amdocs.Ginger.CoreNET
 
         protected IWebDriver webDriver;
 
+        public POMUtils POMUtils = new POMUtils();
 
         bool mIsDeviceConnected = false;
         string mDefaultURL = null;
+        ConcurrentQueue<ElementInfo> processingQueue = new ConcurrentQueue<ElementInfo>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private volatile bool _isProcessing = false;
+        public bool IsProcessing
+        {
+            get => _isProcessing;
+            private set
+            {
+                bool changed;
+                lock (lockObj)
+                {
+                    changed = _isProcessing != value;
+                    _isProcessing = value;
+                }
+                if (changed)
+                {
+                    // Marshal to UI thread if there’s a sync context
+                    var context = System.Threading.SynchronizationContext.Current;
+                    void notify() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsProcessing)));
+                    if (context != null && context != System.Threading.SynchronizationContext.Current)
+                        context.Post(_ => notify(), null);
+                    else
+                        notify();
+                }
+            }
+        }
+        private readonly object lockObj = new object();
 
         public bool IsDeviceConnected
         {
@@ -2664,8 +2700,21 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
 
                         }
                         foundElementsList.Add(EI);
+
+                        try
+                        {
+                            POMUtils.TiggerFineTuneWithAI(pomSetting, EI, this.PomCategory, DevicePlatformType);
+                        }
+                        catch(Exception ex)
+                        {
+
+                        }
+                        
                     }
                 }
+
+                
+                POMUtils.TiggerDelayProcessingfinetuneWithAI(pomSetting,this.PomCategory);
 
                 return foundElementsList.ToList();
             }
@@ -2674,6 +2723,8 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                 mIsDriverBusy = false;
             }
         }
+
+        
 
 
         private Bitmap ScreenshotToImage(Screenshot screenshot)

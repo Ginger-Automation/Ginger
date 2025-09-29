@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
@@ -125,23 +126,36 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 }
 
                 // Check if agent is running and has a driver
-                if (currentAgent?.AgentOperations is AgentOperations agentOps && agentOps.Driver is SeleniumDriver seleniumDriver)
+                if(currentAgent?.AgentOperations is AgentOperations agentOps)
                 {
-                    // Get the wizard window and subscribe to driver events
-                    if (mBasePOMWizard?.mWizardWindow is WizardWindow wizardWindow)
+                    if (agentOps.Driver is SeleniumDriver seleniumDriver)
                     {
-                        wizardWindow.SubscribeToSeleniumDriver(seleniumDriver);
-                        Reporter.ToLog(eLogLevel.DEBUG, "Successfully subscribed to SeleniumDriver AI processing events");
+                        // Get the wizard window and subscribe to driver events
+                        if (mBasePOMWizard?.mWizardWindow is WizardWindow wizardWindow)
+                        {
+                            wizardWindow.SubscribeToSeleniumDriver(seleniumDriver);
+                            Reporter.ToLog(eLogLevel.DEBUG, "Successfully subscribed to SeleniumDriver AI processing events");
+                        }
+                    }
+                    else if (agentOps.Driver is GenericAppiumDriver AppiumDriver)
+                    {
+                        // Get the wizard window and subscribe to driver events
+                        if (mBasePOMWizard?.mWizardWindow is WizardWindow wizardWindow)
+                        {
+                            wizardWindow.SubscribeToAppiumDriver(AppiumDriver);
+                            Reporter.ToLog(eLogLevel.DEBUG, "Successfully subscribed to AppiumDriver AI processing events");
+                        }
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Driver not available for AI processing subscription");
                     }
                 }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.DEBUG, "SeleniumDriver not available for AI processing subscription");
-                }
+                
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error subscribing to SeleniumDriver events", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error subscribing to Driver events", ex);
             }
         }
 
@@ -210,12 +224,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     mAppPlatform = selectedplatform.Platform;
                 }
             }
-            if (mAppPlatform == ePlatformType.Web)
+            if (mAppPlatform == ePlatformType.Web || mAppPlatform == ePlatformType.Mobile)
             {
                 xLearnScreenshotsOfElements.Visibility = Visibility.Visible;
                 if(GingerPlayConfiguration.IsGingerPlayConfigured())
                 {
                     xLearnPOMByAI.Visibility = Visibility.Visible;
+                    xLearnPOMByAI.IsEnabled = true;
                 }
                 isEnableFriendlyLocator = true;
             }
