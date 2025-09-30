@@ -78,7 +78,9 @@ namespace Ginger.Run
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSimulationMode, CheckBox.IsCheckedProperty, mRunner.GingerRunner, nameof(GingerRunner.RunInSimulationMode));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xVisualTestingMode, CheckBox.IsCheckedProperty, mRunner.GingerRunner, nameof(GingerRunner.RunInVisualTestingMode));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xForceUiScreenShot, CheckBox.IsCheckedProperty, mRunner.GingerRunner, nameof(GingerRunner.ForceUiScreenshot));
 
+            
             SetEnvironments();
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUseSpecificEnvChkbox, CheckBox.IsCheckedProperty, mRunner.GingerRunner, nameof(GingerRunner.UseSpecificEnvironment));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSpecificEnvComboBox, ComboBox.SelectedItemProperty, mRunner.GingerRunner, nameof(GingerRunner.ProjEnvironment));

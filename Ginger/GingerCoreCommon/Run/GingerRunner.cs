@@ -281,20 +281,20 @@ namespace Ginger.Run
             }
         }
 
-        private bool mTakeScreenShot = true;
-        [IsSerializedForLocalRepository(true)]
-        public bool TakeScreenShot
+        private bool mForceUiScreenshot = false;
+        [IsSerializedForLocalRepository(false)]
+        public bool ForceUiScreenshot
         {
             get
             {
-                return mTakeScreenShot;
+                return mForceUiScreenshot;
             }
             set
             {
-                if (mTakeScreenShot != value)
+                if (mForceUiScreenshot != value)
                 {
-                    mTakeScreenShot = value;
-                    OnPropertyChanged(nameof(GingerRunner.TakeScreenShot));
+                    mForceUiScreenshot = value;
+                    OnPropertyChanged(nameof(GingerRunner.ForceUiScreenshot));
                 }
             }
         }

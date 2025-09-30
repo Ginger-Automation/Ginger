@@ -658,7 +658,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runner.RunInSimulationMode = gingerRunner.RunInSimulationMode;
                 runner.RunInVisualTestingMode = gingerRunner.RunInVisualTestingMode;
                 runner.KeepAgentsOpen = gingerRunner.KeepAgentsOn;
-                runner.TakeScreenShot = gingerRunner.TakeScreenShot;
+                runner.ForceUiScreenshot = gingerRunner.ForceUiScreenshot;
                 if (gingerRunner.BusinessFlowsRunList.Count > 0)
                 {
                     runner.BusinessFlows = [];
@@ -990,32 +990,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     };
 
                     executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(sealightsDetails);
-
-                }
-                if(WorkSpace.Instance.Solution.AskLisaConfiguration != null)
-                {
-                    if (solution.AskLisaConfiguration.EnableChat == AskLisaConfiguration.eEnableChatBot.Yes)
-                    {
-                        AskLisaDetails askLisaDetails = new AskLisaDetails
-                        {
-                            AskLisaEnable = (AskLisaDetails.eEnableChatBot)solution.AskLisaConfiguration.EnableChat,
-                            AskLisaHostURL = solution.AskLisaConfiguration.Host,
-                            AuthenticationServiceURL = solution.AskLisaConfiguration.AuthenticationServiceURL,
-                            ClientID = solution.AskLisaConfiguration.ClientId,
-                            ClientSecret = solution.AskLisaConfiguration.ClientSecret,
-                            StartNewChatEndpointURL = solution.AskLisaConfiguration.StartNewChat,
-                            ContinueChatEndpointURL = solution.AskLisaConfiguration.ContinueChat,
-                            AccountType = solution.AskLisaConfiguration.Account,
-                            DomainType = solution.AskLisaConfiguration.DomainType,
-                            TemparatureLevel = solution.AskLisaConfiguration.TemperatureLevel,
-                            MaxResponseTokens = solution.AskLisaConfiguration.MaxTokenValue,
-                            DataPath = solution.AskLisaConfiguration.DataPath,
-                            GrantType = solution.AskLisaConfiguration.GrantType,
-
-                        };
-                        executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(askLisaDetails);
-
-                    }
 
                 }
                 if (WorkSpace.Instance.Solution.VRTConfiguration != null)
