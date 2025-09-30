@@ -138,16 +138,40 @@ namespace Ginger.Actions
 
         [DllImport("User32.dll")]
         public static extern int SendMessage(IntPtr A_0, int A_1, int A_2, int A_3);
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
 
         public override void Execute()
         {
             try
             {
                 //locate by
-                if (LocateBy is not eLocateBy.ByTitle and not eLocateBy.ByClassName)
+                if (string.IsNullOrEmpty(LocateValueCalculated))
                 {
-                    Error = "Invalid Locate By- only ByTitle and ByClassName is supported.";
-                    return;
+                    IntPtr foregroundWindow = GetForegroundWindow();
+                    if (foregroundWindow == IntPtr.Zero)
+                    {
+                        Error = "No window is currently focused. Please focus the target window before sending keys.";
+                        return;
+                    }
+                    // If no LocateBy or LocateValue, send keys to current focus
+                    if (string.IsNullOrEmpty(LocateValueCalculated))
+                    {
+                        if (IsSendKeysSlowly)
+                        {
+                            SendKeysSlowly(ValueForDriver);
+                        }
+                        else
+                        {
+                            SendKeys(ValueForDriver);
+                        }
+                        return;
+                    }
+                    else if (LocateBy is not eLocateBy.ByTitle and not eLocateBy.ByClassName)
+                    {
+                        Error = "Invalid Locate By- only ByTitle and ByClassName is supported.";
+                        return;
+                    }
                 }
 
                 //locate value
