@@ -64,7 +64,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     changed = true;
                 }
             }
-            if (changed) ProcessingStatusChanged?.Invoke(this, _isProcessing);
+            if (changed) { ProcessingStatusChanged?.Invoke(this, _isProcessing); }
         }
 
         public ElementWrapperInfo GenerateJsonToSendAIRequestByList(PomSetting pomSetting, ObservableList<ElementInfo> foundElementList)
