@@ -729,7 +729,7 @@ namespace GingerCore.Actions
                 //command
                 if (URLExtensionType.JNLP == mURLExtension)
                 {
-                    command = "\"" + mURL_Calc + "\"";
+                    command =  mURL_Calc ;
                 }
                 else if (URLExtensionType.JAR == mURLExtension)
                 {
@@ -1053,7 +1053,7 @@ namespace GingerCore.Actions
                     commnadConfigs[1] = commnadConfigs[1].Replace("DynamicPortPlaceHolder", mPort_Calc);
                 }
 
-                ExInfo += "Executing Command: " + commnadConfigs[0] + " " + commnadConfigs[1] + Environment.NewLine;
+                ExInfo += "Executing Command: \"" + commnadConfigs[0] + "\" \"" + commnadConfigs[1] +"\"" + Environment.NewLine;
 
                 Process p = new Process();
                 p.StartInfo.FileName = commnadConfigs[0];
