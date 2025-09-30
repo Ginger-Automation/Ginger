@@ -59,9 +59,6 @@
   </ItemGroup>
 
   <ItemGroup> 
-    <Reference Include="Ginger.ExecuterService.Contracts">
-      <HintPath>..\..\..\ginger-execution-services\Ginger.ExecuterService.Contracts\bin\Debug\net8.0\Ginger.ExecuterService.Contracts.dll</HintPath>
-    </Reference> 
     <Reference Include="LiteDB">
       <HintPath>..\..\..\..\..\.nuget\packages\litedb\4.1.4\lib\net40\LiteDB.dll</HintPath>
     </Reference>

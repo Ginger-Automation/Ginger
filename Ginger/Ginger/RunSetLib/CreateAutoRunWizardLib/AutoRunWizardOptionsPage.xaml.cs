@@ -68,20 +68,15 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     BindingHandler.ObjFieldBinding(xALMConfigCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.SetAlmConnectionDetails));
                     BindingHandler.ObjFieldBinding(xGingerRunEXEWindowShow, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.ShowAutoRunWindow));
                     BindingHandler.ObjFieldBinding(xRunAnalyzerCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.RunAnalyzer));
-                    BindingHandler.ObjFieldBinding(xSealightsConfigCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.SetExternalConfigurationSettings));
+                    BindingHandler.ObjFieldBinding(xExternalConfigCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.SetExternalConfigurationSettings));
                     BindingHandler.ObjFieldBinding(xGlobalVariableConfigCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.GlobalVariableConfiguration));
                     BindingHandler.ObjFieldBinding(xEnivonrmentDetailsCheckbox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.SetEnvironmentDetails));
                     BindingHandler.ObjFieldBinding(xAgentDetailCheckbox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.SetAgentDetails));
 
 
-                    
-                    if (!WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
-                    {
-                        xSealightsConfigCheckBox.IsEnabled = false;
-                    }
 
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xALMConfigCheckBox, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
-                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealightsConfigCheckBox, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xExternalConfigCheckBox, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
 
                     xArtifactsPathTextBox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ArtifactsPath), isVENeeded: false, isBrowseNeeded: true, browserType: Activities.UCValueExpression.eBrowserType.Folder);
                     SelfHealingAutoCheckInSetting();

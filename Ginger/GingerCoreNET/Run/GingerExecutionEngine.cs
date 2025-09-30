@@ -2282,9 +2282,9 @@ namespace Ginger.Run
             {
                 return;
             }
-            
+
             // if action failed and user don't want screen shot on failure
-            if ((act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && !act.AutoScreenShotOnFailure) || mGingerRunner.ForceUiScreenshot)
+            if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && !act.AutoScreenShotOnFailure && !mGingerRunner.ForceUiScreenshot)
             {
                 return;
             }

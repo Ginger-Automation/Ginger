@@ -1036,6 +1036,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(zAPDetails);
                 }
 
+                if (executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Count == 0)
+                {
+                    executionConfig.ExternalConfigurationDetails = null;
+                }
             }
             return executionConfig;
         }

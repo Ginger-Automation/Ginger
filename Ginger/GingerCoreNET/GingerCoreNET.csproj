@@ -398,9 +398,6 @@
     <Reference Include="AzureDevOpsRepo">
       <HintPath>DLLS\AzureDevOpsRepo.dll</HintPath>
     </Reference>
-    <Reference Include="Ginger.ExecuterService.Contracts">
-      <HintPath>..\..\..\ginger-execution-services\Ginger.ExecuterService.Contracts\bin\Debug\net8.0\Ginger.ExecuterService.Contracts.dll</HintPath>
-    </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>
     </Reference>
