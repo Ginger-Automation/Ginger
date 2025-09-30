@@ -637,12 +637,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
                     }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.INFO, "Solution downloaded/updated successfully");
+                    }
                 }
-                Reporter.ToLog(eLogLevel.INFO, "Solution downloaded/updated successfully");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control", ex);
             }
             finally
             {
@@ -929,8 +932,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 // Initialize RepoFolderManager if not already done
                 if (_repoFolderManager == null)
                 {
-                    string baseWorkingFolder = Path.GetTempPath();
-                    _repoFolderManager = new RepoFolderManager(baseWorkingFolder, _processId);
+                    _repoFolderManager = new RepoFolderManager(_processId);
                 }
 
                 string assignedFolder = _repoFolderManager.AssignFolder(repoName);
@@ -939,7 +941,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to get repo folder path from Repo Folder Manager, using the random temp folder", ex);
+                Reporter.ToLog(eLogLevel.WARN, $"Failed to get repo folder path from Repo Folder Manager, using the random temp folder", ex);
                 return Path.Combine(Path.GetTempPath(), Path.GetRandomFileName(), repoName);
             }
         }

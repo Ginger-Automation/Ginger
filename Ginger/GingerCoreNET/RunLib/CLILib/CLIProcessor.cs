@@ -521,7 +521,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             if (runOptions.UseTempFolder)
             {
-                mCLIHelper.Solution = runOptions.Solution = mCLIHelper.GetTempFolderPathForRepo(runOptions.URL,runOptions.Branch);
+                mCLIHelper.Solution = runOptions.Solution = mCLIHelper.GetTempFolderPathForRepo(runOptions.URL, runOptions.Branch);
             }
 
             if (!await CLILoadAndPrepare())
