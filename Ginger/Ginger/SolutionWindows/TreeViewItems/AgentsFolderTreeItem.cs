@@ -81,7 +81,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         internal void AddItemHandler(object sender, RoutedEventArgs e)
         {
-            WizardWindow.ShowWizard(new AddAgentWizard(mAgentsFolder), 1100, 1100);
+            WizardWindow.ShowWizard(new AddAgentWizard(mAgentsFolder));
         }
 
         bool ITreeViewItem.IsExpandable()
