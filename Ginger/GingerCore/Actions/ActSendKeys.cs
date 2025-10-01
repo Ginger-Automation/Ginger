@@ -148,17 +148,23 @@ namespace Ginger.Actions
                 //locate by
                 if (string.IsNullOrEmpty(LocateValueCalculated))
                 {
+                    IntPtr foregroundWindow = GetForegroundWindow();
+                    if (foregroundWindow == IntPtr.Zero)
+                    {
+                        Error = "No window is currently focused. Please focus the target window before sending keys.";
+                        return;
+                    }
                     Reporter.ToLog(eLogLevel.DEBUG, $"Method - {MethodBase.GetCurrentMethod().Name}, Sending keys");
                     // If no LocateBy or LocateValue, send keys to current focus
-                        if (IsSendKeysSlowly)
-                        {
-                            SendKeysSlowly(ValueForDriver);
-                        }
-                        else
-                        {
-                            SendKeys(ValueForDriver);
-                        }
-                        return;
+                    if (IsSendKeysSlowly)
+                    {
+                        SendKeysSlowly(ValueForDriver);
+                    }
+                    else
+                    {
+                        SendKeys(ValueForDriver);
+                    }
+                    return;
                 }
                 else if (LocateBy is not eLocateBy.ByTitle and not eLocateBy.ByClassName)
                 {
