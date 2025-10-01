@@ -23,8 +23,10 @@ using Amdocs.Ginger.CoreNET.ActionsLib.UI.Mobile;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
@@ -32,6 +34,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
+using GingerCore.Drivers.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -46,9 +49,12 @@ using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
+using Protractor;
 using RestSharp;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -64,7 +70,7 @@ using PointerInputDevice = OpenQA.Selenium.Interactions.PointerInputDevice;
 
 namespace Amdocs.Ginger.CoreNET
 {
-    public class GenericAppiumDriver : DriverBase, IWindowExplorer, IRecord, IDriverWindow, IMobileDriverWindow, IVisualTestingDriver
+    public class GenericAppiumDriver : DriverBase, IWindowExplorer, IRecord, IDriverWindow, IMobileDriverWindow, IVisualTestingDriver, INotifyPropertyChanged
     {
         public override ePlatformType Platform { get { return ePlatformType.Mobile; } }
 
@@ -159,9 +165,34 @@ namespace Amdocs.Ginger.CoreNET
 
         protected IWebDriver webDriver;
 
+        public POMUtils POMUtils = new POMUtils();
 
         bool mIsDeviceConnected = false;
         string mDefaultURL = null;
+        ConcurrentQueue<ElementInfo> processingQueue = new ConcurrentQueue<ElementInfo>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private bool _isProcessing;
+        public bool IsProcessing
+        {
+            get => _isProcessing;
+            set
+            {
+                if (_isProcessing != value)
+                {
+                    _isProcessing = value;
+                    OnPropertyChanged(nameof(IsProcessing));
+                }
+            }
+        }
+        private readonly object lockObj = new object();
 
         public bool IsDeviceConnected
         {
@@ -2664,8 +2695,19 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
 
                         }
                         foundElementsList.Add(EI);
+
+                        try
+                        {
+                            POMUtils.TriggerFineTuneWithAI(pomSetting, EI, this.PomCategory, DevicePlatformType);
+                        }
+                        catch(Exception ex)
+                        {
+
+                        }
+                        
                     }
                 }
+                POMUtils.TriggerDelayProcessingfinetuneWithAI(pomSetting,this.PomCategory, DevicePlatformType);
 
                 return foundElementsList.ToList();
             }
@@ -2674,6 +2716,8 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                 mIsDriverBusy = false;
             }
         }
+
+        
 
 
         private Bitmap ScreenshotToImage(Screenshot screenshot)
