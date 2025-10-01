@@ -955,11 +955,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 {
                     ExternalConfigurations = []
                 };
+                GingerPlayConfiguration gingerPlayConfig = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
 
-
-                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count > 0)
+                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count > 0
+                    && gingerPlayConfig.GingerPlayEnabled && !string.IsNullOrEmpty(gingerPlayConfig.GingerPlayGatewayUrl))
                 {
-                    GingerPlayConfiguration gingerPlayConfig = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
                     GingerPlayDetails gingerPlayDetails = new GingerPlayDetails
                     {
                         GingerPlayEnable = gingerPlayConfig.GingerPlayEnabled,
@@ -974,7 +974,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(gingerPlayDetails);
 
                 }
-                if (WorkSpace.Instance.Solution.SealightsConfiguration != null)
+                if (WorkSpace.Instance.Solution.SealightsConfiguration != null && solution.SealightsConfiguration.SealightsLog == eSealightsLog.Yes &&
+                    !string.IsNullOrEmpty(solution.SealightsConfiguration.SealightsURL))
+
                 {
                     SealightsDetails sealightsDetails = new SealightsDetails
                     {
@@ -992,7 +994,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(sealightsDetails);
 
                 }
-                if (WorkSpace.Instance.Solution.VRTConfiguration != null)
+                if (WorkSpace.Instance.Solution.VRTConfiguration != null && !string.IsNullOrEmpty(solution.VRTConfiguration.ApiUrl)
+                    && !string.IsNullOrEmpty(solution.VRTConfiguration.ApiKey) )
                 {
                     VRTDetails vrtDetails = new VRTDetails
                     {
@@ -1007,7 +1010,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(vrtDetails);
 
                 }
-                if (WorkSpace.Instance.Solution.ApplitoolsConfiguration != null)
+                if (WorkSpace.Instance.Solution.ApplitoolsConfiguration != null 
+                     && !string.IsNullOrEmpty(solution.ApplitoolsConfiguration.ApiUrl) && !string.IsNullOrEmpty(solution.ApplitoolsConfiguration.ApiKey))
                 {
                     ApplitoolsDetails applitoolsDetails = new ApplitoolsDetails
                     {
@@ -1016,18 +1020,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     };
                     executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(applitoolsDetails);
                 }
-                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count > 0)
+                WireMockConfiguration wireMockConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
+
+                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count > 0 && !string.IsNullOrEmpty(wireMockConfiguration.WireMockUrl))
                 {
-                    WireMockConfiguration wireMockConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
                     WireMockDetails wireMockDetails = new WireMockDetails
                     {
                         WireMockURL = wireMockConfiguration.WireMockUrl
                     };
                     executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(wireMockDetails);
                 }
-                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count > 0)
+                ZAPConfiguration zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
+
+                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count > 0 && !string.IsNullOrEmpty(zAPConfiguration.ZAPUrl) && !string.IsNullOrEmpty(zAPConfiguration.ZAPApiKey))
                 {
-                    ZAPConfiguration zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
                     ZAPDetails zAPDetails = new ZAPDetails
                     {
                         ZAPURL = zAPConfiguration.ZAPUrl,
