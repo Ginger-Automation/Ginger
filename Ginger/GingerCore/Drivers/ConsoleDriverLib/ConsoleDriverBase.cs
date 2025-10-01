@@ -28,6 +28,7 @@ using System.Threading;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using static GingerCore.Actions.ActConsoleCommand;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -119,6 +120,23 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             return null;
         }
 
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<eCommandEndKey, string> s_cmdMap = new();
+        public static string GetCommandValue(eCommandEndKey key)
+        {
+           return s_cmdMap.GetOrAdd(key, k =>
+            {
+                var type = typeof(eCommandEndKey);
+                var members = type.GetMember(k.ToString());
+                if (members == null || members.Length == 0) 
+                { 
+                    return string.Empty; 
+                }
+                var attrs = members[0].GetCustomAttributes(typeof(CommandValueAttribute), false);
+                return attrs.Length > 0 ? ((CommandValueAttribute)attrs[0]).Value : string.Empty;
+            });
+        }
+
+
         public override void RunAction(Act act)
         {
             //TODO: add func to Act + Enum for switch
@@ -156,6 +174,18 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                         }
                         else
                         {
+                            if (Platform == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Unix)
+                            {
+                                command = $"{command}{GetCommandValue(ACC.CommandEndKey)}";
+                            }
+                            else if(ACC.CommandEndKey== eCommandEndKey.Enter)
+                            {
+                                command = $"{command}\r{GetCommandValue(ACC.CommandEndKey)}";
+                            }
+                            else
+                            {
+                                command = $"{command}{GetCommandValue(ACC.CommandEndKey)}";
+                            }
                             sRC = mConsoleDriverWindow.RunConsoleCommand(command);
                         }
                         if (mExpString != null && sRC.Contains(mExpString) == false)

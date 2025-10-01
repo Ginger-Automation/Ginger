@@ -82,7 +82,7 @@ using DevToolsVersion = OpenQA.Selenium.DevTools.V139;
 
 namespace GingerCore.Drivers
 {
-    public class SeleniumDriver : GingerWebDriver, IVirtualDriver, IWindowExplorer, IVisualTestingDriver, IXPath, IPOM, IRecord
+    public class SeleniumDriver : GingerWebDriver, IVirtualDriver, IWindowExplorer, IVisualTestingDriver, IXPath, IPOM, IRecord, INotifyPropertyChanged
     {
         protected IDevToolsSession Session;
         DevToolsSession devToolsSession;
@@ -106,6 +106,7 @@ namespace GingerCore.Drivers
         private const string EDGE_64BIT_BINARY_PATH = "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe";
         String[] SeleniumUserArgs = null;
         DriverService driverService = null;
+        public POMUtils POMUtils = new POMUtils();
         private readonly List<string> HighlightStyleList = ["arguments[0].style.outline='3px dashed rgb(239, 183, 247)'", "arguments[0].style.backgroundColor='rgb(239, 183, 247)'", "arguments[0].style.border='3px dashed rgb(239, 183, 247)'"];
         static List<ActWebSmartSync.eSyncOperation> operationsWithoutLocator =
           [
@@ -174,31 +175,26 @@ namespace GingerCore.Drivers
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private volatile bool _isProcessing = false;
+        private readonly object lockObj = new object();
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private bool _isProcessing;
         public bool IsProcessing
         {
             get => _isProcessing;
-            private set
+            set
             {
-                bool changed;
-                lock (lockObj)
+                if (_isProcessing != value)
                 {
-                    changed = _isProcessing != value;
                     _isProcessing = value;
-                }
-                if (changed)
-                {
-                    // Marshal to UI thread if there’s a sync context
-                    var context = System.Threading.SynchronizationContext.Current;
-                    void notify() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsProcessing)));
-                    if (context != null && context != System.Threading.SynchronizationContext.Current)
-                        context.Post(_ => notify(), null);
-                    else
-                        notify();
+                    OnPropertyChanged(nameof(IsProcessing));
                 }
             }
         }
-        private readonly object lockObj = new object();
 
         public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA, IEnumerable<DriverConfigParam> driverConfigParams = null)
         {
@@ -502,7 +498,8 @@ namespace GingerCore.Drivers
 
         public SeleniumDriver()
         {
-
+            POMUtils = new POMUtils();
+            POMUtils.ProcessingStatusChanged += POMUtils_ProcessingStatusChanged;
         }
 
         ~SeleniumDriver()
@@ -510,6 +507,15 @@ namespace GingerCore.Drivers
             if (Driver != null)
             {
                 CloseDriver();
+            }
+        }
+
+        private void POMUtils_ProcessingStatusChanged(object sender, bool isProcessing)
+        {
+            if (IsProcessing != isProcessing)
+            {
+                IsProcessing = isProcessing;
+                OnPropertyChanged(nameof(IsProcessing));
             }
         }
 
@@ -1518,6 +1524,11 @@ namespace GingerCore.Drivers
         {
             try
             {
+                if (POMUtils != null)
+                {
+                    POMUtils.ProcessingStatusChanged -= POMUtils_ProcessingStatusChanged;
+                }
+
                 if (Driver != null)
                 {
                     Driver.Close();
@@ -5735,20 +5746,8 @@ namespace GingerCore.Drivers
                         {
                             ProcessSvgChildElements(parentContext, pomSetting, htmlElemNode, foundElementInfo, path, foundElementsList, PomMetaData, isShadowRootDetected, ScreenShot);
                         }
-                        
 
-                        if (pomSetting.LearnPOMByAI)
-                        {
-                            // Only enqueue if not already processed
-                            if (!foundElementInfo.IsProcessed)
-                            {
-                                processingQueue.Enqueue(foundElementInfo);
-                            }
-
-                            // Trigger batch processing
-                            TriggerBatchProcessing(pomSetting);
-                        }
-
+                        POMUtils.TriggerFineTuneWithAI(pomSetting, foundElementInfo,this.PomCategory,null);
 
 
                         // Recursively find elements within shadow DOM
@@ -5775,13 +5774,7 @@ namespace GingerCore.Drivers
                     Reporter.ToLog(eLogLevel.DEBUG, $"Failed to learn the Web Element '{htmlElemNode.Name}'", ex);
                 }
             }
-            if (pomSetting.LearnPOMByAI)
-            {
-                if (processingQueue.Count < 10 && !IsProcessing)
-                {
-                    _ = Task.Run(() => TriggerDelayedProcessing(pomSetting));
-                }
-            }
+            POMUtils.TriggerDelayProcessingfinetuneWithAI(pomSetting, this.PomCategory);
             // Process form elements and add metadata
             ProcessFormElements(formElementsList, Driver, pomSetting, foundElementsList, PomMetaData);
 
@@ -5865,14 +5858,7 @@ namespace GingerCore.Drivers
                                     foundElementsList.Add(svgChildElementInfo);
                                     allReadElem.Add(svgChildElementInfo);
 
-                                    if (pomSetting.LearnPOMByAI)
-                                    {
-                                        if (!svgChildElementInfo.IsProcessed)
-                                        {
-                                            processingQueue.Enqueue(svgChildElementInfo);
-                                        }
-                                        TriggerBatchProcessing(pomSetting);
-                                    }
+                                    POMUtils.TriggerFineTuneWithAI(pomSetting, svgChildElementInfo, this.PomCategory);
                                 }
                             }
                             catch (Exception ex)
@@ -6188,150 +6174,6 @@ namespace GingerCore.Drivers
         }
 
 
-        private async Task TriggerDelayedProcessing(PomSetting pomSetting)
-        {
-            await ProcessBatchAsync(pomSetting);
-        }
-
-
-
-        private void TriggerBatchProcessing(PomSetting pomSetting)
-        {
-            if (processingQueue.Count >= 10)
-            {
-                lock (lockObj)
-                {
-                    if (!IsProcessing)
-                    {
-                        IsProcessing = true;
-                        _ = Task.Run(() => ProcessBatchAsync(pomSetting));
-                    }
-                }
-            }
-        }
-
-
-
-        private async Task ProcessBatchAsync(PomSetting pomSetting)
-        {
-            try
-            {
-                while (true)
-                {
-                    var batch = new ObservableList<ElementInfo>();
-                    while (batch.Count < 10 && processingQueue.TryDequeue(out var item))
-                    {
-                        if (!item.IsProcessed)
-                        {
-                            batch.Add(item);
-                        }
-                    }
-
-                    if (batch.Count == 0)
-                        break;
-                    await UpdateAndMarkElementsAsync(pomSetting, batch);
-                }
-                await FlushRemainingAsync(pomSetting);
-            }
-            finally
-            {
-                lock (lockObj)
-                {
-                    IsProcessing = false;
-                }
-            }
-        }
-
-        private async Task FlushRemainingAsync(PomSetting pomSetting)
-        {
-            ObservableList<ElementInfo> remaining = new ObservableList<ElementInfo>();
-            while (processingQueue.TryDequeue(out var item))
-            {
-                if (!item.IsProcessed)
-                {
-                    remaining.Add(item);
-                }
-            }
-
-            if (remaining.Count > 0)
-            {
-                await UpdateAndMarkElementsAsync(pomSetting, remaining);
-            }
-        }
-
-
-
-
-        private async Task UpdateAndMarkElementsAsync(PomSetting pomSetting, ObservableList<ElementInfo> foundElementList)
-        {
-            POMUtils pOMUtils = new POMUtils();
-            ElementWrapperInfo elementWrapperInfo = pOMUtils.GenerateJsonToSendAIRequestByList(pomSetting, foundElementList);
-            string Response = string.Empty;
-            await pOMUtils.SendInBatchesList(elementWrapperInfo, foundElementList, string.Empty, this.PomCategory);
-        }
-
-
-
-
-        // Method to determine if the element should be learned
-        private ObservableList<ElementInfo> ProcessAIElements(List<ElementWrapper> elements)
-        {
-            var elementList = new ObservableList<ElementInfo>();
-
-            foreach (var element in elements)
-            {
-                try
-                {
-                    var htmlElementInfo = ConvertToHTMLElementInfo(element.elementinfo);
-                    if (htmlElementInfo != null)
-                    {
-                        var elementInfo = new ElementInfo
-                        {
-                            ElementName = htmlElementInfo.ElementName,
-                            ElementType = htmlElementInfo.ElementType,
-                            ElementTypeEnum = htmlElementInfo.ElementTypeEnum,
-                            Locators = htmlElementInfo.Locators,
-                            Properties = htmlElementInfo.Properties,
-                            ScreenShotImage = htmlElementInfo.ScreenShotImage,
-                            X = htmlElementInfo.X,
-                            Y = htmlElementInfo.Y,
-                            Width = htmlElementInfo.Width,
-                            Height = htmlElementInfo.Height,
-                            Active = htmlElementInfo.Active,
-                            Mandatory = htmlElementInfo.Mandatory,
-                            IsAutoLearned = htmlElementInfo.IsAutoLearned
-                        };
-                        elementList.Add(elementInfo);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.WARN, $"Failed to process AI element: {ex.Message}");
-                }
-            }
-
-            return elementList;
-        }
-        private bool IsErrorResponse(string response)
-        {
-            return string.IsNullOrWhiteSpace(response) ||
-                   response.Contains("unauthorized", StringComparison.OrdinalIgnoreCase);
-        }
-
-        private string CleanAIResponse(string response)
-        {
-            if (string.IsNullOrWhiteSpace(response)) return string.Empty;
-
-            return response
-                .Replace("```json", "", StringComparison.OrdinalIgnoreCase)
-                .Replace("```", "")
-                .Replace("\\\"", "'")
-                .Replace("\\n", "")
-                .Replace("\\r", "")
-                .Replace("\r", "")
-                .Replace("\n", "")
-                .Trim();
-        }
 
         private bool ShouldLearnElement(PomSetting pomSetting, eElementType elementType)
         {
