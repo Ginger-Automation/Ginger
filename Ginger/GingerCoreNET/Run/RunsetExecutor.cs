@@ -23,6 +23,7 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.Run.ExecutionSummary;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
@@ -443,6 +444,7 @@ namespace Ginger.Run
             try
             {
                 mRunSetConfig.IsRunning = true;
+                AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler();
                 //reset run       
                 if (doContinueRun == false)
                 {
@@ -455,7 +457,7 @@ namespace Ginger.Run
                     {
                         if (mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && !string.IsNullOrEmpty(GingerPlayEndPointManager.GetAccountReportServiceUrl()))
                         {
-                            AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(GingerPlayEndPointManager.GetAccountReportServiceUrl());
+                            accountReportApiHandler = new AccountReportApiHandler(GingerPlayEndPointManager.GetAccountReportServiceUrl());
                             bool isValidated = accountReportApiHandler.ExecutionIdValidation((Guid)RunSetConfig.ExecutionID);
                             if (!isValidated)
                             {
@@ -464,6 +466,13 @@ namespace Ginger.Run
                             }
                         }
                     }
+
+                    if(WorkSpace.Instance.RunningInExecutionMode)
+                    {
+                        //GingerLog.SetHTTPLogAppenderParameter(GingerPlayEndPointManager.GetAccountReportServiceUrl(), RunSetConfig.ExecutionID.ToString(), accountReportApiHandler);
+                        GingerLog.SetHTTPLogAppenderExecutionId(RunSetConfig.ExecutionID);
+                    }
+
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Ginger Execution Id: {0}", RunSetConfig.ExecutionID));
                     Reporter.ToLog(eLogLevel.INFO, string.Format("{0} Source Application: '{1}' And Source Application User: '{2}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), RunSetConfig.SourceApplication, RunSetConfig.SourceApplicationUser));
 

@@ -29,12 +29,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using static Amdocs.Ginger.CoreNET.RunLib.CLILib.OptionsBase;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
@@ -326,6 +325,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 SetVerboseLevel(verboseLevel);
                 Reporter.ToLog(eLogLevel.INFO, "Running 'dynamic' and fetching Ginger Execution Configurations from = '" + url + "'");
 
+                string baseUrl = $"{url.Scheme}://{url.Host}:{url.Port}";
+
+                // Extract instanceId
+                var queryParams = HttpUtility.ParseQueryString(url.Query);
+                string instanceId = queryParams["instanceId"];
+                Guid instanceIdguid = Guid.Parse(instanceId);
+
+                GingerLog.SetHTTPLogAppenderAPIUrl(baseUrl);
+                GingerLog.SetHTTPLogAppenderInstanceId(instanceIdguid);
                 mCLIHandler = new CLIDynamicFile(CLIDynamicFile.eFileType.JSON);
 
                 var (responseContent, statusCode) = await HttpUtilities.GetAsync(url);

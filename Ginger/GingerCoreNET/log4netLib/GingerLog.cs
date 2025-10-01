@@ -18,10 +18,14 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using log4net;
 using log4net.Config;
+using Microsoft.TeamFoundation.Build.WebApi;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -124,7 +128,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(Environment.NewLine);
-            stringBuilder.Append("*******************************************************************************************************************").Append(Environment.NewLine);
+            stringBuilder.Append("******************************************************** ***********************************************************").Append(Environment.NewLine);
             stringBuilder.Append(ApplicationInfo.ApplicationName).Append(Environment.NewLine);
             stringBuilder.Append("Version: " + ApplicationInfo.ApplicationUIversion).Append(Environment.NewLine);
             stringBuilder.Append("Executer Path: ").Append(Assembly.GetEntryAssembly().Location).Append(Environment.NewLine);
@@ -134,6 +138,133 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             stringBuilder.Append($"Current Time Zone: {TimeZoneInfo.Local?.DisplayName}{Environment.NewLine}");
 
             Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
+        }
+
+        public static void SetHTTPLogAppenderParameter(string APIUrl,string executionId, AccountReportApiHandler _accountReportApiHandler)
+        {
+            try
+            {
+                // Retrieve the HttpLogAppender from the log4net repository
+                var appender = log4net.LogManager.GetRepository()
+                    .GetAppenders()
+                    .OfType<HttpLogAppender>()
+                    .FirstOrDefault();
+
+                if (appender == null)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "HttpLogAppender not found in the log4net configuration.");
+                    return;
+                }
+
+                // Set the API URL for the appender
+                string apiUrl = "https://your-api-endpoint/logs";
+                if (string.IsNullOrWhiteSpace(apiUrl))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Invalid API URL for HttpLogAppender.");
+                    return;
+                }
+
+                appender.ApiUrl = apiUrl;
+                appender.AccountReportApiHandler = _accountReportApiHandler;
+                Reporter.ToLog(eLogLevel.INFO, "HttpLogAppender initialized with API URL: " + apiUrl);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to start HttpLogAppender listeners.", ex);
+            }
+        }
+
+        public static void SetHTTPLogAppenderExecutionId(Guid? ExecutionId)
+        {
+            try
+            {
+                // Retrieve the HttpLogAppender from the log4net repository
+                var appender = log4net.LogManager.GetRepository()
+                    .GetAppenders()
+                    .OfType<HttpLogAppender>()
+                    .FirstOrDefault();
+
+                if (appender == null)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "HttpLogAppender not found in the log4net configuration.");
+                    return;
+                }
+
+                if (ExecutionId != null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Invalid API URL for HttpLogAppender.");
+                    return;
+                }
+
+                appender.ExecutionId = appender.ExecutionId != null ? appender.ExecutionId : ExecutionId;
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to set HttpLogAppender ExecutionId Parameter.", ex);
+            }
+        }
+
+        public static void SetHTTPLogAppenderInstanceId(Guid? InstanceId)
+        {
+            try
+            {
+                // Retrieve the HttpLogAppender from the log4net repository
+                var appender = log4net.LogManager.GetRepository()
+                    .GetAppenders()
+                    .OfType<HttpLogAppender>()
+                    .FirstOrDefault();
+
+                if (appender == null)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "HttpLogAppender not found in the log4net configuration.");
+                    return;
+                }
+
+                if (InstanceId != null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Invalid API URL for HttpLogAppender.");
+                    return;
+                }
+
+                appender.InstanceId = appender.InstanceId != null ? appender.InstanceId : InstanceId;
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to set HttpLogAppender InstanceId Parameter.", ex);
+            }
+        }
+
+        public static void SetHTTPLogAppenderAPIUrl(string APIUrl)
+        {
+            try
+            {
+                // Retrieve the HttpLogAppender from the log4net repository
+                var appender = log4net.LogManager.GetRepository()
+                    .GetAppenders()
+                    .OfType<HttpLogAppender>()
+                    .FirstOrDefault();
+
+                if (appender == null)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "HttpLogAppender not found in the log4net configuration.");
+                    return;
+                }
+
+                if (!string.IsNullOrEmpty(APIUrl))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Invalid API URL for HttpLogAppender.");
+                    return;
+                }
+
+                appender.ApiUrl = !string.IsNullOrEmpty(appender.ApiUrl) ? appender.ApiUrl : APIUrl;
+                appender.AccountReportApiHandler = new AccountReportApiHandler(appender.ApiUrl);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to set HttpLogAppender APIUrl Parameter.", ex);
+            }
         }
     }
 }

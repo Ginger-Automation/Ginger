@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Ginger.Configurations;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
@@ -100,6 +101,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     Reporter.ToLog(eLogLevel.ERROR, $"error while convert dynamic json {ex.InnerException}", ex);
                     return;
                 }
+
+                GingerLog.SetHTTPLogAppenderExecutionId(exeConfiguration.ExecutionID);
+                GingerLog.SetHTTPLogAppenderAPIUrl("GingerPlayGateWayURL");//Here Need to replace exeConfiguration.GingerPlayGateWayURL after adding it to GingerExecConfig
 
                 cliHelper.SetEncryptionKey(exeConfiguration.EncryptionKey);
                 if (exeConfiguration.SolutionScmDetails != null)

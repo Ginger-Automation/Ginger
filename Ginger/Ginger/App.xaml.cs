@@ -503,7 +503,11 @@ namespace Ginger
             {
                 if (parserResult != null)
                 {
+                    // Start HttpLogAppender listeners
+                    //GingerLog.StartHttpLogAppenderListeners();
                     await cliProcessor.ProcessParsedArguments(parserResult);
+                    
+                    
                 }
             }
             catch (Exception ex)
