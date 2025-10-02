@@ -18,9 +18,12 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
+using Amdocs.Ginger.Repository;
 using Ginger.Configurations;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
+using Ginger.ExecuterService.Contracts.V1.ExternalConfiguration;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
@@ -32,6 +35,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using static Ginger.Configurations.SealightsConfiguration;
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public class CLIDynamicFile : ICLI
@@ -161,7 +165,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     CLIProcessor.SetVerboseLevel((OptionsBase.eVerboseLevel)Enum.Parse(typeof(OptionsBase.eVerboseLevel), exeConfiguration.VerboseLevel.ToString(), true));
                 }
-               
+            
                 
             }
             else
@@ -200,6 +204,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 if (exeConfiguration.GlobalVariables != null)
                 {
                     LoadGlobalVariableValues(exeConfiguration);
+                }
+                if (exeConfiguration.ExternalConfigurationDetails != null)
+                {
+                    ApplyExternalConfigurationsFromJson(exeConfiguration);
                 }
                 RunSetConfig runsetConfig = DynamicExecutionManager.LoadRunsetFromExecutionConfig(exeConfiguration);
 
@@ -275,6 +283,129 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        public void ApplyExternalConfigurationsFromJson(GingerExecConfig execConfig)
+        {
+            if (execConfig.ExternalConfigurationDetails == null)
+            {
+                return;
+            }
+            Solution solution = WorkSpace.Instance.Solution;
+            SolutionRepository repo = WorkSpace.Instance.SolutionRepository;
+
+            foreach (var config in execConfig.ExternalConfigurationDetails)
+            {
+                switch (config)
+                {
+                    case GingerPlayDetails gingerPlay:
+                        if (!gingerPlay.GingerPlayEnable && string.IsNullOrEmpty(gingerPlay.GingerPlayUrl))
+                        {
+                            break;
+                        }
+                        GingerPlayConfiguration gingerPlayConfig;
+                        if (repo.GetAllRepositoryItems<GingerPlayConfiguration>().Count == 0)
+                        {
+                            gingerPlayConfig = new GingerPlayConfiguration();
+                            // Adding this config to the cache of repository 
+                            repo.AddRepositoryItem(repositoryItem: gingerPlayConfig,doNotSave:true);
+                        }
+                        else
+                        {
+                            gingerPlayConfig = repo.GetFirstRepositoryItem<GingerPlayConfiguration>();
+                        }
+                        if (gingerPlayConfig != null)
+                        {
+                            gingerPlayConfig.GingerPlayEnabled = gingerPlay.GingerPlayEnable;
+                            gingerPlayConfig.GingerPlayGatewayUrl = gingerPlay.GingerPlayUrl;
+                            gingerPlayConfig.GingerPlayClientId = gingerPlay.GingerPlayClientId;
+                            gingerPlayConfig.GingerPlayClientSecret = gingerPlay.GingerPlayClientSecret;
+                            gingerPlayConfig.GingerPlayReportServiceEnabled = gingerPlay.EnableAccountReportService;
+                            gingerPlayConfig.GingerPlayAIServiceEnabled = gingerPlay.EnableAIService;
+                            gingerPlayConfig.GingerPlayExecutionServiceEnabled = gingerPlay.EnableExecutionService;
+                        }
+                        break;
+
+                    case SealightsDetails sealights:
+                        if (solution.SealightsConfiguration != null)
+                        {
+                            solution.SealightsConfiguration.SealightsLog = (bool)sealights.SealightsEnable ? eSealightsLog.Yes : eSealightsLog.No;
+                            solution.SealightsConfiguration.SealightsURL = sealights.SealightsUrl;
+                            solution.SealightsConfiguration.SealightsLabId = sealights.SealightsLabId;
+                            solution.SealightsConfiguration.SealightsBuildSessionID = sealights.SealightsBSId;
+                            solution.SealightsConfiguration.SealightsTestStage = sealights.SealightsTestStage;
+                            solution.SealightsConfiguration.SealightsSessionTimeout = sealights.SealightsSessionTimeout.ToString();
+                            solution.SealightsConfiguration.SealightsReportedEntityLevel = (SealightsConfiguration.eSealightsEntityLevel)sealights.SealightsEntityLevel;
+                            solution.SealightsConfiguration.SealightsAgentToken = sealights.SealightsAgentToken;
+                            solution.SealightsConfiguration.SealightsTestRecommendations = (bool)sealights.SealightsTestRecommendations ? eSealightsTestRecommendations.Yes : eSealightsTestRecommendations.No;
+                        }
+                        break;
+
+                    case VRTDetails vrt:
+                        if (solution.VRTConfiguration != null)
+                        {
+                            solution.VRTConfiguration.ApiUrl = vrt.VRTAPIURL;
+                            solution.VRTConfiguration.ApiKey = vrt.VRTAPIKey;
+                            solution.VRTConfiguration.Project = vrt.ProjectName;
+                            solution.VRTConfiguration.BranchName = vrt.BranchName;
+                            solution.VRTConfiguration.DifferenceTolerance = vrt.DifferenceTolerance;
+                            solution.VRTConfiguration.FailActionOnCheckpointMismatch = (VRTConfiguration.eFailActionOnCheckpointMismatch)vrt.IsFailCheckPoint;
+                        }
+                        break;
+
+                    case ApplitoolsDetails applitools:
+                        if (solution.ApplitoolsConfiguration != null)
+                        {
+                            solution.ApplitoolsConfiguration.ApiUrl = applitools.ApplitoolsApiUrl;
+                            solution.ApplitoolsConfiguration.ApiKey = applitools.ApplitoolsApiKey;
+                        }
+                        break;
+
+                    case WireMockDetails wireMock:
+                        if (string.IsNullOrEmpty(wireMock.WireMockURL))
+                        {
+                            break;
+                        }
+                        WireMockConfiguration wireMockConfig;
+                        if (repo.GetAllRepositoryItems<WireMockConfiguration>().Count == 0)
+                        {
+                            wireMockConfig = new WireMockConfiguration();
+                            // Adding this config to the cache of repository 
+                            repo.AddRepositoryItem(repositoryItem: wireMockConfig, doNotSave: true);
+                        }
+                        else
+                        {
+                            wireMockConfig = repo.GetFirstRepositoryItem<WireMockConfiguration>();
+                        }
+                        if (wireMockConfig != null)
+                        {
+                            wireMockConfig.WireMockUrl = wireMock.WireMockURL;
+                        }
+                        break;
+
+                    case ZAPDetails zap:
+                        if (string.IsNullOrEmpty(zap.ZAPURL) || string.IsNullOrEmpty(zap.ZAPAPIKey))
+                        {
+                            break;
+                        }
+                        ZAPConfiguration zapConfig;
+                        if (repo.GetAllRepositoryItems<ZAPConfiguration>().Count == 0)
+                        {
+                            zapConfig = new ZAPConfiguration();
+                            // Adding this config to the cache of repository 
+                            repo.AddRepositoryItem(repositoryItem: zapConfig, doNotSave: true);
+                        }
+                        else
+                        {
+                            zapConfig = repo.GetFirstRepositoryItem<ZAPConfiguration>();
+                        }
+                        if (zapConfig != null)
+                        {
+                            zapConfig.ZAPUrl = zap.ZAPURL;
+                            zapConfig.ZAPApiKey = zap.ZAPAPIKey;
+                        }
+                        break;
+                }
+            }
+        }
         private void LoadALMDetailsFromJSON(GingerExecConfig gingerExecConfig)
         {
             foreach (AlmDetails almDetails in gingerExecConfig.AlmsDetails)

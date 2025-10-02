@@ -951,14 +951,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             // For All the External configurations present in Ginger
             if (cliHelper.SetExternalConfigurationSettings)
             {
-                executionConfig.ExternalConfigurationDetails = new()
-                {
-                    ExternalConfigurations = []
-                };
+                executionConfig.ExternalConfigurationDetails = [];
                 GingerPlayConfiguration gingerPlayConfig = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
 
                 if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count > 0
-                    && gingerPlayConfig.GingerPlayEnabled && !string.IsNullOrEmpty(gingerPlayConfig.GingerPlayGatewayUrl))
+                    && gingerPlayConfig != null && gingerPlayConfig.GingerPlayEnabled && !string.IsNullOrEmpty(gingerPlayConfig.GingerPlayGatewayUrl))
                 {
                     GingerPlayDetails gingerPlayDetails = new GingerPlayDetails
                     {
@@ -968,10 +965,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         GingerPlayClientSecret = gingerPlayConfig.GingerPlayClientSecret,
                         EnableAccountReportService = gingerPlayConfig.GingerPlayReportServiceEnabled,
                         EnableAIService = gingerPlayConfig.GingerPlayAIServiceEnabled,
-                        EnableHTMLReportService = gingerPlayConfig.GingerPlayReportServiceEnabled
+                        EnableExecutionService = gingerPlayConfig.GingerPlayExecutionServiceEnabled,
 
                     };
-                    executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(gingerPlayDetails);
+                    executionConfig.ExternalConfigurationDetails.Add(gingerPlayDetails);
 
                 }
                 if (WorkSpace.Instance.Solution.SealightsConfiguration != null && solution.SealightsConfiguration.SealightsLog == eSealightsLog.Yes &&
@@ -991,7 +988,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         SealightsTestRecommendations = solution.SealightsConfiguration.SealightsTestRecommendations == eSealightsTestRecommendations.Yes
                     };
 
-                    executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(sealightsDetails);
+                    executionConfig.ExternalConfigurationDetails.Add(sealightsDetails);
 
                 }
                 if (WorkSpace.Instance.Solution.VRTConfiguration != null && !string.IsNullOrEmpty(solution.VRTConfiguration.ApiUrl)
@@ -1007,7 +1004,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         IsFailCheckPoint = (VRTDetails.eFailActionOnCheckpointMismatch)solution.VRTConfiguration.FailActionOnCheckpointMismatch,
 
                     };
-                    executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(vrtDetails);
+                    executionConfig.ExternalConfigurationDetails.Add(vrtDetails);
 
                 }
                 if (WorkSpace.Instance.Solution.ApplitoolsConfiguration != null 
@@ -1018,7 +1015,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         ApplitoolsApiUrl = solution.ApplitoolsConfiguration.ApiUrl,
                         ApplitoolsApiKey = solution.ApplitoolsConfiguration.ApiKey,
                     };
-                    executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(applitoolsDetails);
+                    executionConfig.ExternalConfigurationDetails.Add(applitoolsDetails);
                 }
                 WireMockConfiguration wireMockConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
 
@@ -1028,7 +1025,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     {
                         WireMockURL = wireMockConfiguration.WireMockUrl
                     };
-                    executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(wireMockDetails);
+                    executionConfig.ExternalConfigurationDetails.Add(wireMockDetails);
                 }
                 ZAPConfiguration zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
 
@@ -1039,10 +1036,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         ZAPURL = zAPConfiguration.ZAPUrl,
                         ZAPAPIKey = zAPConfiguration.ZAPApiKey,
                     };
-                    executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Add(zAPDetails);
+                    executionConfig.ExternalConfigurationDetails.Add(zAPDetails);
                 }
 
-                if (executionConfig.ExternalConfigurationDetails.ExternalConfigurations.Count == 0)
+                if (executionConfig.ExternalConfigurationDetails.Count == 0)
                 {
                     executionConfig.ExternalConfigurationDetails = null;
                 }
