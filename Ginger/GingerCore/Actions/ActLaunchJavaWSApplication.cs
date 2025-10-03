@@ -729,7 +729,7 @@ namespace GingerCore.Actions
                 //command
                 if (URLExtensionType.JNLP == mURLExtension)
                 {
-                    command =  mURL_Calc ;
+                    command = "\"" + mURL_Calc + "\"";
                 }
                 else if (URLExtensionType.JAR == mURLExtension)
                 {
@@ -742,9 +742,14 @@ namespace GingerCore.Actions
                     javaExecuter = mURL_Calc;
                 }
 
-                if (commandParams_OneLine != string.Empty)
+                if (!string.IsNullOrEmpty(commandParams_OneLine))
                 {
-                    command += commandParams_OneLine;
+                    // Remove the last quote and add the arguments, then close with a quote
+                    if (command.EndsWith("\""))
+                    {
+                        command = command.Substring(0, command.Length - 1); 
+                    }
+                    command += commandParams_OneLine + "\""; 
                 }
 
                 //run commnad
@@ -1053,7 +1058,7 @@ namespace GingerCore.Actions
                     commnadConfigs[1] = commnadConfigs[1].Replace("DynamicPortPlaceHolder", mPort_Calc);
                 }
 
-                ExInfo += "Executing Command: \"" + commnadConfigs[0] + "\" \"" + commnadConfigs[1] +"\"" + Environment.NewLine;
+                ExInfo += "Executing Command: " + commnadConfigs[0] + " " + commnadConfigs[1] + Environment.NewLine;
 
                 Process p = new Process();
                 p.StartInfo.FileName = commnadConfigs[0];
