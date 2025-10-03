@@ -325,12 +325,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 SetVerboseLevel(verboseLevel);
                 Reporter.ToLog(eLogLevel.INFO, "Running 'dynamic' and fetching Ginger Execution Configurations from = '" + url + "'");
 
-                string baseUrl = $"{url.Scheme}://{url.Host}:{url.Port}";
+                string baseUrl = url.GetLeftPart(UriPartial.Authority);
 
                 // Extract instanceId
                 var queryParams = HttpUtility.ParseQueryString(url.Query);
                 string instanceId = queryParams["instanceId"];
-                Guid instanceIdguid = Guid.Parse(instanceId);
+                if (string.IsNullOrEmpty(instanceId) || !long.TryParse(instanceId, out long instanceIdguid))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Invalid or missing instanceId in URL: {url}");
+                    Environment.ExitCode = 1;
+                    return Environment.ExitCode;
+                }
 
                 GingerLog.SetHTTPLogAppenderAPIUrl(baseUrl);
                 GingerLog.SetHTTPLogAppenderInstanceId(instanceIdguid);
@@ -481,17 +486,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.ShowAutoRunWindow = runOptions.ShowUI;
             mCLIHelper.TestArtifactsFolder = runOptions.TestArtifactsPath;
             mCLIHelper.SelfHealingCheckInConfigured = runOptions.SelfHealingCheckInConfigured;
-            mCLIHelper.SealightsEnable = runOptions.SealightsEnable;
-            mCLIHelper.SealightsUrl = runOptions.SealightsUrl;
-            mCLIHelper.SealightsAgentToken = runOptions.SealightsAgentToken;
-            mCLIHelper.SealightsLabID = runOptions.SealightsLabID;
-            mCLIHelper.SealightsSessionID = runOptions.SealightsSessionID;
-            mCLIHelper.SealightsSessionTimeOut = runOptions.SealightsSessionTimeOut;
-            mCLIHelper.SealightsTestStage = runOptions.SealightsTestStage;
-            mCLIHelper.SealightsEntityLevel = runOptions.SealightsEntityLevel?.ToString() == "None" ? null : runOptions.SealightsEntityLevel?.ToString();
-            mCLIHelper.SealightsTestRecommendations = runOptions.SealightsTestRecommendations;
             mCLIHelper.SourceApplication = runOptions.SourceApplication;
             mCLIHelper.SourceApplicationUser = runOptions.SourceApplicationUser;
+
 
 
             if (!string.IsNullOrEmpty(runOptions.RunSetExecutionId))
@@ -507,6 +504,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     mCLIHelper.ExecutionId = runOptions.RunSetExecutionId;
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Using provided ExecutionID '{0}'.", mCLIHelper.ExecutionId.ToString()));
                 }
+                GingerLog.SetHTTPLogAppenderExecutionId(temp);
             }
             mCLIHelper.ReRunFailed = runOptions.ReRunFailed;
             if (runOptions.ReRunFailed)
@@ -682,12 +680,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     return false; // Failed to perform execution preparations
                 }
 
-                // Check for any Sealights Settings
-                if (!mCLIHelper.SetSealights())
-                {
-                    return false;
-                }
-
+                
                 // set source app and user
                 mCLIHelper.SetSourceAppAndUser();
 

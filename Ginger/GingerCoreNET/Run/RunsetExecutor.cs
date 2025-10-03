@@ -444,7 +444,7 @@ namespace Ginger.Run
             try
             {
                 mRunSetConfig.IsRunning = true;
-                AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler();
+                AccountReportApiHandler accountReportApiHandler = null;
                 //reset run       
                 if (doContinueRun == false)
                 {
@@ -465,12 +465,6 @@ namespace Ginger.Run
                                 Reporter.ToLog(eLogLevel.WARN, string.Format("Duplicate execution id used, creating new execution id : {0}", RunSetConfig.ExecutionID));
                             }
                         }
-                    }
-
-                    if(WorkSpace.Instance.RunningInExecutionMode)
-                    {
-                        //GingerLog.SetHTTPLogAppenderParameter(GingerPlayEndPointManager.GetAccountReportServiceUrl(), RunSetConfig.ExecutionID.ToString(), accountReportApiHandler);
-                        GingerLog.SetHTTPLogAppenderExecutionId(RunSetConfig.ExecutionID);
                     }
 
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Ginger Execution Id: {0}", RunSetConfig.ExecutionID));

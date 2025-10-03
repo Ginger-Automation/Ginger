@@ -18,11 +18,9 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using log4net;
 using log4net.Config;
-using Microsoft.TeamFoundation.Build.WebApi;
 using System;
 using System.IO;
 using System.Linq;
@@ -140,40 +138,6 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
         }
 
-        public static void SetHTTPLogAppenderParameter(string APIUrl,string executionId, AccountReportApiHandler _accountReportApiHandler)
-        {
-            try
-            {
-                // Retrieve the HttpLogAppender from the log4net repository
-                var appender = log4net.LogManager.GetRepository()
-                    .GetAppenders()
-                    .OfType<HttpLogAppender>()
-                    .FirstOrDefault();
-
-                if (appender == null)
-                {
-                    Reporter.ToLog(eLogLevel.WARN, "HttpLogAppender not found in the log4net configuration.");
-                    return;
-                }
-
-                // Set the API URL for the appender
-                string apiUrl = "https://your-api-endpoint/logs";
-                if (string.IsNullOrWhiteSpace(apiUrl))
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Invalid API URL for HttpLogAppender.");
-                    return;
-                }
-
-                appender.ApiUrl = apiUrl;
-                appender.AccountReportApiHandler = _accountReportApiHandler;
-                Reporter.ToLog(eLogLevel.INFO, "HttpLogAppender initialized with API URL: " + apiUrl);
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to start HttpLogAppender listeners.", ex);
-            }
-        }
-
         public static void SetHTTPLogAppenderExecutionId(Guid? ExecutionId)
         {
             try
@@ -192,12 +156,8 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
 
                 if (ExecutionId != null)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Invalid API URL for HttpLogAppender.");
-                    return;
+                    appender.ExecutionId = appender.ExecutionId == null ? ExecutionId : appender.ExecutionId;
                 }
-
-                appender.ExecutionId = appender.ExecutionId != null ? appender.ExecutionId : ExecutionId;
-
             }
             catch (Exception ex)
             {
@@ -205,7 +165,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             }
         }
 
-        public static void SetHTTPLogAppenderInstanceId(Guid? InstanceId)
+        public static void SetHTTPLogAppenderInstanceId(long? InstanceId)
         {
             try
             {
@@ -223,11 +183,8 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
 
                 if (InstanceId != null)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Invalid API URL for HttpLogAppender.");
-                    return;
+                    appender.InstanceId = appender.InstanceId == null ? InstanceId : appender.InstanceId;
                 }
-
-                appender.InstanceId = appender.InstanceId != null ? appender.InstanceId : InstanceId;
 
             }
             catch (Exception ex)
@@ -252,14 +209,13 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                     return;
                 }
 
-                if (!string.IsNullOrEmpty(APIUrl))
+                if (string.IsNullOrEmpty(APIUrl))
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Invalid API URL for HttpLogAppender.");
                     return;
                 }
 
-                appender.ApiUrl = !string.IsNullOrEmpty(appender.ApiUrl) ? appender.ApiUrl : APIUrl;
-                appender.AccountReportApiHandler = new AccountReportApiHandler(appender.ApiUrl);
+                appender.ApiUrl = APIUrl;
             }
             catch (Exception ex)
             {

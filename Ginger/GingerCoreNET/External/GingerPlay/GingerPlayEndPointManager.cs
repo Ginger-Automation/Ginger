@@ -48,40 +48,58 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
         private static readonly string EXECUTION_SERVICE_GENERATIVEPOM_PROCESS_EXTRACTED_ELEMENTS = "generative-ai/process_extracted_elements";
 
 
-        private static readonly ExecutionLoggerConfiguration LoggerConfig = WorkSpace.Instance.Solution.LoggerConfigurations;
 
-
+        private static readonly object _lock = new();
         private static GingerPlayConfiguration _gingerPlayConfiguration;
+
         private static GingerPlayConfiguration GingerPlayConfiguration
         {
             get
             {
-                if (_gingerPlayConfiguration == null && WorkSpace.Instance?.SolutionRepository != null)
+                if (_gingerPlayConfiguration == null)
                 {
-                    _gingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count == 0
-                        ? new GingerPlayConfiguration()
-                        : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+                    lock (_lock)
+                    {
+                        if (_gingerPlayConfiguration == null)
+                        {
+                            if (WorkSpace.Instance?.SolutionRepository != null)
+                            {
+                                _gingerPlayConfiguration =
+                                    WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>()
+                                    ?? new GingerPlayConfiguration();
+                            }
+                        }
+                    }
                 }
-                return _gingerPlayConfiguration ?? new GingerPlayConfiguration();
+                return _gingerPlayConfiguration;
             }
+        }
+
+        public static string GetAccountReportServiceUrlByGateWay()
+        {
+            if (!string.IsNullOrEmpty(GingerPlayConfiguration?.GingerPlayGatewayUrl) && GingerPlayConfiguration.GingerPlayReportServiceEnabled)
+            {
+                return GingerPlayConfiguration.GingerPlayGatewayUrl + ACCOUNT_REPORT_SERVICE_URL;
+            }
+            return string.Empty;
         }
 
         public static string GetAccountReportServiceUrl()
         {
             try
             {
-                if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl) && GingerPlayConfiguration.GingerPlayReportServiceEnabled)
+                if (!string.IsNullOrEmpty(GetAccountReportServiceUrlByGateWay()))
                 {
-                    return GingerPlayConfiguration.GingerPlayGatewayUrl + ACCOUNT_REPORT_SERVICE_URL;
+                    return GetAccountReportServiceUrlByGateWay();
                 }
-                else if (!string.IsNullOrEmpty(GingerPlayConfiguration.CentralizedAccountReportURL))
+                else if (!string.IsNullOrEmpty(GingerPlayConfiguration?.CentralizedAccountReportURL))
                 {
                     return GingerPlayConfiguration.CentralizedAccountReportURL;
                 }
-                else if (!string.IsNullOrEmpty(LoggerConfig.GetCentralLoggerEndPointURLBackwardCompatibility()))
+                else if (!string.IsNullOrEmpty(WorkSpace.Instance?.Solution?.LoggerConfigurations?.GetCentralLoggerEndPointURLBackwardCompatibility()))
                 {
                     // If the Central Logger URL is set, use it as the Account Report Service URL
-                    GingerPlayConfiguration.CentralizedAccountReportURL = LoggerConfig.GetCentralLoggerEndPointURLBackwardCompatibility();
+                    GingerPlayConfiguration.CentralizedAccountReportURL = WorkSpace.Instance?.Solution?.LoggerConfigurations?.GetCentralLoggerEndPointURLBackwardCompatibility();
                     GingerPlayConfiguration.GingerPlayEnabled = true;
                     GingerPlayConfiguration.GingerPlayReportServiceEnabled = true;
                     return GingerPlayConfiguration.CentralizedAccountReportURL;
@@ -114,9 +132,9 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                 {
                     return GingerPlayConfiguration.CentralizedHTMLReportServiceURL;
                 }
-                else if (!string.IsNullOrEmpty(LoggerConfig.GetCentralizedHtmlReportServiceURLBackwardCompatibility()))
+                else if (!string.IsNullOrEmpty(WorkSpace.Instance?.Solution?.LoggerConfigurations?.GetCentralizedHtmlReportServiceURLBackwardCompatibility()))
                 {
-                    GingerPlayConfiguration.CentralizedHTMLReportServiceURL = LoggerConfig.GetCentralizedHtmlReportServiceURLBackwardCompatibility();
+                    GingerPlayConfiguration.CentralizedHTMLReportServiceURL = WorkSpace.Instance?.Solution?.LoggerConfigurations?.GetCentralizedHtmlReportServiceURLBackwardCompatibility();
                     GingerPlayConfiguration.GingerPlayEnabled = true;
                     GingerPlayConfiguration.GingerPlayReportServiceEnabled = true;
                     return GingerPlayConfiguration.CentralizedHTMLReportServiceURL;
@@ -171,10 +189,10 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                 {
                     return GingerPlayConfiguration.CentralizedExecutionHandlerURL;
                 }
-                else if (!string.IsNullOrEmpty(LoggerConfig.GetExecutionServiceURLBackwardCompatibility()))
+                else if (!string.IsNullOrEmpty(WorkSpace.Instance?.Solution?.LoggerConfigurations?.GetExecutionServiceURLBackwardCompatibility()))
                 {
                     // If the Central Logger URL is set, use it as the Execution Service URL
-                    GingerPlayConfiguration.CentralizedExecutionHandlerURL = LoggerConfig.GetExecutionServiceURLBackwardCompatibility();
+                    GingerPlayConfiguration.CentralizedExecutionHandlerURL = WorkSpace.Instance?.Solution?.LoggerConfigurations?.GetExecutionServiceURLBackwardCompatibility();
                     GingerPlayConfiguration.GingerPlayEnabled = true;
                     GingerPlayConfiguration.GingerPlayExecutionServiceEnabled = true;
                     return GingerPlayConfiguration.CentralizedExecutionHandlerURL;

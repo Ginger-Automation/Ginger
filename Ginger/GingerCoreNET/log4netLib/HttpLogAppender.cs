@@ -1,4 +1,8 @@
-﻿using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using log4net.Appender;
 using log4net.Core;
 using System;
@@ -10,182 +14,243 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-public class HttpLogAppender : AppenderSkeleton
+namespace Amdocs.Ginger.CoreNET.log4netLib
 {
-    private static readonly HttpClient _httpClient = new HttpClient();
-    private readonly BlockingCollection<LoggingEvent> _queue = new BlockingCollection<LoggingEvent>(new ConcurrentQueue<LoggingEvent>());
-    private CancellationTokenSource _cts;
-    private Task _workerTask;
-
-    // not set from config, injected at runtime
-    private string _apiUrl;
-    public string ApiUrl
+    public class HttpLogAppender : AppenderSkeleton
     {
-        get => _apiUrl;
-        set
+        private readonly BlockingCollection<LoggingEvent> _queue = new BlockingCollection<LoggingEvent>(new ConcurrentQueue<LoggingEvent>());
+        private CancellationTokenSource _cts;
+        private Task _workerTask;
+
+        // not set from config, injected at runtime
+        private string _apiUrl;
+        public string ApiUrl
         {
-            _apiUrl = value;
-        }
-    }
-
-    private int batchSize = !string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["HttpLogBatchSize"]?.ToString()) ? Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["HttpLogBatchSize"]?.ToString()) : 20;
-
-    public int GetBatchSize()
-    {
-        return batchSize;
-    }
-
-    public void SetBatchSize(int value)
-    {
-        batchSize = value;
-    }
-
-    private int FlushIntervalSeconds = !string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["HttpLogFlushIntervalSeconds"]?.ToString()) ? Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["HttpLogFlushIntervalSeconds"]?.ToString()) : 5;
-
-    public int GetFlushIntervalSeconds()
-    {
-        return FlushIntervalSeconds;
-    }
-
-    public void SetFlushIntervalSeconds(int value)
-    {
-        FlushIntervalSeconds = value;
-    }
-
-    private int MaxRetryDelaySeconds = !string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["HttpLogMaxRetryDelaySeconds"]?.ToString()) ? Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["HttpLogMaxRetryDelaySeconds"]?.ToString()) : 60;
-
-    public int GetMaxRetryDelaySeconds()
-    {
-        return MaxRetryDelaySeconds;
-    }
-
-    public void SetMaxRetryDelaySeconds(int value)
-    {
-        MaxRetryDelaySeconds = value;
-    }
-
-    public Guid? ExecutionId { get; set; }
-
-    public Guid? InstanceId { get; set; }
-
-    public Guid LogId { get; set; }
-
-    public string LogData { get; set; }
-
-    private AccountReportApiHandler _accountReportApiHandler;
-
-    public AccountReportApiHandler AccountReportApiHandler
-    {
-        get => _accountReportApiHandler;
-        set => _accountReportApiHandler = value;
-    }
-
-    public override void ActivateOptions()
-    {
-        base.ActivateOptions();
-        _cts = new CancellationTokenSource();
-        _workerTask = Task.Run(() => ProcessQueue(_cts.Token));
-    }
-
-    protected override void OnClose()
-    {
-        try
-        {
-            if (_workerTask != null)
+            get
             {
-                _workerTask.Wait(2000); // Wait for the task to complete or timeout
+                if(string.IsNullOrEmpty(_apiUrl))
+                {
+                    if( !string.IsNullOrWhiteSpace(GingerPlayEndPointManager.GetAccountReportServiceUrlByGateWay()))
+                    {
+                        _apiUrl = GingerPlayEndPointManager.GetAccountReportServiceUrlByGateWay();
+                    }
+                }
+                return _apiUrl;
             }
-            _cts?.Cancel();
+            set
+            {
+                if(!string.IsNullOrWhiteSpace(_apiUrl) && !string.IsNullOrWhiteSpace(value) && value != _apiUrl)
+                {
+                    _apiUrl = value;
+                }
+            }
         }
-        catch (AggregateException ex)
+
+        private static int GetConfigInt(string key, int defaultValue)
         {
-            // Handle TaskCanceledException explicitly
-            ex.Handle(e => e is TaskCanceledException);
+            string value = System.Configuration.ConfigurationManager.AppSettings[key];
+            if (!string.IsNullOrEmpty(value) && int.TryParse(value, out int result))
+            {
+                return result;
+            }
+            return defaultValue;
         }
-        finally
+
+        public string BatchSize { get; set; }
+
+        public string GetBatchSize()
         {
-            base.OnClose();
+            return BatchSize;
         }
-    }
 
-    protected override void Append(LoggingEvent loggingEvent)
-    {
-        // Assume 'originalEvent' is your LoggingEvent instance
-        var newEvent = new LoggingEvent(loggingEvent.GetLoggingEventData());
-
-        // Create a snapshot of the Properties collection
-        var propertiesSnapshot = new Dictionary<string, object>();
-        foreach (System.Collections.DictionaryEntry entry in loggingEvent.Properties)
+        public void SetBatchSize(string value)
         {
-            string key = entry.Key.ToString();
-            propertiesSnapshot[key] = entry.Value;
+            BatchSize = value;
         }
 
-        // Copy custom properties from the snapshot
-        foreach (var kvp in propertiesSnapshot)
+        public string FlushIntervalSeconds { get; set; } //= GetConfigInt("HttpLogFlushIntervalSeconds", 5);
+
+        public string GetFlushIntervalSeconds()
         {
-            newEvent.Properties[kvp.Key] = kvp.Value;
+            return FlushIntervalSeconds;
         }
-        // clone so async worker has its own copy
-        _queue.Add(newEvent);
-    }
 
-    private async Task ProcessQueue(CancellationToken token)
-    {
-        var buffer = new List<LoggingEvent>();
-        int retryDelay = 1;
+        public void SetFlushIntervalSeconds(string value)
+        {
+            FlushIntervalSeconds = value;
+        }
 
-        while (!token.IsCancellationRequested)
+        public string MaxRetryDelaySeconds { get; set; }//= GetConfigInt("HttpLogMaxRetryDelaySeconds", 60);
+
+        public string GetMaxRetryDelaySeconds()
+        {
+            return MaxRetryDelaySeconds;
+        }
+
+        public void SetMaxRetryDelaySeconds(string value)
+        {
+            MaxRetryDelaySeconds = value;
+        }
+
+        public Guid? ExecutionId { get; set; }
+
+        public long? InstanceId { get; set; }
+
+        private AccountReportApiHandler _accountReportApiHandler;
+
+        public AccountReportApiHandler AccountReportApiHandler
+        {
+           get
+            {
+                if(_accountReportApiHandler == null)
+                {
+                    if(!string.IsNullOrEmpty(_apiUrl))
+                    {
+                        _accountReportApiHandler = new AccountReportApiHandler(_apiUrl);
+                    }
+                }
+                return _accountReportApiHandler;
+            }
+        }
+
+        public override void ActivateOptions()
+        {
+            base.ActivateOptions();
+            _cts = new CancellationTokenSource();
+            _workerTask = Task.Run(() => ProcessQueue(_cts.Token));
+        }
+
+        protected override void OnClose()
         {
             try
             {
-                if(!string.IsNullOrEmpty(ApiUrl))
+                _queue?.CompleteAdding();
+                _cts?.Cancel();
+                if (_workerTask != null)
                 {
-                    LoggingEvent log;
-                    if (_queue.TryTake(out log, TimeSpan.FromSeconds(FlushIntervalSeconds)))
-                    {
-                        buffer.Add(log);
-                    }
-
-                    if (buffer.Count >= GetBatchSize() || (buffer.Count > 0 && log == null))
-                    {
-                        string LogData = string.Empty;
-                        //var payload = new List<object>();
-                        foreach (var evt in buffer)
-                        {
-                            LogData = $"{LogData}[{evt.Level.DisplayName} | {evt.TimeStamp.ToString("HH:mm:ss:fff_dd-MMM")}]{evt.RenderedMessage}";
-                            Exception ex = evt.ExceptionObject;
-
-                            if (ex != null)
-                            {
-                                string excFullInfo = "Error:" + ex.Message + Environment.NewLine;
-                                excFullInfo += "Source:" + ex.Source + Environment.NewLine;
-                                excFullInfo += "Stack Trace: " + ex.StackTrace;
-
-                                LogData = $"{LogData}{Environment.NewLine}Exception Details:{Environment.NewLine}{excFullInfo}";
-                            }
-                            LogData = $"{LogData}{Environment.NewLine}{Environment.NewLine}";
-                        }
-
-                        if (AccountReportApiHandler != null && !string.IsNullOrEmpty(ApiUrl))
-                        {
-                            await AccountReportApiHandler.SendExecutionLogToCentralDBAsync(ApiUrl, ExecutionId, InstanceId, LogData);
-                        }
-                        else
-                        {
-                            Console.WriteLine("[HttpLogAppender] AccountReportApiHandler or ApiUrl is not set. Cannot send logs.");
-                        }
-
-                        buffer.Clear();
-                        retryDelay = 1;
-                    }
+                    _workerTask.Wait(2000); // Wait for the task to complete or timeout
                 }
             }
-            catch (Exception ex)
+            catch (AggregateException ex)
             {
-                Console.WriteLine($"[HttpLogAppender] Failed to send logs: {ex.Message}");
-                await Task.Delay(TimeSpan.FromSeconds(retryDelay), token);
-                retryDelay = Math.Min(retryDelay * 2, MaxRetryDelaySeconds);
+                // Handle TaskCanceledException explicitly
+                ex.Handle(e => e is TaskCanceledException);
+            }
+            finally
+            {
+                base.OnClose();
+            }
+        }
+
+        protected override void Append(LoggingEvent loggingEvent)
+        {
+            // Assume 'originalEvent' is your LoggingEvent instance
+            var newEvent = new LoggingEvent(loggingEvent.GetLoggingEventData());
+
+            // Create a snapshot of the Properties collection
+            var propertiesSnapshot = new Dictionary<string, object>();
+            foreach (System.Collections.DictionaryEntry entry in loggingEvent.Properties)
+            {
+                string key = entry.Key.ToString();
+                propertiesSnapshot[key] = entry.Value;
+            }
+
+            // Copy custom properties from the snapshot
+            foreach (var kvp in propertiesSnapshot)
+            {
+                newEvent.Properties[kvp.Key] = kvp.Value;
+            }
+            // clone so async worker has its own copy
+            _queue.Add(newEvent);
+        }
+
+
+        private async Task ProcessQueue(CancellationToken token)
+        {
+            var buffer = new List<LoggingEvent>();
+            int retryDelay = 1;
+
+            while (!token.IsCancellationRequested)
+            {
+                try
+                {
+                    if (WorkSpace.Instance is not null && WorkSpace.Instance.RunningInExecutionMode && !string.IsNullOrEmpty(ApiUrl))
+                    {
+                        LoggingEvent log;
+                        if (_queue.TryTake(out log, TimeSpan.FromSeconds(int.Parse(FlushIntervalSeconds))))
+                        {
+                            buffer.Add(log);
+                        }
+
+                        if (buffer.Count >= int.Parse(GetBatchSize()) || (buffer.Count > 0 && log == null))
+                        {
+                            var logDataBuilder = new StringBuilder();
+                            foreach (var evt in buffer)
+                            {
+                                logDataBuilder.Append($"[{evt.Level.DisplayName} | {evt.TimeStamp.ToString("HH:mm:ss:fff_dd-MMM")}]{evt.RenderedMessage}");
+                                Exception ex = evt.ExceptionObject;
+
+                                if (ex != null)
+                                {
+                                    string excFullInfo = "Error:" + ex.Message + Environment.NewLine;
+                                    excFullInfo += "Source:" + ex.Source + Environment.NewLine;
+                                    excFullInfo += "Stack Trace: " + ex.StackTrace;
+
+                                    logDataBuilder.Append($"{Environment.NewLine}Exception Details:{Environment.NewLine}{excFullInfo}");
+                                }
+                                logDataBuilder.Append($"{Environment.NewLine}{Environment.NewLine}");
+                            }
+                            string LogData = logDataBuilder.ToString();
+                            if (AccountReportApiHandler != null)
+                            {
+                                int exceptioncount = 0;
+                                try
+                                {
+                                    bool isSuccess = await AccountReportApiHandler.SendExecutionLogToCentralDBAsync(ApiUrl, ExecutionId, InstanceId, LogData);
+                                    if (isSuccess)
+                                    {
+                                        buffer.Clear();
+                                        retryDelay = 1;
+                                    }
+                                    else
+                                    {
+                                        Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Failed to send logs, will retry.");
+                                        await Task.Delay(TimeSpan.FromSeconds(retryDelay), token);
+                                        retryDelay = Math.Min(retryDelay * 2, int.Parse(MaxRetryDelaySeconds));
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    exceptioncount++;
+                                    if (exceptioncount > 3)
+                                    {
+                                        // after 3 exceptions give up and drop the logs
+                                        Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Failed to send logs after 3 attempts, dropping logs.", ex);
+                                        buffer.Clear();
+                                        retryDelay = 1;
+                                    }
+                                    else
+                                    {
+                                        Reporter.ToLog(eLogLevel.ERROR, $"[HttpLogAppender] Exception occurred while sending logs, attempt {exceptioncount}. Will retry.", ex);
+                                        await Task.Delay(TimeSpan.FromSeconds(retryDelay), token);
+                                        retryDelay = Math.Min(retryDelay * 2, int.Parse(MaxRetryDelaySeconds));
+                                    }
+                                    Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Failed to send logs");
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("[HttpLogAppender] AccountReportApiHandler or ApiUrl is not set. Cannot send logs.");
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[HttpLogAppender] Failed to send logs: {ex.Message}");
+                    await Task.Delay(TimeSpan.FromSeconds(retryDelay), token);
+                    retryDelay = Math.Min(retryDelay * 2, int.Parse(MaxRetryDelaySeconds));
+                }
             }
         }
     }

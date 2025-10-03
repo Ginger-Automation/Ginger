@@ -23,9 +23,7 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using AutoMapper;
-using Ginger.Run;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -617,36 +615,53 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             }
         }
 
-        public async Task SendExecutionLogToCentralDBAsync(string ApiUrl, Guid? ExecutionId, Guid? instanceId, string logData)
+        public async Task<bool> SendExecutionLogToCentralDBAsync(string apiUrl, Guid? executionId, long? instanceId, string logData)
         {
+            bool isSuccess = false; 
+            if (string.IsNullOrWhiteSpace(apiUrl))
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "SendExecutionLogToCentralDBAsync: ApiUrl is required");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(logData))
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "SendExecutionLogToCentralDBAsync: logData is empty, skipping");
+                return false;
+            }
+
             if (restClient != null && _isRunSetDataSent)
             {
-                string message = string.Format("execution data to Central DB for the Action:'{0}' (Execution Id:'{1}', instanceId Id:'{2}',logData:'{3}', Log Id:'{4}')", ApiUrl, ExecutionId, instanceId, logData,LogId);
+                string message = string.Format("execution log to Central DB (API URL:'{0}', Execution Id:'{1}', Instance Id:'{2}', Log Id:'{3}')", apiUrl, executionId, instanceId, LogId);
                 try
                 {
                     var payload = new ExecutionLogPayload
                     {
                         LogId = LogId,
-                        executionId = ExecutionId,
-                        instanceId = instanceId,
-                        logData = logData
+                        ExecutionId = executionId,
+                        InstanceId = instanceId,
+                        LogData = logData
                     };
-                    string FinalAPIUrl = $"{ApiUrl}{Path.DirectorySeparatorChar}{SEND_EXECUTIONLOG}";
+                    string FinalAPIUrl = $"{apiUrl.TrimEnd('/')}/{SEND_EXECUTIONLOG}";
                     bool IsSuccessful = await SendExecutionLogRestRequestAndGetResponse(FinalAPIUrl, payload).ConfigureAwait(false);
                     if (IsSuccessful)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, $"Successfully sent {message}");
+                        return true;
                     }
                     else
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"Failed to send {message}");
+                        isSuccess = false;
                     }
                 }
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Exception when sending {message}", ex);
+                    isSuccess = false;
                 }
             }
+            return isSuccess;
         }
 
         private async Task<bool> SendExecutionLogRestRequestAndGetResponse(string api, ExecutionLogPayload payload)
@@ -668,13 +683,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 else
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Failed to send {api} Response:{response.Content}", response.ErrorException);
-                    return false; 
+                    return false;
                 }
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Exception when sending {api}", ex);
-                return false; 
+                return false;
             }
         }
     }
@@ -682,8 +697,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
     public class ExecutionLogPayload
     {
         public Guid LogId { get; set; }
-        public Guid? executionId { get; set; }
-        public Guid? instanceId { get; set; }
-        public string logData { get; set; }
+        public Guid? ExecutionId { get; set; }
+        public long? InstanceId { get; set; }
+        public string LogData { get; set; }
     }
 }
