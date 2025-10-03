@@ -240,7 +240,6 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                         Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Failed to send logs after 3 attempts, dropping logs.", ex);
                                         buffer.Clear();
                                         retryDelay = 1;
-                                        exceptionCount = 0;
                                     }
                                     else
                                     {
