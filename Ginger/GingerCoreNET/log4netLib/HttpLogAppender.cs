@@ -243,7 +243,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                     }
                                     else
                                     {
-                                        Reporter.ToLog(eLogLevel.ERROR, $"[HttpLogAppender] Exception occurred while sending logs, attempt {exceptioncount}. Will retry.", ex);
+                                        Reporter.ToLog(eLogLevel.ERROR, $"[HttpLogAppender] Exception occurred while sending logs. Will retry.", ex);
                                         await Task.Delay(TimeSpan.FromSeconds(retryDelay), token);
                                         retryDelay = Math.Min(retryDelay * 2, int.Parse(MaxRetryDelaySeconds));
                                     }
