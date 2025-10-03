@@ -43,6 +43,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 if (string.IsNullOrWhiteSpace(_apiUrl) || (!string.IsNullOrWhiteSpace(value) && value != _apiUrl))
                 {
                     _apiUrl = value;
+                    _accountReportApiHandler = string.IsNullOrWhiteSpace(_apiUrl) ? null : new AccountReportApiHandler(_apiUrl);
                 }
             }
         }
@@ -213,7 +214,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                             string LogData = logDataBuilder.ToString();
                             if (AccountReportApiHandler != null)
                             {
-                                int exceptioncount = 0;
+                                int exceptionCount = 0;
                                 try
                                 {
                                     bool isSuccess = await AccountReportApiHandler.SendExecutionLogToCentralDBAsync(ApiUrl, ExecutionId, InstanceId, LogData);
@@ -221,6 +222,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                     {
                                         buffer.Clear();
                                         retryDelay = 1;
+                                        exceptionCount = 0;
                                     }
                                     else
                                     {
@@ -231,13 +233,14 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                 }
                                 catch (Exception ex)
                                 {
-                                    exceptioncount++;
-                                    if (exceptioncount > 3)
+                                    exceptionCount++;
+                                    if (exceptionCount > 3)
                                     {
                                         // after 3 exceptions give up and drop the logs
                                         Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Failed to send logs after 3 attempts, dropping logs.", ex);
                                         buffer.Clear();
                                         retryDelay = 1;
+                                        exceptionCount = 0;
                                     }
                                     else
                                     {
