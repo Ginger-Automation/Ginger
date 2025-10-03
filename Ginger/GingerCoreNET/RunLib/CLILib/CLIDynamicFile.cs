@@ -325,7 +325,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         break;
 
                     case SealightsDetails sealights:
-                        if (solution.SealightsConfiguration != null)
+                        if (sealights != null)
                         {
                             solution.SealightsConfiguration.SealightsLog = (bool)sealights.SealightsEnable ? eSealightsLog.Yes : eSealightsLog.No;
                             solution.SealightsConfiguration.SealightsURL = sealights.SealightsUrl;
@@ -340,7 +340,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         break;
 
                     case VRTDetails vrt:
-                        if (solution.VRTConfiguration != null)
+                        if (vrt != null)
                         {
                             solution.VRTConfiguration.ApiUrl = vrt.VRTAPIURL;
                             solution.VRTConfiguration.ApiKey = vrt.VRTAPIKey;
@@ -352,7 +352,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         break;
 
                     case ApplitoolsDetails applitools:
-                        if (solution.ApplitoolsConfiguration != null)
+                        if (applitools != null)
                         {
                             solution.ApplitoolsConfiguration.ApiUrl = applitools.ApplitoolsApiUrl;
                             solution.ApplitoolsConfiguration.ApiKey = applitools.ApplitoolsApiKey;
