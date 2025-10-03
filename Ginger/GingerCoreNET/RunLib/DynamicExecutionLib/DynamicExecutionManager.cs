@@ -1019,7 +1019,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
                 WireMockConfiguration wireMockConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
 
-                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count > 0 && !string.IsNullOrEmpty(wireMockConfiguration.WireMockUrl))
+                if (wireMockConfiguration != null && WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count > 0 && !string.IsNullOrEmpty(wireMockConfiguration.WireMockUrl))
                 {
                     WireMockDetails wireMockDetails = new WireMockDetails
                     {
@@ -1029,7 +1029,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
                 ZAPConfiguration zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
 
-                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count > 0 && !string.IsNullOrEmpty(zAPConfiguration.ZAPUrl) && !string.IsNullOrEmpty(zAPConfiguration.ZAPApiKey))
+                if (zAPConfiguration != null && WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count > 0 && !string.IsNullOrEmpty(zAPConfiguration.ZAPUrl) && !string.IsNullOrEmpty(zAPConfiguration.ZAPApiKey))
                 {
                     ZAPDetails zAPDetails = new ZAPDetails
                     {
