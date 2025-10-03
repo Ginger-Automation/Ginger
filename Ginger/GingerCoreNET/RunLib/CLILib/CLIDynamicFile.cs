@@ -403,6 +403,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                             zapConfig.ZAPApiKey = zap.ZAPAPIKey;
                         }
                         break;
+                    default:
+                        Reporter.ToLog(eLogLevel.WARN, $"External configuration of type '{config.GetType().Name}' is not handled in ApplyExternalConfigurationsFromJson.");
+                        break;
                 }
             }
         }
