@@ -20,9 +20,11 @@ using AccountReport.Contracts;
 using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.CoreNET.External.GingerPlay;
+using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.Repository;
 using Ginger;
@@ -287,6 +289,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     WorkSpace.Instance.UserProfile.DoNotSaveCredentialsOnUserProfile = false;
                 }
+                
                 var isSolutionOpened = OpenSolution();
                 if (isSolutionOpened && !doNotSaveDeeplinkCredentials && !doNotSaveCLIGitCredentials)
                 {
@@ -623,7 +626,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
                     bool solutionDownloadedSuccessfully = false;
-
+                    
                     if (WorkSpace.Instance.GingerCLIMode == eGingerCLIMode.run)
                     {
                         solutionDownloadedSuccessfully = SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier);

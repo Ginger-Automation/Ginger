@@ -504,6 +504,7 @@ namespace Ginger
                 if (parserResult != null)
                 {
                     await cliProcessor.ProcessParsedArguments(parserResult);
+                    
                 }
             }
             catch (Exception ex)
