@@ -51,18 +51,33 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
         private static readonly ExecutionLoggerConfiguration LoggerConfig = WorkSpace.Instance.Solution.LoggerConfigurations;
 
 
+        private static readonly object _lock = new();
         private static GingerPlayConfiguration _gingerPlayConfiguration;
+
         private static GingerPlayConfiguration GingerPlayConfiguration
         {
             get
             {
-                if (_gingerPlayConfiguration == null && WorkSpace.Instance?.SolutionRepository != null)
+                if (_gingerPlayConfiguration == null)
                 {
-                    _gingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count == 0
-                        ? new GingerPlayConfiguration()
-                        : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+                    lock (_lock)
+                    {
+                        if (_gingerPlayConfiguration == null)
+                        {
+                            if (WorkSpace.Instance?.SolutionRepository != null)
+                            {
+                                _gingerPlayConfiguration =
+                                    WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>()
+                                    ?? new GingerPlayConfiguration();
+                            }
+                            else
+                            {
+                                _gingerPlayConfiguration = new GingerPlayConfiguration();
+                            }
+                        }
+                    }
                 }
-                return _gingerPlayConfiguration ?? new GingerPlayConfiguration();
+                return _gingerPlayConfiguration;
             }
         }
 

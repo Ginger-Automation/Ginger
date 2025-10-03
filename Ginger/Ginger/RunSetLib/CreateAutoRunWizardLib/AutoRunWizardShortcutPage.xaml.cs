@@ -58,7 +58,6 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
                 case EventType.Active:
                     BindingHandler.ObjFieldBinding(xShortcutContentTextBox, System.Windows.Controls.TextBox.TextProperty, mAutoRunWizard.AutoRunShortcut, nameof(RunSetAutoRunShortcut.ShortcutContent), BindingMode: System.Windows.Data.BindingMode.OneWay);
-                    BindingHandler.ObjFieldBinding(xExecutionServiceUrlTextBox, System.Windows.Controls.TextBox.TextProperty, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ExecutionServiceUrl));
 
                     InitNumberPicker();
 
@@ -66,12 +65,10 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     if (mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote)
                     {
                         xRequestExecutionYesRadioButton.IsChecked = true;
-                        xExecutionServiceUrlTextBox.AddValidationRule(new ValidateURLFormat());
                     }
                     else
                     {
                         xRequestExecutionNoRadioButton.IsChecked = true;
-                        xExecutionServiceUrlTextBox.RemoveValidations(TextBox.TextProperty);
                     }
                     break;
             }
@@ -102,16 +99,12 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 xShortCutCreationConfigsPnl.Visibility = Visibility.Collapsed;
                 xCreateShortCutRadioPnl.Visibility = Visibility.Collapsed;
 
-                if (mAutoRunWizard.AutoRunShortcut.StartExecution)
-                {
-                    xRequestSettingsPnl.Visibility = Visibility.Visible;
-                }
+               
             }
             else
             {
                 xCreateShortCutRadioPnl.Visibility = Visibility.Visible;
                 xCLICommandPnl.Visibility = Visibility.Visible;
-                xRequestSettingsPnl.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -157,7 +150,6 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             if (mAutoRunWizard != null)
             {
                 xParallelExecutionPnl.Visibility = Visibility.Collapsed;
-                xRequestSettingsPnl.Visibility = Visibility.Collapsed;
                 mAutoRunWizard.AutoRunShortcut.StartExecution = false;
 
                 ShowHideCommandPnl();
@@ -169,7 +161,6 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             if (mAutoRunWizard != null)
             {
                 xParallelExecutionPnl.Visibility = Visibility.Visible;
-                xRequestSettingsPnl.Visibility = Visibility.Visible;
 
                 mAutoRunWizard.AutoRunShortcut.StartExecution = true;
                 ShowHideCommandPnl();

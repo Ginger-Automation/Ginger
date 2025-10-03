@@ -281,6 +281,24 @@ namespace Ginger.Run
             }
         }
 
+        private bool mForceUiScreenshot = false;
+        [IsSerializedForLocalRepository(false)]
+        public bool ForceUiScreenshot
+        {
+            get
+            {
+                return mForceUiScreenshot;
+            }
+            set
+            {
+                if (mForceUiScreenshot != value)
+                {
+                    mForceUiScreenshot = value;
+                    OnPropertyChanged(nameof(GingerRunner.ForceUiScreenshot));
+                }
+            }
+        }
+
         [IsSerializedForLocalRepository]
         public ObservableList<BusinessFlowRun> BusinessFlowsRunList { get; set; } = [];
 

@@ -89,37 +89,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 options.SelfHealingCheckInConfigured = true;
             }
 
-            if (cliHelper.SetSealightsSettings)
-            {
-                options.SealightsEnable = solution.SealightsConfiguration.SealightsLog == SealightsConfiguration.eSealightsLog.Yes;
-                options.SealightsUrl = solution.SealightsConfiguration.SealightsURL;
-                options.SealightsLabID = solution.SealightsConfiguration.SealightsLabId;
-                options.SealightsSessionID = solution.SealightsConfiguration.SealightsBuildSessionID;
-                options.SealightsTestStage = solution.SealightsConfiguration.SealightsTestStage;
-                options.SealightsSessionTimeOut = solution.SealightsConfiguration.SealightsSessionTimeout;
-                options.SealightsEntityLevel = solution.SealightsConfiguration.SealightsReportedEntityLevel.ToString();
-                options.SealightsAgentToken = solution.SealightsConfiguration.SealightsAgentToken;
-                options.SealightsTestRecommendations = solution.SealightsConfiguration.SealightsTestRecommendations == SealightsConfiguration.eSealightsTestRecommendations.Yes;
-
-                //  Check Sealights's values on run-set levels
-                if (runsetExecutor.RunSetConfig.SealightsLabId != null)
-                {
-                    options.SealightsLabID = runsetExecutor.RunSetConfig.SealightsLabId;
-                }
-                if (runsetExecutor.RunSetConfig.SealightsBuildSessionID != null)
-                {
-                    options.SealightsSessionID = runsetExecutor.RunSetConfig.SealightsBuildSessionID;
-                }
-                if (runsetExecutor.RunSetConfig.SealightsTestStage != null)
-                {
-                    options.SealightsTestStage = runsetExecutor.RunSetConfig.SealightsTestStage;
-                }
-                if (runsetExecutor.RunSetConfig.SealightsTestRecommendationsRunsetOverrideFlag)
-                {
-                    options.SealightsTestRecommendations = runsetExecutor.RunSetConfig.SealightsTestRecommendations == SealightsConfiguration.eSealightsTestRecommendations.Yes;
-                }
-            }
-
+          
             var args = CommandLine.Parser.Default.FormatCommandLine<RunOptions>(options);
             args = args.Replace(solution.EncryptionKey, "\"" + solution.EncryptionKey + "\"");
             if (options.PasswordEncrypted && !string.IsNullOrEmpty(options.Pass))

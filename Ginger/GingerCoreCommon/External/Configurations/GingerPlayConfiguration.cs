@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.Common.External.Configurations
         public delegate void GingerPlayConfigurationChangedEvent();
 
 
-        private string mName;
+        private string mName= "GingerPlay";
         [IsSerializedForLocalRepository]
         public string Name
         {

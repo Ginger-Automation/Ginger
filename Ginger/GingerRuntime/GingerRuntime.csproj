@@ -41,7 +41,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="BouncyCastle.Cryptography" Version="2.5.0" />
-		<PackageReference Include="Ginger.ExecuterService.Contracts" Version="25.3.0" />
+		<PackageReference Include="Ginger.ExecuterService.Contracts" Version="2025.4.2.1" />
 		<PackageReference Include="Microsoft.NETCore.App" Version="2.1.30" />
 		<PackageReference Include="MimeKit" Version="4.10.0" />
 		<PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.100" />
