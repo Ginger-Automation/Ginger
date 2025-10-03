@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.Common.External.Configurations
         public delegate void GingerPlayConfigurationChangedEvent();
 
 
-        private string mName;
+        private string mName= "GingerPlay";
         [IsSerializedForLocalRepository]
         public string Name
         {
@@ -228,6 +228,14 @@ namespace Amdocs.Ginger.Common.External.Configurations
         }
 
         public override string GetNameForFileName() { return Name; }
+
+        public bool IsGingerPlayConfigured()
+        {
+            return GingerPlayEnabled &&
+                   !string.IsNullOrEmpty(GingerPlayGatewayUrl) &&
+                   !string.IsNullOrEmpty(GingerPlayClientId) &&
+                   !string.IsNullOrEmpty(GingerPlayClientSecret);
+        }
 
     }
 }

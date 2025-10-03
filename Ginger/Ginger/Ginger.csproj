@@ -641,6 +641,7 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\WireMockLogo16x16.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\xml.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\xml.svg" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\ZAPLogo.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -730,12 +731,13 @@
     <PackageReference Include="FontAwesome6.Svg" Version="2.5.1" />
     <PackageReference Include="Gherkin" Version="5.1.0" />
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="2024.4.1.6" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="2025.4.2.1" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
     <PackageReference Include="IdentityModel" Version="7.0.0" />
     <PackageReference Include="LiteDB" Version="5.0.21" />
     <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.7" />
     <PackageReference Include="log4net" Version="2.0.15" />
-    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.5.0" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.8.2" />
     <PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="9.4.0-preview.1.25207.5" />
     <PackageReference Include="Microsoft.NETCore.App" Version="2.1.30" />
     <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
@@ -805,9 +807,6 @@
     </Reference>
     <Reference Include="CredentialManagement">
       <HintPath>DLLs\CredentialManagement.dll</HintPath>
-    </Reference>
-    <Reference Include="Ginger.ExecuterService.Contracts">
-      <HintPath>..\GingerCoreNET\DLLS\Ginger.ExecuterService.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>..\GingerCoreNET\DLLS\GingerExternal.dll</HintPath>
@@ -2576,6 +2575,9 @@
 
   <ItemGroup>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\WireMockLogo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\ZAPLogo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

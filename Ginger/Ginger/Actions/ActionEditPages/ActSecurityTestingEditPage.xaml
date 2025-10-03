@@ -1,0 +1,27 @@
+﻿<Page x:Class="Ginger.Actions.ActSecurityTestingEditPage" xmlns:Actions="clr-namespace:Ginger.Actions"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib" xmlns:Ginger="clr-namespace:Ginger" xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d" 
+            xmlns:Activities="clr-namespace:Ginger.BusinessFlowWindows"
+      d:DesignHeight="400" d:DesignWidth="800"
+	Title="ActSecurityTestingEditPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_White}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label Style="{StaticResource $LabelStyle}" Width="140" Grid.Column="0" Grid.Row="0" Height="32" Content="Operation Type :" Margin="10,10,0,0"/>
+        <ComboBox x:Name="xScanTypeComboBox"  Width="Auto" Grid.Row="0" Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="xScanTypeComboBox_SelectionChanged" Margin="0,8,916,8" />
+        <Label x:Name="xSeveritylbl" Width="140" Style="{StaticResource $LabelStyle}"  Content="Acceptable Alerts :" Height="32" Grid.Column="0" Grid.Row="1" Margin="10,10,0,530" />
+        <UserControlsLib:MultiSelectComboBox x:Name="xSeverityCB"  Width="Auto" Grid.Row="1" Grid.Column="1" Height="26" HorizontalAlignment="Stretch" Margin="0,0,916,528"/>
+    </Grid>
+</Page>
+

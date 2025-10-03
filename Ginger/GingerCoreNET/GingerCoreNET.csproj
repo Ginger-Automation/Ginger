@@ -261,6 +261,8 @@
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="2024.4.1.6" />
   
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="2025.4.2.1" />
+  
     <PackageReference Include="Google.Protobuf" Version="3.29.3" />
     
     <PackageReference Include="GraphQL" Version="8.3.1" />
@@ -291,7 +293,7 @@
   
     <PackageReference Include="log4net" Version="2.0.15" />
   
-    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.5.0" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.8.2" />
   
     <PackageReference Include="MailKit" Version="4.0.0" />
   
@@ -325,12 +327,13 @@
     <PackageReference Include="Npgsql" Version="8.0.3" />
     <PackageReference Include="NPOI" Version="2.6.1" />
     <PackageReference Include="NUglify" Version="1.9.7" />
+    <PackageReference Include="OWASPZAPDotNetAPI" Version="2.12.0" />
     <PackageReference Include="protobuf-net" Version="3.2.46" />
     <PackageReference Include="protobuf-net.Core" Version="3.2.46" />
     <PackageReference Include="Protractor" Version="1.0.0" />
     <PackageReference Include="RestSharp" Version="112.0.0" />
-    <PackageReference Include="Selenium.Support" Version="4.23.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.33.0" />
+    <PackageReference Include="Selenium.Support" Version="4.35.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.35.0" />
     <PackageReference Include="Selenium.WebDriver.Extensions" Version="4.1.0" />
     <PackageReference Include="SharpAdbClient" Version="2.3.23" />
     <PackageReference Include="SkiaSharp" Version="3.116.1" />
@@ -394,9 +397,6 @@
     </Reference>
     <Reference Include="AzureDevOpsRepo">
       <HintPath>DLLS\AzureDevOpsRepo.dll</HintPath>
-    </Reference>
-    <Reference Include="Ginger.ExecuterService.Contracts">
-      <HintPath>DLLS\Ginger.ExecuterService.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>
@@ -556,6 +556,36 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Images\%40ItemPrev.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_PP-OCRv4_det\inference.pdiparams">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_PP-OCRv4_det\inference.pdiparams.info">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_PP-OCRv4_det\inference.pdmodel">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_ppocr_mobile_v2.0_cls\._inference.pdmodel">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_ppocr_mobile_v2.0_cls\inference.pdiparams">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_ppocr_mobile_v2.0_cls\inference.pdiparams.info">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_ppocr_mobile_v2.0_cls\inference.pdmodel">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\en_PP-OCRv4_rec\inference.pdiparams">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\en_PP-OCRv4_rec\inference.pdiparams.info">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\en_PP-OCRv4_rec\inference.pdmodel">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="SelfHealingConfig\SelfHealingPropertyWeightage.json">

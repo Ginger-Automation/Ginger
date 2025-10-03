@@ -13,6 +13,7 @@
 
     <Grid x:Name="PageGrid">
         <Grid.Resources>
+
             <local1:ButtonToDisableConverter x:Key="ButtonToDisableConverter"/>
 
             <DataTemplate x:Key="OpenEditOptionalValuesPage">
@@ -66,7 +67,6 @@
                     <UserControls:ImageMakerControl ImageType="Copy" SetAsFontImageWithSize="16"  Width="16" Height="16" />
                 </Button>
             </DataTemplate>
-
         </Grid.Resources>
 
         <Grid.RowDefinitions>

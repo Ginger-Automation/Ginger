@@ -172,9 +172,11 @@ function define_GingerLib() {
                 ElementAction = "Enabled";
             }
             if (ElementAction === "Select") {
+                Value = inputValues["ValueToSelect"];
                 ElementAction = "SelectFromDropDown";
             }
             else if (ElementAction === "SelectByIndex") {
+                Value = inputValues["ValueToSelect"];
                 ElementAction = "SelectFromDropDownByIndex";
             }
 
@@ -1034,8 +1036,8 @@ function define_GingerLib() {
 				if(el!=undefined)
                 {
 					if (GingerLib.isVisible(el) || $(el).prop("type") == "checkbox")
-					{					
-						bStopWaiting = true;
+					{	bStopWaiting = true;				
+						
 					}
 					else if (GingerLib.GetElemTag(el) == "SELECT")
 					{				

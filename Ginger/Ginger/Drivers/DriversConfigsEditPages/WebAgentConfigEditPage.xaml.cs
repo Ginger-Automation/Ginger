@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright;
@@ -47,7 +48,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         public WebAgentConfigEditPage(Agent mAgent)
         {
             this.mAgent = mAgent;
-            InitializeComponent();            
+            InitializeComponent();
 
             BindElement();
 
@@ -95,7 +96,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         private void RecordVideoDirTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var textChange = e.Changes.FirstOrDefault();
-            
+
             if (textChange != null && (textChange.AddedLength > 1 || textChange.RemovedLength > 1))
             {
                 ReplaceSolutionDirPathInVideoDirPath();
@@ -325,15 +326,15 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xAutoFrameShiftForPOMCB, CheckBox.ToolTipProperty, handleIFrameShiftAuto, nameof(DriverConfigParam.Description));
 
             #region VideoRecordingConfigurations
-            
+
             DriverConfigParam enableVideoRecording = mAgent.GetOrCreateParam(nameof(PlaywrightDriver.EnableVideoRecording), "false");
             BindingHandler.ObjFieldBinding(xEnableVideoRecordingCheckBox, CheckBox.IsCheckedProperty, enableVideoRecording, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xEnableVideoRecordingCheckBox, CheckBox.ToolTipProperty, enableVideoRecording, nameof(DriverConfigParam.Description));
 
-            DriverConfigParam recordVideoDir = mAgent.GetOrCreateParam(nameof(PlaywrightDriver.RecordVideoDir));            
+            DriverConfigParam recordVideoDir = mAgent.GetOrCreateParam(nameof(PlaywrightDriver.RecordVideoDir));
             xRecordVideoDirVE.Init(null, recordVideoDir, nameof(DriverConfigParam.Value), true, true, Ginger.BusinessFlowWindows.UCValueExpression.eBrowserType.Folder, "*.*", null);
             BindingHandler.ObjFieldBinding(xRecordVideoDirVE, TextBox.ToolTipProperty, recordVideoDir, nameof(DriverConfigParam.Description));
-            
+
             DriverConfigParam vidoeHeight = mAgent.GetOrCreateParam(nameof(PlaywrightDriver.VideoHeight));
             xVideoHeight.Init(null, vidoeHeight, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xVideoHeight, TextBox.ToolTipProperty, vidoeHeight, nameof(DriverConfigParam.Description));
@@ -345,6 +346,18 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             #endregion
 
+
+            #region UseSecurityTesting ZAP Config
+            DriverConfigParam UseSecurityTesting = mAgent.GetOrCreateParam(nameof(SeleniumDriver.UseSecurityTesting), "false");
+            BindingHandler.ObjFieldBinding(xEnableZAPCheckBox, CheckBox.IsCheckedProperty, UseSecurityTesting, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xEnableZAPCheckBox, CheckBox.ToolTipProperty, UseSecurityTesting, nameof(DriverConfigParam.Description));
+
+            // show only for Selenium Driver
+            if (mAgent.DriverType != Agent.eDriverType.Selenium)
+            {
+                xZAPConfigExpander.Visibility = Visibility.Collapsed;
+            }
+            #endregion
             if (!string.IsNullOrEmpty(proxyName.Value))
             {
                 xAutoDetectProxyCB.IsChecked = false;
@@ -538,6 +551,23 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         private void xEnableVideoRecordingCheckBox_Click(object sender, RoutedEventArgs e)
         {
             xVideoRecordingControlsPnl.IsEnabled = (bool)xEnableVideoRecordingCheckBox.IsChecked;
+        }
+
+        private void xEnableZAPCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (xEnableZAPCheckBox.IsChecked == true)
+            {
+                // Disable AutoDetect Proxy and set manual proxy as required
+                xAutoDetectProxyCB.IsChecked = false;
+                xAutoDetectProxyCB.IsEnabled = false;
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Enabling Security Testing will disable the Auto Detect Proxy. All configured proxy settings will be overridden by the ZAP Proxy");
+                ProxyPnlVisbility();
+            }
+            else
+            {
+                xAutoDetectProxyCB.IsEnabled = true;
+                ProxyPnlVisbility();
+            }
         }
     }
 }

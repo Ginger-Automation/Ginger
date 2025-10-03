@@ -28,36 +28,56 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
     {
         private static readonly string ACCOUNT_REPORT_SERVICE_URL = System.Configuration.ConfigurationManager.AppSettings["ACCOUNT_REPORT_SERVICE_URL"]?.ToString() ?? "ginger-report";
 
-        private static readonly string HTML_REPORT_SERVICE_URL = System.Configuration.ConfigurationManager.AppSettings["HTML_REPORT_SERVICE_URL"]?.ToString() ?? "ginger-html-report";
-
         private static readonly string AI_SERVICE_URL = System.Configuration.ConfigurationManager.AppSettings["AI_SERVICE_URL"]?.ToString() ?? "ginger-ai";
 
         private static readonly string EXECUTION_SERVICE = System.Configuration.ConfigurationManager.AppSettings["EXECUTION_SERVICE"]?.ToString() ?? "ginger-execution";
 
         private static readonly string IDENTITY_SERVICE = System.Configuration.ConfigurationManager.AppSettings["IDENTITY_SERVICE"]?.ToString() ?? "identity";
 
+        private static readonly string LocalSetup = System.Configuration.ConfigurationManager.AppSettings["LocalSetup"]?.ToString() ?? "True";
+
+        private static readonly string LocalSetupToken = System.Configuration.ConfigurationManager.AppSettings["LocalSetupToken"]?.ToString() ?? "";
+
+        private static readonly string AIBatchSize = System.Configuration.ConfigurationManager.AppSettings["AIBatchSize"]?.ToString() ?? "2000";
+
         private static readonly string REPORT_SERVICE_HEALTH_PATH = $"{ACCOUNT_REPORT_SERVICE_URL}/health";
         private static readonly string EXECUTION_SERVICE_HEALTH_PATH = $"{EXECUTION_SERVICE}/health";
         private static readonly string AI_SERVICE_HEALTH_PATH = $"{AI_SERVICE_URL}/health";
         private static readonly string GENERATE_TOKEN_URL = $"{IDENTITY_SERVICE}/connect/token";
         private static readonly string EXECUTION_SERVICE_GENERATIVEPOM_URL = "generative-ai/extract_dom_elements";
+        private static readonly string EXECUTION_SERVICE_GENERATIVEPOM_PROCESS_EXTRACTED_ELEMENTS = "generative-ai/process_extracted_elements";
 
 
         private static readonly ExecutionLoggerConfiguration LoggerConfig = WorkSpace.Instance.Solution.LoggerConfigurations;
 
 
+        private static readonly object _lock = new();
         private static GingerPlayConfiguration _gingerPlayConfiguration;
+
         private static GingerPlayConfiguration GingerPlayConfiguration
         {
             get
             {
-                if (_gingerPlayConfiguration == null && WorkSpace.Instance?.SolutionRepository != null)
+                if (_gingerPlayConfiguration == null)
                 {
-                    _gingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count == 0
-                        ? new GingerPlayConfiguration()
-                        : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+                    lock (_lock)
+                    {
+                        if (_gingerPlayConfiguration == null)
+                        {
+                            if (WorkSpace.Instance?.SolutionRepository != null)
+                            {
+                                _gingerPlayConfiguration =
+                                    WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>()
+                                    ?? new GingerPlayConfiguration();
+                            }
+                            else
+                            {
+                                _gingerPlayConfiguration = new GingerPlayConfiguration();
+                            }
+                        }
+                    }
                 }
-                return _gingerPlayConfiguration ?? new GingerPlayConfiguration();
+                return _gingerPlayConfiguration;
             }
         }
 
@@ -84,14 +104,14 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                 else
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting Account Report Service URL");
-                    
+
                     return null;
                 }
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while getting Account Report Service URL: {ex.Message}");
-                
+
                 return null;
             }
 
@@ -103,7 +123,7 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
             {
                 if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl) && GingerPlayConfiguration.GingerPlayReportServiceEnabled)
                 {
-                    return GingerPlayConfiguration.GingerPlayGatewayUrl + HTML_REPORT_SERVICE_URL;
+                    return GingerPlayConfiguration.GingerPlayGatewayUrl + ACCOUNT_REPORT_SERVICE_URL;
                 }
                 else if (!string.IsNullOrEmpty(GingerPlayConfiguration.CentralizedHTMLReportServiceURL))
                 {
@@ -177,14 +197,12 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                 else
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting Execution Service URL");
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the Execution Service URL. Please check the configuration.");
                     return null;
                 }
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while getting Execution Service URL: {ex.Message}");
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the Execution Service URL. Please check the configuration.");
                 return null;
             }
         }
@@ -214,6 +232,11 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
             return EXECUTION_SERVICE_GENERATIVEPOM_URL;
         }
 
+        public static string GetAIServicePOMProcessExtractedElementsPath()
+        {
+            return EXECUTION_SERVICE_GENERATIVEPOM_PROCESS_EXTRACTED_ELEMENTS;
+        }
+
         private static string BuildServiceUrl(string path)
         {
             var baseUrl = GingerPlayConfiguration.GingerPlayGatewayUrl;
@@ -226,6 +249,21 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                 baseUrl += "/";
             }
             return baseUrl + path;
+        }
+
+        public static string GetLocalSetupValue()
+        {
+            return LocalSetup;
+        }
+
+        public static string GetLocalSetupToken()
+        {
+            return LocalSetupToken;
+        }
+
+        public static string GetAIBatchsize()
+        {
+            return AIBatchSize;
         }
     }
 }

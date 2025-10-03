@@ -494,7 +494,39 @@ namespace Ginger.SolutionGeneral
                     AddCategory(category);
                 }
             }
+            if (!string.IsNullOrEmpty(LoggerConfigurations.GetCentralizedHtmlReportServiceURLBackwardCompatibility()) || !string.IsNullOrEmpty(LoggerConfigurations.GetCentralLoggerEndPointURLBackwardCompatibility()) || !string.IsNullOrEmpty(LoggerConfigurations.GetExecutionServiceURLBackwardCompatibility()))
+            {
+                if (GingerCoreCommonWorkSpace.Instance.UserProfile == null)
+                {
+                    return;
+                }
 
+                if (GingerCoreCommonWorkSpace.Instance?.SolutionRepository != null)
+                {
+                    if (!GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Any())
+                    {
+                        GingerPlayConfiguration gingerPlayConfiguration = new GingerPlayConfiguration() { Name = "GingerPlay" };
+                        UpdateOldConfigurationToNew(gingerPlayConfiguration);
+                        GingerCoreCommonWorkSpace.Instance.SolutionRepository.AddRepositoryItem(gingerPlayConfiguration);
+
+                    }
+                    else
+                    {
+                        GingerPlayConfiguration gingerPlayConfiguration = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+                        UpdateOldConfigurationToNew(gingerPlayConfiguration);
+                        GingerCoreCommonWorkSpace.Instance?.SolutionRepository.SaveRepositoryItem(gingerPlayConfiguration);
+                    }
+                }
+
+            }
+
+        }
+
+        private void UpdateOldConfigurationToNew(GingerPlayConfiguration gingerPlayConfiguration)
+        {
+            gingerPlayConfiguration.CentralizedAccountReportURL = LoggerConfigurations.GetCentralLoggerEndPointURLBackwardCompatibility();
+            gingerPlayConfiguration.CentralizedHTMLReportServiceURL = LoggerConfigurations.GetCentralizedHtmlReportServiceURLBackwardCompatibility();
+            gingerPlayConfiguration.CentralizedExecutionHandlerURL = LoggerConfigurations.GetExecutionServiceURLBackwardCompatibility();
         }
 
         private void AddCategory(eSolutionCategories category)
@@ -622,8 +654,5 @@ namespace Ginger.SolutionGeneral
 
         [IsSerializedForLocalRepository]
         public AskLisaConfiguration AskLisaConfiguration { get; set; } = new AskLisaConfiguration();
-
-        [IsSerializedForLocalRepository]
-        public GingerPlayConfiguration GingerPlayConfiguration { get; set; } = new GingerPlayConfiguration();
     }
 }

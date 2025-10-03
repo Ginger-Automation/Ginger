@@ -2206,7 +2206,6 @@ namespace GingerCore.Drivers
                     {
                         return true;
                     }
-
                     break;
             }
             return false;
@@ -2439,6 +2438,7 @@ namespace GingerCore.Drivers
                     }
 
                     break;
+
             }
             return false;
 
@@ -4104,12 +4104,12 @@ namespace GingerCore.Drivers
         private static string GetClipboardText()
         {
             string clipboardText = GingerCore.General.GetClipboardText();
-            
+
             if (string.IsNullOrEmpty(clipboardText))
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Clipboard couldn't be identified, so trying alternative.");
 
-                bool bDone = false;                
+                bool bDone = false;
                 // Fall-back mechanism, if above GingerCore.General.GetClipboardText doesn't work, then
                 var t = new Thread(() =>
                 {
@@ -5297,7 +5297,7 @@ namespace GingerCore.Drivers
             switch (actGrid.WhereOperator)
             {
                 case ActTableElement.eRunColOperator.Equals:
-                    
+
                     for (int i = 0; i < AECollection.Length; i++)
                     {
                         var value = GetControlValueForComparision(actGrid, AECollection[i]);

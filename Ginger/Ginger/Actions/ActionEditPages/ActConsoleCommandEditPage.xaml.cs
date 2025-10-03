@@ -19,12 +19,14 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
+using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
+using static GingerCore.Actions.ActConsoleCommand;
 
 namespace Ginger.Actions
 {
@@ -50,6 +52,7 @@ namespace Ginger.Actions
             }
 
             List<object> list = GetActionListPlatform();
+            
             GingerCore.General.FillComboFromEnumObj(ConsoleActionComboBox, actConsoleCommand.ConsoleCommand, list);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConsoleActionComboBox, ComboBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.ConsoleCommand);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CommandTextBox, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.Command);
@@ -57,8 +60,12 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtWait, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.WaitTime);
             xDelimiterVE.BindControl(Context.GetAsContext(actConsoleCommand.Context), actConsoleCommand, nameof(ActConsoleCommand.Delimiter));
             txtExpected.Init(Context.GetAsContext(mActConsoleCommand.Context), mActConsoleCommand, ActConsoleCommand.Fields.ExpString);
+            GingerCore.General.FillComboFromEnumObj(CommandTerminatorComboBox, actConsoleCommand.CommandEndKey);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CommandTerminatorComboBox, ComboBox.SelectedValueProperty, actConsoleCommand, nameof(ActConsoleCommand.CommandEndKey));
         }
 
+
+        
         private List<object> GetActionListPlatform()
         {
             if (mActConsoleCommand.Platform == ePlatformType.NA)
@@ -120,6 +127,13 @@ namespace Ginger.Actions
             }
         }
 
+        private void CommandTerminatorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (CommandTerminatorComboBox.SelectedValue is ActConsoleCommand.eCommandEndKey key)
+            {
+                mActConsoleCommand.CommandEndKey = key;
+            }
+        }
         private void FillScriptNameCombo()
         {
             ScriptNameComboBox.Items.Clear();

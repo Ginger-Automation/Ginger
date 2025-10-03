@@ -144,7 +144,7 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
             GlobalSolutionUtils.Instance.AddDependaciesForSharedActivity(item, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
 
             //Assert
-            Assert.AreEqual(SelectedItemsListToImport.Count, 4);
+            Assert.AreEqual(SelectedItemsListToImport.Count, 5);
             Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\Applications Models\\POM Models\\SeleniumDemoValid.Ginger.ApplicationPOMModel.xml"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\SharedRepository\\Actions\\Browser Action.Ginger.Action.xml"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\SharedRepository\\Actions\\UIElement Action.Ginger.Action.xml"));

@@ -44,6 +44,7 @@ namespace Ginger.Configurations
             userConfig = WorkSpace.Instance.Solution.AskLisaConfiguration;
 
             userConfig.StartDirtyTracking();
+            WorkSpace.Instance.CurrentSelectedItem = userConfig;
             SetControls();
 
         }

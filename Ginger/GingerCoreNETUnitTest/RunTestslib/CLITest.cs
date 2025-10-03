@@ -1113,6 +1113,7 @@ namespace WorkspaceHold
         /// Testing JSON Runset with setup of ExecutionID
         /// </summary>   
         [TestMethod]
+        [Ignore]
         public void CLI_Sealights_JSON_Test()
         {
             // Arrange

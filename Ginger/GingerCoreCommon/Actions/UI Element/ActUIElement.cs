@@ -16,9 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -27,6 +24,9 @@ using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace GingerCore.Actions.Common
 {
@@ -246,6 +246,9 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Mouse Click")]
             MouseClick,
             [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Mouse Double Click")]
+            MouseDoubleClick,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Mouse Press/Release")]
             MousePressRelease,                              // JAVA ?
             [Description(EElementActionTypeGeneric)]
@@ -458,6 +461,8 @@ namespace GingerCore.Actions.Common
             RightClickXY,
             [EnumValueDescription("Send Keys using XY")]
             SendKeysXY,
+            [EnumValueDescription("Get Value By OCR")]
+            GetValueByOCR,
             #endregion Generic Action Types
 
             #region TextBox Action Types

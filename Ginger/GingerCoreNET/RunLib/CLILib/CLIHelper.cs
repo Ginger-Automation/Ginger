@@ -65,16 +65,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public eAppReporterLoggingLevel AppLoggingLevel;
         public string ExecutionId;
 
-        public bool SealightsEnable;
-        public string SealightsUrl;
-        public string SealightsAgentToken;
-        public string SealightsLabID;
-        public string SealightsSessionID;
-        public string SealightsSessionTimeOut;
-        public string SealightsTestStage;
-        public string SealightsEntityLevel;
-        public bool SealightsTestRecommendations;
-
         public bool ReRunFailed;
         public string ReferenceExecutionID;
         public string RerunLevel;
@@ -88,6 +78,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         RepoFolderManager _repoFolderManager;
 
         static readonly string _processId = Environment.ProcessId.ToString();
+       
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
         public bool ShowAutoRunWindow
         {
@@ -176,17 +167,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        bool mSetSealightsSettings;
-        public bool SetSealightsSettings
+        bool mSetExternalConfigurationSettings;
+        public bool SetExternalConfigurationSettings
         {
             get
             {
-                return mSetSealightsSettings;
+                return mSetExternalConfigurationSettings;
             }
             set
             {
-                mSetSealightsSettings = value;
-                OnPropertyChanged(nameof(SetSealightsSettings));
+                mSetExternalConfigurationSettings = value;
+                OnPropertyChanged(nameof(SetExternalConfigurationSettings));
             }
         }
 
@@ -646,12 +637,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
                     }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.INFO, "Solution downloaded/updated successfully");
+                    }
                 }
-                Reporter.ToLog(eLogLevel.INFO, "Solution downloaded/updated successfully");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control", ex);
             }
             finally
             {
@@ -700,76 +694,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlBranch: '{value}'");
             WorkSpace.Instance.UserProfile.Branch = value;
         }
-
-        public bool SetSealights()
-        {
-            WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog = SealightsEnable ? SealightsConfiguration.eSealightsLog.Yes : SealightsConfiguration.eSealightsLog.No;
-
-            if (SealightsEnable)
-            {
-                // Validation
-                if (SealightsUrl != null && SealightsAgentToken != null && (SealightsLabID != null || SealightsSessionID != null) &&
-                    SealightsTestStage != null && SealightsEntityLevel != null)
-                {
-                    // Override the Sealights Solution's settings with the CLI's settings
-                    if (SealightsUrl != null)
-                    {
-                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsURL = SealightsUrl;
-                    }
-
-                    if (SealightsAgentToken != null)
-                    {
-                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsAgentToken = SealightsAgentToken;
-                    }
-
-                    if (SealightsLabID != null)
-                    {
-                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLabId = SealightsLabID;
-                    }
-
-                    if (SealightsSessionID != null)
-                    {
-                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID = SealightsSessionID;
-                    }
-
-                    if (SealightsTestStage != null)
-                    {
-                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsTestStage = SealightsTestStage;
-                    }
-
-                    if (SealightsSessionTimeOut != null)
-                    {
-                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsSessionTimeout = SealightsSessionTimeOut;
-                    }
-
-                    if (SealightsEntityLevel != null)
-                    {
-                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel = (SealightsConfiguration.eSealightsEntityLevel)Enum.Parse(typeof(SealightsConfiguration.eSealightsEntityLevel), SealightsEntityLevel);
-                    }
-
-                    WorkSpace.Instance.Solution.SealightsConfiguration.SealightsTestRecommendations = SealightsTestRecommendations ? SealightsConfiguration.eSealightsTestRecommendations.Yes : SealightsConfiguration.eSealightsTestRecommendations.No;
-
-                    // Override the Sealights RunSet's settings with the CLI's settings
-                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId = SealightsLabID;
-                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID = SealightsSessionID;
-                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage = SealightsTestStage;
-                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestRecommendations = SealightsTestRecommendations ? SealightsConfiguration.eSealightsTestRecommendations.Yes : SealightsConfiguration.eSealightsTestRecommendations.No;
-
-                    if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsSessionTimeout == null)
-                    {
-                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID = "14400"; // Default setting
-                    }
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         internal void SetSourceControlPassword(string value)
         {
             WorkSpace.Instance.UserProfile.Password = value;
@@ -962,79 +886,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to Check-in self healing changes in source control");
             }
         }
-        internal void SetSealightsEnable(bool? value)
-        {
-            if (value != null)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsEnable: '" + value + "'");
-                SealightsEnable = (bool)value;
-            }
-        }
-        internal void SetSealightsUrl(string value)
-        {
-            SealightsUrl = value;
-        }
-        internal void SetSealightsAgentToken(string value)
-        {
-            if (!String.IsNullOrEmpty(value))
-            {
-                SealightsAgentToken = value;
-            }
-        }
-        internal void SetSealightsLabID(string value)
-        {
-            if (!String.IsNullOrEmpty(value))
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsLabID: '" + value + "'");
-                SealightsLabID = value;
-            }
-        }
-        internal void SetSealightsBuildSessionID(string value)
-        {
-            if (!String.IsNullOrEmpty(value))
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsBSId: '" + value + "'");
-                SealightsSessionID = value;
-            }
-        }
-        internal void SetSealightsSessionTimeout(int? value)
-        {
-            if (value != null)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsSessionTimeout: '" + value.ToString() + "'");
-                SealightsSessionTimeOut = value.ToString();
-            }
-            else
-            {
-                SealightsSessionTimeOut = "14400";
-            }
-        }
-        internal void SetSealightsTestStage(string value)
-        {
-            if (!String.IsNullOrEmpty(value))
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsTestStage: '" + value + "'");
-                SealightsTestStage = value;
-            }
-        }
-        internal void SetSealightsEntityLevel(SealightsDetails.eSealightsEntityLevel? value)
-        {
-            if (value != null)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsEntityLevel: '" + value + "'");
-                SealightsEntityLevel = (Enum.GetName(typeof(SealightsDetails.eSealightsEntityLevel), value));
-                return;
-            }
-            SealightsEntityLevel = Enum.GetName(typeof(SealightsDetails.eSealightsEntityLevel), default(SealightsDetails.eSealightsEntityLevel));
-        }
-        internal void SetSealightsTestRecommendations(bool? value)
-        {
-            if (value != null)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsTestRecommendations: '" + value + "'");
-                SealightsTestRecommendations = (bool)value;
-            }
-        }
 
         /// <summary>
         /// Sets the source application and user in the RunSetConfig object.
@@ -1062,7 +913,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         /// A string representing the path to a temporary folder, combining the system's temp directory 
         /// with the repository name extracted from the source control URL.
         /// </returns>
-        public string GetTempFolderPathForRepo(string sourceControlUrl)
+        public string GetTempFolderPathForRepo(string sourceControlUrl, string branchName)
         {
             string repoName = string.Empty;
             try
@@ -1075,13 +926,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     sourceControlUrl = sourceControlUrl.TrimEnd('/');
 
                     repoName = Path.GetFileNameWithoutExtension(sourceControlUrl.Split('/').Last());
+                    repoName = !string.IsNullOrEmpty(branchName) ? $"{repoName}_{branchName}" : $"{repoName}";
                 }
 
                 // Initialize RepoFolderManager if not already done
                 if (_repoFolderManager == null)
                 {
-                    string baseWorkingFolder = Path.GetTempPath();
-                    _repoFolderManager = new RepoFolderManager(baseWorkingFolder, _processId);
+                    _repoFolderManager = new RepoFolderManager(_processId);
                 }
 
                 string assignedFolder = _repoFolderManager.AssignFolder(repoName);
@@ -1090,7 +941,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to get repo folder path from Repo Folder Manager, using the random temp folder", ex);
+                Reporter.ToLog(eLogLevel.WARN, $"Failed to get repo folder path from Repo Folder Manager, using the random temp folder", ex);
                 return Path.Combine(Path.GetTempPath(), Path.GetRandomFileName(), repoName);
             }
         }

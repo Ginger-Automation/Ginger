@@ -72,7 +72,16 @@ namespace Amdocs.Ginger.Common.UIElement
         public bool IsAutoLearned
         {
             get { return mIsAutoLearned; }
-            set { if (mIsAutoLearned != value) { mIsAutoLearned = value; OnPropertyChanged(nameof(IsAutoLearned)); } }
+            set
+            {
+                if (mIsAutoLearned != value)
+                {
+                    mIsAutoLearned = value;
+                    OnPropertyChanged(nameof(IsAutoLearned));
+                    OnPropertyChanged(nameof(LearnedTypeEnum));
+                    OnPropertyChanged(nameof(LearnedType));
+                }
+            }
         }
 
         private string mLastUpdatedTime;
@@ -92,6 +101,26 @@ namespace Amdocs.Ginger.Common.UIElement
                 }
             }
         }
+
+
+        private bool _isProcessed;
+        /// <summary>
+        /// Indicates whether this element has been processed by AI workflows.
+        /// </summary>
+        public bool IsProcessed
+        {
+            get => _isProcessed;
+            set
+            {
+                if (_isProcessed != value)
+                {
+                    _isProcessed = value;
+                    OnPropertyChanged(nameof(IsProcessed));
+                }
+            }
+        }
+
+
 
         private SelfHealingInfoEnum mSelfHealingInfo;
         public string GetSelfHealingInfo
@@ -531,6 +560,21 @@ namespace Amdocs.Ginger.Common.UIElement
                 _ => eImageType.Element,
             };
         }
+
+        public enum eLearnedType { Manual, Auto, AI }
+
+        // Non-breaking addition:
+        public eLearnedType LearnedTypeEnum
+        {
+            get
+            {
+                if (IsAutoLearned) { return eLearnedType.Auto; }
+                return eLearnedType.Manual;
+            }
+        }
+
+        // Keep existing string property as-is, or derive from the enum:
+        public string LearnedType => LearnedTypeEnum.ToString();
     }
 
     public enum eLocateBy
@@ -622,7 +666,14 @@ namespace Amdocs.Ginger.Common.UIElement
         [EnumValueDescription("By ARIA Label")]
         ByAriaLabel,
         [EnumValueDescription("By DataTest Id")]
-        ByDataTestId
+        ByDataTestId,
+        [EnumValueDescription("By Partial LinkText")]
+        ByPartialLinkText,
+        [EnumValueDescription("By Custom XPath")]
+        ByCustomXPath,
+        [EnumValueDescription("By Data Attribute")]
+        ByDataAttribute
+
     }
 
     public enum eElementType
@@ -677,7 +728,9 @@ namespace Amdocs.Ginger.Common.UIElement
         [EnumValueDescription("Date Picker")]
         DatePicker,
         Document,
-        Svg
+        [EnumValueDescription("SVG")]
+        Svg,
+        
     }
 
     public enum SelfHealingInfoEnum
@@ -702,4 +755,6 @@ namespace Amdocs.Ginger.Common.UIElement
         [EnumValueDescription("Near")]
         near
     }
+
+
 }
