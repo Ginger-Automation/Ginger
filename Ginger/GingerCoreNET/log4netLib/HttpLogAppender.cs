@@ -21,6 +21,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
         private readonly BlockingCollection<LoggingEvent> _queue = new BlockingCollection<LoggingEvent>(new ConcurrentQueue<LoggingEvent>());
         private CancellationTokenSource _cts;
         private Task _workerTask;
+        private bool _disposed = false; // To detect redundant calls to Dispose
 
         // not set from config, injected at runtime
         private string _apiUrl;
@@ -39,7 +40,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             }
             set
             {
-                if(!string.IsNullOrWhiteSpace(_apiUrl) && !string.IsNullOrWhiteSpace(value) && value != _apiUrl)
+                if (string.IsNullOrWhiteSpace(_apiUrl) || (!string.IsNullOrWhiteSpace(value) && value != _apiUrl))
                 {
                     _apiUrl = value;
                 }
@@ -54,16 +55,16 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
         }
 
 
-        public string BatchSize { get; set; }
+        public string BatchSize { get; set; } = GetConfigString("HttpLogBatchSize", "20");
 
-        public string GetBatchSize()
+        public int GetBatchSize()
         {
-            return BatchSize;
-        }
-
-        public void SetBatchSize(string value)
-        {
-            BatchSize = value;
+            if (!int.TryParse(BatchSize, out var result) || result <= 0)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Invalid BatchSize configuration, defaulting to 20");
+                result = 20;
+            }
+            return result;
         }
 
         public string FlushIntervalSeconds { get; set; } = GetConfigString("HttpLogFlushIntervalSeconds", "5");
@@ -93,12 +94,38 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
         public override void ActivateOptions()
         {
             base.ActivateOptions();
+            // Validate configuration
+            if (string.IsNullOrEmpty(BatchSize) || !int.TryParse(BatchSize, out _))
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Invalid BatchSize configuration, using default 20");
+                BatchSize = "20";
+            }
+            if (string.IsNullOrEmpty(FlushIntervalSeconds) || !int.TryParse(FlushIntervalSeconds, out _))
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Invalid FlushIntervalSeconds configuration, using default 5");
+                FlushIntervalSeconds = "5";
+            }
+            if (string.IsNullOrEmpty(MaxRetryDelaySeconds) || !int.TryParse(MaxRetryDelaySeconds, out _))
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Invalid MaxRetryDelaySeconds configuration, using default 60");
+                MaxRetryDelaySeconds = "60";
+            }
             _cts = new CancellationTokenSource();
             _workerTask = Task.Run(() => ProcessQueue(_cts.Token));
         }
 
         protected override void OnClose()
         {
+            Dispose(); // Ensure Dispose is called when the appender is closed
+            base.OnClose();
+        }
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
             try
             {
                 _queue?.CompleteAdding();
@@ -107,6 +134,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 {
                     _workerTask.Wait(2000); // Wait for the task to complete or timeout
                 }
+                _cts?.Dispose(); // Dispose of the CancellationTokenSource
             }
             catch (AggregateException ex)
             {
@@ -115,8 +143,13 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             }
             finally
             {
-                base.OnClose();
+                _disposed = true;
             }
+        }
+
+        ~HttpLogAppender()
+        {
+            Dispose(); // Finalizer to ensure resources are cleaned up
         }
 
         protected override void Append(LoggingEvent loggingEvent)
@@ -159,7 +192,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                             buffer.Add(log);
                         }
 
-                        if (buffer.Count >= int.Parse(GetBatchSize()) || (buffer.Count > 0 && log == null))
+                        if (buffer.Count >= GetBatchSize() || (buffer.Count > 0 && log == null))
                         {
                             var logDataBuilder = new StringBuilder();
                             foreach (var evt in buffer)
@@ -212,7 +245,6 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                         await Task.Delay(TimeSpan.FromSeconds(retryDelay), token);
                                         retryDelay = Math.Min(retryDelay * 2, int.Parse(MaxRetryDelaySeconds));
                                     }
-                                    Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Failed to send logs");
                                 }
                             }
                             else
