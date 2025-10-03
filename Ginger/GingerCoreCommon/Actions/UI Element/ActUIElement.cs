@@ -246,6 +246,9 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Mouse Click")]
             MouseClick,
             [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Mouse Double Click")]
+            MouseDoubleClick,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Mouse Press/Release")]
             MousePressRelease,                              // JAVA ?
             [Description(EElementActionTypeGeneric)]

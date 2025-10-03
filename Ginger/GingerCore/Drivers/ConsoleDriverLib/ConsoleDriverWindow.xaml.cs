@@ -63,7 +63,6 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             {
                 CommandTextBox.Text = string.Empty;
             }
-
             if (mRecording)
             {
                 ActConsoleCommand ACC = new ActConsoleCommand
@@ -84,12 +83,12 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             {
                 //Unix then only \n is required
                 mConsoleDriver.taskFinished = false;
-                mConsoleDriver.SendCommand(CommandTextBox.Text + "\n");
+                mConsoleDriver.SendCommand(CommandTextBox.Text);
             }
             else
             {
                 //Dos then \r\n is required
-                mConsoleDriver.SendCommand(CommandTextBox.Text + Environment.NewLine);
+                mConsoleDriver.SendCommand(CommandTextBox.Text);
             }
             CommandTextBox.Text = "";
         }

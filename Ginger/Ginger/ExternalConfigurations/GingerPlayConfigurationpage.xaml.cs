@@ -47,7 +47,6 @@ namespace Ginger.ExternalConfigurations
 
         private void Init()
         {
-            GingerCoreNET.GeneralLib.General.CreateGingerPlayConfiguration();
             gingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count == 0 ? new GingerPlayConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
             gingerPlayConfiguration.StartDirtyTracking();
             WorkSpace.Instance.CurrentSelectedItem = gingerPlayConfiguration;
