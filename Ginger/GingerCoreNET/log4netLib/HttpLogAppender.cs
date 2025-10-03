@@ -46,15 +46,13 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             }
         }
 
-        private static int GetConfigInt(string key, int defaultValue)
+
+        private static string GetConfigString(string key, string defaultValue)
         {
             string value = System.Configuration.ConfigurationManager.AppSettings[key];
-            if (!string.IsNullOrEmpty(value) && int.TryParse(value, out int result))
-            {
-                return result;
-            }
-            return defaultValue;
+            return !string.IsNullOrEmpty(value) ? value : defaultValue;
         }
+
 
         public string BatchSize { get; set; }
 
@@ -68,29 +66,8 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             BatchSize = value;
         }
 
-        public string FlushIntervalSeconds { get; set; } //= GetConfigInt("HttpLogFlushIntervalSeconds", 5);
-
-        public string GetFlushIntervalSeconds()
-        {
-            return FlushIntervalSeconds;
-        }
-
-        public void SetFlushIntervalSeconds(string value)
-        {
-            FlushIntervalSeconds = value;
-        }
-
-        public string MaxRetryDelaySeconds { get; set; }//= GetConfigInt("HttpLogMaxRetryDelaySeconds", 60);
-
-        public string GetMaxRetryDelaySeconds()
-        {
-            return MaxRetryDelaySeconds;
-        }
-
-        public void SetMaxRetryDelaySeconds(string value)
-        {
-            MaxRetryDelaySeconds = value;
-        }
+        public string FlushIntervalSeconds { get; set; } = GetConfigString("HttpLogFlushIntervalSeconds", "5");
+        public string MaxRetryDelaySeconds { get; set; } = GetConfigString("HttpLogMaxRetryDelaySeconds", "60");
 
         public Guid? ExecutionId { get; set; }
 
