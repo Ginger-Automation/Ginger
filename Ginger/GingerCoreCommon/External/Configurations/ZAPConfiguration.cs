@@ -19,7 +19,7 @@ namespace Amdocs.Ginger.Common.External.Configurations
             }
         }
 
-        private string mName;
+        private string mName= "ZAPConfiguration";
         [IsSerializedForLocalRepository]
         public string Name
         {

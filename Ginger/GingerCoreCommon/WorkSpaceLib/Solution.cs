@@ -654,7 +654,5 @@ namespace Ginger.SolutionGeneral
 
         [IsSerializedForLocalRepository]
         public AskLisaConfiguration AskLisaConfiguration { get; set; } = new AskLisaConfiguration();
-
-        public GingerPlayConfiguration GingerPlayConfiguration { get; set; } //To be removed in next Release no longer needed
     }
 }

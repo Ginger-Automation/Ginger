@@ -2284,14 +2284,14 @@ namespace Ginger.Run
             }
 
             // if action failed and user don't want screen shot on failure
-            if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && !act.AutoScreenShotOnFailure)
+            if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && !act.AutoScreenShotOnFailure && !mGingerRunner.ForceUiScreenshot)
             {
                 return;
             }
 
             if (ActionExecutorType == GingerRunner.eActionExecutorType.RunOnDriver)
             {
-                if (act.TakeScreenShot || act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                if (act.TakeScreenShot || act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed || mGingerRunner.ForceUiScreenshot)
                 {
                     string msg;
                     try
@@ -2362,7 +2362,7 @@ namespace Ginger.Run
                     }
                 }
             }
-            else if (act.TakeScreenShot && act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen || act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+            else if (act.TakeScreenShot && act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen || act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed || mGingerRunner.ForceUiScreenshot)
             {
                 TakeDesktopScreenShotIntoAction(act);
             }
