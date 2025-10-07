@@ -84,7 +84,7 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
             return string.Empty;
         }
 
-        public static string GetAccoutReportServiceGateWay()
+        public static string GetAccountReportServiceGateWay()
         {
             return ACCOUNT_REPORT_SERVICE_URL;
         }

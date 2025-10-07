@@ -44,7 +44,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 {
                     _apiUrl = value;
                     _accountReportApiHandler = string.IsNullOrWhiteSpace(_apiUrl) ? null : new AccountReportApiHandler(_apiUrl);
-                    _apiUrl = $"{value}{GingerPlayEndPointManager.GetAccoutReportServiceGateWay()}"; //Final Url with gateway
+                    _apiUrl = $"{value}{GingerPlayEndPointManager.GetAccountReportServiceGateWay()}"; //Final Url with gateway
                 }
             }
         }
