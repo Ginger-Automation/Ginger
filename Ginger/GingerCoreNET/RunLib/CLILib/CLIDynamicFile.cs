@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
+using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Configurations;
@@ -31,6 +32,7 @@ using GingerCore.Environments;
 using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using Newtonsoft.Json;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.IO;
 using System.Linq;
@@ -105,6 +107,27 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     return;
                 }
 
+                if(exeConfiguration.ExternalConfigurationDetails != null)
+                {
+                    try
+                    {
+                        string GingerPlayGatewayUrl = exeConfiguration.ExternalConfigurationDetails
+                            .OfType<GingerPlayDetails>()
+                            .Select(g => g.GingerPlayUrl)
+                            .FirstOrDefault();
+
+                        GingerLog.SetHTTPLogAppenderExecutionId(exeConfiguration.ExecutionID);
+                        if (!string.IsNullOrEmpty(GingerPlayGatewayUrl))
+                        {
+                            GingerLog.SetHTTPLogAppenderAPIUrl(GingerPlayGatewayUrl);
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Failed to set HttpLogAppender parameters.", ex);
+                    }
+                }
+                
                 cliHelper.SetEncryptionKey(exeConfiguration.EncryptionKey);
                 if (exeConfiguration.SolutionScmDetails != null)
                 {
