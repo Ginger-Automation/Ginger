@@ -156,24 +156,61 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
 
         protected override void Append(LoggingEvent loggingEvent)
         {
-            // Assume 'originalEvent' is your LoggingEvent instance
-            var newEvent = new LoggingEvent(loggingEvent.GetLoggingEventData());
-
-            // Create a snapshot of the Properties collection
-            var propertiesSnapshot = new Dictionary<string, object>();
-            foreach (System.Collections.DictionaryEntry entry in loggingEvent.Properties)
+            try
             {
-                string key = entry.Key.ToString();
-                propertiesSnapshot[key] = entry.Value;
-            }
+                LoggingEvent newEvent;
 
-            // Copy custom properties from the snapshot
-            foreach (var kvp in propertiesSnapshot)
-            {
-                newEvent.Properties[kvp.Key] = kvp.Value;
+                // If there's an exception, use the constructor that accepts the exception
+                if (loggingEvent.ExceptionObject != null)
+                {
+                    newEvent = new LoggingEvent(
+                       typeof(LoggingEvent),
+                        loggingEvent.Repository,
+                        loggingEvent.LoggerName,
+                        loggingEvent.Level,
+                        loggingEvent.MessageObject,
+                        loggingEvent.ExceptionObject  // Pass the exception directly
+                    );
+                }
+                else
+                {
+                    // Use the existing approach for events without exceptions
+                    var loggingData = loggingEvent.GetLoggingEventData();
+                    newEvent = new LoggingEvent(loggingData);
+                }
+
+                // Create a snapshot of the Properties collection to avoid collection modification exceptions
+                var propertiesSnapshot = new Dictionary<string, object>();
+                foreach (System.Collections.DictionaryEntry entry in loggingEvent.Properties)
+                {
+                    string key = entry.Key.ToString();
+                    propertiesSnapshot[key] = entry.Value;
+                }
+
+                // Copy custom properties from the snapshot
+                foreach (var kvp in propertiesSnapshot)
+                {
+                    newEvent.Properties[kvp.Key] = kvp.Value;
+                }
+
+                // Add to queue for async processing
+                if (!_disposed && !_queue.IsAddingCompleted)
+                {
+                    try
+                    {
+                        _queue.Add(newEvent);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // Queue is completed for adding, ignore
+                    }
+                }
             }
-            // clone so async worker has its own copy
-            _queue.Add(newEvent);
+            catch (Exception ex)
+            {
+                // Log the error but don't break the logging chain
+                Console.WriteLine($"[HttpLogAppender] Error in Append: {ex.Message}");
+            }
         }
 
 
