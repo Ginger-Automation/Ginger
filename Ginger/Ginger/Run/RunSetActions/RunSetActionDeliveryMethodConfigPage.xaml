@@ -17,11 +17,11 @@
         <Grid Margin="10" Background="{StaticResource $BackgroundColor_White}">
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Label Style="{StaticResource @LabelStyle}"  VerticalAlignment="Center" Margin="-2,10,0,10" Width="118">E-mail Method:</Label>
+                    <Label Style="{StaticResource @LabelStyle}"  VerticalAlignment="Center" Margin="-2,10,0,10" Width="118">E-mail Method:*</Label>
                     <ComboBox x:Name="xEmailMethodComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="120" Height="25" SelectionChanged="xEmailMethodComboBox_SelectionChanged"/>
                 </StackPanel>
                 <StackPanel x:Name="xSMTPConfig">
-                    <Label Style="{StaticResource @LabelStyle}" x:Name="LabelMailHost">SMTP Mail Host:</Label>
+                    <Label Style="{StaticResource @LabelStyle}" x:Name="LabelMailHost">SMTP Mail Host:*</Label>
                     <Actions:UCValueExpression x:Name="xSMTPMailHostTextBox"  ToolTip="SMTP Host" Width="265" Height="25" HorizontalAlignment="Left" ScrollViewer.VerticalScrollBarVisibility="Auto" />
                     <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelPort">SMTP Port:</Label>
                     <TextBox x:Name="xSMTPPortTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" Height="25" HorizontalAlignment="Left"/>
@@ -41,9 +41,9 @@
                             <Actions:UCValueExpression x:Name="CertificatePasswordUCValueExpression" HorizontalAlignment="Left" Width="260" VerticalContentAlignment="Center" Height="30" LostKeyboardFocus="CertificatePasswordUCValueExpression_LostKeyboardFocus" Margin="2,0,0,0"/>
                         </StackPanel>
                     </StackPanel>
-                    <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelUser" Visibility="Collapsed">SMTP User:</Label>
+                    <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelUser" Visibility="Collapsed">SMTP User:*</Label>
                     <Actions:UCValueExpression x:Name="xSMTPUserTextBox"  ToolTip="SMTP User" Width="235" HorizontalAlignment="Left" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Auto" />
-                    <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelPass" Visibility="Collapsed">SMTP Password:</Label>
+                    <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelPass" Visibility="Collapsed">SMTP Password:*</Label>
                     <TextBox x:Name="xSMTPPassTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left" Visibility="Collapsed" LostFocus="xSMTPPassTextBox_LostFocus"/>
                 </StackPanel>
             </StackPanel>
