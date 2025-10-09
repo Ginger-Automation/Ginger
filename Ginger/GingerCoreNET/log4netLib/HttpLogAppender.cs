@@ -63,7 +63,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
         {
             if (!int.TryParse(BatchSize, out var result) || result <= 0)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Invalid BatchSize configuration, defaulting to 20");
+                Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Invalid BatchSize configuration, defaulting to 20");
                 result = 20;
             }
             return result;
@@ -99,17 +99,17 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             // Validate configuration
             if (string.IsNullOrEmpty(BatchSize) || !int.TryParse(BatchSize, out _))
             {
-                Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Invalid BatchSize configuration, using default 20");
+                Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Invalid BatchSize configuration, using default 20");
                 BatchSize = "20";
             }
             if (string.IsNullOrEmpty(FlushIntervalSeconds) || !int.TryParse(FlushIntervalSeconds, out _))
             {
-                Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Invalid FlushIntervalSeconds configuration, using default 5");
+                Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Invalid FlushIntervalSeconds configuration, using default 5");
                 FlushIntervalSeconds = "5";
             }
             if (string.IsNullOrEmpty(MaxRetryDelaySeconds) || !int.TryParse(MaxRetryDelaySeconds, out _))
             {
-                Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Invalid MaxRetryDelaySeconds configuration, using default 60");
+                Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Invalid MaxRetryDelaySeconds configuration, using default 60");
                 MaxRetryDelaySeconds = "60";
             }
             _cts = new CancellationTokenSource();
@@ -209,7 +209,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             catch (Exception ex)
             {
                 // Log the error but don't break the logging chain
-                Console.WriteLine($"[HttpLogAppender] Error in Append: {ex.Message}");
+                Reporter.ToLog(eLogLevel.DEBUG, $"[HttpLogAppender] Error in Append: {ex.Message}");
             }
         }
 
@@ -264,7 +264,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                     }
                                     else
                                     {
-                                        Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Failed to send logs, will retry.");
+                                        Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send logs, will retry.");
                                         await Task.Delay(TimeSpan.FromSeconds(retryDelay), token);
                                         retryDelay = Math.Min(retryDelay * 2, int.Parse(MaxRetryDelaySeconds));
                                     }
@@ -275,13 +275,13 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                     if (exceptionCount > 3)
                                     {
                                         // after 3 exceptions give up and drop the logs
-                                        Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Failed to send logs after 3 attempts, dropping logs.", ex);
+                                        Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send logs after 3 attempts, dropping logs.", ex);
                                         buffer.Clear();
                                         retryDelay = 1;
                                     }
                                     else
                                     {
-                                        Reporter.ToLog(eLogLevel.ERROR, $"[HttpLogAppender] Exception occurred while sending logs. Will retry.", ex);
+                                        Reporter.ToLog(eLogLevel.DEBUG, $"[HttpLogAppender] Exception occurred while sending logs. Will retry.", ex);
                                         await Task.Delay(TimeSpan.FromSeconds(retryDelay), token);
                                         retryDelay = Math.Min(retryDelay * 2, int.Parse(MaxRetryDelaySeconds));
                                     }
@@ -289,14 +289,14 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                             }
                             else
                             {
-                                Console.WriteLine("[HttpLogAppender] AccountReportApiHandler or ApiUrl is not set. Cannot send logs.");
+                                Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] AccountReportApiHandler or ApiUrl is not set. Cannot send logs.");
                             }
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[HttpLogAppender] Failed to send logs: {ex.Message}");
+                    Reporter.ToLog(eLogLevel.DEBUG, $"[HttpLogAppender] Failed to send logs: {ex.Message}");
                     await Task.Delay(TimeSpan.FromSeconds(retryDelay), token);
                     retryDelay = Math.Min(retryDelay * 2, int.Parse(MaxRetryDelaySeconds));
                 }
