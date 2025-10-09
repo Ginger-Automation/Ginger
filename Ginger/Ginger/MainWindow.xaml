@@ -24,6 +24,7 @@
                     <ColumnDefinition Width="150*"/>
                     <ColumnDefinition Width="100"/>
                     <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
                 <!--Main Menu- Ginger Icon-->
@@ -69,7 +70,7 @@
                     <!--Main Menu- Loaded Solution Menu's-->
                     <DockPanel x:Name="xLoadedSolutionMenusPnl" DockPanel.Dock="Left" VerticalAlignment="Center">
                         <!--Main Menu- Solution Tabs-->
-                        <ListView x:Name="xSolutionTabsListView" Background="{StaticResource $BackgroundColor_Black}" BorderBrush="{StaticResource $BackgroundColor_Black}" SelectionChanged="xSolutionTopNavigationListView_SelectionChanged" Margin="0,5,0,0" VerticalAlignment="Center" DockPanel.Dock="Left" SelectionMode="Single" >
+                        <ListView x:Name="xSolutionTabsListView" Background="{StaticResource $BackgroundColor_Black}" BorderBrush="{StaticResource $BackgroundColor_Black}" SelectionChanged="xSolutionTopNavigationListView_SelectionChanged" Margin="10,5,0,0" VerticalAlignment="Center" DockPanel.Dock="Left" SelectionMode="Single" >
                             <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel Orientation="Horizontal"></StackPanel>
@@ -88,7 +89,36 @@
                             <ListViewItem x:Name="xConfigurationsListItem" Style="{StaticResource $TopListViewItemStyle}">CONFIGURATIONS</ListViewItem>
                             <ListViewItem x:Name="xResourcesListItem" Style="{StaticResource $TopListViewItemStyle}">RESOURCES</ListViewItem>
                         </ListView>
-
+                        <Border Grid.Column="4" Height="30" CornerRadius="6">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#FF6A00" Offset="0.0"/>
+                                        <GradientStop Color="#FF00FF" Offset="0.5"/>
+                                        <GradientStop Color="#824de6" Offset="1.0"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="40"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <!-- Premium Icon (Crown) -->
+                                    <usercontrols:ImageMakerControl ImageType="Crown" Foreground="White" SetAsFontImageWithSize="17" />
+                                    <!-- Unlock Button -->
+                                    <Button Grid.Column="1"
+                Content="Unlock Pro Features with Ginger Play"
+                Foreground="White"
+                Background="Transparent"
+                FontWeight="Bold"
+                FontSize="14"
+                HorizontalAlignment="Right"
+                Padding="-10,0"
+                BorderThickness="0"
+                Cursor="Hand"
+                />
+                                </Grid>
+                            </Border>
+                        
                         <!--Main Menu- Solution Operations-->
                         <Menu x:Name="xExtraSolutionOperationsMenu" Background="{StaticResource $BackgroundColor_Black}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
                             <MenuItem x:Name="xExtraSolutionOperationsMainMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Extra Solution Operations" StaysOpenOnClick="True">

@@ -16,6 +16,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition  Height="30"/>
                 <RowDefinition  Height="1*"/>
+                <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" Grid.Row="0">
                 <Label Content="Ginger Play Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
@@ -72,6 +73,44 @@
                     </StackPanel>
                 </Grid>
 
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Row="2" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left Side -->
+                    <Grid Grid.Column="0" >
+                        <StackPanel Margin="0,10,0,0" >
+                            <Expander x:Name="xAboutGingerPlay" ExpandDirection="Down"  Style="{StaticResource $ExpanderStyle}"   IsExpanded="True" Width="591">
+                                <Expander.Header>
+                                    <Label Content="About Ginger Play" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                                </Expander.Header>
+                                <TextBlock x:Name="xGingerPlayInfo" TextWrapping="Wrap" Width="581" Height="250" Padding="10,5,5,5" HorizontalAlignment="Left">
+                                    <Run Text="Ginger Play is an advanced automation platform built on top of Ginger, designed for execution, collaboration, and reporting at scale."/>
+                                    <LineBreak/>
+                                    <Run Text="Key features include:"/>
+                                    <LineBreak/>
+                                    <Run Text="• Advanced execution: bulk runs, concatenated flows, intelligent scheduling, and input-output data mapping."/>
+                                    <LineBreak/>
+                                    <Run Text="• Real-time tracking &amp; dashboards: status, logs, errors, screenshots, and performance insights."/>
+                                    <LineBreak/>
+                                    <Run Text="• Post-execution actions: resume from failure, re-execution, cloning from history."/>
+                                    <LineBreak/>
+                                    <Run Text="• AI-powered capabilities: natural language SQL queries, optimized flow execution, runtime input combinations, and more."/>
+                                    <LineBreak/>
+                                    <Run Text="Integrating Ginger Play unlocks enterprise-grade execution, reporting, and AI-driven productivity—all within a unified automation ecosystem."/>
+                                    <LineBreak/>
+                                    <Hyperlink NavigateUri="https://docs.ginger.amdocs.com/gingerplay" RequestNavigate="Hyperlink_RequestNavigate">
+                                        <Run Text="Learn more about Ginger Play"/>
+                                    </Hyperlink>
+                                </TextBlock>
+                            </Expander>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
             </StackPanel>
         </Grid>
     </DockPanel>
