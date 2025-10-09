@@ -77,6 +77,11 @@ namespace Ginger.ExternalConfigurations
         }
 
 
+        public bool AreRequiredGateWayFieldsEmpty()
+        {
+            return gingerPlayConfiguration.IsGingerPlayGateWayConfigured();
+        }
+
         public bool AreRequiredFieldsEmpty()
         {
             return gingerPlayConfiguration.IsGingerPlayConfigured();
@@ -94,13 +99,18 @@ namespace Ginger.ExternalConfigurations
             {
                 ShowLoader();
                 xTestConBtn.IsEnabled = false;
-                if (!AreRequiredFieldsEmpty())
+                if (!AreRequiredGateWayFieldsEmpty())
                 {
                     Reporter.ToUser(eUserMsgKey.RequiredFieldsEmpty);
                     return;
                 }
-                else
+                else if((bool)xAIServiceCheckBox.IsChecked)
                 {
+                    if (!AreRequiredFieldsEmpty())
+                    {
+                        Reporter.ToUser(eUserMsgKey.RequiredFieldsEmpty);
+                        return;
+                    }
                     bool isAuthorized = await GingerPlayAPITokenManager.GetOrValidateToken();
                     // Show main connection result
                     connectionResultMessage = ShowConnectionResult(isAuthorized);
