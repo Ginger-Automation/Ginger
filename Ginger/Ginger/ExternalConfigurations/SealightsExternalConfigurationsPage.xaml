@@ -16,6 +16,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition  Height="30"/>
                     <RowDefinition  Height="1*"/>
+                    <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
                 <usercontrols:ucButton x:Name="xSaveButton" DockPanel.Dock="Top" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" Visibility="Collapsed" HorizontalAlignment="Left" Margin="0,0,0,0"/>
                 <StackPanel Orientation="Horizontal" Grid.Row="0">
@@ -90,6 +91,38 @@
                         <StackPanel x:Name="xSealightsTestRecommendationsPanel" Orientation="Horizontal" Grid.Column="1" Grid.Row="13" Margin="-16,0,0,0" HorizontalAlignment="Left">
                             <UserControlsLib:UCRadioButtons x:Name="xSealightsTestRecommendationsRadioButton" ></UserControlsLib:UCRadioButtons>
                         </StackPanel>
+                    </Grid>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="2" >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Left Side -->
+                        <Grid Grid.Column="0" >
+                            <StackPanel Margin="0,10,0,0" >
+                                <Expander x:Name="xAboutSealights" ExpandDirection="Down" Style="{StaticResource $ExpanderStyle}" IsExpanded="True" Width="591">
+                                    <Expander.Header>
+                                        <Label Content="About Sealights" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                                    </Expander.Header>
+                                    <TextBlock x:Name="xSealightsInfo" TextWrapping="Wrap" Width="581" Height="250" Padding="10,5,5,5" HorizontalAlignment="Left">
+                           <Run Text="Sealights is a quality intelligence platform powered by AI test-impact analytics."/>
+                           <LineBreak/>
+                           <Run Text="It runs only the tests affected by recent code changes, helping teams cut cycle time by up to 90%."/>
+                           <LineBreak/>
+                           <Run Text="Sealights supports unit, regression, API, end-to-end, and system testing."/>
+                           <LineBreak/>
+                           <Run Text="By integrating with Ginger, Sealights ensures smarter test selection, faster feedback, and efficient QA inside CI/CD pipelines."/>
+                           <LineBreak/>
+                           <Hyperlink NavigateUri="https://www.sealights.io/" RequestNavigate="Hyperlink_RequestNavigate">
+                               <Run Text="Learn more about Sealights"/>
+                           </Hyperlink>
+                                    </TextBlock>
+                                </Expander>
+                            </StackPanel>
+                        </Grid>
                     </Grid>
                 </StackPanel>
             </Grid>
