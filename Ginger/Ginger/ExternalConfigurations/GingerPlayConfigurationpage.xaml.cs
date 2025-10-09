@@ -77,7 +77,7 @@ namespace Ginger.ExternalConfigurations
         }
 
 
-        public bool AreRequiredGateWayFieldsEmpty()
+        public bool AreRequiredGatewayFieldsEmpty()
         {
             return gingerPlayConfiguration.IsGingerPlayGateWayConfigured();
         }
@@ -99,7 +99,7 @@ namespace Ginger.ExternalConfigurations
             {
                 ShowLoader();
                 xTestConBtn.IsEnabled = false;
-                if (!AreRequiredGateWayFieldsEmpty())
+                if (!AreRequiredGatewayFieldsEmpty())
                 {
                     Reporter.ToUser(eUserMsgKey.RequiredFieldsEmpty);
                     return;
