@@ -296,6 +296,10 @@ namespace GingerWPF.TreeViewItemsLib
                         repoFolder.ReloadItems();
                     }
 
+                    if (((ITreeViewItem)this) is DocumentsFolderTreeItem docFolder)
+                    {
+                        docFolder.RefreshDocumentsFolder();
+                    }
                     //refresh tree
                     mTreeView.Tree.RefreshTreeNodeChildrens((ITreeViewItem)this);
 
