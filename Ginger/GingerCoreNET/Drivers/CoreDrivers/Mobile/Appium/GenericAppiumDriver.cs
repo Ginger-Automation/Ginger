@@ -58,6 +58,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -5491,38 +5492,66 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
 
         public void SetDeviceLocation(ActMobileDevice act)
         {
-            if (string.IsNullOrEmpty(act.Latitude.ValueForDriver))
-            {
-                throw new ArgumentException("latitude cannot be null or empty", nameof(act.Latitude.ValueForDriver));
-            }
-
-            if (string.IsNullOrEmpty(act.Longitude.ValueForDriver))
-            {
-                throw new ArgumentException("longitude cannot be null or empty", nameof(act.Longitude.ValueForDriver));
-            }
-
             if (act == null)
             {
                 throw new ArgumentNullException(nameof(act), "ActMobileDevice cannot be null");
             }
+
+            string latitudeRaw = act.Latitude?.ValueForDriver;
+            string longitudeRaw = act.Longitude?.ValueForDriver;
+            string altitudeRaw = act.Altitude?.ValueForDriver;
+
+            if (string.IsNullOrWhiteSpace(latitudeRaw))
+            {
+                throw new ArgumentException("latitude cannot be null or empty", nameof(act.Latitude));
+            }
+
+            if (string.IsNullOrWhiteSpace(longitudeRaw))
+            {
+                throw new ArgumentException("longitude cannot be null or empty", nameof(act.Longitude));
+            }
+
+            if (!double.TryParse(latitudeRaw, NumberStyles.Float, CultureInfo.InvariantCulture, out double latitude))
+            {
+                throw new ArgumentException("latitude must be a valid number", nameof(act.Latitude));
+            }
+
+            if (!double.TryParse(longitudeRaw, NumberStyles.Float, CultureInfo.InvariantCulture, out double longitude))
+            {
+                throw new ArgumentException("longitude must be a valid number", nameof(act.Longitude));
+            }
+
+            double altitude = 0;
+            if (!string.IsNullOrWhiteSpace(altitudeRaw) && !double.TryParse(altitudeRaw, NumberStyles.Float, CultureInfo.InvariantCulture, out altitude))
+            {
+                throw new ArgumentException("altitude must be a valid number", nameof(act.Altitude));
+            }
+
             try
             {
-                var location = new Location();
-                location.Latitude = Convert.ToDouble(act.Latitude.ValueForDriver);
-                location.Longitude = Convert.ToDouble(act.Longitude.ValueForDriver);
-                location.Altitude = Convert.ToDouble(act.Altitude.ValueForDriver);
-                if (Driver is AndroidDriver)
+                var location = new Location
                 {
-                    ((AndroidDriver)Driver).Location = location;
+                    Latitude = latitude,
+                    Longitude = longitude,
+                    Altitude = altitude
+                };
+
+                if (Driver is AndroidDriver androidDriver)
+                {
+                    androidDriver.Location = location;
+                }
+                else if (Driver is IOSDriver iosDriver)
+                {
+                    iosDriver.Location = location;
                 }
                 else
                 {
-                    ((IOSDriver)Driver).Location = location;
+                    throw new InvalidOperationException("Driver does not support setting device location");
                 }
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Failed to retrieve performance data: {ex.Message}", ex);
+                throw new InvalidOperationException($"Failed to set device location: {ex.Message}", ex);
             }
         }
 

@@ -345,7 +345,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(Latitude));
+                return GetOrCreateInputParam(nameof(Latitude),"0");
             }
             set
             {
@@ -358,7 +358,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(Longitude));
+                return GetOrCreateInputParam(nameof(Longitude),"0");
             }
             set
             {
@@ -371,7 +371,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(Altitude));
+                return GetOrCreateInputParam(nameof(Altitude),"0");
             }
             set
             {
