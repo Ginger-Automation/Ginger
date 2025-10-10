@@ -5409,7 +5409,7 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                     _ => throw new InvalidOperationException("Unsupported driver type")
                 };
                 act.AddOrUpdateReturnParamActual("Latitude",  location.Latitude.ToString());
-                act.AddOrUpdateReturnParamActual("longitude", location.Longitude.ToString());
+                act.AddOrUpdateReturnParamActual("Longitude", location.Longitude.ToString());
                 act.AddOrUpdateReturnParamActual("Altitude", location.Altitude.ToString());
             }
             catch (Exception ex)
@@ -5519,6 +5519,14 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
             if (!double.TryParse(longitudeRaw, NumberStyles.Float, CultureInfo.InvariantCulture, out double longitude))
             {
                 throw new ArgumentException("longitude must be a valid number", nameof(act.Longitude));
+            }
+            if (latitude < -90 || latitude > 90)
+            {
+                throw new ArgumentOutOfRangeException(nameof(act.Latitude), "latitude must be between -90 and 90 degrees");
+            }
+            if (longitude < -180 || longitude > 180)
+            {
+                throw new ArgumentOutOfRangeException(nameof(act.Longitude), "longitude must be between -180 and 180 degrees");
             }
 
             double altitude = 0;

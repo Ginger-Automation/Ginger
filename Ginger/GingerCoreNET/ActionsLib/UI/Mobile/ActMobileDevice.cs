@@ -371,7 +371,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(Altitude),"0");
+                return GetOrCreateInputParam(nameof(Altitude),"");
             }
             set
             {
