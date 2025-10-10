@@ -18,7 +18,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" x:Name="Panel" Margin="0,5,0,0">
                     <Label Style="{StaticResource @LabelStyle}" FontSize="12" HorizontalAlignment="Left" Content="HTML Report Attachment Option : " Margin="0,0,5,0"></Label>
-                    <StackPanel ToolTip="To use the Account Report link in the email, please configure the centralized Execution Logger settings in the Configuration tab." VerticalAlignment="Center">
+                    <StackPanel ToolTip="To use Account report link in email, please configure Ginger Play setting in the Configuration Tab  >  External integration Tab." VerticalAlignment="Center">
                         <RadioButton x:Name="xAccountReportLink" Tag="AccountLink"  GroupName="LinkOptionRadio" Content="Online Account Report Link" Width="170" VerticalAlignment="Center" Checked="xAccountReportLink_Checked"   Style="{StaticResource @InputRadioButtonStyle}"/>
                     </StackPanel>
                     <RadioButton x:Name="RadioZippedReportOption" Tag="ZippedReport" GroupName="LinkOptionRadio" Content="Attached Zip Report" Width="140" VerticalAlignment="Center" Checked="RadioZippedOption_Checked" Style="{StaticResource @InputRadioButtonStyle}"/>

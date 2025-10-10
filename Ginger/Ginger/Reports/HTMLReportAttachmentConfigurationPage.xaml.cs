@@ -99,7 +99,7 @@ namespace Ginger.Reports
         }
         private void Close_ButtonClick(object sender, RoutedEventArgs e)
         {           
-            _pageGenericWin.Close();
+            _pageGenericWin?.Close();
         }
         public void RadioButtonInit()
         {

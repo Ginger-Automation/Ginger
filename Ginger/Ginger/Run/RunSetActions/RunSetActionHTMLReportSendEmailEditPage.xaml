@@ -39,13 +39,13 @@
                         <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelMailFromDisplayName" Content="From Display Name:" />
                         <Actions:UCValueExpression x:Name="xMailFromDisplayNameTextBox" ToolTip="Provide Display Name to show if it has not configured for sender email." />
 
-                        <Label Style="{StaticResource @LabelStyle}" Content="To:*" />
+                        <Label Style="{StaticResource @LabelStyle}" Content="To: *" />
                         <Actions:UCValueExpression x:Name="MailToTextBox" ToolTip="To"/>
 
                         <Label Style="{StaticResource @LabelStyle}" Content="CC:" />
                         <Actions:UCValueExpression x:Name="MailCCTextBox" ToolTip="CC" />
 
-                        <Label Style="{StaticResource @LabelStyle}" Content="Subject:*" Margin="0,6,0,0"  />
+                        <Label Style="{StaticResource @LabelStyle}" Content="Subject: *" Margin="0,6,0,0"  />
                         <Actions:UCValueExpression x:Name="SubjectTextBox" ToolTip="Subject"/>
 
                         <DockPanel Margin="0,6,0,0" >
