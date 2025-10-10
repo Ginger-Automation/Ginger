@@ -229,6 +229,12 @@ namespace Amdocs.Ginger.Common.External.Configurations
 
         public override string GetNameForFileName() { return Name; }
 
+        public bool IsGingerPlayGateWayConfigured()
+        {
+            return GingerPlayEnabled &&
+                   !string.IsNullOrEmpty(GingerPlayGatewayUrl);
+        }
+
         public bool IsGingerPlayConfigured()
         {
             return GingerPlayEnabled &&

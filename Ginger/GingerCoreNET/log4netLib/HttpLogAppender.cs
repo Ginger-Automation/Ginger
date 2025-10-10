@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2025 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.CoreNET.External.GingerPlay;
@@ -44,6 +62,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 {
                     _apiUrl = value;
                     _accountReportApiHandler = string.IsNullOrWhiteSpace(_apiUrl) ? null : new AccountReportApiHandler(_apiUrl);
+                    _apiUrl = $"{value}{GingerPlayEndPointManager.GetAccountReportServiceGateWay()}"; //Final Url with gateway
                 }
             }
         }
@@ -62,7 +81,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
         {
             if (!int.TryParse(BatchSize, out var result) || result <= 0)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Invalid BatchSize configuration, defaulting to 20");
+                Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Invalid BatchSize configuration, defaulting to 20");
                 result = 20;
             }
             return result;
@@ -98,17 +117,17 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             // Validate configuration
             if (string.IsNullOrEmpty(BatchSize) || !int.TryParse(BatchSize, out _))
             {
-                Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Invalid BatchSize configuration, using default 20");
+                Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Invalid BatchSize configuration, using default 20");
                 BatchSize = "20";
             }
             if (string.IsNullOrEmpty(FlushIntervalSeconds) || !int.TryParse(FlushIntervalSeconds, out _))
             {
-                Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Invalid FlushIntervalSeconds configuration, using default 5");
+                Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Invalid FlushIntervalSeconds configuration, using default 5");
                 FlushIntervalSeconds = "5";
             }
             if (string.IsNullOrEmpty(MaxRetryDelaySeconds) || !int.TryParse(MaxRetryDelaySeconds, out _))
             {
-                Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Invalid MaxRetryDelaySeconds configuration, using default 60");
+                Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Invalid MaxRetryDelaySeconds configuration, using default 60");
                 MaxRetryDelaySeconds = "60";
             }
             _cts = new CancellationTokenSource();
@@ -155,24 +174,61 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
 
         protected override void Append(LoggingEvent loggingEvent)
         {
-            // Assume 'originalEvent' is your LoggingEvent instance
-            var newEvent = new LoggingEvent(loggingEvent.GetLoggingEventData());
-
-            // Create a snapshot of the Properties collection
-            var propertiesSnapshot = new Dictionary<string, object>();
-            foreach (System.Collections.DictionaryEntry entry in loggingEvent.Properties)
+            try
             {
-                string key = entry.Key.ToString();
-                propertiesSnapshot[key] = entry.Value;
-            }
+                LoggingEvent newEvent;
 
-            // Copy custom properties from the snapshot
-            foreach (var kvp in propertiesSnapshot)
-            {
-                newEvent.Properties[kvp.Key] = kvp.Value;
+                // If there's an exception, use the constructor that accepts the exception
+                if (loggingEvent.ExceptionObject != null)
+                {
+                    newEvent = new LoggingEvent(
+                       typeof(LoggingEvent),
+                        loggingEvent.Repository,
+                        loggingEvent.LoggerName,
+                        loggingEvent.Level,
+                        loggingEvent.MessageObject,
+                        loggingEvent.ExceptionObject  // Pass the exception directly
+                    );
+                }
+                else
+                {
+                    // Use the existing approach for events without exceptions
+                    var loggingData = loggingEvent.GetLoggingEventData();
+                    newEvent = new LoggingEvent(loggingData);
+                }
+
+                // Create a snapshot of the Properties collection to avoid collection modification exceptions
+                var propertiesSnapshot = new Dictionary<string, object>();
+                foreach (System.Collections.DictionaryEntry entry in loggingEvent.Properties)
+                {
+                    string key = entry.Key.ToString();
+                    propertiesSnapshot[key] = entry.Value;
+                }
+
+                // Copy custom properties from the snapshot
+                foreach (var kvp in propertiesSnapshot)
+                {
+                    newEvent.Properties[kvp.Key] = kvp.Value;
+                }
+
+                // Add to queue for async processing
+                if (!_disposed && !_queue.IsAddingCompleted)
+                {
+                    try
+                    {
+                        _queue.Add(newEvent);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // Queue is completed for adding, ignore
+                    }
+                }
             }
-            // clone so async worker has its own copy
-            _queue.Add(newEvent);
+            catch (Exception ex)
+            {
+                // Log the error but don't break the logging chain
+                Reporter.ToLog(eLogLevel.DEBUG, $"[HttpLogAppender] Error in Append: {ex.Message}");
+            }
         }
 
 
@@ -209,7 +265,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
 
                                     logDataBuilder.Append($"{Environment.NewLine}Exception Details:{Environment.NewLine}{excFullInfo}");
                                 }
-                                logDataBuilder.Append($"{Environment.NewLine}{Environment.NewLine}");
+                                logDataBuilder.Append($"{Environment.NewLine}");
                             }
                             string LogData = logDataBuilder.ToString();
                             if (AccountReportApiHandler != null)
@@ -226,7 +282,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                     }
                                     else
                                     {
-                                        Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Failed to send logs, will retry.");
+                                        Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send logs, will retry.");
                                         await Task.Delay(TimeSpan.FromSeconds(retryDelay), token);
                                         retryDelay = Math.Min(retryDelay * 2, int.Parse(MaxRetryDelaySeconds));
                                     }
@@ -237,13 +293,13 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                     if (exceptionCount > 3)
                                     {
                                         // after 3 exceptions give up and drop the logs
-                                        Reporter.ToLog(eLogLevel.ERROR, "[HttpLogAppender] Failed to send logs after 3 attempts, dropping logs.", ex);
+                                        Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send logs after 3 attempts, dropping logs.", ex);
                                         buffer.Clear();
                                         retryDelay = 1;
                                     }
                                     else
                                     {
-                                        Reporter.ToLog(eLogLevel.ERROR, $"[HttpLogAppender] Exception occurred while sending logs. Will retry.", ex);
+                                        Reporter.ToLog(eLogLevel.DEBUG, $"[HttpLogAppender] Exception occurred while sending logs. Will retry.", ex);
                                         await Task.Delay(TimeSpan.FromSeconds(retryDelay), token);
                                         retryDelay = Math.Min(retryDelay * 2, int.Parse(MaxRetryDelaySeconds));
                                     }
@@ -251,14 +307,14 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                             }
                             else
                             {
-                                Console.WriteLine("[HttpLogAppender] AccountReportApiHandler or ApiUrl is not set. Cannot send logs.");
+                                Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] AccountReportApiHandler or ApiUrl is not set. Cannot send logs.");
                             }
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[HttpLogAppender] Failed to send logs: {ex.Message}");
+                    Reporter.ToLog(eLogLevel.DEBUG, $"[HttpLogAppender] Failed to send logs: {ex.Message}");
                     await Task.Delay(TimeSpan.FromSeconds(retryDelay), token);
                     retryDelay = Math.Min(retryDelay * 2, int.Parse(MaxRetryDelaySeconds));
                 }
