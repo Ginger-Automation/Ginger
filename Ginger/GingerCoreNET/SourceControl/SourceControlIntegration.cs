@@ -673,7 +673,7 @@ namespace Ginger.SourceControl
                 }
 
                 if (!sol.ExistInLocaly && Directory.Exists(SolutionFolder) && Directory.GetFileSystemEntries(SolutionFolder).Length > 0
-                     && SolutionFolder.StartsWith(General.DefaultGingerReposFolder) && WorkSpace.Instance.RunningInExecutionMode)
+                     && SolutionFolder.StartsWith(General.DefaultGingerReposFolder, StringComparison.OrdinalIgnoreCase) && WorkSpace.Instance.RunningInExecutionMode)
                 {
                     CleanSolutionFolder(SolutionFolder, mSourceControl);
                 }
@@ -698,11 +698,11 @@ namespace Ginger.SourceControl
                         return TargetFrameworkHelper.Helper.GetLatest(sol.LocalFolder, mSourceControl, progressNotifier);
                     }
                     catch (Exception ex) when (ex.Message.Contains("doesn't point at a valid Git repository or workdir", StringComparison.InvariantCultureIgnoreCase)
-                            && SolutionFolder.StartsWith(General.DefaultGingerReposFolder)
+                            && SolutionFolder.StartsWith(General.DefaultGingerReposFolder, StringComparison.OrdinalIgnoreCase)
                             && WorkSpace.Instance.RunningInExecutionMode)
                     {
                         Reporter.ToLog(eLogLevel.WARN, $"The local repository {SolutionFolder} is corrupted. Attempting to clean the folder and retry pulling the repository.");
-                        
+
                         CleanSolutionFolder(SolutionFolder, mSourceControl);
 
                         return SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, projectURI, progressNotifier);
@@ -738,16 +738,10 @@ namespace Ginger.SourceControl
                             General.ClearDirectoryContent(SolutionFolder);
                             break;
                         }
-                        catch (IOException ioEx) when (attempts < 2)
+                        catch (Exception ex) when ((ex is IOException || ex is UnauthorizedAccessException) && attempts < 2)
                         {
                             attempts++;
-                            Reporter.ToLog(eLogLevel.WARN, $"Retry {attempts} clearing corrupted repository folder due to IO error: {ioEx.Message}");
-                            System.Threading.Thread.Sleep(300 * attempts);
-                        }
-                        catch (UnauthorizedAccessException uaEx) when (attempts < 2)
-                        {
-                            attempts++;
-                            Reporter.ToLog(eLogLevel.WARN, $"Retry {attempts} clearing corrupted repository folder due to access error: {uaEx.Message}");
+                            Reporter.ToLog(eLogLevel.WARN, $"Retry {attempts} clearing corrupted repository folder due to {ex.GetType().Name}: {ex.Message}");
                             System.Threading.Thread.Sleep(300 * attempts);
                         }
                     }
