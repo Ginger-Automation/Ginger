@@ -1566,6 +1566,9 @@ namespace Amdocs.Ginger.CoreNET
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceOSType:
                         act.AddOrUpdateReturnParamActual("Os Type", GetDeviceOSType());
                         break;
+                    case ActMobileDevice.eMobileDeviceAction.SetDeviceLocation:
+                        SetDeviceLocation(act);
+                        break;
 
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
@@ -5404,7 +5407,7 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                     IOSDriver => ((IOSDriver)Driver).Location,
                     _ => throw new InvalidOperationException("Unsupported driver type")
                 };
-                act.AddOrUpdateReturnParamActual("Latitude", location.Latitude.ToString());
+                act.AddOrUpdateReturnParamActual("Latitude",  location.Latitude.ToString());
                 act.AddOrUpdateReturnParamActual("longitude", location.Longitude.ToString());
                 act.AddOrUpdateReturnParamActual("Altitude", location.Altitude.ToString());
             }
@@ -5485,6 +5488,44 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                 throw new InvalidOperationException("Unsupported driver type");
             }
         }
+
+        public void SetDeviceLocation(ActMobileDevice act)
+        {
+            if (string.IsNullOrEmpty(act.Latitude.ValueForDriver))
+            {
+                throw new ArgumentException("latitude cannot be null or empty", nameof(act.Latitude.ValueForDriver));
+            }
+
+            if (string.IsNullOrEmpty(act.Longitude.ValueForDriver))
+            {
+                throw new ArgumentException("longitude cannot be null or empty", nameof(act.Longitude.ValueForDriver));
+            }
+
+            if (act == null)
+            {
+                throw new ArgumentNullException(nameof(act), "ActMobileDevice cannot be null");
+            }
+            try
+            {
+                var location = new Location();
+                location.Latitude = Convert.ToDouble(act.Latitude.ValueForDriver);
+                location.Longitude = Convert.ToDouble(act.Longitude.ValueForDriver);
+                location.Altitude = Convert.ToDouble(act.Altitude.ValueForDriver);
+                if (Driver is AndroidDriver)
+                {
+                    ((AndroidDriver)Driver).Location = location;
+                }
+                else
+                {
+                    ((IOSDriver)Driver).Location = location;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to retrieve performance data: {ex.Message}", ex);
+            }
+        }
+
     }
 
 }
