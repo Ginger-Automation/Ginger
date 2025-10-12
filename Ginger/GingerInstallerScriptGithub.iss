@@ -30,6 +30,7 @@ UninstallDisplayName= {#MyAppName}
 Compression=lzma
 SolidCompression=yes
 UsePreviousTasks=no
+
 DisableReadyPage=no
 DisableReadyMemo=no
 AlwaysShowGroupOnReadyPage=yes
@@ -433,4 +434,4 @@ Begin
 end;
 
 [UninstallRun]
-Filename: "D:\a\Ginger\Ginger\Ginger\RemoveGingerExe.bat"; Parameters: "/silent"; Check: ShouldRemoveUserData
+Filename: "D:\a\Ginger\Ginger\Ginger\RemoveGingerExe.bat"; Parameters: "/silent";  
