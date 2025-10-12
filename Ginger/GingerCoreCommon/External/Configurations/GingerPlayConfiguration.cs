@@ -243,5 +243,12 @@ namespace Amdocs.Ginger.Common.External.Configurations
                    !string.IsNullOrEmpty(GingerPlayClientSecret);
         }
 
+        //for clearing the backward compatibility values when user will have the gateway url configured
+        public void ClearBackwardCompatibilityValues()
+        {
+            CentralizedAccountReportURL = string.Empty;
+            CentralizedHTMLReportServiceURL = string.Empty;
+            CentralizedExecutionHandlerURL = string.Empty;
+        }
     }
 }

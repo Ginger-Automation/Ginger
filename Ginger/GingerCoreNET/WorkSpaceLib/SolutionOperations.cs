@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
@@ -366,7 +367,7 @@ namespace Ginger.SolutionGeneral
 
         public void CleanUpCacheDirectory()
         {
-            Type[] repositoryItemTypes = [typeof(RunSetConfig), typeof(BusinessFlow)];
+            Type[] repositoryItemTypes = [typeof(RunSetConfig), typeof(BusinessFlow),typeof(GingerPlayConfiguration)];
             foreach (Type repositoryItemType in repositoryItemTypes)
             {
                 string rootFolderPath = WorkSpace.Instance.SolutionRepository.GetSolutionRepositoryItemInfo(repositoryItemType).ItemRootRepositoryFolder.FolderFullPath;

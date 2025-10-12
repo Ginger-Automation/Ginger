@@ -77,7 +77,7 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
 
         public static string GetAccountReportServiceUrlByGateWay()
         {
-            if (!string.IsNullOrEmpty(GingerPlayConfiguration?.GingerPlayGatewayUrl) && GingerPlayConfiguration.GingerPlayReportServiceEnabled)
+            if (!string.IsNullOrEmpty(GingerPlayConfiguration?.GingerPlayGatewayUrl) && GingerPlayConfiguration.GingerPlayReportServiceEnabled && GingerPlayConfiguration.GingerPlayEnabled)
             {
                 return GingerPlayConfiguration.GingerPlayGatewayUrl + ACCOUNT_REPORT_SERVICE_URL;
             }
@@ -97,11 +97,11 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                 {
                     return GetAccountReportServiceUrlByGateWay();
                 }
-                else if (!string.IsNullOrEmpty(GingerPlayConfiguration?.CentralizedAccountReportURL))
+                else if (!string.IsNullOrEmpty(GingerPlayConfiguration?.CentralizedAccountReportURL)  && GingerPlayConfiguration.GingerPlayEnabled)
                 {
                     return GingerPlayConfiguration.CentralizedAccountReportURL;
                 }
-                else if (!string.IsNullOrEmpty(WorkSpace.Instance?.Solution?.LoggerConfigurations?.GetCentralLoggerEndPointURLBackwardCompatibility()))
+                else if (!string.IsNullOrEmpty(WorkSpace.Instance?.Solution?.LoggerConfigurations?.GetCentralLoggerEndPointURLBackwardCompatibility()) && GingerPlayConfiguration.GingerPlayEnabled)
                 {
                     // If the Central Logger URL is set, use it as the Account Report Service URL
                     GingerPlayConfiguration.CentralizedAccountReportURL = WorkSpace.Instance?.Solution?.LoggerConfigurations?.GetCentralLoggerEndPointURLBackwardCompatibility();
@@ -129,7 +129,7 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
         {
             try
             {
-                if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl) && GingerPlayConfiguration.GingerPlayReportServiceEnabled)
+                if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl) && GingerPlayConfiguration.GingerPlayReportServiceEnabled && GingerPlayConfiguration.GingerPlayEnabled)
                 {
                     return GingerPlayConfiguration.GingerPlayGatewayUrl + ACCOUNT_REPORT_SERVICE_URL;
                 }
@@ -163,7 +163,7 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
         {
             try
             {
-                if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl) && GingerPlayConfiguration.GingerPlayAIServiceEnabled)
+                if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl) && GingerPlayConfiguration.GingerPlayAIServiceEnabled && GingerPlayConfiguration.GingerPlayEnabled)
                 {
                     return GingerPlayConfiguration.GingerPlayGatewayUrl + AI_SERVICE_URL;
                 }
@@ -186,7 +186,7 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
         {
             try
             {
-                if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl) && GingerPlayConfiguration.GingerPlayExecutionServiceEnabled)
+                if (!string.IsNullOrEmpty(GingerPlayConfiguration.GingerPlayGatewayUrl) && GingerPlayConfiguration.GingerPlayExecutionServiceEnabled && GingerPlayConfiguration.GingerPlayEnabled)
                 {
                     return GingerPlayConfiguration.GingerPlayGatewayUrl + EXECUTION_SERVICE;
                 }
