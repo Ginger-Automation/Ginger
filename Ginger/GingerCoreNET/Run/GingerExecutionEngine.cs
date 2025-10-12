@@ -939,6 +939,18 @@ namespace Ginger.Run
                             mappedValue = string.IsNullOrEmpty(var.Value) ? string.Empty : var.Value;
                         }
                     }
+                    else if (inputVar.MappedOutputType == VariableBase.eOutputType.Value)
+                    {
+                        if (outputVariables == null)
+                        {
+                            outputVariables = GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, CurrentBusinessFlow, includeGlobalVars: false, includePrevRunnersVars: true);
+                        }
+                        VariableBase outputVar = outputVariables.Find(x => x.VariableInstanceInfo == inputVar.MappedOutputValue);
+                        if (inputVar != null)
+                        {
+                            mappedValue = inputVar.MappedOutputValue;
+                        }
+                    }
                     else if (inputVar.MappedOutputType == VariableBase.eOutputType.OutputVariable)
                     {
                         if (outputVariables == null)

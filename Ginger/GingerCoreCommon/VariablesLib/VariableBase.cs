@@ -80,7 +80,8 @@ namespace GingerCore.Variables
             ApplicationModelParameter,
             DataSource,
             ActivityOutputVariable,
-            ValueExpression
+            ValueExpression,
+            Value
         }
 
         private bool mSetAsInputValue = true;
@@ -156,11 +157,74 @@ namespace GingerCore.Variables
         public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(nameof(Description)); } } }
 
         private string mValue;
-        public virtual string Value { get { return mValue; } set { if (mValue != value) { mValue = value; OnPropertyChanged(nameof(Value)); } } }
+        public virtual string Value { get { return mValue; } set { if (mValue != value) { mValue = value; OnPropertyChanged(nameof(Value)); OnPropertyChanged(nameof(CurrentEffectiveValue)); } } }
 
+        /// <summary>
+        /// Gets the effective current value that should be displayed - either the mapped value if it's a "Value" type mapping, or the regular value
+        /// </summary>
+        public string CurrentEffectiveValue
+        {
+            get
+            {
+                // If there's a "Value" type mapping with a value, return the mapped value
+                // This is what the user should see as the current value during configuration
+                if (MappedOutputType == eOutputType.Value && !string.IsNullOrEmpty(MappedOutputValue))
+                {
+                    return MappedOutputValue;
+                }
+                // Otherwise return the regular value
+                return Value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the initial value of the variable as a property for data binding
+        /// </summary>
+        public string InitialValue
+        {
+            get
+            {
+                return GetInitialValue();
+            }
+        }
 
         public override void PostDeserialization()
         {
+            // Handle backward compatibility for old runset XML files
+            // Convert variables with DiffrentFromOrigin=true and MappedOutputType=None to new "Value" mapping format
+            if (DiffrentFromOrigin && MappedOutputType == eOutputType.None)
+            {
+                string sourceValue = null;
+                
+                // For VariablePasswordString, check the Password property
+                if (this is VariablePasswordString passwordVar && !string.IsNullOrEmpty(passwordVar.Password))
+                {
+                    sourceValue = passwordVar.Password;
+                }
+                // For other variable types, check the Value property
+                else if (!string.IsNullOrEmpty(Value))
+                {
+                    sourceValue = Value;
+                }
+                
+                // Convert old format to new format if we have a source value
+                if (!string.IsNullOrEmpty(sourceValue))
+                {
+                    MappedOutputType = eOutputType.Value;
+                    MappedOutputValue = sourceValue;
+                    
+                    // Log the conversion for debugging purposes
+                    try
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Converted variable '{Name}' from old format (DiffrentFromOrigin=True, MappedOutputType=None) to new format (MappedOutputType=Value, MappedOutputValue='{MappedOutputValue}')");
+                    }
+                    catch
+                    {
+                        // Ignore logging errors during deserialization
+                    }
+                }
+            }
+            
             ResetValue();
         }
 
@@ -607,7 +671,19 @@ namespace GingerCore.Variables
 
         private eOutputType mMappedOutputType;
         [IsSerializedForLocalRepository]
-        public eOutputType MappedOutputType { get { return mMappedOutputType; } set { if (mMappedOutputType != value) { mMappedOutputType = value; OnPropertyChanged(nameof(MappedOutputType)); } } }
+        public eOutputType MappedOutputType 
+        { 
+            get { return mMappedOutputType; } 
+            set 
+            { 
+                if (mMappedOutputType != value) 
+                { 
+                    mMappedOutputType = value; 
+                    OnPropertyChanged(nameof(MappedOutputType)); 
+                    OnPropertyChanged(nameof(CurrentEffectiveValue));
+                } 
+            } 
+        }
 
         private string mMappedOutputValue;
         [IsSerializedForLocalRepository]
@@ -623,6 +699,7 @@ namespace GingerCore.Variables
                 {
                     mMappedOutputValue = value;
                     OnPropertyChanged(nameof(MappedOutputValue));
+                    OnPropertyChanged(nameof(CurrentEffectiveValue));
                 }
                 if (String.IsNullOrEmpty(value) == false || VarValChanged == true)
                     DiffrentFromOrigin = true;

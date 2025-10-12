@@ -291,6 +291,35 @@ namespace Ginger.Run
             //keep original description values
             VariableBase originalCopy = (VariableBase)originalVar.CreateCopy(false);
 
+            // Handle backward compatibility for old runset XML files before any other processing
+            if (customizedVar.DiffrentFromOrigin && customizedVar.MappedOutputType == VariableBase.eOutputType.None)
+            {
+                string sourceValue = null;
+                
+                // For VariablePasswordString, check the Password property
+                if (customizedVar is VariablePasswordString passwordVar && !string.IsNullOrEmpty(passwordVar.Password))
+                {
+                    sourceValue = passwordVar.Password;
+                }
+                // For other variable types, check the Value property  
+                else if (!string.IsNullOrEmpty(customizedVar.Value))
+                {
+                    sourceValue = customizedVar.Value;
+                }
+                
+                // Convert old format to new format if we have a source value
+                if (!string.IsNullOrEmpty(sourceValue))
+                {
+                    customizedVar.MappedOutputType = VariableBase.eOutputType.Value;
+                    customizedVar.MappedOutputValue = sourceValue;
+                    
+                    Reporter.ToLog(eLogLevel.DEBUG, $"RunsetExecutor: Converted variable '{customizedVar.Name}' from old format during CopyCustomizedVariableConfigurations");
+                }
+            }
+
+            // Store the original initial value before any mapping
+            string preservedInitialValue = originalVar.GetInitialValue();
+
             //ovveride original variable configurations with user customizations
             string varType = customizedVar.GetType().Name;
             bool skipType = false;
@@ -303,13 +332,27 @@ namespace Ginger.Run
 
             originalVar.DiffrentFromOrigin = customizedVar.DiffrentFromOrigin;
             originalVar.MappedOutputVariable = customizedVar.MappedOutputVariable;
-
+            originalVar.MappedOutputType = customizedVar.MappedOutputType;
+            originalVar.MappedOutputValue = customizedVar.MappedOutputValue;
 
             //Fix for Empty variable are not being saved in Run Configuration (when variable has value in BusinessFlow but is changed to empty in RunSet)
             if (customizedVar.DiffrentFromOrigin && string.IsNullOrEmpty(customizedVar.MappedOutputVariable))
             {
                 originalVar.Value = customizedVar.Value;
             }
+
+            // Handle "Value" mapping type - copy the mapped value to the current value
+            if (customizedVar.MappedOutputType == VariableBase.eOutputType.Value && !string.IsNullOrEmpty(customizedVar.MappedOutputValue))
+            {
+                // Only set the current value to the mapped value for immediate effect
+                // DO NOT call SetInitialValue as this would change the variable's initial value permanently
+                originalVar.Value = customizedVar.MappedOutputValue;
+                // Ensure the variable is marked as different from origin
+                originalVar.DiffrentFromOrigin = true;
+            }
+
+            // Restore the original initial value to ensure it's not changed by mapping
+            originalVar.SetInitialValue(preservedInitialValue);
 
             //Restore original description values
             originalVar.Name = originalCopy.Name;
