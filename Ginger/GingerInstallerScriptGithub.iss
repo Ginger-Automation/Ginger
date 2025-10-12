@@ -431,3 +431,6 @@ Begin
        Wizardform.ReadyMemo.Lines.Add('Terminology Type:'#13#10'      "' + _strTerminologyType + '"');
     end;
 end;
+
+[UninstallRun]
+Filename: "D:\a\Ginger\Ginger\Ginger\RemoveGingerExe.bat"; Parameters: "/silent"; Check: ShouldRemoveUserData
