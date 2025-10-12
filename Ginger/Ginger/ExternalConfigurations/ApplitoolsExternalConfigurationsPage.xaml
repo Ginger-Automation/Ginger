@@ -10,95 +10,103 @@
       MinHeight="500" MinWidth="585"
 	Title="Execution Logger Configuration">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" >
         <DockPanel Background="{StaticResource $BackgroundColor_White}">
             <Grid>
-            <Grid.RowDefinitions>
-                    <RowDefinition  Height="30"/>
-                    <RowDefinition  Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                </Grid.RowDefinitions>
-            <usercontrols:ucButton x:Name="xSaveButton" Grid.Row="0" DockPanel.Dock="Top" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" Visibility="Collapsed" HorizontalAlignment="Left" Margin="0,0,0,0"/>
-            <StackPanel Orientation="Horizontal" Grid.Row="0">
-                    <Label Content="Applitools Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
-            </StackPanel>
-                <StackPanel Orientation="Vertical" Grid.Row="1">
-                <Grid Margin="10,10,0,0" x:Name="xVRTGrid" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
-                        <RowDefinition  Height="50"/>
-                        <RowDefinition  Height="0"/>
-                        <RowDefinition  Height="50"/>
-                        <RowDefinition  Height="0"/>
-                        <RowDefinition  Height="0"/>
-                        <RowDefinition  Height="0"/>
-                        <RowDefinition  Height="50"/>
-                        <RowDefinition  Height="0"/>
-                        <RowDefinition  Height="50"/>
-                        <RowDefinition  Height="0"/>
-                        <RowDefinition  Height="50"/>
-                        <RowDefinition  Height="0"/>
-
+                        <RowDefinition  Height="30"/>
+                        <RowDefinition  Height="1*"/>
                     </Grid.RowDefinitions>
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="130"/>
-                        <ColumnDefinition Width="350*"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
-                        <Label x:Name="xAPIURLLabel" Content="API URL:"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>
-                        <Label x:Name="xAPIURLLabelValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
+                    <usercontrols:ucButton x:Name="xSaveButton" Grid.Row="0" DockPanel.Dock="Top" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" Visibility="Collapsed" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+                    <StackPanel Orientation="Horizontal" Grid.Row="0">
+                        <Label Content="Applitools Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
                     </StackPanel>
-                    <Activities:UCValueExpression x:Name="xAPIURLTextBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="VRT API URL" Margin="10,0,0,0"  Width="400"/>
+                    <StackPanel Orientation="Vertical" Grid.Row="1">
+                        <Grid Margin="10,10,0,0" x:Name="xVRTGrid" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition  Height="50"/>
+                                <RowDefinition  Height="0"/>
+                                <RowDefinition  Height="50"/>
+                                <RowDefinition  Height="0"/>
+                                <RowDefinition  Height="0"/>
+                                <RowDefinition  Height="0"/>
+                                <RowDefinition  Height="50"/>
+                                <RowDefinition  Height="0"/>
+                                <RowDefinition  Height="50"/>
+                                <RowDefinition  Height="0"/>
+                                <RowDefinition  Height="50"/>
+                                <RowDefinition  Height="0"/>
 
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
-                        <Label x:Name="xAPIKeyLabel" Content="API Key:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
-                        <Label x:Name="xAPIKeyLabelValidation" Content="*" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
-                    </StackPanel>
-                    <Activities:UCValueExpression x:Name="xAPIKeyTextBox" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="API Key" Margin="10,0,0,0"  Width="400"/>
+                            </Grid.RowDefinitions>
 
-                    
-                </Grid>
-            </StackPanel>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="350*"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
 
-                <StackPanel Orientation="Horizontal" Grid.Row="2" >
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Left Side -->
-                        <Grid Grid.Column="0" >
-                            <StackPanel Margin="0,10,0,0" >
-                                <Expander x:Name="xAboutApplitools" ExpandDirection="Down" Style="{StaticResource $ExpanderStyle}" IsExpanded="True" Width="591">
-                                    <Expander.Header>
-                                        <Label Content="About Applitools" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                                    </Expander.Header>
-                                    <TextBlock x:Name="xApplitoolsInfo" TextWrapping="Wrap" Width="581" Height="250" Padding="10,5,5,5" HorizontalAlignment="Left">
-    <Run Text="Applitools is a leading AI-powered visual testing platform."/>
-    <LineBreak/>
-    <Run Text="It uses advanced image comparison and Visual AI to catch even subtle UI issues across browsers, devices, and screen sizes."/>
-    <LineBreak/>
-    <Run Text="Applitools automatically maintains baselines, highlights differences, and supports collaboration for visual reviews."/>
-    <LineBreak/>
-    <Run Text="With Ginger, Applitools adds enterprise-grade Visual AI testing into functional flows, ensuring consistent, pixel-perfect user experiences."/>
-    <LineBreak/>
-    <Hyperlink NavigateUri="https://applitools.com/" RequestNavigate="Hyperlink_RequestNavigate">
-        <Run Text="Learn more about Applitools"/>
-    </Hyperlink>
-    <LineBreak/>
-    <Hyperlink NavigateUri="https://docs.ginger.amdocs.com/docs/visual-testing-applitools" RequestNavigate="Hyperlink_RequestNavigate">
-        <Run Text="Learn more about how to use Applitools in Ginger"/>
-    </Hyperlink>
-                                    </TextBlock>
-                                </Expander>
+                            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
+                                <Label x:Name="xAPIURLLabel" Content="API URL:"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>
+                                <Label x:Name="xAPIURLLabelValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
                             </StackPanel>
+                            <Activities:UCValueExpression x:Name="xAPIURLTextBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="VRT API URL" Margin="10,0,0,0"  Width="400"/>
+
+                            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
+                                <Label x:Name="xAPIKeyLabel" Content="API Key:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
+                                <Label x:Name="xAPIKeyLabelValidation" Content="*" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
+                            </StackPanel>
+                            <Activities:UCValueExpression x:Name="xAPIKeyTextBox" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="API Key" Margin="10,0,0,0"  Width="400"/>
+
+
                         </Grid>
-                    </Grid>
-                </StackPanel>
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <Border
+     Margin="20"
+     Background="GhostWhite"
+     CornerRadius="10"
+     BorderBrush="#B6E0FE"
+     BorderThickness="1">
+                        <StackPanel Margin="20">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                                <usercontrols:ImageMakerControl Margin="0,0,8,0" Foreground="#2196F3" SetAsFontImageWithSize="20" ImageType="Info"/>
+                                <TextBlock Text="About Applitools" 
+                    FontWeight="Normal" 
+                    FontSize="18"
+                    VerticalAlignment="Center"/>
+                                <usercontrols:ImageMakerControl ImageType="Applitools"  Margin="10,2,0,0"/>
+
+                            </StackPanel>
+                            <Separator Margin="0,10,0,10"/>
+                            <TextBlock TextWrapping="Wrap"
+                Foreground="#333"
+                FontSize="14"
+                Margin="0,0,0,10">
+Applitools is a leading AI-powered visual testing platform.
+It uses advanced image comparison and Visual AI to catch even subtle UI issues across browsers, devices, and screen sizes.
+Applitools automatically maintains baselines, highlights differences, and supports collaboration for visual reviews.
+
+                            </TextBlock>
+
+                            <TextBlock TextWrapping="Wrap" FontWeight="Bold" Text="With Ginger, Applitools adds enterprise-grade Visual AI testing into functional flows, ensuring consistent, pixel-perfect user experiences."/>
+                            <TextBlock Margin="0,10,0,0" FontSize="14">
+<Hyperlink NavigateUri="https://applitools.com/platform-overview" RequestNavigate="Hyperlink_RequestNavigate">
+                               <Run Text="Learn more about Applitools"/>
+                           </Hyperlink></TextBlock>
+                            <TextBlock Margin="0,10,0,0" FontSize="14">
+<Hyperlink NavigateUri="https://ginger-automation.github.io/Ginger-Web-Help/assets/Ginger_By_Amdocs/Integrations/Visual_Testing_using_Applitools.htm" RequestNavigate="Hyperlink_RequestNavigate">
+                               <Run Text="Learn more about how to use Applitools in Ginger"/>
+                           </Hyperlink></TextBlock>
+                        </StackPanel>
+                    </Border>
+                </Grid>
             </Grid>
         </DockPanel>
     </ScrollViewer>

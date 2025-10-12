@@ -10,133 +10,140 @@
       MinHeight="500" MinWidth="585"
 	Title="Execution Logger Configuration">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" >
         <DockPanel Background="{StaticResource $BackgroundColor_White}">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition  Height="30"/>
-                    <RowDefinition  Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                </Grid.RowDefinitions>
-                <usercontrols:ucButton x:Name="xSaveButton" DockPanel.Dock="Top" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" Visibility="Collapsed" HorizontalAlignment="Left" Margin="0,0,0,0"/>
-                <StackPanel Orientation="Horizontal" Grid.Row="0">
-                    <Label Content="Visual Regression Testing(VRT) Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Grid.Row="1">
-                    <Grid Margin="10,10,0,0" x:Name="xVRTGrid" >
-                        <Grid.RowDefinitions>
-                            <RowDefinition  Height="50"/>
-                            <RowDefinition  Height="0"/>
-                            <RowDefinition  Height="50"/>
-                            <RowDefinition  Height="0"/>
-                            <RowDefinition  Height="0"/>
-                            <RowDefinition  Height="0"/>
-                            <RowDefinition  Height="50"/>
-                            <RowDefinition  Height="0"/>
-                            <RowDefinition  Height="50"/>
-                            <RowDefinition  Height="0"/>
-                            <RowDefinition  Height="50"/>
-                            <RowDefinition  Height="0"/>
-                            <RowDefinition  Height="50"/>
-                            <RowDefinition  Height="0"/>
-                            <RowDefinition  Height="50"/>
-                            <RowDefinition  Height="0"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="230"/>
-                            <ColumnDefinition Width="350*"/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
-                            <Label x:Name="xAPIURLLabel" Content="API URL:"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>
-                            <Label x:Name="xAPIURLLabelValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
-                        </StackPanel>
-                        <Activities:UCValueExpression x:Name="xAPIURLTextBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="VRT API URL" Margin="10,0,0,0"  Width="400"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition  Height="30"/>
+                        <RowDefinition  Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <usercontrols:ucButton x:Name="xSaveButton" DockPanel.Dock="Top" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" Visibility="Collapsed" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+                    <StackPanel Orientation="Horizontal" Grid.Row="0">
+                        <Label Content="Visual Regression Testing(VRT) Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Grid.Row="1">
+                        <Grid Margin="10,10,0,0" x:Name="xVRTGrid" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition  Height="50"/>
+                                <RowDefinition  Height="0"/>
+                                <RowDefinition  Height="50"/>
+                                <RowDefinition  Height="0"/>
+                                <RowDefinition  Height="0"/>
+                                <RowDefinition  Height="0"/>
+                                <RowDefinition  Height="50"/>
+                                <RowDefinition  Height="0"/>
+                                <RowDefinition  Height="50"/>
+                                <RowDefinition  Height="0"/>
+                                <RowDefinition  Height="50"/>
+                                <RowDefinition  Height="0"/>
+                                <RowDefinition  Height="50"/>
+                                <RowDefinition  Height="0"/>
+                                <RowDefinition  Height="50"/>
+                                <RowDefinition  Height="0"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="230"/>
+                                <ColumnDefinition Width="350*"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
+                                <Label x:Name="xAPIURLLabel" Content="API URL:"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>
+                                <Label x:Name="xAPIURLLabelValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
+                            </StackPanel>
+                            <Activities:UCValueExpression x:Name="xAPIURLTextBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="VRT API URL" Margin="10,0,0,0"  Width="400"/>
 
-                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
-                            <Label x:Name="xAPIKeyLabel" Content="API Key:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
-                            <Label x:Name="xAPIKeyLabelValidation" Content="*" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
-                        </StackPanel>
-                        <Activities:UCValueExpression x:Name="xAPIKeyTextBox" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="API Key" Margin="10,0,0,0"  Width="400"/>
+                            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
+                                <Label x:Name="xAPIKeyLabel" Content="API Key:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
+                                <Label x:Name="xAPIKeyLabelValidation" Content="*" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
+                            </StackPanel>
+                            <Activities:UCValueExpression x:Name="xAPIKeyTextBox" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="API Key" Margin="10,0,0,0"  Width="400"/>
 
-                        <!--<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="4">
+                            <!--<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="4">
                                 <Label x:Name="xTestNameLabel" Content="TestName:"   Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
                                 <Label x:Name="xTestNameLabelValidation" Content="*"  Style="{StaticResource @InputFieldLabelStyle}"  Foreground="Red" FontWeight="Bold" FontSize="12"/>
                             </StackPanel>
                             <Activities:UCValueExpression x:Name="xTestNameTextBox" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" ToolTip="CiBuildId" Margin="10,0,0,0"  Width="400"/>-->
 
-                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="6">
-                            <Label x:Name="xProjectLabel" Content="Project:"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
-                            <Label x:Name="xProjectLabelValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
-                        </StackPanel>
-                        <Activities:UCValueExpression x:Name="xProjectTextBox" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Project" Margin="10,0,0,0"  Width="400"/>
+                            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="6">
+                                <Label x:Name="xProjectLabel" Content="Project:"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
+                                <Label x:Name="xProjectLabelValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
+                            </StackPanel>
+                            <Activities:UCValueExpression x:Name="xProjectTextBox" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Project" Margin="10,0,0,0"  Width="400"/>
 
-                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="8">
-                            <Label x:Name="xBranchNameLabel" Content="Branch Name:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
-                            <Label x:Name="xBranchNameLabelValidation" Content="*" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
-                        </StackPanel>
-                        <Activities:UCValueExpression x:Name="xBranchNameTextBox" Grid.Column="1" Grid.Row="8" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Branch Name" Margin="10,0,0,0"  Width="400"/>
+                            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="8">
+                                <Label x:Name="xBranchNameLabel" Content="Branch Name:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
+                                <Label x:Name="xBranchNameLabelValidation" Content="*" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
+                            </StackPanel>
+                            <Activities:UCValueExpression x:Name="xBranchNameTextBox" Grid.Column="1" Grid.Row="8" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Branch Name" Margin="10,0,0,0"  Width="400"/>
 
-                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="10">
-                            <Label x:Name="xDifferenceTolerenceLabel" Content="Difference Tolerance %:"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
-                        </StackPanel>
-                        <Activities:UCValueExpression x:Name="xDiffToleranceTextBox" Grid.Column="1" Grid.Row="10" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Difference Tolerance %" Margin="10,0,0,0" Width="400"/>
+                            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="10">
+                                <Label x:Name="xDifferenceTolerenceLabel" Content="Difference Tolerance %:"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
+                            </StackPanel>
+                            <Activities:UCValueExpression x:Name="xDiffToleranceTextBox" Grid.Column="1" Grid.Row="10" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Difference Tolerance %" Margin="10,0,0,0" Width="400"/>
 
-                        <Label  Content="Fail Checkpoint Action on mismatch:" Grid.Row="12" Grid.Column="0"  Style="{StaticResource @LabelStyle}" VerticalAlignment="Center" FontSize="12"></Label>
-                        <StackPanel x:Name="xEnableSoftAssertPanel" Margin="-15,0,0,0" Orientation="Horizontal" ToolTip="Select 'No' to ignore mismatches on checkpoint actions." VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="12" Grid.Column="1">
-                            <UserControlsLib:UCRadioButtons x:Name="xEnableSoftAssertRadioButton" ></UserControlsLib:UCRadioButtons>
-                        </StackPanel>
+                            <Label  Content="Fail Checkpoint Action on mismatch:" Grid.Row="12" Grid.Column="0"  Style="{StaticResource @LabelStyle}" VerticalAlignment="Center" FontSize="12"></Label>
+                            <StackPanel x:Name="xEnableSoftAssertPanel" Margin="-15,0,0,0" Orientation="Horizontal" ToolTip="Select 'No' to ignore mismatches on checkpoint actions." VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="12" Grid.Column="1">
+                                <UserControlsLib:UCRadioButtons x:Name="xEnableSoftAssertRadioButton" ></UserControlsLib:UCRadioButtons>
+                            </StackPanel>
 
-                        <Label  Content="Checkpoint Tags:" Grid.Row="14" Grid.Column="0" ToolTip="Add checked tags on all checkpoint images." Style="{StaticResource @LabelStyle}" VerticalAlignment="Center" FontSize="12"></Label>
-                        <StackPanel Margin="0,0,0,0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="14" Grid.Column="1">
-                            <CheckBox x:Name="xOsCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="OS" ToolTip="Add execution machine OS as tag on checkpoint images."/>
-                            <CheckBox x:Name="xAgentCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Agent" ToolTip="Add agent type as tag on checkpoint images."/>
-                            <CheckBox x:Name="xEnvironmentCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Environment" ToolTip="Add execution Environment as tag on checkpoint images." />
-                            <CheckBox x:Name="xViewportCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Viewport" ToolTip="Add current viewport as tag on checkpoint images." />
-                            <CheckBox x:Name="xActivityTagsCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Activity Tags" ToolTip="Add activity tags as tag on checkpoint images." />
-                        </StackPanel>
-                    </Grid>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Grid.Row="2" >
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                                        <!-- Left Side -->
-                                        <Grid Grid.Column="0" >
-                                            <StackPanel Margin="0,10,0,0" >
-                                                <Expander x:Name="xAboutVRT" ExpandDirection="Down"  Style="{StaticResource $ExpanderStyle}"   IsExpanded="True" Width="591">
-                                                    <Expander.Header>
-                                                        <Label Content="About VRT" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                                                    </Expander.Header>
-                                                    <TextBlock x:Name="xVRTInfo" TextWrapping="Wrap" Width="581" Height="250" Padding="10,5,5,5" HorizontalAlignment="Left">
-                                                        <Run Text="Visual Regression Tracker (VRT) is an open-source tool for automated visual testing."/>
-                                                        <LineBreak/>
-                                                        <Run Text="It compares screenshots from test runs with baselines to instantly detect unexpected UI changes, preventing visual bugs from reaching production."/>
-                                                        <LineBreak/>
-                                                        <Run Text="VRT accepts screenshots from any automation framework via API and supports web, mobile, and desktop apps."/>
-                                                        <LineBreak/>
-                                                        <Run Text="Features like baseline history and ignore regions make reviews faster and more stable."/>
-                                                        <LineBreak/>
-                                                        <Run Text="Integrating VRT with Ginger adds visual testing to functional flows, enabling early detection of UI issues."/>
-                                                        <LineBreak/>
-                                                        <Hyperlink NavigateUri="https://visualregressiontracker.com/" RequestNavigate="Hyperlink_RequestNavigate">
-                                                            <Run Text="Learn more about VRT"/>
-                                                        </Hyperlink>
-                                                        <LineBreak/>
-                                                        <Hyperlink NavigateUri="https://docs.visualregressiontracker.com/integrations/ginger" RequestNavigate="Hyperlink_RequestNavigate">
-                                                            <Run Text="Learn more about how to use VRT in Ginger"/>
-                                                        </Hyperlink>
-                                                    </TextBlock>
-                                                </Expander>
+                            <Label  Content="Checkpoint Tags:" Grid.Row="14" Grid.Column="0" ToolTip="Add checked tags on all checkpoint images." Style="{StaticResource @LabelStyle}" VerticalAlignment="Center" FontSize="12"></Label>
+                            <StackPanel Margin="0,0,0,0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="14" Grid.Column="1">
+                                <CheckBox x:Name="xOsCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="OS" ToolTip="Add execution machine OS as tag on checkpoint images."/>
+                                <CheckBox x:Name="xAgentCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Agent" ToolTip="Add agent type as tag on checkpoint images."/>
+                                <CheckBox x:Name="xEnvironmentCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Environment" ToolTip="Add execution Environment as tag on checkpoint images." />
+                                <CheckBox x:Name="xViewportCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Viewport" ToolTip="Add current viewport as tag on checkpoint images." />
+                                <CheckBox x:Name="xActivityTagsCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Activity Tags" ToolTip="Add activity tags as tag on checkpoint images." />
                             </StackPanel>
                         </Grid>
-                    </Grid>
-                </StackPanel>
+                    </StackPanel>
+
+                </Grid>
+                <Grid Grid.Column="1">
+                    <Border
+     Margin="20"
+     Background="GhostWhite"
+     CornerRadius="10"
+     BorderBrush="#B6E0FE"
+     BorderThickness="1">
+                        <StackPanel Margin="20">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                                <usercontrols:ImageMakerControl Margin="0,0,8,0" Foreground="#2196F3" SetAsFontImageWithSize="20" ImageType="Info"/>
+                                <TextBlock Text="About VRT" 
+                    FontWeight="Normal" 
+                    FontSize="18"
+                    VerticalAlignment="Center"/>
+                                <usercontrols:ImageMakerControl ImageType="VRT" Margin="10,2,0,0"/>
+
+                            </StackPanel>
+                            <Separator Margin="0,10,0,10"/>
+                            <TextBlock TextWrapping="Wrap"
+                Foreground="#333"
+                FontSize="14"
+                Margin="0,0,0,10">
+Visual Regression Tracker (VRT) is an open-source tool for automated visual testing.
+It compares screenshots from test runs with baselines to instantly detect unexpected UI changes, preventing visual bugs from reaching production.
+VRT accepts screenshots from any automation framework via API and supports web, mobile, and desktop apps.
+Features like baseline history and ignore regions make reviews faster and more stable.
+                            </TextBlock>
+
+                            <TextBlock TextWrapping="Wrap" FontWeight="Bold" Text="Integrating VRT with Ginger adds visual testing to functional flows, enabling early detection of UI issues."/>
+                            <TextBlock Margin="0,10,0,0" FontSize="14">
+<Hyperlink NavigateUri="https://github.com/Visual-Regression-Tracker/Visual-Regression-Tracker" RequestNavigate="Hyperlink_RequestNavigate">
+                               <Run Text="Learn more about VRT"/>
+                           </Hyperlink></TextBlock>
+                            <TextBlock Margin="0,10,0,0" FontSize="14">
+<Hyperlink NavigateUri="https://ginger-automation.github.io/Ginger-Web-Help/assets/Ginger_By_Amdocs/Integrations/Visual_Testing_using_VRT.htm" RequestNavigate="Hyperlink_RequestNavigate">
+                               <Run Text="Learn more about how to use VRT in Ginger"/>
+                           </Hyperlink></TextBlock>
+                        </StackPanel>
+                    </Border>
+                </Grid>
             </Grid>
         </DockPanel>
     </ScrollViewer>

@@ -20,8 +20,8 @@
             <!--Main Menu -->
             <Grid Grid.Row="0" Background="{StaticResource $BackgroundColor_Black}" >
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="120"/>
-                    <ColumnDefinition Width="150*"/>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="180*"/>
                     <ColumnDefinition Width="100"/>
                     <ColumnDefinition Width="30"/>
                     <ColumnDefinition Width="*"/>
@@ -37,7 +37,7 @@
                 <DockPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
                     <!--Main Menu- Solution Selection-->
                     <StackPanel x:Name="xSolutionSelectionPnl" Orientation="Horizontal" DockPanel.Dock="Left" >
-                        <TextBlock x:Name="xSolutionNameTextBlock" TextTrimming="CharacterEllipsis" MaxWidth="300"  TextWrapping="NoWrap" Margin="0,0,0,0" Text="Please Load Solution" VerticalAlignment="Center" HorizontalAlignment="Left" FontFamily="Open Sans" FontSize="20" FontWeight="Normal" Foreground="{StaticResource $SelectionColor_Pink}"   ></TextBlock>
+                        <TextBlock x:Name="xSolutionNameTextBlock" TextTrimming="CharacterEllipsis" MaxWidth="120"  TextWrapping="WrapWithOverflow" Margin="0,0,0,0" Text="Please Load Solution" VerticalAlignment="Center" HorizontalAlignment="Left" FontFamily="Open Sans" FontSize="20" FontWeight="Normal" Foreground="{StaticResource $SelectionColor_Pink}"   ></TextBlock>
                         <Menu x:Name="xSolutionSelectionMenu" Background="{StaticResource $BackgroundColor_Black}"  Margin="0,0,0,0" VerticalAlignment="Center" >
                             <MenuItem x:Name="xSolutionSelectionMainMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Solution Selection" Margin="0,0,0,0"  StaysOpenOnClick="True">
                                 <MenuItem.Icon>
@@ -70,7 +70,7 @@
                     <!--Main Menu- Loaded Solution Menu's-->
                     <DockPanel x:Name="xLoadedSolutionMenusPnl" DockPanel.Dock="Left" VerticalAlignment="Center">
                         <!--Main Menu- Solution Tabs-->
-                        <ListView x:Name="xSolutionTabsListView" Background="{StaticResource $BackgroundColor_Black}" BorderBrush="{StaticResource $BackgroundColor_Black}" SelectionChanged="xSolutionTopNavigationListView_SelectionChanged" Margin="10,5,0,0" VerticalAlignment="Center" DockPanel.Dock="Left" SelectionMode="Single" >
+                        <ListView x:Name="xSolutionTabsListView" Background="{StaticResource $BackgroundColor_Black}" BorderBrush="{StaticResource $BackgroundColor_Black}" SelectionChanged="xSolutionTopNavigationListView_SelectionChanged" Margin="-10,5,0,0" VerticalAlignment="Center" DockPanel.Dock="Left" SelectionMode="Single" >
                             <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel Orientation="Horizontal"></StackPanel>
@@ -89,36 +89,52 @@
                             <ListViewItem x:Name="xConfigurationsListItem" Style="{StaticResource $TopListViewItemStyle}">CONFIGURATIONS</ListViewItem>
                             <ListViewItem x:Name="xResourcesListItem" Style="{StaticResource $TopListViewItemStyle}">RESOURCES</ListViewItem>
                         </ListView>
-                        <Border Grid.Column="4" Height="30" CornerRadius="6">
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                        <GradientStop Color="#FF6A00" Offset="0.0"/>
-                                        <GradientStop Color="#FF00FF" Offset="0.5"/>
-                                        <GradientStop Color="#824de6" Offset="1.0"/>
-                                    </LinearGradientBrush>
-                                </Border.Background>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="40"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <!-- Premium Icon (Crown) -->
-                                    <usercontrols:ImageMakerControl ImageType="Crown" Foreground="White" SetAsFontImageWithSize="17" />
-                                    <!-- Unlock Button -->
-                                    <Button Grid.Column="1"
-                Content="Unlock Pro Features with Ginger Play"
-                Foreground="White"
-                Background="Transparent"
-                FontWeight="Bold"
-                FontSize="14"
-                HorizontalAlignment="Right"
-                Padding="-10,0"
-                BorderThickness="0"
-                Cursor="Hand"
-                />
-                                </Grid>
-                            </Border>
-                        
+                        <Border Margin="10,0,0,0" Height="28" CornerRadius="6" Width="95">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#FF6A00" Offset="0.0"/>
+                                    <GradientStop Color="#FF00FF" Offset="0.5"/>
+                                    <GradientStop Color="#824de6" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Grid Margin="16,0,10,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- Premium Icon (Crown) -->
+                                <usercontrols:ImageMakerControl ImageType="Crown" Foreground="White" SetAsFontImageWithSize="15" Margin="-10,2,10,4" RenderTransformOrigin="0.641,1.502" />
+                                <!-- Unlock Button -->
+                                <Button
+Content="Upgrade"
+Foreground="White"
+Background="Transparent"
+FontWeight="Bold"
+FontSize="14"
+HorizontalAlignment="Left"
+ ToolTip="Unlock Pro Features with Ginger Play"
+Padding="-10,0"
+BorderThickness="0"
+Cursor="Hand"
+Click="ProFeatureButtonClick" Margin="-10,0,0,0" Width="99" Grid.ColumnSpan="2" Height="28">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </Grid>
+                        </Border>
+
                         <!--Main Menu- Solution Operations-->
                         <Menu x:Name="xExtraSolutionOperationsMenu" Background="{StaticResource $BackgroundColor_Black}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
                             <MenuItem x:Name="xExtraSolutionOperationsMainMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Extra Solution Operations" StaysOpenOnClick="True">
@@ -197,7 +213,7 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
 
-                                
+
 
                                 <MenuItem Header="View Repository Details" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlRepositoryDetails_Click" ToolTip="Display information about the current source control repository.">
                                     <MenuItem.Icon>
@@ -227,7 +243,7 @@
 
                         <usercontrols:ucButton x:Name="xFindAndReplaceBtn" ButtonType="ImageButton" ToolTip="Find and Replace in Solution"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Search" Click="xFindAndReplaceSolutionButton_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Menu}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,0"/>
 
-                      <Grid DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Grid DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
                             <usercontrols:ucButton x:Name="xSaveAllBtn" ButtonType="ImageButton" ToolTip="Save All" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="SaveAll" Click="xSaveAllBtn_Click" MouseEnter="xSaveAllBtn_MouseEnter" MouseLeave="xSaveAllBtn_MouseLeave" ButtonStyle="{StaticResource $ImageButtonStyle_Menu}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,0"/>
                             <Label x:Name="xModifiedItemsCounter" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Top" FontFamily="OpenSans" Foreground="White" FontSize="12" FontWeight="Bold" Padding="0,0,0,0">
                                 <Label.Content>
