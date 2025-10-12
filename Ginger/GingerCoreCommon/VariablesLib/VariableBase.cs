@@ -190,6 +190,41 @@ namespace GingerCore.Variables
 
         public override void PostDeserialization()
         {
+            // Handle backward compatibility for old runset XML files
+            // Convert variables with DiffrentFromOrigin=true and MappedOutputType=None to new "Value" mapping format
+            if (DiffrentFromOrigin && MappedOutputType == eOutputType.None)
+            {
+                string sourceValue = null;
+                
+                // For VariablePasswordString, check the Password property
+                if (this is VariablePasswordString passwordVar && !string.IsNullOrEmpty(passwordVar.Password))
+                {
+                    sourceValue = passwordVar.Password;
+                }
+                // For other variable types, check the Value property
+                else if (!string.IsNullOrEmpty(Value))
+                {
+                    sourceValue = Value;
+                }
+                
+                // Convert old format to new format if we have a source value
+                if (!string.IsNullOrEmpty(sourceValue))
+                {
+                    MappedOutputType = eOutputType.Value;
+                    MappedOutputValue = sourceValue;
+                    
+                    // Log the conversion for debugging purposes
+                    try
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Converted variable '{Name}' from old format (DiffrentFromOrigin=True, MappedOutputType=None) to new format (MappedOutputType=Value, MappedOutputValue='{MappedOutputValue}')");
+                    }
+                    catch
+                    {
+                        // Ignore logging errors during deserialization
+                    }
+                }
+            }
+            
             ResetValue();
         }
 
