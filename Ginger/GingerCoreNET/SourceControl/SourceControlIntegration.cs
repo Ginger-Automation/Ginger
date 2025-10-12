@@ -672,8 +672,9 @@ namespace Ginger.SourceControl
                     return false;
                 }
 
-                if (!sol.ExistInLocaly && Directory.Exists(SolutionFolder) && Directory.GetFileSystemEntries(SolutionFolder).Length > 0
-                     && SolutionFolder.StartsWith(General.DefaultGingerReposFolder, StringComparison.OrdinalIgnoreCase) && WorkSpace.Instance.RunningInExecutionMode)
+                if (!sol.ExistInLocaly && !string.IsNullOrWhiteSpace(SolutionFolder) && WorkSpace.Instance.RunningInExecutionMode
+                     && SolutionFolder.StartsWith(General.DefaultGingerReposFolder, StringComparison.OrdinalIgnoreCase) &&
+                     Directory.Exists(SolutionFolder) && Directory.GetFileSystemEntries(SolutionFolder).Length > 0)
                 {
                     CleanSolutionFolder(SolutionFolder, mSourceControl);
                 }
@@ -697,9 +698,8 @@ namespace Ginger.SourceControl
                     {
                         return TargetFrameworkHelper.Helper.GetLatest(sol.LocalFolder, mSourceControl, progressNotifier);
                     }
-                    catch (Exception ex) when (ex.Message.Contains("doesn't point at a valid Git repository or workdir", StringComparison.InvariantCultureIgnoreCase)
-                            && SolutionFolder.StartsWith(General.DefaultGingerReposFolder, StringComparison.OrdinalIgnoreCase)
-                            && WorkSpace.Instance.RunningInExecutionMode)
+                    catch (Exception ex) when (WorkSpace.Instance.RunningInExecutionMode && ex.Message.Contains("doesn't point at a valid Git repository or workdir", StringComparison.InvariantCultureIgnoreCase)
+                            && SolutionFolder.StartsWith(General.DefaultGingerReposFolder, StringComparison.OrdinalIgnoreCase))
                     {
                         Reporter.ToLog(eLogLevel.WARN, $"The local repository {SolutionFolder} is corrupted. Attempting to clean the folder and retry pulling the repository.");
 
