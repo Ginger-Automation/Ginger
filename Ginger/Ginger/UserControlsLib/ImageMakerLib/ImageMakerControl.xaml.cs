@@ -217,6 +217,15 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.GingerPlayLogo:
                     SetAsStaticImage("GingerPlayLogo.png");
                     break;
+                case eImageType.GingerPlayGradiantBlack:
+                    SetAsStaticImage("GingerPlayGradiantBlack.png");
+                    break;
+                case eImageType.GingerPlayGradiantWhite:
+                    SetAsStaticImage("GingerPlayGradiantWhite.png");
+                    break;
+                case eImageType.GingerPlayWhiteGradiant:
+                    SetAsStaticImage("GingerPlayWhiteGradiant.png");
+                    break;
                 case eImageType.ZAP:
                     SetAsStaticImage("ZAPLogo.png");
                     break;
@@ -1024,6 +1033,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.AngleArrowDown:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleDown);
+                    break;
+                case eImageType.Crown:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Crown);
                     break;
                 case eImageType.AngleArrowLeft:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleLeft);

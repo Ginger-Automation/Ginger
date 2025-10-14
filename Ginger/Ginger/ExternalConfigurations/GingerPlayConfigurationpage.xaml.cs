@@ -24,10 +24,13 @@ using Ginger.UserControlsLib;
 using Ginger.ValidationRules;
 using GingerCore;
 using GingerCore.GeneralLib;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Ginger.ExternalConfigurations
 {
@@ -243,6 +246,113 @@ namespace Ginger.ExternalConfigurations
                 xClientSecretTextBox.ValueTextBox.Text = ValueExpression.IsThisAValueExpression(xClientSecretTextBox.ValueTextBox.Text) ? xClientSecretTextBox.ValueTextBox.Text : EncryptionHandler.EncryptwithKey(xClientSecretTextBox.ValueTextBox.Text);
             }
         }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            e.Handled = true;
+        }
+
+        private string IsGingerPlayGatewayURLConfigured()
+        {
+            try
+            {
+                GingerPlayConfiguration gpConfig = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+                if (gpConfig != null && !string.IsNullOrEmpty(gpConfig.GingerPlayGatewayUrl))
+                {
+                    return gpConfig.GingerPlayGatewayUrl;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Gateway URL is null or no configuration found", ex);
+                return string.Empty;
+            }
+        }
+        private void GingerPlayLearnMore_Click(object sender, RoutedEventArgs e)
+        {
+            string gatewayUrl = IsGingerPlayGatewayURLConfigured();
+            if (!string.IsNullOrEmpty(gatewayUrl))
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = gatewayUrl + "gingerplay/#/playHome",
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to open the link: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                // Show the banner window if the gateway URL is not configured
+                ShowGingerPlayBannerWindow();
+            }
+        }
+
+        private void ShowGingerPlayBannerWindow()
+        {
+            var imageUri = new Uri("pack://application:,,,/Ginger;component/UserControlsLib/ImageMakerLib/Images/GingerPlayDetailsPopUpContent.png", UriKind.Absolute);
+
+            var image = new System.Windows.Controls.Image
+            {
+                Source = new System.Windows.Media.Imaging.BitmapImage(imageUri),
+                Stretch = Stretch.Uniform,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Cursor = System.Windows.Input.Cursors.Hand
+            };
+
+            var viewbox = new Viewbox
+            {
+                Stretch = Stretch.Uniform,
+                Child = image
+            };
+
+            var border = new Border
+            {
+                Child = viewbox,
+                Background = Brushes.Transparent
+            };
+
+            border.MouseLeftButtonUp += (_, args) =>
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "https://www.amdocs.com/products-services/quality-engineering-services",
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to open the link: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            };
+
+            Window bannerWindow = new Window
+            {
+                Title = "Get to know Ginger Play",
+                Width = 900,
+                Height = 700,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                ResizeMode = ResizeMode.NoResize,
+                WindowStyle = WindowStyle.ThreeDBorderWindow,
+                ShowInTaskbar = false,
+                Content = border,
+                SizeToContent = SizeToContent.Manual,
+            };
+
+            bannerWindow.ShowDialog();
+        }
+
     }
 }
 
