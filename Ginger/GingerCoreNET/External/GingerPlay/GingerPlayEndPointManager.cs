@@ -49,29 +49,18 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
 
 
 
-        private static readonly object _lock = new();
         private static GingerPlayConfiguration _gingerPlayConfiguration;
-
         private static GingerPlayConfiguration GingerPlayConfiguration
         {
             get
             {
-                if (_gingerPlayConfiguration == null)
+                if (_gingerPlayConfiguration == null && WorkSpace.Instance?.SolutionRepository != null)
                 {
-                    lock (_lock)
-                    {
-                        if (_gingerPlayConfiguration == null)
-                        {
-                            if (WorkSpace.Instance?.SolutionRepository != null)
-                            {
-                                _gingerPlayConfiguration =
-                                    WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>()
-                                    ?? new GingerPlayConfiguration();
-                            }
-                        }
-                    }
+                    _gingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count == 0
+                        ? new GingerPlayConfiguration()
+                        : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
                 }
-                return _gingerPlayConfiguration;
+                return _gingerPlayConfiguration ?? new GingerPlayConfiguration();
             }
         }
 
