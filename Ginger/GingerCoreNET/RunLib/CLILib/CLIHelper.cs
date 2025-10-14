@@ -36,6 +36,7 @@ using Ginger.Run;
 using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.Environments;
+using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
@@ -439,7 +440,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
             if (mRunSetConfig.ReRunConfigurations.ReferenceExecutionID != null)
             {
-                if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes
+                if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayConfigured()
                     && !string.IsNullOrEmpty(GingerPlayEndPointManager.GetAccountReportServiceUrl()))
                 {
                     AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(GingerPlayEndPointManager.GetAccountReportServiceUrl());
@@ -991,5 +992,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
             _disposed = true;
         }
+
     }
 }

@@ -19,6 +19,7 @@ limitations under the License.
 //# Status=Cleaned; Comment=Cleaned on 05/11/18
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.ALM;
@@ -27,6 +28,7 @@ using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.GeneralLib;
+using GingerCoreNET.GeneralLib;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -106,7 +108,7 @@ namespace Ginger.Run
                     ExportReportLinkChkbx.IsEnabled = false;
                     ExportReportLinkChkbx.IsChecked = false;
                 }
-                else if (_executionLogger.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
+                else if (_executionLogger.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayConfigured())
                 {
                     ExportReportLinkChkbx.IsEnabled = true;
                 }
