@@ -250,7 +250,7 @@ namespace Ginger.GeneralWindows
                     return gingerPlayConfiguration.GingerPlayGatewayUrl;
                 }
 
-                return string.Empty; ;
+                return string.Empty;
             }
             catch (Exception ex)
             {
