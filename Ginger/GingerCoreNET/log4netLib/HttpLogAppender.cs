@@ -35,6 +35,7 @@ using System.Text.RegularExpressions;
 using AccountReport.Contracts.RequestModels;
 using AccountReport.Contracts;
 using AccountReport.Contracts.Enum;
+using SharpAdbClient.Logs;
 
 namespace Amdocs.Ginger.CoreNET.log4netLib
 {
@@ -279,6 +280,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                 if (Regex.IsMatch(evt.RenderedMessage, @"Running Post-Execution Run Set Operations"))
                                 {
                                     isPostRunSetOperation = true;
+                                    isPreRunSetOperation = false;
                                 }
 
                                 if (Regex.IsMatch(evt.RenderedMessage, @"Run Set Execution Ended"))
@@ -299,7 +301,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                     };
                                     if(ExecutionId != null)
                                     {
-                                        bool Response = await _accountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
+                                        bool Response = await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
                                         if(!Response)
                                         {
                                             Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send Runset Execution data to Central DB.");
@@ -329,14 +331,21 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                 }
                                 else if (isExecutionStarted)
                                 {
-                                    if (Regex.IsMatch(evt.Level.DisplayName, @"^INFO$") && Regex.IsMatch(evt.RenderedMessage, @"Action Execution Ended.*Execution Status= Failed"))
+                                    if (Regex.IsMatch(evt.Level.DisplayName, @"^INFO$") && Regex.IsMatch(evt.RenderedMessage,@"Action Execution Ended.*Execution Status= Failed",RegexOptions.Singleline))
                                     {
+                                        var match = Regex.Match(evt.RenderedMessage, @"SourcePath:\s*(.+?)\)");
+
+                                        if (match.Success)
+                                        {
+                                            string sourcePath = match.Groups[1].Value;
+                                            ExecutionErrorRequests.ErrorOriginPath = sourcePath;
+                                        }
                                         SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted);
                                     }
                                 }
                                 else if (isPreRunSetOperation)
                                 {
-                                    if(Regex.IsMatch(evt.Level.DisplayName,@"^INFO$") && Regex.IsMatch(evt.RenderedMessage, @"Execution Ended for Run Set Operation.*Status= Failed"))
+                                    if(Regex.IsMatch(evt.Level.DisplayName,@"^INFO$") && Regex.IsMatch(evt.RenderedMessage, @"Execution Ended for Run Set Operation.*Status= Failed", RegexOptions.Singleline))
                                     {
                                         ExecutionErrorRequests.ErrorSource = "Operation type Pre";
                                         SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted);
@@ -344,7 +353,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                 }
                                 else if (isPostRunSetOperation)
                                 {
-                                    if (Regex.IsMatch(evt.Level.DisplayName, @"^INFO$") && Regex.IsMatch(evt.RenderedMessage, @"Execution Ended for Run Set Operation.*Status= Failed"))
+                                    if (Regex.IsMatch(evt.Level.DisplayName, @"^INFO$") && Regex.IsMatch(evt.RenderedMessage, @"Execution Ended for Run Set Operation.*Status= Failed", RegexOptions.Singleline))
                                     {
                                         ExecutionErrorRequests.ErrorSource = "Operation type Post";
                                         SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted);
@@ -355,11 +364,10 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                 {
                                     ExecutionErrorRequestsList.Add(ExecutionErrorRequests);
                                 }
-                                
                             }
                             string LogData = logDataBuilder.ToString();
                             string ErrorLogData = errlogDataBuilder.ToString();
-                            if (_accountReportApiHandler != null)
+                            if (AccountReportApiHandler != null)
                             {
                                 int exceptionCount = 0;
                                 try
@@ -371,8 +379,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                     ExecutionLogRequest.InstanceId = InstanceId;
                                     ExecutionLogRequest.ExecutionErrorRequests = ExecutionErrorRequestsList;
 
-
-                                    bool isSuccess = await _accountReportApiHandler.SendExecutionLogToCentralDBAsync(ApiUrl, ExecutionLogRequest);
+                                    bool isSuccess = await AccountReportApiHandler.SendExecutionLogToCentralDBAsync(ApiUrl, ExecutionLogRequest);
                                     if (isSuccess)
                                     {
                                         buffer.Clear();
@@ -424,8 +431,6 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
         {
             ExecutionErrorRequests.ErrorOccurrenceTime = evt.TimeStamp;
             ExecutionErrorRequests.ErrorLevel = isExecutionStarted ? eExecutionErrorLevel.Execution : eExecutionErrorLevel.Setup;
-            ExecutionErrorRequests.ErrorSource = evt.RenderedMessage;
-            ExecutionErrorRequests.ErrorOriginPath = evt.RenderedMessage;
             ExecutionErrorRequests.ErrorMessage = evt.RenderedMessage;
         }
     }

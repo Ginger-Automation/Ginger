@@ -632,9 +632,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
             if (restClient != null && _isRunSetDataSent)
             {
+                executionLogRequest.LogId = LogId;
                 string message = string.Format("execution log to Central DB (API URL:'{0}', Execution Id:'{1}', Instance Id:'{2}', Log Id:'{3}')", apiUrl, executionLogRequest.ExecutionId, executionLogRequest.InstanceId, executionLogRequest.LogId);
                 try
                 {
+                    
                     string FinalAPIUrl = $"{apiUrl.TrimEnd('/')}/{SEND_EXECUTIONLOG}";
                     FinalAPIUrl = FinalAPIUrl.Replace("https://usstlattstl01:9001/ginger-report", "https://localhost:3117");
                     bool IsSuccessful = await SendExecutionLogRestRequestAndGetResponse(FinalAPIUrl, executionLogRequest).ConfigureAwait(false);
