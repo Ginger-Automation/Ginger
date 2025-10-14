@@ -182,6 +182,7 @@ namespace Ginger.ExternalConfigurations
                 else
                 {
                     Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"Service Health Status:\n{summary}");
+                    gingerPlayConfiguration.ClearBackwardCompatibilityValues();
                 }
             }
         }
