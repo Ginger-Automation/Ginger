@@ -672,6 +672,13 @@ namespace Ginger.SourceControl
                     return false;
                 }
 
+                if (!sol.ExistInLocaly && !string.IsNullOrWhiteSpace(SolutionFolder) && WorkSpace.Instance.RunningInExecutionMode
+                     && SolutionFolder.StartsWith(General.DefaultGingerReposFolder, StringComparison.OrdinalIgnoreCase) &&
+                     Directory.Exists(SolutionFolder) && Directory.GetFileSystemEntries(SolutionFolder).Length > 0)
+                {
+                    CleanSolutionFolder(SolutionFolder, mSourceControl);
+                }
+
                 if (sol.ExistInLocaly)
                 {
                     mSourceControl.RepositoryRootFolder = sol.LocalFolder;
@@ -691,49 +698,15 @@ namespace Ginger.SourceControl
                     {
                         return TargetFrameworkHelper.Helper.GetLatest(sol.LocalFolder, mSourceControl, progressNotifier);
                     }
-                    catch (Exception ex) when (ex.Message.Contains("doesn't point at a valid Git repository or workdir", StringComparison.InvariantCultureIgnoreCase)
-                            && SolutionFolder.StartsWith(General.DefaultGingerReposFolder)
-                            && WorkSpace.Instance.RunningInExecutionMode)
+                    catch (Exception ex) when (WorkSpace.Instance.RunningInExecutionMode && ex.Message.Contains("doesn't point at a valid Git repository or workdir", StringComparison.InvariantCultureIgnoreCase)
+                            && SolutionFolder.StartsWith(General.DefaultGingerReposFolder, StringComparison.OrdinalIgnoreCase))
                     {
                         Reporter.ToLog(eLogLevel.WARN, $"The local repository {SolutionFolder} is corrupted. Attempting to clean the folder and retry pulling the repository.");
-                        //clean folder and retry                        
-                        if (Directory.Exists(SolutionFolder))
-                        {
-                            try
-                            {
-                                // Ensure any libgit2 resources released
-                                mSourceControl?.Disconnect();
 
-                                int attempts = 0;
-                                while (true)
-                                {
-                                    try
-                                    {
-                                        General.ClearDirectoryContent(SolutionFolder);
-                                        break;
-                                    }
-                                    catch (IOException ioEx) when (attempts < 2)
-                                    {
-                                        attempts++;
-                                        Reporter.ToLog(eLogLevel.WARN, $"Retry {attempts} clearing corrupted repository folder due to IO error: {ioEx.Message}");
-                                        System.Threading.Thread.Sleep(300 * attempts);
-                                    }
-                                    catch (UnauthorizedAccessException uaEx) when (attempts < 2)
-                                    {
-                                        attempts++;
-                                        Reporter.ToLog(eLogLevel.WARN, $"Retry {attempts} clearing corrupted repository folder due to access error: {uaEx.Message}");
-                                        System.Threading.Thread.Sleep(300 * attempts);
-                                    }
-                                }
-                            }
-                            catch (Exception cleanEx)
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, $"Failed to clean corrupted repository folder {SolutionFolder}", cleanEx);
-                            }
-                        }
+                        CleanSolutionFolder(SolutionFolder, mSourceControl);
 
                         return SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, projectURI, progressNotifier);
-                    }                    
+                    }
                 }
                 else
                 {
@@ -744,6 +717,39 @@ namespace Ginger.SourceControl
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while Downloading/Updating Solution from source control", e);
                 return false;
+            }
+        }
+
+        private static void CleanSolutionFolder(string SolutionFolder, SourceControlBase mSourceControl)
+        {
+            //clean folder and retry                        
+            if (Directory.Exists(SolutionFolder))
+            {
+                try
+                {
+                    // Ensure any libgit2 resources released
+                    mSourceControl?.Disconnect();
+
+                    int attempts = 0;
+                    while (true)
+                    {
+                        try
+                        {
+                            General.ClearDirectoryContent(SolutionFolder);
+                            break;
+                        }
+                        catch (Exception ex) when ((ex is IOException || ex is UnauthorizedAccessException) && attempts < 2)
+                        {
+                            attempts++;
+                            Reporter.ToLog(eLogLevel.WARN, $"Retry {attempts} clearing corrupted repository folder due to {ex.GetType().Name}: {ex.Message}");
+                            System.Threading.Thread.Sleep(300 * attempts);
+                        }
+                    }
+                }
+                catch (Exception cleanEx)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to clean corrupted repository folder {SolutionFolder}", cleanEx);
+                }
             }
         }
 

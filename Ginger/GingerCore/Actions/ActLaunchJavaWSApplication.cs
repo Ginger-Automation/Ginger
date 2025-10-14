@@ -71,6 +71,7 @@ namespace GingerCore.Actions
                 }
                 return mPlatforms;
             }
+
         }
 
         public override string ActionType

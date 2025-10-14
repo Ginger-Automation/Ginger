@@ -325,7 +325,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 SetVerboseLevel(verboseLevel);
                 Reporter.ToLog(eLogLevel.INFO, "Running 'dynamic' and fetching Ginger Execution Configurations from = '" + url + "'");
 
-                string baseUrl = url.GetLeftPart(UriPartial.Authority);
+                string baseUrl = url.GetLeftPart(UriPartial.Authority).TrimEnd('/') + "/";
 
                 // Extract instanceId
                 var queryParams = HttpUtility.ParseQueryString(url.Query);

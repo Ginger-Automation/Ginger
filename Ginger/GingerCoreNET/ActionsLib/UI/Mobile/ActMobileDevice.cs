@@ -341,6 +341,45 @@ namespace GingerCore.Actions
             }
         }
 
+        public ActInputValue Latitude
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(Latitude),"0");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(Latitude), value.ToString());
+                OnPropertyChanged(nameof(Latitude));
+            }
+        }
+
+        public ActInputValue Longitude
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(Longitude),"0");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(Longitude), value.ToString());
+                OnPropertyChanged(nameof(Longitude));
+            }
+        }
+
+        public ActInputValue Altitude
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(Altitude),"");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(Altitude), value.ToString());
+                OnPropertyChanged(nameof(Altitude));
+            }
+        }
+
         public override string ActionEditPage { get { return "ActMobileDeviceEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return false; } }
@@ -578,6 +617,8 @@ namespace GingerCore.Actions
             SetNetworkConnection,
             [EnumValueDescription("Get Device OS Type")]
             GetDeviceOSType,
+            [EnumValueDescription("Set Device Location")]
+            SetDeviceLocation,
 
 
 
