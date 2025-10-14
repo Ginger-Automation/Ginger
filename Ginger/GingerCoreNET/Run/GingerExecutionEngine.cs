@@ -297,7 +297,7 @@ namespace Ginger.Run
             var accountReportExecutionLogger = RunListeners.Find((runListeners) => runListeners.GetType() == typeof(AccountReportExecutionLogger));
 
             if (mSelectedExecutionLoggerConfiguration != null
-                && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayConfigured() &&
+                && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() &&
                 accountReportExecutionLogger == null)
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));

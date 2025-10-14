@@ -108,7 +108,7 @@ namespace Ginger.Run
                     ExportReportLinkChkbx.IsEnabled = false;
                     ExportReportLinkChkbx.IsChecked = false;
                 }
-                else if (_executionLogger.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayConfigured())
+                else if (_executionLogger.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayGatewayUrlConfigured())
                 {
                     ExportReportLinkChkbx.IsEnabled = true;
                 }

@@ -2330,7 +2330,7 @@ namespace Ginger.Run
         private bool ValidateRemoteConfiguration()
         {
             ExecutionLoggerConfiguration execLoggerConfig = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(c => c.IsSelected);
-            if (execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayConfigured() && AssignGraphQLObjectEndPoint())
+            if (execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() && AssignGraphQLObjectEndPoint())
             {
                 return true;
             }

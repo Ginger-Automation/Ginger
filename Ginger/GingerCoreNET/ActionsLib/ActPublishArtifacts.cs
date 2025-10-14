@@ -91,7 +91,7 @@ namespace GingerCore.Actions
                     return;
                 }
 
-                if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayConfigured() &&
+                if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() &&
                     WorkSpace.Instance.Solution.LoggerConfigurations.UploadArtifactsToCentralizedReport == eUploadExecutionArtifactsToCentralizedReport.No)
                 {
                     Error = "Please Enable Upload execution artifacts in \"CONFIGURATIONS => Reports => Execution Logger Configurations => Centralized Execution Logger Settings\" to execute Publish Artifacts actions.";

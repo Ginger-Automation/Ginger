@@ -457,7 +457,7 @@ namespace Ginger.Run
                     }
                     else
                     {
-                        if (mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayConfigured() && !string.IsNullOrEmpty(GingerPlayEndPointManager.GetAccountReportServiceUrl()))
+                        if (mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() && !string.IsNullOrEmpty(GingerPlayEndPointManager.GetAccountReportServiceUrl()))
                         {
                             accountReportApiHandler = new AccountReportApiHandler(GingerPlayEndPointManager.GetAccountReportServiceUrl());
                             bool isValidated = accountReportApiHandler.ExecutionIdValidation((Guid)RunSetConfig.ExecutionID);
@@ -499,7 +499,7 @@ namespace Ginger.Run
                     WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions([RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution]);
                 }
 
-                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayConfigured() && Runners.Count > 0)
+                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() && Runners.Count > 0)
                 {
                     if (((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger != null)
                     {
@@ -616,7 +616,7 @@ namespace Ginger.Run
                 Runners[0].Executor.ExecutionLoggerManager.RunSetEnd();
 
                 bool isReportStoredToRemote = false;
-                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayConfigured() && Runners.Count > 0)
+                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() && Runners.Count > 0)
                 {
                     if (((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger != null)
                     {
