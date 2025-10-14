@@ -257,13 +257,13 @@ namespace Ginger.ExternalConfigurations
         {
             try
             {
-                GingerPlayConfiguration gingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
-                if (gingerPlayConfiguration != null && !string.IsNullOrEmpty(gingerPlayConfiguration.GingerPlayGatewayUrl))
+                GingerPlayConfiguration gpConfig = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+                if (gpConfig != null && !string.IsNullOrEmpty(gpConfig.GingerPlayGatewayUrl))
                 {
-                    return gingerPlayConfiguration.GingerPlayGatewayUrl;
+                    return gpConfig.GingerPlayGatewayUrl;
                 }
 
-                return string.Empty; ;
+                return null;
             }
             catch (Exception ex)
             {
@@ -321,7 +321,7 @@ namespace Ginger.ExternalConfigurations
                 Background = Brushes.Transparent
             };
 
-            border.MouseLeftButtonUp += (s, args) =>
+            border.MouseLeftButtonUp += (_, args) =>
             {
                 try
                 {

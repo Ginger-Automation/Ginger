@@ -309,7 +309,7 @@ namespace Ginger.GeneralWindows
                 Background = Brushes.Transparent
             };
 
-            border.MouseLeftButtonUp += (s, args) =>
+            border.MouseLeftButtonUp += (_, args) =>
             {
                 try
                 {
