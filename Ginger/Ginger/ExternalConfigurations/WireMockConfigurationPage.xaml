@@ -51,7 +51,7 @@
             </Grid>
             <Grid Grid.Column="1">
                 <Border
-Margin="30,0,10,0"
+Margin="20,0,10,0"
  Background="GhostWhite"
  CornerRadius="10"
  BorderBrush="#B6E0FE"
@@ -67,7 +67,7 @@ Margin="30,0,10,0"
                             <usercontrols:ImageMakerControl ImageType="WireMockLogo"  Height="20" Width="20" Margin="0,2,10,0"/>
                             <TextBlock Text="About WireMock" 
                     FontWeight="Normal" 
-                    FontSize="18"
+                    FontSize="12"
                     VerticalAlignment="Center"/>
 
                         </StackPanel>
@@ -83,7 +83,7 @@ This is ideal when real APIs aren’t available, unstable, or costly to use.
 
                         </TextBlock>
 
-                        <TextBlock TextWrapping="Wrap" FontWeight="Bold" Text="With Ginger, WireMock lets you validate app behavior even before the real APIs are ready."/>
+                        <TextBlock TextWrapping="Wrap" FontSize="12" FontWeight="Bold" Text="With Ginger, WireMock lets you validate app behavior even before the real APIs are ready."/>
                         <TextBlock Margin="0,10,0,0" FontSize="14">
 <Hyperlink NavigateUri="https://wiremock.org/" RequestNavigate="Hyperlink_RequestNavigate">
                                <Run Text="Learn more about WireMock"/>

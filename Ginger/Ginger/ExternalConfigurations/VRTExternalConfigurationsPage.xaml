@@ -106,7 +106,7 @@
                 </Grid>
                 <Grid Grid.Column="1">
                     <Border
-Margin="30,0,10,0"
+Margin="30,20,10,0"
  Background="GhostWhite"
  CornerRadius="10"
  BorderBrush="#B6E0FE"
@@ -129,7 +129,7 @@ Margin="30,0,10,0"
                             <Separator Margin="0,10,0,10"/>
                             <TextBlock TextWrapping="Wrap"
                 Foreground="#333"
-                FontSize="14"
+                FontSize="12"
                 Margin="0,0,0,10">
 Visual Regression Tracker (VRT) is an open-source tool for automated visual testing.
 It compares screenshots from test runs with baselines to instantly detect unexpected UI changes, preventing visual bugs from reaching production.
@@ -137,7 +137,7 @@ VRT accepts screenshots from any automation framework via API and supports web, 
 Features like baseline history and ignore regions make reviews faster and more stable.
                             </TextBlock>
 
-                            <TextBlock TextWrapping="Wrap" FontWeight="Bold" Text="Integrating VRT with Ginger adds visual testing to functional flows, enabling early detection of UI issues."/>
+                            <TextBlock TextWrapping="Wrap"    FontSize="12" FontWeight="Bold" Text="Integrating VRT with Ginger adds visual testing to functional flows, enabling early detection of UI issues."/>
                             <TextBlock Margin="0,10,0,0" FontSize="14">
 <Hyperlink NavigateUri="https://github.com/Visual-Regression-Tracker/Visual-Regression-Tracker" RequestNavigate="Hyperlink_RequestNavigate">
                                <Run Text="Learn more about VRT"/>

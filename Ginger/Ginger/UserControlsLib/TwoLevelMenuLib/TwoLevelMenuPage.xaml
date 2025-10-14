@@ -64,21 +64,21 @@
 
         <!-- Fixed "Upgrade" Button at Top-Right Corner -->
         <Border
-    Width="125"
-    Height="35"
-    CornerRadius="10"
+    Width="115"
+    Height="29"
+    CornerRadius="12"
     VerticalAlignment="Top"
     HorizontalAlignment="Right"
-    Margin="10,2,25,10"
+    Margin="10,5,25,10"
     SnapsToDevicePixels="True">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="10" ShadowDepth="2" Direction="270" Color="Gray" Opacity="0.5"/>
             </Border.Effect>
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                    <GradientStop Color="#18181C" Offset="0.0"/>
-                    <GradientStop Color="#58191C" Offset="0.5"/>
-                    <GradientStop Color="#8A2BE2" Offset="1.0"/>
+                    <GradientStop Color="#924ff6" Offset="0.3"/>
+                    <GradientStop Color="#FF00FF" Offset="0.3"/>
+                    <GradientStop Color="#974de9" Offset="0.3"/>
                 </LinearGradientBrush>
             </Border.Background>
             <Grid Margin="8,0,8,0">
@@ -90,20 +90,21 @@
             ImageType="GingerPlayWhiteGradiant"
             Foreground="White"
             SetAsFontImageWithSize="16"
+            Height="18"
             VerticalAlignment="Center"
-            HorizontalAlignment="Left"/>
+            HorizontalAlignment="Right"/>
                 <Button x:Name="xUpgradeButton"
                 Content="Ginger Play"
                 Foreground="White"
                 Background="Transparent"
                 FontWeight="Bold"
-                FontSize="13"
+                FontSize="12"
                 BorderThickness="0"
                 Cursor="Hand"
                 ToolTip="Unlock Pro Features with Ginger Play"
                 Click="ProFeatureButtonClick"
                 Grid.Column="1"
-                HorizontalAlignment="Center"
+                HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Padding="0,0,0,0">
                     <Button.Style>
