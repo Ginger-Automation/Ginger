@@ -638,7 +638,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 {
                     
                     string FinalAPIUrl = $"{apiUrl.TrimEnd('/')}/{SEND_EXECUTIONLOG}";
-                    FinalAPIUrl = FinalAPIUrl.Replace("https://usstlattstl01:9001/ginger-report", "https://localhost:3117");
                     bool IsSuccessful = await SendExecutionLogRestRequestAndGetResponse(FinalAPIUrl, executionLogRequest).ConfigureAwait(false);
                     if (IsSuccessful)
                     {
