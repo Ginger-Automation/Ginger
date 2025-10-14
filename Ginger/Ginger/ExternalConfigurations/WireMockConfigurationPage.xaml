@@ -51,19 +51,24 @@
             </Grid>
             <Grid Grid.Column="1">
                 <Border
-     Margin="20"
-     Background="GhostWhite"
-     CornerRadius="10"
-     BorderBrush="#B6E0FE"
-     BorderThickness="1">
-                    <StackPanel Margin="20">
+Margin="30,0,10,0"
+ Background="GhostWhite"
+ CornerRadius="10"
+ BorderBrush="#B6E0FE"
+ BorderThickness="1"
+ VerticalAlignment="Top"
+ Height="Auto">
+                    <StackPanel Margin="10"
+         HorizontalAlignment="Left"
+         VerticalAlignment="Top"
+         Height="Auto"
+         >
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
-                            <usercontrols:ImageMakerControl Margin="0,0,8,0" Foreground="#2196F3" SetAsFontImageWithSize="20" ImageType="Info"/>
+                            <usercontrols:ImageMakerControl ImageType="WireMockLogo"  Height="20" Width="20" Margin="0,2,10,0"/>
                             <TextBlock Text="About WireMock" 
                     FontWeight="Normal" 
                     FontSize="18"
                     VerticalAlignment="Center"/>
-                            <usercontrols:ImageMakerControl ImageType="WireMockLogo" Margin="10,2,0,0"/>
 
                         </StackPanel>
                         <Separator Margin="0,10,0,10"/>
@@ -82,7 +87,7 @@ This is ideal when real APIs aren’t available, unstable, or costly to use.
                         <TextBlock Margin="0,10,0,0" FontSize="14">
 <Hyperlink NavigateUri="https://wiremock.org/" RequestNavigate="Hyperlink_RequestNavigate">
                                <Run Text="Learn more about WireMock"/>
-                           </Hyperlink></TextBlock>
+                           </Hyperlink><usercontrols:ImageMakerControl ImageType="Link" Height="10" Width="10" Margin="0,2,10,0"/></TextBlock>
 
                     </StackPanel>
                 </Border>

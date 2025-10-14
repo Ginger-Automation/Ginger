@@ -18,9 +18,11 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.UserControls;
 using Ginger.TwoLevelMenuLib;
 using System;
+using System.Diagnostics;
 using System.Windows;
 
 using System.Windows.Controls;
@@ -237,5 +239,107 @@ namespace Ginger.GeneralWindows
                 SetSelectedListItemStyle(xSubNavigationListView, (SolidColorBrush)FindResource("$PrimaryColor_Black"));
             }
         }
+
+        private string IsGingerPlayGatewayURLConfigured()
+        {
+            try
+            {
+                GingerPlayConfiguration gingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+                if (gingerPlayConfiguration != null && !string.IsNullOrEmpty(gingerPlayConfiguration.GingerPlayGatewayUrl))
+                {
+                    return gingerPlayConfiguration.GingerPlayGatewayUrl;
+                }
+
+                return string.Empty; ;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Gateway URL is null or no configuration found", ex);
+                return string.Empty;
+            }
+        }
+        private void ProFeatureButtonClick(object sender, RoutedEventArgs e)
+        {
+            string gatewayUrl = IsGingerPlayGatewayURLConfigured();
+            if (!string.IsNullOrEmpty(gatewayUrl))
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = gatewayUrl + "gingerplay/#/playHome",
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to open the link: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                // Show the banner window if the gateway URL is not configured
+                ShowGingerPlayBannerWindow();
+            }
+        }
+
+        // Extracted banner window logic to a method for reuse
+        private void ShowGingerPlayBannerWindow()
+        {
+            var imageUri = new Uri("pack://application:,,,/Ginger;component/UserControlsLib/ImageMakerLib/Images/GingerPlayDetailsPopUpContent.png", UriKind.Absolute);
+
+            var image = new System.Windows.Controls.Image
+            {
+                Source = new System.Windows.Media.Imaging.BitmapImage(imageUri),
+                Stretch = Stretch.Uniform,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Cursor = System.Windows.Input.Cursors.Hand
+            };
+
+            var viewbox = new Viewbox
+            {
+                Stretch = Stretch.Uniform,
+                Child = image
+            };
+
+            var border = new Border
+            {
+                Child = viewbox,
+                Background = Brushes.Transparent
+            };
+
+            border.MouseLeftButtonUp += (s, args) =>
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "https://www.amdocs.com/products-services/quality-engineering-services",
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to open the link: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            };
+
+            Window bannerWindow = new Window
+            {
+                Title = "Get to know Ginger Play",
+                Width = 900,
+                Height = 700,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                ResizeMode = ResizeMode.NoResize,
+                WindowStyle = WindowStyle.ThreeDBorderWindow,
+                ShowInTaskbar = false,
+                Content = border,
+                SizeToContent = SizeToContent.Manual,
+            };
+
+            bannerWindow.ShowDialog();
+        }
+       
     }
 }

@@ -89,32 +89,36 @@
             </Grid>
             <Grid Grid.Column="1">
                 <Border
-         Margin="20"
-         Background="GhostWhite"
-         CornerRadius="10"
-         BorderBrush="#B6E0FE"
-         BorderThickness="1">
-                    <StackPanel Margin="20">
+Margin="30,0,10,0"
+ Background="GhostWhite"
+ CornerRadius="10"
+ BorderBrush="#B6E0FE"
+ BorderThickness="1"
+ VerticalAlignment="Top"
+ Height="Auto">
+                    <StackPanel Margin="10"
+         HorizontalAlignment="Left"
+         VerticalAlignment="Top"
+         Height="Auto"
+         >
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
-                            <usercontrols:ImageMakerControl Margin="0,0,8,0" Foreground="#2196F3" SetAsFontImageWithSize="20" ImageType="Info"/>
+                            <usercontrols:ImageMakerControl ImageType="GingerPlayWhiteGradiant" Height="20" Width="20" Margin="0,2,10,0"/>
                             <TextBlock Text="About Ginger Play" 
-                        FontWeight="Normal" 
-                        FontSize="18"
-                        VerticalAlignment="Center"/>
-                            <usercontrols:ImageMakerControl ImageType="GingerPlayGradiantBlack" Height="20" Width="20" Margin="10,2,0,0"/>
-
+                                       FontWeight="Normal" 
+                                       FontSize="18"
+                                       VerticalAlignment="Center"/>
                         </StackPanel>
                         <Separator Margin="0,10,0,10"/>
                         <TextBlock TextWrapping="Wrap"
-                    Foreground="#333"
-                    FontSize="14"
-                    Margin="0,0,0,10">
-             Ginger Play is an advanced automation platform built on top of Ginger, designed for execution, collaboration, and reporting at scale.
+                                   Foreground="#333"
+                                   FontSize="14"
+                                   Margin="0,0,0,10">
+                            Ginger Play is an advanced automation platform built on top of Ginger, designed for execution, collaboration, and reporting at scale.
                         </TextBlock>
                         <TextBlock Text="Key features include:" 
-                    FontWeight="Bold"
-                    FontSize="14"
-                    Margin="0,0,0,6"/>
+                                   FontWeight="Bold"
+                                   FontSize="14"
+                                   Margin="0,0,0,6"/>
                         <StackPanel>
                             <TextBlock Text="• Advanced execution: bulk runs, concatenated flows, intelligent scheduling, and input-output data mapping." TextWrapping="Wrap" Margin="0,0,0,4"/>
                             <TextBlock Text="• Real-time tracking &amp; dashboards: status, logs, errors, screenshots, and performance insights." TextWrapping="Wrap" Margin="0,0,0,4"/>
@@ -123,8 +127,9 @@
                         </StackPanel>
                         <TextBlock TextWrapping="Wrap" FontWeight="Bold" Text="Integrating Ginger Play unlocks enterprise-grade execution, reporting, and AI-driven productivity—all within a unified automation ecosystem."/>
                         <TextBlock Margin="0,10,0,0" FontSize="14">
-        <Hyperlink Click="GingerPlayLearnMore_Click">Learn more about Ginger Play</Hyperlink>
-    </TextBlock>
+                            <Hyperlink Click="GingerPlayLearnMore_Click">Learn more about Ginger Play</Hyperlink>
+                                                        <usercontrols:ImageMakerControl ImageType="Link" Height="10" Width="10" Margin="0,2,10,0"/>
+                        </TextBlock>
                     </StackPanel>
                 </Border>
             </Grid>

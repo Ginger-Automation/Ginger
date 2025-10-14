@@ -8,7 +8,7 @@
       xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
       mc:Ignorable="d" 
       MinHeight="500" MinWidth="585"
-	Title="Execution Logger Configuration">
+	Title="Applitools Configuration">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" >
         <DockPanel Background="{StaticResource $BackgroundColor_White}">
@@ -28,7 +28,7 @@
                         <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
                     </StackPanel>
                     <StackPanel Orientation="Vertical" Grid.Row="1">
-                        <Grid Margin="10,10,0,0" x:Name="xVRTGrid" >
+                        <Grid Margin="10,10,0,0" x:Name="xApplitoolsGrid" >
                             <Grid.RowDefinitions>
                                 <RowDefinition  Height="50"/>
                                 <RowDefinition  Height="0"/>
@@ -55,7 +55,7 @@
                                 <Label x:Name="xAPIURLLabel" Content="API URL:"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>
                                 <Label x:Name="xAPIURLLabelValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
                             </StackPanel>
-                            <Activities:UCValueExpression x:Name="xAPIURLTextBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="VRT API URL" Margin="10,0,0,0"  Width="400"/>
+                            <Activities:UCValueExpression x:Name="xAPIURLTextBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Applitools API URL" Margin="10,0,0,0"  Width="400"/>
 
                             <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
                                 <Label x:Name="xAPIKeyLabel" Content="API Key:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
@@ -69,19 +69,24 @@
                 </Grid>
                 <Grid Grid.Column="1">
                     <Border
-     Margin="20"
-     Background="GhostWhite"
-     CornerRadius="10"
-     BorderBrush="#B6E0FE"
-     BorderThickness="1">
-                        <StackPanel Margin="20">
+Margin="30,0,10,0"
+ Background="GhostWhite"
+ CornerRadius="10"
+ BorderBrush="#B6E0FE"
+ BorderThickness="1"
+ VerticalAlignment="Top"
+ Height="Auto">
+                        <StackPanel Margin="10"
+         HorizontalAlignment="Left"
+         VerticalAlignment="Top"
+         Height="Auto"
+         >
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
-                                <usercontrols:ImageMakerControl Margin="0,0,8,0" Foreground="#2196F3" SetAsFontImageWithSize="20" ImageType="Info"/>
+                                <usercontrols:ImageMakerControl ImageType="Applitools"  Height="20" Width="20" Margin="0,2,10,0"/>
                                 <TextBlock Text="About Applitools" 
                     FontWeight="Normal" 
                     FontSize="18"
                     VerticalAlignment="Center"/>
-                                <usercontrols:ImageMakerControl ImageType="Applitools"  Margin="10,2,0,0"/>
 
                             </StackPanel>
                             <Separator Margin="0,10,0,10"/>
@@ -99,11 +104,13 @@ Applitools automatically maintains baselines, highlights differences, and suppor
                             <TextBlock Margin="0,10,0,0" FontSize="14">
 <Hyperlink NavigateUri="https://applitools.com/platform-overview" RequestNavigate="Hyperlink_RequestNavigate">
                                <Run Text="Learn more about Applitools"/>
-                           </Hyperlink></TextBlock>
+                           </Hyperlink>                                                        <usercontrols:ImageMakerControl ImageType="Link" Height="10" Width="10" Margin="0,2,10,0"/>
+                            </TextBlock>
                             <TextBlock Margin="0,10,0,0" FontSize="14">
 <Hyperlink NavigateUri="https://ginger-automation.github.io/Ginger-Web-Help/assets/Ginger_By_Amdocs/Integrations/Visual_Testing_using_Applitools.htm" RequestNavigate="Hyperlink_RequestNavigate">
                                <Run Text="Learn more about how to use Applitools in Ginger"/>
-                           </Hyperlink></TextBlock>
+                           </Hyperlink>                                                        <usercontrols:ImageMakerControl ImageType="Link" Height="10" Width="10" Margin="0,2,10,0"/>
+                            </TextBlock>
                         </StackPanel>
                     </Border>
                 </Grid>

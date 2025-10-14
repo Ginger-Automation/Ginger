@@ -253,20 +253,62 @@ namespace Ginger.ExternalConfigurations
             e.Handled = true;
         }
 
+        private string IsGingerPlayGatewayURLConfigured()
+        {
+            try
+            {
+                GingerPlayConfiguration gingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+                if (gingerPlayConfiguration != null && !string.IsNullOrEmpty(gingerPlayConfiguration.GingerPlayGatewayUrl))
+                {
+                    return gingerPlayConfiguration.GingerPlayGatewayUrl;
+                }
+
+                return string.Empty; ;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Gateway URL is null or no configuration found", ex);
+                return string.Empty;
+            }
+        }
         private void GingerPlayLearnMore_Click(object sender, RoutedEventArgs e)
+        {
+            string gatewayUrl = IsGingerPlayGatewayURLConfigured();
+            if (!string.IsNullOrEmpty(gatewayUrl))
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = gatewayUrl + "gingerplay/#/playHome",
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to open the link: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                // Show the banner window if the gateway URL is not configured
+                ShowGingerPlayBannerWindow();
+            }
+        }
+
+        private void ShowGingerPlayBannerWindow()
         {
             var imageUri = new Uri("pack://application:,,,/Ginger;component/UserControlsLib/ImageMakerLib/Images/GingerPlayDetailsPopUpContent.png", UriKind.Absolute);
 
             var image = new System.Windows.Controls.Image
             {
                 Source = new System.Windows.Media.Imaging.BitmapImage(imageUri),
-                Stretch = Stretch.Uniform, // Maintains aspect ratio
+                Stretch = Stretch.Uniform,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
                 Cursor = System.Windows.Input.Cursors.Hand
             };
 
-            // Use a Viewbox to ensure aspect ratio is maintained and image scales to fit window
             var viewbox = new Viewbox
             {
                 Stretch = Stretch.Uniform,
@@ -297,7 +339,7 @@ namespace Ginger.ExternalConfigurations
 
             Window bannerWindow = new Window
             {
-                Title = "Explore Pro Features Using Ginger Play",
+                Title = "Get to know Ginger Play",
                 Width = 900,
                 Height = 700,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,

@@ -1214,7 +1214,7 @@ namespace Ginger
 
         private void SolutionFindAndReplace()
         {
-            FindAndReplacePage mfindAndReplacePageSolution = new FindAndReplacePage(FindAndReplacePage.eContext.SolutionPage);            
+            FindAndReplacePage mfindAndReplacePageSolution = new FindAndReplacePage(FindAndReplacePage.eContext.SolutionPage);
             mfindAndReplacePageSolution.ShowAsWindow();
         }
 
@@ -1940,65 +1940,5 @@ namespace Ginger
                 xChatbotIcon.Visibility = Visibility.Collapsed;
             }
         }
-
-        private void ProFeatureButtonClick(object sender, RoutedEventArgs e)
-        {
-            var imageUri = new Uri("pack://application:,,,/Ginger;component/UserControlsLib/ImageMakerLib/Images/GingerPlayDetailsPopUpContent.png", UriKind.Absolute);
-
-            var image = new System.Windows.Controls.Image
-            {
-                Source = new System.Windows.Media.Imaging.BitmapImage(imageUri),
-                Stretch = Stretch.Uniform, // Maintains aspect ratio
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Cursor = System.Windows.Input.Cursors.Hand
-            };
-
-            // Use a Viewbox to ensure aspect ratio is maintained and image scales to fit window
-            var viewbox = new Viewbox
-            {
-                Stretch = Stretch.Uniform,
-                Child = image
-            };
-
-            var border = new Border
-            {
-                Child = viewbox,
-                Background = Brushes.Transparent
-            };
-
-            border.MouseLeftButtonUp += (s, args) =>
-            {
-                try
-                {
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = "https://www.amdocs.com/products-services/quality-engineering-services",
-                        UseShellExecute = true
-                    });
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Unable to open the link: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            };
-
-            Window bannerWindow = new Window
-            {
-                Title = "Explore Pro Features Using Ginger Play",
-                Width = 900,
-                Height = 700,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                ResizeMode = ResizeMode.NoResize,
-                Owner = this,
-                WindowStyle = WindowStyle.ThreeDBorderWindow,
-                ShowInTaskbar = false,
-                Content = border,
-                SizeToContent = SizeToContent.Manual,
-            };
-
-            bannerWindow.ShowDialog();
-        }
-
     }
 }

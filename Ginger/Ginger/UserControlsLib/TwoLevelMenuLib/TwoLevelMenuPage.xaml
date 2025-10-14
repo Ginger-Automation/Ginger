@@ -7,57 +7,121 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="MenusPage">
+    <Grid>
 
-    <DockPanel Background="{StaticResource $BackgroundColor_White}">
-        <Border BorderThickness="0,0,0,1" DockPanel.Dock="Top">
-            <DockPanel DockPanel.Dock="Top">
-                <!--Main Navigation Panel-->
-                <ListView x:Name="xMainNavigationListView" DockPanel.Dock="Top" Height="40" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="xMainNavigationListView_SelectionChanged" Loaded="xMainNavigationListView_Loaded" ItemContainerStyle="{StaticResource $ListMainViewItemStyle}" SelectionMode="Single">
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"></StackPanel>
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" ToolTip="{Binding Path=ToolTip}" Background="{StaticResource $BackgroundColor_White}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="{Binding Path=IconType}" HorizontalAlignment="Center" VerticalAlignment="Center" SetBorder="False" Margin="10,0,0,0" ImageForeground="{StaticResource $BackgroundColor_DarkGray}" />
-                                <Label Content="{Binding Path=Name}" Style="{StaticResource $MainListViewItemLabelStyle}" Margin="0,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+        <DockPanel Background="{StaticResource $BackgroundColor_White}">
+            <Border BorderThickness="0,0,0,1" DockPanel.Dock="Top">
+                <DockPanel DockPanel.Dock="Top">
+                    <!--Main Navigation Panel-->
+                    <ListView x:Name="xMainNavigationListView" DockPanel.Dock="Top" Height="40" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="xMainNavigationListView_SelectionChanged" Loaded="xMainNavigationListView_Loaded" ItemContainerStyle="{StaticResource $ListMainViewItemStyle}" SelectionMode="Single">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"></StackPanel>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" ToolTip="{Binding Path=ToolTip}" Background="{StaticResource $BackgroundColor_White}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="{Binding Path=IconType}" HorizontalAlignment="Center" VerticalAlignment="Center" SetBorder="False" Margin="10,0,0,0" ImageForeground="{StaticResource $BackgroundColor_DarkGray}" />
+                                    <Label Content="{Binding Path=Name}" Style="{StaticResource $MainListViewItemLabelStyle}" Margin="0,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
 
-                <!--Sub Navigation Panel-->
-                <ListView x:Name="xSubNavigationListView" DockPanel.Dock="Top" Height="35" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="xSubNavigationListView_SelectionChanged" Loaded="xSubNavigationListView_Loaded" Visibility="Collapsed"  ItemContainerStyle="{StaticResource $ListMainViewItemStyle}" SelectionMode="Single">
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"></StackPanel>
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" ToolTip="{Binding Path=ToolTip}" Background="{StaticResource $BackgroundColor_White}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="{Binding Path=IconType}" HorizontalAlignment="Center" VerticalAlignment="Center" SetBorder="False" Margin="10,0,0,0" ImageForeground="{StaticResource $BackgroundColor_DarkGray}" />
-                                <Label Content="{Binding Path=Name}" Style="{StaticResource $SubListViewItemLabelStyle}" Margin="0,0,10,0" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </DockPanel>
+                    <!--Sub Navigation Panel-->
+                    <ListView x:Name="xSubNavigationListView" DockPanel.Dock="Top" Height="35" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="xSubNavigationListView_SelectionChanged" Loaded="xSubNavigationListView_Loaded" Visibility="Collapsed"  ItemContainerStyle="{StaticResource $ListMainViewItemStyle}" SelectionMode="Single">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"></StackPanel>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" ToolTip="{Binding Path=ToolTip}" Background="{StaticResource $BackgroundColor_White}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="{Binding Path=IconType}" HorizontalAlignment="Center" VerticalAlignment="Center" SetBorder="False" Margin="10,0,0,0" ImageForeground="{StaticResource $BackgroundColor_DarkGray}" />
+                                    <Label Content="{Binding Path=Name}" Style="{StaticResource $SubListViewItemLabelStyle}" Margin="0,0,10,0" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </DockPanel>
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" Direction ="-90" RenderingBias ="Quality" ShadowDepth ="2" Color ="Gray"/>
+                </Border.Effect>
+            </Border>
+
+
+
+            <!--Selected Item Page-->
+            <Border Margin="5" CornerRadius="15" DockPanel.Dock="Top" BorderBrush="Transparent" BorderThickness="5" Background="{StaticResource $BackgroundColor_White}" >
+                <Frame x:Name="xSelectedItemFrame" Background="Transparent"  NavigationUIVisibility="Hidden" Margin="5" />
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" Direction ="-90" RenderingBias ="Quality" ShadowDepth ="2" Color ="Gray"/>
+                </Border.Effect>
+            </Border>
+        </DockPanel>
+
+        <!-- Fixed "Upgrade" Button at Top-Right Corner -->
+        <Border
+    Width="125"
+    Height="35"
+    CornerRadius="10"
+    VerticalAlignment="Top"
+    HorizontalAlignment="Right"
+    Margin="10,2,25,10"
+    SnapsToDevicePixels="True">
             <Border.Effect>
-                <DropShadowEffect BlurRadius="15" Direction ="-90" RenderingBias ="Quality" ShadowDepth ="2" Color ="Gray"/>
+                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Direction="270" Color="Gray" Opacity="0.5"/>
             </Border.Effect>
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#18181C" Offset="0.0"/>
+                    <GradientStop Color="#58191C" Offset="0.5"/>
+                    <GradientStop Color="#8A2BE2" Offset="1.0"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Grid Margin="8,0,8,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="22"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <usercontrols:ImageMakerControl 
+            ImageType="GingerPlayWhiteGradiant"
+            Foreground="White"
+            SetAsFontImageWithSize="16"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Left"/>
+                <Button x:Name="xUpgradeButton"
+                Content="Ginger Play"
+                Foreground="White"
+                Background="Transparent"
+                FontWeight="Bold"
+                FontSize="13"
+                BorderThickness="0"
+                Cursor="Hand"
+                ToolTip="Unlock Pro Features with Ginger Play"
+                Click="ProFeatureButtonClick"
+                Grid.Column="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Padding="0,0,0,0">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
         </Border>
-
-
-
-        <!--Selected Item Page-->
-        <Border Margin="5" CornerRadius="15" DockPanel.Dock="Top" BorderBrush="Transparent" BorderThickness="5" Background="{StaticResource $BackgroundColor_White}" >
-            <Frame x:Name="xSelectedItemFrame" Background="Transparent"  NavigationUIVisibility="Hidden" Margin="5" />
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="15" Direction ="-90" RenderingBias ="Quality" ShadowDepth ="2" Color ="Gray"/>
-            </Border.Effect>
-        </Border>
-    </DockPanel>
+    </Grid>
 </Page>
