@@ -259,8 +259,6 @@
   
     <PackageReference Include="Eyes.Selenium4" Version="2.59.0" />
   
-    <PackageReference Include="Ginger.AccountReport.Contracts" Version="2024.4.1.6" />
-  
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="2025.4.2.1" />
   
     <PackageReference Include="Google.Protobuf" Version="3.29.3" />
@@ -365,6 +363,9 @@
   </ItemGroup>
 
   <ItemGroup>            
+    <Reference Include="AccountReport.Contracts">
+      <HintPath>..\Ginger\DLLs\AccountReport.Contracts.dll</HintPath>
+    </Reference>            
     <Reference Include="ACL_Data_Contract">
       <HintPath>DLLS\ACL_Data_Contract.dll</HintPath>
     </Reference>            

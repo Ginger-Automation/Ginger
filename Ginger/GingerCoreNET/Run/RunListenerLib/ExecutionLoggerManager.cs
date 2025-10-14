@@ -273,7 +273,7 @@ namespace Ginger.Run
             ((ExecutionLogger)mExecutionLogger).SetRunsetFolder(execResultsFolder, maxFolderSize, currentExecutionDateTime, offline);
             if (!offline)
             {
-                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.RunSet), string.Format("{0} (ID:{1})", WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid) , null);                
+                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.RunSet), string.Format("{0} (ID:{1})", WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid) , null);
             }
         }
 
@@ -601,7 +601,8 @@ namespace Ginger.Run
 
                 if (!offlineMode)
                 {
-                    ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Action", string.Format("{0} (ID:{1}, ParentID:{2}, ParentActivityID: {3})", action.Description, action.Guid, action.ExecutionParentGuid, mCurrentActivity?.Guid), AR);
+                    string SourcePath = $"{mContext.Runner}=>{mContext.BusinessFlow.Name}=>{mCurrentActivity.ActivityName}=>{action.ItemName}";
+                    ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Action", string.Format("{0} (ID:{1}, ParentID:{2}, ParentActivityID: {3},SourcePath: {4})", action.Description, action.Guid, action.ExecutionParentGuid, mCurrentActivity?.Guid, SourcePath), AR);
                 }
             }
             catch (Exception ex)

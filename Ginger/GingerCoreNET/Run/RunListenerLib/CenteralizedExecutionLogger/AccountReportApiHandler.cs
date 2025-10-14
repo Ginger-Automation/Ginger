@@ -615,16 +615,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             }
         }
 
-        public async Task<bool> SendExecutionLogToCentralDBAsync(string apiUrl, Guid? executionId, long? instanceId, string logData)
+        public async Task<bool> SendExecutionLogToCentralDBAsync(string apiUrl, AccountReport.Contracts.RequestModels.ExecutionLogRequest executionLogRequest)
         {
-            bool isSuccess = false; 
+            bool isSuccess = false;
             if (string.IsNullOrWhiteSpace(apiUrl))
             {
                 Reporter.ToLog(eLogLevel.ERROR, "SendExecutionLogToCentralDBAsync: ApiUrl is required");
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(logData))
+            if (string.IsNullOrWhiteSpace(executionLogRequest.LogData))
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "SendExecutionLogToCentralDBAsync: logData is empty, skipping");
                 return false;
@@ -632,18 +632,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
             if (restClient != null && _isRunSetDataSent)
             {
-                string message = string.Format("execution log to Central DB (API URL:'{0}', Execution Id:'{1}', Instance Id:'{2}', Log Id:'{3}')", apiUrl, executionId, instanceId, LogId);
+                string message = string.Format("execution log to Central DB (API URL:'{0}', Execution Id:'{1}', Instance Id:'{2}', Log Id:'{3}')", apiUrl, executionLogRequest.ExecutionId, executionLogRequest.InstanceId, executionLogRequest.LogId);
                 try
                 {
-                    var payload = new ExecutionLogPayload
-                    {
-                        LogId = LogId,
-                        ExecutionId = executionId,
-                        InstanceId = instanceId,
-                        LogData = logData
-                    };
                     string FinalAPIUrl = $"{apiUrl.TrimEnd('/')}/{SEND_EXECUTIONLOG}";
-                    bool IsSuccessful = await SendExecutionLogRestRequestAndGetResponse(FinalAPIUrl, payload).ConfigureAwait(false);
+                    FinalAPIUrl = FinalAPIUrl.Replace("https://usstlattstl01:9001/ginger-report", "https://localhost:3117");
+                    bool IsSuccessful = await SendExecutionLogRestRequestAndGetResponse(FinalAPIUrl, executionLogRequest).ConfigureAwait(false);
                     if (IsSuccessful)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, $"Successfully sent {message}");
@@ -664,7 +658,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             return isSuccess;
         }
 
-        private async Task<bool> SendExecutionLogRestRequestAndGetResponse(string api, ExecutionLogPayload payload)
+        private async Task<bool> SendExecutionLogRestRequestAndGetResponse(string api, AccountReport.Contracts.RequestModels.ExecutionLogRequest payload)
         {
             try
             {
@@ -692,13 +686,5 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 return false;
             }
         }
-    }
-
-    public class ExecutionLogPayload
-    {
-        public Guid LogId { get; set; }
-        public Guid? ExecutionId { get; set; }
-        public long? InstanceId { get; set; }
-        public string LogData { get; set; }
     }
 }
