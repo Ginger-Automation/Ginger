@@ -299,7 +299,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                     };
                                     if(ExecutionId != null)
                                     {
-                                        bool Response = await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
+                                        bool Response = await _accountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
                                         if(!Response)
                                         {
                                             Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send Runset Execution data to Central DB.");
@@ -321,7 +321,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
 
                                     currentLog.Append($"{Environment.NewLine}Exception Details:{Environment.NewLine}{excFullInfo}");
                                 }
-                                currentLog.Append($"{Environment.NewLine}");
+                                currentLog.Append($"{Environment.NewLine}{Environment.NewLine}");
 
                                 if (Regex.IsMatch(evt.Level.DisplayName, @"^ERROR$") && !isExecutionStarted)
                                 {
@@ -359,7 +359,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                             }
                             string LogData = logDataBuilder.ToString();
                             string ErrorLogData = errlogDataBuilder.ToString();
-                            if (AccountReportApiHandler != null)
+                            if (_accountReportApiHandler != null)
                             {
                                 int exceptionCount = 0;
                                 try
@@ -372,7 +372,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                     ExecutionLogRequest.ExecutionErrorRequests = ExecutionErrorRequestsList;
 
 
-                                    bool isSuccess = await AccountReportApiHandler.SendExecutionLogToCentralDBAsync(ApiUrl, ExecutionLogRequest);
+                                    bool isSuccess = await _accountReportApiHandler.SendExecutionLogToCentralDBAsync(ApiUrl, ExecutionLogRequest);
                                     if (isSuccess)
                                     {
                                         buffer.Clear();
