@@ -9,11 +9,12 @@ namespace GingerCoreNET.GeneralLib
         /// <summary>
         /// Checks if Ginger Play is properly configured in the current solution.
         /// </summary>
-        public static bool IsGingerPlayConfigured()
+        public static bool IsGingerPlayGatewayUrlConfigured()
         {
             GingerPlayConfiguration gingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
             return gingerPlayConfiguration != null
-                && !string.IsNullOrEmpty(gingerPlayConfiguration.GingerPlayGatewayUrl)
+                && (!string.IsNullOrEmpty(gingerPlayConfiguration.GingerPlayGatewayUrl) || !string.IsNullOrEmpty(gingerPlayConfiguration.CentralizedAccountReportURL) || !string.IsNullOrEmpty(gingerPlayConfiguration.CentralizedHTMLReportServiceURL
+                ))
                 && gingerPlayConfiguration.GingerPlayEnabled
                 && gingerPlayConfiguration.GingerPlayReportServiceEnabled;
         }
