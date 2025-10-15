@@ -24,6 +24,7 @@ using Ginger.UserControlsLib;
 using Ginger.ValidationRules;
 using GingerCore;
 using GingerCore.GeneralLib;
+using GingerCoreNET.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -254,34 +255,16 @@ namespace Ginger.ExternalConfigurations
             e.Handled = true;
         }
 
-        private string IsGingerPlayGatewayURLConfigured()
-        {
-            try
-            {
-                GingerPlayConfiguration gpConfig = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
-                if (gpConfig != null && !string.IsNullOrEmpty(gpConfig.GingerPlayGatewayUrl))
-                {
-                    return gpConfig.GingerPlayGatewayUrl;
-                }
-
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Gateway URL is null or no configuration found", ex);
-                return string.Empty;
-            }
-        }
+     
         private void GingerPlayLearnMore_Click(object sender, RoutedEventArgs e)
         {
-            string gatewayUrl = IsGingerPlayGatewayURLConfigured();
-            if (!string.IsNullOrEmpty(gatewayUrl))
+            if (!string.IsNullOrEmpty(GingerPlayUtils.GetGingerPlayGatewayURLIfConfigured()))
             {
                 try
                 {
                     Process.Start(new ProcessStartInfo
                     {
-                        FileName = gatewayUrl + "gingerplay/#/playHome",
+                        FileName = GingerPlayUtils.GetGingerPlayGatewayURLIfConfigured() + "gingerplay/#/playHome",
                         UseShellExecute = true
                     });
                 }
