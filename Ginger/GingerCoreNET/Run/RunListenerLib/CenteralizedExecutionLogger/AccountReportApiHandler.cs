@@ -23,12 +23,14 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using AutoMapper;
+using Ginger.Reports;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -53,7 +55,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         private const string GET_RUNNER_EXECUTION_DATA = "api/HtmlReport/GetAccountReportRunnersByExecutionId/";
         private const string GET_ACCOUNT_HTML_REPORT = "/api/HtmlReport/GetAccountHtmlReport/";
         private const string SEND_EXECUTIONLOG = "api/AccountReport/executionlog/";
-
+        private const string GET_RUNSET_EXECUTION_DATA_RUNSET_ID = "api/HtmlReport/GetRunsetHLExecutionInfoByRunsetId/{solutionId}/{runSetId}/";
+        private const string GET_RUNSET_EXECUTION_DATA_SOLUTION_ID = "api/HtmlReport/GetRunsetsExecutionInfoBySolutionID/{solutionId}/";
         // Instance-level flag indicating the RunSet was successfully sent to the central DB.
         // Volatile to ensure visibility across threads. Prefer per-execution tracking if multiple
         // concurrent runs are supported in the same process.
@@ -557,6 +560,76 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             return accountReportrunset;
         }
 
+        public string GetRunsetExecutionDataByRunSetIDFromCentralDB(Guid solutionId,Guid runSetId)
+        {
+            if (restClient != null)
+            {
+                RestRequest restRequest = new RestRequest( string.Format(GET_RUNSET_EXECUTION_DATA_RUNSET_ID,solutionId,runSetId), Method.Get);
+                string message = string.Format("solution id : {0} runSetId :{1}", solutionId,runSetId);
+                try
+                {
+                    RestResponse response = restClient.Execute(restRequest);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts runsetGuid  : {runSetId} GetSolutionRunsetsExecutionInfo() :{response}");
+
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{response}");
+                        }
+                    }
+                    else
+                    {
+                        return response.Content;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception while validating execution id {message}", ex);
+                }
+                return string.Empty;
+            }
+            return string.Empty;
+        }
+
+        public string GetRunsetExecutionDataBySolutionIDFromCentralDB(Guid solutionId)
+        {
+            if (restClient != null)
+            {
+                RestRequest restRequest = new RestRequest(string.Format(GET_RUNSET_EXECUTION_DATA_SOLUTION_ID, solutionId), Method.Get);
+                string message = string.Format("solution id : {0}", solutionId);
+                try
+                {
+                    RestResponse response = restClient.Execute(restRequest);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts solutionGuid  : {solutionId} GetSolutionRunsetsExecutionInfo() :{response}");
+
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{response}");
+                        }
+                    }
+                    else
+                    {
+                        return response.Content;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception while validating execution id {message}", ex);
+                }
+                return string.Empty;
+            }
+            return string.Empty;
+        }
+
         public List<AccountReportRunner> GetRunnerExecutionDataFromCentralDB(Guid executionId)
         {
             List<AccountReportRunner> accountReportrunset = [];
@@ -636,7 +709,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 string message = string.Format("execution log to Central DB (API URL:'{0}', Execution Id:'{1}', Instance Id:'{2}', Log Id:'{3}')", apiUrl, executionLogRequest.ExecutionId, executionLogRequest.InstanceId, executionLogRequest.LogId);
                 try
                 {
-                    
                     string FinalAPIUrl = $"{apiUrl.TrimEnd('/')}/{SEND_EXECUTIONLOG}";
                     bool IsSuccessful = await SendExecutionLogRestRequestAndGetResponse(FinalAPIUrl, executionLogRequest).ConfigureAwait(false);
                     if (IsSuccessful)

@@ -153,6 +153,10 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             try
             {
                 _queue?.CompleteAdding();
+
+                // Process any remaining items in the queue before shutdown
+                ProcessRemainingItems();
+
                 _cts?.Cancel();
                 if (_workerTask != null)
                 {
@@ -174,6 +178,30 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
         ~HttpLogAppender()
         {
             Dispose(); // Finalizer to ensure resources are cleaned up
+        }
+
+        private void ProcessRemainingItems()
+        {
+            try
+            {
+                var remainingItems = new List<LoggingEvent>();
+
+                // Collect all remaining items
+                while (_queue.TryTake(out LoggingEvent item, TimeSpan.FromMilliseconds(100)))
+                {
+                    remainingItems.Add(item);
+                }
+
+                if (remainingItems.Count > 0)
+                {
+                    // Process the remaining items synchronously
+                    ProcessBatch(remainingItems).GetAwaiter().GetResult();
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Error processing remaining items during disposal", ex);
+            }
         }
 
         protected override void Append(LoggingEvent loggingEvent)
@@ -236,196 +264,284 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
         }
 
 
+        // Updated ProcessQueue method
         private async Task ProcessQueue(CancellationToken token)
         {
             var buffer = new List<LoggingEvent>();
             int retryDelay = 1;
 
-            while (!token.IsCancellationRequested)
+            while (!token.IsCancellationRequested || !_queue.IsCompleted)
             {
                 try
                 {
                     if (WorkSpace.Instance is not null && WorkSpace.Instance.RunningInExecutionMode && !string.IsNullOrEmpty(ApiUrl))
                     {
                         LoggingEvent log;
-                        if (_queue.TryTake(out log, TimeSpan.FromSeconds(int.Parse(FlushIntervalSeconds))))
+                        bool hasItem = _queue.TryTake(out log, TimeSpan.FromSeconds(int.Parse(FlushIntervalSeconds)));
+
+                        if (hasItem)
                         {
                             buffer.Add(log);
                         }
 
-                        if (buffer.Count >= GetBatchSize() || (buffer.Count > 0 && log == null))
+                        // Process batch if:
+                        // 1. Buffer is full (reached batch size)
+                        // 2. No new items and buffer has items (timeout occurred)
+                        // 3. Queue is completed (shutdown) and buffer has items
+                        bool shouldProcess = buffer.Count >= GetBatchSize() ||
+                                           (buffer.Count > 0 && !hasItem) ||
+                                           (buffer.Count > 0 && _queue.IsCompleted);
+
+                        if (shouldProcess)
                         {
-                            var logDataBuilder = new StringBuilder();
-                            List<AccountReport.Contracts.RequestModels.ExecutionErrorRequest> ExecutionErrorRequestsList = new List<ExecutionErrorRequest>();
+                            int exceptionCount = 0;
+                            bool processed = false;
 
-                            foreach (var evt in buffer)
+                            while (!processed && exceptionCount <= 3)
                             {
-                                AccountReport.Contracts.RequestModels.ExecutionErrorRequest ExecutionErrorRequests = new AccountReport.Contracts.RequestModels.ExecutionErrorRequest();
-                                StringBuilder currentLog = new StringBuilder();
-                                if (Regex.IsMatch(evt.RenderedMessage, @"Run Set Execution Started"))
-                                {
-                                    isExecutionStarted = true;
-                                }
-
-                                if (Regex.IsMatch(evt.RenderedMessage, @"Running Pre-Execution Run Set Operations"))
-                                {
-                                    isPreRunSetOperation = true;
-                                }
-
-                                if (Regex.IsMatch(evt.RenderedMessage, @"Running Post-Execution Run Set Operations"))
-                                {
-                                    isPostRunSetOperation = true;
-                                    isPreRunSetOperation = false;
-                                }
-
-                                if (Regex.IsMatch(evt.RenderedMessage, @"Run Set Execution Ended"))
-                                {
-                                    isExecutionStarted = false;
-                                }
-
-                                if (Regex.IsMatch(evt.Level.DisplayName, @"^ERROR$") && Regex.IsMatch(evt.RenderedMessage, @"Error\(s\) occurred process exit code"))
-                                {
-                                    AccountReportRunSet accountReportRunSet = new AccountReportRunSet
-                                    {
-                                        Id = (Guid)ExecutionId,
-                                        ExecutionId = (Guid)ExecutionId,
-                                        EntityId = WorkSpace.Instance.RunsetExecutor?.RunSetConfig?.Guid,
-                                        GingerSolutionGuid = WorkSpace.Instance.Solution.Guid,
-                                        Name = WorkSpace.Instance.RunsetExecutor?.RunSetConfig?.Name,
-                                        RunStatus = eExecutionStatus.Failed,
-                                    };
-                                    if (ExecutionId != null)
-                                    {
-                                        bool Response = await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
-                                        if (!Response)
-                                        {
-                                            Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send Runset Execution data to Central DB.");
-                                        }
-                                    }
-
-                                }
-                                else
-                                {
-                                    currentLog.Append($"[{evt.Level.DisplayName} | {evt.TimeStamp.ToString("HH:mm:ss:fff_dd-MMM")}]{evt.RenderedMessage}");
-                                }
-                                Exception ex = evt.ExceptionObject;
-
-                                if (ex != null)
-                                {
-                                    string excFullInfo = "Error:" + ex.Message + Environment.NewLine;
-                                    excFullInfo += "Source:" + ex.Source + Environment.NewLine;
-                                    excFullInfo += "Stack Trace: " + ex.StackTrace;
-
-                                    currentLog.Append($"{Environment.NewLine}Exception Details:{Environment.NewLine}{excFullInfo}");
-                                }
-                                currentLog.Append($"{Environment.NewLine}{Environment.NewLine}");
-
-                                if (Regex.IsMatch(evt.Level.DisplayName, @"^ERROR$") && !isExecutionStarted)
-                                {
-                                    SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted);
-                                }
-                                else if (isExecutionStarted)
-                                {
-                                    if (Regex.IsMatch(evt.Level.DisplayName, @"^INFO$") && Regex.IsMatch(evt.RenderedMessage, @"Action Execution Ended.*Execution Status= Failed", RegexOptions.Singleline))
-                                    {
-                                        var match = Regex.Match(evt.RenderedMessage, @"SourcePath:\s*(.+?)\)");
-
-                                        if (match.Success)
-                                        {
-                                            string sourcePath = match.Groups[1].Value;
-                                            ExecutionErrorRequests.ErrorOriginPath = sourcePath;
-                                        }
-                                        SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted);
-                                    }
-                                }
-                                else if (isPreRunSetOperation)
-                                {
-                                    if (Regex.IsMatch(evt.Level.DisplayName, @"^INFO$") && Regex.IsMatch(evt.RenderedMessage, @"Execution Ended for Run Set Operation.*Status= Failed", RegexOptions.Singleline))
-                                    {
-                                        ExecutionErrorRequests.ErrorSource = "Operation type Pre";
-                                        SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted);
-                                    }
-                                }
-                                else if (isPostRunSetOperation)
-                                {
-                                    if (Regex.IsMatch(evt.Level.DisplayName, @"^INFO$") && Regex.IsMatch(evt.RenderedMessage, @"Execution Ended for Run Set Operation.*Status= Failed", RegexOptions.Singleline))
-                                    {
-                                        ExecutionErrorRequests.ErrorSource = "Operation type Post";
-                                        SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted);
-                                    }
-                                }
-                                logDataBuilder.Append(currentLog);
-                                if (!string.IsNullOrEmpty(ExecutionErrorRequests?.ErrorMessage))
-                                {
-                                    ExecutionErrorRequestsList.Add(ExecutionErrorRequests);
-                                }
-                            }
-                            string LogData = logDataBuilder.ToString();
-                            if (AccountReportApiHandler != null)
-                            {
-                                int exceptionCount = 0;
                                 try
                                 {
-
-                                    AccountReport.Contracts.RequestModels.ExecutionLogRequest ExecutionLogRequest = new AccountReport.Contracts.RequestModels.ExecutionLogRequest();
-                                    ExecutionLogRequest.ExecutionId = ExecutionId;
-                                    ExecutionLogRequest.LogData = LogData;
-                                    ExecutionLogRequest.InstanceId = InstanceId;
-                                    ExecutionLogRequest.ExecutionErrorRequests = ExecutionErrorRequestsList;
-
-                                    bool isSuccess = await AccountReportApiHandler.SendExecutionLogToCentralDBAsync(ApiUrl, ExecutionLogRequest);
-                                    if (isSuccess)
-                                    {
-                                        buffer.Clear();
-                                        retryDelay = 1;
-                                        exceptionCount = 0;
-                                    }
-                                    else
-                                    {
-                                        Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send logs, will retry.");
-                                        await Task.Delay(TimeSpan.FromSeconds(retryDelay), token);
-                                        retryDelay = Math.Min(retryDelay * 2, int.Parse(MaxRetryDelaySeconds));
-                                    }
+                                    await ProcessBatch(buffer);
+                                    buffer.Clear();
+                                    retryDelay = 1;
+                                    processed = true;
                                 }
                                 catch (Exception ex)
                                 {
                                     exceptionCount++;
                                     if (exceptionCount > 3)
                                     {
-                                        // after 3 exceptions give up and drop the logs
                                         Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send logs after 3 attempts, dropping logs.", ex);
                                         buffer.Clear();
-                                        retryDelay = 1;
+                                        processed = true;
                                     }
                                     else
                                     {
                                         Reporter.ToLog(eLogLevel.DEBUG, $"[HttpLogAppender] Exception occurred while sending logs. Will retry.", ex);
-                                        await Task.Delay(TimeSpan.FromSeconds(retryDelay), token);
-                                        retryDelay = Math.Min(retryDelay * 2, int.Parse(MaxRetryDelaySeconds));
+                                        if (!token.IsCancellationRequested)
+                                        {
+                                            await Task.Delay(TimeSpan.FromSeconds(retryDelay), token);
+                                            retryDelay = Math.Min(retryDelay * 2, int.Parse(MaxRetryDelaySeconds));
+                                        }
                                     }
                                 }
-                            }
-                            else
-                            {
-                                Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] AccountReportApiHandler or ApiUrl is not set. Cannot send logs.");
                             }
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, $"[HttpLogAppender] Failed to send logs: {ex.Message}");
-                    await Task.Delay(TimeSpan.FromSeconds(retryDelay), token);
-                    retryDelay = Math.Min(retryDelay * 2, int.Parse(MaxRetryDelaySeconds));
+                    Reporter.ToLog(eLogLevel.DEBUG, $"[HttpLogAppender] Failed to process queue: {ex.Message}");
+                    if (!token.IsCancellationRequested)
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(retryDelay), token);
+                        retryDelay = Math.Min(retryDelay * 2, int.Parse(MaxRetryDelaySeconds));
+                    }
+                }
+            }
+
+            // Final flush - process any remaining items
+            if (buffer.Count > 0)
+            {
+                try
+                {
+                    await ProcessBatch(buffer);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Error in final flush", ex);
                 }
             }
         }
 
-        private static void SetExecutionError(LoggingEvent evt, ExecutionErrorRequest ExecutionErrorRequests, bool isExecutionStarted)
+        // Extract the batch processing logic into a separate method
+        private async Task ProcessBatch(List<LoggingEvent> buffer)
+        {
+            if (buffer == null || buffer.Count == 0)
+                return;
+
+            var logDataBuilder = new StringBuilder();
+            List<AccountReport.Contracts.RequestModels.ExecutionErrorRequest> ExecutionErrorRequestsList = new List<ExecutionErrorRequest>();
+
+            foreach (var evt in buffer)
+            {
+                AccountReport.Contracts.RequestModels.ExecutionErrorRequest ExecutionErrorRequests = new AccountReport.Contracts.RequestModels.ExecutionErrorRequest();
+                StringBuilder currentLog = new StringBuilder();
+
+                if (evt.RenderedMessage.IndexOf("Run Set Execution Started", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    isExecutionStarted = true;
+                }
+
+                if (evt.RenderedMessage.IndexOf("Running Pre-Execution Run Set Operations", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    isPreRunSetOperation = true;
+                }
+
+                if (evt.RenderedMessage.IndexOf("Running Post-Execution Run Set Operations", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    isPostRunSetOperation = true;
+                    isPreRunSetOperation = false;
+                }
+
+                if (evt.RenderedMessage.IndexOf("Run Set Execution Ended", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    isExecutionStarted = false;
+                }
+
+                if (evt.Level.DisplayName.Equals("ERROR", StringComparison.Ordinal) && evt.RenderedMessage.IndexOf("Error(s) occurred process exit code", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    if (ExecutionId != null)
+                    {
+                        AccountReportRunSet accountReportRunSet = new AccountReportRunSet
+                        {
+                            Id = (Guid)ExecutionId,
+                            ExecutionId = (Guid)ExecutionId,
+                            EntityId = WorkSpace.Instance.RunsetExecutor?.RunSetConfig?.Guid,
+                            GingerSolutionGuid = WorkSpace.Instance.Solution.Guid,
+                            Name = WorkSpace.Instance.RunsetExecutor?.RunSetConfig?.Name,
+                            RunStatus = eExecutionStatus.Failed,
+                        };
+
+                        bool Response = await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
+                        if (!Response)
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send Runset Execution data to Central DB.");
+                        }
+                    }
+                }
+                else
+                {
+                    currentLog.Append($"[{evt.Level.DisplayName} | {evt.TimeStamp.ToString("HH:mm:ss:fff_dd-MMM")}]{evt.RenderedMessage}");
+                }
+                Exception ex = evt.ExceptionObject;
+                if (ex != null)
+                {
+                    string excFullInfo = "Error:" + ex.Message + Environment.NewLine;
+                    excFullInfo += "Source:" + ex.Source + Environment.NewLine;
+                    excFullInfo += "Stack Trace: " + ex.StackTrace;
+                    currentLog.Append($"{Environment.NewLine}Exception Details:{Environment.NewLine}{excFullInfo}");
+                }
+                currentLog.Append($"{Environment.NewLine}{Environment.NewLine}");
+
+                if (evt.Level.DisplayName.Equals("ERROR", StringComparison.Ordinal) && !isExecutionStarted)
+                {
+                    SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted, false);
+                }
+                else if (isExecutionStarted)
+                {
+                    if (evt.Level.DisplayName.Equals("INFO", StringComparison.Ordinal) && evt.RenderedMessage.IndexOf("Action Execution Ended", StringComparison.OrdinalIgnoreCase) >= 0 && evt.RenderedMessage.IndexOf("Execution Status= Failed", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        var match = Regex.Match(evt.RenderedMessage, @"SourcePath= (.*?)\n");
+                        if (match.Success)
+                        {
+                            string sourcePath = match.Groups[1].Value;
+                            ExecutionErrorRequests.ErrorOriginPath = sourcePath;
+                        }
+                        var ActionNamematch = Regex.Match(evt.RenderedMessage, @"Description= (.*?)\n");
+                        if (ActionNamematch.Success)
+                        {
+                            string ActionName = ActionNamematch.Groups[1].Value;
+                            ExecutionErrorRequests.ErrorSource = ActionName;
+                        }
+                        int TotalRetries = 0;
+                        var TotalRetriesmatch = Regex.Match(evt.RenderedMessage, @"Total Retries Configured= (.*?)\n");
+                        if (ActionNamematch.Success)
+                        {
+                            TotalRetries = Convert.ToInt32(TotalRetriesmatch.Groups[1].Value);                        
+                        }
+                        int CurrentRetry = 0;
+                        var CurrentRetrymatch = Regex.Match(evt.RenderedMessage, @"Current Retry Iteration= (.*?)\n");
+                        if (ActionNamematch.Success)
+                        {
+                            CurrentRetry = Convert.ToInt32(CurrentRetrymatch.Groups[1].Value);
+                        }
+
+                        var ActionIdmatch = Regex.Match(evt.RenderedMessage, @"ID:([^,]+)");
+                        if (ActionIdmatch.Success)
+                        {
+                            string ActionId = ActionIdmatch.Groups[1].Value;
+                            ExecutionErrorRequests.ErrorOriginID = ActionId;
+                        }
+
+                        if(TotalRetries == CurrentRetry)
+                        {
+                            SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted, false);
+                        }
+                        
+                    }
+                }
+                else if (isPreRunSetOperation)
+                {
+                    if (Regex.IsMatch(evt.Level.DisplayName, @"^INFO$") && Regex.IsMatch(evt.RenderedMessage, @"Execution Ended for Run Set Operation.*Status= Failed", RegexOptions.Singleline))
+                    {
+                        ExecutionErrorRequests.ErrorSource = "Pre Runset Operation Type";
+                        SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted, true);
+                    }
+                }
+                else if (isPostRunSetOperation)
+                {
+                    if (Regex.IsMatch(evt.Level.DisplayName, @"^INFO$") && Regex.IsMatch(evt.RenderedMessage, @"Execution Ended for Run Set Operation.*Status= Failed", RegexOptions.Singleline))
+                    {
+                        ExecutionErrorRequests.ErrorSource = "Post Runset Operation Type";
+                        SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted, true);
+                    }
+                }
+
+                logDataBuilder.Append(currentLog);
+                if (!string.IsNullOrEmpty(ExecutionErrorRequests?.ErrorMessage))
+                {
+                    ExecutionErrorRequestsList.Add(ExecutionErrorRequests);
+                }
+            }
+
+            // Send the batch
+            string LogData = logDataBuilder.ToString();
+            if (AccountReportApiHandler != null && !string.IsNullOrEmpty(ApiUrl))
+            {
+                AccountReport.Contracts.RequestModels.ExecutionLogRequest ExecutionLogRequest = new AccountReport.Contracts.RequestModels.ExecutionLogRequest();
+                ExecutionLogRequest.ExecutionId = ExecutionId;
+                ExecutionLogRequest.LogData = LogData;
+                ExecutionLogRequest.InstanceId = InstanceId;
+                ExecutionLogRequest.ExecutionErrorRequests = ExecutionErrorRequestsList;
+
+                bool isSuccess = await AccountReportApiHandler.SendExecutionLogToCentralDBAsync(ApiUrl, ExecutionLogRequest);
+                if (!isSuccess)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send logs during batch processing.");
+                }
+            }
+        }
+
+        private static void SetExecutionError(LoggingEvent evt, ExecutionErrorRequest ExecutionErrorRequests, bool isExecutionStarted,bool isRunsetOperation)
         {
             ExecutionErrorRequests.ErrorOccurrenceTime = evt.TimeStamp;
             ExecutionErrorRequests.ErrorLevel = isExecutionStarted ? eExecutionErrorLevel.Execution : eExecutionErrorLevel.Setup;
-            ExecutionErrorRequests.ErrorMessage = evt.RenderedMessage;
+
+            if(isRunsetOperation)
+            {
+                Match match = Regex.Match(evt.RenderedMessage, @"Errors= (.*?)\n");
+                if (match.Success)
+                {
+                    ExecutionErrorRequests.ErrorMessage = match.Groups[1].Value;
+                }
+                else
+                {
+                    ExecutionErrorRequests.ErrorMessage = evt.RenderedMessage;
+                }
+            }
+            else
+            {
+                Match match = Regex.Match(evt.RenderedMessage, @"Error Details=([\s\S]*?)\r?\nExtra Details=");
+                if (match.Success)
+                {
+                    ExecutionErrorRequests.ErrorMessage = match.Groups[1].Value;
+                }
+                else
+                {
+                    ExecutionErrorRequests.ErrorMessage = evt.RenderedMessage;
+                }
+            }
         }
     }
 }
