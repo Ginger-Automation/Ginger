@@ -16,9 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using AccountReport.Contracts;
+using AccountReport.Contracts.Enum;
+using AccountReport.Contracts.RequestModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using log4net.Appender;
@@ -26,16 +28,10 @@ using log4net.Core;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Text;
-using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using AccountReport.Contracts.RequestModels;
-using AccountReport.Contracts;
-using AccountReport.Contracts.Enum;
-using SharpAdbClient.Logs;
 
 namespace Amdocs.Ginger.CoreNET.log4netLib
 {
@@ -55,9 +51,9 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
         {
             get
             {
-                if(string.IsNullOrEmpty(_apiUrl))
+                if (string.IsNullOrEmpty(_apiUrl))
                 {
-                    if( !string.IsNullOrWhiteSpace(GingerPlayEndPointManager.GetAccountReportServiceUrlByGateWay()))
+                    if (!string.IsNullOrWhiteSpace(GingerPlayEndPointManager.GetAccountReportServiceUrlByGateWay()))
                     {
                         _apiUrl = GingerPlayEndPointManager.GetAccountReportServiceUrlByGateWay();
                     }
@@ -106,11 +102,11 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
 
         public AccountReportApiHandler AccountReportApiHandler
         {
-           get
+            get
             {
-                if(_accountReportApiHandler == null)
+                if (_accountReportApiHandler == null)
                 {
-                    if(!string.IsNullOrEmpty(_apiUrl))
+                    if (!string.IsNullOrEmpty(_apiUrl))
                     {
                         _accountReportApiHandler = new AccountReportApiHandler(_apiUrl);
                     }
@@ -260,9 +256,8 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                         if (buffer.Count >= GetBatchSize() || (buffer.Count > 0 && log == null))
                         {
                             var logDataBuilder = new StringBuilder();
-                            var errlogDataBuilder = new StringBuilder();
                             List<AccountReport.Contracts.RequestModels.ExecutionErrorRequest> ExecutionErrorRequestsList = new List<ExecutionErrorRequest>();
-                            
+
                             foreach (var evt in buffer)
                             {
                                 AccountReport.Contracts.RequestModels.ExecutionErrorRequest ExecutionErrorRequests = new AccountReport.Contracts.RequestModels.ExecutionErrorRequest();
@@ -299,15 +294,15 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                         Name = WorkSpace.Instance.RunsetExecutor?.RunSetConfig?.Name,
                                         RunStatus = eExecutionStatus.Failed,
                                     };
-                                    if(ExecutionId != null)
+                                    if (ExecutionId != null)
                                     {
                                         bool Response = await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
-                                        if(!Response)
+                                        if (!Response)
                                         {
                                             Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send Runset Execution data to Central DB.");
                                         }
                                     }
-                                    
+
                                 }
                                 else
                                 {
@@ -327,11 +322,11 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
 
                                 if (Regex.IsMatch(evt.Level.DisplayName, @"^ERROR$") && !isExecutionStarted)
                                 {
-                                    SetExecutionError(evt, ExecutionErrorRequests,isExecutionStarted);
+                                    SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted);
                                 }
                                 else if (isExecutionStarted)
                                 {
-                                    if (Regex.IsMatch(evt.Level.DisplayName, @"^INFO$") && Regex.IsMatch(evt.RenderedMessage,@"Action Execution Ended.*Execution Status= Failed",RegexOptions.Singleline))
+                                    if (Regex.IsMatch(evt.Level.DisplayName, @"^INFO$") && Regex.IsMatch(evt.RenderedMessage, @"Action Execution Ended.*Execution Status= Failed", RegexOptions.Singleline))
                                     {
                                         var match = Regex.Match(evt.RenderedMessage, @"SourcePath:\s*(.+?)\)");
 
@@ -345,7 +340,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                 }
                                 else if (isPreRunSetOperation)
                                 {
-                                    if(Regex.IsMatch(evt.Level.DisplayName,@"^INFO$") && Regex.IsMatch(evt.RenderedMessage, @"Execution Ended for Run Set Operation.*Status= Failed", RegexOptions.Singleline))
+                                    if (Regex.IsMatch(evt.Level.DisplayName, @"^INFO$") && Regex.IsMatch(evt.RenderedMessage, @"Execution Ended for Run Set Operation.*Status= Failed", RegexOptions.Singleline))
                                     {
                                         ExecutionErrorRequests.ErrorSource = "Operation type Pre";
                                         SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted);
@@ -360,13 +355,12 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                     }
                                 }
                                 logDataBuilder.Append(currentLog);
-                                if(!string.IsNullOrEmpty(ExecutionErrorRequests?.ErrorMessage))
+                                if (!string.IsNullOrEmpty(ExecutionErrorRequests?.ErrorMessage))
                                 {
                                     ExecutionErrorRequestsList.Add(ExecutionErrorRequests);
                                 }
                             }
                             string LogData = logDataBuilder.ToString();
-                            string ErrorLogData = errlogDataBuilder.ToString();
                             if (AccountReportApiHandler != null)
                             {
                                 int exceptionCount = 0;
@@ -427,7 +421,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             }
         }
 
-        private static void SetExecutionError(LoggingEvent evt, ExecutionErrorRequest ExecutionErrorRequests,bool isExecutionStarted)
+        private static void SetExecutionError(LoggingEvent evt, ExecutionErrorRequest ExecutionErrorRequests, bool isExecutionStarted)
         {
             ExecutionErrorRequests.ErrorOccurrenceTime = evt.TimeStamp;
             ExecutionErrorRequests.ErrorLevel = isExecutionStarted ? eExecutionErrorLevel.Execution : eExecutionErrorLevel.Setup;

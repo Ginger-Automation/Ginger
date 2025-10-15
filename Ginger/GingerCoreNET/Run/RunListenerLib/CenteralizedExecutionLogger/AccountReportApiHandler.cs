@@ -647,13 +647,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     else
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"Failed to send {message}");
-                        isSuccess = false;
+                        return false;
                     }
                 }
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Exception when sending {message}", ex);
-                    isSuccess = false;
+                    return false;
                 }
             }
             return isSuccess;

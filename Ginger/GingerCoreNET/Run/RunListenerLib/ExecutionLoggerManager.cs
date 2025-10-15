@@ -601,7 +601,7 @@ namespace Ginger.Run
 
                 if (!offlineMode)
                 {
-                    string SourcePath = $"{mContext.Runner}=>{mContext.BusinessFlow.Name}=>{mCurrentActivity.ActivityName}=>{action.ItemName}";
+                    string SourcePath = $"{mContext?.Runner}=>{mContext?.BusinessFlow?.Name ?? "N/A"}=>{mCurrentActivity?.ActivityName ?? "N/A"}=>{(action?.ItemName ?? action?.Description ?? "N/A")}";
                     ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Action", string.Format("{0} (ID:{1}, ParentID:{2}, ParentActivityID: {3},SourcePath: {4})", action.Description, action.Guid, action.ExecutionParentGuid, mCurrentActivity?.Guid, SourcePath), AR);
                 }
             }
