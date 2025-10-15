@@ -60,7 +60,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         private const double AGENT_CONFIGS_ROW_HEIGHT = 90;
         private GingerPlayConfiguration GingerPlayConfiguration;
 
-        public eImageType IconType { get; set; } = eImageType.GingerPlayLogo;
+        public eImageType IconType { get; set; } = eImageType.GingerPlayWhiteGradiant;
 
 
 

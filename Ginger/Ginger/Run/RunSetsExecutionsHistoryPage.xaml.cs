@@ -19,6 +19,7 @@ limitations under the License.
 using AccountReport.Contracts.GraphQL.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.BPMN.Exportation;
@@ -33,6 +34,7 @@ using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCoreNET.GeneralLib;
 using GingerWPF.WizardLib;
 using GraphQL;
 using GraphQLClient.Clients;
@@ -147,7 +149,7 @@ namespace Ginger.Run
         /// </summary>
         private bool SetExectionHistoryVisibility(ExecutionLoggerConfiguration execLoggerConfig)
         {
-            if (execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
+            if (execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayGatewayUrlConfigured())
             {
                 return true;
             }

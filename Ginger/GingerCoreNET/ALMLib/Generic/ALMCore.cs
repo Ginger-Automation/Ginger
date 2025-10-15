@@ -18,11 +18,13 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Environments;
+using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -225,7 +227,7 @@ namespace GingerCore.ALM
                 publishToALMConfig.ExecutionId = "";
 
                 bool check =
-                    WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Any(g => g.IsSelected && g.PublishLogToCentralDB == ePublishToCentralDB.Yes);
+                    WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Any(g => g.IsSelected && g.PublishLogToCentralDB == ePublishToCentralDB.Yes) && GingerPlayUtils.IsGingerPlayGatewayUrlConfigured();
 
                 if (!exectutedFromAutomateTab && check)
                 {
@@ -415,5 +417,6 @@ namespace GingerCore.ALM
 
             return mergedFields;
         }
+
     }
 }
