@@ -76,9 +76,7 @@
             </Border.Effect>
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                    <GradientStop Color="#924ff6" Offset="0.3"/>
-                    <GradientStop Color="#FF00FF" Offset="0.3"/>
-                    <GradientStop Color="#974de9" Offset="0.3"/>
+                    <GradientStop Color="#8250DF" Offset="1"/>
                 </LinearGradientBrush>
             </Border.Background>
             <Grid Margin="8,0,8,0">
