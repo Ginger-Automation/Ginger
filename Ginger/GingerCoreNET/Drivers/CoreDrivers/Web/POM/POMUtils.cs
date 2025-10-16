@@ -270,11 +270,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                             {
                                 nameCount[baseName] = 0; // First occurrence, no suffix
                                 // Check if base name (without suffix) is already taken
-                                if (list.Any(e => e != existingElement && e.ElementName == baseName))
+                                string candidateName = baseName;
+                                while (list.Any(e => e != existingElement && e.ElementName == candidateName))
                                 {
                                     nameCount[baseName]++;
-                                    existingElement.ElementName = $"{baseName}_{nameCount[baseName]}";
+                                    candidateName = $"{baseName}_{nameCount[baseName]}";
                                 }
+                                existingElement.ElementName = candidateName;
                             }
                             if (ele.elementinfo.locators.EnhanceLocatorsByAI != null)
                             {
