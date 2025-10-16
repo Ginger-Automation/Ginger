@@ -18,6 +18,7 @@ limitations under the License.
 
 using AccountReport.Contracts;
 using AccountReport.Contracts.ResponseModels;
+using ALM_CommonStd.DataContracts;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.External.GingerPlay;
@@ -585,7 +586,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                         // First deserialize the outer object
                         RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
 
-                        return root.response;
+                        if (root != null && root.isSuccsess)
+                        {
+                            return root.response;
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo(): {response}");
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -620,10 +628,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     }
                     else
                     {
+
                         // First deserialize the outer object
                         RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
-
-                        return root.response;
+                        if (root != null && root.isSuccsess)
+                        {
+                            return root.response;
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo(): {response}");
+                        }
                     }
                 }
                 catch (Exception ex)
