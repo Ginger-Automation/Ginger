@@ -32,6 +32,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using static GingerCore.Drivers.DriverBase;
 
 namespace Amdocs.Ginger.CoreNET.log4netLib
 {
@@ -358,8 +359,9 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
         private async Task ProcessBatch(List<LoggingEvent> buffer)
         {
             if (buffer == null || buffer.Count == 0)
+            {
                 return;
-
+            }
             var logDataBuilder = new StringBuilder();
             List<AccountReport.Contracts.RequestModels.ExecutionErrorRequest> ExecutionErrorRequestsList = new List<ExecutionErrorRequest>();
 
@@ -391,20 +393,20 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
 
                 if (evt.Level.DisplayName.Equals("ERROR", StringComparison.Ordinal) && evt.RenderedMessage.IndexOf("Error(s) occurred process exit code", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    if (ExecutionId != null)
+                    if (ExecutionId.HasValue)
                     {
                         AccountReportRunSet accountReportRunSet = new AccountReportRunSet
                         {
-                            Id = (Guid)ExecutionId,
-                            ExecutionId = (Guid)ExecutionId,
+                            Id = ExecutionId.Value,
+                            ExecutionId = ExecutionId.Value,
                             EntityId = WorkSpace.Instance.RunsetExecutor?.RunSetConfig?.Guid,
                             GingerSolutionGuid = WorkSpace.Instance.Solution.Guid,
                             Name = WorkSpace.Instance.RunsetExecutor?.RunSetConfig?.Name,
                             RunStatus = eExecutionStatus.Failed,
                         };
 
-                        bool Response = await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
-                        if (!Response)
+                        bool response = await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
+                        if (!response)
                         {
                             Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send Runset Execution data to Central DB.");
                         }
@@ -414,19 +416,28 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 {
                     currentLog.Append($"[{evt.Level.DisplayName} | {evt.TimeStamp.ToString("HH:mm:ss:fff_dd-MMM")}]{evt.RenderedMessage}");
                 }
+                string exceptiosource = string.Empty;
                 Exception ex = evt.ExceptionObject;
                 if (ex != null)
                 {
                     string excFullInfo = "Error:" + ex.Message + Environment.NewLine;
                     excFullInfo += "Source:" + ex.Source + Environment.NewLine;
                     excFullInfo += "Stack Trace: " + ex.StackTrace;
+                    exceptiosource = ex.Source;
                     currentLog.Append($"{Environment.NewLine}Exception Details:{Environment.NewLine}{excFullInfo}");
                 }
                 currentLog.Append($"{Environment.NewLine}{Environment.NewLine}");
 
                 if (evt.Level.DisplayName.Equals("ERROR", StringComparison.Ordinal) && !isExecutionStarted)
                 {
-                    SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted, false);
+                    if(!string.IsNullOrEmpty(exceptiosource))
+                    {
+                        ExecutionErrorRequests.ErrorSource = exceptiosource;
+                    }
+                    if(!(evt.RenderedMessage.IndexOf("Error(s) occurred process exit code", StringComparison.OrdinalIgnoreCase) >= 0))
+                    {
+                        SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted, false);
+                    }
                 }
                 else if (isExecutionStarted)
                 {

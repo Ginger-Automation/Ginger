@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.0" />
+    <PackageReference Include="Ginger.AccountReport.Contracts" Version="2025.4.0" />
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="2025.4.2.1" />
     <PackageReference Include="GingerTestHelper" Version="2.0.2" />
     <PackageReference Include="log4net" Version="2.0.15" />
@@ -43,12 +44,6 @@
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
     <ProjectReference Include="..\GingerCore\GingerCore.csproj" />
     <ProjectReference Include="..\Ginger\Ginger.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="AccountReport.Contracts">
-      <HintPath>..\Ginger\DLLs\AccountReport.Contracts.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>   

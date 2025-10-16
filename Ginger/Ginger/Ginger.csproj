@@ -734,6 +734,7 @@
     <PackageReference Include="FontAwesome6.Fonts" Version="2.5.1" />
     <PackageReference Include="FontAwesome6.Svg" Version="2.5.1" />
     <PackageReference Include="Gherkin" Version="5.1.0" />
+    <PackageReference Include="Ginger.AccountReport.Contracts" Version="2025.4.0" />
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="2025.4.2.1" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
     <PackageReference Include="IdentityModel" Version="7.0.0" />
@@ -784,9 +785,6 @@
   </ItemGroup>
 
   <ItemGroup>    
-    <Reference Include="AccountReport.Contracts">
-      <HintPath>DLLs\AccountReport.Contracts.dll</HintPath>
-    </Reference>    
     <Reference Include="ACL_Data_Contract">
       <HintPath>..\GingerCoreNET\DLLS\ACL_Data_Contract.dll</HintPath>
     </Reference>

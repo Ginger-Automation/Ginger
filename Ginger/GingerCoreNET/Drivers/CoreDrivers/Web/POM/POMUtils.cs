@@ -251,6 +251,26 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                             existingElement.ElementName = enhancedName ?? existingElement.ElementName;
                             existingElement.Description = enhancedDescription ?? existingElement.Description;
                             existingElement.IsProcessed = true;
+
+
+                            // Check for duplicates and append _i if necessary
+                            var baseName = existingElement.ElementName;
+                            var duplicates = list.Where(x => x.ElementName.StartsWith(baseName)).ToList();
+
+                            if (duplicates.Count > 1)
+                            {
+                                int suffix = 1;
+                                string newName;
+                                do
+                                {
+                                    newName = $"{baseName}_{suffix}";
+                                    suffix++;
+                                } while (list.Any(x => x.ElementName == newName));
+
+                                existingElement.ElementName = newName;
+                            }
+
+
                             if (ele.elementinfo.locators.EnhanceLocatorsByAI != null)
                             {
                                 // Deserialize the EnhanceLocatorsByAI property
