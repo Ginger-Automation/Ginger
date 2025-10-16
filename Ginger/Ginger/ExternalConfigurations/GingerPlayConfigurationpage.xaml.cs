@@ -258,26 +258,7 @@ namespace Ginger.ExternalConfigurations
      
         private void GingerPlayLearnMore_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(GingerPlayUtils.GetGingerPlayGatewayURLIfConfigured()))
-            {
-                try
-                {
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = GingerPlayUtils.GetGingerPlayGatewayURLIfConfigured() + "gingerplay/#/playHome",
-                        UseShellExecute = true
-                    });
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Unable to open the link: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-            else
-            {
-                // Show the banner window if the gateway URL is not configured
                 ShowGingerPlayBannerWindow();
-            }
         }
 
         private void ShowGingerPlayBannerWindow()
