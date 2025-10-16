@@ -457,13 +457,13 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                         }
                         int TotalRetries = 0;
                         var TotalRetriesmatch = Regex.Match(evt.RenderedMessage, @"Total Retries Configured= (.*?)\n");
-                        if (ActionNamematch.Success)
+                        if (TotalRetriesmatch.Success)
                         {
                             TotalRetries = Convert.ToInt32(TotalRetriesmatch.Groups[1].Value);                        
                         }
                         int CurrentRetry = 0;
                         var CurrentRetrymatch = Regex.Match(evt.RenderedMessage, @"Current Retry Iteration= (.*?)\n");
-                        if (ActionNamematch.Success)
+                        if (CurrentRetrymatch.Success)
                         {
                             CurrentRetry = Convert.ToInt32(CurrentRetrymatch.Groups[1].Value);
                         }
