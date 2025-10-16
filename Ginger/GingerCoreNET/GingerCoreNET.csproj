@@ -259,7 +259,7 @@
   
     <PackageReference Include="Eyes.Selenium4" Version="2.59.0" />
   
-    <PackageReference Include="Ginger.AccountReport.Contracts" Version="2024.4.1.6" />
+    <PackageReference Include="Ginger.AccountReport.Contracts" Version="2025.4.0" />
   
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="2025.4.2.1" />
   
