@@ -88,16 +88,18 @@ namespace Ginger.BusinessFlowPages
                        .OfType<VariableSelectionList>()
                        .ToList();
 
-                if (mContext.Activity.EnableActionsVariablesDependenciesControl)
+                if (mContext.Activity.EnableActionsVariablesDependenciesControl && mParentListVars.Count>0)
                 {
                     foreach (var variable in mParentListVars)
                     {
                         var optionalValue = variable.OptionalValuesList
                             .Select(v => v.Value)
                             .ToArray();
-
-                        var variableDependency = new VariableDependency(variable.Guid, variable.Name, optionalValue);
-                        selectedAction.VariablesDependencies.Add(variableDependency);
+                        if (optionalValue != null)
+                        {
+                            var variableDependency = new VariableDependency(variable.Guid, variable.Name, optionalValue);
+                            selectedAction.VariablesDependencies.Add(variableDependency);
+                        }
                     }
                 }
 
