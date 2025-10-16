@@ -564,7 +564,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             if (restClient != null)
             {
-                var path = $"{GET_RUNSET_EXECUTION_DATA_RUNSET_ID}/{solutionId}/{runSetId}/";
+                var path = $"{GET_RUNSET_EXECUTION_DATA_RUNSET_ID}{solutionId}/{runSetId}/";
                 RestRequest restRequest = new RestRequest(path, Method.Get);
                 string message = string.Format("solution id : {0} runSetId :{1}", solutionId,runSetId);
                 try
@@ -600,7 +600,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             if (restClient != null)
             {
-                var path = $"{GET_RUNSET_EXECUTION_DATA_SOLUTION_ID}/{solutionId}/";
+                var path = $"{GET_RUNSET_EXECUTION_DATA_SOLUTION_ID}{solutionId}/";
                 RestRequest restRequest = new RestRequest(path, Method.Get);
                 string message = string.Format("solution id : {0}", solutionId);
                 try

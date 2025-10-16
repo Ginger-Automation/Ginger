@@ -329,6 +329,14 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                             }
                         }
                     }
+                    else
+                    {
+                        // Avoid tight loop when not in execution mode or API URL is not set
+                        if (!token.IsCancellationRequested)
+                        {
+                            await Task.Delay(TimeSpan.FromSeconds(1), token);
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
