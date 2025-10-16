@@ -251,6 +251,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                             existingElement.ElementName = enhancedName ?? existingElement.ElementName;
                             existingElement.Description = enhancedDescription ?? existingElement.Description;
                             existingElement.IsProcessed = true;
+
+
                             if (ele.elementinfo.locators.EnhanceLocatorsByAI != null)
                             {
                                 // Deserialize the EnhanceLocatorsByAI property

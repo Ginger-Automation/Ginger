@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.CoreNET.External.GingerPlay;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Ginger.Reports;
 using GingerCoreNET.GeneralLib;
 using Newtonsoft.Json;
@@ -41,23 +42,12 @@ namespace Amdocs.Ginger.CoreNET
             {
                 using (var httpClient = new HttpClient())
                 {
-                    var endpoint = baseURI + "api/AccountReport/GetRunsetsExecutionInfoBySolutionID/" + soluionGuid;
-                    var response = httpClient.GetAsync(endpoint).Result;
-                    if (!response.IsSuccessStatusCode)
+                    AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(GingerPlayEndPointManager.GetAccountReportServiceUrl());
+                    var response = accountReportApiHandler.GetRunsetExecutionDataBySolutionIDFromCentralDB(soluionGuid);
+                    
+                    if(!string.IsNullOrEmpty(response))
                     {
-                        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-                        {
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts solutionGuid  : {soluionGuid} GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result}");
-                        }
-                        else
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result}");
-                        }
-
-                    }
-                    else
-                    {
-                        runSetReports = ConvertResponsInRunsetReport(response.Content.ReadAsStringAsync().Result);
+                        runSetReports = ConvertResponsInRunsetReport(response);
                     }
                 }
             }
@@ -71,24 +61,11 @@ namespace Amdocs.Ginger.CoreNET
             {
                 using (var httpClient = new HttpClient())
                 {
-                    var endpoint = baseURI + "api/AccountReport/GetRunsetExecutionInfoByRunsetID/" + soluionGuid + "/" + runsetGuid;
-                    var response = httpClient.GetAsync(endpoint).Result;
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-                        {
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts runsetGuid  : {runsetGuid} GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result}");
-
-                        }
-                        else
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result}");
-                        }
-
-                    }
-                    else
-                    {
-                        runSetReports = ConvertResponsInRunsetReport(response.Content.ReadAsStringAsync().Result);
+                    AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(GingerPlayEndPointManager.GetAccountReportServiceUrl());
+                    var response = accountReportApiHandler.GetRunsetExecutionDataByRunSetIDFromCentralDB(soluionGuid, runsetGuid);
+                    
+                    if(!string.IsNullOrEmpty(response)){
+                        runSetReports = ConvertResponsInRunsetReport(response);
                     }
                 }
             }

@@ -63,66 +63,66 @@
         </DockPanel>
 
         <!-- Fixed "Upgrade" Button at Top-Right Corner -->
-        <Border
-    Width="115"
+        <Button x:Name="xUpgradeButton"
+    Width="105"
     Height="29"
-    CornerRadius="12"
+    Cursor="Hand"
     VerticalAlignment="Top"
     HorizontalAlignment="Right"
-    Margin="10,5,25,10"
-    SnapsToDevicePixels="True">
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Direction="270" Color="Gray" Opacity="0.5"/>
-            </Border.Effect>
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                    <GradientStop Color="#924ff6" Offset="0.3"/>
-                    <GradientStop Color="#FF00FF" Offset="0.3"/>
-                    <GradientStop Color="#974de9" Offset="0.3"/>
-                </LinearGradientBrush>
-            </Border.Background>
-            <Grid Margin="8,0,8,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="22"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <usercontrols:ImageMakerControl 
-            ImageType="GingerPlayWhiteGradiant"
-            Foreground="White"
-            SetAsFontImageWithSize="16"
-            Height="18"
-            VerticalAlignment="Center"
-            HorizontalAlignment="Right"/>
-                <Button x:Name="xUpgradeButton"
-                Content="Ginger Play"
-                Foreground="White"
-                Background="Transparent"
-                FontWeight="Bold"
-                FontSize="12"
-                BorderThickness="0"
-                Cursor="Hand"
-                ToolTip="Unlock Pro Features with Ginger Play"
-                Click="ProFeatureButtonClick"
-                Grid.Column="1"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Padding="0,0,0,0">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                            <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="BorderBrush" Value="Transparent"/>
-                            <Setter Property="OverridesDefaultStyle" Value="True"/>
-                            <Setter Property="Template">
+    Margin="10,5,20,10"
+    ToolTip="Unlock Pro Features with Ginger Play"
+    Click="ProFeatureButtonClick"
+    Background="Transparent"
+    BorderThickness="0">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        x:Name="border"
+                CornerRadius="12"
+                SnapsToDevicePixels="True">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" ShadowDepth="2" Direction="270" Color="Gray" Opacity="0.5"/>
+                        </Border.Effect>
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#FFD600" Offset="0.3"/>
+                                <GradientStop Color="#FF6EC4" Offset="0.5"/>
+                                <GradientStop Color="#FF3CAC" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Grid Margin="8,0,8,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="22"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <usercontrols:ImageMakerControl 
+                        ImageType="GingerPlayGradiantBlack"
+                        Foreground="White"
+                        SetAsFontImageWithSize="16"
+                        Height="18"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left"/>
+                            <TextBlock
+                        Text="Ginger Play"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        FontSize="12"
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Effect">
                                 <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </ControlTemplate>
+                                    <DropShadowEffect BlurRadius="12" ShadowDepth="3" Direction="270" Color="#FF3CAC" Opacity="0.7"/>
                                 </Setter.Value>
                             </Setter>
-                        </Style>
-                    </Button.Style>
-                </Button>
-            </Grid>
-        </Border>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
     </Grid>
 </Page>
