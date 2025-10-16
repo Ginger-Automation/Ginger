@@ -46,6 +46,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
         ConcurrentQueue<ElementInfo> processingQueue = new ConcurrentQueue<ElementInfo>();
         private readonly ConcurrentDictionary<Guid, byte> _enqueuedIds = new();
 
+        private Dictionary<string, int> nameCount = new Dictionary<string, int>();
 
         private readonly object lockObj = new object();
 
@@ -251,6 +252,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                             existingElement.ElementName = enhancedName ?? existingElement.ElementName;
                             existingElement.Description = enhancedDescription ?? existingElement.Description;
                             existingElement.IsProcessed = true;
+
+                            var baseName = existingElement.ElementName;
+
+                            if (nameCount.ContainsKey(baseName))
+                            {
+                                nameCount[baseName]++;
+                                existingElement.ElementName = $"{baseName}_{nameCount[baseName]}";
+                            }
+                            else
+                            {
+                                nameCount[baseName] = 0; // First occurrence, no suffix
+                                                         // Optional: If you want to rename the first occurrence too, uncomment below
+                                                         // element.ElementName = $"{baseName}_0";
+                            }
                             if (ele.elementinfo.locators.EnhanceLocatorsByAI != null)
                             {
                                 // Deserialize the EnhanceLocatorsByAI property
