@@ -55,8 +55,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         private const string GET_RUNNER_EXECUTION_DATA = "api/HtmlReport/GetAccountReportRunnersByExecutionId/";
         private const string GET_ACCOUNT_HTML_REPORT = "/api/HtmlReport/GetAccountHtmlReport/";
         private const string SEND_EXECUTIONLOG = "api/AccountReport/executionlog/";
-        private const string GET_RUNSET_EXECUTION_DATA_RUNSET_ID = "api/HtmlReport/GetRunsetHLExecutionInfoByRunsetId/{solutionId}/{runSetId}/";
-        private const string GET_RUNSET_EXECUTION_DATA_SOLUTION_ID = "api/HtmlReport/GetRunsetsExecutionInfoBySolutionID/{solutionId}/";
+        private const string GET_RUNSET_EXECUTION_DATA_RUNSET_ID = "api/HtmlReport/GetRunsetHLExecutionInfoByRunsetId/";
+        private const string GET_RUNSET_EXECUTION_DATA_SOLUTION_ID = "api/HtmlReport/GetRunsetsExecutionInfoBySolutionID/";
         // Instance-level flag indicating the RunSet was successfully sent to the central DB.
         // Volatile to ensure visibility across threads. Prefer per-execution tracking if multiple
         // concurrent runs are supported in the same process.

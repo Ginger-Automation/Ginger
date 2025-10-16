@@ -312,7 +312,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                     exceptionCount++;
                                     if (exceptionCount > 3)
                                     {
-                                        Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send logs after 3 attempts, dropping logs.", ex);
+                                        Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send logs after 3 retries, dropping logs.", ex);
                                         buffer.Clear();
                                         processed = true;
                                     }
@@ -428,13 +428,13 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 }
                 currentLog.Append($"{Environment.NewLine}{Environment.NewLine}");
 
-                if (evt.Level.DisplayName.Equals("ERROR", StringComparison.Ordinal) && !isExecutionStarted)
+                if ((evt.Level.DisplayName.Equals("ERROR", StringComparison.Ordinal) || evt.Level.DisplayName.Equals("FATAL", StringComparison.Ordinal)) && !isExecutionStarted)
                 {
                     if(!string.IsNullOrEmpty(exceptiosource))
                     {
                         ExecutionErrorRequests.ErrorSource = exceptiosource;
                     }
-                    if(!(evt.RenderedMessage.IndexOf("Error(s) occurred process exit code", StringComparison.OrdinalIgnoreCase) >= 0))
+                    if(evt.RenderedMessage.IndexOf("Error(s) occurred process exit code", StringComparison.OrdinalIgnoreCase) <= 0) //Error(s) occurred process exit code should not get add in ExecutionError
                     {
                         SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted, false);
                     }
@@ -443,7 +443,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 {
                     if (evt.Level.DisplayName.Equals("INFO", StringComparison.Ordinal) && evt.RenderedMessage.IndexOf("Action Execution Ended", StringComparison.OrdinalIgnoreCase) >= 0 && evt.RenderedMessage.IndexOf("Execution Status= Failed", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        var match = Regex.Match(evt.RenderedMessage, @"SourcePath= (.*?)\n");
+                        var match = Regex.Match(evt.RenderedMessage,@"SourcePath= (.*?)\n");
                         if (match.Success)
                         {
                             string sourcePath = match.Groups[1].Value;
@@ -457,17 +457,10 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                         }
                         int TotalRetries = 0;
                         var TotalRetriesmatch = Regex.Match(evt.RenderedMessage, @"Total Retries Configured= (.*?)\n");
-                        if (TotalRetriesmatch.Success)
-                        {
-                            TotalRetries = Convert.ToInt32(TotalRetriesmatch.Groups[1].Value);                        
-                        }
+                        if (TotalRetriesmatch.Success && int.TryParse(TotalRetriesmatch.Groups[1].Value, out var tr)) { TotalRetries = tr; }
                         int CurrentRetry = 0;
                         var CurrentRetrymatch = Regex.Match(evt.RenderedMessage, @"Current Retry Iteration= (.*?)\n");
-                        if (CurrentRetrymatch.Success)
-                        {
-                            CurrentRetry = Convert.ToInt32(CurrentRetrymatch.Groups[1].Value);
-                        }
-
+                        if (CurrentRetrymatch.Success && int.TryParse(CurrentRetrymatch.Groups[1].Value, out var cr)) { CurrentRetry = cr; }
                         var ActionIdmatch = Regex.Match(evt.RenderedMessage, @"ID:([^,]+)");
                         if (ActionIdmatch.Success)
                         {
