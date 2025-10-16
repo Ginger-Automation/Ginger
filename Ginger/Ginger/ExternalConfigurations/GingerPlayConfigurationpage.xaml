@@ -24,7 +24,7 @@
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal" Grid.Row="0">
                     <Label Content="Ginger Play Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="GingerPlayWhiteGradiant"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
+                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Ginger Play" ImageType="GingerPlayWhiteGradiant"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Grid.Row="1">
                     <Grid Margin="10,10,0,0" x:Name="xGingerPlayGrid">
@@ -87,21 +87,21 @@
                     </Grid>
                 </StackPanel>
             </Grid>
-            <Grid Grid.Column="1">
-                <Border
-Margin="30,0,10,0"
+                <Grid Grid.Column="1">
+                    <Border
+Margin="30,20,10,0"
  Background="GhostWhite"
  CornerRadius="10"
  BorderBrush="#B6E0FE"
  BorderThickness="1"
  VerticalAlignment="Top"
  Height="Auto">
-                    <StackPanel Margin="10"
+                        <StackPanel Margin="10"
          HorizontalAlignment="Left"
          VerticalAlignment="Top"
          Height="Auto"
          >
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
                             <usercontrols:ImageMakerControl ImageType="GingerPlayWhiteGradiant" Height="20" Width="20" Margin="0,2,10,0"/>
                             <TextBlock Text="About Ginger Play" 
                                        FontWeight="Normal" 
@@ -111,7 +111,7 @@ Margin="30,0,10,0"
                         <Separator Margin="0,10,0,10"/>
                         <TextBlock TextWrapping="Wrap"
                                    Foreground="#333"
-                                   FontSize="14"
+                                   FontSize="12"
                                    Margin="0,0,0,10">
                             Ginger Play is an advanced automation platform built on top of Ginger, designed for execution, collaboration, and reporting at scale.
                         </TextBlock>
@@ -120,15 +120,20 @@ Margin="30,0,10,0"
                                    FontSize="14"
                                    Margin="0,0,0,6"/>
                         <StackPanel>
-                            <TextBlock Text="• Advanced execution: bulk runs, concatenated flows, intelligent scheduling, and input-output data mapping." TextWrapping="Wrap" Margin="0,0,0,4"/>
-                            <TextBlock Text="• Real-time tracking &amp; dashboards: status, logs, errors, screenshots, and performance insights." TextWrapping="Wrap" Margin="0,0,0,4"/>
-                            <TextBlock Text="• Post-execution actions: resume from failure, re-execution, cloning from history." TextWrapping="Wrap" Margin="0,0,0,4"/>
-                            <TextBlock Text="• AI-powered capabilities: natural language SQL queries, optimized flow execution, runtime input combinations, and more." TextWrapping="Wrap" Margin="0,0,0,4"/>
+                            <TextBlock FontSize="12" Text="• Advanced execution: bulk runs, concatenated flows, intelligent scheduling, and input-output data mapping." TextWrapping="Wrap" Margin="0,0,0,4"/>
+                            <TextBlock FontSize="12" Text="• Real-time tracking &amp; dashboards: status, logs, errors, screenshots, and performance insights." TextWrapping="Wrap" Margin="0,0,0,4"/>
+                            <TextBlock FontSize="12" Text="• Post-execution actions: resume from failure, re-execution, cloning from history." TextWrapping="Wrap" Margin="0,0,0,4"/>
+                            <TextBlock FontSize="12" Text="• AI-powered capabilities: natural language SQL queries, optimized flow execution, runtime input combinations, and more." TextWrapping="Wrap" Margin="0,0,0,4"/>
                         </StackPanel>
-                        <TextBlock TextWrapping="Wrap" FontWeight="Bold" Text="Integrating Ginger Play unlocks enterprise-grade execution, reporting, and AI-driven productivity—all within a unified automation ecosystem."/>
-                        <TextBlock Margin="0,10,0,0" FontSize="14">
+                        <TextBlock TextWrapping="Wrap" FontSize="12" FontWeight="Bold" Text="Integrating Ginger Play unlocks enterprise-grade execution, reporting, and AI-driven productivity—all within a unified automation ecosystem."/>
+                        <TextBlock Margin="0,10,0,0" FontSize="12">
                             <Hyperlink Click="GingerPlayLearnMore_Click">Learn more about Ginger Play</Hyperlink>
                                                         <usercontrols:ImageMakerControl ImageType="Link" Height="10" Width="10" Margin="0,2,10,0"/>
+                        </TextBlock>
+                        <TextBlock Margin="0,10,0,0" TextWrapping="Wrap" FontSize="12" FontWeight="Bold" Text="Ginger Play is provided as part of Amdocs Automation Testing Service."/>
+                        <TextBlock Margin="0,10,0,0" FontSize="12">
+      <Hyperlink Click="GingerPlayLearnMore_Click">Learn More About Amdocs Automation Testing Service</Hyperlink>
+                                  <usercontrols:ImageMakerControl ImageType="Link" Height="10" Width="10" Margin="0,2,10,0"/>
                         </TextBlock>
                     </StackPanel>
                 </Border>

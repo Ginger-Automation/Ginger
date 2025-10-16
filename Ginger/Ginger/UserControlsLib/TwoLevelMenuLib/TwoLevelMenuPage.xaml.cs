@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.UserControls;
 using Ginger.TwoLevelMenuLib;
+using GingerCoreNET.GeneralLib;
 using System;
 using System.Diagnostics;
 using System.Windows;
@@ -240,34 +241,17 @@ namespace Ginger.GeneralWindows
             }
         }
 
-        private string IsGingerPlayGatewayURLConfigured()
-        {
-            try
-            {
-                GingerPlayConfiguration gingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
-                if (gingerPlayConfiguration != null && !string.IsNullOrEmpty(gingerPlayConfiguration.GingerPlayGatewayUrl))
-                {
-                    return gingerPlayConfiguration.GingerPlayGatewayUrl;
-                }
-
-                return string.Empty;
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Gateway URL is null or no configuration found", ex);
-                return string.Empty;
-            }
-        }
+  
         private void ProFeatureButtonClick(object sender, RoutedEventArgs e)
         {
-            string gatewayUrl = IsGingerPlayGatewayURLConfigured();
-            if (!string.IsNullOrEmpty(gatewayUrl))
+         
+            if (!string.IsNullOrEmpty(GingerPlayUtils.GetGingerPlayGatewayURLIfConfigured()))
             {
                 try
                 {
                     Process.Start(new ProcessStartInfo
                     {
-                        FileName = gatewayUrl + "gingerplay/#/playHome",
+                        FileName = GingerPlayUtils.GetGingerPlayGatewayURLIfConfigured() + "gingerplay/#/playHome",
                         UseShellExecute = true
                     });
                 }
