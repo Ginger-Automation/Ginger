@@ -2689,7 +2689,7 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                         {
                             try
                             {
-                                EI.ScreenShotImage = GingerCoreNET.GeneralLib.General.TakeElementScreenShot(EI, ScreenShot); //TakeElementScreenShot(EI, fullImage);
+                                EI.ScreenShotImage = GingerCoreNET.GeneralLib.General.TakeElementScreenShot(EI, fullImage); //TakeElementScreenShot(EI, fullImage);
                             }
                             catch (Exception ex)
                             {
@@ -2720,9 +2720,6 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                 mIsDriverBusy = false;
             }
         }
-
-        
-
 
         private Bitmap ScreenshotToImage(Screenshot screenshot)
         {
