@@ -53,7 +53,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         private const string GET_RUNNER_EXECUTION_DATA = "api/HtmlReport/GetAccountReportRunnersByExecutionId/";
         private const string GET_ACCOUNT_HTML_REPORT = "/api/HtmlReport/GetAccountHtmlReport/";
         private const string SEND_EXECUTIONLOG = "api/AccountReport/executionlog/";
-        private const string GET_RUNSET_EXECUTION_DATA_RUNSET_ID = "api/HtmlReport/GetRunsetHLExecutionInfoByRunsetId/";
+        private const string GET_RUNSET_EXECUTION_DATA_RUNSET_ID = "api/HtmlReport/GetRunsetExecutionInfoByRunsetID/";
         private const string GET_RUNSET_EXECUTION_DATA_SOLUTION_ID = "api/HtmlReport/GetRunsetsExecutionInfoBySolutionID/";
         // Instance-level flag indicating the RunSet was successfully sent to the central DB.
         // Volatile to ensure visibility across threads. Prefer per-execution tracking if multiple
@@ -558,7 +558,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             return accountReportrunset;
         }
 
-        public string GetRunsetExecutionDataByRunSetIDFromCentralDB(string baseURI,Guid solutionId, Guid runSetId)
+        public string GetRunsetExecutionDataByRunSetIDFromCentralDB(string baseURI, Guid solutionId, Guid runSetId)
         {
             if (restClient != null)
             {
@@ -582,7 +582,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     }
                     else
                     {
-                        return response.Content;
+                        // First deserialize the outer object
+                        RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
+
+                        return root.response;
                     }
                 }
                 catch (Exception ex)
@@ -593,7 +596,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             }
             return string.Empty;
         }
-
         public string GetRunsetExecutionDataBySolutionIDFromCentralDB(string baseURI, Guid solutionId)
         {
             if (restClient != null)
@@ -618,7 +620,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     }
                     else
                     {
-                        return response.Content;
+                        // First deserialize the outer object
+                        RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
+
+                        return root.response;
                     }
                 }
                 catch (Exception ex)
@@ -760,4 +765,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             }
         }
     }
+}
+
+public class RootObject
+{
+    public bool isSuccsess { get; set; }
+    public string response { get; set; }
 }
