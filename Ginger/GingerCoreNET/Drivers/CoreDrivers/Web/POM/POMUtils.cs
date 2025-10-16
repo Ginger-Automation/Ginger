@@ -263,8 +263,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
                             if (nameCount.ContainsKey(baseName))
                             {
-                                nameCount[baseName]++;
-                                existingElement.ElementName = $"{baseName}_{nameCount[baseName]}";
+                                string candidateName;
+                                do
+                                {
+                                    nameCount[baseName]++;
+                                    candidateName = $"{baseName}_{nameCount[baseName]}";
+                                } while (list.Any(e => e != existingElement && e.ElementName == candidateName));
+                                existingElement.ElementName = candidateName;
                             }
                             else
                             {
