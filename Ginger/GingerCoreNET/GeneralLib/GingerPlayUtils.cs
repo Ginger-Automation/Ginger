@@ -1,6 +1,8 @@
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.CoreNET.External.GingerPlay;
+using System;
 
 namespace GingerCoreNET.GeneralLib
 {
@@ -17,6 +19,25 @@ namespace GingerCoreNET.GeneralLib
                 ))
                 && gingerPlayConfiguration.GingerPlayEnabled
                 && gingerPlayConfiguration.GingerPlayReportServiceEnabled;
+        }
+
+        public static string GetGingerPlayGatewayURLIfConfigured()
+        {
+            try
+            {
+                GingerPlayConfiguration gpConfig = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+                if (gpConfig != null && !string.IsNullOrEmpty(gpConfig.GingerPlayGatewayUrl))
+                {
+                    return gpConfig.GingerPlayGatewayUrl;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Gateway URL is null or no configuration found", ex);
+                return string.Empty;
+            }
         }
     }
 }
