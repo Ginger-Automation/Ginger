@@ -23,14 +23,12 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using AutoMapper;
-using Ginger.Reports;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -560,13 +558,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             return accountReportrunset;
         }
 
-        public string GetRunsetExecutionDataByRunSetIDFromCentralDB(Guid solutionId,Guid runSetId)
+        public string GetRunsetExecutionDataByRunSetIDFromCentralDB(Guid solutionId, Guid runSetId)
         {
             if (restClient != null)
             {
                 var path = $"{GET_RUNSET_EXECUTION_DATA_RUNSET_ID}{solutionId}/{runSetId}/";
                 RestRequest restRequest = new RestRequest(path, Method.Get);
-                string message = string.Format("solution id : {0} runSetId :{1}", solutionId,runSetId);
+                string message = string.Format("solution id : {0} runSetId :{1}", solutionId, runSetId);
                 try
                 {
                     RestResponse response = restClient.Execute(restRequest);
@@ -574,7 +572,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     {
                         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts runsetGuid  : {runSetId} GetSolutionRunsetsExecutionInfo() :{response}");
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts runsetGuid: {runSetId} GetSolutionRunsetsExecutionInfo(): {response}");
 
                         }
                         else
@@ -610,12 +608,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     {
                         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts solutionGuid  : {solutionId} GetSolutionRunsetsExecutionInfo() :{response}");
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts solutionGuid: {solutionId} GetSolutionRunsetsExecutionInfo(): {response}");
 
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{response}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo(): {response}");
                         }
                     }
                     else
