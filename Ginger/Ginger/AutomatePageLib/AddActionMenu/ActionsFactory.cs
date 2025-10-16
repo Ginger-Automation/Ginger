@@ -30,6 +30,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
 using GingerCore.Activities;
 using GingerCore.Platforms.PlatformsInfo;
+using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
@@ -83,6 +84,25 @@ namespace Ginger.BusinessFlowPages
                 {
                     selectedAction.Platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == mContext.Activity.TargetApplication).Platform;
                 }
+                var mParentListVars = mContext.Activity.Variables
+                       .OfType<VariableSelectionList>()
+                       .ToList();
+
+                if (mContext.Activity.EnableActionsVariablesDependenciesControl && mParentListVars.Count>0)
+                {
+                    foreach (var variable in mParentListVars)
+                    {
+                        var optionalValue = variable?.OptionalValuesList
+                            .Select(v => v.Value)
+                            .ToArray();
+                        if (optionalValue != null)
+                        {
+                            var variableDependency = new VariableDependency(variable.Guid, variable.Name, optionalValue);
+                            selectedAction?.VariablesDependencies?.Add(variableDependency);
+                        }
+                    }
+                }
+
                 instance = GenerateSelectedAction(selectedAction, mContext);
             }
             else if (mItem is ElementInfo)
