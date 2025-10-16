@@ -92,13 +92,13 @@ namespace Ginger.BusinessFlowPages
                 {
                     foreach (var variable in mParentListVars)
                     {
-                        var optionalValue = variable.OptionalValuesList
+                        var optionalValue = variable?.OptionalValuesList
                             .Select(v => v.Value)
                             .ToArray();
                         if (optionalValue != null)
                         {
                             var variableDependency = new VariableDependency(variable.Guid, variable.Name, optionalValue);
-                            selectedAction.VariablesDependencies.Add(variableDependency);
+                            selectedAction?.VariablesDependencies?.Add(variableDependency);
                         }
                     }
                 }
