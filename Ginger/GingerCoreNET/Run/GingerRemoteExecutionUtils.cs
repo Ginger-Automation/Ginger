@@ -43,7 +43,7 @@ namespace Amdocs.Ginger.CoreNET
                 using (var httpClient = new HttpClient())
                 {
                     AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(GingerPlayEndPointManager.GetAccountReportServiceUrl());
-                    var response = accountReportApiHandler.GetRunsetExecutionDataBySolutionIDFromCentralDB(soluionGuid);
+                    var response = accountReportApiHandler.GetRunsetExecutionDataBySolutionIDFromCentralDB(baseURI,soluionGuid);
                     
                     if(!string.IsNullOrEmpty(response))
                     {
@@ -62,7 +62,7 @@ namespace Amdocs.Ginger.CoreNET
                 using (var httpClient = new HttpClient())
                 {
                     AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(GingerPlayEndPointManager.GetAccountReportServiceUrl());
-                    var response = accountReportApiHandler.GetRunsetExecutionDataByRunSetIDFromCentralDB(soluionGuid, runsetGuid);
+                    var response = accountReportApiHandler.GetRunsetExecutionDataByRunSetIDFromCentralDB(baseURI, soluionGuid, runsetGuid);
                     
                     if(!string.IsNullOrEmpty(response)){
                         runSetReports = ConvertResponsInRunsetReport(response);

@@ -558,11 +558,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             return accountReportrunset;
         }
 
-        public string GetRunsetExecutionDataByRunSetIDFromCentralDB(Guid solutionId, Guid runSetId)
+        public string GetRunsetExecutionDataByRunSetIDFromCentralDB(string baseURI,Guid solutionId, Guid runSetId)
         {
             if (restClient != null)
             {
-                var path = $"{GET_RUNSET_EXECUTION_DATA_RUNSET_ID}{solutionId}/{runSetId}/";
+                var path = $"{baseURI}{GET_RUNSET_EXECUTION_DATA_RUNSET_ID}{solutionId}/{runSetId}/";
                 RestRequest restRequest = new RestRequest(path, Method.Get);
                 string message = string.Format("solution id : {0} runSetId :{1}", solutionId, runSetId);
                 try
@@ -594,11 +594,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             return string.Empty;
         }
 
-        public string GetRunsetExecutionDataBySolutionIDFromCentralDB(Guid solutionId)
+        public string GetRunsetExecutionDataBySolutionIDFromCentralDB(string baseURI, Guid solutionId)
         {
             if (restClient != null)
             {
-                var path = $"{GET_RUNSET_EXECUTION_DATA_SOLUTION_ID}{solutionId}/";
+                var path = $"{baseURI}{GET_RUNSET_EXECUTION_DATA_SOLUTION_ID}{solutionId}/";
                 RestRequest restRequest = new RestRequest(path, Method.Get);
                 string message = string.Format("solution id : {0}", solutionId);
                 try
