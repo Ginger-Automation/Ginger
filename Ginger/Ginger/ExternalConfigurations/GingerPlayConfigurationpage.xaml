@@ -130,6 +130,11 @@ Margin="30,20,10,0"
                             <Hyperlink Click="GingerPlayLearnMore_Click">Learn more about Ginger Play</Hyperlink>
                                                         <usercontrols:ImageMakerControl ImageType="Link" Height="10" Width="10" Margin="0,2,10,0"/>
                         </TextBlock>
+                        <TextBlock Margin="0,10,0,0" TextWrapping="Wrap" FontSize="12" FontWeight="Bold" Text="Ginger Play is provided as part of Amdocs Automation Testing Service."/>
+                        <TextBlock Margin="0,10,0,0" FontSize="12">
+      <Hyperlink Click="GingerPlayLearnMore_Click">Learn More About Amdocs Automation Testing Service</Hyperlink>
+                                  <usercontrols:ImageMakerControl ImageType="Link" Height="10" Width="10" Margin="0,2,10,0"/>
+                        </TextBlock>
                     </StackPanel>
                 </Border>
             </Grid>
