@@ -273,7 +273,7 @@ namespace Ginger.Run
             ((ExecutionLogger)mExecutionLogger).SetRunsetFolder(execResultsFolder, maxFolderSize, currentExecutionDateTime, offline);
             if (!offline)
             {
-                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.RunSet), string.Format("{0} (ID:{1})", WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid) , null);                
+                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.RunSet), string.Format("{0} (ID:{1})", WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid) , null);
             }
         }
 
@@ -532,7 +532,7 @@ namespace Ginger.Run
 
                 Object AR = null;
                 if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
-                {
+                {                    
                     AR = ((ExecutionLogger)mExecutionLogger).SetReportAction(action, mContext, this.ExecutedFrom, offlineMode);
                     //
                     // Defects Suggestion section (to be considered to remove to separate function)
@@ -601,7 +601,8 @@ namespace Ginger.Run
 
                 if (!offlineMode)
                 {
-                    ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Action", string.Format("{0} (ID:{1}, ParentID:{2}, ParentActivityID: {3})", action.Description, action.Guid, action.ExecutionParentGuid, mCurrentActivity?.Guid), AR);
+                    string SourcePath = $"{WorkSpace.Instance?.RunsetExecutor?.RunSetConfig?.Name ?? "N/A"} > {mContext?.BusinessFlow?.Name ?? "N/A"} > {mCurrentActivity?.ActivityName ?? "N/A"} > {(action?.ItemName ?? action?.Description ?? "N/A")}";
+                    ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Action", string.Format("{0} (ID:{1}, ParentID:{2}, ParentActivityID: {3})", action.Description, action.Guid, action.ExecutionParentGuid, mCurrentActivity?.Guid), AR,SourcePath);
                 }
             }
             catch (Exception ex)
