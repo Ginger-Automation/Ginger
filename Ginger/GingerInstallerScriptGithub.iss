@@ -53,6 +53,7 @@ Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\windowsdesktop-runtime
 Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\aspnetcore-runtime-8.0.0-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
 Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\AccessDatabaseEngine_X64.exe"; DestDir: "{tmp}"; Flags: dontcopy deleteafterinstall noencryption
 Source: "D:\a\Ginger\Ginger\Ginger\SetGingerExe.bat"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\a\Ginger\Ginger\Ginger\RemoveGingerExe.bat"; DestDir: "{app}"; Flags: ignoreversion
 ;NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 
@@ -434,4 +435,8 @@ Begin
 end;
 
 [UninstallRun]
-Filename: "D:\a\Ginger\Ginger\Ginger\RemoveGingerExe.bat"; Parameters: "/silent";  
+Filename: "{app}\RemoveGingerExe.bat"; Flags: runhidden
+
+[UninstallDelete]
+Type: filesandordirs; Name: "{app}\*"
+Type: files; Name: "{app}\Ginger.InstallationConfiguration.Json"
