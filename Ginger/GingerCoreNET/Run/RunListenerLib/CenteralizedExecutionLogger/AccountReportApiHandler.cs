@@ -628,7 +628,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     {
                         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts solutionGuid: {solutionId} GetRunsetExecutionDataBySolutionIDFromCentralDB(): {response}");
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Execution Info Not found against solutionGuid: {solutionId} GetRunsetExecutionDataBySolutionIDFromCentralDB(): {response}");
 
                         }
                         else
