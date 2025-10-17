@@ -18,6 +18,7 @@ limitations under the License.
 
 using AccountReport.Contracts;
 using AccountReport.Contracts.ResponseModels;
+using ALM_CommonStd.DataContracts;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.External.GingerPlay;
@@ -53,7 +54,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         private const string GET_RUNNER_EXECUTION_DATA = "api/HtmlReport/GetAccountReportRunnersByExecutionId/";
         private const string GET_ACCOUNT_HTML_REPORT = "/api/HtmlReport/GetAccountHtmlReport/";
         private const string SEND_EXECUTIONLOG = "api/AccountReport/executionlog/";
-        private const string GET_RUNSET_EXECUTION_DATA_RUNSET_ID = "api/HtmlReport/GetRunsetHLExecutionInfoByRunsetId/";
+        private const string GET_RUNSET_EXECUTION_DATA_RUNSET_ID = "api/HtmlReport/GetRunsetExecutionInfoByRunsetID/";
         private const string GET_RUNSET_EXECUTION_DATA_SOLUTION_ID = "api/HtmlReport/GetRunsetsExecutionInfoBySolutionID/";
         // Instance-level flag indicating the RunSet was successfully sent to the central DB.
         // Volatile to ensure visibility across threads. Prefer per-execution tracking if multiple
@@ -511,8 +512,18 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     if (response.IsSuccessful)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, $"Successfully validated execution id {message}");
-                        accountReportBusinessFlows = JsonConvert.DeserializeObject<List<AccountReportBusinessFlow>>(response.Content);
-                        return accountReportBusinessFlows;
+
+                        RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
+
+                        if (root != null && root.isSuccsess)
+                        {
+                            accountReportBusinessFlows = JsonConvert.DeserializeObject<List<AccountReportBusinessFlow>>(root.response);
+                            return accountReportBusinessFlows;
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetBusinessflowExecutionDataFromCentralDB(): {response}");
+                        }
                     }
                     else
                     {
@@ -558,11 +569,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             return accountReportrunset;
         }
 
-        public string GetRunsetExecutionDataByRunSetIDFromCentralDB(Guid solutionId, Guid runSetId)
+        public string GetRunsetExecutionDataByRunSetIDFromCentralDB(string baseURI, Guid solutionId, Guid runSetId)
         {
             if (restClient != null)
             {
-                var path = $"{GET_RUNSET_EXECUTION_DATA_RUNSET_ID}{solutionId}/{runSetId}/";
+                var path = $"{baseURI}{GET_RUNSET_EXECUTION_DATA_RUNSET_ID}{solutionId}/{runSetId}/";
                 RestRequest restRequest = new RestRequest(path, Method.Get);
                 string message = string.Format("solution id : {0} runSetId :{1}", solutionId, runSetId);
                 try
@@ -572,17 +583,27 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     {
                         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts runsetGuid: {runSetId} GetSolutionRunsetsExecutionInfo(): {response}");
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts runsetGuid: {runSetId} GetRunsetExecutionDataByRunSetIDFromCentralDB(): {response}");
 
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{response}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetRunsetExecutionDataByRunSetIDFromCentralDB() :{response}");
                         }
                     }
                     else
                     {
-                        return response.Content;
+                        // First deserialize the outer object
+                        RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
+
+                        if (root != null && root.isSuccsess)
+                        {
+                            return root.response ?? string.Empty;
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetRunsetExecutionDataByRunSetIDFromCentralDB(): {response}");
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -593,12 +614,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             }
             return string.Empty;
         }
-
-        public string GetRunsetExecutionDataBySolutionIDFromCentralDB(Guid solutionId)
+        public string GetRunsetExecutionDataBySolutionIDFromCentralDB(string baseURI, Guid solutionId)
         {
             if (restClient != null)
             {
-                var path = $"{GET_RUNSET_EXECUTION_DATA_SOLUTION_ID}{solutionId}/";
+                var path = $"{baseURI}{GET_RUNSET_EXECUTION_DATA_SOLUTION_ID}{solutionId}/";
                 RestRequest restRequest = new RestRequest(path, Method.Get);
                 string message = string.Format("solution id : {0}", solutionId);
                 try
@@ -608,17 +628,26 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     {
                         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts solutionGuid: {solutionId} GetSolutionRunsetsExecutionInfo(): {response}");
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Execution Info Not found against solutionGuid: {solutionId} GetRunsetExecutionDataBySolutionIDFromCentralDB(): {response}");
 
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo(): {response}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetRunsetExecutionDataBySolutionIDFromCentralDB(): {response}");
                         }
                     }
                     else
                     {
-                        return response.Content;
+                        // First deserialize the outer object
+                        RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
+                        if (root != null && root.isSuccsess)
+                        {
+                            return root.response ?? string.Empty;
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetRunsetExecutionDataBySolutionIDFromCentralDB(): {response}");
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -643,8 +672,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     if (response.IsSuccessful)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, $"Successfully validated execution id {message}");
-                        accountReportrunset = JsonConvert.DeserializeObject<List<AccountReportRunner>>(response.Content);
-                        return accountReportrunset;
+                        RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
+                        if (root != null && root.isSuccsess)
+                        {
+                            accountReportrunset = JsonConvert.DeserializeObject<List<AccountReportRunner>>(root.response);
+                            return accountReportrunset;
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetRunnerExecutionDataFromCentralDB(): {response}");
+                        }
+                        
                     }
                     else
                     {
@@ -673,7 +711,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 RestResponse response = await restClient.ExecuteAsync(request);
                 if (response.IsSuccessful)
                 {
-                    return JsonConvert.DeserializeObject<AccountReportRunSetClient>(response.Content);
+                    RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
+                    if (root != null && root.isSuccsess)
+                    {
+                        return JsonConvert.DeserializeObject<AccountReportRunSetClient>(root.response);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetAccountHTMLReportAsync(): {response}");
+                    }
+                    return null;
                 }
                 else
                 {
@@ -760,4 +807,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             }
         }
     }
+}
+
+public class RootObject
+{
+    public bool isSuccsess { get; set; }
+    public string response { get; set; }
 }
