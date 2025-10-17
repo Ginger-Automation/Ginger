@@ -512,8 +512,18 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     if (response.IsSuccessful)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, $"Successfully validated execution id {message}");
-                        accountReportBusinessFlows = JsonConvert.DeserializeObject<List<AccountReportBusinessFlow>>(response.Content);
-                        return accountReportBusinessFlows;
+
+                        RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
+
+                        if (root != null && root.isSuccsess)
+                        {
+                            accountReportBusinessFlows = JsonConvert.DeserializeObject<List<AccountReportBusinessFlow>>(root.response);
+                            return accountReportBusinessFlows;
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo(): {response}");
+                        }
                     }
                     else
                     {
@@ -628,7 +638,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     }
                     else
                     {
-
                         // First deserialize the outer object
                         RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
                         if (root != null && root.isSuccsess)
@@ -663,8 +672,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     if (response.IsSuccessful)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, $"Successfully validated execution id {message}");
-                        accountReportrunset = JsonConvert.DeserializeObject<List<AccountReportRunner>>(response.Content);
-                        return accountReportrunset;
+                        RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
+                        if (root != null && root.isSuccsess)
+                        {
+                            accountReportrunset = JsonConvert.DeserializeObject<List<AccountReportRunner>>(root.response);
+                            return accountReportrunset;
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo(): {response}");
+                        }
+                        
                     }
                     else
                     {
@@ -693,7 +711,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 RestResponse response = await restClient.ExecuteAsync(request);
                 if (response.IsSuccessful)
                 {
-                    return JsonConvert.DeserializeObject<AccountReportRunSetClient>(response.Content);
+                    RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
+                    if (root != null && root.isSuccsess)
+                    {
+                        return JsonConvert.DeserializeObject<AccountReportRunSetClient>(root.response);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo(): {response}");
+                    }
+                    return null;
                 }
                 else
                 {
