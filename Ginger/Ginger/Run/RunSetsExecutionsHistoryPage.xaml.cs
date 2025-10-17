@@ -318,7 +318,7 @@ namespace Ginger.Run
         /// <summary>
         /// Reloads the data for the RunSetsExecutionsHistoryPage.
         /// </summary>
-        public async void ReloadExecutionHistoryData()
+        public async Task ReloadExecutionHistoryData()
         {
 
             if (await AssignGraphQLObjectEndPoint() && SetExectionHistoryVisibility(execLoggerConfig))
