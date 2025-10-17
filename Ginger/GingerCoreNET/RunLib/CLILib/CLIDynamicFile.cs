@@ -25,6 +25,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Configurations;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.ExecuterService.Contracts.V1.ExternalConfiguration;
+using Ginger.Reports;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
@@ -344,6 +345,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                             gingerPlayConfig.GingerPlayReportServiceEnabled = gingerPlay.EnableAccountReportService;
                             gingerPlayConfig.GingerPlayAIServiceEnabled = gingerPlay.EnableAIService;
                             gingerPlayConfig.GingerPlayExecutionServiceEnabled = gingerPlay.EnableExecutionService;
+                        }
+                        if (gingerPlay.EnableAccountReportService)
+                        {
+                            solution.LoggerConfigurations.PublishLogToCentralDB = ExecutionLoggerConfiguration.ePublishToCentralDB.Yes;
+                            solution.LoggerConfigurations.UploadArtifactsToCentralizedReport = ExecutionLoggerConfiguration.eUploadExecutionArtifactsToCentralizedReport.Yes;
+                            solution.LoggerConfigurations.DeleteLocalDataOnPublish = ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish.Yes;
+                        }
+                        else
+                        {
+                            solution.LoggerConfigurations.PublishLogToCentralDB = ExecutionLoggerConfiguration.ePublishToCentralDB.No;
+                            solution.LoggerConfigurations.UploadArtifactsToCentralizedReport = ExecutionLoggerConfiguration.eUploadExecutionArtifactsToCentralizedReport.No;
+                            solution.LoggerConfigurations.DeleteLocalDataOnPublish = ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish.No;
                         }
                         break;
 

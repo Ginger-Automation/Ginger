@@ -24,7 +24,6 @@
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" Grid.Row="0">
                 <Label Content="ZAP Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
             </StackPanel>
             <StackPanel Orientation="Vertical" Grid.Row="1">
                 <Grid Margin="10,10,0,0" x:Name="xZAPGrid" >

@@ -86,11 +86,11 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                 {
                     return GetAccountReportServiceUrlByGateWay();
                 }
-                else if (!string.IsNullOrEmpty(GingerPlayConfiguration?.CentralizedAccountReportURL)  && GingerPlayConfiguration.GingerPlayEnabled)
+                else if (!string.IsNullOrEmpty(GingerPlayConfiguration?.CentralizedAccountReportURL))
                 {
                     return GingerPlayConfiguration.CentralizedAccountReportURL;
                 }
-                else if (!string.IsNullOrEmpty(WorkSpace.Instance?.Solution?.LoggerConfigurations?.GetCentralLoggerEndPointURLBackwardCompatibility()) && GingerPlayConfiguration.GingerPlayEnabled)
+                else if (!string.IsNullOrEmpty(WorkSpace.Instance?.Solution?.LoggerConfigurations?.GetCentralLoggerEndPointURLBackwardCompatibility()))
                 {
                     // If the Central Logger URL is set, use it as the Account Report Service URL
                     GingerPlayConfiguration.CentralizedAccountReportURL = WorkSpace.Instance?.Solution?.LoggerConfigurations?.GetCentralLoggerEndPointURLBackwardCompatibility();
@@ -98,12 +98,7 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                     GingerPlayConfiguration.GingerPlayReportServiceEnabled = true;
                     return GingerPlayConfiguration.CentralizedAccountReportURL;
                 }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting Account Report Service URL");
-
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -133,12 +128,7 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                     GingerPlayConfiguration.GingerPlayReportServiceEnabled = true;
                     return GingerPlayConfiguration.CentralizedHTMLReportServiceURL;
                 }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting HTML Report Service URL");
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the HTML Report Service URL. Please check the configuration.");
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -156,12 +146,7 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                 {
                     return GingerPlayConfiguration.GingerPlayGatewayUrl + AI_SERVICE_URL;
                 }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting AI Service URL");
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the AI Service URL. Please check the configuration.");
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -191,11 +176,7 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                     GingerPlayConfiguration.GingerPlayExecutionServiceEnabled = true;
                     return GingerPlayConfiguration.CentralizedExecutionHandlerURL;
                 }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting Execution Service URL");
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
