@@ -680,7 +680,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo(): {response}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetRunnerExecutionDataFromCentralDB(): {response}");
                         }
                         
                     }
