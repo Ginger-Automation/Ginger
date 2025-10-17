@@ -25,6 +25,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Configurations;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.ExecuterService.Contracts.V1.ExternalConfiguration;
+using Ginger.Reports;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
@@ -344,6 +345,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                             gingerPlayConfig.GingerPlayReportServiceEnabled = gingerPlay.EnableAccountReportService;
                             gingerPlayConfig.GingerPlayAIServiceEnabled = gingerPlay.EnableAIService;
                             gingerPlayConfig.GingerPlayExecutionServiceEnabled = gingerPlay.EnableExecutionService;
+                            solution.LoggerConfigurations.PublishLogToCentralDB = ExecutionLoggerConfiguration.ePublishToCentralDB.Yes;
                         }
                         break;
 

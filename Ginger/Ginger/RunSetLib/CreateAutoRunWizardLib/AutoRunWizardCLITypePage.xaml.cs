@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using GingerCore.GeneralLib;
@@ -64,6 +66,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     ResetCLIContent(mAutoRunWizard.ResetCLIContent);
                     ShowHelp();
                     ShowContent();
+                    SetRequestButtonState();
                     break;
 
                 case EventType.Prev:
@@ -86,6 +89,19 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 case EventType.LeavingForNextPage:
                     mAutoRunWizard.ResetCLIContent = false;
                     break;
+            }
+        }
+
+        private void SetRequestButtonState()
+        {
+            GingerPlayConfiguration gingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+            if (gingerPlayConfiguration != null && gingerPlayConfiguration.GingerPlayEnabled && !string.IsNullOrEmpty(gingerPlayConfiguration.GingerPlayGatewayUrl) && gingerPlayConfiguration.GingerPlayExecutionServiceEnabled)
+            {
+                xRequestRadioButton.IsEnabled = true;
+            }
+            else
+            {
+                xRequestRadioButton.IsEnabled = false;
             }
         }
 
