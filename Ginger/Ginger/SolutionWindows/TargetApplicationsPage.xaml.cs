@@ -23,6 +23,7 @@ using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -206,6 +207,14 @@ namespace Ginger.SolutionWindows
 
                         numOfAfectedItems++;
                     }
+
+                    // For changing the name of DB type
+                    foreach (ActDBValidation dbAction in activity.Acts.OfType<ActDBValidation>())
+                    {
+                        dbAction.StartDirtyTracking();
+                        dbAction.AppName = app.AppName;
+                        numOfAfectedItems++;
+                    }
                 }
 
                 foreach (TargetApplication bfTargetApp in bf.TargetApplications.Where((targetApp) => targetApp is TargetApplication))
@@ -232,6 +241,13 @@ namespace Ginger.SolutionWindows
                     activity.StartDirtyTracking();
                     activity.TargetApplication = app.AppName;
                     numOfAfectedItems++;
+                }
+                // For changing the name of DB type
+                foreach (ActDBValidation dbAction in activity.Acts.OfType<ActDBValidation>())
+                {
+                    dbAction.StartDirtyTracking();
+                    dbAction.AppName = app.AppName;
+                  
                 }
             }
 
