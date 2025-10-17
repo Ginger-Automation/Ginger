@@ -513,7 +513,30 @@ namespace Ginger
             }
             finally
             {
+                DisposeHttpLogAppenders();
+
                 System.Windows.Application.Current.Shutdown(Environment.ExitCode);
+            }
+        }
+
+        private void DisposeHttpLogAppenders()
+        {
+            try
+            {
+                
+                var repository = log4net.LogManager.GetRepository();
+                var httpLogAppenders = repository.GetAppenders()
+                    .OfType<HttpLogAppender>()
+                    .ToList();
+
+                foreach (var appender in httpLogAppenders)
+                {
+                    appender.Dispose();
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "[RunNewCLI] Error disposing HttpLogAppenders", ex);
             }
         }
 
