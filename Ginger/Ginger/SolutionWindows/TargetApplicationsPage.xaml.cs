@@ -211,9 +211,12 @@ namespace Ginger.SolutionWindows
                     // For changing the name of DB type
                     foreach (ActDBValidation dbAction in activity.Acts.OfType<ActDBValidation>())
                     {
-                        dbAction.StartDirtyTracking();
-                        dbAction.AppName = app.AppName;
-                        numOfAfectedItems++;
+                        if (string.Equals(dbAction.AppName, app.NameBeforeEdit))
+                        {
+                            dbAction.StartDirtyTracking();
+                            dbAction.AppName = app.AppName;
+                            numOfAfectedItems++;
+                        }  
                     }
                 }
 
@@ -245,9 +248,12 @@ namespace Ginger.SolutionWindows
                 // For changing the name of DB type
                 foreach (ActDBValidation dbAction in activity.Acts.OfType<ActDBValidation>())
                 {
-                    dbAction.StartDirtyTracking();
-                    dbAction.AppName = app.AppName;
-                  
+                    if (string.Equals(dbAction.AppName, app.NameBeforeEdit))
+                    {
+                        dbAction.StartDirtyTracking();
+                        dbAction.AppName = app.AppName;
+                        numOfAfectedItems++;
+                    }
                 }
             }
 
