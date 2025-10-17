@@ -46,6 +46,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -167,29 +168,62 @@ namespace Ginger.Run
         {
             try
             {
-                string endPoint = GingerRemoteExecutionUtils.GetReportDataServiceUrl();
-                if (!string.IsNullOrEmpty(endPoint))
+                if (execLoggerConfig == null || execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
                 {
-                    graphQlClient = new GraphQlClient($"{endPoint}api/graphql");
-                    executionReportGraphQLClient = new ExecutionReportGraphQLClient(graphQlClient);
-                    isGraphQlClinetConfigure = true;
-                    return true;
+                    isGraphQlClinetConfigure = false;
+                    return false;
                 }
-                else
+                string endPoint = GingerRemoteExecutionUtils.GetReportDataServiceUrl();
+                if (string.IsNullOrEmpty(endPoint))
                 {
                     isGraphQlClinetConfigure = false;
                     return false;
                 }
 
+                string graphQlUrl = $"{endPoint.TrimEnd('/')}/api/graphql";
+
+                // GraphQL POST health check
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.Timeout = TimeSpan.FromSeconds(3);
+
+                    var healthCheckQuery = new
+                    {
+                        query = "{ __typename }"
+                    };
+
+                    var content = new StringContent(
+                        System.Text.Json.JsonSerializer.Serialize(healthCheckQuery),
+                        Encoding.UTF8,
+                        "application/json"
+                    );
+
+                    HttpResponseMessage graphQLresponse = httpClient.PostAsync(graphQlUrl, content).Result;
+
+                    if (!graphQLresponse.IsSuccessStatusCode)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN,
+                            $"GraphQL endpoint responded with {graphQLresponse.StatusCode}. Marking as unavailable.");
+                        isGraphQlClinetConfigure = false;
+                        return false;
+                    }
+                }
+
+                // healthy, initialize the client
+                graphQlClient = new GraphQlClient(graphQlUrl);
+                executionReportGraphQLClient = new ExecutionReportGraphQLClient(graphQlClient);
+                isGraphQlClinetConfigure = true;
+                return true;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while connecting remote.", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error while verifying or connecting GraphQL endpoint.", ex);
+                isGraphQlClinetConfigure = false;
                 return false;
-
             }
-
         }
+
+
         /// <summary>
         /// Checks the centralized execution logger configuration and sets the appropriate radio button and loads the executions history data.
         /// </summary>
