@@ -164,7 +164,7 @@ namespace Ginger.Run
         /// Assigns the GraphQL endpoint for the execution report client.
         /// Retrieves the endpoint URL, configures the GraphQL client, and handles any connection errors.
         /// </summary>
-        private bool AssignGraphQLObjectEndPoint()
+        private async Task<bool> AssignGraphQLObjectEndPoint()
         {
             try
             {
@@ -198,8 +198,7 @@ namespace Ginger.Run
                         "application/json"
                     );
 
-                    HttpResponseMessage graphQLresponse = httpClient.PostAsync(graphQlUrl, content).Result;
-
+                    HttpResponseMessage graphQLresponse = await httpClient.PostAsync(graphQlUrl, content);
                     if (!graphQLresponse.IsSuccessStatusCode)
                     {
                         Reporter.ToLog(eLogLevel.WARN,
@@ -258,7 +257,7 @@ namespace Ginger.Run
         {
             xButtonPnl.Visibility = Visibility.Visible;
             GraphQlLoadingVisible();
-            if (SetExectionHistoryVisibility(execLoggerConfig) && AssignGraphQLObjectEndPoint())
+            if (SetExectionHistoryVisibility(execLoggerConfig) && await AssignGraphQLObjectEndPoint())
             {
                 await LoadExecutionsHistoryDataGraphQl();
             }
@@ -319,10 +318,10 @@ namespace Ginger.Run
         /// <summary>
         /// Reloads the data for the RunSetsExecutionsHistoryPage.
         /// </summary>
-        public void ReloadExecutionHistoryData()
+        public async Task ReloadExecutionHistoryData()
         {
 
-            if (AssignGraphQLObjectEndPoint() && SetExectionHistoryVisibility(execLoggerConfig))
+            if (await AssignGraphQLObjectEndPoint() && SetExectionHistoryVisibility(execLoggerConfig))
             {
                 remoteRadioButton.IsChecked = true;
                 remoteRadioButton.IsEnabled = true;
