@@ -149,7 +149,7 @@ namespace Ginger.Run
         /// </summary>
         private bool SetExectionHistoryVisibility(ExecutionLoggerConfiguration execLoggerConfig)
         {
-            if (execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayGatewayUrlConfigured())
+            if (execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && (GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() || GingerPlayUtils.IsGingerPlayBackwardUrlConfigured()))
             {
                 return true;
             }

@@ -227,7 +227,7 @@ namespace GingerCore.ALM
                 publishToALMConfig.ExecutionId = "";
 
                 bool check =
-                    WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Any(g => g.IsSelected && g.PublishLogToCentralDB == ePublishToCentralDB.Yes) && GingerPlayUtils.IsGingerPlayGatewayUrlConfigured();
+                    WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Any(g => g.IsSelected && g.PublishLogToCentralDB == ePublishToCentralDB.Yes) && (GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() || GingerPlayUtils.IsGingerPlayBackwardUrlConfigured());
 
                 if (!exectutedFromAutomateTab && check)
                 {
