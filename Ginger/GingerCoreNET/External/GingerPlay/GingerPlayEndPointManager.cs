@@ -98,11 +98,7 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                     GingerPlayConfiguration.GingerPlayReportServiceEnabled = true;
                     return GingerPlayConfiguration.CentralizedAccountReportURL;
                 }
-                else
-                {
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the Account Report Service URL. Please check the configuration.");
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -132,16 +128,11 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                     GingerPlayConfiguration.GingerPlayReportServiceEnabled = true;
                     return GingerPlayConfiguration.CentralizedHTMLReportServiceURL;
                 }
-                else
-                {
-            
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the HTML Report Service URL. Please check the configuration.");
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.INFO, $"Error occurred while getting Account Report Service URL: {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while getting Account Report Service URL: {ex.Message}");
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the Account Report Service URL. Please check the configuration.");
                 return null;
             }
@@ -155,16 +146,11 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                 {
                     return GingerPlayConfiguration.GingerPlayGatewayUrl + AI_SERVICE_URL;
                 }
-                else
-                {
-                
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the AI Service URL. Please check the configuration.");
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.INFO, $"Error occurred while getting AI Service URL: {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while getting AI Service URL: {ex.Message}");
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to retrieve the AI Service URL. Please check the configuration.");
                 return null;
             }
@@ -190,15 +176,11 @@ namespace Amdocs.Ginger.CoreNET.External.GingerPlay
                     GingerPlayConfiguration.GingerPlayExecutionServiceEnabled = true;
                     return GingerPlayConfiguration.CentralizedExecutionHandlerURL;
                 }
-                else
-                {
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error occurred while getting Execution Service URL");
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.INFO, $"Error occurred while getting Execution Service URL: {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while getting Execution Service URL: {ex.Message}");
                 return null;
             }
         }
