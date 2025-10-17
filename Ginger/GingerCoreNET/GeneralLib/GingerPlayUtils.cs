@@ -24,9 +24,8 @@ namespace GingerCoreNET.GeneralLib
         public static bool IsGingerPlayBackwardUrlConfigured()
         {
             GingerPlayConfiguration gingerPlayConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
-            return gingerPlayConfiguration != null
-                && !string.IsNullOrEmpty(gingerPlayConfiguration.CentralizedAccountReportURL) || !string.IsNullOrEmpty(gingerPlayConfiguration.CentralizedHTMLReportServiceURL
-                );
+            return gingerPlayConfiguration != null && (!string.IsNullOrEmpty(gingerPlayConfiguration.CentralizedAccountReportURL)
+                   && !string.IsNullOrEmpty(gingerPlayConfiguration.CentralizedHTMLReportServiceURL));
         }
 
         public static string GetGingerPlayGatewayURLIfConfigured()
