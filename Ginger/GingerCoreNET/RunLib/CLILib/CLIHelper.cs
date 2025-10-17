@@ -440,7 +440,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
             if (mRunSetConfig.ReRunConfigurations.ReferenceExecutionID != null)
             {
-                if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayGatewayUrlConfigured()
+                if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && (GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() || GingerPlayUtils.IsGingerPlayBackwardUrlConfigured())
                     && !string.IsNullOrEmpty(GingerPlayEndPointManager.GetAccountReportServiceUrl()))
                 {
                     AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(GingerPlayEndPointManager.GetAccountReportServiceUrl());

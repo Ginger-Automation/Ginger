@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             var runSetReports = new List<RunSetReport>();
             var baseURI = GetReportDataServiceUrl();
-            if (!string.IsNullOrEmpty(baseURI) && WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayGatewayUrlConfigured())
+            if (!string.IsNullOrEmpty(baseURI) && WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && (GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() || GingerPlayUtils.IsGingerPlayBackwardUrlConfigured()))
             {
                 using (var httpClient = new HttpClient())
                 {
@@ -57,7 +57,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             var runSetReports = new List<RunSetReport>();
             var baseURI = GetReportDataServiceUrl();
-            if (!string.IsNullOrEmpty(baseURI) && WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && GingerPlayUtils.IsGingerPlayGatewayUrlConfigured())
+            if (!string.IsNullOrEmpty(baseURI) && WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && (GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() || GingerPlayUtils.IsGingerPlayBackwardUrlConfigured()))
             {
                 using (var httpClient = new HttpClient())
                 {
