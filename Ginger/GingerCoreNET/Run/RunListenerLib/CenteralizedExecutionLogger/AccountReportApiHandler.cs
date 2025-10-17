@@ -522,7 +522,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo(): {response}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetBusinessflowExecutionDataFromCentralDB(): {response}");
                         }
                     }
                     else
@@ -583,12 +583,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     {
                         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts runsetGuid: {runSetId} GetSolutionRunsetsExecutionInfo(): {response}");
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts runsetGuid: {runSetId} GetRunsetExecutionDataByRunSetIDFromCentralDB(): {response}");
 
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{response}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetRunsetExecutionDataByRunSetIDFromCentralDB() :{response}");
                         }
                     }
                     else
@@ -598,11 +598,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
                         if (root != null && root.isSuccsess)
                         {
-                            return root.response;
+                            return root.response ?? string.Empty;
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo(): {response}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetRunsetExecutionDataByRunSetIDFromCentralDB(): {response}");
                         }
                     }
                 }
@@ -628,12 +628,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     {
                         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts solutionGuid: {solutionId} GetSolutionRunsetsExecutionInfo(): {response}");
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts solutionGuid: {solutionId} GetRunsetExecutionDataBySolutionIDFromCentralDB(): {response}");
 
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo(): {response}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetRunsetExecutionDataBySolutionIDFromCentralDB(): {response}");
                         }
                     }
                     else
@@ -642,11 +642,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                         RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
                         if (root != null && root.isSuccsess)
                         {
-                            return root.response;
+                            return root.response ?? string.Empty;
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo(): {response}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetRunsetExecutionDataBySolutionIDFromCentralDB(): {response}");
                         }
                     }
                 }
@@ -718,7 +718,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo(): {response}");
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetAccountHTMLReportAsync(): {response}");
                     }
                     return null;
                 }
