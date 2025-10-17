@@ -601,7 +601,7 @@ namespace Ginger.Run
 
                 if (!offlineMode)
                 {
-                    string SourcePath = $"{WorkSpace.Instance?.RunsetExecutor?.RunSetConfig?.Name ?? "N/A"} > {mContext?.BusinessFlow?.Name ?? "N/A"} > {mCurrentActivity?.ActivityName ?? "N/A"} > {(action?.ItemName ?? action?.Description ?? "N/A")}";
+                    string SourcePath = $"{WorkSpace.Instance?.RunsetExecutor?.RunSetConfig?.Name ?? "N/A"} -> {((GingerExecutionEngine)mContext?.Runner).GingerRunner.Name ?? "N/A"} -> {mContext?.BusinessFlow?.Name ?? "N/A"} -> {mCurrentActivity?.ActivityName ?? "N/A"} -> {(action?.ItemName ?? action?.Description ?? "N/A")}";
                     ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Action", string.Format("{0} (ID:{1}, ParentID:{2}, ParentActivityID: {3})", action.Description, action.Guid, action.ExecutionParentGuid, mCurrentActivity?.Guid), AR,SourcePath);
                 }
             }
