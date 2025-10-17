@@ -168,7 +168,7 @@ namespace Ginger.Run
         {
             try
             {
-                if (execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
+                if (execLoggerConfig == null || execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
                 {
                     isGraphQlClinetConfigure = false;
                     return false;
@@ -198,12 +198,12 @@ namespace Ginger.Run
                         "application/json"
                     );
 
-                    var response = httpClient.PostAsync(graphQlUrl, content).Result;
+                    HttpResponseMessage graphQLresponse = httpClient.PostAsync(graphQlUrl, content).Result;
 
-                    if (!response.IsSuccessStatusCode)
+                    if (!graphQLresponse.IsSuccessStatusCode)
                     {
                         Reporter.ToLog(eLogLevel.WARN,
-                            $"GraphQL endpoint responded with {response.StatusCode}. Marking as unavailable.");
+                            $"GraphQL endpoint responded with {graphQLresponse.StatusCode}. Marking as unavailable.");
                         isGraphQlClinetConfigure = false;
                         return false;
                     }
