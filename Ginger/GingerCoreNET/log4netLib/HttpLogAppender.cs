@@ -25,6 +25,7 @@ using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using log4net.Appender;
 using log4net.Core;
+using SixLabors.ImageSharp.Processing.Processors.Dithering;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -393,7 +394,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                     runsetName = WorkSpace.Instance?.RunsetExecutor?.RunSetConfig?.Name;
                 }
             }
-            catch
+            catch //Any exceptions that occur in this block should be ignored — they should neither be logged nor cause a return, so that the subsequent code continues to execute
             {
             }
 
