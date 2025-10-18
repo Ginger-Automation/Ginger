@@ -2695,7 +2695,6 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                                 }
                                 else
                                 {
-                                    //EI.ScreenShotImage = GingerCoreNET.GeneralLib.General.TakeElementScreenShot(EI, fullImage);
                                     EI.ScreenShotImage = TakeElementScreenShot(EI, fullImage);
                                 }
 
@@ -2756,6 +2755,7 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                 if (cropWidth <= 0 || cropHeight <= 0)
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "Invalid crop dimensions.");
+                    return null;
                 }
                 // Clamp crop rectangle to the bounds of the full image
                 Rectangle cropRect = new Rectangle(cropX, cropY, cropWidth, cropHeight);
