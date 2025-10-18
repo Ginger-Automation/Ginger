@@ -19,11 +19,13 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
+using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Configurations;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.ExecuterService.Contracts.V1.ExternalConfiguration;
+using Ginger.Reports;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
@@ -31,6 +33,7 @@ using GingerCore.Environments;
 using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using Newtonsoft.Json;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.IO;
 using System.Linq;
@@ -105,6 +108,27 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     return;
                 }
 
+                if(exeConfiguration.ExternalConfigurationDetails != null)
+                {
+                    try
+                    {
+                        string GingerPlayGatewayUrl = exeConfiguration.ExternalConfigurationDetails
+                            .OfType<GingerPlayDetails>()
+                            .Select(g => g.GingerPlayUrl)
+                            .FirstOrDefault();
+
+                        GingerLog.SetHTTPLogAppenderExecutionId(exeConfiguration.ExecutionID);
+                        if (!string.IsNullOrEmpty(GingerPlayGatewayUrl))
+                        {
+                            GingerLog.SetHTTPLogAppenderAPIUrl(GingerPlayGatewayUrl);
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Failed to set HttpLogAppender parameters.", ex);
+                    }
+                }
+                
                 cliHelper.SetEncryptionKey(exeConfiguration.EncryptionKey);
                 if (exeConfiguration.SolutionScmDetails != null)
                 {
@@ -321,6 +345,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                             gingerPlayConfig.GingerPlayReportServiceEnabled = gingerPlay.EnableAccountReportService;
                             gingerPlayConfig.GingerPlayAIServiceEnabled = gingerPlay.EnableAIService;
                             gingerPlayConfig.GingerPlayExecutionServiceEnabled = gingerPlay.EnableExecutionService;
+                        }
+                        if (gingerPlay.EnableAccountReportService)
+                        {
+                            solution.LoggerConfigurations.PublishLogToCentralDB = ExecutionLoggerConfiguration.ePublishToCentralDB.Yes;
+                            solution.LoggerConfigurations.UploadArtifactsToCentralizedReport = ExecutionLoggerConfiguration.eUploadExecutionArtifactsToCentralizedReport.Yes;
+                            solution.LoggerConfigurations.DeleteLocalDataOnPublish = ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish.Yes;
+                        }
+                        else
+                        {
+                            solution.LoggerConfigurations.PublishLogToCentralDB = ExecutionLoggerConfiguration.ePublishToCentralDB.No;
+                            solution.LoggerConfigurations.UploadArtifactsToCentralizedReport = ExecutionLoggerConfiguration.eUploadExecutionArtifactsToCentralizedReport.No;
+                            solution.LoggerConfigurations.DeleteLocalDataOnPublish = ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish.No;
                         }
                         break;
 

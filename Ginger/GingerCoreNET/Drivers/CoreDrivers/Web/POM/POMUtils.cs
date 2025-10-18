@@ -46,6 +46,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
         ConcurrentQueue<ElementInfo> processingQueue = new ConcurrentQueue<ElementInfo>();
         private readonly ConcurrentDictionary<Guid, byte> _enqueuedIds = new();
 
+        private Dictionary<string, int> nameCount = new Dictionary<string, int>();
 
         private readonly object lockObj = new object();
 
@@ -223,7 +224,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                         {
                             responseElements = JsonConvert.DeserializeObject<List<ElementWrapper>>(cleanedResponse);
                         }
-                    }
+                    }   
                     catch (JsonException ex)
                     {
                         Reporter.ToLog(eLogLevel.WARN, "AI response could not be parsed into ElementWrapper list.",ex);
@@ -251,6 +252,37 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                             existingElement.ElementName = enhancedName ?? existingElement.ElementName;
                             existingElement.Description = enhancedDescription ?? existingElement.Description;
                             existingElement.IsProcessed = true;
+
+                            var baseName = existingElement.ElementName;
+                            // Strip any existing suffix to get true base name
+                            var suffixMatch = System.Text.RegularExpressions.Regex.Match(baseName, @"^(.+)_(\d+)$");
+                            if (suffixMatch.Success)
+                            {
+                                baseName = suffixMatch.Groups[1].Value;
+                            }
+
+                            if (nameCount.ContainsKey(baseName))
+                            {
+                                string candidateName;
+                                do
+                                {
+                                    nameCount[baseName]++;
+                                    candidateName = $"{baseName}_{nameCount[baseName]}";
+                                } while (list.Any(e => e != existingElement && e.ElementName == candidateName));
+                                existingElement.ElementName = candidateName;
+                            }
+                            else
+                            {
+                                nameCount[baseName] = 0; // First occurrence, no suffix
+                                // Check if base name (without suffix) is already taken
+                                string candidateName = baseName;
+                                while (list.Any(e => e != existingElement && e.ElementName == candidateName))
+                                {
+                                    nameCount[baseName]++;
+                                    candidateName = $"{baseName}_{nameCount[baseName]}";
+                                }
+                                existingElement.ElementName = candidateName;
+                            }
                             if (ele.elementinfo.locators.EnhanceLocatorsByAI != null)
                             {
                                 // Deserialize the EnhanceLocatorsByAI property
@@ -422,7 +454,5 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             ElementWrapperInfo elementWrapperInfo = GenerateJsonToSendAIRequestByList(pomSetting, foundElementList);
             await SendInBatchesList(elementWrapperInfo, foundElementList, string.Empty, PomCategory, DevicePlatformType);
         }
-
-
     }
 }

@@ -1214,7 +1214,7 @@ namespace Ginger
 
         private void SolutionFindAndReplace()
         {
-            FindAndReplacePage mfindAndReplacePageSolution = new FindAndReplacePage(FindAndReplacePage.eContext.SolutionPage);            
+            FindAndReplacePage mfindAndReplacePageSolution = new FindAndReplacePage(FindAndReplacePage.eContext.SolutionPage);
             mfindAndReplacePageSolution.ShowAsWindow();
         }
 

@@ -94,7 +94,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             AddExecutionDetailsToLog(eExecutionPhase.End, "Action", string.Format("{0} (ID:{1}, ParentID:{2})", action.Description, action.Guid, action.ExecutionParentGuid), new ActionReport(action, null));
         }
 
-        public static void AddExecutionDetailsToLog(eExecutionPhase objExecutionPhase, string objType, string objName, object obj)
+        public static void AddExecutionDetailsToLog(eExecutionPhase objExecutionPhase, string objType, string objName, object obj,string sourcePath = null)
         {
             if (WorkSpace.Instance != null && WorkSpace.Instance.RunningInExecutionMode || Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug || Reporter.ReportAllAlsoToConsole == true)//needed for not derlling the objects if not needed to be reported
             {
@@ -118,7 +118,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     stringBuilder.Append("Details:").AppendLine();
                     try
                     {
-                        PropertyInfo[] props = obj.GetType().GetProperties();
+                        PropertyInfo[] props = obj.GetType().GetProperties();                        
                         foreach (PropertyInfo prop in props)
                         {
                             try
@@ -161,6 +161,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                             catch (Exception ex)
                             {
                             }
+                        }
+
+                        if(!string.IsNullOrEmpty(sourcePath))
+                        {
+                            stringBuilder.Append("SourcePath").Append("= ").Append(sourcePath).AppendLine();
                         }
                     }
                     catch (Exception) { }
