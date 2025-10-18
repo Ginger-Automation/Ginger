@@ -25,7 +25,6 @@ using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using log4net.Appender;
 using log4net.Core;
-using SixLabors.ImageSharp.Processing.Processors.Dithering;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -42,7 +41,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
         private CancellationTokenSource _cts;
         private Task _workerTask;
         private bool _disposed = false; // To detect redundant calls to Dispose
-        private bool isExecutionStarted = false; 
+        private bool isExecutionStarted = false;
         private bool isRunSetStarted = false;
         private bool isPreRunSetOperation = false;
         private bool isPostRunSetOperation = false;
@@ -293,8 +292,8 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                         // 3. Queue is completed (shutdown) and buffer has items
                         bool shouldProcess = buffer.Count >= GetBatchSize() ||
                                            (buffer.Count > 0 && !hasItem) ||
-                                           (buffer.Count > 0 && _queue.IsCompleted); 
-                                           
+                                           (buffer.Count > 0 && _queue.IsCompleted);
+
                         if (shouldProcess)
                         {
                             int exceptionCount = 0;
@@ -431,7 +430,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                     runsetName = string.Empty;
                 }
 
-                
+
 
                 if (!isRunSetStarted && evt.Level.DisplayName.Equals("ERROR", StringComparison.Ordinal) && evt.RenderedMessage.IndexOf("Error(s) occurred process exit code", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
@@ -458,7 +457,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                     }
                     catch (Exception ex1)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send Runset Execution data to Central DB.",ex1);
+                        Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send Runset Execution data to Central DB.", ex1);
                     }
                 }
                 else
@@ -479,11 +478,11 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
 
                 if ((evt.Level.DisplayName.Equals("ERROR", StringComparison.Ordinal) || evt.Level.DisplayName.Equals("FATAL", StringComparison.Ordinal)) && !isExecutionStarted)
                 {
-                    if(!string.IsNullOrEmpty(exceptiosource))
+                    if (!string.IsNullOrEmpty(exceptiosource))
                     {
                         ExecutionErrorRequests.ErrorSource = exceptiosource;
                     }
-                    if(evt.RenderedMessage.IndexOf("Error(s) occurred process exit code", StringComparison.OrdinalIgnoreCase) < 0) //Error(s) occurred process exit code should not get add in ExecutionError
+                    if (evt.RenderedMessage.IndexOf("Error(s) occurred process exit code", StringComparison.OrdinalIgnoreCase) < 0) //Error(s) occurred process exit code should not get add in ExecutionError
                     {
                         SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted, false);
                     }
@@ -492,7 +491,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 {
                     if (evt.Level.DisplayName.Equals("INFO", StringComparison.Ordinal) && evt.RenderedMessage.IndexOf("Action Execution Ended", StringComparison.OrdinalIgnoreCase) >= 0 && evt.RenderedMessage.IndexOf("Execution Status= Failed", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        var match = Regex.Match(evt.RenderedMessage,@"SourcePath= (.*?)\n");
+                        var match = Regex.Match(evt.RenderedMessage, @"SourcePath= (.*?)\n");
                         if (match.Success)
                         {
                             string sourcePath = match.Groups[1].Value;
@@ -517,11 +516,11 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                             ExecutionErrorRequests.ErrorOriginID = ActionId;
                         }
 
-                        if(TotalRetries == CurrentRetry)
+                        if (TotalRetries == CurrentRetry)
                         {
                             SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted, false);
                         }
-                        
+
                     }
                 }
                 else if (isPreRunSetOperation)
@@ -578,12 +577,12 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             }
         }
 
-        private static void SetExecutionError(LoggingEvent evt, ExecutionErrorRequest ExecutionErrorRequests, bool isExecutionStarted,bool isRunsetOperation)
+        private static void SetExecutionError(LoggingEvent evt, ExecutionErrorRequest ExecutionErrorRequests, bool isExecutionStarted, bool isRunsetOperation)
         {
             ExecutionErrorRequests.ErrorOccurrenceTime = evt.TimeStamp;
             ExecutionErrorRequests.ErrorLevel = isExecutionStarted ? eExecutionErrorLevel.Execution : eExecutionErrorLevel.Setup;
 
-            if(isRunsetOperation)
+            if (isRunsetOperation)
             {
                 Match match = Regex.Match(evt.RenderedMessage, @"Errors= (.*?)\n");
                 if (match.Success)
