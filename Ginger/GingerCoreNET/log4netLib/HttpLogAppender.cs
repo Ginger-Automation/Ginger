@@ -393,8 +393,9 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                     runsetName = WorkSpace.Instance?.RunsetExecutor?.RunSetConfig?.Name;
                 }
             }
-            catch //Any exceptions that occur in this block should be ignored — they should neither be logged nor cause a return, so that the subsequent code continues to execute
+            catch(Exception ex)
             {
+                Reporter.ToLog(eLogLevel.DEBUG, "exeception occured on fetching Runset/Solution details in HttpLogAppender", ex);
             }
 
             foreach (var evt in buffer)
