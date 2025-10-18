@@ -364,9 +364,9 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             }
         }
 
-        private static Guid EntityId = Guid.Empty;
-        private static Guid solutionId = Guid.Empty;
-        private static string runsetName = string.Empty;
+        private Guid EntityId = Guid.Empty;
+        private Guid solutionId = Guid.Empty;
+        private string runsetName = string.Empty;
 
         // Extract the batch processing logic into a separate method
         private async Task ProcessBatch(List<LoggingEvent> buffer)
@@ -377,7 +377,6 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             }
             var logDataBuilder = new StringBuilder();
             List<AccountReport.Contracts.RequestModels.ExecutionErrorRequest> ExecutionErrorRequestsList = new List<ExecutionErrorRequest>();
-            var Workspaceinstance = WorkSpace.Instance;
 
             try
             {
@@ -407,6 +406,9 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 {
                     isExecutionStarted = true;
                     isRunSetStarted = true;
+                    EntityId = Guid.Empty;
+                    solutionId = Guid.Empty;
+                    runsetName = string.Empty;
                 }
 
                 if (evt.RenderedMessage.IndexOf("Running Pre-Execution Run Set Operations", StringComparison.OrdinalIgnoreCase) >= 0)
@@ -423,6 +425,9 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 if (evt.RenderedMessage.IndexOf("Run Set Execution Ended", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     isExecutionStarted = false;
+                    EntityId = Guid.Empty;
+                    solutionId = Guid.Empty;
+                    runsetName = string.Empty;
                 }
 
                 
@@ -431,7 +436,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 {
                     try
                     {
-                        if (ExecutionId.HasValue)
+                        if (ExecutionId.HasValue && AccountReportApiHandler != null && !string.IsNullOrEmpty(ApiUrl))
                         {
                             AccountReportRunSet accountReportRunSet = new AccountReportRunSet
                             {
@@ -443,7 +448,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                 RunStatus = eExecutionStatus.Failed,
                             };
 
-                            bool response = await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
+                            bool response = await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, isUpdate: true).ConfigureAwait(false);
                             if (!response)
                             {
                                 Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send Runset Execution data to Central DB.");
@@ -522,7 +527,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 {
                     if (Regex.IsMatch(evt.Level.DisplayName, @"^INFO$") && Regex.IsMatch(evt.RenderedMessage, @"Execution Ended for Run Set Operation.*Status= Failed", RegexOptions.Singleline))
                     {
-                        var OperationNameMatch = Regex.Match(evt.RenderedMessage, @"and Name ([^,]+)");
+                        var OperationNameMatch = Regex.Match(evt.RenderedMessage, @"\band Name\s+([^,\r\n]+)");
                         if (OperationNameMatch.Success)
                         {
                             string OPerationName = OperationNameMatch.Groups[1].Value;
@@ -536,7 +541,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 {
                     if (Regex.IsMatch(evt.Level.DisplayName, @"^INFO$") && Regex.IsMatch(evt.RenderedMessage, @"Execution Ended for Run Set Operation.*Status= Failed", RegexOptions.Singleline))
                     {
-                        var OperationNameMatch = Regex.Match(evt.RenderedMessage, @"and Name ([^,]+)");
+                        var OperationNameMatch = Regex.Match(evt.RenderedMessage, @"\band Name\s+([^,\r\n]+)");
                         if (OperationNameMatch.Success)
                         {
                             string OPerationName = OperationNameMatch.Groups[1].Value;

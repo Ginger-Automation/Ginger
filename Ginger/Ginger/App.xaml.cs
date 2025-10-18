@@ -525,14 +525,30 @@ namespace Ginger
             {
                 
                 var repository = log4net.LogManager.GetRepository();
-                var httpLogAppenders = repository.GetAppenders()
-                    .OfType<HttpLogAppender>()
-                    .ToList();
+                if (repository == null)
+                {
+                    return;
+                }
+                var appenders = repository.GetAppenders();
+                if (appenders == null)
+                {
+                    return;
+                }
+                
+                var httpLogAppenders = appenders
+                                    .OfType<HttpLogAppender>().ToList();
 
                 foreach (var appender in httpLogAppenders)
                 {
-                    appender.Dispose();
-                }
+                    try
+                    {
+                        appender.Dispose();
+                    }
+                    catch (Exception appenderEx)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"[RunNewCLI] Error disposing HttpLogAppender: {appender?.Name}", appenderEx);
+                    }
+                    }
             }
             catch (Exception ex)
             {
