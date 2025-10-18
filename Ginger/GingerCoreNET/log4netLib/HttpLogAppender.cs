@@ -32,7 +32,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using static GingerCore.Drivers.DriverBase;
 
 namespace Amdocs.Ginger.CoreNET.log4netLib
 {
@@ -43,6 +42,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
         private Task _workerTask;
         private bool _disposed = false; // To detect redundant calls to Dispose
         private bool isExecutionStarted = false;
+        private bool isRunSetStarted = false;
         private bool isPreRunSetOperation = false;
         private bool isPostRunSetOperation = false;
 
@@ -168,6 +168,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             catch (AggregateException ex)
             {
                 // Handle TaskCanceledException explicitly
+                Reporter.ToLog(eLogLevel.DEBUG, "Dispose Error disposing HttpLogAppenders", ex);
                 ex.Handle(e => e is TaskCanceledException);
             }
             finally
@@ -363,6 +364,10 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             }
         }
 
+        private Guid EntityId = Guid.Empty;
+        private Guid solutionId = Guid.Empty;
+        private string runsetName = string.Empty;
+
         // Extract the batch processing logic into a separate method
         private async Task ProcessBatch(List<LoggingEvent> buffer)
         {
@@ -373,6 +378,26 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             var logDataBuilder = new StringBuilder();
             List<AccountReport.Contracts.RequestModels.ExecutionErrorRequest> ExecutionErrorRequestsList = new List<ExecutionErrorRequest>();
 
+            try
+            {
+                if (EntityId == Guid.Empty && WorkSpace.Instance?.RunsetExecutor?.RunSetConfig?.Guid != Guid.Empty)
+                {
+                    EntityId = (Guid)WorkSpace.Instance?.RunsetExecutor?.RunSetConfig?.Guid;
+                }
+                if (solutionId == Guid.Empty && WorkSpace.Instance?.Solution?.Guid != Guid.Empty)
+                {
+                    solutionId = (Guid)WorkSpace.Instance?.Solution?.Guid;
+                }
+                if (string.IsNullOrEmpty(runsetName) && !string.IsNullOrEmpty(WorkSpace.Instance?.RunsetExecutor?.RunSetConfig?.Name))
+                {
+                    runsetName = WorkSpace.Instance?.RunsetExecutor?.RunSetConfig?.Name;
+                }
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "exeception occured on fetching Runset/Solution details in HttpLogAppender", ex);
+            }
+
             foreach (var evt in buffer)
             {
                 AccountReport.Contracts.RequestModels.ExecutionErrorRequest ExecutionErrorRequests = new AccountReport.Contracts.RequestModels.ExecutionErrorRequest();
@@ -381,6 +406,10 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 if (evt.RenderedMessage.IndexOf("Run Set Execution Started", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     isExecutionStarted = true;
+                    isRunSetStarted = true;
+                    EntityId = Guid.Empty;
+                    solutionId = Guid.Empty;
+                    runsetName = string.Empty;
                 }
 
                 if (evt.RenderedMessage.IndexOf("Running Pre-Execution Run Set Operations", StringComparison.OrdinalIgnoreCase) >= 0)
@@ -397,27 +426,39 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 if (evt.RenderedMessage.IndexOf("Run Set Execution Ended", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     isExecutionStarted = false;
+                    EntityId = Guid.Empty;
+                    solutionId = Guid.Empty;
+                    runsetName = string.Empty;
                 }
 
-                if (evt.Level.DisplayName.Equals("ERROR", StringComparison.Ordinal) && evt.RenderedMessage.IndexOf("Error(s) occurred process exit code", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    if (ExecutionId.HasValue)
-                    {
-                        AccountReportRunSet accountReportRunSet = new AccountReportRunSet
-                        {
-                            Id = ExecutionId.Value,
-                            ExecutionId = ExecutionId.Value,
-                            EntityId = WorkSpace.Instance.RunsetExecutor?.RunSetConfig?.Guid,
-                            GingerSolutionGuid = WorkSpace.Instance.Solution.Guid,
-                            Name = WorkSpace.Instance.RunsetExecutor?.RunSetConfig?.Name,
-                            RunStatus = eExecutionStatus.Failed,
-                        };
 
-                        bool response = await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
-                        if (!response)
+
+                if (!isRunSetStarted && evt.Level.DisplayName.Equals("ERROR", StringComparison.Ordinal) && evt.RenderedMessage.IndexOf("Error(s) occurred process exit code", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    try
+                    {
+                        if (ExecutionId.HasValue && AccountReportApiHandler != null && !string.IsNullOrEmpty(ApiUrl))
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send Runset Execution data to Central DB.");
+                            AccountReportRunSet accountReportRunSet = new AccountReportRunSet
+                            {
+                                Id = ExecutionId.Value,
+                                ExecutionId = ExecutionId.Value,
+                                EntityId = EntityId,
+                                GingerSolutionGuid = solutionId,
+                                Name = runsetName,
+                                RunStatus = eExecutionStatus.Failed,
+                            };
+
+                            bool response = await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, isUpdate: true).ConfigureAwait(false);
+                            if (!response)
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send Runset Execution data to Central DB.");
+                            }
                         }
+                    }
+                    catch (Exception ex1)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Failed to send Runset Execution data to Central DB.", ex1);
                     }
                 }
                 else
@@ -438,11 +479,11 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
 
                 if ((evt.Level.DisplayName.Equals("ERROR", StringComparison.Ordinal) || evt.Level.DisplayName.Equals("FATAL", StringComparison.Ordinal)) && !isExecutionStarted)
                 {
-                    if(!string.IsNullOrEmpty(exceptiosource))
+                    if (!string.IsNullOrEmpty(exceptiosource))
                     {
                         ExecutionErrorRequests.ErrorSource = exceptiosource;
                     }
-                    if(evt.RenderedMessage.IndexOf("Error(s) occurred process exit code", StringComparison.OrdinalIgnoreCase) <= 0) //Error(s) occurred process exit code should not get add in ExecutionError
+                    if (evt.RenderedMessage.IndexOf("Error(s) occurred process exit code", StringComparison.OrdinalIgnoreCase) < 0) //Error(s) occurred process exit code should not get add in ExecutionError
                     {
                         SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted, false);
                     }
@@ -451,7 +492,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 {
                     if (evt.Level.DisplayName.Equals("INFO", StringComparison.Ordinal) && evt.RenderedMessage.IndexOf("Action Execution Ended", StringComparison.OrdinalIgnoreCase) >= 0 && evt.RenderedMessage.IndexOf("Execution Status= Failed", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        var match = Regex.Match(evt.RenderedMessage,@"SourcePath= (.*?)\n");
+                        var match = Regex.Match(evt.RenderedMessage, @"SourcePath= (.*?)\n");
                         if (match.Success)
                         {
                             string sourcePath = match.Groups[1].Value;
@@ -476,17 +517,23 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                             ExecutionErrorRequests.ErrorOriginID = ActionId;
                         }
 
-                        if(TotalRetries == CurrentRetry)
+                        if (TotalRetries == CurrentRetry)
                         {
                             SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted, false);
                         }
-                        
+
                     }
                 }
                 else if (isPreRunSetOperation)
                 {
                     if (Regex.IsMatch(evt.Level.DisplayName, @"^INFO$") && Regex.IsMatch(evt.RenderedMessage, @"Execution Ended for Run Set Operation.*Status= Failed", RegexOptions.Singleline))
                     {
+                        var OperationNameMatch = Regex.Match(evt.RenderedMessage, @"\band Name\s+([^,\r\n]+)");
+                        if (OperationNameMatch.Success)
+                        {
+                            string OPerationName = OperationNameMatch.Groups[1].Value;
+                            ExecutionErrorRequests.ErrorOriginPath = OPerationName;
+                        }
                         ExecutionErrorRequests.ErrorSource = "Pre Runset Operation Type";
                         SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted, true);
                     }
@@ -495,6 +542,12 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 {
                     if (Regex.IsMatch(evt.Level.DisplayName, @"^INFO$") && Regex.IsMatch(evt.RenderedMessage, @"Execution Ended for Run Set Operation.*Status= Failed", RegexOptions.Singleline))
                     {
+                        var OperationNameMatch = Regex.Match(evt.RenderedMessage, @"\band Name\s+([^,\r\n]+)");
+                        if (OperationNameMatch.Success)
+                        {
+                            string OPerationName = OperationNameMatch.Groups[1].Value;
+                            ExecutionErrorRequests.ErrorOriginPath = OPerationName;
+                        }
                         ExecutionErrorRequests.ErrorSource = "Post Runset Operation Type";
                         SetExecutionError(evt, ExecutionErrorRequests, isExecutionStarted, true);
                     }
@@ -525,12 +578,12 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             }
         }
 
-        private static void SetExecutionError(LoggingEvent evt, ExecutionErrorRequest ExecutionErrorRequests, bool isExecutionStarted,bool isRunsetOperation)
+        private static void SetExecutionError(LoggingEvent evt, ExecutionErrorRequest ExecutionErrorRequests, bool isExecutionStarted, bool isRunsetOperation)
         {
             ExecutionErrorRequests.ErrorOccurrenceTime = evt.TimeStamp;
             ExecutionErrorRequests.ErrorLevel = isExecutionStarted ? eExecutionErrorLevel.Execution : eExecutionErrorLevel.Setup;
 
-            if(isRunsetOperation)
+            if (isRunsetOperation)
             {
                 Match match = Regex.Match(evt.RenderedMessage, @"Errors= (.*?)\n");
                 if (match.Success)
