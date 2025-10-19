@@ -139,10 +139,10 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             {
                 while (mOutputs.Contains(mExpString) == false && ((DateTime.Now - startingTime).TotalSeconds <= mWait))
                 {
-                    if (!mConsoleDriverWindow.mConsoleDriver.IsDriverRunning)
-                    {
-                        break;
-                    }
+                    //if (!mConsoleDriverWindow.mConsoleDriver.IsDriverRunning)
+                    //{
+                    //    break;
+                    //}
 
                     Thread.Sleep(500);
                 }
@@ -165,12 +165,12 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             Thread.Sleep(1000);
             while (mOutputs.Length > mlastOutputsLength)
             {
-                if (!mConsoleDriverWindow.mConsoleDriver.IsDriverRunning)
-                {
-                    break;
-                }
+                //if (!mConsoleDriverWindow.mConsoleDriver.IsDriverRunning)
+                //{
+                //    break;
+                //}
 
-                mConsoleDriverWindow.ConsoleWriteText(mOutputs[mlastOutputsLength..]);//get the output addition to console
+                //mConsoleDriverWindow.ConsoleWriteText(mOutputs[mlastOutputsLength..]);//get the output addition to console
 
                 if (waitForRestOfOutputs)
                 {
