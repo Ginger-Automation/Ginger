@@ -27,8 +27,8 @@
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-	<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-	  <enableDefaultPageItems>false</enableDefaultPageItems>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <enableDefaultPageItems>false</enableDefaultPageItems>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <RegisterForComInterop>false</RegisterForComInterop>
@@ -186,6 +186,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Drivers\ConsoleDriverLib\ConsoleDriverWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Drivers\ConsoleDriverLib\ConsoleNewActionPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\ActSikuli.cs" />
@@ -340,6 +348,14 @@
     <Compile Include="XPathParser\XPathScanner.cs" />
     <Compile Include="XPathParser\XPathStringBuilder.cs" />
     <Compile Include="XPathParser\XPathTreeBuilder.cs" />
+    <Compile Include="Drivers\ConsoleDriverLib\ConsoleDriverWindow.xaml.cs">
+      <DependentUpon>ConsoleDriverWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Drivers\ConsoleDriverLib\ConsoleNewActionPage.xaml.cs">
+      <DependentUpon>ConsoleNewActionPage.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="tessdata\eng.traineddata">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

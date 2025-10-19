@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.CoreNET.Drivers.DriversWindow; // Added for IDriverWindow
 using GingerCore.Actions;
 using System;
 using System.Drawing;
@@ -49,12 +50,26 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         }
     }
 
-    public abstract class ConsoleDriverBase : DriverBase, IVirtualDriver
+    public abstract class ConsoleDriverBase : DriverBase, IVirtualDriver, IDriverWindow
     {
         [UserConfigured]
         [UserConfiguredDefault("30")]
         [UserConfiguredDescription("Implicit Wait for Console Action Completion")]
         public int ImplicitWait { get; set; }
+
+        // Allow user to control if console window should be displayed (similar to mobile LoadDeviceWindow)
+        [UserConfigured]
+        [UserConfiguredDefault("true")]
+        [UserConfiguredDescription("Determine if the console driver window will be loaded with the Agent")]
+        public bool LoadConsoleWindow { get; set; } = true;
+
+        public bool ShowWindow => LoadConsoleWindow;   // IDriverWindow implementation
+
+        public string GetDriverWindowName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        {
+            // Window moved from GingerCore to Ginger project under Drivers/DriverWindow
+            return "Ginger.Drivers.DriverWindow.ConsoleDriverWindow";
+        }
 
         public bool taskFinished = false;
         
@@ -65,8 +80,6 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         {
             return true;
         }
-
-        //public ConsoleDriverWindow mConsoleDriverWindow;
 
         public abstract bool Connect();
         public abstract void Disconnect();
@@ -86,39 +99,36 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         public override void StartDriver()
         {
-            CreateSTA(ShowDriverWindow);
-        }
-
-        public void ShowDriverWindow()
-        {
-            // Use dummy dispatcher instead of creating UI window
+            // Connect on current thread; DriverWindowHandler will open the window asynchronously if ShowWindow == true
             IsDriverConnected = Connect();
 
-            if (IsDriverConnected)
+            if (!ShowWindow)
+            {
+                // Headless mode: provide dummy dispatcher so actions relying on dispatcher still work
+                Dispatcher = new DummyDispatcher();
+            }
+
+            OnDriverMessage(eDriverMessageType.DriverStatusChanged);
+        }
+
+        // Legacy method retained for backward compatibility (not used by new flow)
+        public void ShowDriverWindow()
+        {
+            IsDriverConnected = Connect();
+            if (!ShowWindow)
             {
                 Dispatcher = new DummyDispatcher();
-                Dispatcher.Invoke(new Action(() => OnDriverMessage(eDriverMessageType.DriverStatusChanged)));
             }
-            else
-            {
-                OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-            }
+            OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
 
         public override void CloseDriver()
         {
             try
             {
-                //if (mConsoleDriverWindow != null)
-                //{
-                //    mConsoleDriverWindow.Close();
-                //    mConsoleDriverWindow = null;
-                //}
-                
-                if (Dispatcher != null)
+                if (Dispatcher != null && !ShowWindow)
                 {
-                    //Dispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
-                    Thread.Sleep(100);
+                    Thread.Sleep(50);
                 }
                 Disconnect();
             }
@@ -141,10 +151,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         public override void RunAction(Act act)
         {
-            //TODO: add func to Act + Enum for switch
             string actClass = act.GetType().ToString();
-
-            //TODO: avoid hard coded string...
             actClass = actClass.Replace("GingerCore.Actions.", "");
             switch (actClass)
             {
@@ -162,16 +169,13 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     taskFinished = false;
                     if (command.StartsWith("GINGER_RC="))
                     {
-                        //This is FTP command and we already have the result
                         act.AddOrUpdateReturnParamActual("GINGER_RC", command.Replace("GINGER_RC=", ""));
                     }
                     else
                     {
                         string sRC;
-                        //Send the command via driver - now directly through base class
                         if (ACC.ConsoleCommand == ActConsoleCommand.eConsoleCommand.Script)
                         {
-                            //TODO: externalize static const for ~~~GINGER_RC_END~~~ and all hard coded multi use strings
                             sRC = RunConsoleCommand(command, "~~~GINGER_RC_END~~~");
                         }
                         else
@@ -180,7 +184,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                         }
                         if (mExpString != null && sRC.Contains(mExpString) == false)
                         {
-                            act.Error = @"Expected String """ + mExpString + @""" not found in command output";
+                            act.Error = "Expected String \"" + mExpString + "\" not found in command output";
                             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                             return;
                         }
@@ -209,9 +213,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                                 if ((i > 0) && (i != RCValue.IndexOf("==")) && (i != RCValue.IndexOf("!=") + 1))
                                 {
                                     Param = (RCValue[..i]).Trim();
-                                    //the rest is the value
                                     Value = RCValue[(Param.Length + 1)..];
-
                                     Value = new string(Value.Where(ch => !char.IsControl(ch)).ToArray());
                                     act.AddOrUpdateReturnParamActual(Param, Value);
                                 }
@@ -228,35 +230,16 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             }
         }
 
-        
         public virtual string RunConsoleCommand(string command, string waitForText = null)
         {
             mConsoleBuffer.Clear();
-            
-            // Log the command being executed
             Reporter.ToLog(eLogLevel.DEBUG, $"Executing console command: {command}");
-            
-            // Add platform-specific line ending and execute the command
-            string commandWithLineEnding;
-            if (Platform.ToString() == "Unix")
-            {
-                commandWithLineEnding = command + "\n";
-            }
-            else
-            {
-                commandWithLineEnding = command + System.Environment.NewLine;
-            }
-            
+            string commandWithLineEnding = Platform.ToString() == "Unix" ? command + "\n" : command + System.Environment.NewLine;
             taskFinished = false;
             SendCommand(commandWithLineEnding);
-
-            // Get the result from the buffer
             string rc = mConsoleBuffer.ToString();
-            
-            // Process Ginger-specific markers if present
             string GingerRCStart = "~~~GINGER_RC_START~~~";
             string GingerRCEnd = "~~~GINGER_RC_END~~~";
-
             int i = rc.IndexOf(GingerRCStart);
             if (i > 0)
             {
@@ -266,31 +249,21 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     rc = rc.Substring(i + GingerRCStart.Length + 1, i2 - i - GingerRCEnd.Length - 4);
                 }
             }
-            
             mConsoleBuffer.Clear();
             return rc;
         }
 
-        
         public virtual void WriteToConsoleBuffer(string text)
         {
             mConsoleBuffer.Append(text + System.Environment.NewLine);
-            
-            //// Also write to console window if it exists
-            //if (mConsoleDriverWindow != null)
-            //{
-            //    mConsoleDriverWindow.ConsoleWriteText(text, true);
-            //}
         }
 
-       
         protected virtual string GetParameterizedCommand(ActConsoleCommand act)
         {
             string command = act.Command;
             foreach (ActInputValue AIV in act.InputValues)
             {
                 string calcValue = AIV.ValueForDriver;
-
                 if (command != null)
                 {
                     command = command + " " + calcValue;
