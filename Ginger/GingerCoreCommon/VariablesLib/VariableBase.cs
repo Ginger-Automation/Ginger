@@ -194,18 +194,7 @@ namespace GingerCore.Variables
             // Convert variables with DiffrentFromOrigin=true and MappedOutputType=None to new "Value" mapping format
             if (DiffrentFromOrigin && MappedOutputType == eOutputType.None)
             {
-                string sourceValue = null;
-                
-                // For VariablePasswordString, check the Password property
-                if (this is VariablePasswordString passwordVar && !string.IsNullOrEmpty(passwordVar.Password))
-                {
-                    sourceValue = passwordVar.Password;
-                }
-                // For other variable types, check the Value property
-                else if (!string.IsNullOrEmpty(Value))
-                {
-                    sourceValue = Value;
-                }
+                string sourceValue = GetVariableSourceValueForDeserialization();
                 
                 // Convert old format to new format if we have a source value
                 if (!string.IsNullOrEmpty(sourceValue))
@@ -216,7 +205,7 @@ namespace GingerCore.Variables
                     // Log the conversion for debugging purposes
                     try
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, $"Converted variable '{Name}' from old format (DiffrentFromOrigin=True, MappedOutputType=None) to new format (MappedOutputType=Value, MappedOutputValue='{MappedOutputValue}')");
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Converted variable '{Name}' of type '{VariableType}' from old format (DiffrentFromOrigin=True, MappedOutputType=None) to new format (MappedOutputType=Value, MappedOutputValue='{MappedOutputValue}')");
                     }
                     catch
                     {
@@ -226,6 +215,64 @@ namespace GingerCore.Variables
             }
             
             ResetValue();
+        }
+
+        /// <summary>
+        /// Gets the source value for deserialization based on variable type-specific storage patterns
+        /// </summary>
+        /// <returns>The source value if found, null or empty otherwise</returns>
+        private string GetVariableSourceValueForDeserialization()
+        {
+            try
+            {
+                switch (this)
+                {
+                    case VariablePasswordString passwordVar:
+                        // For VariablePasswordString, check the Password property first, then Value
+                        return !string.IsNullOrEmpty(passwordVar.Password) ? passwordVar.Password : Value;
+                    
+                    case VariableString stringVar:
+                        // For VariableString, check InitialStringValue first, then Value
+                        return !string.IsNullOrEmpty(stringVar.InitialStringValue) ? stringVar.InitialStringValue : Value;
+                    
+                    case VariableNumber numberVar:
+                        // For VariableNumber, check InitialNumberValue first, then Value
+                        return !string.IsNullOrEmpty(numberVar.InitialNumberValue) ? numberVar.InitialNumberValue : Value;
+                    
+                    case VariableDateTime dateTimeVar:
+                        // For VariableDateTime, check InitialDateTime first, then Value
+                        return !string.IsNullOrEmpty(dateTimeVar.InitialDateTime) ? dateTimeVar.InitialDateTime : Value;
+                    
+                    case VariableSelectionList selectionVar:
+                        // For VariableSelectionList, use the SelectedValue if available, otherwise Value
+                        return !string.IsNullOrEmpty(selectionVar.SelectedValue) ? selectionVar.SelectedValue : Value;
+                    
+                    case VariableDynamic dynamicVar:
+                        // For VariableDynamic, just use the Value property (no specific initial value field)
+                        return Value;
+                    
+                    case VariableTimer timerVar:
+                        // For VariableTimer, just use the Value property (no specific initial value field)
+                        return Value;
+                    
+                    default:
+                        // For all other variable types (VariableRandomString, VariableRandomNumber, VariableSequence, etc.), use the Value property
+                        return Value;
+                }
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    Reporter.ToLog(eLogLevel.WARN, $"Exception occurred while getting source value for variable '{Name}' of type '{VariableType}': {ex.Message}");
+                }
+                catch
+                {
+                    // Ignore logging errors during deserialization
+                }
+                // Fallback to the Value property if there's any error
+                return Value;
+            }
         }
 
         private string mFormula;

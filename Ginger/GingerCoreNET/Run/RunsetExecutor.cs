@@ -263,6 +263,23 @@ namespace Ginger.Run
 
             try
             {
+                // Handle backward compatibility for old runset XML files first
+                // Convert variables with DiffrentFromOrigin=true and MappedOutputType=None to new "Value" mapping format
+                if (var.DiffrentFromOrigin && var.MappedOutputType == VariableBase.eOutputType.None)
+                {
+                    string sourceValue = GetVariableSourceValue(var);
+                    
+                    // Convert old format to new format if we have a source value
+                    if (!string.IsNullOrEmpty(sourceValue))
+                    {
+                        var.MappedOutputType = VariableBase.eOutputType.Value;
+                        var.MappedOutputValue = sourceValue;
+                        
+                        Reporter.ToLog(eLogLevel.DEBUG, $"UpdateOldOutputVariableMappedValues: Converted variable '{var.Name}' of type '{var.VariableType}' from old format (DiffrentFromOrigin=True, MappedOutputType=None) to new format (MappedOutputType=Value, MappedOutputValue='{var.MappedOutputValue}')");
+                    }
+                }
+
+                // Handle OutputVariable mapping backward compatibility
                 if (var.MappedOutputType == VariableBase.eOutputType.OutputVariable && !var.MappedOutputValue.Contains('_'))
                 {
                     for (int i = AllPreviousBusinessFlowRuns.Count - 1; i >= 0; i--)//doing in reverse for sorting by latest value in case having the same var more than once
@@ -282,8 +299,70 @@ namespace Ginger.Run
             {
                 Reporter.ToLog(eLogLevel.WARN, "Exception occurred when trying to update outputvariable mapped value ", ex);
             }
+        }
 
-
+        /// <summary>
+        /// Gets the source value from different variable types based on their specific storage patterns
+        /// </summary>
+        /// <param name="var">The variable to extract the source value from</param>
+        /// <returns>The source value if found, null or empty otherwise</returns>
+        private string GetVariableSourceValue(VariableBase var)
+        {
+            try
+            {
+                switch (var)
+                {
+                    case VariablePasswordString passwordVar:
+                        // For VariablePasswordString, check the Password property first, then Value
+                        return !string.IsNullOrEmpty(passwordVar.Password) ? passwordVar.Password : var.Value;
+                    
+                    case VariableString stringVar:
+                        // For VariableString, check InitialStringValue first, then Value
+                        return !string.IsNullOrEmpty(stringVar.InitialStringValue) ? stringVar.InitialStringValue : var.Value;
+                    
+                    case VariableNumber numberVar:
+                        // For VariableNumber, check InitialNumberValue first, then Value
+                        return !string.IsNullOrEmpty(numberVar.InitialNumberValue) ? numberVar.InitialNumberValue : var.Value;
+                    
+                    case VariableDateTime dateTimeVar:
+                        // For VariableDateTime, check InitialDateTime first, then Value
+                        return !string.IsNullOrEmpty(dateTimeVar.InitialDateTime) ? dateTimeVar.InitialDateTime : var.Value;
+                    
+                    case VariableSelectionList selectionVar:
+                        // For VariableSelectionList, use the SelectedValue if available, otherwise Value
+                        return !string.IsNullOrEmpty(selectionVar.SelectedValue) ? selectionVar.SelectedValue : var.Value;
+                    
+                    case VariableDynamic dynamicVar:
+                        // For VariableDynamic, just use the Value property (no specific initial value field)
+                        return var.Value;
+                    
+                    case VariableTimer timerVar:
+                        // For VariableTimer, just use the Value property (no specific initial value field)
+                        return var.Value;
+                    
+                    case VariableRandomString randomStringVar:
+                        // For VariableRandomString, just use the Value property (no specific initial value field)
+                        return var.Value;
+                    
+                    case VariableRandomNumber randomNumberVar:
+                        // For VariableRandomNumber, just use the Value property (no specific initial value field)
+                        return var.Value;
+                    
+                    case VariableSequence sequenceVar:
+                        // For VariableSequence, just use the Value property (no specific initial value field)
+                        return var.Value;
+                    
+                    default:
+                        // For all other variable types, use the Value property
+                        return var.Value;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, $"Exception occurred while getting source value for variable '{var?.Name}' of type '{var?.VariableType}': {ex.Message}");
+                // Fallback to the Value property if there's any error
+                return var?.Value;
+            }
         }
 
         private void CopyCustomizedVariableConfigurations(VariableBase customizedVar, VariableBase originalVar)
@@ -294,18 +373,7 @@ namespace Ginger.Run
             // Handle backward compatibility for old runset XML files before any other processing
             if (customizedVar.DiffrentFromOrigin && customizedVar.MappedOutputType == VariableBase.eOutputType.None)
             {
-                string sourceValue = null;
-                
-                // For VariablePasswordString, check the Password property
-                if (customizedVar is VariablePasswordString passwordVar && !string.IsNullOrEmpty(passwordVar.Password))
-                {
-                    sourceValue = passwordVar.Password;
-                }
-                // For other variable types, check the Value property  
-                else if (!string.IsNullOrEmpty(customizedVar.Value))
-                {
-                    sourceValue = customizedVar.Value;
-                }
+                string sourceValue = GetVariableSourceValue(customizedVar);
                 
                 // Convert old format to new format if we have a source value
                 if (!string.IsNullOrEmpty(sourceValue))
@@ -313,7 +381,7 @@ namespace Ginger.Run
                     customizedVar.MappedOutputType = VariableBase.eOutputType.Value;
                     customizedVar.MappedOutputValue = sourceValue;
                     
-                    Reporter.ToLog(eLogLevel.DEBUG, $"RunsetExecutor: Converted variable '{customizedVar.Name}' from old format during CopyCustomizedVariableConfigurations");
+                    Reporter.ToLog(eLogLevel.DEBUG, $"CopyCustomizedVariableConfigurations: Converted variable '{customizedVar.Name}' of type '{customizedVar.VariableType}' from old format to new format");
                 }
             }
 
