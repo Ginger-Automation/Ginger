@@ -152,22 +152,22 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             }
 
             try
-            {
-                _queue?.CompleteAdding();
-
+            {                
+                _queue?.CompleteAdding();   
+                
                 // Process any remaining items in the queue before shutdown
                 ProcessRemainingItems();
-
+                      
                 _cts?.Cancel();
                 if (_workerTask != null)
                 {
                     _workerTask.Wait(2000); // Wait for the task to complete or timeout
-                }
-                _cts?.Dispose(); // Dispose of the CancellationTokenSource
+                }              
+                _cts?.Dispose(); // Dispose of the CancellationTokenSource                
             }
             catch (AggregateException ex)
             {
-                // Handle TaskCanceledException explicitly
+                // Handle TaskCanceledException explicitly               
                 Reporter.ToLog(eLogLevel.DEBUG, "Dispose Error disposing HttpLogAppenders", ex);
                 ex.Handle(e => e is TaskCanceledException);
             }
@@ -182,28 +182,28 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             Dispose(); // Finalizer to ensure resources are cleaned up
         }
 
-        private void ProcessRemainingItems()
+        private async void ProcessRemainingItems()
         {
             try
-            {
+            {                
                 var remainingItems = new List<LoggingEvent>();
 
                 // Collect all remaining items
                 while (_queue.TryTake(out LoggingEvent item, TimeSpan.FromMilliseconds(100)))
-                {
+                {                    
                     remainingItems.Add(item);
-                }
+                }                
 
                 if (remainingItems.Count > 0)
                 {
-                    // Process the remaining items synchronously
-                    ProcessBatch(remainingItems).GetAwaiter().GetResult();
-                }
+                    // Process the remaining items synchronously                    
+                    await ProcessBatch(remainingItems);                    
+                }                
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "[HttpLogAppender] Error processing remaining items during disposal", ex);
-            }
+            }           
         }
 
         protected override void Append(LoggingEvent loggingEvent)
@@ -364,8 +364,8 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             }
         }
 
-        private Guid EntityId = Guid.Empty;
-        private Guid solutionId = Guid.Empty;
+        private Guid? EntityId = Guid.Empty;
+        private Guid? solutionId = Guid.Empty;
         private string runsetName = string.Empty;
 
         // Extract the batch processing logic into a separate method
@@ -382,11 +382,11 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             {
                 if (EntityId == Guid.Empty && WorkSpace.Instance?.RunsetExecutor?.RunSetConfig?.Guid != Guid.Empty)
                 {
-                    EntityId = (Guid)WorkSpace.Instance?.RunsetExecutor?.RunSetConfig?.Guid;
+                    EntityId = WorkSpace.Instance?.RunsetExecutor?.RunSetConfig?.Guid;
                 }
                 if (solutionId == Guid.Empty && WorkSpace.Instance?.Solution?.Guid != Guid.Empty)
                 {
-                    solutionId = (Guid)WorkSpace.Instance?.Solution?.Guid;
+                    solutionId = WorkSpace.Instance?.Solution?.Guid;
                 }
                 if (string.IsNullOrEmpty(runsetName) && !string.IsNullOrEmpty(WorkSpace.Instance?.RunsetExecutor?.RunSetConfig?.Name))
                 {
@@ -407,9 +407,6 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 {
                     isExecutionStarted = true;
                     isRunSetStarted = true;
-                    EntityId = Guid.Empty;
-                    solutionId = Guid.Empty;
-                    runsetName = string.Empty;
                 }
 
                 if (evt.RenderedMessage.IndexOf("Running Pre-Execution Run Set Operations", StringComparison.OrdinalIgnoreCase) >= 0)
@@ -426,12 +423,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 if (evt.RenderedMessage.IndexOf("Run Set Execution Ended", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     isExecutionStarted = false;
-                    EntityId = Guid.Empty;
-                    solutionId = Guid.Empty;
-                    runsetName = string.Empty;
                 }
-
-
 
                 if (!isRunSetStarted && evt.Level.DisplayName.Equals("ERROR", StringComparison.Ordinal) && evt.RenderedMessage.IndexOf("Error(s) occurred process exit code", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
@@ -444,7 +436,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                                 Id = ExecutionId.Value,
                                 ExecutionId = ExecutionId.Value,
                                 EntityId = EntityId,
-                                GingerSolutionGuid = solutionId,
+                                GingerSolutionGuid = solutionId ?? Guid.Empty,
                                 Name = runsetName,
                                 RunStatus = eExecutionStatus.Failed,
                             };
