@@ -1224,6 +1224,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         gingerRunner.KeepAgentsOn = runnerConfig.KeepAgentsOpen.Value;
                     }
 
+                    gingerRunner.ForceUiScreenshot = runnerConfig.ForceUiScreenshot;
+
                     if (runnerConfig.EnvironmentName != null || runnerConfig.EnvironmentID != null)
                     {
                         ProjEnvironment env = DynamicExecutionManager.FindItemByIDAndName<ProjEnvironment>(

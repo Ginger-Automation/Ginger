@@ -58,6 +58,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -1566,6 +1567,9 @@ namespace Amdocs.Ginger.CoreNET
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceOSType:
                         act.AddOrUpdateReturnParamActual("Os Type", GetDeviceOSType());
                         break;
+                    case ActMobileDevice.eMobileDeviceAction.SetDeviceLocation:
+                        SetDeviceLocation(act);
+                        break;
 
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
@@ -2685,7 +2689,15 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                         {
                             try
                             {
-                                EI.ScreenShotImage = GingerCoreNET.GeneralLib.General.TakeElementScreenShot(EI, ScreenShot); //TakeElementScreenShot(EI, fullImage);
+                                if(DevicePlatformType == eDevicePlatformType.Android)
+                                {
+                                    EI.ScreenShotImage = GingerCoreNET.GeneralLib.General.TakeElementScreenShot(EI, fullImage);
+                                }
+                                else
+                                {
+                                    EI.ScreenShotImage = TakeElementScreenShot(EI, fullImage);
+                                }
+
                             }
                             catch (Exception ex)
                             {
@@ -2717,8 +2729,112 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
             }
         }
 
-        
+        public static string TakeElementScreenShot(ElementInfo elementInfo, Bitmap fullImage)
+        {
+            try
+            {
+                if (fullImage == null)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Full image cannot be null.");
+                    return null;
+                }
 
+                if (elementInfo == null)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "elementInfo cannot be null.");
+                    return null;
+                }
+
+                int cropX;
+                int cropY;
+                int cropWidth;
+                int cropHeight;
+
+                GetLocationAndSizeOfElement(elementInfo, out cropX, out cropY, out cropWidth, out cropHeight);
+
+                if (cropWidth <= 0 || cropHeight <= 0)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Invalid crop dimensions.");
+                    return null;
+                }
+                // Clamp crop rectangle to the bounds of the full image
+                Rectangle cropRect = new Rectangle(cropX, cropY, cropWidth, cropHeight);
+                cropRect.Intersect(new Rectangle(0, 0, fullImage.Width, fullImage.Height));
+                if (cropRect.Width == 0 || cropRect.Height == 0)
+                {
+                    Reporter.ToLog(eLogLevel.WARN,
+                    $"Element bounds {cropX},{cropY},{cropWidth},{cropHeight} are outside the screenshot area {fullImage.Width}x{fullImage.Height}");
+                    return null;
+                }
+
+                using (Bitmap elementImage = new Bitmap(cropRect.Width, cropRect.Height))
+                {
+
+                    using (Graphics g = Graphics.FromImage(elementImage))
+                    {
+                        g.DrawImage(fullImage, new Rectangle(0, 0, cropRect.Width, cropRect.Height), cropRect, GraphicsUnit.Pixel);
+                    }
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        elementImage.Save(ms, ImageFormat.Png);
+                        return Convert.ToBase64String(ms.ToArray());
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Take element screen-shot: ", ex);
+                return null;
+            }
+        }
+
+        public static void GetLocationAndSizeOfElement(ElementInfo elementInfo, out int cropX, out int cropY, out int cropWidth, out int cropHeight)
+        {
+            var props = elementInfo.Properties.GroupBy(p => p.Name, StringComparer.InvariantCultureIgnoreCase)
+                .Select(g => g.First())
+                .ToDictionary(p => p.Name, p => p.Value, StringComparer.InvariantCultureIgnoreCase);
+
+            string BoundsValue = props.TryGetValue("bounds", out var xBounds) ? xBounds : string.Empty;
+            try
+            {
+                if (!string.IsNullOrEmpty(BoundsValue))
+                {
+                    // Remove the square brackets and split the string
+                    string[] parts = BoundsValue.Replace("[", "").Split(']');
+                    if (parts.Length < 2)
+                    {
+                        throw new FormatException($"Unexpected bounds format: {BoundsValue}");
+                    }
+                    // Parse the first part as x and y
+                    string[] xy = parts[0].Split(',');
+
+                    // Parse the second part as width and height
+                    string[] wh = parts[1].Split(',');
+
+                    if (!int.TryParse(xy[0], out cropX) || !int.TryParse(xy[1], out cropY) || !int.TryParse(wh[0], out int x2) || !int.TryParse(wh[1], out int y2))
+                    {
+                        throw new FormatException($"Unable to parse bounds string: {BoundsValue}");
+                    }
+
+                    cropWidth = Math.Max(0, x2 - cropX);
+                    cropHeight = Math.Max(0, y2 - cropY);
+                }
+                else
+                {
+                    cropX = props.TryGetValue("x", out var xVal) ? Convert.ToInt32(xVal) : 0;
+                    cropY = props.TryGetValue("y", out var yVal) ? Convert.ToInt32(yVal) : 0;
+                    cropWidth = props.TryGetValue("width", out var widthVal) ? Convert.ToInt32(widthVal) : 0;
+                    cropHeight = props.TryGetValue("height", out var heightVal) ? Convert.ToInt32(heightVal) : 0;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                cropX = 0; cropY = 0; cropWidth = 0; cropHeight = 0;
+                Reporter.ToLog(eLogLevel.DEBUG, $"Failed to parse bounds string: {BoundsValue}", ex);
+            }
+        }
 
         private Bitmap ScreenshotToImage(Screenshot screenshot)
         {
@@ -5404,8 +5520,8 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                     IOSDriver => ((IOSDriver)Driver).Location,
                     _ => throw new InvalidOperationException("Unsupported driver type")
                 };
-                act.AddOrUpdateReturnParamActual("Latitude", location.Latitude.ToString());
-                act.AddOrUpdateReturnParamActual("longitude", location.Longitude.ToString());
+                act.AddOrUpdateReturnParamActual("Latitude",  location.Latitude.ToString());
+                act.AddOrUpdateReturnParamActual("Longitude", location.Longitude.ToString());
                 act.AddOrUpdateReturnParamActual("Altitude", location.Altitude.ToString());
             }
             catch (Exception ex)
@@ -5485,6 +5601,80 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                 throw new InvalidOperationException("Unsupported driver type");
             }
         }
+
+        public void SetDeviceLocation(ActMobileDevice act)
+        {
+            if (act == null)
+            {
+                throw new ArgumentNullException(nameof(act), "ActMobileDevice cannot be null");
+            }
+
+            string latitudeRaw = act.Latitude?.ValueForDriver;
+            string longitudeRaw = act.Longitude?.ValueForDriver;
+            string altitudeRaw = act.Altitude?.ValueForDriver;
+
+            if (string.IsNullOrWhiteSpace(latitudeRaw))
+            {
+                throw new ArgumentException("latitude cannot be null or empty", nameof(act.Latitude));
+            }
+
+            if (string.IsNullOrWhiteSpace(longitudeRaw))
+            {
+                throw new ArgumentException("longitude cannot be null or empty", nameof(act.Longitude));
+            }
+
+            if (!double.TryParse(latitudeRaw, NumberStyles.Float, CultureInfo.InvariantCulture, out double latitude))
+            {
+                throw new ArgumentException("latitude must be a valid number", nameof(act.Latitude));
+            }
+
+            if (!double.TryParse(longitudeRaw, NumberStyles.Float, CultureInfo.InvariantCulture, out double longitude))
+            {
+                throw new ArgumentException("longitude must be a valid number", nameof(act.Longitude));
+            }
+            if (latitude < -90 || latitude > 90)
+            {
+                throw new ArgumentOutOfRangeException(nameof(act.Latitude), "latitude must be between -90 and 90 degrees");
+            }
+            if (longitude < -180 || longitude > 180)
+            {
+                throw new ArgumentOutOfRangeException(nameof(act.Longitude), "longitude must be between -180 and 180 degrees");
+            }
+
+            double altitude = 0;
+            if (!string.IsNullOrWhiteSpace(altitudeRaw) && !double.TryParse(altitudeRaw, NumberStyles.Float, CultureInfo.InvariantCulture, out altitude))
+            {
+                throw new ArgumentException("altitude must be a valid number", nameof(act.Altitude));
+            }
+
+            try
+            {
+                var location = new Location
+                {
+                    Latitude = latitude,
+                    Longitude = longitude,
+                    Altitude = altitude
+                };
+
+                if (Driver is AndroidDriver androidDriver)
+                {
+                    androidDriver.Location = location;
+                }
+                else if (Driver is IOSDriver iosDriver)
+                {
+                    iosDriver.Location = location;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Driver does not support setting device location");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to set device location: {ex.Message}", ex);
+            }
+        }
+
     }
 
 }

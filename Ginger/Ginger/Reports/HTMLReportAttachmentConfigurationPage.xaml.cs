@@ -94,10 +94,13 @@ namespace Ginger.Reports
             };
             SaveAllButton.Click += new RoutedEventHandler(OkButton_Click);
             winButtons.Add(SaveAllButton);
-
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, false);
+            RoutedEventHandler closeHandler = new RoutedEventHandler(Close_ButtonClick);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, true,"Close", closeHandler);
         }
-
+        private void Close_ButtonClick(object sender, RoutedEventArgs e)
+        {           
+            _pageGenericWin?.Close();
+        }
         public void RadioButtonInit()
         {
 

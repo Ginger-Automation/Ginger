@@ -611,7 +611,11 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoGray.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerIconWhite.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\GingerPlayDetailsPopUpContent.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\GingerPlayGradiantBlack.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\GingerPlayGradiantWhite.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerPlayLogo.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\GingerPlayWhiteGradiant.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerSplashImageNew.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\hbase.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\hbase.svg" />
@@ -730,7 +734,7 @@
     <PackageReference Include="FontAwesome6.Fonts" Version="2.5.1" />
     <PackageReference Include="FontAwesome6.Svg" Version="2.5.1" />
     <PackageReference Include="Gherkin" Version="5.1.0" />
-    <PackageReference Include="Ginger.AccountReport.Contracts" Version="2024.4.1.6" />
+    <PackageReference Include="Ginger.AccountReport.Contracts" Version="2025.4.0" />
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="2025.4.2.1" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
     <PackageReference Include="IdentityModel" Version="7.0.0" />
@@ -2514,7 +2518,19 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconWhite.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerPlayDetailsPopUpContent.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerPlayGradiantBlack.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerPlayGradiantWhite.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerPlayLogo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerPlayWhiteGradiant.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerSplashImageNew.png">

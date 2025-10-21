@@ -399,6 +399,7 @@ namespace GingerCoreNET.Application_Models
             DeltaElementInfo matchedDeltaElement = new DeltaElementInfo();
             //copy possible customized fields from original
             latestElement.Guid = existingElement.Guid;
+            latestElement.ParentGuid = existingElement.ParentGuid;
             latestElement.ElementName = existingElement.ElementName;
             latestElement.Description = existingElement.Description;
             latestElement.ElementGroup = existingElement.ElementGroup;
