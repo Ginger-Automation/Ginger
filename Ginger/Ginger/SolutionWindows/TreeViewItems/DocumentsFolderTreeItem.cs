@@ -521,5 +521,22 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             return true;
         }
+
+        public void RefreshDocumentsFolder()
+        {
+            try
+            {
+                //Clearing the cached items
+                _children?.Clear();
+
+                //loading the items again from disk
+                _children = GetChildrenList();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error refreshing Documents folder at path '{Path}'", ex);
+            }
+        }
+
     }
 }

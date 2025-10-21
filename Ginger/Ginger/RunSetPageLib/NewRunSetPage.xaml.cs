@@ -21,6 +21,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -46,6 +47,7 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
+using GingerCoreNET.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using GraphQL;
@@ -2328,7 +2330,7 @@ namespace Ginger.Run
         private bool ValidateRemoteConfiguration()
         {
             ExecutionLoggerConfiguration execLoggerConfig = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(c => c.IsSelected);
-            if (execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && AssignGraphQLObjectEndPoint())
+            if (execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && (GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() || GingerPlayUtils.IsGingerPlayBackwardUrlConfigured()) && AssignGraphQLObjectEndPoint())
             {
                 return true;
             }

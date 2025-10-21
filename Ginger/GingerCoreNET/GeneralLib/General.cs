@@ -1253,13 +1253,19 @@ namespace GingerCoreNET.GeneralLib
                     return null;
                 }
 
-                using (Bitmap elementImage = fullImage.Clone(cropRect, fullImage.PixelFormat))
+                using (Bitmap elementImage = new Bitmap(cropRect.Width, cropRect.Height))
                 {
+
+                    using (Graphics g = Graphics.FromImage(elementImage))
+                    {
+                        g.DrawImage(fullImage, new Rectangle(0, 0, cropRect.Width, cropRect.Height), cropRect, GraphicsUnit.Pixel);
+                    }
                     using (MemoryStream ms = new MemoryStream())
                     {
                         elementImage.Save(ms, ImageFormat.Png);
                         return Convert.ToBase64String(ms.ToArray());
                     }
+
                 }
             }
             catch (Exception ex)

@@ -11,68 +11,133 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="GingerPlayConfigurationpage">
 
-    <DockPanel Background="{StaticResource $BackgroundColor_White}">
+    <DockPanel >
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition  Height="30"/>
-                <RowDefinition  Height="1*"/>
-            </Grid.RowDefinitions>
-            <StackPanel Orientation="Horizontal" Grid.Row="0">
-                <Label Content="Ginger Play Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
-            </StackPanel>
-            <StackPanel Orientation="Vertical" Grid.Row="1">
-                <Grid Margin="10,10,0,0" x:Name="xGingerPlayGrid">
-                    <Grid.RowDefinitions>
-                        <RowDefinition  Height="50"/>
-                        <RowDefinition  Height="50"/>
-                        <RowDefinition  Height="50"/>
-                        <RowDefinition  Height="50"/>
-                        <RowDefinition  Height="50"/>
-                        <RowDefinition  Height="50"/>
-                        <RowDefinition  Height="50"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="230"/>
-                        <ColumnDefinition Width="350*"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
-                        <CheckBox Content="Allow Ginger Play Integration"   VerticalAlignment="Center" Margin="0,0,10,0" FontSize="12" x:Name="xAllowGingerPlayCheckBox" Checked="xAllowGingerPlayCheckBox_Checked" Unchecked="xAllowGingerPlayCheckBox_Unchecked" />
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0" Background="{StaticResource $BackgroundColor_White}">
+                <Grid.RowDefinitions>
+                    <RowDefinition  Height="30"/>
+                    <RowDefinition  Height="1*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Row="0">
+                    <Label Content="Ginger Play Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Ginger Play" ImageType="GingerPlayWhiteGradiant"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Grid.Row="1">
+                    <Grid Margin="10,10,0,0" x:Name="xGingerPlayGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition  Height="50"/>
+                            <RowDefinition  Height="50"/>
+                            <RowDefinition  Height="50"/>
+                            <RowDefinition  Height="50"/>
+                            <RowDefinition  Height="50"/>
+                            <RowDefinition  Height="50"/>
+                            <RowDefinition  Height="50"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="230"/>
+                            <ColumnDefinition Width="350*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
+                            <CheckBox Content="Allow Ginger Play Integration"   VerticalAlignment="Center" Margin="0,0,10,0" FontSize="12" x:Name="xAllowGingerPlayCheckBox" Checked="xAllowGingerPlayCheckBox_Checked" Unchecked="xAllowGingerPlayCheckBox_Unchecked" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1">
+                            <Label x:Name="xGatewayURL" Content="Gateway URL:"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>
+                            <Label x:Name="xGatewayURLValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
+                        </StackPanel>
+                        <Activities:UCValueExpression x:Name="xGatewayURLTextBox"  Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="GingerOps Account URL" Margin="10,0,0,0"  Width="400" />
+
+                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
+                            <Label x:Name="xClientIdLabel" Content="Client Id:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
+                        </StackPanel>
+                        <Activities:UCValueExpression x:Name="xClientIdTextBox"  Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Id" Margin="10,0,0,0"  Width="400" LostKeyboardFocus="xClientIdTextBox_LostKeyboardFocus"/>
+
+                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="3">
+                            <Label x:Name="xClientSecretLabel" Content="Client Secret:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
+                        </StackPanel>
+                        <Activities:UCValueExpression x:Name="xClientSecretTextBox"  Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Secret" Margin="10,0,0,0" Width="400" LostKeyboardFocus="xClientSecretTextBox_LostKeyboardFocus" />
+
+                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Margin="0,0,427,0">
+                            <CheckBox Content="Report Service" VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xReportServiceCheckBox" />
+
+
+                            <CheckBox Content="Execution Service" VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xExecutionServiceCheckBox" />
+
+
+                            <CheckBox Content="AI Service"  VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xAIServiceCheckBox" />
+
+                        </StackPanel>
+                        <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+                            <usercontrols:ucButton x:Name="xTestConBtn" IsEnabled="False" ButtonType="RoundTextAndImageButton" ButtonText="Test Connection" ButtonImageType="Run" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xTestConBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" ToolTip="Test GingerPlay Connection" Width="181"/>
+                            <usercontrols:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="10,0,0,0" Height="25" Width="20" Visibility="Collapsed"/>
+                        </StackPanel>
+                    </Grid>
+
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="2" >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+                <Grid Grid.Column="1">
+                    <Border
+Margin="30,20,10,0"
+ Background="GhostWhite"
+ CornerRadius="10"
+ BorderBrush="#B6E0FE"
+ BorderThickness="1"
+ VerticalAlignment="Top"
+ Height="Auto">
+                        <StackPanel Margin="10"
+         HorizontalAlignment="Left"
+         VerticalAlignment="Top"
+         Height="Auto"
+         >
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                            <usercontrols:ImageMakerControl ImageType="GingerPlayWhiteGradiant" Height="20" Width="20" Margin="0,2,10,0"/>
+                            <TextBlock Text="About Ginger Play" 
+                                       FontWeight="Normal" 
+                                       FontSize="18"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <Separator Margin="0,10,0,10"/>
+                        <TextBlock TextWrapping="Wrap"
+                                   Foreground="#333"
+                                   FontSize="12"
+                                   Margin="0,0,0,10">
+                            Ginger Play is an advanced automation platform built on top of Ginger, designed for execution, collaboration, and reporting at scale.
+                        </TextBlock>
+                        <TextBlock Text="Key features include:" 
+                                   FontWeight="Bold"
+                                   FontSize="14"
+                                   Margin="0,0,0,6"/>
+                        <StackPanel>
+                            <TextBlock FontSize="12" Text="• Advanced execution: bulk runs, concatenated flows, intelligent scheduling, and input-output data mapping." TextWrapping="Wrap" Margin="0,0,0,4"/>
+                            <TextBlock FontSize="12" Text="• Real-time tracking &amp; dashboards: status, logs, errors, screenshots, and performance insights." TextWrapping="Wrap" Margin="0,0,0,4"/>
+                            <TextBlock FontSize="12" Text="• Post-execution actions: resume from failure, re-execution, cloning from history." TextWrapping="Wrap" Margin="0,0,0,4"/>
+                            <TextBlock FontSize="12" Text="• AI-powered capabilities: natural language SQL queries, optimized flow execution, runtime input combinations, and more." TextWrapping="Wrap" Margin="0,0,0,4"/>
+                        </StackPanel>
+                        <TextBlock TextWrapping="Wrap" FontSize="12" FontWeight="Bold" Text="Integrating Ginger Play unlocks enterprise-grade execution, reporting, and AI-driven productivity—all within a unified automation ecosystem."/>
+                        <TextBlock Margin="0,10,0,0" FontSize="12">
+                            <Hyperlink Click="GingerPlayLearnMore_Click">Learn more about Ginger Play</Hyperlink>
+                                                        <usercontrols:ImageMakerControl ImageType="Link" Height="10" Width="10" Margin="0,2,10,0"/>
+                        </TextBlock>
+                        <TextBlock Margin="0,10,0,0" TextWrapping="Wrap" FontSize="12" FontWeight="Bold" Text="Ginger Play is provided as part of Amdocs Automation Testing Service."/>
+                        <TextBlock Margin="0,10,0,0" FontSize="12">
+      <Hyperlink Click="GingerPlayLearnMore_Click">Learn More About Amdocs Automation Testing Service</Hyperlink>
+                                  <usercontrols:ImageMakerControl ImageType="Link" Height="10" Width="10" Margin="0,2,10,0"/>
+                        </TextBlock>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1">
-                        <Label x:Name="xGatewayURL" Content="Gateway URL:"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>
-                        <Label x:Name="xGatewayURLValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
-                    </StackPanel>
-                    <Activities:UCValueExpression x:Name="xGatewayURLTextBox"  Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="GingerOps Account URL" Margin="10,0,0,0"  Width="400" />
-
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
-                        <Label x:Name="xClientIdLabel" Content="Client Id:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
-                    </StackPanel>
-                    <Activities:UCValueExpression x:Name="xClientIdTextBox"  Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Id" Margin="10,0,0,0"  Width="400" LostKeyboardFocus="xClientIdTextBox_LostKeyboardFocus"/>
-
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="3">
-                        <Label x:Name="xClientSecretLabel" Content="Client Secret:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
-                    </StackPanel>
-                    <Activities:UCValueExpression x:Name="xClientSecretTextBox"  Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Secret" Margin="10,0,0,0" Width="400" LostKeyboardFocus="xClientSecretTextBox_LostKeyboardFocus" />
-
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Margin="0,0,427,0">
-                        <CheckBox Content="Report Service" VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xReportServiceCheckBox" />
-
-
-                        <CheckBox Content="Execution Service" VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xExecutionServiceCheckBox" />
-
-
-                        <CheckBox Content="AI Service"  VerticalAlignment="Center" IsEnabled="False" Margin="0,0,10,0" FontSize="12" x:Name="xAIServiceCheckBox" />
-
-                    </StackPanel>
-                    <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-                        <usercontrols:ucButton x:Name="xTestConBtn" IsEnabled="False" ButtonType="RoundTextAndImageButton" ButtonText="Test Connection" ButtonImageType="Run" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xTestConBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" ToolTip="Test GingerPlay Connection" Width="181"/>
-                        <usercontrols:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="10,0,0,0" Height="25" Width="20" Visibility="Collapsed"/>
-                    </StackPanel>
-                </Grid>
-
-            </StackPanel>
+                </Border>
+            </Grid>
         </Grid>
     </DockPanel>
 </UserControlsLib:GingerUIPage>

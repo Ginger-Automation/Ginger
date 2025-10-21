@@ -206,12 +206,13 @@ namespace GingerCore.GingerOCR
                             else
                             {
                                 resultTxt.Append(lineTxt.Substring(firstIndexOf + firstLabel.Length));
+                                resultTxt.Append(' '); // Adding the  space after every region
                             }
                         }
                     }
                     else
                     {
-                        int secondIndexOf = lineTxt.IndexOf(secondLabel);
+                        int secondIndexOf = lineTxt.IndexOf(secondLabel, StringComparison.OrdinalIgnoreCase);
                         if (secondIndexOf != -1)
                         {
                             resultTxt.Append(lineTxt.Substring(0, secondIndexOf));
@@ -220,6 +221,7 @@ namespace GingerCore.GingerOCR
                         else
                         {
                             resultTxt.Append(lineTxt);
+                            resultTxt.Append(' '); // Adding the space after every region
                         }
                     }
                 }
@@ -230,7 +232,7 @@ namespace GingerCore.GingerOCR
                 err = "Unable to read text from Image";
             }
 
-            return resultTxt.ToString();
+            return resultTxt.ToString().Trim();
         }
 
         // ---------------- PDF → Image Conversion Helpers ----------------

@@ -46,7 +46,6 @@
             </StackPanel>
             <StackPanel x:Name="xConsumerStack" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
                 <Label x:Name="xConsumerlbl" Style="{StaticResource $LabelStyle}" Content="Consumer"/>
-                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16"  ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
                 <Label  Style="{StaticResource $LabelStyle}" Content=":"/>
                 <usercontrolsLib:ConsumerComboBox Grid.Column="1" x:Name="xConsumerCB" Margin="38,0,0,0" Width="250" />
             </StackPanel>

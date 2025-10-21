@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.Common.Expressions;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
@@ -47,6 +48,7 @@ using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
+using GingerCoreNET.GeneralLib;
 using GingerCoreNET.RosLynLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
@@ -295,7 +297,7 @@ namespace Ginger.Run
             var accountReportExecutionLogger = RunListeners.Find((runListeners) => runListeners.GetType() == typeof(AccountReportExecutionLogger));
 
             if (mSelectedExecutionLoggerConfiguration != null
-                && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes &&
+                && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && (GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() || GingerPlayUtils.IsGingerPlayBackwardUrlConfigured()) &&
                 accountReportExecutionLogger == null)
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
@@ -5847,5 +5849,6 @@ namespace Ginger.Run
                 CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
             }
         }
+     
     }
 }

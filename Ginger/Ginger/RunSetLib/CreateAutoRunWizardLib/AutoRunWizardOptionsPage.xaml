@@ -32,7 +32,6 @@
                 <CheckBox.Content>
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <GingerCore:ucTextDicResource Text="Set ALM connection details"/>
-                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
                     </StackPanel>
                 </CheckBox.Content>
             </CheckBox>
@@ -41,7 +40,6 @@
                 <CheckBox.Content>
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <GingerCore:ucTextDicResource Text="Set External Configuration settings"/>
-                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
                     </StackPanel>
                 </CheckBox.Content>
             </CheckBox>
