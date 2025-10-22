@@ -2,6 +2,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.CoreNET.External.GingerPlay;
+using OpenQA.Selenium.DevTools.V137.Audits;
 using System;
 
 namespace GingerCoreNET.GeneralLib
@@ -44,6 +45,25 @@ namespace GingerCoreNET.GeneralLib
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Gateway URL is null or no configuration found", ex);
                 return string.Empty;
+            }
+        }
+
+        public static bool IsGingerPlayEnabled()
+        {
+            try
+            {
+                GingerPlayConfiguration gpConfig = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+                if (gpConfig != null)
+                {
+                    return gpConfig.GingerPlayEnabled;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to check if Ginger Play is Enabled", ex);
+                return false;
             }
         }
     }
