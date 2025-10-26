@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.CoreNET.Drivers.DriversWindow; // Added for IDriverWindow
 using GingerCore.Actions;
 using System;
 using System.Drawing;
@@ -31,8 +30,10 @@ using System.Text;
 using System.Threading;
 using static Amdocs.Ginger.CoreNET.ActionsLib.ActConsoleCommand;
 using Amdocs.Ginger.CoreNET.ActionsLib;
+using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using GingerCore;
 using GingerCore.Drivers;
+using GingerValueExpression = GingerCore.ValueExpression;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
 {
@@ -178,7 +179,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
                 case "ActConsoleCommand":
                     mWait = ((ActConsoleCommand)act).WaitTime;
 
-                    var VE = new ValueExpression(Environment, BusinessFlow);
+                    var VE = new GingerValueExpression(Environment, BusinessFlow);
 
                     var ExpString = ((ActConsoleCommand)act).ExpString;
                     VE.Value = ExpString;

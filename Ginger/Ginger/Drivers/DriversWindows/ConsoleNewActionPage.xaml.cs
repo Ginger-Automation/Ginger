@@ -20,10 +20,12 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.ActionsLib;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console;
 using Ginger;
+using GingerCore; // Added to resolve BusinessFlow reference
 using System.Windows;
 using System.Windows.Controls;
 
-namespace GingerCore.Drivers.ConsoleDriverLib
+
+namespace Ginger.Drivers.DriversWindows
 {
     /// <summary>
     /// Interaction logic for ConsoleNewActionPage.xaml

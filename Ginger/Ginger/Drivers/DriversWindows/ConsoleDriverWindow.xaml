@@ -1,4 +1,4 @@
-<Window x:Class="Ginger.Drivers.DriverWindow.ConsoleDriverWindow"
+<Window x:Class="Ginger.Drivers.DriversWindows.ConsoleDriverWindow" 
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"      
         Title="ConsoleDriverWindow" Height="600" Width="800" 

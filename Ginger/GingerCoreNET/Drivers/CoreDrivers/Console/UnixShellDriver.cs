@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.ActionsLib;
 using Amdocs.Ginger.Repository;
 using GingerCore;
+using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Renci.SshNet;
 using System;
@@ -83,7 +84,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         {
             BusinessFlow = BF;
         }
-        public UnixShellDriver(BusinessFlow BF, Environments.ProjEnvironment env)
+        public UnixShellDriver(BusinessFlow BF, ProjEnvironment env)
         {
             BusinessFlow = BF;
             Environment = env;
@@ -220,7 +221,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
                 if (UnixClient.IsConnected)
                 {
                     // Use the base class method to write to console buffer instead of directly to window
-                    Console.WriteLine(result);
+                    System.Console.WriteLine(result);
                     WriteToConsoleBuffer("Connected!");
 
                     s = ss.ReadLine(new TimeSpan(0, 0, 2));
@@ -231,7 +232,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
                         s = ss.ReadLine(new TimeSpan(0, 0, 2));
 
                     }
-                    Console.WriteLine(result);
+                    System.Console.WriteLine(result);
                     WriteToConsoleBuffer(result);
 
                     return true;
@@ -366,7 +367,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
                 if (command != "\u0003\n")
                 {
                     // Use the base class method to write to console buffer instead of directly to window
-                    Console.WriteLine(reply.ToString());
+                    System.Console.WriteLine(reply.ToString());
                     WriteToConsoleBuffer(reply.ToString());
                     reply.Clear();
                 }
