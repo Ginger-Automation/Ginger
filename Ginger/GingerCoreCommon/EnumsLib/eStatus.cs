@@ -34,6 +34,7 @@ namespace Amdocs.Ginger.CoreNET.Execution
         Blocked,
         Completed,
         Automated,
-        Canceled
+        Canceled,
+        InProgress
     }
 }

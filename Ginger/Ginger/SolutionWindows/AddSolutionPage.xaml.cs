@@ -139,6 +139,8 @@ namespace Ginger.SolutionWindows
                 GingerCoreNET.GeneralLib.General.CreateDefaultAccessiblityconfiguration();
                 GingerCoreNET.GeneralLib.General.CreateGingerOpsConfiguration();
                 GingerCoreNET.GeneralLib.General.CreateWireMockConfiguration();
+                GingerCoreNET.GeneralLib.General.CreateGingerPlayConfiguration();
+                GingerCoreNET.GeneralLib.General.CreateZAPConfiguration();
                 //Save again to keep all defualt configurations setup
                 mSolution.SolutionOperations.SaveSolution(false);
                 //show success message to user

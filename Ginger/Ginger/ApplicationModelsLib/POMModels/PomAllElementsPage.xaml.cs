@@ -89,6 +89,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             CollectionChangedEventManager.AddHandler(source: mPOM.MappedUIElements, handler: MappedUIElements_CollectionChanged);
             CollectionChangedEventManager.AddHandler(source: mPOM.UnMappedUIElements, handler: UnMappedUIElements_CollectionChanged);
+            
 
 
             mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped, AddSelfHealingColumn, editMode);
@@ -212,17 +213,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             else
             {
-                xCreateNewElement.Visibility = Visibility.Collapsed;
-                xStatusLable.Content = "Spying is Off";
-                mDispatcherTimer.IsEnabled = false;
+                StopSpying();
             }
         }
 
-        private void StopSpying()
+        public void StopSpying()
         {
             xCreateNewElement.Visibility = Visibility.Collapsed;
             xStatusLable.Content = "Spying is Off";
-            mDispatcherTimer.IsEnabled = false;
+            StopSpy();
         }
 
         public ElementInfo mSpyElement;

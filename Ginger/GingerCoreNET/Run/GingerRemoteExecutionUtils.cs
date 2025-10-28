@@ -18,13 +18,16 @@ limitations under the License.
 using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Ginger.Reports;
+using GingerCoreNET.GeneralLib;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Net.Http;
 
 namespace Amdocs.Ginger.CoreNET
@@ -35,27 +38,16 @@ namespace Amdocs.Ginger.CoreNET
         {
             var runSetReports = new List<RunSetReport>();
             var baseURI = GetReportDataServiceUrl();
-            if (!string.IsNullOrEmpty(baseURI) && WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
+            if (!string.IsNullOrEmpty(baseURI) && WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && (GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() || GingerPlayUtils.IsGingerPlayBackwardUrlConfigured()))
             {
                 using (var httpClient = new HttpClient())
                 {
-                    var endpoint = baseURI + "api/AccountReport/GetRunsetsExecutionInfoBySolutionID/" + soluionGuid;
-                    var response = httpClient.GetAsync(endpoint).Result;
-                    if (!response.IsSuccessStatusCode)
+                    AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(GingerPlayEndPointManager.GetAccountReportServiceUrl());
+                    var response = accountReportApiHandler.GetRunsetExecutionDataBySolutionIDFromCentralDB(baseURI,soluionGuid);
+                    
+                    if(!string.IsNullOrEmpty(response))
                     {
-                        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-                        {
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts solutionGuid  : {soluionGuid} GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result}");
-                        }
-                        else
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result}");
-                        }
-
-                    }
-                    else
-                    {
-                        runSetReports = ConvertResponsInRunsetReport(response.Content.ReadAsStringAsync().Result);
+                        runSetReports = ConvertResponsInRunsetReport(response);
                     }
                 }
             }
@@ -65,28 +57,15 @@ namespace Amdocs.Ginger.CoreNET
         {
             var runSetReports = new List<RunSetReport>();
             var baseURI = GetReportDataServiceUrl();
-            if (!string.IsNullOrEmpty(baseURI) && WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
+            if (!string.IsNullOrEmpty(baseURI) && WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && (GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() || GingerPlayUtils.IsGingerPlayBackwardUrlConfigured()))
             {
                 using (var httpClient = new HttpClient())
                 {
-                    var endpoint = baseURI + "api/AccountReport/GetRunsetExecutionInfoByRunsetID/" + soluionGuid + "/" + runsetGuid;
-                    var response = httpClient.GetAsync(endpoint).Result;
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-                        {
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts runsetGuid  : {runsetGuid} GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result}");
-
-                        }
-                        else
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result}");
-                        }
-
-                    }
-                    else
-                    {
-                        runSetReports = ConvertResponsInRunsetReport(response.Content.ReadAsStringAsync().Result);
+                    AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(GingerPlayEndPointManager.GetAccountReportServiceUrl());
+                    var response = accountReportApiHandler.GetRunsetExecutionDataByRunSetIDFromCentralDB(baseURI, soluionGuid, runsetGuid);
+                    
+                    if(!string.IsNullOrEmpty(response)){
+                        runSetReports = ConvertResponsInRunsetReport(response);
                     }
                 }
             }
@@ -94,7 +73,7 @@ namespace Amdocs.Ginger.CoreNET
         }
         public static string GetReportDataServiceUrl()
         {
-            var baseURI = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected)).CentralLoggerEndPointUrl;
+            var baseURI = GingerPlayEndPointManager.GetAccountReportServiceUrl();
 
             if (!string.IsNullOrEmpty(baseURI) && !baseURI.EndsWith("/"))
             {
@@ -130,21 +109,42 @@ namespace Amdocs.Ginger.CoreNET
             return runSetReports;
         }
 
-        public void GenerateHTMLReport(string executionGuid)
+        public static void GenerateHTMLReport(string executionGuid)
         {
             var htmlServiceUrl = GetReportHTMLServiceUrl();
             if (!string.IsNullOrEmpty(htmlServiceUrl))
             {
-                Process.Start(new ProcessStartInfo() { FileName = htmlServiceUrl + "?ExecutionId=" + executionGuid, UseShellExecute = true });
+                string url = htmlServiceUrl + "?ExecutionId=" + executionGuid;
+
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = url,
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage,
+                        $"Failed to open report URL.\nURL: {url}\nError: {ex.Message}");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to open HTML report URL: {url}", ex);
+                }
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Centralized Html Report Service URL is missing in General Report Configurations.\nPlease go to Configurations > Reports > Execution Logger Configurations to configure the HTML Report URL");
-            }
+                 Reporter.ToUser(
+                     eUserMsgKey.StaticErrorMessage,
+                     "Centralized HTML Report Service URL is missing in Configurations > Reports > Execution Logger. Please configure the HTML Report URL.");
+                Reporter.ToLog(
+                    eLogLevel.ERROR,
+                    "Missing Centralized HTML Report Service URL in Execution Logger configuration.");
+             }
         }
+
         public static string GetReportHTMLServiceUrl()
         {
-            var baseURI = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected)).CentralizedHtmlReportServiceURL;
+            var baseURI = GingerPlayEndPointManager.GetHTMLReportServiceUrl()?.Trim();
 
             if (!string.IsNullOrEmpty(baseURI))
             {
@@ -159,6 +159,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             return baseURI;
         }
+
 
         public static string GetOnlineHTMLReportlink(Guid? executionGuid)
         {

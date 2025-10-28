@@ -25,6 +25,7 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -43,25 +44,25 @@ namespace Ginger.Actions
         ActMobileDevice mAct;
         Context mContext;
         bool isValueExpression;
-       
+
 
         public ActMobileDeviceEditPage(ActMobileDevice Act)
         {
             InitializeComponent();
-          
+
             mAct = Act;
             mContext = Context.GetAsContext(Act.Context);
-     
+
             BindControls();
             SetControlsView();
         }
-      
+
         private void BindControls()
         {
             xOperationNameComboBox.Init(mAct, nameof(mAct.MobileDeviceAction), typeof(ActMobileDevice.eMobileDeviceAction), ActionNameComboBox_SelectionChanged);
 
-            
-              
+
+
             xInputVE.Init(Context.GetAsContext(mAct.Context), mAct.ActionInput, nameof(ActInputValue.Value));
 
             xAuthResultComboBox.Init(mAct, nameof(mAct.AuthResultSimulation), typeof(ActMobileDevice.eAuthResultSimulation), AuthResultComboBox_SelectionChanged);
@@ -79,9 +80,11 @@ namespace Ginger.Actions
 
             xDataTypeComboBox.Init(mAct, nameof(mAct.PerformanceTypes), typeof(ActMobileDevice.ePerformanceTypes), ActionNameComboBox_SelectionChanged);
 
+            xUnlockTypeComboBox.Init(mAct, nameof(mAct.UnLockType), typeof(ActMobileDevice.eUnlockType), UnlockTypeComboBox_SelectionChanged);
+
             xFilePathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.FilePathInput, nameof(ActInputValue.Value), true, true, UCValueExpression.eBrowserType.File, "*");
 
-            xFolderPathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.FolderPathInput, nameof(ActMobileDevice.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");            
+            xFolderPathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.FolderPathInput, nameof(ActInputValue.Value), true, true, UCValueExpression.eBrowserType.Folder, "*");
 
             xAppPackageVE.Init(Context.GetAsContext(mAct.Context), mAct.ActionAppPackage, nameof(ActInputValue.Value));
 
@@ -89,6 +92,9 @@ namespace Ginger.Actions
             xDragDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.DragDuration, nameof(ActInputValue.Value));
             xSwipeScaleTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.SwipeScale, nameof(ActInputValue.Value));
             xSwipeDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.SwipeDuration, nameof(ActInputValue.Value));
+            xLatitudeTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.Latitude, nameof(ActInputValue.Value));
+            xLongitudeTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.Longitude, nameof(ActInputValue.Value));
+            xAltitudeTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.Altitude, nameof(ActInputValue.Value));
 
             SetMultiTouchGridView();
             xMultiTouchGrid.DataSourceList = mAct.MobileTouchOperations;
@@ -145,7 +151,7 @@ namespace Ginger.Actions
         {
             UpdateBaseLineImage();
         }
-        
+
 
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
@@ -185,6 +191,11 @@ namespace Ginger.Actions
         private void AuthResultComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ChangeAuthResultDetailsComboBox();
+        }
+
+        private void UnlockTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SetControlsView();
         }
 
         private void ChangeAuthResultDetailsComboBox()
@@ -232,8 +243,9 @@ namespace Ginger.Actions
             xFileTransferPnl.Visibility = Visibility.Collapsed;
             xSpecificPerformanceDataPnl.Visibility = Visibility.Collapsed;
             xDeviceRotationPnl.Visibility = Visibility.Collapsed;
-          
+            xUnlockDevicePnl.Visibility = Visibility.Collapsed;
             xMultiTouchGrid.Visibility = Visibility.Collapsed;
+            xDeviceLoactioPnl.Visibility = Visibility.Collapsed;
 
             switch (mAct.MobileDeviceAction)
             {
@@ -285,8 +297,9 @@ namespace Ginger.Actions
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.OpenDeeplink:
-                    xAppPnl.Visibility = Visibility.Visible; 
+                    xAppPnl.Visibility = Visibility.Visible;
                     xInputLabelVE.Content = "Link:";
+                    xInputTextBlock.Text = "";
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
 
@@ -295,21 +308,25 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.IsAppInstalled:
                 case ActMobileDevice.eMobileDeviceAction.RemoveApp:
                 case ActMobileDevice.eMobileDeviceAction.QueryAppState:
+                case ActMobileDevice.eMobileDeviceAction.ClearAppData:
                     xAppPnl.Visibility = Visibility.Visible;
                     break;
-                    
+
                 case ActMobileDevice.eMobileDeviceAction.SetContext:
                     xInputLabelVE.Content = "Context to Set:";
+                    xInputTextBlock.Text = "";
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.RunScript:
                     xInputLabelVE.Content = "Script:";
+                    xInputTextBlock.Text = "";
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.StartRecordingScreen:
                     xInputLabelVE.Content = "Note: Max duration recording: 30 min.";
+                    xInputTextBlock.Text = "";
                     xInputVE.Visibility = Visibility.Collapsed;
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
@@ -326,6 +343,7 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.PushFileToDevice:
                     xFilePathLbl.Content = "Local File to Push:";
                     xFolderPathLbl.Content = "Device Target Folder:";
+                    xFileTextBlock.Text = "For Multiple Files Select Folder";
                     xFilePathLbl.Visibility = Visibility.Visible;
                     xFilePathTextBox.Visibility = Visibility.Visible;
                     xFolderPathLbl.Visibility = Visibility.Visible;
@@ -334,6 +352,10 @@ namespace Ginger.Actions
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.PullFileFromDevice:
+                    xFolderPathLbl.Content = "Local Target to Push:";
+                    xFilePathLbl.Content = "Device File to Pull:";
+                    xFileTextBlock.Text = "Target Folders Path:\nDocuments: /storage/emulated/0/Documents/\nPictures: /storage/emulated/0/Pictures/\nDownloads: /storage/emulated/0/Download/";
+                    xFolderTextBlock.Text = "Select Folder";
                     xFilePathLbl.Visibility = Visibility.Visible;
                     xFilePathTextBox.Visibility = Visibility.Visible;
                     xFolderPathLbl.Visibility = Visibility.Visible;
@@ -343,6 +365,12 @@ namespace Ginger.Actions
 
                 case ActMobileDevice.eMobileDeviceAction.SetClipboardText:
                     xInputLabelVE.Content = "Text:";
+                    xInputTextBlock.Text = "";
+                    xInputPnl.Visibility = Visibility.Visible;
+                    break;
+                case ActMobileDevice.eMobileDeviceAction.TypeUsingkeyboard:
+                    xInputLabelVE.Content = "Text:";
+                    xInputTextBlock.Text = "Note: For IOS, Keyboard Should be Open.";
                     xInputPnl.Visibility = Visibility.Visible;
                     break;
 
@@ -354,11 +382,49 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.RotateSimulation:
                     xDeviceRotationPnl.Visibility = Visibility.Visible;
                     break;
-               
+                case ActMobileDevice.eMobileDeviceAction.LockForDuration:
+                    xInputLabelVE.Content = "Set a Time Duration for Lock(Seconds):";
+                    xInputTextBlock.Text = "";
+                    xInputPnl.Visibility = Visibility.Visible;
+                    break;
 
                 case ActMobileDevice.eMobileDeviceAction.PerformMultiTouch:
                     xMultiTouchGrid.Visibility = Visibility.Visible;
                     break;
+                case ActMobileDevice.eMobileDeviceAction.GrantAppPermission:
+                    xAppPnl.Visibility = Visibility.Visible;
+                    xInputLabelVE.Content = "Permission:";
+                    xInputTextBlock.Text = "";
+                    xInputPnl.Visibility = Visibility.Visible;
+                    break;
+
+                case ActMobileDevice.eMobileDeviceAction.SendAppToBackground:
+                    xInputLabelVE.Content = "Set a Time Duration for Background(Seconds):";
+                    xInputTextBlock.Text = "";
+                    xInputPnl.Visibility = Visibility.Visible;
+                    break;
+                case ActMobileDevice.eMobileDeviceAction.StartActivity:
+                    xAppPnl.Visibility = Visibility.Visible;
+                    xInputLabelVE.Content = "Activity:";
+                    xInputTextBlock.Text = "";
+                    xInputPnl.Visibility = Visibility.Visible;
+                    break;
+                case ActMobileDevice.eMobileDeviceAction.UnlockDevice:
+                    var selectedValue = xUnlockTypeComboBox.ComboBoxSelectedValue?.ToString();
+                    xInputLabelVE.Content = $"Enter Value";
+                    if (selectedValue != null && selectedValue.Equals(nameof(ActMobileDevice.eUnlockType.none), StringComparison.OrdinalIgnoreCase))
+                    {
+                        mAct.ActionInput.Value = "";
+                    }
+                    xUnlockDevicePnl.Visibility = Visibility.Visible;
+                    xInputPnl.Visibility = Visibility.Visible;
+                    xInputTextBlock.Text = "Unlock operation (Android only)\r\n \r\n1. Pick the unlock type →\r\n  • PIN – enter digits only, e.g. 1234\r\n  • Password – enter your full device password, e.g. Pass@1234\r\n  • Pattern – describe the 3 × 3 Android pattern using the letters A … I\r\n\r\nMathematica\r\nCopy\r\nEdit\r\n1 2 3\r\n4 5 6\r\n7 8 9\r\n    Example “Z‑shape” pattern ⇢ 147369\r\n 2.iOS devices cannot be unlocked by Appium – run tests with the device already unlocked.";
+
+                    break;
+                case ActMobileDevice.eMobileDeviceAction.SetDeviceLocation:
+                    xDeviceLoactioPnl.Visibility = Visibility.Visible;
+                    break;
+
             }
         }
 

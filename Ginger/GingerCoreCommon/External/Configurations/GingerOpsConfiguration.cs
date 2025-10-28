@@ -26,7 +26,7 @@ namespace Ginger.Configurations
         public delegate void GingerOpsConfigurationChangedEvent();
 
 
-        private string mName;
+        private string mName = "GingerOpsConfig";
         [IsSerializedForLocalRepository]
         public string Name
         {

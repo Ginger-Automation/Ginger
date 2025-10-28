@@ -18,9 +18,10 @@ limitations under the License.
 
 using AccountReport.Contracts;
 using AccountReport.Contracts.ResponseModels;
-using amdocs.ginger.GingerCoreNET;
+using ALM_CommonStd.DataContracts;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using AutoMapper;
 using Newtonsoft.Json;
@@ -36,8 +37,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 {
     public class AccountReportApiHandler
     {
-
-
         private string EndPointUrl { get; set; }
 
         RestClient restClient;
@@ -49,13 +48,20 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         private const string SEND_RUNNER_EXECUTION_DATA = "api/AccountReport/runner/";
         private const string UPLOAD_FILES = "api/AccountReport/UploadFiles/";
         private const string UPLOAD_ARTIFACTS = "api/AccountReport/UploadArtifacts/";
-        private const string EXECUTION_ID_VALIDATION = "api/AccountReport/ExecutionIdValidation/";
-        private const string GET_BUSINESSFLOW_EXECUTION_DATA = "api/AccountReport/GetAccountReportBusinessflowsByExecutionId/";
-        private const string GET_RUNSET_EXECUTION_DATA = "api/AccountReport/GetRunsetHLExecutionInfo/";
-        private const string GET_RUNNER_EXECUTION_DATA = "api/AccountReport/GetAccountReportRunnersByExecutionId/";
-        private const string GET_ACCOUNT_HTML_REPORT = "/api/AccountReport/GetAccountHtmlReport/";
+        private const string EXECUTION_ID_VALIDATION = "api/HtmlReport/ExecutionIdValidation/";
+        private const string GET_BUSINESSFLOW_EXECUTION_DATA = "api/HtmlReport/GetAccountReportBusinessflowsByExecutionId/";
+        private const string GET_RUNSET_EXECUTION_DATA = "api/HtmlReport/GetRunsetHLExecutionInfo/";
+        private const string GET_RUNNER_EXECUTION_DATA = "api/HtmlReport/GetAccountReportRunnersByExecutionId/";
+        private const string GET_ACCOUNT_HTML_REPORT = "/api/HtmlReport/GetAccountHtmlReport/";
+        private const string SEND_EXECUTIONLOG = "api/AccountReport/executionlog/";
+        private const string GET_RUNSET_EXECUTION_DATA_RUNSET_ID = "api/HtmlReport/GetRunsetExecutionInfoByRunsetID/";
+        private const string GET_RUNSET_EXECUTION_DATA_SOLUTION_ID = "api/HtmlReport/GetRunsetsExecutionInfoBySolutionID/";
+        // Instance-level flag indicating the RunSet was successfully sent to the central DB.
+        // Volatile to ensure visibility across threads. Prefer per-execution tracking if multiple
+        // concurrent runs are supported in the same process.
+        private volatile bool _isRunSetDataSent = true;
 
-
+        private readonly Guid LogId = Guid.NewGuid();
 
         public AccountReportApiHandler(string apiUrl)
         {
@@ -77,7 +83,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Centralized DB endpoint url is Invalid");
+                    Reporter.ToLog(eLogLevel.ERROR, "Centralized DB endpoint url is Invalid", ex);
                 }
             }
         }
@@ -114,7 +120,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public bool IsConfigurationChanged()
         {
-            return !string.Equals(EndPointUrl, WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+            return !string.Equals(EndPointUrl, GingerPlayEndPointManager.GetAccountReportServiceUrl());
         }
         public async Task<bool> SendRunsetExecutionDataToCentralDBAsync(AccountReportRunSet accountReportRunSet, bool isUpdate = false)
         {
@@ -123,9 +129,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 if (!isUpdate)
                 {
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Starting to publish execution data to central DB for Runset- '{0}'", accountReportRunSet.Name));
+                    _isRunSetDataSent = true; //Resetting the flag again
                 }
                 else
                 {
+                    if (!_isRunSetDataSent)
+                    {
+                        // If this is an update and the RunSet was not previously sent successfully,
+                        // do not allow finishing update.
+                        return false;
+                    }
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Finishing to publish execution data to central DB for Runset- '{0}'", accountReportRunSet.Name));
                 }
                 string message = string.Format("execution data to Central DB for the Runset:'{0}' (Execution Id:'{1}')", accountReportRunSet.Name, accountReportRunSet.ExecutionId);
@@ -142,11 +155,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
                 if (isResponseSuccessful)
                 {
+                    // Mark flag true only after successful send
+                    _isRunSetDataSent = true;
                     Reporter.ToLog(eLogLevel.INFO, $"Successfully sent {message}");
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to send {message}");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to send data for RunSet Execution {message}, Further execution data won't be sent");
+                    _isRunSetDataSent = false;
                 }
                 return isResponseSuccessful;
             }
@@ -160,7 +176,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task SendRunnerExecutionDataToCentralDBAsync(AccountReportRunner accountReportRunner, bool isUpdate = false)
         {
-            if (restClient != null)
+            if (restClient != null && _isRunSetDataSent)
             {
                 string message = string.Format("execution data to Central DB for the Runner:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportRunner.Name, accountReportRunner.Id, accountReportRunner.AccountReportDbRunSetId);
                 try
@@ -184,7 +200,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task SendBusinessflowExecutionDataToCentralDBAsync(AccountReportBusinessFlow accountReportBusinessFlow, bool isUpdate = false)
         {
-            if (restClient != null)
+            if (restClient != null && _isRunSetDataSent)
             {
                 string message = string.Format("execution data to Central DB for the Business Flow:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportBusinessFlow.Name, accountReportBusinessFlow.Id, accountReportBusinessFlow.AccountReportDbRunnerId);
                 bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_BUSINESSFLOW_EXECUTION_DATA, accountReportBusinessFlow, isUpdate).ConfigureAwait(false);
@@ -201,7 +217,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task SendActivityGroupExecutionDataToCentralDBAsync(AccountReportActivityGroup accountReportActivityGroup, bool isUpdate = false)
         {
-            if (restClient != null)
+            if (restClient != null && _isRunSetDataSent)
             {
                 RestRequest restRequest = new RestRequest(SEND_ACTIVITYGROUP_EXECUTION_DATA, isUpdate ? Method.Put : Method.Post) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReportActivityGroup);
                 string message = string.Format("execution data to Central DB for the Activities Group:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportActivityGroup.Name, accountReportActivityGroup.Id, accountReportActivityGroup.AccountReportDbBusinessFlowId);
@@ -226,7 +242,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task SendActivityExecutionDataToCentralDBAsync(AccountReportActivity accountReportActivity, bool isUpdate = false)
         {
-            if (restClient != null)
+            if (restClient != null && _isRunSetDataSent)
             {
                 string message = string.Format("execution data to Central DB for the Activity:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportActivity.Name, accountReportActivity.Id, accountReportActivity.AccountReportDbActivityGroupId);
                 try
@@ -250,7 +266,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task SendActionExecutionDataToCentralDBAsync(AccountReportAction accountReportAction, bool isUpdate = false)
         {
-            if (restClient != null)
+            if (restClient != null && _isRunSetDataSent)
             {
                 string message = string.Format("execution data to Central DB for the Action:'{0}' (Execution Id:'{1}', Parent Activity Id:'{2}')", accountReportAction.Name, accountReportAction.Id, accountReportAction.AccountReportDbActivityId);
                 try
@@ -302,7 +318,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task SendScreenShotsToCentralDBAsync(Guid executionId, List<string> filePaths)
         {
-            if (restClient != null)
+            if (restClient != null && _isRunSetDataSent)
             {
                 if (filePaths != null && filePaths.Count > 0)
                 {
@@ -343,7 +359,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task UploadImageAsync(Guid executionId, List<string> filePaths)
         {
-            if (restClient != null)
+            if (restClient != null && _isRunSetDataSent)
             {
                 string message = string.Format("screenshot/s to Central DB for Execution Id:'{0}'", executionId);
                 try
@@ -377,7 +393,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task SendArtifactsToCentralDBAsync(Guid executionId, ObservableList<ArtifactDetails> artifactDetails)
         {
-            if (restClient != null)
+            if (restClient != null && _isRunSetDataSent)
             {
                 if (artifactDetails != null && artifactDetails.Count > 0)
                 {
@@ -425,7 +441,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task UploadArtifactsAsync(Guid executionId, List<ArtifactDetails> artifactDetails)
         {
-            if (restClient != null)
+            if (restClient != null && _isRunSetDataSent)
             {
                 string message = string.Format("artifact/s to Central DB for Execution Id:'{0}'", executionId);
                 try
@@ -496,8 +512,18 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     if (response.IsSuccessful)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, $"Successfully validated execution id {message}");
-                        accountReportBusinessFlows = JsonConvert.DeserializeObject<List<AccountReportBusinessFlow>>(response.Content);
-                        return accountReportBusinessFlows;
+
+                        RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
+
+                        if (root != null && root.isSuccsess)
+                        {
+                            accountReportBusinessFlows = JsonConvert.DeserializeObject<List<AccountReportBusinessFlow>>(root.response);
+                            return accountReportBusinessFlows;
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetBusinessflowExecutionDataFromCentralDB(): {response}");
+                        }
                     }
                     else
                     {
@@ -543,7 +569,95 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             return accountReportrunset;
         }
 
-        //GET_RUNNER_EXECUTION_DATA
+        public string GetRunsetExecutionDataByRunSetIDFromCentralDB(string baseURI, Guid solutionId, Guid runSetId)
+        {
+            if (restClient != null)
+            {
+                var path = $"{baseURI}{GET_RUNSET_EXECUTION_DATA_RUNSET_ID}{solutionId}/{runSetId}/";
+                RestRequest restRequest = new RestRequest(path, Method.Get);
+                string message = string.Format("solution id : {0} runSetId :{1}", solutionId, runSetId);
+                try
+                {
+                    RestResponse response = restClient.Execute(restRequest);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts runsetGuid: {runSetId} GetRunsetExecutionDataByRunSetIDFromCentralDB(): {response}");
+
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetRunsetExecutionDataByRunSetIDFromCentralDB() :{response}");
+                        }
+                    }
+                    else
+                    {
+                        // First deserialize the outer object
+                        RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
+
+                        if (root != null && root.isSuccsess)
+                        {
+                            return root.response ?? string.Empty;
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetRunsetExecutionDataByRunSetIDFromCentralDB(): {response}");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception while validating execution id {message}", ex);
+                }
+                return string.Empty;
+            }
+            return string.Empty;
+        }
+        public string GetRunsetExecutionDataBySolutionIDFromCentralDB(string baseURI, Guid solutionId)
+        {
+            if (restClient != null)
+            {
+                var path = $"{baseURI}{GET_RUNSET_EXECUTION_DATA_SOLUTION_ID}{solutionId}/";
+                RestRequest restRequest = new RestRequest(path, Method.Get);
+                string message = string.Format("solution id : {0}", solutionId);
+                try
+                {
+                    RestResponse response = restClient.Execute(restRequest);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Execution Info Not found against solutionGuid: {solutionId} GetRunsetExecutionDataBySolutionIDFromCentralDB(): {response}");
+
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetRunsetExecutionDataBySolutionIDFromCentralDB(): {response}");
+                        }
+                    }
+                    else
+                    {
+                        // First deserialize the outer object
+                        RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
+                        if (root != null && root.isSuccsess)
+                        {
+                            return root.response ?? string.Empty;
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetRunsetExecutionDataBySolutionIDFromCentralDB(): {response}");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception while validating execution id {message}", ex);
+                }
+                return string.Empty;
+            }
+            return string.Empty;
+        }
 
         public List<AccountReportRunner> GetRunnerExecutionDataFromCentralDB(Guid executionId)
         {
@@ -558,8 +672,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     if (response.IsSuccessful)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, $"Successfully validated execution id {message}");
-                        accountReportrunset = JsonConvert.DeserializeObject<List<AccountReportRunner>>(response.Content);
-                        return accountReportrunset;
+                        RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
+                        if (root != null && root.isSuccsess)
+                        {
+                            accountReportrunset = JsonConvert.DeserializeObject<List<AccountReportRunner>>(root.response);
+                            return accountReportrunset;
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetRunnerExecutionDataFromCentralDB(): {response}");
+                        }
+                        
                     }
                     else
                     {
@@ -588,7 +711,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 RestResponse response = await restClient.ExecuteAsync(request);
                 if (response.IsSuccessful)
                 {
-                    return JsonConvert.DeserializeObject<AccountReportRunSetClient>(response.Content);
+                    RootObject root = JsonConvert.DeserializeObject<RootObject>(response.Content);
+                    if (root != null && root.isSuccsess)
+                    {
+                        return JsonConvert.DeserializeObject<AccountReportRunSetClient>(root.response);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetAccountHTMLReportAsync(): {response}");
+                    }
+                    return null;
                 }
                 else
                 {
@@ -602,5 +734,83 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 return null!;
             }
         }
+
+        public async Task<bool> SendExecutionLogToCentralDBAsync(string apiUrl, AccountReport.Contracts.RequestModels.ExecutionLogRequest executionLogRequest)
+        {
+            bool isSuccess = false;
+            if (string.IsNullOrWhiteSpace(apiUrl))
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "SendExecutionLogToCentralDBAsync: ApiUrl is required");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(executionLogRequest.LogData))
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "SendExecutionLogToCentralDBAsync: logData is empty, skipping");
+                return false;
+            }
+
+            if (restClient != null && _isRunSetDataSent)
+            {
+                executionLogRequest.LogId = LogId;
+                string message = string.Format("execution log to Central DB (API URL:'{0}', Execution Id:'{1}', Instance Id:'{2}', Log Id:'{3}')", apiUrl, executionLogRequest.ExecutionId, executionLogRequest.InstanceId, executionLogRequest.LogId);
+                try
+                {
+                    string FinalAPIUrl = $"{apiUrl.TrimEnd('/')}/{SEND_EXECUTIONLOG}";
+                    bool IsSuccessful = await SendExecutionLogRestRequestAndGetResponse(FinalAPIUrl, executionLogRequest).ConfigureAwait(false);
+                    if (IsSuccessful)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Successfully sent {message}");
+                        return true;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to send {message}");
+                        return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception when sending {message}", ex);
+                    return false;
+                }
+            }
+            return isSuccess;
+        }
+
+        private async Task<bool> SendExecutionLogRestRequestAndGetResponse(string api, AccountReport.Contracts.RequestModels.ExecutionLogRequest payload)
+        {
+            try
+            {
+                Method method = Method.Post;
+                RestRequest restRequest = new RestRequest(api, method)
+                {
+                    RequestFormat = RestSharp.DataFormat.Json
+                }.AddJsonBody(payload);
+
+                RestResponse response = await restClient.ExecuteAsync(restRequest);
+                if (response.IsSuccessful)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Successfully sent {api}");
+                    return true;
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to send {api} Response:{response.Content}", response.ErrorException);
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Exception when sending {api}", ex);
+                return false;
+            }
+        }
     }
+}
+
+public class RootObject
+{
+    public bool isSuccsess { get; set; }
+    public string response { get; set; }
 }

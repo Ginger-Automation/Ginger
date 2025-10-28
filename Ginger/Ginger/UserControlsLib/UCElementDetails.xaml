@@ -40,6 +40,12 @@
                     <UserControls:ImageMakerControl ImageType="Copy" SetAsFontImageWithSize="16"  Width="16" Height="16" />
                 </Button>
             </DataTemplate>
+            
+            <DataTemplate x:Key="xCopyPropertyValueButtonTemplate">
+                <Button x:Name="xCopyPropertyButton" Click="xCopyPropertyButton_Click" ToolTip="Copy Element Property" Style="{StaticResource @InputImageGridCellButtonStyle}">
+                    <UserControls:ImageMakerControl ImageType="Copy" SetAsFontImageWithSize="16"  Width="16" Height="16" />
+                </Button>
+            </DataTemplate>
 
         </Grid.Resources>
 
@@ -81,7 +87,7 @@
                         <TextBlock x:Name="xPropertiesTextBlock" Text="Properties" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Ginger:ucGrid x:Name="xPropertiesGrid" Title="Control Properties"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" ShowRefresh="Collapsed" />
+                <Ginger:ucGrid x:Name="xPropertiesGrid" Title="Control Properties" ScrollViewer.VerticalScrollBarVisibility="Visible"  ScrollViewer.CanContentScroll="True"  ShowAdd="Visible" ShowClearAll="Collapsed" ShowDelete="Visible" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" ShowRefresh="Collapsed" />
             </TabItem>
             <TabItem Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>

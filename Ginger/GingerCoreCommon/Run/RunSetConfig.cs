@@ -24,7 +24,6 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.Common.ReRunControlLib;
 using Amdocs.Ginger.Common.SelfHealingLib;
-using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
 using System;
@@ -75,6 +74,7 @@ namespace Ginger.Run
 
         private string mDescription;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit("Description")]
         public string Description
         {
             get { return mDescription; }
@@ -350,6 +350,7 @@ namespace Ginger.Run
 
         public bool mRunWithAnalyzer = true;
         [IsSerializedForLocalRepository(true)]
+        [AllowUserToEdit("Run with Analyzer")]
         public bool RunWithAnalyzer
         {
             get
@@ -441,41 +442,21 @@ namespace Ginger.Run
         [IsSerializedForLocalRepository]
         public ObservableList<SolutionCategoryDefinition> CategoriesDefinitions = [];
 
+        public ObservableList<SolutionCategoryDefinition> MergedCategoriesDefinitions
+        {
+            get 
+            {
+                return General.MergeCategories(CategoriesDefinitions);
+            }
+            set 
+            {
+                General.UpdateStoredCategories(CategoriesDefinitions, value);
+            }
+        }
+
         [IsSerializedForLocalRepository]
         public SelfHealingConfig SelfHealingConfiguration { get; set; } = new SelfHealingConfig();
 
-        public override void PostDeserialization()
-        {
-            AddCategories();
-        }
-
-        public void AddCategories()
-        {
-            if (CategoriesDefinitions.Count == 0)
-            {
-                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Product));
-                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.TestType));
-                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Release));
-                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Iteration));
-                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.BusinessProcessTag));
-                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.SubBusinessProcessTag));
-                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory1));
-                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory2));
-                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory3));
-            }
-            else if (CategoriesDefinitions.Count < Enum.GetNames(typeof(eSolutionCategories)).Length)
-            {
-                var allSolutionCategories = CategoriesDefinitions.Select(x => x.Category).ToList();
-                if (!allSolutionCategories.Any(x => x.Equals(eSolutionCategories.BusinessProcessTag)))
-                {
-                    CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.BusinessProcessTag));
-                }
-                if (!allSolutionCategories.Any(x => x.Equals(eSolutionCategories.SubBusinessProcessTag)))
-                {
-                    CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.SubBusinessProcessTag));
-                }
-            }
-        }
         private void CheckIfLazyLoadInfoNeedsUpdate()
         {
             string folderName = this.ContainingFolderFullPath;
@@ -521,7 +502,9 @@ namespace Ginger.Run
         public string SourceApplication { get; set; }
         public string SourceApplicationUser { get; set; }
 
-        public List<Guid> AutoUpdatedPOMList { get; set; }
+        public List<Guid> AutoUpdatedPOMList { 
+            get; 
+            set; }
 
     }
 }

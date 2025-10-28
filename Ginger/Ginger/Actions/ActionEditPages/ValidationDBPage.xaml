@@ -8,7 +8,7 @@
       xmlns:Ginger="clr-namespace:Ginger" xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="556.717" d:DesignWidth="728.358"
-	Title="ValidationDBPage" >
+	Title="Fetch Data from Database" >
 
     <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
@@ -56,7 +56,7 @@
                     </DockPanel>
                 </Grid>
             </StackPanel>
-
+     
             <StackPanel Margin="0,5,5,5" Orientation="Horizontal">
                 <Grid Background="{StaticResource $BackgroundColor_White}">
                     <Grid.RowDefinitions>

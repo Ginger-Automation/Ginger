@@ -20,7 +20,11 @@ using AccountReport.Contracts;
 using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Common.WorkSpaceLib;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
+using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.Repository;
 using Ginger;
@@ -32,6 +36,7 @@ using Ginger.Run;
 using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.Environments;
+using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
@@ -49,7 +54,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         Config, Dynamic, Script, Arguments
     }
 
-    public class CLIHelper : INotifyPropertyChanged
+    public class CLIHelper : INotifyPropertyChanged, IDisposable
     {
         public string Solution;
         public string Env;
@@ -63,16 +68,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public eAppReporterLoggingLevel AppLoggingLevel;
         public string ExecutionId;
 
-        public bool SealightsEnable;
-        public string SealightsUrl;
-        public string SealightsAgentToken;
-        public string SealightsLabID;
-        public string SealightsSessionID;
-        public string SealightsSessionTimeOut;
-        public string SealightsTestStage;
-        public string SealightsEntityLevel;
-        public bool SealightsTestRecommendations;
-
         public bool ReRunFailed;
         public string ReferenceExecutionID;
         public string RerunLevel;
@@ -83,6 +78,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         ProgressStatus progressStatus;
         public bool SelfHealingCheckInConfigured;
         public static event EventHandler<string> GitProgresStatus;
+        RepoFolderManager _repoFolderManager;
+
+        static readonly string _processId = Environment.ProcessId.ToString();
+       
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
         public bool ShowAutoRunWindow
         {
@@ -171,17 +170,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        bool mSetSealightsSettings;
-        public bool SetSealightsSettings
+        bool mSetExternalConfigurationSettings;
+        public bool SetExternalConfigurationSettings
         {
             get
             {
-                return mSetSealightsSettings;
+                return mSetExternalConfigurationSettings;
             }
             set
             {
-                mSetSealightsSettings = value;
-                OnPropertyChanged(nameof(SetSealightsSettings));
+                mSetExternalConfigurationSettings = value;
+                OnPropertyChanged(nameof(SetExternalConfigurationSettings));
             }
         }
 
@@ -291,6 +290,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     WorkSpace.Instance.UserProfile.DoNotSaveCredentialsOnUserProfile = false;
                 }
+                
                 var isSolutionOpened = OpenSolution();
                 if (isSolutionOpened && !doNotSaveDeeplinkCredentials && !doNotSaveCLIGitCredentials)
                 {
@@ -307,7 +307,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         void SetSourceControlParaOnUserProfile()
         {
-           
+
             WorkSpace.Instance.UserProfile.RecentDownloadedSolutionGuid = WorkSpace.Instance.Solution.Guid;
             var SetSourceControlParaOnUserProfile = WorkSpace.Instance.UserProfile.GetSolutionSourceControlInfo(WorkSpace.Instance.Solution.Guid);
             SetSourceControlParaOnUserProfile.SourceControlInfo.Type = WorkSpace.Instance.UserProfile.Type;
@@ -440,10 +440,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
             if (mRunSetConfig.ReRunConfigurations.ReferenceExecutionID != null)
             {
-                if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes
-                    && !string.IsNullOrEmpty(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl))
+                if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && (GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() || GingerPlayUtils.IsGingerPlayBackwardUrlConfigured())
+                    && !string.IsNullOrEmpty(GingerPlayEndPointManager.GetAccountReportServiceUrl()))
                 {
-                    AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+                    AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(GingerPlayEndPointManager.GetAccountReportServiceUrl());
                     if (mRunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.RunSet)
                     {
                         List<RunsetHLInfoResponse> accountReportRunset = accountReportApiHandler.GetRunsetExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
@@ -626,17 +626,30 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 if (!string.IsNullOrEmpty(SourceControlURL) && !string.IsNullOrEmpty(SourcecontrolUser) && !string.IsNullOrEmpty(sourceControlPass))
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
-                    bool solutionDownloadedSuccessfully = await Task.Run(() => SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier));
+                    bool solutionDownloadedSuccessfully = false;
+                    
+                    if (WorkSpace.Instance.GingerCLIMode == eGingerCLIMode.run)
+                    {
+                        solutionDownloadedSuccessfully = SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier);
+                    }
+                    else
+                    {
+                        solutionDownloadedSuccessfully = await Task.Run(() => SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges, progressNotifier));
+                    }
+
                     if (!solutionDownloadedSuccessfully)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
                     }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.INFO, "Solution downloaded/updated successfully");
+                    }
                 }
-                Reporter.ToLog(eLogLevel.INFO, "Solution downloaded/updated successfully");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control", ex);
             }
             finally
             {
@@ -685,76 +698,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlBranch: '{value}'");
             WorkSpace.Instance.UserProfile.Branch = value;
         }
-
-        public bool SetSealights()
-        {
-            WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog = SealightsEnable ? SealightsConfiguration.eSealightsLog.Yes : SealightsConfiguration.eSealightsLog.No;
-
-            if (SealightsEnable)
-            {
-                // Validation
-                if (SealightsUrl != null && SealightsAgentToken != null && (SealightsLabID != null || SealightsSessionID != null) &&
-                    SealightsTestStage != null && SealightsEntityLevel != null)
-                {
-                    // Override the Sealights Solution's settings with the CLI's settings
-                    if (SealightsUrl != null)
-                    {
-                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsURL = SealightsUrl;
-                    }
-
-                    if (SealightsAgentToken != null)
-                    {
-                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsAgentToken = SealightsAgentToken;
-                    }
-
-                    if (SealightsLabID != null)
-                    {
-                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLabId = SealightsLabID;
-                    }
-
-                    if (SealightsSessionID != null)
-                    {
-                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID = SealightsSessionID;
-                    }
-
-                    if (SealightsTestStage != null)
-                    {
-                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsTestStage = SealightsTestStage;
-                    }
-
-                    if (SealightsSessionTimeOut != null)
-                    {
-                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsSessionTimeout = SealightsSessionTimeOut;
-                    }
-
-                    if (SealightsEntityLevel != null)
-                    {
-                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel = (SealightsConfiguration.eSealightsEntityLevel)Enum.Parse(typeof(SealightsConfiguration.eSealightsEntityLevel), SealightsEntityLevel);
-                    }
-
-                    WorkSpace.Instance.Solution.SealightsConfiguration.SealightsTestRecommendations = SealightsTestRecommendations ? SealightsConfiguration.eSealightsTestRecommendations.Yes : SealightsConfiguration.eSealightsTestRecommendations.No;
-
-                    // Override the Sealights RunSet's settings with the CLI's settings
-                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId = SealightsLabID;
-                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID = SealightsSessionID;
-                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage = SealightsTestStage;
-                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestRecommendations = SealightsTestRecommendations ? SealightsConfiguration.eSealightsTestRecommendations.Yes : SealightsConfiguration.eSealightsTestRecommendations.No;
-
-                    if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsSessionTimeout == null)
-                    {
-                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID = "14400"; // Default setting
-                    }
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         internal void SetSourceControlPassword(string value)
         {
             WorkSpace.Instance.UserProfile.Password = value;
@@ -947,79 +890,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to Check-in self healing changes in source control");
             }
         }
-        internal void SetSealightsEnable(bool? value)
-        {
-            if (value != null)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsEnable: '" + value + "'");
-                SealightsEnable = (bool)value;
-            }
-        }
-        internal void SetSealightsUrl(string value)
-        {
-            SealightsUrl = value;
-        }
-        internal void SetSealightsAgentToken(string value)
-        {
-            if (!String.IsNullOrEmpty(value))
-            {
-                SealightsAgentToken = value;
-            }
-        }
-        internal void SetSealightsLabID(string value)
-        {
-            if (!String.IsNullOrEmpty(value))
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsLabID: '" + value + "'");
-                SealightsLabID = value;
-            }
-        }
-        internal void SetSealightsBuildSessionID(string value)
-        {
-            if (!String.IsNullOrEmpty(value))
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsBSId: '" + value + "'");
-                SealightsSessionID = value;
-            }
-        }
-        internal void SetSealightsSessionTimeout(int? value)
-        {
-            if (value != null)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsSessionTimeout: '" + value.ToString() + "'");
-                SealightsSessionTimeOut = value.ToString();
-            }
-            else
-            {
-                SealightsSessionTimeOut = "14400";
-            }
-        }
-        internal void SetSealightsTestStage(string value)
-        {
-            if (!String.IsNullOrEmpty(value))
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsTestStage: '" + value + "'");
-                SealightsTestStage = value;
-            }
-        }
-        internal void SetSealightsEntityLevel(SealightsDetails.eSealightsEntityLevel? value)
-        {
-            if (value != null)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsEntityLevel: '" + value + "'");
-                SealightsEntityLevel = (Enum.GetName(typeof(SealightsDetails.eSealightsEntityLevel), value));
-                return;
-            }
-            SealightsEntityLevel = Enum.GetName(typeof(SealightsDetails.eSealightsEntityLevel), default(SealightsDetails.eSealightsEntityLevel));
-        }
-        internal void SetSealightsTestRecommendations(bool? value)
-        {
-            if (value != null)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsTestRecommendations: '" + value + "'");
-                SealightsTestRecommendations = (bool)value;
-            }
-        }
 
         /// <summary>
         /// Sets the source application and user in the RunSetConfig object.
@@ -1040,27 +910,88 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         /// <summary>
         /// Constructs a temporary folder path by appending the repository name (extracted from the source control URL) 
-        /// to the system's temporary directory.
+        /// to the system's temporary directory. Uses managed folder assignment when CLIProcessor is available.
         /// </summary>
         /// <param name="sourceControlUrl"> The source control URL used to extract the repository name. If null, the instance's SourceControlURL property will be used. </param>
         /// <returns>
         /// A string representing the path to a temporary folder, combining the system's temp directory 
         /// with the repository name extracted from the source control URL.
         /// </returns>
-        public string GetTempFolderPathForRepo(string sourceControlUrl = null)
+        public string GetTempFolderPathForRepo(string sourceControlUrl, string branchName)
         {
-            string urlToUse = sourceControlUrl ?? SourceControlURL;
             string repoName = string.Empty;
-
-            if (!string.IsNullOrEmpty(urlToUse))
+            try
             {
-                // Remove trailing slash if present
-                urlToUse = urlToUse.TrimEnd('/');
+                sourceControlUrl = sourceControlUrl ?? this.SourceControlURL;
 
-                repoName = Path.GetFileNameWithoutExtension(urlToUse.Split('/').Last());
+                if (!string.IsNullOrEmpty(sourceControlUrl))
+                {
+                    // Remove trailing slash if present
+                    sourceControlUrl = sourceControlUrl.TrimEnd('/');
+
+                    repoName = Path.GetFileNameWithoutExtension(sourceControlUrl.Split('/').Last());
+                    repoName = !string.IsNullOrEmpty(branchName) ? $"{repoName}_{branchName}" : $"{repoName}";
+                }
+
+                // Initialize RepoFolderManager if not already done
+                if (_repoFolderManager == null)
+                {
+                    _repoFolderManager = new RepoFolderManager(_processId);
+                }
+
+                string assignedFolder = _repoFolderManager.AssignFolder(repoName);
+                Reporter.ToLog(eLogLevel.DEBUG, $"Process {_processId} assigned folder: {assignedFolder}");
+                return assignedFolder;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, $"Failed to get repo folder path from Repo Folder Manager, using the random temp folder", ex);
+                return Path.Combine(Path.GetTempPath(), Path.GetRandomFileName(), repoName);
+            }
+        }
+
+        /// <summary>
+        /// Releases the folder assigned to this process.
+        /// Should be called when the execution is complete.
+        /// </summary>
+        public void ReleaseTempFolder()
+        {
+            if (_repoFolderManager != null)
+            {
+                _repoFolderManager.ReleaseFolder();
+                Reporter.ToLog(eLogLevel.DEBUG, $"Process {_processId} released folder");
+            }
+        }
+
+        // Add a flag to prevent multiple disposals
+        private bool _disposed = false;
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                try
+                {
+                    _repoFolderManager?.Dispose();
+                    _repoFolderManager = null;
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception instead of silently swallowing it
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error disposing RepoFolderManager", ex);
+                }
             }
 
-            return Path.Combine(Path.GetTempPath(), repoName);
+            _disposed = true;
         }
+
     }
 }

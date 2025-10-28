@@ -96,6 +96,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         [Option("sourceApplicationUser", Required = false, HelpText = "Set Source Application username")]
         public string SourceApplicationUser { get; set; }
+
+        [Option("useTempFolder", Required = false, HelpText = "Use a temporary folder for execution artifacts")]
+        public bool UseTempFolder { get; set; }
+
+       
     }
 
 }

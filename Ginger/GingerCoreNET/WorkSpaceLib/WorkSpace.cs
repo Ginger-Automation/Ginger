@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.OS;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.CoreNET.Repository;
@@ -408,19 +407,6 @@ namespace amdocs.ginger.GingerCoreNET
 
             // Configuration Logger - Sealights
             if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == SealightsConfiguration.eSealightsLog.Yes)
-            {
-                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
-            }
-
-            // General Report Configurations
-            ExecutionLoggerConfiguration executionLoggerConfiguration = Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
-
-            if (!string.IsNullOrEmpty(executionLoggerConfiguration?.CentralLoggerEndPointUrl) || !string.IsNullOrEmpty(executionLoggerConfiguration?.CentralizedHtmlReportServiceURL))
-            {
-                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
-            }
-
-            if (WorkSpace.Instance.Solution.ALMConfigs.Count > 0)
             {
                 WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
             }
@@ -845,8 +831,12 @@ namespace amdocs.ginger.GingerCoreNET
                         //Save current default
                         if (apiGlobalParamInstance.OptionalValuesList.Count > 0)
                         {
-                            currentDefaultOVGuid = apiGlobalParamInstance.OptionalValuesList.FirstOrDefault(x => x.IsDefault == true).Guid;
-                            recoverSavedOV = true;
+                            var defaultOptionalValue = apiGlobalParamInstance.OptionalValuesList.FirstOrDefault(x => x.IsDefault == true);
+                            if (defaultOptionalValue != null)
+                            {
+                                currentDefaultOVGuid = defaultOptionalValue.Guid;
+                                recoverSavedOV = true;
+                            }
                         }
 
                         string newDefaultOV = null;

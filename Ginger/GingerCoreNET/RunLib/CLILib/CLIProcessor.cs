@@ -29,12 +29,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using static Amdocs.Ginger.CoreNET.RunLib.CLILib.OptionsBase;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
@@ -84,31 +83,38 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         public async Task ProcessParsedArguments(ParserResult<object> parserResult)
         {
-            // FIXME: failing with exc of obj state
-            // Do not show default version
-            // Parser.Default.Settings.AutoVersion = false;
-            var parser = new Parser(settings =>
+            try
             {
-                settings.IgnoreUnknownArguments = true;
-            });
+                // FIXME: failing with exc of obj state
+                // Do not show default version
+                // Parser.Default.Settings.AutoVersion = false;
+                var parser = new Parser(settings =>
+                {
+                    settings.IgnoreUnknownArguments = true;
+                });
 
-            int result = await parserResult.MapResult(
-                    async (RunOptions opts) => await HandleRunOptions(opts),
-                    async (GridOptions opts) => await HandleGridOption(opts),
-                    async (ConfigFileOptions opts) => await HandleFileOptions("config", opts.FileName, opts.VerboseLevel),
-                    async (DynamicOptions opts) => await HandleDynamicOptions(opts),
-                    async (ScriptOptions opts) => await HandleFileOptions("script", opts.FileName, opts.VerboseLevel),
-                    async (VersionOptions opts) => await HandleVersionOptions(opts),
-                    async (ExampleOptions opts) => await HandleExampleOptions(opts),
-                    async (DoOptions opts) => await HandleDoOptions(opts),
+                int result = await parserResult.MapResult(
+                        async (RunOptions opts) => await HandleRunOptions(opts),
+                        async (GridOptions opts) => await HandleGridOption(opts),
+                        async (ConfigFileOptions opts) => await HandleFileOptions("config", opts.FileName, opts.VerboseLevel),
+                        async (DynamicOptions opts) => await HandleDynamicOptions(opts),
+                        async (ScriptOptions opts) => await HandleFileOptions("script", opts.FileName, opts.VerboseLevel),
+                        async (VersionOptions opts) => await HandleVersionOptions(opts),
+                        async (ExampleOptions opts) => await HandleExampleOptions(opts),
+                        async (DoOptions opts) => await HandleDoOptions(opts),
 
-                    async errs => await HandleCLIParseError(errs)
-            );
+                        async errs => await HandleCLIParseError(errs)
+                );
 
-            if (result != 0)
+                if (result != 0)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error(s) occurred process exit code (" + result + ")");
+                    Environment.ExitCode = 1; // error
+                }
+            }
+            finally
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error(s) occurred process exit code (" + result + ")");
-                Environment.ExitCode = 1; // error
+                mCLIHelper?.ReleaseTempFolder();
             }
         }
 
@@ -319,6 +325,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 SetVerboseLevel(verboseLevel);
                 Reporter.ToLog(eLogLevel.INFO, "Running 'dynamic' and fetching Ginger Execution Configurations from = '" + url + "'");
 
+                string baseUrl = url.GetLeftPart(UriPartial.Authority).TrimEnd('/') + "/";
+
+                // Extract instanceId
+                var queryParams = HttpUtility.ParseQueryString(url.Query);
+                string instanceId = queryParams["instanceId"];
+                if (string.IsNullOrEmpty(instanceId) || !long.TryParse(instanceId, out long instanceIdguid))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Invalid or missing instanceId in URL: {url}");
+                    Environment.ExitCode = 1;
+                    return Environment.ExitCode;
+                }
+
+                GingerLog.SetHTTPLogAppenderAPIUrl(baseUrl);
+                GingerLog.SetHTTPLogAppenderInstanceId(instanceIdguid);
                 mCLIHandler = new CLIDynamicFile(CLIDynamicFile.eFileType.JSON);
 
                 var (responseContent, statusCode) = await HttpUtilities.GetAsync(url);
@@ -466,17 +486,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.ShowAutoRunWindow = runOptions.ShowUI;
             mCLIHelper.TestArtifactsFolder = runOptions.TestArtifactsPath;
             mCLIHelper.SelfHealingCheckInConfigured = runOptions.SelfHealingCheckInConfigured;
-            mCLIHelper.SealightsEnable = runOptions.SealightsEnable;
-            mCLIHelper.SealightsUrl = runOptions.SealightsUrl;
-            mCLIHelper.SealightsAgentToken = runOptions.SealightsAgentToken;
-            mCLIHelper.SealightsLabID = runOptions.SealightsLabID;
-            mCLIHelper.SealightsSessionID = runOptions.SealightsSessionID;
-            mCLIHelper.SealightsSessionTimeOut = runOptions.SealightsSessionTimeOut;
-            mCLIHelper.SealightsTestStage = runOptions.SealightsTestStage;
-            mCLIHelper.SealightsEntityLevel = runOptions.SealightsEntityLevel?.ToString() == "None" ? null : runOptions.SealightsEntityLevel?.ToString();
-            mCLIHelper.SealightsTestRecommendations = runOptions.SealightsTestRecommendations;
             mCLIHelper.SourceApplication = runOptions.SourceApplication;
             mCLIHelper.SourceApplicationUser = runOptions.SourceApplicationUser;
+
 
 
             if (!string.IsNullOrEmpty(runOptions.RunSetExecutionId))
@@ -492,6 +504,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     mCLIHelper.ExecutionId = runOptions.RunSetExecutionId;
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Using provided ExecutionID '{0}'.", mCLIHelper.ExecutionId.ToString()));
                 }
+                GingerLog.SetHTTPLogAppenderExecutionId(temp);
             }
             mCLIHelper.ReRunFailed = runOptions.ReRunFailed;
             if (runOptions.ReRunFailed)
@@ -519,8 +532,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 mCLIHandler.LoadGeneralConfigurations("", mCLIHelper);
             }
 
-
             WorkSpace.Instance.RunningInExecutionMode = true;
+
+            if (runOptions.UseTempFolder)
+            {
+                mCLIHelper.Solution = runOptions.Solution = mCLIHelper.GetTempFolderPathForRepo(runOptions.URL, runOptions.Branch);
+            }
+
             if (!await CLILoadAndPrepare())
             {
                 Reporter.ToLog(eLogLevel.WARN, "Issue occurred while doing CLI Load and Prepare so aborting execution");
@@ -642,7 +660,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             try
             {
-                if (! await mCLIHelper.LoadSolutionAsync(true))
+                if (!await mCLIHelper.LoadSolutionAsync(true))
                 {
                     return false; // failed to load Solution;
                 }
@@ -662,12 +680,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     return false; // Failed to perform execution preparations
                 }
 
-                // Check for any Sealights Settings
-                if (!mCLIHelper.SetSealights())
-                {
-                    return false;
-                }
-
+                
                 // set source app and user
                 mCLIHelper.SetSourceAppAndUser();
 
@@ -736,7 +749,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private static string ReadFile(string fileName)
         {
-            return Ginger.Common.GeneralLib.General.FileContentProvider(fileName);           
+            return Ginger.Common.GeneralLib.General.FileContentProvider(fileName);
         }
     }
 }

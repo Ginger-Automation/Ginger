@@ -181,6 +181,10 @@ namespace Amdocs.Ginger.Common.Enums
         ExpandToFullScreen,
         Exchange,
         GingerAnalytics,
+        GingerPlayLogo,
+        GingerPlayWhiteGradiant,
+        GingerPlayGradiantWhite,
+        GingerPlayGradiantBlack,
         WireMockLogo,
         WireMock_Logo,
         WireMockLogo16x16,
@@ -328,6 +332,7 @@ namespace Amdocs.Ginger.Common.Enums
         AndroidWhite,
         AngleArrowUp,
         AngleArrowDown,
+        Crown,
         AngleArrowLeft,
         AngleArrowRight,
         Support,
@@ -337,6 +342,7 @@ namespace Amdocs.Ginger.Common.Enums
         IdCard,
         IdBadge,
         Phone,
+        Microchip,
         MoneyCheckDollar,
         #endregion
 
@@ -366,6 +372,7 @@ namespace Amdocs.Ginger.Common.Enums
         AnglesArrowLeft,
         AnglesArrowRight,
         Katalon,
+        Shield,
 
         #region Comparison Status Images
         Unchanged,
@@ -400,6 +407,9 @@ namespace Amdocs.Ginger.Common.Enums
         SelfHealing,
         #endregion
 
+        #region External Apps Logo
+        ZAP,
+        #endregion
         #region Http Methods
 
         GET,

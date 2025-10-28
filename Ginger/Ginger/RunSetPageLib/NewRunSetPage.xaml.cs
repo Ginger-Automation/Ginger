@@ -21,11 +21,12 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.External.Configurations;
+using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
-using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
@@ -46,6 +47,7 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
+using GingerCoreNET.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using GraphQL;
@@ -247,7 +249,7 @@ namespace Ginger.Run
                 }
             }
         }
-        
+
         private void LoadRunSetConfigBySelection(RunSetConfig defaultRunSet)
         {
             //hide current Run set UI
@@ -917,10 +919,18 @@ namespace Ginger.Run
             {
                 mSolutionCategoriesPage = new SolutionCategoriesPage();
                 xCategoriesFrame.ClearAndSetContent(mSolutionCategoriesPage);
+                mSolutionCategoriesPage.CategoryValueChanged += CategoriesPage_CategoryValueChanged;
             }
-            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mRunSetConfig.CategoriesDefinitions);
+            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mRunSetConfig.MergedCategoriesDefinitions);
             PropertyChangedEventManager.AddHandler(source: mRunSetConfig, handler: RunSetConfig_PropertyChanged, propertyName: allProperties);
             CollectionChangedEventManager.AddHandler(source: mRunSetConfig.Tags, handler: RunSetTags_CollectionChanged);
+        }
+        private void CategoriesPage_CategoryValueChanged(object sender, EventArgs e)
+        {
+            if (sender is ObservableList<SolutionCategoryDefinition> categories && mRunSetConfig != null)
+            {
+                mRunSetConfig.MergedCategoriesDefinitions = categories;
+            }
         }
 
         private void mRunSetConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -2320,7 +2330,7 @@ namespace Ginger.Run
         private bool ValidateRemoteConfiguration()
         {
             ExecutionLoggerConfiguration execLoggerConfig = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(c => c.IsSelected);
-            if (execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && AssignGraphQLObjectEndPoint())
+            if (execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && (GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() || GingerPlayUtils.IsGingerPlayBackwardUrlConfigured()) && AssignGraphQLObjectEndPoint())
             {
                 return true;
             }
@@ -2341,7 +2351,7 @@ namespace Ginger.Run
                 var executionId = data.Data.Runsets.Nodes[0].ExecutionId.ToString();
                 if (!string.IsNullOrEmpty(executionId))
                 {
-                    new GingerRemoteExecutionUtils().GenerateHTMLReport(executionId);
+                    GingerRemoteExecutionUtils.GenerateHTMLReport(executionId);
                 }
             }
             catch (Exception ex)
@@ -3295,7 +3305,6 @@ namespace Ginger.Run
             }
         }
 
-        FindAndReplacePage mfindAndReplacePageRunSet = null;
 
         private void xFind_Click(object sender, RoutedEventArgs e)
         {
@@ -3304,11 +3313,7 @@ namespace Ginger.Run
 
         public void ShowFindAndReplacePage()
         {
-            if (mfindAndReplacePageRunSet == null)
-            {
-                mfindAndReplacePageRunSet = new FindAndReplacePage(FindAndReplacePage.eContext.RunsetPage);
-
-            }
+            FindAndReplacePage mfindAndReplacePageRunSet = new FindAndReplacePage(FindAndReplacePage.eContext.RunsetPage);
             mfindAndReplacePageRunSet.ShowAsWindow();
         }
 

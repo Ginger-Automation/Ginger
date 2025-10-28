@@ -22,10 +22,14 @@
             <Actions:UCValueExpression x:Name="xAppPackageVE" HorizontalAlignment="Left" VerticalAlignment="Center" Width="330" Margin="-1,5,0,0"/>
             <TextBlock Style="{StaticResource $TextBlockStyle}" FontSize="10" TextWrapping="Wrap" Width="330" Text="Set as 'default' for pointing the initial app package, 'current' for pointing the current running app or specifiy the wanted application package to point on."/>
         </StackPanel>
-
+        <StackPanel x:Name="xUnlockDevicePnl" HorizontalAlignment="Left" Orientation="Horizontal" DockPanel.Dock="Top" Margin="5,10,0,0" Visibility="Collapsed">
+            <Label Style="{StaticResource $LabelStyle}" Content="Unlock Type:"></Label>
+            <UserControlsLib1:UCComboBox x:Name="xUnlockTypeComboBox" VerticalAlignment="Top" Margin="0,-2,0,0" Width="241" />
+        </StackPanel>
         <StackPanel x:Name="xInputPnl"  HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="7,10,0,0" Visibility="Collapsed">
-            <Label  x:Name="xInputLabelVE" Style="{StaticResource $LabelStyle}" Content="Input:"/>
+            <Label  x:Name="xInputLabelVE" Style="{StaticResource $LabelStyle}" Content="Input:"/> 
             <Actions:UCValueExpression x:Name="xInputVE" VerticalAlignment="Top" Width="330"/>
+            <TextBlock x:Name="xInputTextBlock" Style="{StaticResource $TextBlockStyle}" FontSize="9" TextWrapping="Wrap" Width="330" Text=""/>
         </StackPanel>
 
         <StackPanel x:Name="xKeyPressPnl" HorizontalAlignment="Left" Orientation="Horizontal"  DockPanel.Dock="Top" Margin="5,10,0,0" Visibility="Collapsed">
@@ -92,11 +96,12 @@
 
         <StackPanel x:Name="xFileTransferPnl" HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="5,10,0,0" Visibility="Collapsed">
             <Label x:Name="xFilePathLbl" Style="{StaticResource $LabelStyle}" Content="Device File Path:" Margin="-4,0,0,0"/>
-            <Actions:UCValueExpression x:Name="xFilePathTextBox" HorizontalAlignment="Left" Margin="0,0,0,0" Width="330"/>
+            <Actions:UCValueExpression x:Name="xFilePathTextBox" HorizontalAlignment="Left" Margin="0,0,0,0" Width="335"/>
+            <TextBlock x:Name="xFileTextBlock" Style="{StaticResource $TextBlockStyle}" FontSize="10" TextWrapping="Wrap" Width="330" Text=""/>
             <Label x:Name="xFolderPathLbl" Style="{StaticResource $LabelStyle}" Content="Local Target Folder:" Margin="-3,0,0,0"/>
-            <Actions:UCValueExpression x:Name="xFolderPathTxtBox" Width="340" />
+            <Actions:UCValueExpression x:Name="xFolderPathTxtBox" Width="335" />
+            <TextBlock x:Name="xFolderTextBlock" Style="{StaticResource $TextBlockStyle}" FontSize="10" TextWrapping="Wrap" Width="330" Text="Target Folders Path:&#10;Documents: /storage/emulated/0/Documents/&#10;Pictures: /storage/emulated/0/Pictures/&#10;Downloads: /storage/emulated/0/Download/"/>
         </StackPanel>
-        
         <StackPanel x:Name="xSpecificPerformanceDataPnl" HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="0,2,0,0" Visibility="Collapsed">
             <Label Style="{StaticResource $LabelStyle}" Content="Data Type:" Margin="0,0,0,0"/>
             <UserControlsLib1:UCComboBox x:Name="xDataTypeComboBox" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="4,-6,0,0" Width="250"/>
@@ -105,7 +110,20 @@
             <Label Style="{StaticResource $LabelStyle}" Content="Choose State: "/>
             <UserControlsLib1:UCComboBox x:Name="xDeviceRotateComboBox" VerticalAlignment="Top" Margin="0,-2,0,0" Width="241"/>
         </StackPanel>
-        
+        <StackPanel x:Name="xDeviceLoactioPnl" HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed">
+            <StackPanel x:Name="xLatitudePnl" Orientation="Horizontal">
+                <Label Style="{StaticResource $LabelStyle}" Content="Latitude:" Margin="0 0 0 0"/>
+                <Activities:UCValueExpression x:Name="xLatitudeTxtBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" Margin="50 0 0 0"/>
+            </StackPanel>
+            <StackPanel x:Name="xLongitudePnl" Orientation="Horizontal" Margin="0 10 0 0">
+                <Label Style="{StaticResource $LabelStyle}" Content="Longitude:" Margin="0 0 0 0"/>
+                <Activities:UCValueExpression x:Name="xLongitudeTxtBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" Margin="40 0 0 0"/>
+            </StackPanel>
+            <StackPanel x:Name="xAltitudePnl" Orientation="Horizontal" Margin="0 10 0 0">
+                <Label Style="{StaticResource $LabelStyle}" Content="Altitude:" Margin="0 0 0 0"/>
+                <Activities:UCValueExpression x:Name="xAltitudeTxtBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" Margin="50 0 0 0"/>
+            </StackPanel>
+        </StackPanel>
         <Ginger:ucGrid x:Name="xMultiTouchGrid" Title="Touch Operations to Perform" ShowTitle="Collapsed" Visibility="Collapsed" Margin="0,10,0,0"/>
         
     </DockPanel>

@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2024 European Support Limited
+Copyright © 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ namespace Ginger.ExternalConfigurations
         {
             wireMockConfiguration = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count == 0 ? new WireMockConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
             wireMockConfiguration.StartDirtyTracking();
+            WorkSpace.Instance.CurrentSelectedItem = wireMockConfiguration;
             mockAPI = new WireMockAPI();
             SetControls();
         }
@@ -138,6 +139,12 @@ namespace Ginger.ExternalConfigurations
         {
             WireMockMappingPage wmp = new();
             wmp.ShowAsWindow();
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            e.Handled = true;
         }
     }
 }

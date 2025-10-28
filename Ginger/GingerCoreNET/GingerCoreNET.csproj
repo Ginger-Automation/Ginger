@@ -57,6 +57,7 @@
     <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\AccessiblityRules.json" />
     <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporter.css" />
     <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporterElements.js" />
+    <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\MobileAccessiblityRules.json" />
     <None Remove="Drivers\WebServicesDriver\WebServicesDriverWindow.xaml" />
     <None Remove="log4netLib\log4net.config" />    
     <None Remove="Reports\GingerExecutionReport\assets\css\bootstrap.css" />
@@ -226,7 +227,7 @@
 
   <ItemGroup>
   
-    <PackageReference Include="Appium.WebDriver" Version="5.1.0" />
+    <PackageReference Include="Appium.WebDriver" Version="7.2.0" />
   
     <PackageReference Include="Azure.Identity" Version="1.12.0" />
   
@@ -258,9 +259,9 @@
   
     <PackageReference Include="Eyes.Selenium4" Version="2.59.0" />
   
-    <PackageReference Include="Ginger.AccountReport.Contracts" Version="2024.4.1.6" />
+    <PackageReference Include="Ginger.AccountReport.Contracts" Version="2025.4.0" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="25.2.2" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="2025.4.2.1" />
   
     <PackageReference Include="Google.Protobuf" Version="3.29.3" />
     
@@ -292,7 +293,7 @@
   
     <PackageReference Include="log4net" Version="2.0.15" />
   
-    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.5.0" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.8.2" />
   
     <PackageReference Include="MailKit" Version="4.0.0" />
   
@@ -326,12 +327,13 @@
     <PackageReference Include="Npgsql" Version="8.0.3" />
     <PackageReference Include="NPOI" Version="2.6.1" />
     <PackageReference Include="NUglify" Version="1.9.7" />
+    <PackageReference Include="OWASPZAPDotNetAPI" Version="2.12.0" />
     <PackageReference Include="protobuf-net" Version="3.2.46" />
     <PackageReference Include="protobuf-net.Core" Version="3.2.46" />
     <PackageReference Include="Protractor" Version="1.0.0" />
     <PackageReference Include="RestSharp" Version="112.0.0" />
-    <PackageReference Include="Selenium.Support" Version="4.23.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.23.0" />
+    <PackageReference Include="Selenium.Support" Version="4.35.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.35.0" />
     <PackageReference Include="Selenium.WebDriver.Extensions" Version="4.1.0" />
     <PackageReference Include="SharpAdbClient" Version="2.3.23" />
     <PackageReference Include="SkiaSharp" Version="3.116.1" />
@@ -340,9 +342,8 @@
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="System.Data.OleDb" Version="8.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.7" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.5" />
     <PackageReference Include="System.Formats.Asn1" Version="9.0.1" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.1" />
     <PackageReference Include="System.IO.Packaging" Version="9.0.1" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Reflection.DispatchProxy" Version="4.7.1" />
@@ -555,6 +556,36 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Images\%40ItemPrev.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_PP-OCRv4_det\inference.pdiparams">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_PP-OCRv4_det\inference.pdiparams.info">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_PP-OCRv4_det\inference.pdmodel">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_ppocr_mobile_v2.0_cls\._inference.pdmodel">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_ppocr_mobile_v2.0_cls\inference.pdiparams">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_ppocr_mobile_v2.0_cls\inference.pdiparams.info">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_ppocr_mobile_v2.0_cls\inference.pdmodel">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\en_PP-OCRv4_rec\inference.pdiparams">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\en_PP-OCRv4_rec\inference.pdiparams.info">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\en_PP-OCRv4_rec\inference.pdmodel">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="SelfHealingConfig\SelfHealingPropertyWeightage.json">
@@ -1312,6 +1343,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporter.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\MobileAccessiblityRules.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
 

@@ -214,6 +214,21 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.WireMock_Logo:
                     SetAsStaticImage("WireMock_Logo.png");
                     break;
+                case eImageType.GingerPlayLogo:
+                    SetAsStaticImage("GingerPlayLogo.png");
+                    break;
+                case eImageType.GingerPlayGradiantBlack:
+                    SetAsStaticImage("GingerPlayGradiantBlack.png");
+                    break;
+                case eImageType.GingerPlayGradiantWhite:
+                    SetAsStaticImage("GingerPlayGradiantWhite.png");
+                    break;
+                case eImageType.GingerPlayWhiteGradiant:
+                    SetAsStaticImage("GingerPlayWhiteGradiant.png");
+                    break;
+                case eImageType.ZAP:
+                    SetAsStaticImage("ZAPLogo.png");
+                    break;
                 case eImageType.WireMockLogo16x16:
                     SetAsStaticImage("WireMockLogo16x16.png");
                     break;
@@ -304,6 +319,10 @@ namespace Amdocs.Ginger.UserControls
 
                 case eImageType.Accessibility:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UniversalAccess);
+                    break;
+
+                case eImageType.Shield:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ShieldHalved);
                     break;
                 #endregion
 
@@ -1015,6 +1034,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.AngleArrowDown:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleDown);
                     break;
+                case eImageType.Crown:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Crown);
+                    break;
                 case eImageType.AngleArrowLeft:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleLeft);
                     break;
@@ -1041,6 +1063,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Phone:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Phone);
+                    break;
+                case eImageType.Microchip:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Microchip, toolTip: "Microchip");
                     break;
                 #endregion
 

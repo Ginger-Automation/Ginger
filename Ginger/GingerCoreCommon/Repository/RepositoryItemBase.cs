@@ -16,6 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.WorkSpaceLib;
+using GingerCore.GeneralLib;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -26,12 +32,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.Common.WorkSpaceLib;
-using GingerCore.GeneralLib;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -1100,7 +1100,7 @@ namespace Amdocs.Ginger.Repository
             if (DirtyStatus != eDirtyStatus.NoTracked && DirtyTrackingFields != null && DirtyTrackingFields.Contains(name) && DirtyTracking != eDirtyTracking.Paused)
             {
                 DirtyStatus = eDirtyStatus.Modified;
-                // RaiseDirtyChangedEvent();
+                //RaiseDirtyChangedEvent();
             }
         }
 
@@ -1111,7 +1111,7 @@ namespace Amdocs.Ginger.Repository
             {
                 DirtyStatus = eDirtyStatus.Modified;
             }
-            // RaiseDirtyChangedEvent();
+            //RaiseDirtyChangedEvent();
         }
 
 
@@ -1476,7 +1476,7 @@ namespace Amdocs.Ginger.Repository
         }
 
         /// <summary>
-        /// This method is being called afetr object type is read from xml and all properties/fields been deserialzied
+        /// This method is being called after object type is read from xml and all properties/fields been deserialzied
         /// Use this method to do updates to the object being serialzied 
         /// </summary>
         public virtual void PostDeserialization()
@@ -1526,6 +1526,7 @@ namespace Amdocs.Ginger.Repository
         /// Flag used to mark if item is ready to be published on third party applications which enhancing Ginger framework
         /// </summary>
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit("Publish")]
         public bool Publish
         {
             get

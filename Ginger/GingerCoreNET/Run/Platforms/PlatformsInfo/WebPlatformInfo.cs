@@ -97,6 +97,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 ActBrowserElement.eControlAction.StopMonitoringNetworkLog,
                 ActBrowserElement.eControlAction.SetBlockedUrls,
                 ActBrowserElement.eControlAction.UnblockeUrls,
+                ActBrowserElement.eControlAction.ClearExistingNetworkLog,
             ];
             return browserActElementList;
         }
@@ -285,7 +286,14 @@ namespace GingerCore.Platforms.PlatformsInfo
                 }
                 else
                 {
-                    uIAdvancedElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, false));
+                    if(elementTypeOperation.ElementType.Equals(eElementType.Svg))
+                    {
+                        uIAdvancedElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, "It includes key SVG child elements such as SvgGroup, SvgLine, SvgUse, SvgText, SvgCircle, and SvgPath.", false));
+                    }
+                    else
+                    {
+                        uIAdvancedElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, false));
+                    }                    
                 }
             }
 
@@ -444,6 +452,12 @@ namespace GingerCore.Platforms.PlatformsInfo
                         ActionType = typeof(ActUIElement),
                         ElementOperationsList = [ ActUIElement.eElementAction.GetValue,
                                                                    ActUIElement.eElementAction.SetValue,
+                                                                   ActUIElement.eElementAction.DoubleClick,
+                                                                    ActUIElement.eElementAction.JavaScriptClick,
+                                                                    ActUIElement.eElementAction.MouseClick,
+                                                                    ActUIElement.eElementAction.MousePressRelease,
+                                                                    ActUIElement.eElementAction.ClickAndValidate,
+                                                                    ActUIElement.eElementAction.MultiClicks
                                                                    ]
                     },
                     new ElementTypeData()
@@ -594,6 +608,17 @@ namespace GingerCore.Platforms.PlatformsInfo
                     eLocateBy.NA,
                     eLocateBy.Unknown,
                     eLocateBy.ByTagName,
+                    eLocateBy.ByLabel,
+                    eLocateBy.ByPlaceholder,
+                    eLocateBy.ByAltText,
+                    eLocateBy.ByTestID,
+                    eLocateBy.Chained,
+                    eLocateBy.ByAriaLabel,
+                    eLocateBy.ByPartialLinkText,
+                    eLocateBy.ByCustomXPath,
+                    eLocateBy.ByDataAttribute,
+                    eLocateBy.ByDataTestId
+
                 ];
             }
             return mElementLocatorsTypeList;
@@ -645,7 +670,15 @@ namespace GingerCore.Platforms.PlatformsInfo
                 new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false },
                 new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false },
                 new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByDataTestId, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByCSSSelector, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false },
                 new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Less Recommended (sensitive to page design changes)", EnableFriendlyLocator = false },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByPlaceholder, Help = "Less Recommended (sensitive to page design changes)", EnableFriendlyLocator = false },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByClassName, Help = "Less Recommended (sensitive to page design changes)", EnableFriendlyLocator = false },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByLinkText, Help = "Less Recommended (sensitive to page design changes)", EnableFriendlyLocator = false },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByHref, Help = "Less Recommended (sensitive to page design changes)", EnableFriendlyLocator = false },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByAriaLabel, Help = "Less Recommended (sensitive to page design changes)", EnableFriendlyLocator = false },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByTitle, Help = "Less Recommended (sensitive to page design changes)", EnableFriendlyLocator = false },
                 new ElementLocator() { Active = true, LocateBy = eLocateBy.ByTagName, Help = "Less Recommended", EnableFriendlyLocator = true },
             ];
             return learningLocatorsList;

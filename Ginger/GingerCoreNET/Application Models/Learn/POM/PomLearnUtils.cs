@@ -34,6 +34,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using static GingerCore.Agent;
 
 namespace Amdocs.Ginger.CoreNET.Application_Models
 {
@@ -48,6 +49,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         List<eLocateBy> mElementLocatorsList = [];
         public ObservableList<ElementInfo> mElementsList = [];
         public PomSetting pomSetting;
+        public bool IsGeneratedByAI { get; set; } = false;
 
         bool mLearnOnlyMappedElements = true;
         public bool LearnOnlyMappedElements
@@ -72,6 +74,19 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             set
             {
                 mLearnScreenshotsOfElements = value;
+            }
+        }
+
+        bool mLearnPOMByAI = false;
+        public bool LearnPOMByAI
+        {
+            get
+            {
+                return mLearnPOMByAI;
+            }
+            set
+            {
+                mLearnPOMByAI = value;
             }
         }
 
@@ -129,11 +144,8 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 var elementList = PlatformInfoBase.GetPlatformImpl(ePlatformType.Web).GetUIElementFilterList();
                 AutoMapBasicElementTypesList = elementList["Basic"];
                 AutoMapAdvanceElementTypesList = elementList["Advanced"];
-                foreach (UIElementFilter uIElementFilter in POM.PomSetting.FilteredElementType)
-                {
-                    SelectElementsToList(AutoMapBasicElementTypesList, uIElementFilter, AutoMapBasicElementTypesList);
-                    SelectElementsToList(AutoMapAdvanceElementTypesList, uIElementFilter, AutoMapAdvanceElementTypesList);
-                }
+                SelectElementsToList(AutoMapBasicElementTypesList, POM.PomSetting.FilteredElementType);
+                SelectElementsToList(AutoMapAdvanceElementTypesList, POM.PomSetting.FilteredElementType);
             }
             mAgent = agent;
             mPomModelsFolder = pomModelsFolder;
@@ -141,15 +153,11 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             mElementsList.CollectionChanged += ElementsListCollectionChanged;
         }
 
-        void SelectElementsToList(ObservableList<UIElementFilter> elements, UIElementFilter filter, ObservableList<UIElementFilter> targetList)
+        public void SelectElementsToList(ObservableList<UIElementFilter> elements, ObservableList<UIElementFilter> filterList)
         {
-            foreach (var element in elements)
+            foreach (UIElementFilter element in elements)
             {
-                if (filter.ElementType.Equals(element.ElementType))
-                {
-                    UIElementFilter uIElementFilter = targetList.FirstOrDefault(x => x.ElementType.Equals(element.ElementType));
-                    uIElementFilter.Selected = filter.Selected;
-                }
+                element.Selected = filterList.FirstOrDefault(f => f.ElementType == element.ElementType)?.Selected ?? false;
             }
         }
 
@@ -167,6 +175,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             if (Agent != null)
             {
                 POM.LastUsedAgent = Agent.Guid;
+                POM.AIGenerated = IsGeneratedByAI;
             }
 
             if (mPomModelsFolder != null)
@@ -217,7 +226,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         public void PrepareLearningConfigurations()
         {
-            
+
             ObservableList<UIElementFilter> uIElementList = new ObservableList<UIElementFilter>();
 
             // Adding items from AutoMapBasicElementTypesList
@@ -229,10 +238,10 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             // Filtering selected elements and getting their types
             SelectedElementTypesList = new ObservableList<UIElementFilter>();
             SelectedElementTypesList.AddRange(uIElementList.Where(x => x.Selected));
-
+            
             if (POM.PomSetting != null)
             {
-                mElementLocatorsList = POM.PomSetting.ElementLocatorsSettingsList != null ? POM.PomSetting.ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList(): ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();
+                mElementLocatorsList = POM.PomSetting.ElementLocatorsSettingsList != null ? POM.PomSetting.ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList() : ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();
 
                 POM.PomSetting.FilteredElementType = SelectedElementTypesList;
                 POM.PomSetting.ElementLocatorsSettingsList = POM.PomSetting.ElementLocatorsSettingsList != null ? POM.PomSetting.ElementLocatorsSettingsList : ElementLocatorsSettingsList;
@@ -241,11 +250,13 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 POM.PomSetting.SpecificFramePath = POM.PomSetting.SpecificFramePath != null ? POM.PomSetting.SpecificFramePath : SpecificFramePath;
                 POM.PomSetting.LearnScreenshotsOfElements = POM.PomSetting.LearnScreenshotsOfElements ? POM.PomSetting.LearnScreenshotsOfElements : LearnScreenshotsOfElements;
                 POM.PomSetting.LearnShadowDomElements = POM.PomSetting.LearnShadowDomElements ? POM.PomSetting.LearnShadowDomElements : LearnShadowDomElements;
+                POM.PomSetting.LearnPOMByAI = POM.PomSetting.LearnPOMByAI || LearnPOMByAI;
+                POM.PomSetting = POM.PomSetting;
             }
             else
             {
 
-                pomSetting = new PomSetting(); 
+                pomSetting = new PomSetting();
                 mElementLocatorsList = ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();
 
                 pomSetting.FilteredElementType = SelectedElementTypesList;
@@ -255,10 +266,10 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 pomSetting.SpecificFramePath = SpecificFramePath;
                 pomSetting.LearnScreenshotsOfElements = LearnScreenshotsOfElements;
                 pomSetting.LearnShadowDomElements = LearnShadowDomElements;
+                pomSetting.LearnPOMByAI = LearnPOMByAI;
                 POM.PomSetting = pomSetting;
             }
-
-            
+            POM.AIGenerated = POM.PomSetting.LearnPOMByAI;
         }
 
         public void LearnScreenShot()
@@ -277,6 +288,25 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             PrepareLearningConfigurations();
             LearnScreenShot();
             POM.PageURL = ((AgentOperations)Agent.AgentOperations).Driver.GetURL();
+            if (Agent.Platform == ePlatformType.Web)
+            {
+                try
+                {
+                    Uri uri = new Uri(POM.PageURL);
+                    if (uri.IsFile && File.Exists(uri.AbsolutePath))
+                    {
+                        string normalizedPageUrl = Path.GetFullPath(new Uri(POM.PageURL).LocalPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                        if (normalizedPageUrl.Contains(WorkSpace.Instance.SolutionRepository.SolutionFolder))
+                        {
+                            POM.PageURL = GingerCoreNET.GeneralLib.General.SetupRelativePath(normalizedPageUrl);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, $"Invalid URI format in POM.PageURL: {POM.PageURL}", ex);
+                }
+            }
             POM.Name = IWindowExplorerDriver.GetActiveWindow().Title;
             // appending Specific frame title in POM name
             if (!string.IsNullOrEmpty(SpecificFramePath))
@@ -296,13 +326,14 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 if (SelectedElementTypesList.Count > 0)
                 {
-                    await IWindowExplorerDriver.GetVisibleControls(pomSetting, mElementsList, POM.ApplicationPOMMetaData);
+                    await IWindowExplorerDriver.GetVisibleControls(POM.PomSetting, mElementsList, POM.ApplicationPOMMetaData, ScreenShot);
+
                 }
             }
             else
             {
-                pomSetting.FilteredElementType = null;
-                await IWindowExplorerDriver.GetVisibleControls(pomSetting, mElementsList, POM.ApplicationPOMMetaData);
+                POM.PomSetting.FilteredElementType = null;
+                await IWindowExplorerDriver.GetVisibleControls(POM.PomSetting, mElementsList, POM.ApplicationPOMMetaData, ScreenShot);
             }
 
             featureTracker.Metadata.Add("MappedElementCount", POM.MappedUIElements != null ? POM.MappedUIElements.Count.ToString() : "");
@@ -312,7 +343,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         private ObservableList<CustomRelativeXpathTemplate> GetRelativeXpathTemplateList()
         {
             var customRelXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>();
-            if(POM.PomSetting != null && POM.PomSetting.RelativeXpathTemplateList != null)
+            if (POM.PomSetting != null && POM.PomSetting.RelativeXpathTemplateList != null)
             {
                 foreach (var item in POM.PomSetting.RelativeXpathTemplateList)
                 {
@@ -333,7 +364,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                     SetLearnedElementDetails(learnedElement);
                     learnedElement.ParentGuid = POM.Guid;
                     //add to relevent group
-                    if (SelectedElementTypesList.Any(x=>x.ElementType.Equals(learnedElement.ElementTypeEnum)))
+                    if (SelectedElementTypesList.Any(x => x.ElementType.Equals(learnedElement.ElementTypeEnum)))
                     {
                         POM.MappedUIElements.Add(learnedElement);
                     }
@@ -374,7 +405,9 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 if (curElement != null)
                 {
                     //remove invalid chars
-                    string name = curElement.ElementName.Trim().Replace(".", "").Replace("?", "").Replace("\n", "").Replace("\r", "").Replace("#", "").Replace("!", " ").Replace(",", " ").Replace("   ", "");
+                    string name = string.IsNullOrEmpty(curElement.ElementName) ? 
+                        string.Empty : 
+                        curElement.ElementName.Trim().Replace(".", "").Replace("?", "").Replace("\n", "").Replace("\r", "").Replace("#", "").Replace("!", " ").Replace(",", " ").Replace("   ", "");
                     foreach (char chr in Path.GetInvalidFileNameChars())
                     {
                         name = name.Replace(chr.ToString(), string.Empty);

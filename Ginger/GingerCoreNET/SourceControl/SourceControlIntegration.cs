@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.SourceControl;
@@ -26,11 +27,14 @@ using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
+using LibGit2Sharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
+using static GingerCoreNET.SourceControl.SourceControlBase;
 
 namespace Ginger.SourceControl
 {
@@ -146,20 +150,21 @@ namespace Ginger.SourceControl
             return true;
         }
 
-        public static bool GetProject(SourceControlBase SourceControl, string Path, string URI, ProgressNotifier progressNotifier = null, System.Threading.CancellationToken cancellationToken = default)
+        public static bool GetProject(SourceControlBase sourceControl, string path, string uri, ProgressNotifier progressNotifier = null, CancellationToken cancellationToken = default)
         {
             try
             {
                 string error = string.Empty;
-                if (!SourceControl.GetProjectWithProgress(Path, URI, ref error, progressNotifier, cancellationToken))
+                bool isLinuxOrSVN = RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || sourceControl.GetSourceControlType == eSourceControlType.SVN;
+
+                bool success = isLinuxOrSVN ? sourceControl.GetProject(path, uri, ref error) : sourceControl.GetProjectWithProgress(path, uri, ref error, progressNotifier, cancellationToken);
+
+                if (!success && !string.IsNullOrEmpty(error))
                 {
-                    if (!string.IsNullOrEmpty(error))
-                    {
-                        Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
-                    }
-                    return false;
+                    Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
                 }
-                return true;
+
+                return success;
             }
             catch (Exception ex)
             {
@@ -168,15 +173,12 @@ namespace Ginger.SourceControl
             }
         }
 
-
         public static bool GetLatest(string path, SourceControlBase SourceControl)
         {
             string error = string.Empty;
             List<string> conflictsPaths = [];
             if (!SourceControl.GetLatest(path, ref error, ref conflictsPaths))
             {
-
-
                 if (conflictsPaths.Count > 0)
                 {
                     Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, error);
@@ -522,72 +524,125 @@ namespace Ginger.SourceControl
             return SCImage;
         }
 
+        private static SourceControlBase CreateSourceControl()
+        {
+            if (WorkSpace.Instance.UserProfile.Type == SourceControlBase.eSourceControlType.GIT)
+            {
+
+                if (WorkSpace.Instance != null && WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlUseShellClient)
+                {
+                    return new GitSourceControlShellWrapper();
+                }
+                else
+                {
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        return new GITSourceControl();
+                    }
+                    else
+                    {
+                        return new GitSourceControlShellWrapper();
+                    }
+                }
+            }
+            else if (WorkSpace.Instance.UserProfile.Type == SourceControlBase.eSourceControlType.SVN)
+            {
+
+                if (WorkSpace.Instance != null && WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlUseShellClient)
+                {
+                    return new SVNSourceControlShellWrapper();
+                }
+                else
+                {
+                    return TargetFrameworkHelper.Helper.GetNewSVnRepo();
+                }
+            }
+            else
+            {
+                return TargetFrameworkHelper.Helper.GetNewSVnRepo();
+            }
+        }
+
+        private static void ConfigureSourceControl(SourceControlBase sourceControl, string solutionFolder)
+        {
+            sourceControl.URL = WorkSpace.Instance.UserProfile.URL;
+            sourceControl.Username = WorkSpace.Instance.UserProfile.Username;
+            sourceControl.Password = WorkSpace.Instance.UserProfile.Password;
+            sourceControl.LocalFolder = WorkSpace.Instance.UserProfile.LocalFolderPath;
+            sourceControl.IgnoreCertificate = WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlIgnoreCertificate;
+
+            sourceControl.SolutionFolder = solutionFolder;
+
+            sourceControl.IsProxyConfigured = WorkSpace.Instance.UserProfile.IsProxyConfigured;
+            sourceControl.ProxyAddress = WorkSpace.Instance.UserProfile.ProxyAddress;
+            sourceControl.ProxyPort = WorkSpace.Instance.UserProfile.ProxyPort;
+            sourceControl.Timeout = WorkSpace.Instance.UserProfile.Timeout;
+            sourceControl.supressMessage = true;
+
+            sourceControl.Branch = WorkSpace.Instance.UserProfile.Branch;
+        }
+
+        private static SolutionInfo GetSolutionInfo(string solutionFolder)
+        {
+            var sol = new SolutionInfo { LocalFolder = solutionFolder };
+            if (WorkSpace.Instance.UserProfile.Type == SourceControlBase.eSourceControlType.SVN &&
+                Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + Path.DirectorySeparatorChar + @".svn")))
+            {
+                sol.ExistInLocaly = true;
+            }
+            else if (WorkSpace.Instance.UserProfile.Type == SourceControlBase.eSourceControlType.GIT &&
+                Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + Path.DirectorySeparatorChar + @".git")))
+            {
+                sol.ExistInLocaly = true;
+            }
+            else
+            {
+                sol.ExistInLocaly = false;
+            }
+            sol.SourceControlLocation = solutionFolder[(solutionFolder.LastIndexOf(Path.DirectorySeparatorChar) + 1)..];
+            return sol;
+        }
+
+        private static string GetProjectURI(SolutionInfo sol, SourceControlBase sourceControl)
+        {
+            if (WorkSpace.Instance.UserProfile.Type == SourceControlBase.eSourceControlType.SVN && sourceControl is not SVNSourceControlShellWrapper)
+            {
+                if (WorkSpace.Instance.UserProfile.URL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return sol.SourceControlLocation;
+                }
+                else
+                {
+                    string projectURI = WorkSpace.Instance.UserProfile.URL;
+                    if (!projectURI.ToUpper().Contains(sol.SourceControlLocation.ToUpper()))
+                    {
+                        if (!projectURI.ToUpper().Contains("/SVN") && !projectURI.ToUpper().Contains("/SVN/"))
+                        {
+                            if (!projectURI.ToUpper().EndsWith("/"))
+                            {
+                                projectURI += "/";
+                            }
+                            projectURI += "svn/";
+                        }
+                        if (!projectURI.ToUpper().EndsWith("/"))
+                        {
+                            projectURI += "/";
+                        }
+                        projectURI += sol.SourceControlLocation;
+                    }
+                    return projectURI;
+                }
+            }
+            else
+            {
+                return WorkSpace.Instance.UserProfile.URL;
+            }
+        }
 
         public static bool DownloadSolution(string SolutionFolder, bool undoSolutionLocalChanges = false, ProgressNotifier progressNotifier = null)
         {
             try
             {
-
-                SourceControlBase mSourceControl;
-                if (WorkSpace.Instance.UserProfile.Type == SourceControlBase.eSourceControlType.GIT)
-                {
-
-                    if (WorkSpace.Instance != null && WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlUseShellClient)
-                    {
-                        mSourceControl = new GitSourceControlShellWrapper();
-                    }
-                    else
-                    {
-                        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                        {
-                            mSourceControl = new GITSourceControl();
-                        }
-                        else
-                        {
-                            mSourceControl = new GitSourceControlShellWrapper();
-                        }
-                    }
-
-
-
-                }
-                else if (WorkSpace.Instance.UserProfile.Type == SourceControlBase.eSourceControlType.SVN)
-                {
-
-                    if (WorkSpace.Instance != null && WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlUseShellClient)
-                    {
-                        mSourceControl = new SVNSourceControlShellWrapper();
-                    }
-                    else
-                    {
-                        mSourceControl = TargetFrameworkHelper.Helper.GetNewSVnRepo();
-                    }
-
-                }
-                else
-                {
-                    mSourceControl = TargetFrameworkHelper.Helper.GetNewSVnRepo();
-                }
-
-                if (mSourceControl != null)
-                {
-                    mSourceControl.URL = WorkSpace.Instance.UserProfile.URL;
-                    mSourceControl.Username = WorkSpace.Instance.UserProfile.Username;
-                    mSourceControl.Password = WorkSpace.Instance.UserProfile.Password;
-                    mSourceControl.LocalFolder = WorkSpace.Instance.UserProfile.LocalFolderPath;
-                    mSourceControl.IgnoreCertificate = WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlIgnoreCertificate;
-
-                    mSourceControl.SolutionFolder = SolutionFolder;
-
-                    mSourceControl.IsProxyConfigured = WorkSpace.Instance.UserProfile.IsProxyConfigured;
-                    mSourceControl.ProxyAddress = WorkSpace.Instance.UserProfile.ProxyAddress;
-                    mSourceControl.ProxyPort = WorkSpace.Instance.UserProfile.ProxyPort;
-                    mSourceControl.Timeout = WorkSpace.Instance.UserProfile.Timeout;
-                    mSourceControl.supressMessage = true;
-
-                    mSourceControl.Branch = WorkSpace.Instance.UserProfile.Branch;
-                }
-
                 if (WorkSpace.Instance.UserProfile.LocalFolderPath == string.Empty)
                 {
                     Reporter.ToUser(eUserMsgKey.SourceControlConnMissingLocalFolderInput);
@@ -597,78 +652,34 @@ namespace Ginger.SourceControl
                     SolutionFolder = SolutionFolder[..^1];
                 }
 
-                SolutionInfo sol = new SolutionInfo
+                SourceControlBase mSourceControl = CreateSourceControl();
+                if (mSourceControl != null)
                 {
-                    LocalFolder = SolutionFolder
-                };
-                if (WorkSpace.Instance.UserProfile.Type == SourceControlBase.eSourceControlType.SVN && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + Path.DirectorySeparatorChar + @".svn")))
-                {
-                    sol.ExistInLocaly = true;
-                }
-                else if (WorkSpace.Instance.UserProfile.Type == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + Path.DirectorySeparatorChar + @".git")))
-                {
-                    sol.ExistInLocaly = true;
-                }
-                else
-                {
-                    sol.ExistInLocaly = false;
+                    ConfigureSourceControl(mSourceControl, SolutionFolder);
                 }
 
-                sol.SourceControlLocation = SolutionFolder[(SolutionFolder.LastIndexOf(Path.DirectorySeparatorChar) + 1)..];
-
+                SolutionInfo sol = GetSolutionInfo(SolutionFolder);
                 if (sol == null)
                 {
                     Reporter.ToUser(eUserMsgKey.AskToSelectSolution);
                     return false;
                 }
 
-                string ProjectURI = string.Empty;
-                if (WorkSpace.Instance.UserProfile.Type == SourceControlBase.eSourceControlType.SVN && mSourceControl is not SVNSourceControlShellWrapper)
-                {
-
-                    if (WorkSpace.Instance.UserProfile.URL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        ProjectURI = sol.SourceControlLocation;
-                    }
-                    else
-                    {
-                        if (WorkSpace.Instance.UserProfile.URL.ToUpper().Contains(sol.SourceControlLocation.ToUpper()))
-                        {
-                            ProjectURI = WorkSpace.Instance.UserProfile.URL;
-                        }
-                        else
-                        {
-                            ProjectURI = WorkSpace.Instance.UserProfile.URL;
-                            if (!ProjectURI.ToUpper().Contains("/SVN") && !ProjectURI.ToUpper().Contains("/SVN/"))
-                            {
-                                if (!ProjectURI.ToUpper().EndsWith("/"))
-                                {
-                                    ProjectURI += "/";
-                                }
-                                ProjectURI += "svn/";
-                            }
-                            if (!ProjectURI.ToUpper().EndsWith("/"))
-                            {
-                                ProjectURI += "/";
-                            }
-                            ProjectURI += sol.SourceControlLocation;
-                        }
-
-                    }
-
-                }
-                else
-                {
-                    ProjectURI = WorkSpace.Instance.UserProfile.URL;
-                }
-                bool getProjectResult = true;
-                getProjectResult = SourceControlIntegration.CreateConfigFile(mSourceControl);
-                if (getProjectResult != true)
+                string projectURI = GetProjectURI(sol, mSourceControl);
+                bool getProjectResult = SourceControlIntegration.CreateConfigFile(mSourceControl);
+                if (!getProjectResult)
                 {
                     return false;
                 }
 
-                if (sol.ExistInLocaly == true)
+                if (!sol.ExistInLocaly && !string.IsNullOrWhiteSpace(SolutionFolder) && WorkSpace.Instance.RunningInExecutionMode
+                     && SolutionFolder.StartsWith(General.DefaultGingerReposFolder, StringComparison.OrdinalIgnoreCase) &&
+                     Directory.Exists(SolutionFolder) && Directory.GetFileSystemEntries(SolutionFolder).Length > 0)
+                {
+                    CleanSolutionFolder(SolutionFolder, mSourceControl);
+                }
+
+                if (sol.ExistInLocaly)
                 {
                     mSourceControl.RepositoryRootFolder = sol.LocalFolder;
                     if (undoSolutionLocalChanges)
@@ -683,17 +694,62 @@ namespace Ginger.SourceControl
                             Reporter.ToLog(eLogLevel.ERROR, "Failed to revert local Solution changes, error: " + ex.Message);
                         }
                     }
-                    return TargetFrameworkHelper.Helper.GetLatest(sol.LocalFolder, mSourceControl, progressNotifier);
-                                    }
+                    try
+                    {
+                        return TargetFrameworkHelper.Helper.GetLatest(sol.LocalFolder, mSourceControl, progressNotifier);
+                    }
+                    catch (Exception ex) when (WorkSpace.Instance.RunningInExecutionMode && ex.Message.Contains("doesn't point at a valid Git repository or workdir", StringComparison.InvariantCultureIgnoreCase)
+                            && SolutionFolder.StartsWith(General.DefaultGingerReposFolder, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, $"The local repository {SolutionFolder} is corrupted. Attempting to clean the folder and retry pulling the repository.");
+
+                        CleanSolutionFolder(SolutionFolder, mSourceControl);
+
+                        return SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, projectURI, progressNotifier);
+                    }
+                }
                 else
                 {
-                    return SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI, progressNotifier);
+                    return SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, projectURI, progressNotifier);
                 }
             }
             catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while Downloading/Updating Solution from source control", e);
                 return false;
+            }
+        }
+
+        private static void CleanSolutionFolder(string SolutionFolder, SourceControlBase mSourceControl)
+        {
+            //clean folder and retry                        
+            if (Directory.Exists(SolutionFolder))
+            {
+                try
+                {
+                    // Ensure any libgit2 resources released
+                    mSourceControl?.Disconnect();
+
+                    int attempts = 0;
+                    while (true)
+                    {
+                        try
+                        {
+                            General.ClearDirectoryContent(SolutionFolder);
+                            break;
+                        }
+                        catch (Exception ex) when ((ex is IOException || ex is UnauthorizedAccessException) && attempts < 2)
+                        {
+                            attempts++;
+                            Reporter.ToLog(eLogLevel.WARN, $"Retry {attempts} clearing corrupted repository folder due to {ex.GetType().Name}: {ex.Message}");
+                            System.Threading.Thread.Sleep(300 * attempts);
+                        }
+                    }
+                }
+                catch (Exception cleanEx)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to clean corrupted repository folder {SolutionFolder}", cleanEx);
+                }
             }
         }
 
@@ -706,7 +762,7 @@ namespace Ginger.SourceControl
         {
             try
             {
-                return SourceControl.GetCurrentBranchForSolution();
+                return SourceControl.GetCurrentWorkingBranch();
             }
             catch (Exception ex)
             {

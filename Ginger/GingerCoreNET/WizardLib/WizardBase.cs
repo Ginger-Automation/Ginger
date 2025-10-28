@@ -132,6 +132,16 @@ namespace GingerWPF.WizardLib
         //    }
         //}
 
+        public void AIProcessStarted()
+        {
+            mWizardWindow.AIProcessStarted();
+        }
+
+        public void AIProcessStopped()
+        {
+            mWizardWindow.AIProcessStopped();
+        }
+
         public bool DisableBackBtnOnLastPage { get; set; } = false;
 
         public void AddPage(string Name, String Title, string SubTitle, IWizardPage Page)
@@ -264,5 +274,6 @@ namespace GingerWPF.WizardLib
             mWizardWindow = null;
             // GC.Collect();            
         }
+
     }
 }

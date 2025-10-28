@@ -19,6 +19,7 @@ limitations under the License.
 using AccountReport.Contracts.GraphQL.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.BPMN.Exportation;
@@ -33,6 +34,7 @@ using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCoreNET.GeneralLib;
 using GingerWPF.WizardLib;
 using GraphQL;
 using GraphQLClient.Clients;
@@ -44,6 +46,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -147,7 +150,7 @@ namespace Ginger.Run
         /// </summary>
         private bool SetExectionHistoryVisibility(ExecutionLoggerConfiguration execLoggerConfig)
         {
-            if (execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
+            if (execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && (GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() || GingerPlayUtils.IsGingerPlayBackwardUrlConfigured()))
             {
                 return true;
             }
@@ -161,33 +164,65 @@ namespace Ginger.Run
         /// Assigns the GraphQL endpoint for the execution report client.
         /// Retrieves the endpoint URL, configures the GraphQL client, and handles any connection errors.
         /// </summary>
-        private bool AssignGraphQLObjectEndPoint()
+        private async Task<bool> AssignGraphQLObjectEndPoint()
         {
             try
             {
-                string endPoint = GingerRemoteExecutionUtils.GetReportDataServiceUrl();
-                if (!string.IsNullOrEmpty(endPoint))
+                if (execLoggerConfig == null || execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
                 {
-                    graphQlClient = new GraphQlClient($"{endPoint}api/graphql");
-                    executionReportGraphQLClient = new ExecutionReportGraphQLClient(graphQlClient);
-                    isGraphQlClinetConfigure = true;
-                    return true;
+                    isGraphQlClinetConfigure = false;
+                    return false;
                 }
-                else
+                string endPoint = GingerRemoteExecutionUtils.GetReportDataServiceUrl();
+                if (string.IsNullOrEmpty(endPoint))
                 {
                     isGraphQlClinetConfigure = false;
                     return false;
                 }
 
+                string graphQlUrl = $"{endPoint.TrimEnd('/')}/api/graphql";
+
+                // GraphQL POST health check
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.Timeout = TimeSpan.FromSeconds(3);
+
+                    var healthCheckQuery = new
+                    {
+                        query = "{ __typename }"
+                    };
+
+                    var content = new StringContent(
+                        System.Text.Json.JsonSerializer.Serialize(healthCheckQuery),
+                        Encoding.UTF8,
+                        "application/json"
+                    );
+
+                    HttpResponseMessage graphQLresponse = await httpClient.PostAsync(graphQlUrl, content);
+                    if (!graphQLresponse.IsSuccessStatusCode)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN,
+                            $"GraphQL endpoint responded with {graphQLresponse.StatusCode}. Marking as unavailable.");
+                        isGraphQlClinetConfigure = false;
+                        return false;
+                    }
+                }
+
+                // healthy, initialize the client
+                graphQlClient = new GraphQlClient(graphQlUrl);
+                executionReportGraphQLClient = new ExecutionReportGraphQLClient(graphQlClient);
+                isGraphQlClinetConfigure = true;
+                return true;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while connecting remote.", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error while verifying or connecting GraphQL endpoint.", ex);
+                isGraphQlClinetConfigure = false;
                 return false;
-
             }
-
         }
+
+
         /// <summary>
         /// Checks the centralized execution logger configuration and sets the appropriate radio button and loads the executions history data.
         /// </summary>
@@ -222,7 +257,7 @@ namespace Ginger.Run
         {
             xButtonPnl.Visibility = Visibility.Visible;
             GraphQlLoadingVisible();
-            if (SetExectionHistoryVisibility(execLoggerConfig) && AssignGraphQLObjectEndPoint())
+            if (SetExectionHistoryVisibility(execLoggerConfig) && await AssignGraphQLObjectEndPoint())
             {
                 await LoadExecutionsHistoryDataGraphQl();
             }
@@ -283,10 +318,10 @@ namespace Ginger.Run
         /// <summary>
         /// Reloads the data for the RunSetsExecutionsHistoryPage.
         /// </summary>
-        public void ReloadExecutionHistoryData()
+        public async Task ReloadExecutionHistoryData()
         {
 
-            if (AssignGraphQLObjectEndPoint() && SetExectionHistoryVisibility(execLoggerConfig))
+            if (await AssignGraphQLObjectEndPoint() && SetExectionHistoryVisibility(execLoggerConfig))
             {
                 remoteRadioButton.IsChecked = true;
                 remoteRadioButton.IsEnabled = true;
@@ -878,7 +913,7 @@ namespace Ginger.Run
             else if (((RunSetReport)xGridExecutionsHistory.CurrentItem).DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.Remote)
             {
                 var executionGuid = ((RunSetReport)xGridExecutionsHistory.CurrentItem).GUID;
-                new GingerRemoteExecutionUtils().GenerateHTMLReport(executionGuid);
+                GingerRemoteExecutionUtils.GenerateHTMLReport(executionGuid);
             }
             else
             {

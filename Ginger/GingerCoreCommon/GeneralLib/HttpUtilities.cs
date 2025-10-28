@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -56,38 +57,80 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 return (null, HttpStatusCode.BadRequest);
             }
 
-            var handler = new HttpClientHandler
+                   
+
+            async Task<(string, HttpStatusCode)> TryFetchAsync(HttpClientHandler handler)
+            {
+                try
+                {
+                    ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
+                    handler.ServerCertificateCustomValidationCallback += (_, _, _, _) => { return true; };                   
+                    using var client = new HttpClient(handler);                                
+                    var response = await client.GetAsync(url);
+                    string content = await response.Content.ReadAsStringAsync();
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR,
+                            $"GET request to '{url}' failed. Status Code: {response.StatusCode}. Response: {content}");
+                        return (null, response.StatusCode);
+                    }
+
+                    return (content, response.StatusCode);
+                }
+                catch (HttpRequestException httpEx)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"HTTP request failed for '{url}': {httpEx.Message}");
+                    return (null, HttpStatusCode.ServiceUnavailable);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error while calling '{url}'", ex);
+                    return (null, HttpStatusCode.InternalServerError);
+                }
+            }
+
+            // First try: using proxy (original behavior)
+            var handlerWithProxy = new HttpClientHandler
             {
                 Proxy = WebRequest.GetSystemWebProxy(),
+                UseProxy = true,                
+            };
+            var result = await TryFetchAsync(handlerWithProxy);
+            if (result.Item1 != null)
+                return result;
+
+            // Second try: without proxy
+            var handlerWithoutProxy = new HttpClientHandler
+            {
+                UseProxy = false
+            };
+            result = await TryFetchAsync(handlerWithoutProxy);
+            if (result.Item1 != null)
+                return result;
+
+            // Third try: with proxy but add API host to no-proxy list
+            var hostNoProxy = url.Host;
+            var systemProxy = WebRequest.GetSystemWebProxy();
+
+            if (systemProxy is WebProxy webProxy)
+            {
+                var bypassList = webProxy.BypassList ?? [];
+                if (!bypassList.Contains(hostNoProxy))
+                {
+                    var newBypassList = bypassList.Concat([hostNoProxy]).ToArray();
+                    webProxy.BypassList = newBypassList;
+                }
+            }
+
+            var handlerWithProxyNoBypass = new HttpClientHandler
+            {
+                Proxy = systemProxy,
                 UseProxy = true
             };
 
-            try
-            {
-                using var client = new HttpClient(handler);
-
-                var response = await client.GetAsync(url);
-                string content = await response.Content.ReadAsStringAsync();
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR,
-                        $"GET request to '{url}' failed. Status Code: {response.StatusCode}. Response: {content}");
-                    return (null, response.StatusCode);
-                }
-
-                return (content, response.StatusCode);
-            }
-            catch (HttpRequestException httpEx)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, $"HTTP request failed for '{url}': {httpEx.Message}");
-                return (null, HttpStatusCode.ServiceUnavailable);
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error while calling '{url}'", ex);
-                return (null, HttpStatusCode.InternalServerError);
-            }
+            result = await TryFetchAsync(handlerWithProxyNoBypass);
+            return result;
         }
     }
 }

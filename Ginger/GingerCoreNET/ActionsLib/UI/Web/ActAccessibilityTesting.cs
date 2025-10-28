@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.VariablesLib;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.Appium;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
@@ -37,6 +38,7 @@ using Newtonsoft.Json;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -62,6 +64,9 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
         public override bool ValueConfigsNeeded { get { return false; } }
 
+        // Public property to set the type of rules to fetch
+        public string CurrentRuleType { get; set; } = ePlatformType.Web.ToString(); // Default to "Web"
+
         public override List<ePlatformType> Platforms
         {
             get
@@ -69,6 +74,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 if (mPlatforms.Count == 0)
                 {
                     mPlatforms.Add(ePlatformType.Web);
+                    mPlatforms.Add(ePlatformType.Mobile);
                 }
                 return mPlatforms;
             }
@@ -89,9 +95,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         {
             PlatformAction platformAction = new PlatformAction(this);
 
-
-
-
             foreach (ActInputValue aiv in this.InputValues)
             {
                 if (!platformAction.InputParams.ContainsKey(aiv.Param))
@@ -99,8 +102,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                     platformAction.InputParams.Add(aiv.Param, aiv.ValueForDriver);
                 }
             }
-
-
             return platformAction;
         }
 
@@ -184,6 +185,31 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             wcag22aa,
             [EnumValueDescription("Best Practice")]
             bestpractice,
+        }
+
+        public enum eMobileAccessibilityStandards
+        {
+            [EnumValueDescription("All Applicable Standards")]
+            All,
+
+            // --- WCAG Principles/Levels ---
+            [EnumValueDescription("WCAG 2.1 Level A")]
+            WCAG21A,
+            [EnumValueDescription("WCAG 2.1 Level AA")]
+            WCAG21AA,
+            [EnumValueDescription("WCAG 2.1 Level AAA")]
+            WCAG21AAA,
+
+            // --- European Standard EN 301 549 ---
+            [EnumValueDescription("EN 301 549 (General Standard)")]
+            EN_301_549,
+            [EnumValueDescription("EN 301 549 - 9.4.1.2 (Name, Role, Value)")]
+            EN_9_4_1_2,
+            [EnumValueDescription("EN 301 549 - 9.4.1.3 (Info and Relationships)")]
+            EN_9_4_1_3,
+
+            [EnumValueDescription("Best Practice Recommendation")]
+            BestPractice
         }
 
         public enum eSeverity
@@ -325,7 +351,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             ObservableList<AccessibilityRuleData> ruleDatalist;
             try
             {
-                string AccessbiltyString = GetAccessiblityrules();
+                string AccessbiltyString = GetAccessibilityRulesFile(this.CurrentRuleType);
                 ruleDatalist = AccessibilityRuleDataObjet.GetAccessibilityRules(AccessbiltyString);
                 foreach (AccessibilityRuleData ruleData in ruleDatalist)
                 {
@@ -398,11 +424,100 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             return eTarget.Page;
         }
 
-        private static string GetAccessiblityrules()
+        // This property becomes the single source of filtered rules
+        public ObservableCollection<AccessibilityRuleData> ActiveRulesForAnalysis
+        {
+            get
+            {
+                return GetFilteredRuleList();
+            }
+        }
+
+        /// <summary>
+        /// Filters the accessibility rule list based on selected standards and/or severity levels.
+        /// </summary>
+        /// <returns>An ObservableCollection of AccessibilityRuleData for analysis.</returns>
+        public ObservableCollection<AccessibilityRuleData> GetFilteredRuleList()
+        {
+            //all rules that are marked as Active in configuration
+            ObservableCollection<AccessibilityRuleData> rulesForAnalysis =
+                [.. GetRuleList().Where(x => x.Active)];
+
+            // Get the selected analyzer type
+            string analyzerType = GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer);
+
+            // lists for selected tags and severities
+            List<string>? selectedStandardTags = null;
+            if (StandardList != null && StandardList.Any())
+            {
+                selectedStandardTags = StandardList.Select(i => i.Value.ToString().ToLower()).ToList();
+
+                selectedStandardTags = MobileAccessibilityRuleDataExtensions.NormalizeTagNames(selectedStandardTags.ToArray()).ToList();
+            }
+
+            List<string>? selectedSeverities = null;
+            if (SeverityList != null && SeverityList.Count != 0)
+            {
+                selectedSeverities = [.. SeverityList.Select(x => x.Value.ToLower())];
+            }
+
+            // Apply filtering based on Analyzer type
+            if (analyzerType == nameof(ActAccessibilityTesting.eAnalyzer.ByStandard))
+            {
+                if (selectedStandardTags == null || selectedStandardTags.Count == 0)
+                {
+                    Status = eRunStatus.Failed;
+                    Error = "Standard list is empty or not set when 'By Standard' analyzer is selected.";
+                    return [];
+                }
+
+                // Filter rules to only include those matching selected standards/tags
+                rulesForAnalysis = rulesForAnalysis.WithTags([.. selectedStandardTags]);
+
+                if (selectedSeverities != null && selectedSeverities.Count != 0)
+                {
+                    rulesForAnalysis = new ObservableCollection<AccessibilityRuleData>(
+                        rulesForAnalysis.Where(rule => !selectedSeverities.Contains(rule.Impact.ToLower()))
+                    );
+                }
+            }
+            else if (analyzerType == nameof(ActAccessibilityTesting.eAnalyzer.BySeverity))
+            {
+                if (selectedSeverities == null || selectedSeverities.Count == 0)
+                {
+                    Status = eRunStatus.Failed;
+                    Error = "Severity list is empty or not set when 'By Severity' analyzer is selected.";
+                    return [];
+                }
+
+                // Filter rules to only include those matching selected severities
+                rulesForAnalysis = new ObservableCollection<AccessibilityRuleData>(
+                    rulesForAnalysis.Where(rule => selectedSeverities.Contains(rule.Impact.ToLower()))
+                );
+
+            }
+            else
+            {
+
+                Status = eRunStatus.Passed;
+                Error = string.Empty;
+            }
+
+            return rulesForAnalysis;
+        }
+        private static string GetAccessibilityRulesFile(string platType)
         {
             try
             {
-                return EmbeddedResourceProvider.ReadEmbeddedFile("AccessiblityRules.json");
+                if (platType.Equals("Mobile", StringComparison.OrdinalIgnoreCase))
+                {
+                    return EmbeddedResourceProvider.ReadEmbeddedFile("MobileAccessiblityRules.json");
+                }
+                else if (platType.Equals("Web", StringComparison.OrdinalIgnoreCase))
+                {
+                    return EmbeddedResourceProvider.ReadEmbeddedFile("AccessiblityRules.json");
+                }
+                return string.Empty;
             }
             catch (Exception ex)
             {
@@ -762,7 +877,31 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             }
             return count;
         }
+        //Analyzer for Mobile
+        public void AnalyzerMobileAccessibility(IWebDriver driver, ISearchContext context, IWebElement elementXPath = null)
+        {
+            try
+            {
+                Artifacts = [];
+                context = context is IWrapsElement ? (context as IWrapsElement).WrappedElement : context;
 
+                string screenShotBase64 = GetDataImageString(context);
+                if (screenShotBase64.StartsWith("data:image/png;base64,", StringComparison.OrdinalIgnoreCase))
+                {
+                    screenShotBase64 = screenShotBase64.Substring("data:image/png;base64,".Length);
+                }
+                MobileAccessibilityAnalyzer axeBuilder = new MobileAccessibilityAnalyzer(driver, ActiveRulesForAnalysis);
+                axeBuilder.AnalyzerMobileAccessibility(driver, elementXPath, currentAct: this, axeBuilder, screenShotBase64);
+            }
+            catch (Exception ex)
+            {
+                Error = "Error during mobile accessibility testing: " + ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, "Error during mobile accessibility testing", ex);
+            }
+        }
+
+
+        //Analyzer for Web
         public void AnalyzerAccessibility(IWebDriver Driver, IWebElement element)
         {
             AxeBuilder axeBuilder = null;
@@ -790,7 +929,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
                 if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder != null)
                 {
-                    string folderPath = Path.Combine(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, @"AccessibilityReport");
+                    string folderPath = Path.Combine(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder), @"AccessibilityReport");
                     if (!Directory.Exists(folderPath))
                     {
                         Directory.CreateDirectory(folderPath);
@@ -830,13 +969,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 if (StandardList != null && StandardList.Any())
                 {
                     string[] Tag_array = StandardList.Select(i => i.Value.ToString()).ToArray();
-                    for (int i = 0; i < Tag_array.Length; i++)
-                    {
-                        if (Tag_array[i].Equals("bestpractice", StringComparison.OrdinalIgnoreCase))
-                        {
-                            Tag_array[i] = "best-practice";
-                        }
-                    }
+                    Tag_array = MobileAccessibilityRuleDataExtensions.NormalizeTagNames(Tag_array);
                     axeBuilder.WithTags(Tag_array);
                 }
                 else if (StandardList == null || !StandardList.Any())
@@ -907,11 +1040,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 Violationseverity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()) : Enumerable.Empty<string>().ToList();
                 if (SeverityList != null && SeverityList.Any())
                 {
-                    List<string> sevritylist = SeverityList.Select(x => x.Value.ToLower()).ToList();
-                    foreach (string severity in sevritylist)
-                    {
-                        ActionResult = Violationseverity.Any(y => y.Equals(severity));
-                    }
+                    List<string> sevritylist = [.. SeverityList.Select(x => x.Value.ToLower())];
+                    ActionResult = sevritylist.Any(severity => Violationseverity.Contains(severity));
                 }
                 else
                 {
@@ -961,6 +1091,22 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         }
 
 
+    }
+
+    public class AccessibilityIssue
+    {
+        public string RuleId { get; set; } // e.g., "WCAG_1_1_1", "Android_TouchTargetSize"
+        public string Description { get; set; }
+        public string ElementIdentifier { get; set; } // A unique way to identify the element (e.g., XPath, resource-id)
+        public string Severity { get; set; } // e.g., "Critical", "Moderate", "Minor"
+        public string SuggestedFix { get; set; } // Guidance on how to fix the issue
+        public string RelatedWCAG { get; set; } // e.g., "WCAG 2.1.1 (A)"
+
+
+        public override string ToString()
+        {
+            return $"[{Severity}] {RuleId}: {Description} | Element: {ElementIdentifier} | Suggested Fix: {SuggestedFix}";
+        }
     }
 
     internal static class EmbeddedResourceProvider

@@ -191,55 +191,40 @@ namespace Ginger.Reports
             }
         }
 
-        private string mCentralizedHtmlReportServiceURL;
-        [IsSerializedForLocalRepository]
-        public string CentralizedHtmlReportServiceURL
-        {
-            get
-            {
-                return mCentralizedHtmlReportServiceURL;
-            }
-            set
-            {
-                if (mCentralizedHtmlReportServiceURL != value)
-                {
-                    mCentralizedHtmlReportServiceURL = value;
-                    OnPropertyChanged(nameof(CentralizedHtmlReportServiceURL));
-                }
-            }
-        }
+        // For supporting backward compatibility with old Ginger versions
 
         private string mCentralLoggerEndPointUrl;
-        [IsSerializedForLocalRepository]
-        public string CentralLoggerEndPointUrl
-        {
-            get
-            {
-                return mCentralLoggerEndPointUrl;
-            }
-            set
-            {
-                if (mCentralLoggerEndPointUrl != value)
-                {
-                    mCentralLoggerEndPointUrl = value;
-                    OnPropertyChanged(nameof(CentralLoggerEndPointUrl));
-                }
-            }
-        }
+        public string GetCentralLoggerEndPointURLBackwardCompatibility() => mCentralLoggerEndPointUrl;
+
+        private string mCentralizedHtmlReportServiceURL;
+        public string GetCentralizedHtmlReportServiceURLBackwardCompatibility() => mCentralizedHtmlReportServiceURL;
 
         private string mExecutionHandlerURL;
-        [IsSerializedForLocalRepository]
-        public string ExecutionHandlerURL
+        public string GetExecutionServiceURLBackwardCompatibility() => mExecutionHandlerURL;
+
+
+
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
         {
-            get => mExecutionHandlerURL;
-            set
+            if (errorType == SerializationErrorType.PropertyNotFound)
             {
-                if (!string.Equals(mExecutionHandlerURL, value))
+                if (string.Equals("CentralizedHtmlReportServiceURL", name) && !string.IsNullOrEmpty(value))
                 {
-                    mExecutionHandlerURL = value;
-                    OnPropertyChanged(nameof(ExecutionHandlerURL));
+                    this.mCentralizedHtmlReportServiceURL = value;
+                    return true;
+                }
+                if (string.Equals("CentralLoggerEndPointUrl", name) && !string.IsNullOrEmpty(value))
+                {
+                    this.mCentralLoggerEndPointUrl = value;
+                    return true;
+                }
+                if (string.Equals("ExecutionHandlerURL", name) && !string.IsNullOrEmpty(value))
+                {
+                    this.mExecutionHandlerURL = value;
+                    return true;
                 }
             }
+            return false;
         }
 
 

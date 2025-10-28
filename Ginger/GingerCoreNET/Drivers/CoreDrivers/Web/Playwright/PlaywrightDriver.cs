@@ -131,11 +131,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 }
             }
 
+            var args = new List<string> { "--start-maximized" };
+
+            if (HeadlessBrowserMode)
+            {
+                args.Add("--window-size=1920,1080");
+            }
+
             PlaywrightBrowser.Options options = new()
             {
-                Args = new[] { "--start-maximized" },
+                Args = args.ToArray(),
                 Headless = HeadlessBrowserMode,
-                Timeout = DriverLoadWaitingTime * 1000, //convert to milliseconds
+                Timeout = DriverLoadWaitingTime * 1000,
                 EnableVideoRecording = EnableVideoRecording,
                 RecordVideoDir = recordVideoDir,
                 RecordVideoSize = recordVideoSize
@@ -156,6 +163,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             return options;
         }
+      
 
         public override bool IsRunning()
         {
@@ -895,7 +903,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return Task.Run(() => GetActiveWindowAsync().Result).Result;
         }
 
-        public async Task<List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo>? foundElementsList = null, ObservableList<POMPageMetaData>? PomMetaData = null)
+        public async Task<List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo>? foundElementsList = null, ObservableList<POMPageMetaData>? PomMetaData = null, Bitmap ScreenShot = null)
         {
             ThrowIfClosed();
 
@@ -921,7 +929,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             POMLearner pomLearner = POMLearner.Create(pageSource, new PlaywrightBrowserElementProvider(currentTab), pomSetting, xpathImpl: this);
             CancellationTokenSource cancellationTokenSource = new();
-            Task learnElementsTask = pomLearner.LearnElementsAsync(foundElementsList, cancellationTokenSource.Token);
+            Task learnElementsTask = pomLearner.LearnElementsAsync(foundElementsList, cancellationTokenSource.Token, ScreenShot: ScreenShot);
             _ = Task.Run(() =>
             {
                 while (!StopProcess && !learnElementsTask.IsCompleted) ;

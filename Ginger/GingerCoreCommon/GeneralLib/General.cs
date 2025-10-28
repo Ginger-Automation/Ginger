@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Repository.SolutionCategories;
+using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -113,8 +115,24 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
 
-
-
+        static string mDefaultGingerReposFolder = null;
+        /// <summary>
+        /// Gets the default folder path for Ginger repositories for the current user.
+        /// The folder is located under the user's profile directory as "GingerRepos".
+        /// The value is cached after the first access.
+        /// </summary>
+        public static string DefaultGingerReposFolder
+        {
+            get
+            {
+                mDefaultGingerReposFolder ??= Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "GingerRepos");
+                if (!Directory.Exists(mDefaultGingerReposFolder))
+                {
+                    Directory.CreateDirectory(mDefaultGingerReposFolder);
+                }
+                return mDefaultGingerReposFolder;
+            }
+        }
 
 
 
@@ -278,13 +296,88 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
         public static void ClearDirectoryContent(string DirPath)
         {
-            //clear directory
-            System.IO.DirectoryInfo di = new DirectoryInfo(DirPath);
-            foreach (FileInfo file in di.GetFiles())
-                file.Delete();
-            foreach (DirectoryInfo dir in di.GetDirectories())
+            try
             {
-                dir.Delete(true);
+                if (string.IsNullOrWhiteSpace(DirPath) || !Directory.Exists(DirPath))
+                {
+                    return; // Nothing to do
+                }
+
+                // Use DirectoryInfo so we can enumerate without locking the root folder for the duration
+                DirectoryInfo root = new(DirPath);
+
+                // Local helper to remove ReadOnly/Hidden/System attributes so deletion won't fail
+                static void ResetAttributes(FileSystemInfo fsi)
+                {
+                    try
+                    {
+                        if (fsi == null) return;
+                        FileAttributes attrs = fsi.Attributes;
+                        if ((attrs & (FileAttributes.ReadOnly | FileAttributes.Hidden | FileAttributes.System)) != 0)
+                        {
+                            fsi.Attributes = attrs & ~(FileAttributes.ReadOnly | FileAttributes.Hidden | FileAttributes.System);
+                        }
+                    }
+                    catch { /* best effort */ }
+                }
+
+                static bool Retry(int maxRetries, Func<bool> action, int delayMs = 120)
+                {
+                    int attempt = 0;
+                    while (true)
+                    {
+                        try
+                        {
+                            return action();
+                        }
+                        catch (IOException)
+                        {
+                            if (++attempt >= maxRetries) throw;
+                        }
+                        catch (UnauthorizedAccessException)
+                        {
+                            if (++attempt >= maxRetries) throw;
+                        }
+                        System.Threading.Thread.Sleep(delayMs * attempt); // simple backoff
+                    }
+                }
+
+                // Delete files first
+                foreach (FileInfo file in root.GetFiles())
+                {
+                    ResetAttributes(file);
+                    try
+                    {
+                        Retry(3, () => { file.Delete(); return true; });
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, $"Failed to delete file '{file.FullName}' while clearing directory '{DirPath}'", ex);
+                    }
+                }
+
+                // Then delete sub directories (depth-first) so that ReadOnly attributes inside .git, etc. are handled
+                foreach (DirectoryInfo dir in root.GetDirectories())
+                {
+                    try
+                    {
+                        // Recursively clear attributes for all descendants to avoid UnauthorizedAccess on Windows
+                        foreach (FileSystemInfo fsi in dir.EnumerateFileSystemInfos("*", SearchOption.AllDirectories))
+                        {
+                            ResetAttributes(fsi);
+                        }
+                        ResetAttributes(dir);
+                        Retry(3, () => { dir.Delete(true); return true; });
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, $"Failed to delete sub directory '{dir.FullName}' while clearing directory '{DirPath}'", ex);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error while clearing directory '{DirPath}'", ex);
             }
         }
 
@@ -505,7 +598,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
 
-        
+
         public static string FileContentProvider(string filename)
         {
             Uri url = new Uri(filename);
@@ -560,5 +653,63 @@ namespace Amdocs.Ginger.Common.GeneralLib
         /// <param name="InitialValue">The initial value of the variable.</param>
         /// <param name="CurrentValue">The current value of the variable.</param>
         public record VariableMinimalRecord(string Name, string InitialValue, string CurrentValue);
+
+        public static ObservableList<SolutionCategoryDefinition> GetAllCategories()
+        {
+            ObservableList<SolutionCategoryDefinition> returnSolutionCategories = [];
+            foreach (var category in Enum.GetValues<eSolutionCategories>())
+            {
+                returnSolutionCategories.Add(new SolutionCategoryDefinition(category));
+            }
+            return returnSolutionCategories;
+        }
+
+        public static ObservableList<SolutionCategoryDefinition> MergeCategories(ObservableList<SolutionCategoryDefinition> categoriesDefinitions)
+        {
+            ObservableList<SolutionCategoryDefinition> allCategories = General.GetAllCategories();
+            foreach (var category in allCategories)
+            {
+                var selectedCat = categoriesDefinitions.FirstOrDefault(cd => cd.Category == category.Category);
+                if (selectedCat != null)
+                {
+                    category.SelectedValueID = selectedCat.SelectedValueID;
+                }
+            }
+            return allCategories;
+        }
+
+        public static void UpdateStoredCategories(ObservableList<SolutionCategoryDefinition> existingCategoriesDefinitions, ObservableList<SolutionCategoryDefinition> newCategoriesDefinitions)
+        {
+            if (newCategoriesDefinitions == null)
+            {
+                return;
+            }
+
+            // Update or add categories from the new list
+            foreach (var newCategory in newCategoriesDefinitions)
+            {
+                var existingCategory = existingCategoriesDefinitions.FirstOrDefault(cd => cd.Category == newCategory.Category);
+                if (newCategory.SelectedValueID != Guid.Empty)
+                {
+                    if (existingCategory != null)
+                    {
+                        existingCategory.SelectedValueID = newCategory.SelectedValueID;
+                    }
+                    else
+                    {
+                        existingCategoriesDefinitions.Add(newCategory);
+                    }
+                }
+            }
+
+            // Remove categories without a selected value
+            for (int i = existingCategoriesDefinitions.Count - 1; i >= 0; i--)
+            {
+                if (existingCategoriesDefinitions[i].SelectedValueID == Guid.Empty)
+                {
+                    existingCategoriesDefinitions.RemoveAt(i);
+                }
+            }
+        }
     }
 }

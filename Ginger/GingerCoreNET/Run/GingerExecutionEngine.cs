@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.Common.Expressions;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
@@ -47,6 +48,7 @@ using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
+using GingerCoreNET.GeneralLib;
 using GingerCoreNET.RosLynLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
@@ -295,7 +297,7 @@ namespace Ginger.Run
             var accountReportExecutionLogger = RunListeners.Find((runListeners) => runListeners.GetType() == typeof(AccountReportExecutionLogger));
 
             if (mSelectedExecutionLoggerConfiguration != null
-                && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes &&
+                && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && (GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() || GingerPlayUtils.IsGingerPlayBackwardUrlConfigured()) &&
                 accountReportExecutionLogger == null)
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
@@ -975,10 +977,10 @@ namespace Ginger.Run
                             }
                         }
                     }
-                    else if (inputVar.MappedOutputType == VariableBase.eOutputType.DataSource)
+                    else if (inputVar.MappedOutputType == VariableBase.eOutputType.DataSource||inputVar.MappedOutputType == VariableBase.eOutputType.ValueExpression)
                     {
-                        string dsRes = ValueExpression.Calculate(mGingerRunner.ProjEnvironment, CurrentBusinessFlow, inputVar.MappedOutputValue, mGingerRunner.DSList);
-                        mappedValue = string.IsNullOrEmpty(dsRes) ? string.Empty : dsRes;
+                        string calculatedValue = ValueExpression.Calculate(mGingerRunner.ProjEnvironment, CurrentBusinessFlow, inputVar.MappedOutputValue, mGingerRunner.DSList);
+                        mappedValue = string.IsNullOrEmpty(calculatedValue) ? string.Empty : calculatedValue;
                     }
                     else if (inputVar.GetType() != typeof(VariablePasswordString) && inputVar.GetType() != typeof(VariableDynamic))//what this for???
                     {
@@ -1401,11 +1403,6 @@ namespace Ginger.Run
                     {
                         SkipActionAndNotifyEnd(act);
                         act.ExInfo = "Visual Testing Action Run Mode is Inactive.";
-                    }
-                    if (!CheckRunInNetworkLog(act))
-                    {
-                        SkipActionAndNotifyEnd(act);
-                        return;
                     }
                     if (act.CheckIfVaribalesDependenciesAllowsToRun(CurrentBusinessFlow.CurrentActivity, true) == false)
                     {
@@ -2289,14 +2286,14 @@ namespace Ginger.Run
             }
 
             // if action failed and user don't want screen shot on failure
-            if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && !act.AutoScreenShotOnFailure)
+            if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && !act.AutoScreenShotOnFailure && !mGingerRunner.ForceUiScreenshot)
             {
                 return;
             }
 
             if (ActionExecutorType == GingerRunner.eActionExecutorType.RunOnDriver)
             {
-                if (act.TakeScreenShot || act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                if (act.TakeScreenShot || act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed || mGingerRunner.ForceUiScreenshot)
                 {
                     string msg;
                     try
@@ -2367,7 +2364,7 @@ namespace Ginger.Run
                     }
                 }
             }
-            else if (act.TakeScreenShot && act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen || act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+            else if (act.TakeScreenShot && act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen || act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed || mGingerRunner.ForceUiScreenshot)
             {
                 TakeDesktopScreenShotIntoAction(act);
             }
@@ -3251,7 +3248,12 @@ namespace Ginger.Run
                 int index = CurrentBusinessFlow.Activities.IndexOf(CurrentBusinessFlow.CurrentActivity) + 1;
                 ActivitiesGroup activitiesGroup = CurrentBusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID);
                 CurrentBusinessFlow.AddActivity(sharedActivityInstance, activitiesGroup, index);
-
+                ApplicationAgent appAgent = (ApplicationAgent)mGingerRunner.ApplicationAgents.FirstOrDefault(x => x.AppName.Equals(sharedActivityInstance.TargetApplication.ToString()
+                   ));
+                if (appAgent == null)
+                {
+                    UpdateApplicationAgents();
+                }
                 NotifyDynamicActivityWasAddedToBusinessflow(CurrentBusinessFlow);
 
                 //set it as next activity to run                                  
@@ -3873,7 +3875,7 @@ namespace Ginger.Run
                             CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
 
                             GiveUserFeedback();
-                            if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true && CheckRunInVisualTestingMode(act) && CheckRunInNetworkLog(act))
+                            if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true && CheckRunInVisualTestingMode(act))
                             {
                                 RunAction(act, false);
                                 GiveUserFeedback();
@@ -3939,10 +3941,6 @@ namespace Ginger.Run
                                 {
                                     SkipActionAndNotifyEnd(act);
                                     act.ExInfo = "Visual Testing Action Run Mode is Inactive.";
-                                }
-                                if (!CheckRunInNetworkLog(act))
-                                {
-                                    SkipActionAndNotifyEnd(act);
                                 }
                                 if (!activity.Acts.IsLastItem())
                                 {
@@ -4064,28 +4062,6 @@ namespace Ginger.Run
             else { return true; }
         }
 
-        private bool CheckRunInNetworkLog(Act act)
-        {
-            if (act is ActBrowserElement actBrowserElement)
-            {
-                if (actBrowserElement.ControlAction is ActBrowserElement.eControlAction.StartMonitoringNetworkLog or ActBrowserElement.eControlAction.GetNetworkLog or ActBrowserElement.eControlAction.StopMonitoringNetworkLog)
-                {
-                    GingerCore.Drivers.DriverBase driver = ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Driver;
-
-                    if (driver is GingerCore.Drivers.SeleniumDriver)
-                    {
-                        GingerCore.Drivers.SeleniumDriver.eBrowserType browserType = ((GingerCore.Drivers.SeleniumDriver)driver).GetBrowserType();
-                        if (browserType != GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome)
-                        {
-                            SkipActionAndNotifyEnd(act);
-                            act.ExInfo = "Action is skipped, Selected browser operation:" + actBrowserElement.ControlAction + "  is not supported for browser type:" + browserType;
-                            return false;
-                        }
-                    }
-                }
-            }
-            return true;
-        }
 
         private void ContinueTimerVariables(ObservableList<VariableBase> variableList)
         {
@@ -5861,5 +5837,6 @@ namespace Ginger.Run
                 CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
             }
         }
+     
     }
 }

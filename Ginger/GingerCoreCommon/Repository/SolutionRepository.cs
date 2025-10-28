@@ -157,6 +157,19 @@ namespace Amdocs.Ginger.Repository
         {
             try
             {
+                // this is not a correct approach, containing folders should be automatically added for External Integrations
+                // Patch: explicitly setting the ContainingFolder and ContainingFolderFullPath if missing
+                if (string.IsNullOrEmpty(repositoryItem.ContainingFolder) || string.IsNullOrEmpty(repositoryItem.ContainingFolderFullPath))
+                {
+                    var repoFolder = GetItemRepositoryRootFolder(repositoryItem);
+                    if (repoFolder != null)
+                    {
+                        repositoryItem.ContainingFolder = repoFolder.FolderRelativePath;
+                        repositoryItem.ContainingFolderFullPath = repoFolder.FolderFullPath;
+                    }
+                }
+                
+
                 if (string.IsNullOrEmpty(repositoryItem.ContainingFolder))
                 {
                     throw new Exception("Cannot save item, there is no containing folder defined - " + repositoryItem.GetType().FullName + ", " + repositoryItem.GetNameForFileName());
@@ -212,9 +225,12 @@ namespace Amdocs.Ginger.Repository
 
         public void StopAllRepositoryFolderWatchers()
         {
-            foreach (RepositoryFolderBase RF in SolutionRootFolders)
+            if (SolutionRootFolders != null)
             {
-                RF.StopFileWatcherRecursive();
+                foreach (RepositoryFolderBase RF in SolutionRootFolders)
+                {
+                    RF.StopFileWatcherRecursive();
+                }
             }
         }
 

@@ -17,11 +17,15 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
 using Ginger;
+using GingerCore.Drivers;
 using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -42,12 +46,14 @@ namespace GingerWPF.WizardLib
 
         List<ValidationError> mValidationErrors = [];
 
-        public static void ShowWizard(WizardBase wizard, double width = 800, double height = 800, bool DoNotShowAsDialog = false)
+        private POMUtils _subscribedPOMUtils;
+
+        public static void ShowWizard(WizardBase wizard, double width = 1000, double height = 800, bool DoNotShowAsDialog = false)
         {
             WizardWindow wizardWindow = new WizardWindow(wizard);
             wizardWindow.Dispatcher.Invoke(() =>
             {
-                wizardWindow.MaxHeight = height;
+                wizardWindow.Height = height;
                 wizardWindow.Width = width;
                 if (!wizard.IsNavigationListEnabled)
                 {
@@ -379,6 +385,16 @@ namespace GingerWPF.WizardLib
         private void CloseWizard()
         {
             mWizard.mWizardWindow = null;
+            if (_subscribedSeleniumDriver != null)
+            {
+                _subscribedSeleniumDriver.PropertyChanged -= SeleniumDriver_PropertyChanged;
+                _subscribedSeleniumDriver = null;
+            }
+            if(_subscribedAppiumDriver != null)
+            {
+                _subscribedAppiumDriver.PropertyChanged -= AppiumDriver_PropertyChanged;
+                _subscribedAppiumDriver = null;
+            }
             this.Close();
             CurrentWizardWindow = null;
         }
@@ -441,6 +457,157 @@ namespace GingerWPF.WizardLib
         void IWizardWindow.SetPrevButtonEnabled(bool isEnabled)
         {
             xPrevButton.IsEnabled = isEnabled;
+        }
+
+        private DispatcherTimer AIFineTunetimer;
+        private TimeSpan AIFineTuneelapsedTime; 
+        private string AIFineTuneBaseText;
+        private void StartAIFineTuneTimer()
+        {
+            // Create and configure the DispatcherTimer
+            AIFineTunetimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1) // Update every second
+            };
+            AIFineTunetimer.Tick += AIFineTuneTimer_Tick;
+
+            // Initialize elapsed time
+            AIFineTuneelapsedTime = TimeSpan.Zero;
+            // Capture base label once and initialize displayed text
+            AIFineTuneBaseText = string.IsNullOrWhiteSpace(xAIProcessingText.Text) ? "AI Fine-Tuning Processing" : xAIProcessingText.Text;
+            xAIProcessingText.Text = $"{AIFineTuneBaseText},00:00";
+            // Start the timer
+            try
+            {
+                AIFineTunetimer.Start();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error while starting the timer", ex);
+            }
+        }
+
+        private void AIFineTuneTimer_Tick(object sender, EventArgs e)
+        {
+            // Increment elapsed time by 1 second
+            AIFineTuneelapsedTime = AIFineTuneelapsedTime.Add(TimeSpan.FromSeconds(1));
+
+            // Update the timer display
+            xAIProcessingText.Text = $"{AIFineTuneBaseText}, {(int)AIFineTuneelapsedTime.TotalMinutes:00}:{AIFineTuneelapsedTime.Seconds:00}";
+        }
+
+        // You can stop the timer if needed
+        private void AIFineTuneStopTimer()
+        {
+            if (AIFineTunetimer != null)
+            {
+                try
+                {
+                    AIFineTunetimer.Stop();
+                    // Reset label to base text when stopping
+                    if (!string.IsNullOrWhiteSpace(AIFineTuneBaseText))
+                    {
+                        xAIProcessingText.Text = AIFineTuneBaseText;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error while stopping the timer", ex);
+                }
+            }
+        }
+
+        private SeleniumDriver _subscribedSeleniumDriver;
+        public void SubscribeToSeleniumDriver(SeleniumDriver seleniumDriver)
+        {
+            // Unsubscribe from previous instance if needed
+            if (_subscribedPOMUtils != null)
+            {
+                _subscribedPOMUtils.ProcessingStatusChanged -= POMUtils_ProcessingStatusChanged;
+            }
+
+            if (seleniumDriver.POMUtils != null) 
+            { 
+                seleniumDriver.POMUtils.ProcessingStatusChanged += POMUtils_ProcessingStatusChanged;
+                _subscribedPOMUtils = seleniumDriver.POMUtils;
+            }
+        }
+
+        private void POMUtils_ProcessingStatusChanged(object sender, bool isProcessing)
+        {
+            if (isProcessing)
+            {
+                AIProcessStarted();
+            }
+            else
+            {
+                AIProcessStopped();
+            }
+        }
+
+        private void SeleniumDriver_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(SeleniumDriver.IsProcessing))
+            {
+                if (sender is SeleniumDriver seleniumDriverdata && seleniumDriverdata.IsProcessing)
+                {
+                    Dispatcher.Invoke(AIProcessStarted);
+                }
+                else
+                {
+                    Dispatcher.Invoke(AIProcessStopped);
+                }
+            }
+        }
+
+        private GenericAppiumDriver _subscribedAppiumDriver;
+        public void SubscribeToAppiumDriver(GenericAppiumDriver AppiumDriver)
+        {
+
+            // Unsubscribe from previous instance if needed
+            if (_subscribedPOMUtils != null)
+            {
+                _subscribedPOMUtils.ProcessingStatusChanged -= POMUtils_ProcessingStatusChanged;
+            }
+
+            if (AppiumDriver.POMUtils != null) 
+            {
+                AppiumDriver.POMUtils.ProcessingStatusChanged += POMUtils_ProcessingStatusChanged;
+                _subscribedPOMUtils = AppiumDriver.POMUtils;
+            }
+        }
+
+        private void AppiumDriver_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(GenericAppiumDriver.IsProcessing))
+            {
+                if (sender is GenericAppiumDriver AppiumDriverdata && AppiumDriverdata.IsProcessing)
+                {
+                    Dispatcher.Invoke(AIProcessStarted);
+                }
+                else
+                {
+                    Dispatcher.Invoke(AIProcessStopped);
+                }
+            }
+        }
+
+        public void AIProcessStarted()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xAIProcessingText.Visibility = Visibility.Visible;
+            });
+            StartAIFineTuneTimer();
+        }
+
+        public void AIProcessStopped()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xAIProcessingText.Visibility = Visibility.Collapsed;
+            });
+            AIFineTuneStopTimer();
         }
     }
 }

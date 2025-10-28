@@ -160,15 +160,18 @@ namespace GingerCore.Actions
 
         private bool mActive;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit("Active")]
         public Boolean Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(Fields.Active); } } }
 
 
         private string mDescription;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit("Description")]
         public String Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(Fields.Description); } } }
 
         private string mRunDescription;
         [IsSerializedForLocalRepository]
+        [AllowUserToEdit("Run Description")]
         public String RunDescription { get { return mRunDescription; } set { if (mRunDescription != value) { mRunDescription = value; OnPropertyChanged(Fields.RunDescription); } } }
 
         private bool mSupportSimulation;

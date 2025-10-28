@@ -41,6 +41,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Automation;
 using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace GingerCore.Drivers.WindowsLib
@@ -417,6 +418,12 @@ namespace GingerCore.Drivers.WindowsLib
                     actionResult = mUIElementOperationsHelper.ClickElement(automationElement);
                     break;
 
+                case ActUIElement.eElementAction.DoubleClick:
+                    actionResult = mUIElementOperationsHelper.DoubleClickElement(automationElement);
+                    break;
+                case ActUIElement.eElementAction.MouseDoubleClick:
+                    actionResult = mUIElementOperationsHelper.MouseDoubleClickElement(automationElement);
+                    break;
                 case ActUIElement.eElementAction.MouseClick:
                     actionResult = mUIElementOperationsHelper.MouseClickElement(automationElement);
                     break;
@@ -426,22 +433,19 @@ namespace GingerCore.Drivers.WindowsLib
                     break;
 
                 case ActUIElement.eElementAction.ClickXY:
-                    x = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate));
-                    y = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate));
+                    GetCoOrdinate(actUIElement, automationElement, out x, out y);
                     actionResult = mUIElementOperationsHelper.ClickElementUsingXY(automationElement, x, y);
                     break;
                 case ActUIElement.eElementAction.Collapse:
                     actionResult = mUIElementOperationsHelper.CollapseElement(automationElement);
                     break;
                 case ActUIElement.eElementAction.DoubleClickXY:
-                    x = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate));
-                    y = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate));
+                    GetCoOrdinate(actUIElement, automationElement, out x, out y);
                     actionResult = mUIElementOperationsHelper.DoubleClickElementUsingXY(automationElement, x, y);
                     break;
 
                 case ActUIElement.eElementAction.RightClickXY:
-                    x = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate));
-                    y = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate));
+                    GetCoOrdinate(actUIElement, automationElement, out x, out y);
                     actionResult = mUIElementOperationsHelper.RightClickElementUsingXY(automationElement, x, y);
                     break;
 
@@ -449,7 +453,10 @@ namespace GingerCore.Drivers.WindowsLib
                     actionResult = mUIElementOperationsHelper.GetValue(automationElement, elementType);
                     isoutputvalue = true;
                     break;
-
+                case ActUIElement.eElementAction.GetValueByOCR:
+                    actionResult = UIElementOperationsHelper.GetValueByOCR(automationElement);
+                    isoutputvalue = true;
+                    break;
                 case ActUIElement.eElementAction.GetText:
                     actionResult = mUIElementOperationsHelper.GetText(automationElement);
                     isoutputvalue = true;
@@ -598,6 +605,72 @@ namespace GingerCore.Drivers.WindowsLib
                 actUIElement.Error = actionResult.errorMessage;
             }
         }
+        /// <summary>
+        /// Calculates element-relative coordinates for UI automation actions.
+        /// Returns center offsets when coordinates are invalid or missing.
+        /// </summary>
+        /// <param name="actUIElement">UI element action containing coordinate parameters</param>
+        /// <param name="automationElement">Target automation element for coordinate calculation</param>
+        /// <param name="x">Output element-relative X coordinate</param>
+        /// <param name="y">Output element-relative Y coordinate</param>
+        private static void GetCoOrdinate(ActUIElement actUIElement, UIAuto.AutomationElement automationElement, out int x, out int y)
+        {
+            string xStr = actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate);
+            string yStr = actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate);
+
+            // Default to element-relative center offsets
+            int centerOffsetX = 0;
+            int centerOffsetY = 0;
+
+            try
+            {
+                // Use element bounding rectangle size to compute center offsets (relative to element)
+                System.Drawing.Rectangle drawingRect = automationElement.Current.BoundingRectangle;
+                if (drawingRect.Width > 0 && drawingRect.Height > 0)
+                {
+                    centerOffsetX = drawingRect.Width / 2;
+                    centerOffsetY = drawingRect.Height / 2;
+                }
+                else
+                {
+                    centerOffsetX = 5;
+                    centerOffsetY = 5;
+                }
+            }
+            catch
+            {
+                // If unable to read bounding rect, fallback to small defaults
+                centerOffsetX = 5;
+                centerOffsetY = 5;
+            }
+
+            // Try parse provided coordinates; if valid use them as element-relative offsets, otherwise use center offsets
+            bool parsedX = int.TryParse(xStr, out int parsedXVal);
+            bool parsedY = int.TryParse(yStr, out int parsedYVal);
+
+            if (!parsedX && !parsedY)
+            {
+                // Provided values not parseable -> use centers
+                x = centerOffsetX;
+                y = centerOffsetY;
+            }
+            else if (!parsedX)
+            {
+                x = centerOffsetX;
+                y = parsedYVal;
+            }
+            else if (!parsedY)
+            {
+                x = parsedXVal;
+                y = centerOffsetY;
+            }
+            else
+            {
+                x = parsedXVal;
+                y = parsedYVal;
+            }
+        }
+
         public ActionResult ClickAndValidte(UIAuto.AutomationElement automationElement, ActUIElement act)
         {
             ActionResult actionResult = new ActionResult();
@@ -1145,7 +1218,7 @@ namespace GingerCore.Drivers.WindowsLib
             return EI;
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, Bitmap ScreenShot = null)
         {
             return await Task.Run(async () =>
             {
@@ -1169,7 +1242,7 @@ namespace GingerCore.Drivers.WindowsLib
                         bool learnElement = true;
                         if (pomSetting.FilteredElementType != null)
                         {
-                            if (!pomSetting.FilteredElementType.Any(x=>x.ElementType.Equals(foundElemntInfo.ElementTypeEnum)))
+                            if (!pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(foundElemntInfo.ElementTypeEnum)))
                             {
                                 learnElement = false;
                             }

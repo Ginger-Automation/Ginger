@@ -244,6 +244,7 @@ namespace Ginger
             [
                 new GridColView() { Field = "Name", WidthWeight = 3, ReadOnly = true },
                 new GridColView() { Field = "Value", WidthWeight = 5, ReadOnly = true },
+                new GridColView() { Field = "", WidthWeight = 1, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedElementSectionGrid.Resources["xCopyPropertyValueButtonTemplate"] },
                 new GridColView() { Field = nameof(ControlProperty.Category), WidthWeight = 2, ReadOnly = true, BindingMode = BindingMode.TwoWay },
             ]
             };
@@ -323,6 +324,7 @@ namespace Ginger
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.EnableFriendlyLocator), Header = "Friendly Locator", WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Category), Header = nameof(ElementLocator.Category), WidthWeight = 20 });
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAIGenerated), Header = "AI Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
                 defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedElementSectionGrid.Resources["xTestElementButtonTemplate"] });
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.StatusIcon), Header = "Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedElementSectionGrid.Resources["xTestStatusIconTemplate"] });
                 xLocatorsGrid.SetAllColumnsDefaultView(defView);
@@ -387,7 +389,6 @@ namespace Ginger
                 }
             }
         }
-
         private void PasteLocatorEvent(PasteItemEventArgs EventArgs)
         {
             ElementLocator copiedLocator = (ElementLocator)EventArgs.Item;
@@ -1154,10 +1155,19 @@ namespace Ginger
             }
         }
 
+
         bool FriendlyLocatorChanged = false;
         private void xFriendlyLocatorsGrid_RowChangedEvent(object sender, EventArgs e)
         {
             FriendlyLocatorChanged = true;
+        }
+
+        private void xCopyPropertyButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is ControlProperty property && !string.IsNullOrEmpty(property.Value))
+            {
+                GingerCore.General.SetClipboardText(property.Value);
+            }
         }
     }
 }

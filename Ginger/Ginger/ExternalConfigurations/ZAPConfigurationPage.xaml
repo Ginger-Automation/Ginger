@@ -1,0 +1,104 @@
+﻿<UserControlsLib:GingerUIPage   x:Class="Ginger.ExternalConfigurations.ZAPConfigurationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.ExternalConfigurations"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      xmlns:Activities="clr-namespace:Ginger.BusinessFlowWindows"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ZAPConfigurationPage">
+
+    <DockPanel Background="{StaticResource $BackgroundColor_White}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition  Height="30"/>
+                <RowDefinition  Height="1*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Row="0">
+                <Label Content="ZAP Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+            </StackPanel>
+            <StackPanel Orientation="Vertical" Grid.Row="1">
+                <Grid Margin="10,10,0,0" x:Name="xZAPGrid" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition  Height="50"/>
+                        <RowDefinition  Height="50"/>
+                        <RowDefinition  Height="50"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="230"/>
+                        <ColumnDefinition Width="350*"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
+                        <Label x:Name="xZAPURLLabel" Content="ZAP URL :"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>
+                        <Label x:Name="xZAPURLLabelValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
+                    </StackPanel>
+                    <Activities:UCValueExpression x:Name="xZAPURLTextBox" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="GingerOps Account URL" Margin="139,0,0,0"  Width="414" Grid.ColumnSpan="2"/>
+
+                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1">
+                        <Label x:Name="xZAPAPIkeyLabel" Content="ZAP API KEY :" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
+                        <Label x:Name="xZAPAPIkeyValidation" Content="*" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
+                    </StackPanel>
+                    <Activities:UCValueExpression x:Name="xZAPAPIkeyTextBox" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Secret" Margin="139,0,0,0" Width="414" LostKeyboardFocus="xZAPAPIkeyTextBox_LostKeyboardFocus" Grid.ColumnSpan="2"/>
+                </Grid>
+                <Grid>
+                    <usercontrols:ucButton x:Name="xTestConBtn" IsEnabled="True" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="10,-41,0,66" ButtonType="RoundTextAndImageButton" ButtonText="Test Connection" ButtonImageType="Run" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xTestConBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" ToolTip="Test ZAP Connection"/>
+                    <usercontrols:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="192,-38,0,69" HorizontalAlignment="Left" Height="25" Width="20" Visibility="Collapsed"></usercontrols:ImageMakerControl>
+
+                </Grid>
+            </StackPanel>
+        </Grid>
+            <Grid Grid.Column="1">
+                <Border
+Margin="20,20,10,0"
+ Background="GhostWhite"
+ CornerRadius="10"
+ BorderBrush="#B6E0FE"
+ BorderThickness="1"
+ VerticalAlignment="Top"
+ Height="Auto">
+                    <StackPanel Margin="10"
+         HorizontalAlignment="Left"
+         VerticalAlignment="Top"
+         Height="Auto"
+         >
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                            <usercontrols:ImageMakerControl ImageType="ZAP"  Height="20" Width="20" Margin="0,2,10,0"/>
+                            <TextBlock Text="About ZAP" 
+                    FontWeight="Normal" 
+                     FontSize="18"
+                    VerticalAlignment="Center"/>
+
+                        </StackPanel>
+                        <Separator Margin="0,10,0,10"/>
+                        <TextBlock TextWrapping="Wrap"
+                Foreground="#333"
+                FontSize="12"
+                Margin="0,0,0,10">
+Zed Attack Proxy (ZAP) is an open-source security testing tool.
+It helps identify vulnerabilities in web applications by scanning for issues like SQL injection, XSS, and misconfigurations.
+ZAP works as both an automated scanner and a manual testing proxy, making it useful for developers, testers, and security teams.
+
+
+                        </TextBlock>
+
+                        <TextBlock TextWrapping="Wrap" FontSize="12" FontWeight="Bold" Text="With Ginger, ZAP can be added into automation flows, enabling teams to combine functional testing with security checks for early detection of risks."/>
+                        <TextBlock Margin="0,10,0,0" FontSize="14">
+<Hyperlink NavigateUri="https://www.zaproxy.org/" RequestNavigate="Hyperlink_RequestNavigate">
+                               <Run Text="Learn more about ZAP"/>
+                           </Hyperlink><usercontrols:ImageMakerControl ImageType="Link" Height="10" Width="10" Margin="4,2,12,0"/></TextBlock>
+                 
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</UserControlsLib:GingerUIPage>

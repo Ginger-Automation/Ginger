@@ -192,14 +192,23 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 globalAppModelParameter.PlaceHolder = "{{" + newPlaceholder.Replace("{{", "").Replace("}}", "") + "_Copy}}";
             }
 
+            var optionalValueList = new ObservableList<OptionalValue>();
+
+            foreach (OptionalValue item in globalAppModelParameter.OptionalValuesList)
+            {
+                var copy = item.CreateCopy(setNewGUID: false, deepCopy: true);
+                optionalValueList.Add(copy as OptionalValue);
+            }
+
             var globalAppModelToAdd = new GlobalAppModelParameter()
             {
                 PlaceHolder = globalAppModelParameter.PlaceHolder,
                 Guid = globalAppModelParameter.Guid,
-                OptionalValuesList = [.. globalAppModelParameter.OptionalValuesList]
+                OptionalValuesList = optionalValueList
             };
 
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(globalAppModelToAdd);
+            globalAppModelToAdd.StartDirtyTracking();
             return globalAppModelToAdd;
         }
 

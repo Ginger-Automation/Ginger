@@ -102,6 +102,19 @@ namespace GingerCore.Actions
             }
         }
 
+        public eUnlockType UnLockType
+
+        {
+            get
+            {
+                return GetOrCreateInputParam<eUnlockType>(nameof(UnLockType), eUnlockType.none);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(UnLockType), value.ToString());
+                OnPropertyChanged(nameof(UnLockType));
+            }
+        }
 
         public eAuthResultDetailsFailureSimulation AuthResultDetailsFailureSimulation
         {
@@ -141,8 +154,8 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(MobilePressKey));
             }
         }
-     
-      
+
+
         public ActInputValue FilePathInput
         {
             get
@@ -155,7 +168,7 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(FilePathInput));
             }
         }
-
+       
         public ActInputValue FolderPathInput
         {
             get
@@ -328,6 +341,45 @@ namespace GingerCore.Actions
             }
         }
 
+        public ActInputValue Latitude
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(Latitude),"0");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(Latitude), value.ToString());
+                OnPropertyChanged(nameof(Latitude));
+            }
+        }
+
+        public ActInputValue Longitude
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(Longitude),"0");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(Longitude), value.ToString());
+                OnPropertyChanged(nameof(Longitude));
+            }
+        }
+
+        public ActInputValue Altitude
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(Altitude),"");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(Altitude), value.ToString());
+                OnPropertyChanged(nameof(Altitude));
+            }
+        }
+
         public override string ActionEditPage { get { return "ActMobileDeviceEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return false; } }
@@ -368,6 +420,17 @@ namespace GingerCore.Actions
             Diskinfo,
         }
 
+        public enum eUnlockType
+        {
+            [EnumValueDescription("PIN")]
+            pin,
+            [EnumValueDescription("Password")]
+            password,
+            [EnumValueDescription("Pattern")]
+            pattern,
+            [EnumValueDescription("None")]
+            none
+        }
 
 
         public enum eRotateDeviceState
@@ -510,6 +573,55 @@ namespace GingerCore.Actions
             GetClipboardText,
             [EnumValueDescription("Perform Multi Touch")]
             PerformMultiTouch,
+            [EnumValueDescription("Grant App Permission")]
+            GrantAppPermission,
+            [EnumValueDescription("Type Using keyboard")]
+            TypeUsingkeyboard,
+            [EnumValueDescription("Clear App Data")]
+            ClearAppData,
+            [EnumValueDescription("Get Screen Size")]
+            ScreenSize,
+            [EnumValueDescription("Open Notifications Panel")]
+            OpenNotificationsPanel,
+            [EnumValueDescription("Get Device Time")]
+            GetDeviceTime,
+            [EnumValueDescription("Get Orientation")]
+            GetOrientation,
+            [EnumValueDescription("Get App Package")]
+            GetAppPackage,
+            [EnumValueDescription("Get Current Activity Details")]
+            GetCurrentActivityDetails,
+            [EnumValueDescription("Lock for Duration")]
+            LockForDuration,
+            [EnumValueDescription("Get Device Settings")]
+            GetSettings,
+            [EnumValueDescription("Toggle Location Services")]
+            ToggleLocationServices,
+            [EnumValueDescription("Toggle Data")]
+            ToggleData,
+            [EnumValueDescription("Toggle Airplane Mode")]
+            ToggleAirplaneMode,
+            [EnumValueDescription("Toggle WIFI")] 
+            ToggleWifi,
+            [EnumValueDescription("Is IME Active")] 
+            IsIMEActive,
+            [EnumValueDescription("Get IME Active Engine")]
+            GetIMEActiveEngine,
+            [EnumValueDescription("Start Activity")] 
+            StartActivity,
+            [EnumValueDescription("Get GeoLocation")] 
+            GetGeoLocation,
+            [EnumValueDescription("Send App to Background")] 
+            SendAppToBackground,
+            [EnumValueDescription("Set Network Connection")]
+            SetNetworkConnection,
+            [EnumValueDescription("Get Device OS Type")]
+            GetDeviceOSType,
+            [EnumValueDescription("Set Device Location")]
+            SetDeviceLocation,
+
+
+
         }
 
         public enum ePressKey

@@ -19,9 +19,12 @@ extern alias UIAComWrapperNetstandard;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions.Common;
+using GingerCore.GingerOCR;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Threading;
 
 using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
@@ -315,6 +318,39 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
+        public ActionResult DoubleClickElement(UIAuto.AutomationElement automationElement)
+        {
+            ActionResult actionResult = new ActionResult();
+            bool doubleClickTriggeredFlag = false;
+
+            try
+            {
+                // 1) Try InvokePattern twice
+                actionResult = DoubleClickUsingInvokePattern(automationElement, ref doubleClickTriggeredFlag);
+                if (!string.IsNullOrEmpty(actionResult.errorMessage))
+                {
+                    // 2) Try Legacy default action twice
+                    doubleClickTriggeredFlag = false;
+                    actionResult = DoubleClickUsingLegacyPattern(automationElement, ref doubleClickTriggeredFlag);
+                }
+                if(!string.IsNullOrEmpty(actionResult.errorMessage))
+                {
+                    // 3) Fallback to mouse double-click
+                    winAPI.DoubleSendClick(automationElement);
+                    actionResult.executionInfo = "Successfully double-clicked the element";
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in DoubleClickElement", ex);
+                actionResult.errorMessage = "Failed to double-click the element";
+            }
+
+            return actionResult;
+        }
+
+
+
         public ActionResult MouseClickElement(UIAuto.AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();
@@ -327,6 +363,22 @@ namespace GingerCore.Drivers.Common
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Exception in ClickElement", ex);
                 actionResult.errorMessage = "Failed to click the element";
+            }
+            return actionResult;
+        }
+
+        public ActionResult MouseDoubleClickElement(UIAuto.AutomationElement automationElement)
+        {
+            ActionResult actionResult = new ActionResult();
+            try
+            {
+                winAPI.DoubleSendClick(automationElement);
+                actionResult.executionInfo = "Successfully double-clicked the element";
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in MouseDoubleClickElement", ex);
+                actionResult.errorMessage = "Failed to double-click the element";
             }
             return actionResult;
         }
@@ -517,6 +569,73 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
+        internal ActionResult DoubleClickUsingInvokePattern(UIAuto.AutomationElement automationElement, ref Boolean clickTriggeredFlag)
+        {
+            ActionResult actionResult = new ActionResult();
+            object invokePattern;
+            try
+            {
+                if (automationElement.TryGetCurrentPattern(UIAuto.InvokePattern.Pattern, out invokePattern) && invokePattern != null)
+                {
+                    clickTriggeredFlag = true;
+                    ((UIAuto.InvokePattern)invokePattern).Invoke();
+                    Thread.Sleep(100);
+                    ((UIAuto.InvokePattern)invokePattern).Invoke();
+                    actionResult.executionInfo = "Successfully double-click the element";
+                }
+                else
+                {
+                    actionResult.errorMessage = "Failed to double-click the element";
+                }
+            }
+            catch (Exception ex)
+            {
+                clickTriggeredFlag = false;
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in DoubleClickElement", ex);
+                actionResult.errorMessage = "Failed to double-click the element";
+            }
+            return actionResult;
+        }
+
+        internal ActionResult DoubleClickUsingLegacyPattern(UIAuto.AutomationElement automationElement, ref Boolean clickTriggeredFlag)
+        {
+            ActionResult actionResult = new ActionResult();
+            object legacyPattern;
+            try
+            {
+                if (automationElement.TryGetCurrentPattern(UIAuto.LegacyIAccessiblePattern.Pattern, out legacyPattern) && legacyPattern != null)
+                {
+                    actionResult = GetPropertyValue(automationElement, UIAuto.LegacyIAccessiblePatternIdentifiers.DefaultActionProperty);
+                    if (string.IsNullOrEmpty(actionResult.errorMessage))
+                    {
+                        if (!string.IsNullOrEmpty(actionResult.outputValue))
+                        {
+                            clickTriggeredFlag = true;
+                            ((UIAuto.LegacyIAccessiblePattern)legacyPattern).DoDefaultAction();
+                            Thread.Sleep(100);
+                            ((UIAuto.LegacyIAccessiblePattern)legacyPattern).DoDefaultAction();
+                            actionResult.executionInfo = "Successfully double-click  the element";
+                        }
+                        else
+                        {
+                            actionResult.errorMessage = "Failed to double-click the element";
+                        }
+                    }
+                }
+                else
+                {
+                    actionResult.errorMessage = "Failed to double-click the element";
+                }
+            }
+            catch (Exception ex)
+            {
+                clickTriggeredFlag = false;
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in DoubleClickElement", ex);
+                actionResult.errorMessage = "Failed to double-click the element";
+            }
+            return actionResult;
+        }
+
 
         //public ActionResult GetControlProperty(UIAuto.AutomationElement automationElement, string propertyName)
         //{
@@ -566,6 +685,57 @@ namespace GingerCore.Drivers.Common
             }
             return actionResult;
 
+        }
+
+        public static ActionResult GetValueByOCR(UIAuto.AutomationElement automationElement)
+        {
+            ActionResult actionResult = new ActionResult();
+            byte[] imageBytes = null;
+
+            try
+            {
+                BringElementWindowToForeground(automationElement);
+
+                // 1. Get bounding rectangle
+                var rect = automationElement.Current.BoundingRectangle;
+                int left = rect.X;
+                int top = rect.Y;
+                int width = rect.Width;
+                int height = rect.Height;
+
+                using (var bmp = new Bitmap(width, height))
+                {
+                    using (var g = Graphics.FromImage(bmp))
+                    {
+                        g.CopyFromScreen(left, top, 0, 0, new Size(width, height));
+                    }
+
+                    // 2. Convert bitmap to PNG bytes
+                    using (var ms = new MemoryStream())
+                    {
+                        bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                        imageBytes = ms.ToArray();
+                    }
+                }
+
+                // 3. OCR
+                string ocrText = GingerOcrOperations.ReadTextFromByteArray(imageBytes);
+                actionResult.outputValue = string.IsNullOrWhiteSpace(ocrText) ? ocrText : ocrText.Trim();
+                actionResult.executionInfo = "OCR value extracted successfully";
+            }
+            catch (Exception ex)
+            {
+                actionResult.errorMessage = "Failed to get value by OCR: " + ex.Message;
+            }
+            finally
+            {
+                if (imageBytes != null)
+                {
+                    // Overwrite with zeros for cleanup
+                    Array.Clear(imageBytes, 0, imageBytes.Length);
+                }
+            }
+            return actionResult;
         }
 
         public ActionResult GetText(UIAuto.AutomationElement automationElement)
@@ -809,6 +979,25 @@ namespace GingerCore.Drivers.Common
                         result = true;
                     }
                     break;
+                case ActUIElement.eElementAction.GetValueByOCR:
+                    if (elementToValidate == null)
+                    {
+                        result = false;
+                        break;
+                    }
+                    actionResult = GetValueByOCR(elementToValidate);
+                    var actual = actionResult.outputValue?.Trim();
+                    var expected = validationValue?.Trim();
+                    if (!string.IsNullOrEmpty(actionResult.errorMessage) || string.IsNullOrEmpty(actual))
+                    {
+                        actionResult = GetText(elementToValidate);
+                        actual = actionResult.outputValue?.Trim();
+                    }
+                    if (string.Equals(actual, expected, StringComparison.Ordinal))
+                    {
+                        result = true;
+                    }
+                    break;
             }
 
             return result;
@@ -844,6 +1033,39 @@ namespace GingerCore.Drivers.Common
                 actionResult.executionInfo = "Successfully clicked and validated";
             }
             return actionResult;
+        }
+
+        /// <summary>
+        /// Brings the window containing the given AutomationElement to the foreground and optionally resizes it.
+        /// </summary>
+        /// <param name="automationElement">The UI Automation element whose window should be focused.</param>
+        /// <param name="resizeWidth">Optional width to resize the window to.</param>
+        /// <param name="resizeHeight">Optional height to resize the window to.</param>
+        public static void BringElementWindowToForeground(UIAuto.AutomationElement automationElement, int? resizeWidth = null, int? resizeHeight = null)
+        {
+            if (automationElement == null)
+            {
+                return;
+            }
+
+            try
+            {
+                // Bring window to foreground
+                WinAPIAutomation.ShowWindow(automationElement);
+
+                // Optionally resize
+                if (resizeWidth.HasValue && resizeHeight.HasValue)
+                {
+                    WinAPIAutomation.ResizeExternalWindow(automationElement, resizeWidth.Value, resizeHeight.Value);
+                }
+
+                // Give time to the window to come to the front
+                Thread.Sleep(500);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to bring window to foreground", ex);
+            }
         }
     }
 }

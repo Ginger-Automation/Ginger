@@ -18,10 +18,13 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.Run.ExecutionSummary;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
@@ -34,6 +37,7 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
+using GingerCoreNET.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -442,6 +446,7 @@ namespace Ginger.Run
             try
             {
                 mRunSetConfig.IsRunning = true;
+                AccountReportApiHandler accountReportApiHandler = null;
                 //reset run       
                 if (doContinueRun == false)
                 {
@@ -452,9 +457,9 @@ namespace Ginger.Run
                     }
                     else
                     {
-                        if (mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && !string.IsNullOrEmpty(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl))
+                        if (mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && (GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() || GingerPlayUtils.IsGingerPlayBackwardUrlConfigured()) && !string.IsNullOrEmpty(GingerPlayEndPointManager.GetAccountReportServiceUrl()))
                         {
-                            AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+                            accountReportApiHandler = new AccountReportApiHandler(GingerPlayEndPointManager.GetAccountReportServiceUrl());
                             bool isValidated = accountReportApiHandler.ExecutionIdValidation((Guid)RunSetConfig.ExecutionID);
                             if (!isValidated)
                             {
@@ -463,6 +468,7 @@ namespace Ginger.Run
                             }
                         }
                     }
+
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Ginger Execution Id: {0}", RunSetConfig.ExecutionID));
                     Reporter.ToLog(eLogLevel.INFO, string.Format("{0} Source Application: '{1}' And Source Application User: '{2}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), RunSetConfig.SourceApplication, RunSetConfig.SourceApplicationUser));
 
@@ -493,7 +499,7 @@ namespace Ginger.Run
                     WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions([RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution]);
                 }
 
-                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && Runners.Count > 0)
+                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && (GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() || GingerPlayUtils.IsGingerPlayBackwardUrlConfigured()) && Runners.Count > 0)
                 {
                     if (((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger != null)
                     {
@@ -610,7 +616,7 @@ namespace Ginger.Run
                 Runners[0].Executor.ExecutionLoggerManager.RunSetEnd();
 
                 bool isReportStoredToRemote = false;
-                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && Runners.Count > 0)
+                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && (GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() || GingerPlayUtils.IsGingerPlayBackwardUrlConfigured()) && Runners.Count > 0)
                 {
                     if (((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger != null)
                     {
@@ -956,24 +962,24 @@ namespace Ginger.Run
             switch (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel)
             {
                 case SealightsConfiguration.eSealightsEntityLevel.BusinessFlow:
-                    {
-                        DisableBFExecution(testsToExclude, runsetConfig);
-                        break;
-                    }
+                {
+                    DisableBFExecution(testsToExclude, runsetConfig);
+                    break;
+                }
                 case SealightsConfiguration.eSealightsEntityLevel.ActivitiesGroup:
-                    {
-                        DisableActivitiesGroupExecution(testsToExclude, runsetConfig);
-                        break;
-                    }
+                {
+                    DisableActivitiesGroupExecution(testsToExclude, runsetConfig);
+                    break;
+                }
                 case SealightsConfiguration.eSealightsEntityLevel.Activity:
-                    {
-                        DisableActivitiesExecution(testsToExclude, runsetConfig);
-                        break;
-                    }
+                {
+                    DisableActivitiesExecution(testsToExclude, runsetConfig);
+                    break;
+                }
                 default:
-                    {
-                        throw new InvalidEnumArgumentException("Not a valid value");
-                    }
+                {
+                    throw new InvalidEnumArgumentException("Not a valid value");
+                }
             }
         }
 
@@ -1051,6 +1057,7 @@ namespace Ginger.Run
                 BF.Active = true;
             }
         }
+
     }
 }
 

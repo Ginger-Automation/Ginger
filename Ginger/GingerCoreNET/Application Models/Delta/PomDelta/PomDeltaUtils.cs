@@ -98,11 +98,11 @@ namespace GingerCoreNET.Application_Models
                 {
                     List<eElementType> selectedElementList = GetSelectedElementList();
 
-                    await mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.POM.PomSetting, POMLatestElements, PomMetaData);
+                    await mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.POM.PomSetting, POMLatestElements, PomMetaData, ScreenShot: PomLearnUtils.ScreenShot);
                 }
                 else
                 {
-                    await mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.POM.PomSetting, POMLatestElements);
+                    await mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.POM.PomSetting, POMLatestElements, ScreenShot: PomLearnUtils.ScreenShot);
                 }
                 SetUnidentifiedElementsDeltaDetails();
                 DoEndOfRelearnElementsSorting();
@@ -399,6 +399,7 @@ namespace GingerCoreNET.Application_Models
             DeltaElementInfo matchedDeltaElement = new DeltaElementInfo();
             //copy possible customized fields from original
             latestElement.Guid = existingElement.Guid;
+            latestElement.ParentGuid = existingElement.ParentGuid;
             latestElement.ElementName = existingElement.ElementName;
             latestElement.Description = existingElement.Description;
             latestElement.ElementGroup = existingElement.ElementGroup;
@@ -1004,6 +1005,12 @@ namespace GingerCoreNET.Application_Models
                 {
                     originalElement.Locators.Add(secondElement.Locators[i]);
                 }
+            }
+
+            //Merge element screen-shot
+            if (!string.IsNullOrEmpty(secondElement.ScreenShotImage) && (string.IsNullOrEmpty(originalElement.ScreenShotImage) || originalElement.ScreenShotImage != secondElement.ScreenShotImage))
+            {
+                originalElement.ScreenShotImage = secondElement.ScreenShotImage;
             }
         }
 

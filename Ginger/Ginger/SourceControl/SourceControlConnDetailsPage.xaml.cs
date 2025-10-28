@@ -24,6 +24,8 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Ginger.SourceControl
 {
@@ -47,6 +49,23 @@ namespace Ginger.SourceControl
         }
 
 
+
+
+        private void CopyMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is FrameworkElement element && element.Tag is Control sourceControl)
+            {
+                string textToCopy = sourceControl switch
+                {
+                    TextBox textBox => textBox.Text,
+                    PasswordBox passwordBox => passwordBox.Password,
+                    _ => string.Empty
+                };
+
+                GingerCore.General.CopyMouseDown(sender, textToCopy);
+            }
+        }
+
         private void Bind()
         {
 
@@ -55,15 +74,9 @@ namespace Ginger.SourceControl
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSourceControlBranchTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.Branch));
 
-            if (SourceControlClassTextBox.Text == SourceControlBase.eSourceControlType.GIT.ToString())
-            {
-                xTimeoutRow.Height = new GridLength(0);
-            }
-            else
-            {
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTextSourceControlConnectionTimeout, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.Timeout));
-                xBranchRow.Height = new GridLength(0);
-            }
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTextSourceControlConnectionTimeout, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.Timeout));
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserAuthorNameTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.AuthorName));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlAuthorEmailTextBox, TextBox.TextProperty, WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.AuthorEmail));
 
@@ -86,6 +99,7 @@ namespace Ginger.SourceControl
                 WorkSpace.Instance.Solution.SourceControl.AuthorName = WorkSpace.Instance.Solution.SourceControl.Username;
             }
             SetSourceControlDetailsFromUserProfile();
+
         }
 
         private void SetSourceControlDetailsFromUserProfile()
@@ -115,14 +129,9 @@ namespace Ginger.SourceControl
                     {
                         SourceControlClassTextBox.Text = nameof(GingerSolutionSourceControl.SourceControlInfo.Type);
                     }
-                    if (string.IsNullOrEmpty(GingerSolutionSourceControl.SourceControlInfo.Branch))
-                    {
-                        xSourceControlBranchTextBox.Text = SourceControlIntegration.GetCurrentBranchForSolution(WorkSpace.Instance.Solution.SourceControl);
-                    }
-                    else
-                    {
-                        xSourceControlBranchTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Branch;
-                    }
+                   
+                    xSourceControlBranchTextBox.Text = SourceControlIntegration.GetCurrentBranchForSolution(WorkSpace.Instance.Solution.SourceControl) ?? string.Empty;
+
                     SourceControlUserTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.Username;
                     SourceControlPassTextBox.Password = GingerSolutionSourceControl.SourceControlInfo.Password;
                     SourceControlUserAuthorNameTextBox.Text = GingerSolutionSourceControl.SourceControlInfo.AuthorName;
@@ -175,9 +184,10 @@ namespace Ginger.SourceControl
                         return;
                     }
                 }
-                Close();
+                WorkSpace.Instance.UserProfile.SetSourceControlPropertyOnUserProfile(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Guid);
                 WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
                 WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
+                Close();
 
             }
         }
@@ -190,9 +200,6 @@ namespace Ginger.SourceControl
         {
             if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.SourceControl != null)
             {
-
-                WorkSpace.Instance.UserProfile.SetSourceControlPropertyOnUserProfile(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Guid);
-
                 SourceControlIntegration.Disconnect(WorkSpace.Instance.Solution.SourceControl);
             }
             genWin.Close();
