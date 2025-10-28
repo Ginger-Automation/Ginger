@@ -245,7 +245,7 @@ namespace Ginger.GeneralWindows
         private void ProFeatureButtonClick(object sender, RoutedEventArgs e)
         {
          
-            if (!string.IsNullOrEmpty(GingerPlayUtils.GetGingerPlayGatewayURLIfConfigured()))
+            if (GingerPlayUtils.IsGingerPlayEnabled() && !string.IsNullOrEmpty(GingerPlayUtils.GetGingerPlayGatewayURLIfConfigured()))
             {
                 try
                 {
@@ -320,6 +320,7 @@ namespace Ginger.GeneralWindows
                 ShowInTaskbar = false,
                 Content = border,
                 SizeToContent = SizeToContent.Manual,
+                Owner = Application.Current.MainWindow
             };
 
             bannerWindow.ShowDialog();

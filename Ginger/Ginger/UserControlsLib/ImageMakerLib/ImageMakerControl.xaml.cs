@@ -215,7 +215,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsStaticImage("WireMock_Logo.png");
                     break;
                 case eImageType.GingerPlayLogo:
-                    SetAsStaticImage("GingerPlayLogo.png");
+                    SetAsStaticImage("GingerPlayWhiteGradiant.png", Width:20,Height:20);
                     break;
                 case eImageType.GingerPlayGradiantBlack:
                     SetAsStaticImage("GingerPlayGradiantBlack.png");
