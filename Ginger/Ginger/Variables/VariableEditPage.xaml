@@ -38,33 +38,33 @@
                             </StackPanel>
                             <TextBox x:Name="xVarNameTxtBox" IsEnabled="True" AutomationProperties.AutomationId="Variable Name AID" Margin="0,0,0,10" Style="{StaticResource $MultiRowsTextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch"/>
                             <Label Style="{StaticResource $LabelStyle}">Description:</Label>
-                            <TextBox x:Name="xVarDescritpiontxtBox" IsEnabled="True" Style="{StaticResource $MultiRowsTextBoxStyle}" Height="50" Margin="0,0,0,0"/>
+                            <TextBox x:Name="xVarDescritpiontxtBox" IsEnabled="True" Style="{StaticResource $TextBoxStyle}" Margin="0,0,0,0"/>
                             <Ginger:ucTagsViewer x:Name="xTagsViewer" Margin="0,0,0,0" HorizontalAlignment="Left" />
                             <StackPanel  Orientation="Vertical" >
-                                <DockPanel  Margin="0,5,0,0">
-                                    <CheckBox x:Name="xSetAsInputValueCheckBox" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Content="Set as Input" HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="5,0,0,0" Checked="InputOutputChecked" Unchecked="InputOutputUnChecked" />
-                                    <CheckBox x:Name="xMandatoryInputCheckBox" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Content="Mandatory Input" HorizontalAlignment="Left"  DockPanel.Dock="Left" Margin="8,0,0,0" Visibility="Collapsed" ToolTip="Value must be provided before execution starts"/>
-                                </DockPanel>
-                                <CheckBox x:Name="xSetAsOutputValueCheckBox" Style="{StaticResource $CeckBoxStyle}"  VerticalAlignment="Center" Content="Set as Output" HorizontalAlignment="Left"  DockPanel.Dock="Left" Margin="5,5,0,0" Checked="InputOutputChecked" Unchecked="InputOutputUnChecked"/>
-                                <CheckBox x:Name="xPublishcheckbox" IsEnabled="True" Content="Publish" ToolTip="Publish to third party applications" VerticalAlignment="Center" HorizontalAlignment="Left"  DockPanel.Dock="Left" Margin="5,5,0,0" Style="{StaticResource $CeckBoxStyle}" Visibility="Collapsed"/>
-                                <StackPanel Orientation="Horizontal" Margin="5,10,0,0" VerticalAlignment="Center" Name="LinkedVariableStackPanel"> 
-                                    <Label Style="{StaticResource $LabelStyle}" VerticalAlignment="Center">
-                                        <Label.Content>
-                                            <GingerCore:ucTextDicResource Text="Linked [Variable]:"/>
-                                        </Label.Content>
-                                    </Label>
-                                    <usercontrols:ImageMakerControl ImageType="Info" Height="12" Width="12" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" >
-                                        <usercontrols:ImageMakerControl.ToolTip>
-                                            <GingerCore:ucTextDicResource Text="The actual [Variable] which will be used/manipulate in run time"/>
-                                        </usercontrols:ImageMakerControl.ToolTip>
-                                    </usercontrols:ImageMakerControl>
-                                    <ComboBox x:Name="xLinkedvariableCombo" Width="200" Style="{StaticResource $FlatEditInputComboBoxStyle}" SelectionChanged="linkedvariableCombo_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,5"/>
-                                    <usercontrols:ucButton x:Name="xPublishValueToLinkedVarBtn" ButtonType="ImageButton" ButtonImageType="LinkSquare" Click="publishValueToLinkedBtn_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,0" ButtonFontImageSize="16" >
-                                        <usercontrols:ucButton.ToolTip>
-                                            <GingerCore:ucTextDicResource Text="Set linked [Variable] value to be the same as current [Variable] value"/>
-                                        </usercontrols:ucButton.ToolTip>
-                                    </usercontrols:ucButton>
-                                </StackPanel>
+                                <WrapPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                    <CheckBox x:Name="xSetAsInputValueCheckBox" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Content="Set as Input" HorizontalAlignment="Left" Margin="5,0,15,0" Checked="InputOutputChecked" Unchecked="InputOutputUnChecked" />
+                                    <CheckBox x:Name="xMandatoryInputCheckBox" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Content="Mandatory Input" HorizontalAlignment="Left" Margin="0,0,15,0" Visibility="Collapsed" ToolTip="Value must be provided before execution starts"/>
+                                    <CheckBox x:Name="xSetAsOutputValueCheckBox" Style="{StaticResource $CeckBoxStyle}"  VerticalAlignment="Center" Content="Set as Output" HorizontalAlignment="Left" Margin="0,0,15,0" Checked="InputOutputChecked" Unchecked="InputOutputUnChecked"/>
+                                    <CheckBox x:Name="xPublishcheckbox" IsEnabled="True" Content="Publish" ToolTip="Publish to third party applications" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,15,0" Style="{StaticResource $CeckBoxStyle}" Visibility="Collapsed"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,0" VerticalAlignment="Center" Name="LinkedVariableStackPanel"> 
+                                        <Label Style="{StaticResource $LabelStyle}" VerticalAlignment="Center">
+                                            <Label.Content>
+                                                <GingerCore:ucTextDicResource Text="Linked [Variable]:"/>
+                                            </Label.Content>
+                                        </Label>
+                                        <usercontrols:ImageMakerControl ImageType="Info" Height="12" Width="12" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" >
+                                            <usercontrols:ImageMakerControl.ToolTip>
+                                                <GingerCore:ucTextDicResource Text="The actual [Variable] which will be used/manipulate in run time"/>
+                                            </usercontrols:ImageMakerControl.ToolTip>
+                                        </usercontrols:ImageMakerControl>
+                                        <ComboBox x:Name="xLinkedvariableCombo" Width="200" Style="{StaticResource $FlatEditInputComboBoxStyle}" SelectionChanged="linkedvariableCombo_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,5"/>
+                                        <usercontrols:ucButton x:Name="xPublishValueToLinkedVarBtn" ButtonType="ImageButton" ButtonImageType="LinkSquare" Click="publishValueToLinkedBtn_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,0" ButtonFontImageSize="16" >
+                                            <usercontrols:ucButton.ToolTip>
+                                                <GingerCore:ucTextDicResource Text="Set linked [Variable] value to be the same as current [Variable] value"/>
+                                            </usercontrols:ucButton.ToolTip>
+                                        </usercontrols:ucButton>
+                                    </StackPanel>
+                                </WrapPanel>
                             </StackPanel>
                         </StackPanel>
                         <Ginger:ucSharedRepoInstance x:Name="xSharedRepoInstanceUC" Grid.Column="1" />

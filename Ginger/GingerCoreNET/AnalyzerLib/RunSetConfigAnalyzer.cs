@@ -158,6 +158,10 @@ namespace Ginger.AnalyzerLib
                                 case VariableBase.eOutputType.DataSource:
                                     issueExist = string.IsNullOrEmpty(inputVar.MappedOutputValue);
                                     break;
+                                case VariableBase.eOutputType.Value:
+                                    // For Value type, any text input is valid, so no validation is needed
+                                    issueExist = false;
+                                    break;
                             }
 
                             if (issueExist)

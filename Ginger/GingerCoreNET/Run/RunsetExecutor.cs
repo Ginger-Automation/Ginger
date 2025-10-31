@@ -266,6 +266,23 @@ namespace Ginger.Run
 
             try
             {
+                // Handle backward compatibility for old runset XML files first
+                // Convert variables with DiffrentFromOrigin=true and MappedOutputType=None to new "Value" mapping format
+                if (var.DiffrentFromOrigin && var.MappedOutputType == VariableBase.eOutputType.None)
+                {
+                    string sourceValue = GetVariableSourceValue(var);
+                    
+                    // Convert old format to new format if we have a source value
+                    if (!string.IsNullOrEmpty(sourceValue))
+                    {
+                        var.MappedOutputType = VariableBase.eOutputType.Value;
+                        var.MappedOutputValue = sourceValue;
+                        
+                        Reporter.ToLog(eLogLevel.DEBUG, $"UpdateOldOutputVariableMappedValues: Converted variable '{var.Name}' of type '{var.VariableType}' from old format (DiffrentFromOrigin=True, MappedOutputType=None) to new format (MappedOutputType=Value, MappedOutputValue='{var.MappedOutputValue}')");
+                    }
+                }
+
+                // Handle OutputVariable mapping backward compatibility
                 if (var.MappedOutputType == VariableBase.eOutputType.OutputVariable && !var.MappedOutputValue.Contains('_'))
                 {
                     for (int i = AllPreviousBusinessFlowRuns.Count - 1; i >= 0; i--)//doing in reverse for sorting by latest value in case having the same var more than once
@@ -285,14 +302,94 @@ namespace Ginger.Run
             {
                 Reporter.ToLog(eLogLevel.WARN, "Exception occurred when trying to update outputvariable mapped value ", ex);
             }
+        }
 
-
+        /// <summary>
+        /// Gets the source value from different variable types based on their specific storage patterns
+        /// </summary>
+        /// <param name="var">The variable to extract the source value from</param>
+        /// <returns>The source value if found, null or empty otherwise</returns>
+        private string GetVariableSourceValue(VariableBase var)
+        {
+            try
+            {
+                switch (var)
+                {
+                    case VariablePasswordString passwordVar:
+                        // For VariablePasswordString, check the Password property first, then Value
+                        return !string.IsNullOrEmpty(passwordVar.Password) ? passwordVar.Password : var.Value;
+                    
+                    case VariableString stringVar:
+                        // For VariableString, check InitialStringValue first, then Value
+                        return !string.IsNullOrEmpty(stringVar.InitialStringValue) ? stringVar.InitialStringValue : var.Value;
+                    
+                    case VariableNumber numberVar:
+                        // For VariableNumber, check InitialNumberValue first, then Value
+                        return !string.IsNullOrEmpty(numberVar.InitialNumberValue) ? numberVar.InitialNumberValue : var.Value;
+                    
+                    case VariableDateTime dateTimeVar:
+                        // For VariableDateTime, check InitialDateTime first, then Value
+                        return !string.IsNullOrEmpty(dateTimeVar.InitialDateTime) ? dateTimeVar.InitialDateTime : var.Value;
+                    
+                    case VariableSelectionList selectionVar:
+                        // For VariableSelectionList, use the SelectedValue if available, otherwise Value
+                        return !string.IsNullOrEmpty(selectionVar.SelectedValue) ? selectionVar.SelectedValue : var.Value;
+                    
+                    case VariableDynamic dynamicVar:
+                        // For VariableDynamic, just use the Value property (no specific initial value field)
+                        return var.Value;
+                    
+                    case VariableTimer timerVar:
+                        // For VariableTimer, just use the Value property (no specific initial value field)
+                        return var.Value;
+                    
+                    case VariableRandomString randomStringVar:
+                        // For VariableRandomString, just use the Value property (no specific initial value field)
+                        return var.Value;
+                    
+                    case VariableRandomNumber randomNumberVar:
+                        // For VariableRandomNumber, just use the Value property (no specific initial value field)
+                        return var.Value;
+                    
+                    case VariableSequence sequenceVar:
+                        // For VariableSequence, just use the Value property (no specific initial value field)
+                        return var.Value;
+                    
+                    default:
+                        // For all other variable types, use the Value property
+                        return var.Value;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, $"Exception occurred while getting source value for variable '{var?.Name}' of type '{var?.VariableType}': {ex.Message}");
+                // Fallback to the Value property if there's any error
+                return var?.Value;
+            }
         }
 
         private void CopyCustomizedVariableConfigurations(VariableBase customizedVar, VariableBase originalVar)
         {
             //keep original description values
             VariableBase originalCopy = (VariableBase)originalVar.CreateCopy(false);
+
+            // Handle backward compatibility for old runset XML files before any other processing
+            if (customizedVar.DiffrentFromOrigin && customizedVar.MappedOutputType == VariableBase.eOutputType.None)
+            {
+                string sourceValue = GetVariableSourceValue(customizedVar);
+                
+                // Convert old format to new format if we have a source value
+                if (!string.IsNullOrEmpty(sourceValue))
+                {
+                    customizedVar.MappedOutputType = VariableBase.eOutputType.Value;
+                    customizedVar.MappedOutputValue = sourceValue;
+                    
+                    Reporter.ToLog(eLogLevel.DEBUG, $"CopyCustomizedVariableConfigurations: Converted variable '{customizedVar.Name}' of type '{customizedVar.VariableType}' from old format to new format");
+                }
+            }
+
+            // Store the original initial value before any mapping
+            string preservedInitialValue = originalVar.GetInitialValue();
 
             //ovveride original variable configurations with user customizations
             string varType = customizedVar.GetType().Name;
@@ -306,13 +403,27 @@ namespace Ginger.Run
 
             originalVar.DiffrentFromOrigin = customizedVar.DiffrentFromOrigin;
             originalVar.MappedOutputVariable = customizedVar.MappedOutputVariable;
-
+            originalVar.MappedOutputType = customizedVar.MappedOutputType;
+            originalVar.MappedOutputValue = customizedVar.MappedOutputValue;
 
             //Fix for Empty variable are not being saved in Run Configuration (when variable has value in BusinessFlow but is changed to empty in RunSet)
             if (customizedVar.DiffrentFromOrigin && string.IsNullOrEmpty(customizedVar.MappedOutputVariable))
             {
                 originalVar.Value = customizedVar.Value;
             }
+
+            // Handle "Value" mapping type - copy the mapped value to the current value
+            if (customizedVar.MappedOutputType == VariableBase.eOutputType.Value && !string.IsNullOrEmpty(customizedVar.MappedOutputValue))
+            {
+                // Only set the current value to the mapped value for immediate effect
+                // DO NOT call SetInitialValue as this would change the variable's initial value permanently
+                originalVar.Value = customizedVar.MappedOutputValue;
+                // Ensure the variable is marked as different from origin
+                originalVar.DiffrentFromOrigin = true;
+            }
+
+            // Restore the original initial value to ensure it's not changed by mapping
+            originalVar.SetInitialValue(preservedInitialValue);
 
             //Restore original description values
             originalVar.Name = originalCopy.Name;
