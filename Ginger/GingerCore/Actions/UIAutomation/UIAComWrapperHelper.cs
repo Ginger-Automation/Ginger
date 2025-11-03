@@ -32,8 +32,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -848,7 +850,7 @@ namespace GingerCore.Drivers
         }
 
         //Find first matching element based on locator
-        public override object FindElementByLocator(eLocateBy locateBy, string locateValue)
+        public override object FindElementByLocator(eLocateBy locateBy, string locateValue,string ElemenetType = null)
         {
             object element = null;
             int count = 0;
@@ -878,7 +880,7 @@ namespace GingerCore.Drivers
                 }
                 Thread.Sleep(100);
             }
-            if (CurrentWindow == null)
+             if (CurrentWindow == null)
             {
                 throw new Exception("No Window Handle Attached to locate the element.");
             }
@@ -896,6 +898,136 @@ namespace GingerCore.Drivers
                         case eLocateBy.ByName:
                             UIAuto.Condition nameCondition = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.NameProperty, locateValue);
                             element = CurrentWindow.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, nameCondition);
+                            if(element == null)
+                            {
+                                if (!string.IsNullOrEmpty(ElemenetType))
+                                {
+                                    // If ElemenetType is a localized display string prefer LocalizedControlTypeProperty:
+                                    // element = CurrentWindow.FindFirst(TreeScope.Subtree, new PropertyCondition(AutomationElementIdentifiers.LocalizedControlTypeProperty, ElemenetType));
+                                    // Otherwise use ControlTypeProperty with mapped ControlType:
+                                    var controlType = GetControlTypeFromString(ElemenetType);
+                                    var cond = new UIAuto.AndCondition(
+                                        new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.NameProperty, locateValue),
+                                        new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.ControlTypeProperty, controlType)
+                                    );
+                                    element = CurrentWindow.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, cond);
+                                }
+                                else
+                                {
+                                    element = CurrentWindow.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree,
+                                        new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.NameProperty, locateValue));
+                                }
+                            }
+                            if (element == null)
+                            {
+                                UIAuto.AutomationElement RecursiveFind(UIAuto.AutomationElement root, Func<UIAuto.AutomationElement, bool> match)
+                                {
+                                    var walker = UIAuto.TreeWalker.RawViewWalker;
+                                    var child = walker.GetFirstChild(root);
+                                    while (child != null)
+                                    {
+                                        try
+                                        {
+                                            if (match(child)) return child;
+                                            var res = RecursiveFind(child, match);
+                                            if (res != null) return res;
+                                        }
+                                        catch { }
+                                        child = walker.GetNextSibling(child);
+                                    }
+                                    return null;
+                                }
+                                // usage
+                                element = RecursiveFind(CurrentWindow, ae => (ae.Current.Name ?? "").Contains(locateValue));
+                            }
+                            if(element == null)
+                            {
+                                int excelPid = Process.GetProcessesByName("EXCEL").FirstOrDefault()?.Id ?? 0;
+                                IEnumerable<UIAuto.AutomationElement> allDesktopElements = null;
+
+                                try
+                                {
+                                    // Try the simple fast call first
+                                    var coll = UIAuto.AutomationElement.RootElement.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, UIAuto.Condition.TrueCondition);
+                                    allDesktopElements = coll.Cast<UIAuto.AutomationElement>();
+                                }
+                                catch (COMException comEx)
+                                {
+                                    Reporter.ToLog(eLogLevel.DEBUG, "UIA FindAll(TreeScope.Descendants) failed, falling back to safe enumeration", comEx);
+
+                                    // Fallback: enumerate top-level children and query each subtree separately (isolated try/catch per subtree)
+                                    var list = new List<UIAuto.AutomationElement>();
+                                    try
+                                    {
+                                        var walker = UIAuto.TreeWalker.RawViewWalker;
+                                        var child = walker.GetFirstChild(UIAuto.AutomationElement.RootElement);
+                                        while (child != null)
+                                        {
+                                            try
+                                            {
+                                                // Query subtree of this child; isolate failures to this subtree
+                                                var subColl = child.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, UIAuto.Condition.TrueCondition);
+                                                for (int i = 0; i < subColl.Count; i++)
+                                                {
+                                                    list.Add(subColl[i]);
+                                                }
+                                            }
+                                            catch (COMException)
+                                            {
+                                                // ignore subtree failure and continue with next sibling
+                                            }
+                                            catch (ElementNotAvailableException)
+                                            {
+                                                // ignore and continue
+                                            }
+
+                                            // next sibling (wrap in try/catch to be robust)
+                                            try
+                                            {
+                                                child = walker.GetNextSibling(child);
+                                            }
+                                            catch
+                                            {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Reporter.ToLog(eLogLevel.DEBUG, "Fallback desktop enumeration failed", e);
+                                    }
+
+                                    allDesktopElements = list;
+                                }
+                                catch (Exception ex)
+                                {
+                                    Reporter.ToLog(eLogLevel.DEBUG, "Unexpected error enumerating desktop elements", ex);
+                                    allDesktopElements = Enumerable.Empty<UIAuto.AutomationElement>();
+                                }
+
+                                // iterate safely
+                                foreach (var ae in allDesktopElements)
+                                {
+                                    try
+                                    {
+                                        if (ae.Current.ProcessId == excelPid && (ae.Current.Name?.Contains(locateValue) == true))
+                                            return ae;
+                                    }
+                                    catch (ElementNotAvailableException) { /* element disappeared, ignore */ }
+                                    catch (COMException) { /* ignore element read error */ }
+                                }
+                            }
+                            if (element == null)
+                            {
+                                int excelPid = Process.GetProcessesByName("EXCEL").FirstOrDefault()?.Id ?? 0;
+                                element = FindElementInExcelAddin(name: locateValue, localizedControlType: ElemenetType, excelPid: excelPid, timeout: TimeSpan.FromSeconds(10));
+                            }
+                            if (element == null)
+                            {
+                                int excelPid = Process.GetProcessesByName("EXCEL").FirstOrDefault()?.Id ?? 0;
+                                element = FindElementOnDesktopSafely(element => (element.Current.Name ?? "").Contains(locateValue), targetProcessId: excelPid) as UIAuto.AutomationElement;
+                            }
+                            
 
                             //If Name has been derived using Controltype & AutomationId
                             if (element == null && locateValue.Contains("(") && locateValue.Contains(")"))
@@ -933,6 +1065,25 @@ namespace GingerCore.Drivers
                         case eLocateBy.ByAutomationID:
                             UIAuto.Condition CurCond3 = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.AutomationIdProperty, locateValue);
                             element = CurrentWindow.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, CurCond3);
+                            if (element == null)
+                            {
+                                element = CurrentWindow.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, CurCond3);
+                            }
+
+                            if (element == null && !string.IsNullOrEmpty(ElemenetType))
+                            {
+                                // If ElemenetType is a localized display string prefer LocalizedControlTypeProperty:
+                                // element = CurrentWindow.FindFirst(TreeScope.Subtree, new PropertyCondition(AutomationElementIdentifiers.LocalizedControlTypeProperty, ElemenetType));
+                                // Otherwise use ControlTypeProperty with mapped ControlType:
+                                var controlType = GetControlTypeFromString(ElemenetType);
+                                var cond = new UIAuto.AndCondition(
+                                    new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.AutomationIdProperty, locateValue),
+                                    new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.ControlTypeProperty, controlType)
+                                );
+                                element = CurrentWindow.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, cond);
+                                element = CurrentWindow.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, cond);
+                                element = CurrentWindow.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, cond);
+                            }
                             break;
 
                         case eLocateBy.ByClassName:
@@ -1006,6 +1157,410 @@ namespace GingerCore.Drivers
 
             return element;
         }
+
+        // ...existing code...
+        /// <summary>
+        /// Try multiple strategies to locate Excel add-in UIA elements (AutomationId, Name+ControlType, ClassName),
+        /// preferring search inside the Excel process. Returns null if not found.
+        /// </summary>
+        public UIAuto.AutomationElement FindElementInExcelAddin(string automationId = null, string name = null, string localizedControlType = null, string className = null, int? excelPid = null, TimeSpan? timeout = null)
+        {
+            timeout ??= TimeSpan.FromSeconds(10);
+            var sw = Stopwatch.StartNew();
+
+            // Get excel PID if not provided
+            if (!excelPid.HasValue)
+            {
+                excelPid = Process.GetProcessesByName("EXCEL").FirstOrDefault()?.Id;
+            }
+
+            // 1) Try direct descendant find on Desktop by AutomationId (fast & precise)
+            if (!string.IsNullOrEmpty(automationId))
+            {
+                try
+                {
+                    var cond = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.AutomationIdProperty, automationId);
+                    var found = UIAuto.AutomationElement.RootElement.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, cond);
+                    if (found != null) return found;
+                }
+                catch { /* transient COM error - continue to next method */ }
+            }
+
+            // 2) If we have PID, scan top-level windows of that process and search inside their subtree
+            if (excelPid.HasValue)
+            {
+                try
+                {
+                    var topChildren = UIAuto.AutomationElement.RootElement.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, UIAuto.Condition.TrueCondition);
+                    for (int i = 0; i < topChildren.Count && sw.Elapsed < timeout; i++)
+                    {
+                        try
+                        {
+                            var w = topChildren[i];
+                            if (w.Current.ProcessId != excelPid.Value) continue;
+
+                            // Prefer AutomationId when provided
+                            if (!string.IsNullOrEmpty(automationId))
+                            {
+                                var aidCond = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.AutomationIdProperty, automationId);
+                                var ae = w.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, aidCond);
+                                if (ae != null) return ae;
+                            }
+
+                            // Name + ControlType if supplied
+                            if (!string.IsNullOrEmpty(name) || !string.IsNullOrEmpty(localizedControlType))
+                            {
+                                var conds = new List<UIAuto.Condition>();
+                                if (!string.IsNullOrEmpty(name)) conds.Add(new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.NameProperty, name));
+                                if (!string.IsNullOrEmpty(localizedControlType)) conds.Add(new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.LocalizedControlTypeProperty, localizedControlType));
+                                if (conds.Count > 0)
+                                {
+                                    UIAuto.Condition andCond = conds.Count == 1 ? conds[0] : new UIAuto.AndCondition(conds.ToArray());
+                                    var ae = w.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, andCond);
+                                    if (ae != null) return ae;
+                                }
+                            }
+
+                            // Name only fallback inside this window
+                            if (!string.IsNullOrEmpty(name))
+                            {
+                                var nameCond = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.NameProperty, name);
+                                var ae = w.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, nameCond);
+                                if (ae != null) return ae;
+                            }
+                        }
+                        catch { /* ignore window-level transient failures */ }
+                    }
+                }
+                catch { /* continue to next method */ }
+            }
+
+            // 3) Robust desktop scan in STA using existing SafeFindRecursive/FindElementOnDesktopSafely
+            //    (re-uses helper already in this file)
+            try
+            {
+                Func<UIAuto.AutomationElement, bool> match = ae =>
+                {
+                    try
+                    {
+                        if (excelPid.HasValue && ae.Current.ProcessId != excelPid.Value) return false;
+                        if (!string.IsNullOrEmpty(automationId) && ae.Current.AutomationId == automationId) return true;
+                        if (!string.IsNullOrEmpty(className) && ae.Current.ClassName != null && ae.Current.ClassName.IndexOf(className, StringComparison.InvariantCultureIgnoreCase) >= 0) return true;
+                        if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(ae.Current.Name) && ae.Current.Name.IndexOf(name, StringComparison.InvariantCultureIgnoreCase) >= 0)
+                        {
+                            if (string.IsNullOrEmpty(localizedControlType)) return true;
+                            return string.Equals(ae.Current.LocalizedControlType, localizedControlType, StringComparison.InvariantCultureIgnoreCase);
+                        }
+                    }
+                    catch { /* transient property read errors */ }
+                    return false;
+                };
+
+                var found = FindElementOnDesktopSafely(match, targetProcessId: excelPid, timeout: timeout);
+                if (found != null) return found;
+            }
+            catch { /* continue */ }
+
+            // 4) Final fallback: enumerate top-level windows (desktop children), then walk raw tree and check ProviderDescription / FrameworkId / ClassName
+            try
+            {
+                var walker = UIAuto.TreeWalker.RawViewWalker;
+                UIAuto.AutomationElement child = null;
+                try { child = walker.GetFirstChild(UIAuto.AutomationElement.RootElement); } catch { child = null; }
+                while (child != null && sw.Elapsed < timeout)
+                {
+                    try
+                    {
+                        // optional: filter by process id early
+                        if (excelPid.HasValue && child.Current.ProcessId != excelPid.Value)
+                        {
+                            child = walker.GetNextSibling(child);
+                            continue;
+                        }
+
+                        // inspect subtree for candidate; reuse SafeFindRecursive logic inline to reduce stack hops
+                        var candidate = SafeFindRecursive(child, ae =>
+                        {
+                            try
+                            {
+                                if (!string.IsNullOrEmpty(automationId) && ae.Current.AutomationId == automationId) return true;
+                                if (!string.IsNullOrEmpty(name) && ae.Current.Name != null && ae.Current.Name.IndexOf(name, StringComparison.InvariantCultureIgnoreCase) >= 0) return true;
+                                if (!string.IsNullOrEmpty(className) && ae.Current.ClassName != null && ae.Current.ClassName.IndexOf(className, StringComparison.InvariantCultureIgnoreCase) >= 0) return true;
+                                // some unmanaged providers expose FrameworkId/provider hints that can be useful:
+                                // var fw = ae.Current.FrameworkId; // read if needed and safe
+                            }
+                            catch { }
+                            return false;
+                        });
+
+                        if (candidate != null) return candidate;
+                    }
+                    catch { }
+                    try { child = walker.GetNextSibling(child); } catch { break; }
+                }
+            }
+            catch { /* ignore */ }
+
+            // 5) Optional: legacy IAcessible fallback (very target-specific). If you have HWNDs for add-in panes,
+            //    you can call AccessibleObjectFromWindow and query names/childs. Implement here if needed.
+
+            return null;
+        }
+        // ...existing code...
+
+        private UIAuto.AutomationElement FindElementOnDesktopSafely(Func<UIAuto.AutomationElement, bool> match, int? targetProcessId = null, TimeSpan? timeout = null)
+        {
+            timeout ??= TimeSpan.FromSeconds(15);
+            UIAuto.AutomationElement result = null;
+            var done = new ManualResetEventSlim(false);
+
+            Thread sta = new Thread(() =>
+            {
+                try
+                {
+                    // 1) Try fast search: restrict to top-level windows of target process if we have PID
+                    if (targetProcessId.HasValue)
+                    {
+                        var topLevel = UIAuto.AutomationElement.RootElement.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, UIAuto.Condition.TrueCondition);
+                        for (int i = 0; i < topLevel.Count && !done.IsSet; i++)
+                        {
+                            try
+                            {
+                                var tw = topLevel[i];
+                                if (tw.Current.ProcessId == targetProcessId.Value)
+                                {
+                                    // search subtree of this window
+                                    var candidate = SafeFindRecursive(tw, match);
+                                    if (candidate != null)
+                                    {
+                                        result = candidate;
+                                        done.Set();
+                                        return;
+                                    }
+                                }
+                            }
+                            catch { /* ignore transient errors for each window */ }
+                        }
+                    }
+
+                    // 2) Broad RootElement descendant search with limited condition (avoid huge FindAll)
+                    try
+                    {
+                        // If we can craft a condition (e.g. Name), prefer it outside and pass via match
+                        var coll = UIAuto.AutomationElement.RootElement.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, UIAuto.Condition.TrueCondition);
+                        for (int i = 0; i < coll.Count && !done.IsSet; i++)
+                        {
+                            try
+                            {
+                                var rootChild = coll[i];
+                                var candidate = SafeFindRecursive(rootChild, match);
+                                if (candidate != null)
+                                {
+                                    result = candidate;
+                                    done.Set();
+                                    return;
+                                }
+                            }
+                            catch { }
+                        }
+                    }
+                    catch (COMException) { /* continue to fallback */ }
+
+                    // 3) Final fallback: recursive walk from RootElement
+                    result = SafeFindRecursive(UIAuto.AutomationElement.RootElement, match);
+                    if (result != null) done.Set();
+                }
+                finally
+                {
+                    done.Set();
+                }
+            });
+
+            sta.SetApartmentState(ApartmentState.STA);
+            sta.IsBackground = true;
+            sta.Start();
+
+            if (!done.Wait(timeout.Value))
+            {
+                // timed out
+            }
+
+            return result;
+        }
+
+        // recursive walker that is resilient to COM / ElementNotAvailable exceptions
+        private UIAuto.AutomationElement SafeFindRecursive(UIAuto.AutomationElement root, Func<UIAuto.AutomationElement, bool> match)
+        {
+            if (root == null) return null;
+            try
+            {
+                // quick match on root
+                try
+                {
+                    if (match(root)) return root;
+                }
+                catch { /* predicate can throw, ignore */ }
+
+                var walker = UIAuto.TreeWalker.RawViewWalker;
+                UIAuto.AutomationElement child = null;
+                try { child = walker.GetFirstChild(root); } catch { child = null; }
+
+                while (child != null)
+                {
+                    UIAuto.AutomationElement found = null;
+                    try
+                    {
+                        found = SafeFindRecursive(child, match);
+                    }
+                    catch { /* ignore child subtree errors */ }
+
+                    if (found != null) return found;
+
+                    try { child = walker.GetNextSibling(child); } catch { break; }
+                }
+            }
+            catch (ElementNotAvailableException) { }
+            catch (COMException) { }
+            catch { }
+            return null;
+        }
+
+        private UIAuto.ControlType GetControlTypeFromString(string type)
+        {
+            if (string.IsNullOrWhiteSpace(type))
+                return UIAuto.ControlType.Custom;
+
+            // Normalize and split multiple values (commas, pipes, semicolons, slashes, spaces)
+            var separators = new[] { ',', ';', '|', '/', '\\' };
+            var tokens = type
+                .ToLowerInvariant()
+                .Split(separators, StringSplitOptions.RemoveEmptyEntries)
+                .SelectMany(s => s.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+                .Select(s => s.Trim())
+                .Where(s => !string.IsNullOrEmpty(s))
+                .Distinct()
+                .ToList();
+
+            if (tokens.Count == 0)
+                return UIAuto.ControlType.Custom;
+
+            // map token -> ControlType
+            var map = new Dictionary<string, UIAuto.ControlType>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["button"] = UIAuto.ControlType.Button,
+                ["edit"] = UIAuto.ControlType.Edit,
+                ["editbox"] = UIAuto.ControlType.Edit,
+                ["edit box"] = UIAuto.ControlType.Edit,
+                ["textbox"] = UIAuto.ControlType.Edit,
+                ["text"] = UIAuto.ControlType.Text,
+                ["textblock"] = UIAuto.ControlType.Text,
+                ["list"] = UIAuto.ControlType.List,
+                ["listitem"] = UIAuto.ControlType.ListItem,
+                ["list item"] = UIAuto.ControlType.ListItem,
+                ["combo"] = UIAuto.ControlType.ComboBox,
+                ["combobox"] = UIAuto.ControlType.ComboBox,
+                ["combo box"] = UIAuto.ControlType.ComboBox,
+                ["pane"] = UIAuto.ControlType.Pane,
+                ["window"] = UIAuto.ControlType.Window,
+                ["menu"] = UIAuto.ControlType.Menu,
+                ["menuitem"] = UIAuto.ControlType.MenuItem,
+                ["menu item"] = UIAuto.ControlType.MenuItem,
+                ["tab"] = UIAuto.ControlType.Tab,
+                ["tabitem"] = UIAuto.ControlType.TabItem,
+                ["tab item"] = UIAuto.ControlType.TabItem,
+                ["tree"] = UIAuto.ControlType.Tree,
+                ["treeitem"] = UIAuto.ControlType.TreeItem,
+                ["tree item"] = UIAuto.ControlType.TreeItem,
+                ["check"] = UIAuto.ControlType.CheckBox,
+                ["checkbox"] = UIAuto.ControlType.CheckBox,
+                ["check box"] = UIAuto.ControlType.CheckBox,
+                ["radio"] = UIAuto.ControlType.RadioButton,
+                ["radiobutton"] = UIAuto.ControlType.RadioButton,
+                ["radio button"] = UIAuto.ControlType.RadioButton,
+                ["image"] = UIAuto.ControlType.Image,
+                ["hyperlink"] = UIAuto.ControlType.Hyperlink,
+                ["document"] = UIAuto.ControlType.Document,
+                ["header"] = UIAuto.ControlType.Header,
+                ["headeritem"] = UIAuto.ControlType.HeaderItem,
+                ["header item"] = UIAuto.ControlType.HeaderItem,
+                ["scrollbar"] = UIAuto.ControlType.ScrollBar,
+                ["scroll bar"] = UIAuto.ControlType.ScrollBar,
+                ["slider"] = UIAuto.ControlType.Slider,
+                ["separator"] = UIAuto.ControlType.Separator,
+                ["table"] = UIAuto.ControlType.Table,
+                ["datagrid"] = UIAuto.ControlType.DataGrid,
+                ["grid"] = UIAuto.ControlType.DataGrid,
+                // add more aliases as needed
+            };
+
+            // define priority (higher earlier) when multiple tokens provided
+            var priority = new[]
+            {
+                UIAuto.ControlType.Edit,
+                UIAuto.ControlType.Text,
+                UIAuto.ControlType.Button,
+                UIAuto.ControlType.ComboBox,
+                UIAuto.ControlType.CheckBox,
+                UIAuto.ControlType.RadioButton,
+                UIAuto.ControlType.ListItem,
+                UIAuto.ControlType.List,
+                UIAuto.ControlType.MenuItem,
+                UIAuto.ControlType.Menu,
+                UIAuto.ControlType.TabItem,
+                UIAuto.ControlType.Tab,
+                UIAuto.ControlType.TreeItem,
+                UIAuto.ControlType.Tree,
+                UIAuto.ControlType.Pane,
+                UIAuto.ControlType.Window,
+                UIAuto.ControlType.Image,
+                UIAuto.ControlType.Hyperlink,
+                UIAuto.ControlType.Document,
+                UIAuto.ControlType.Header,
+                UIAuto.ControlType.ScrollBar,
+                UIAuto.ControlType.Slider,
+                UIAuto.ControlType.Separator,
+                UIAuto.ControlType.Table,
+                UIAuto.ControlType.DataGrid,
+                UIAuto.ControlType.Custom
+            };
+
+            // collect candidates from tokens
+            var candidates = new List<UIAuto.ControlType>();
+            foreach (var tok in tokens)
+            {
+                if (map.TryGetValue(tok, out var ct))
+                {
+                    candidates.Add(ct);
+                }
+            }
+
+            // if we have candidates, pick highest priority
+            if (candidates.Count > 0)
+            {
+                foreach (var p in priority)
+                {
+                    if (candidates.Contains(p))
+                        return p;
+                }
+                return candidates.First();
+            }
+
+            // fallback: try reflection using PascalCase token (first token)
+            try
+            {
+                var first = tokens.First();
+                var pascal = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(first.Replace(" ", ""));
+                var f = typeof(UIAuto.ControlType).GetField(pascal, BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+                if (f != null)
+                    return (UIAuto.ControlType)f.GetValue(null);
+            }
+            catch { }
+
+            // final fallback: if caller passed localized control type string (e.g. "edit" vs "text") they might want to use LocalizedControlTypeProperty instead.
+            return UIAuto.ControlType.Custom;
+        }
+
+
 
         private UIAuto.AutomationElement GetCurrentActiveWindow()
         {

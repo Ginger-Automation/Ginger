@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Windows.Automation;
 using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace GingerCore.Drivers.Common
@@ -106,7 +107,7 @@ namespace GingerCore.Drivers.Common
             return CurAE;
         }
 
-        public abstract object FindElementByLocator(eLocateBy eLocatorType, string LocateValue);
+        public abstract object FindElementByLocator(eLocateBy eLocatorType, string LocateValue,string ElementType = null);
         public abstract object FindWindowByLocator(eLocateBy eLocatorType, string LocateValue);
         public abstract string SetControlValue(object element, string value);
         public abstract void DragAndDrop(object element, ActUIElement action);

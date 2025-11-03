@@ -730,7 +730,9 @@ namespace Amdocs.Ginger.Common.UIElement
         Document,
         [EnumValueDescription("SVG")]
         Svg,
-        
+        [EnumValueDescription("childern")]
+        childern,
+
     }
 
     public enum SelfHealingInfoEnum

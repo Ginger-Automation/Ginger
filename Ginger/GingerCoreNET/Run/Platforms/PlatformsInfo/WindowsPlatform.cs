@@ -753,6 +753,14 @@ namespace GingerCore.Platforms.PlatformsInfo
                 {
                     elementTypeEnum = eElementType.DatePicker;
                 }
+                else if(elementClass.Contains("My_SplitterContainer"))
+                {
+                    elementTypeEnum = eElementType.childern;
+                }
+                else if (elementClass.Contains("My_SplitterWindow"))
+                {
+                    elementTypeEnum = eElementType.childern;
+                }
                 //else if (elementClass == "Internet Explorer_Server")
                 //{
                 //    elementTypeEnum = eElementType.Browser;

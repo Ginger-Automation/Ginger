@@ -397,7 +397,7 @@ namespace GingerCore.Drivers.WindowsLib
             }
             else if (actUIElement.ElementType != eElementType.Window && actUIElement.ElementAction != ActUIElement.eElementAction.IsExist)
             {
-                automationElement = (UIAuto.AutomationElement)mUIAutomationHelper.FindElementByLocator(actUIElement.ElementLocateBy, actUIElement.ElementLocateValueForDriver);
+                automationElement = (UIAuto.AutomationElement)mUIAutomationHelper.FindElementByLocator(actUIElement.ElementLocateBy, actUIElement.ElementLocateValueForDriver, actUIElement.ElementType.ToString());
 
                 if (automationElement == null && actUIElement.ElementAction != ActUIElement.eElementAction.IsEnabled)
                 {
