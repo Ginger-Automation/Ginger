@@ -47,7 +47,8 @@ namespace Ginger.Drivers.DriversWindows
         Brush ConsoleErrorBrush = Brushes.Red;
         BusinessFlow mBusinessFlow;
 
-        public ConsoleDriverBase mConsoleDriver;
+        ConsoleDriverBase mConsoleDriver;
+        Agent mAgent;
 
         public ConsoleDriverWindow(BusinessFlow BF)
         {
@@ -59,15 +60,66 @@ namespace Ginger.Drivers.DriversWindows
         {
             InitializeComponent();
             //mBusinessFlow = BF;
-            //mDriver = (IMobileDriverWindow)driver;
-            //mAgent = agent;
+            mConsoleDriver = (ConsoleDriverBase)driver;
+            mAgent = agent;
 
-            //((DriverBase)mDriver).DriverMessageEvent += MobileDriverWindow_DriverMessageEvent;
-            //((DriverBase)mDriver).SpyingElementEvent += CurrentMousePosToSpy;
+            ((DriverBase)mConsoleDriver).DriverMessageEvent += ConsoleDriverWindow_DriverMessageEvent;
+        }
 
-            ////Setting up the detail and metic grids
-            //SetDeviceDetailsGridView();
-            //SetDeviceMetricsGridView();
+        #region Events
+        private async void ConsoleDriverWindow_DriverMessageEvent(object sender, DriverMessageEventArgs e)
+        {
+            switch (e.DriverMessageType)
+            {
+                case DriverBase.eDriverMessageType.DriverStatusChanged:
+                    await this.Dispatcher.InvokeAsync(async () =>
+                    {
+                        bool connected = mConsoleDriver.IsRunning();
+                        Title = mConsoleDriver.ConsoleWindowTitle() + (connected ? " (Connected)" : " (Disconnected)");
+                        CommandTextBox.IsEnabled = connected;
+                        RecordButton.IsEnabled = connected;
+                        // Optionally show a status line if a label exists (ignore if not)
+                        try
+                        {
+                            var statusLbl = this.FindName("xStatusLabel") as System.Windows.Controls.ContentControl;
+                            if (statusLbl != null)
+                            {
+                                statusLbl.Content = connected ? "Connected" : "Disconnected";
+                                statusLbl.Foreground = connected ? Brushes.Green : Brushes.Red;
+                            }
+                        }
+                        catch { }
+                    });
+                    break;
+
+                case DriverBase.eDriverMessageType.ConsoleBufferUpdate:
+                    // After a command/action finished, we can auto-scroll or update UI if needed
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        try
+                        {
+                            if(sender is string)
+                                ConsoleWriteCommand((string)sender);
+                        }
+                        catch { }
+                    });
+                    break;
+
+                case DriverBase.eDriverMessageType.RecordingEvent:
+                    // sender carries bool (recording on/off)
+                    if (sender is bool recFlag)
+                    {
+                        await Dispatcher.InvokeAsync(() =>
+                        {
+                            mRecording = recFlag;
+                            RecordButton.Foreground = mRecording ? Brushes.Red : Brushes.Black;
+                        });
+                    }
+                    break;
+                
+                default:
+                    break;
+            }
         }
 
         private void GoButton_Click(object sender, RoutedEventArgs e)
@@ -95,7 +147,7 @@ namespace Ginger.Drivers.DriversWindows
                 mBusinessFlow.AddAct(ACC);
             }
 
-            ConsoleWriteCommand(CommandTextBox.Text);
+            mConsoleDriver.RunConsoleCommand(CommandTextBox.Text);
 
             //Checking Console Driver Platform
             if (mConsoleDriver.Platform.ToString() == "Unix")
@@ -390,3 +442,4 @@ namespace Ginger.Drivers.DriversWindows
         }
     }
 }
+#endregion

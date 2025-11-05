@@ -54,7 +54,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         }
     }
 
-    public abstract class ConsoleDriverBase : DriverBase, IVirtualDriver, IDriverWindow
+    public abstract class ConsoleDriverBase : DriverBase, IVirtualDriver, IDriverWindow, IConsoleDriver
     {
         [UserConfigured]
         [UserConfiguredDefault("30")]
@@ -88,7 +88,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         public abstract bool Connect();
         public abstract void Disconnect();
         public abstract bool IsBusy();
-        bool IsDriverConnected = false;
+        public bool IsDriverConnected = false;
 
         protected int? mWait;
         protected string mExpString;
@@ -106,11 +106,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
             // Connect on current thread; DriverWindowHandler will open the window asynchronously if ShowWindow == true
             IsDriverConnected = Connect();
 
-            if (!ShowWindow)
-            {
+
                 // Headless mode: provide dummy dispatcher so actions relying on dispatcher still work
-                Dispatcher = new DummyDispatcher();
-            }
+            Dispatcher = new DummyDispatcher();
+
 
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
@@ -173,7 +172,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         public override void RunAction(Act act)
         {
             var actClass = act.GetType().ToString();
-            actClass = actClass.Replace("GingerCore.Actions.", "");
+            actClass = actClass.Replace("Amdocs.Ginger.CoreNET.ActionsLib.", "");
             switch (actClass)
             {
                 case "ActConsoleCommand":
@@ -289,6 +288,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         public virtual void WriteToConsoleBuffer(string text)
         {
             mConsoleBuffer.Append(text + System.Environment.NewLine);
+            OnDriverMessage(eDriverMessageType.ConsoleBufferUpdate, text + System.Environment.NewLine);
         }
 
         protected virtual string GetParameterizedCommand(ActConsoleCommand act)
