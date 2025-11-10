@@ -59,9 +59,9 @@ namespace Ginger.Drivers.DriversWindows
         public ConsoleDriverWindow(DriverBase driver, Agent agent)
         {
             InitializeComponent();
-            //mBusinessFlow = BF;
             mConsoleDriver = (ConsoleDriverBase)driver;
             mAgent = agent;
+            mBusinessFlow = agent.BusinessFlow;
 
             ((DriverBase)mConsoleDriver).DriverMessageEvent += ConsoleDriverWindow_DriverMessageEvent;
         }
