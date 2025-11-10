@@ -34,19 +34,21 @@ on:
           - 'No'  # Do not add SSL certificate
 jobs:            
     Builder:
-        name: Build Solution
+        name: Build & Test
         uses: ./.github/workflows/Build.yml
         secrets: inherit
 
-    Ginger_Unit-Test:
-        name: Execute Unit Tests
-        needs: Builder
-        uses: ./.github/workflows/Test.yml
-        secrets: inherit
+
+
+    # Ginger_Unit-Test:
+    #     name: Execute Unit Tests
+    #     needs: Builder
+    #     uses: ./.github/workflows/Test.yml
+    #     secrets: inherit
      
     Release:
         name: Release
-        needs: Ginger_Unit-Test
+        needs: Builder
         uses: ./.github/workflows/Release.yml
         secrets: inherit
      
@@ -57,6 +59,6 @@ jobs:
 
     Docker:
         name: Docker
-        needs: Ginger_Unit-Test
+        needs: Builder
         uses: ./.github/workflows/Docker.yml
         secrets: inherit
