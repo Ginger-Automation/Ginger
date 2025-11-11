@@ -844,7 +844,7 @@
       <HintPath>..\GingerCoreNET\DLLS\OctaneStdSDK.dll</HintPath>
     </Reference>
     <Reference Include="Open3270">
-      <HintPath>..\..\..\..\..\..\..\TestDLL\Open3270.dll</HintPath>
+      <HintPath>DLLs\Open3270.dll</HintPath>
     </Reference>
     <Reference Include="QCRestClientStd">
       <HintPath>..\GingerCoreNET\DLLS\QCRestClientStd.dll</HintPath>
