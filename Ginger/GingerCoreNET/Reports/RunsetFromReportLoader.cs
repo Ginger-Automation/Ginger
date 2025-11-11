@@ -28,6 +28,7 @@ using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
+using GingerCore.Drivers.Selenium.SeleniumBMP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -159,12 +160,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
                 return null;
             }
 
-            GingerExecConfig executionConfig = JsonSerializer.Deserialize<GingerExecConfig>(
-                response.RequestDetails.ExecutionConfigurations,
-                new JsonSerializerOptions()
-                {
-                    Converters = { new JsonStringEnumConverter() }
-                })!;
+            GingerExecConfig executionConfig = DynamicExecutionManager.DeserializeDynamicExecutionFromJSON(response.RequestDetails.ExecutionConfigurations);
             executionConfig.ExecutionID = response.Id;
 
             return executionConfig;
