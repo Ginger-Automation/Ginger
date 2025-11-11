@@ -173,8 +173,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
                     break;
                 }
 
-
-                OnDriverMessage(eDriverMessageType.ConsoleBufferUpdate,mOutputs[mlastOutputsLength..]);//get the output addition to console
                 WriteToConsoleBuffer(mOutputs[mlastOutputsLength..]);
                 if (waitForRestOfOutputs)
                 {

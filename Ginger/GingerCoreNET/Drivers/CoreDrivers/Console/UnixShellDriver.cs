@@ -133,8 +133,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
 
         public override void SendCommand(string command)
         {
-            OnDriverMessage(eDriverMessageType.ConsoleBufferUpdate, command);
-
+            // Removed OnDriverMessage to avoid duplicate command echo
             SSHRunCommand(command);
         }
 

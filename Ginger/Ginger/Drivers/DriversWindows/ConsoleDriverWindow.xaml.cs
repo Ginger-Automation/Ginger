@@ -149,18 +149,6 @@ namespace Ginger.Drivers.DriversWindows
 
             mConsoleDriver.RunConsoleCommand(CommandTextBox.Text);
 
-            //Checking Console Driver Platform
-            if (mConsoleDriver.Platform.ToString() == "Unix")
-            {
-                //Unix then only \n is required
-                mConsoleDriver.taskFinished = false;
-                //mConsoleDriver.SendCommand(CommandTextBox.Text);
-            }
-            else
-            {
-                //Dos then \r\n is required
-                mConsoleDriver.SendCommand(CommandTextBox.Text);
-            }
             CommandTextBox.Text = "";
         }
 
@@ -288,9 +276,8 @@ namespace Ginger.Drivers.DriversWindows
 
         private void NewActionButton_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Implement ConsoleNewActionPage code-behind; currently placeholder removed to prevent build error
-            //ConsoleNewActionPage CNAP = new ConsoleNewActionPage(mConsoleDriver, mBusinessFlow);
-            //CNAP.ShowAsWindow(this);
+            ConsoleNewActionPage CNAP = new ConsoleNewActionPage(mConsoleDriver, mBusinessFlow);
+            CNAP.ShowAsWindow(this);
         }
 
         private void ConsoleDriverWindow_Closing(Object sender, System.ComponentModel.CancelEventArgs e)
