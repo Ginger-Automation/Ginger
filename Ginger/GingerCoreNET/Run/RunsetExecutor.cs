@@ -417,9 +417,7 @@ namespace Ginger.Run
             {
                 // Only set the current value to the mapped value for immediate effect
                 // DO NOT call SetInitialValue as this would change the variable's initial value permanently
-                originalVar.Value = customizedVar.MappedOutputValue;
-                // Ensure the variable is marked as different from origin
-                originalVar.DiffrentFromOrigin = true;
+                originalVar.Value = customizedVar.MappedOutputValue;              
             }
 
             // Restore the original initial value to ensure it's not changed by mapping

@@ -542,7 +542,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
             }
 
-                     executionConfig.SolutionLocalPath = solution.Folder;
+            executionConfig.SolutionLocalPath = solution.Folder;
 
             executionConfig.ShowAutoRunWindow = cliHelper.ShowAutoRunWindow;
             executionConfig.VerboseLevel = GingerExecConfig.eVerboseLevel.normal;
@@ -996,7 +996,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
                 }
                 if (WorkSpace.Instance.Solution.VRTConfiguration != null && !string.IsNullOrEmpty(solution.VRTConfiguration.ApiUrl)
-                    && !string.IsNullOrEmpty(solution.VRTConfiguration.ApiKey) )
+                    && !string.IsNullOrEmpty(solution.VRTConfiguration.ApiKey))
                 {
                     VRTDetails vrtDetails = new VRTDetails
                     {
@@ -1011,7 +1011,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     executionConfig.ExternalConfigurationDetails.Add(vrtDetails);
 
                 }
-                if (WorkSpace.Instance.Solution.ApplitoolsConfiguration != null 
+                if (WorkSpace.Instance.Solution.ApplitoolsConfiguration != null
                      && !string.IsNullOrEmpty(solution.ApplitoolsConfiguration.ApiUrl) && !string.IsNullOrEmpty(solution.ApplitoolsConfiguration.ApiKey))
                 {
                     ApplitoolsDetails applitoolsDetails = new ApplitoolsDetails
@@ -1103,14 +1103,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Using provided ExecutionID '{0}'.", runSetConfig.ExecutionID.ToString()));
             }
 
-         
+
             if (gingerExecConfig.Runset.RerunConfigurations != null)
             {
                 runSetConfig.ReRunConfigurations.Active = gingerExecConfig.Runset.RerunConfigurations.Active;
                 if (gingerExecConfig.Runset.RerunConfigurations.Active)
                 {
                     runSetConfig.ReRunConfigurations.RerunLevel = (global::Ginger.Run.eReRunLevel)gingerExecConfig.Runset.RerunConfigurations.RerunLevel;
-                    runSetConfig.ReRunConfigurations.ReferenceExecutionID = gingerExecConfig.Runset.RerunConfigurations.ReferenceExecutionID.Value;
+                    runSetConfig.ReRunConfigurations.ReferenceExecutionID = gingerExecConfig.Runset.RerunConfigurations.ReferenceExecutionID;
                 }
             }
 
@@ -1437,7 +1437,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                         {
                                             case InputValue.eVariableCustomizationType.Value:
                                                 customizedInputVar.VarValChanged = true;
-                                                customizedInputVar.Value = inputValueConfig.VariableCustomizedValue;
+                                                customizedInputVar.MappedOutputType = VariableBase.eOutputType.Value;
+                                                customizedInputVar.MappedOutputValue = inputValueConfig.VariableCustomizedValue;
                                                 break;
                                             case InputValue.eVariableCustomizationType.Variable://saving variable by Name- Legacy
                                                 customizedInputVar.MappedOutputType = VariableBase.eOutputType.Variable;
@@ -1497,13 +1498,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         RunSetActionHTMLReportSendEmail mailOperation = null;
                         if (dynamicRunsetConfigs.Exist)
                         {
-                            RunSetActionBase oper = FindItemByIDAndName<RunSetActionBase>(
+                            try
+                            {
+                                RunSetActionBase oper = FindItemByIDAndName<RunSetActionBase>(
                                                     new Tuple<string, Guid?>(nameof(RunSetActionBase.Guid), runsetOperationConfigMail.ID),
                                                     new Tuple<string, string>(nameof(RunSetActionBase.Name), runsetOperationConfigMail.Name),
                                                     runSetConfig.RunSetActions);
-                            if (oper != null)
+                                if (oper != null)
+                                {
+                                    mailOperation = (RunSetActionHTMLReportSendEmail)oper;
+                                }
+                            }
+                            catch (Exception ex)
                             {
-                                mailOperation = (RunSetActionHTMLReportSendEmail)oper;
+                                Reporter.ToLog(eLogLevel.INFO, string.Format("{0} operation was not found so configuring new one", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                             }
                         }
 
