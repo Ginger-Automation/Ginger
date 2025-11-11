@@ -296,7 +296,6 @@
       <DependentUpon>VisualDrag.xaml</DependentUpon>
     </Compile>
     <Compile Include="Drivers\ConsoleDriverLib\UnixServerSimulator.cs" />
-    <Compile Include="Drivers\ConsoleDriverLib\DOSConsoleDriver.cs" />
     <Compile Include="Drivers\InternalBrowserLib\CreateNewActionPage.xaml.cs">
       <DependentUpon>CreateNewActionPage.xaml</DependentUpon>
     </Compile>
