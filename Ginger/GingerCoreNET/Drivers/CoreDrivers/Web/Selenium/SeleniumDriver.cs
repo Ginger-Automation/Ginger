@@ -10568,7 +10568,7 @@ namespace GingerCore.Drivers
 
                                 if (currentPOMElementInfo != null)
                                 {
-                                    act.Error = $"{act.Error}Element not found: {act.ElementLocateBy} = POM {currentPOM.Name} and element name = {currentPOMElementInfo.ElementName} ";
+                                    act.Error = $"{act.Error} POM Element not found: POM = '{currentPOM.Name}' , Element = '{currentPOMElementInfo.ElementName}'";
                                     return;
                                 }
                             }
