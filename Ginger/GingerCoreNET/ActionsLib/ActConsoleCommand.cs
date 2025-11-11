@@ -65,7 +65,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             CopyFile = 2,
             IsFileExist = 6,
             Script = 18,
-            ParametrizedCommand = 19
+            ParametrizedCommand = 19,
+            StartRecordingBuffer = 20,
+            StopRecordingBuffer = 21,
+            ReturnBufferContent = 22
         }
 
         public enum eCommandEndKey

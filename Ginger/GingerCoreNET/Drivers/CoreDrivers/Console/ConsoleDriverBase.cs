@@ -79,6 +79,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         
         // Console buffer to capture command output when running without UI
         private StringBuilder mConsoleBuffer = new StringBuilder();
+
+        // Recording buffer support (StartRecordingBuffer/StopRecordingBuffer/ReturnBufferContent)
+        private bool mIsRecordingBufferActive = false;
+        private StringBuilder mRecordingBuffer = new StringBuilder();
         
         public override bool IsSTAThread()
         {
@@ -176,14 +180,52 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
             switch (actClass)
             {
                 case "ActConsoleCommand":
-                    mWait = ((ActConsoleCommand)act).WaitTime;
+                    var ACC = (ActConsoleCommand)act;
+
+                    bool skipExecution = false; // will be set for buffer control commands
+
+                    // Switch on the actual console command (no early returns)
+                    switch (ACC.ConsoleCommand)
+                    {
+                        case eConsoleCommand.StartRecordingBuffer:
+                            mRecordingBuffer.Clear();
+                            mIsRecordingBufferActive = true;
+                            act.AddOrUpdateReturnParamActual("RecordingBufferStatus", "Started");
+                            act.ExInfo = "Console output recording started";
+                            skipExecution = true;
+                            break;
+
+                        case eConsoleCommand.StopRecordingBuffer:
+                            mIsRecordingBufferActive = false;
+                            act.AddOrUpdateReturnParamActual("RecordingBufferStatus", "Stopped");
+                            act.ExInfo = "Console output recording stopped";
+                            skipExecution = true;
+                            break;
+
+                        case eConsoleCommand.ReturnBufferContent:
+                            act.AddOrUpdateReturnParamActual("Result", mRecordingBuffer.ToString());
+                            act.ExInfo = "Returned recorded console buffer content";
+                            skipExecution = true;
+                            break;
+
+                        // Other console command types fall through to generic execution logic below
+                        default:
+                            break;
+                    }
+
+                    if (skipExecution)
+                    {
+                        // Do not execute the generic command send/parse logic
+                        break;
+                    }
+
+                    mWait = ACC.WaitTime;
 
                     var VE = new GingerValueExpression(Environment, BusinessFlow);
-
-                    var ExpString = ((ActConsoleCommand)act).ExpString;
+                    var ExpString = ACC.ExpString;
                     VE.Value = ExpString;
                     mExpString = VE.ValueCalculated;
-                    var ACC = (ActConsoleCommand)act;
+
                     var command = GetCommandText(ACC);
                     act.ExInfo = command;
                     taskFinished = false;
@@ -204,7 +246,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
                             {
                                 command = $"{command}{GetCommandValue(ACC.CommandEndKey)}";
                             }
-                            else if(ACC.CommandEndKey== eCommandEndKey.Enter)
+                            else if (ACC.CommandEndKey == eCommandEndKey.Enter)
                             {
                                 command = $"{command}\r{GetCommandValue(ACC.CommandEndKey)}";
                             }
@@ -218,7 +260,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
                         {
                             act.Error = "Expected String \"" + mExpString + "\" not found in command output";
                             act.Status = Execution.eRunStatus.Failed;
-                            return;
+                            break;
                         }
 
                         act.AddOrUpdateReturnParamActual("Result", sRC);
@@ -288,6 +330,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         public virtual void WriteToConsoleBuffer(string text)
         {
             mConsoleBuffer.Append(text + System.Environment.NewLine);
+            if (mIsRecordingBufferActive)
+            {
+                mRecordingBuffer.Append(text + System.Environment.NewLine);
+            }
             OnDriverMessage(eDriverMessageType.ConsoleBufferUpdate, text + System.Environment.NewLine);
         }
 

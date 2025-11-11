@@ -61,7 +61,7 @@ namespace Ginger.Drivers.DriversWindows
             InitializeComponent();
             mConsoleDriver = (ConsoleDriverBase)driver;
             mAgent = agent;
-            mBusinessFlow = agent.BusinessFlow;
+            mBusinessFlow = driver.BusinessFlow;
 
             ((DriverBase)mConsoleDriver).DriverMessageEvent += ConsoleDriverWindow_DriverMessageEvent;
         }
@@ -154,7 +154,7 @@ namespace Ginger.Drivers.DriversWindows
             {
                 //Unix then only \n is required
                 mConsoleDriver.taskFinished = false;
-                mConsoleDriver.SendCommand(CommandTextBox.Text);
+                //mConsoleDriver.SendCommand(CommandTextBox.Text);
             }
             else
             {
