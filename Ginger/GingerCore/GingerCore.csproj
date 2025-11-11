@@ -89,8 +89,7 @@
     <Reference Include="OctaneSdkStandard">
       <HintPath>..\GingerCoreNET\DLLS\OctaneSdkStandard.dll</HintPath>
     </Reference>
-    <Reference Include="Open3270, Version=1.5.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Open3270">
       <HintPath>..\Ginger\DLLs\Open3270.dll</HintPath>
     </Reference>
     <Reference Include="QCRestClientStd">

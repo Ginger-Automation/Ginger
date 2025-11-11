@@ -127,7 +127,7 @@ namespace GingerCore.Drivers.MainFrame
             {
                 try
                 {
-                    return MFE.IsConnected;
+                    return MFE == null ? false : MFE.IsConnected;
                 }
                 catch
                 {
