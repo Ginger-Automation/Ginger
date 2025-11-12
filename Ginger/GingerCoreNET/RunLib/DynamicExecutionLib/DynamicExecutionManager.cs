@@ -1500,13 +1500,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         {
                             try
                             {
-                                RunSetActionBase oper = FindItemByIDAndName<RunSetActionBase>(
+                                var oper = FindItemByIDAndName<RunSetActionBase>(
                                                     new Tuple<string, Guid?>(nameof(RunSetActionBase.Guid), runsetOperationConfigMail.ID),
                                                     new Tuple<string, string>(nameof(RunSetActionBase.Name), runsetOperationConfigMail.Name),
                                                     runSetConfig.RunSetActions);
-                                if (oper != null)
+                                mailOperation = oper as RunSetActionHTMLReportSendEmail;
+                                if (mailOperation == null && oper != null)
                                 {
-                                    mailOperation = (RunSetActionHTMLReportSendEmail)oper;
+                                    Reporter.ToLog(eLogLevel.WARN, $"Found RunSet operation with matching ID/Name but it is type '{oper.GetType().Name}' instead of expected 'RunSetActionHTMLReportSendEmail'");
                                 }
                             }
                             catch (Exception ex)

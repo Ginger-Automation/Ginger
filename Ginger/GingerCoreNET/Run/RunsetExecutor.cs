@@ -271,13 +271,13 @@ namespace Ginger.Run
                 if (var.DiffrentFromOrigin && var.MappedOutputType == VariableBase.eOutputType.None)
                 {
                     string sourceValue = GetVariableSourceValue(var);
-                    
+
                     // Convert old format to new format if we have a source value
                     if (!string.IsNullOrEmpty(sourceValue))
                     {
                         var.MappedOutputType = VariableBase.eOutputType.Value;
                         var.MappedOutputValue = sourceValue;
-                        
+
                         Reporter.ToLog(eLogLevel.DEBUG, $"UpdateOldOutputVariableMappedValues: Converted variable '{var.Name}' of type '{var.VariableType}' from old format (DiffrentFromOrigin=True, MappedOutputType=None) to new format (MappedOutputType=Value, MappedOutputValue='{var.MappedOutputValue}')");
                     }
                 }
@@ -313,52 +313,7 @@ namespace Ginger.Run
         {
             try
             {
-                switch (var)
-                {
-                    case VariablePasswordString passwordVar:
-                        // For VariablePasswordString, check the Password property first, then Value
-                        return !string.IsNullOrEmpty(passwordVar.Password) ? passwordVar.Password : var.Value;
-                    
-                    case VariableString stringVar:
-                        // For VariableString, check InitialStringValue first, then Value
-                        return !string.IsNullOrEmpty(stringVar.InitialStringValue) ? stringVar.InitialStringValue : var.Value;
-                    
-                    case VariableNumber numberVar:
-                        // For VariableNumber, check InitialNumberValue first, then Value
-                        return !string.IsNullOrEmpty(numberVar.InitialNumberValue) ? numberVar.InitialNumberValue : var.Value;
-                    
-                    case VariableDateTime dateTimeVar:
-                        // For VariableDateTime, check InitialDateTime first, then Value
-                        return !string.IsNullOrEmpty(dateTimeVar.InitialDateTime) ? dateTimeVar.InitialDateTime : var.Value;
-                    
-                    case VariableSelectionList selectionVar:
-                        // For VariableSelectionList, use the SelectedValue if available, otherwise Value
-                        return !string.IsNullOrEmpty(selectionVar.SelectedValue) ? selectionVar.SelectedValue : var.Value;
-                    
-                    case VariableDynamic dynamicVar:
-                        // For VariableDynamic, just use the Value property (no specific initial value field)
-                        return var.Value;
-                    
-                    case VariableTimer timerVar:
-                        // For VariableTimer, just use the Value property (no specific initial value field)
-                        return var.Value;
-                    
-                    case VariableRandomString randomStringVar:
-                        // For VariableRandomString, just use the Value property (no specific initial value field)
-                        return var.Value;
-                    
-                    case VariableRandomNumber randomNumberVar:
-                        // For VariableRandomNumber, just use the Value property (no specific initial value field)
-                        return var.Value;
-                    
-                    case VariableSequence sequenceVar:
-                        // For VariableSequence, just use the Value property (no specific initial value field)
-                        return var.Value;
-                    
-                    default:
-                        // For all other variable types, use the Value property
-                        return var.Value;
-                }
+                return var.GetVariableSourceValueForDeserialization();
             }
             catch (Exception ex)
             {
@@ -377,13 +332,13 @@ namespace Ginger.Run
             if (customizedVar.DiffrentFromOrigin && customizedVar.MappedOutputType == VariableBase.eOutputType.None)
             {
                 string sourceValue = GetVariableSourceValue(customizedVar);
-                
+
                 // Convert old format to new format if we have a source value
                 if (!string.IsNullOrEmpty(sourceValue))
                 {
                     customizedVar.MappedOutputType = VariableBase.eOutputType.Value;
                     customizedVar.MappedOutputValue = sourceValue;
-                    
+
                     Reporter.ToLog(eLogLevel.DEBUG, $"CopyCustomizedVariableConfigurations: Converted variable '{customizedVar.Name}' of type '{customizedVar.VariableType}' from old format to new format");
                 }
             }
@@ -412,16 +367,31 @@ namespace Ginger.Run
                 originalVar.Value = customizedVar.Value;
             }
 
+            // Restore the original initial value to ensure it's not changed by mapping
+            originalVar.SetInitialValue(preservedInitialValue);
+
             // Handle "Value" mapping type - copy the mapped value to the current value
             if (customizedVar.MappedOutputType == VariableBase.eOutputType.Value && !string.IsNullOrEmpty(customizedVar.MappedOutputValue))
             {
-                // Only set the current value to the mapped value for immediate effect
-                // DO NOT call SetInitialValue as this would change the variable's initial value permanently
-                originalVar.Value = customizedVar.MappedOutputValue;              
-            }
-
-            // Restore the original initial value to ensure it's not changed by mapping
-            originalVar.SetInitialValue(preservedInitialValue);
+                if (customizedVar.MappedOutputType == VariableBase.eOutputType.Value
+                    && !string.IsNullOrEmpty(customizedVar.MappedOutputValue))
+                {
+                    if (originalVar is VariablePasswordString)
+                    {
+                        var mapped = customizedVar.MappedOutputValue;
+                        if (!EncryptionHandler.IsStringEncrypted(mapped))
+                        {
+                            mapped = EncryptionHandler.EncryptwithKey(mapped);
+                        }
+                        ((VariablePasswordString)originalVar).Password = mapped; // keeps Value aligned
+                    }
+                    else
+                    {
+                        originalVar.Value = customizedVar.MappedOutputValue;
+                    }
+                    originalVar.DiffrentFromOrigin = true;
+                }
+            }          
 
             //Restore original description values
             originalVar.Name = originalCopy.Name;
@@ -1071,24 +1041,24 @@ namespace Ginger.Run
             switch (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel)
             {
                 case SealightsConfiguration.eSealightsEntityLevel.BusinessFlow:
-                {
-                    DisableBFExecution(testsToExclude, runsetConfig);
-                    break;
-                }
+                    {
+                        DisableBFExecution(testsToExclude, runsetConfig);
+                        break;
+                    }
                 case SealightsConfiguration.eSealightsEntityLevel.ActivitiesGroup:
-                {
-                    DisableActivitiesGroupExecution(testsToExclude, runsetConfig);
-                    break;
-                }
+                    {
+                        DisableActivitiesGroupExecution(testsToExclude, runsetConfig);
+                        break;
+                    }
                 case SealightsConfiguration.eSealightsEntityLevel.Activity:
-                {
-                    DisableActivitiesExecution(testsToExclude, runsetConfig);
-                    break;
-                }
+                    {
+                        DisableActivitiesExecution(testsToExclude, runsetConfig);
+                        break;
+                    }
                 default:
-                {
-                    throw new InvalidEnumArgumentException("Not a valid value");
-                }
+                    {
+                        throw new InvalidEnumArgumentException("Not a valid value");
+                    }
             }
         }
 

@@ -82,12 +82,12 @@ namespace Ginger.UserControlsLib
             }
         }
 
-        public sealed class ValidationResult
+        public sealed class ValueValidationResult
         {
             public bool IsValid { get; }
-            public string ErrorMessage { get; }
+            public string? ErrorMessage { get; }
 
-            public ValidationResult(bool isValid, string errorMessage = null)
+            public ValueValidationResult(bool isValid, string? errorMessage = null)
             {
                 IsValid = isValid;
                 ErrorMessage = errorMessage;
@@ -523,7 +523,7 @@ namespace Ginger.UserControlsLib
         private void MarkMappedValueValidation()
         {
             bool isValid = true;
-            string validationMessage = null;
+            string? validationMessage = null;
 
             if ((MappedType != eDataType.None.ToString() && MappedType != eDataType.Value.ToString() && MappedValue == string.Empty)
                 || ((MappedType == eDataType.OutputVariable.ToString() && !GingerCore.General.CheckComboItemExist(xOptionalValuesComboBox, MappedValue, nameof(VariableBase.VariableInstanceInfo)))
@@ -613,17 +613,17 @@ namespace Ginger.UserControlsLib
             return numericRegex.IsMatch(newText);
         }
 
-        private ValidationResult ValidateValueForVariableType()
+        private ValueValidationResult ValidateValueForVariableType()
         {
             if (string.IsNullOrEmpty(MappedValue))
             {
-                return new ValidationResult(true); // Empty value is valid for Value type
+                return new ValueValidationResult(true); // Empty value is valid for Value type
             }
 
             // Check if the value contains only valid characters
             if (MappedValue.Any(c => char.IsControl(c) && c != '\t' && c != '\n' && c != '\r'))
             {
-                return new ValidationResult(false, "Value contains invalid control characters");
+                return new ValueValidationResult(false, "Value contains invalid control characters");
             }
 
             // If the DataContext is a number variable, validate it as a number
@@ -632,17 +632,17 @@ namespace Ginger.UserControlsLib
                 return ValidateNumericValue(MappedValue);
             }
 
-            return new ValidationResult(true); // Default validation passes
+            return new ValueValidationResult(true); // Default validation passes
         }
 
-        private ValidationResult ValidateNumericValue(string value)
+        private ValueValidationResult ValidateNumericValue(string value)
         {
             if (!double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double numericValue))
             {
-                return new ValidationResult(false, "Invalid numeric format");
+                return new ValueValidationResult(false, "Invalid numeric format");
             }
 
-            return new ValidationResult(true);
+            return new ValueValidationResult(true);
         }
 
         private void xMappedTypeComboBox_DropDownOpened(object sender, EventArgs e)

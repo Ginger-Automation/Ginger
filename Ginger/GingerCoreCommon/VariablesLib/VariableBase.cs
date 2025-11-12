@@ -221,7 +221,7 @@ namespace GingerCore.Variables
         /// Gets the source value for deserialization based on variable type-specific storage patterns
         /// </summary>
         /// <returns>The source value if found, null or empty otherwise</returns>
-        private string GetVariableSourceValueForDeserialization()
+        public string GetVariableSourceValueForDeserialization()
         {
             try
             {

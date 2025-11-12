@@ -4,7 +4,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:Actions="clr-namespace:Ginger.Actions"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:window="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
              xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              mc:Ignorable="d" 
              d:DesignHeight="30" d:DesignWidth="320">
@@ -75,13 +75,13 @@
         </DatePicker>
         
         <!-- WinForms DateTimePicker as fallback -->
-        <window:WindowsFormsHost x:Name="xDateTimeWindow" Grid.Column="1" 
+        <wfi:WindowsFormsHost x:Name="xDateTimeWindow" Grid.Column="1" 
                                 Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" 
                                 Visibility="Collapsed">
             <wf:DateTimePicker x:Name="xDateTimePicker" 
                               TextChanged="xDateTimePicker_TextChanged" 
                               Format="Custom"/>
-        </window:WindowsFormsHost>
+        </wfi:WindowsFormsHost>
         
         <!-- Value TextBox -->
         <TextBox x:Name="xValueTextBox" Grid.Column="1" VerticalAlignment="Top" 
