@@ -88,7 +88,8 @@ namespace Ginger.Run
             grdVariables.AddToolbarTool("@Undo_16x16.png", "Reset " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " to Original Configurations", new RoutedEventHandler(ResetBusFlowVariables));
             grdVariables.AddToolbarTool("@Share_16x16.png", "Share Selected " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Value to all Similar " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " in " + GingerDicser.GetTermResValue(eTermResKey.RunSet), new RoutedEventHandler(CopyBusFlowVariables));
             grdVariables.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Rules, "Rules page", new RoutedEventHandler(ShowRulesPage));
-            grdVariables.RowDoubleClick += VariablesGrid_grdMain_MouseDoubleClick;
+            // Removed: grdVariables.RowDoubleClick += VariablesGrid_grdMain_MouseDoubleClick;
+            // Double-click to edit variables is disabled in Run Set Configurations to prevent unintended variable edits
 
             SetVariablesGridView();
             LoadGridData();
@@ -163,7 +164,7 @@ namespace Ginger.Run
                 new GridColView() { Field = nameof(VariableBase.Image), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 },
                 new GridColView() { Field = nameof(VariableBase.Name), Header = "Name", WidthWeight = 20, ReadOnly = true, BindingMode = BindingMode.OneWay },
                 new GridColView() { Field = nameof(VariableBase.MandatoryIndication), Header = " ", WidthWeight = 1, ReadOnly = true, BindingMode = BindingMode.OneWay, Style = FindResource("$GridColumnRedTextStyle") as Style },
-                new GridColView() { Field = nameof(VariableBase.Value), Header = "Initial Value", WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true },
+                new GridColView() { Field = nameof(VariableBase.InitialValue), Header = "Initial Value", WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true },
             ]
             };
             if (mWindowMode == eWindowMode.Configuration)
@@ -179,13 +180,7 @@ namespace Ginger.Run
                     {
                         _EnableDataMappingProperty = nameof(VariableBase.SupportSetValue),
                         _VariabelsSourceProperty = nameof(VariableBase.PossibleVariables),
-                        _OutputVariabelsSourceProperty = nameof(VariableBase.PossibleOutputVariables),
-                        _RestrictedMappingTypes = new[]
-                            {
-                                new UCDataMapping.RestrictedMappingType(
-                                    name: nameof(UCDataMapping.eDataType.Variable),
-                                    reason: "Variables are deprected for Mapped Runtime Value.")
-                            }
+                        _OutputVariabelsSourceProperty = nameof(VariableBase.PossibleOutputVariables)
                     }),
                     WidthWeight = 40,
                 
@@ -197,7 +192,6 @@ namespace Ginger.Run
             }
             //view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.ParentType), Header = "Level", WidthWeight = 10, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.ParentName), Header = "Path", WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.DiffrentFromOrigin), Header = "Customized?", WidthWeight = 8, BindingMode = BindingMode.OneWay, ReadOnly = true });
             grdVariables.SetAllColumnsDefaultView(view);
             grdVariables.InitViewItems();
 
@@ -371,11 +365,6 @@ namespace Ginger.Run
             {
                 Reporter.ToUser(eUserMsgKey.AskToSelectVariable);
             }
-        }
-
-        private void VariablesGrid_grdMain_MouseDoubleClick(object sender, EventArgs e)
-        {
-            EditVar();
         }
 
         private void EditVar()
