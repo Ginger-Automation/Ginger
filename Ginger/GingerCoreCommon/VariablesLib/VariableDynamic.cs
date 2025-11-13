@@ -114,7 +114,7 @@ namespace GingerCore.Variables
         public override eImageType Image { get { return eImageType.CSS3Text; } }
         public override string VariableType { get { return "Dynamic"; } }
 
-        public override bool SupportSetValue { get { return true; } }
+        public override bool SupportSetValue { get { return false; } }
 
         public override bool SupportResetValue { get { return true; } }
 
