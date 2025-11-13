@@ -54,7 +54,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         }
     }
 
-    public abstract class ConsoleDriverBase : DriverBase, IVirtualDriver, IDriverWindow, IConsoleDriver
+    public abstract class ConsoleDriverBase : DriverBase, IVirtualDriver, IDriverWindow
     {
         [UserConfigured]
         [UserConfiguredDefault("30")]
@@ -121,6 +121,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         }
 
         // Legacy method retained for backward compatibility (not used by new flow)
+        [Obsolete("Use StartDriver() instead. This method will be removed in a future version.")]
         public void ShowDriverWindow()
         {
             IsDriverConnected = Connect();

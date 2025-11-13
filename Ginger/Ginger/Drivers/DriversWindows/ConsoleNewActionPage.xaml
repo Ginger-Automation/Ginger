@@ -47,7 +47,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ScrollBar">
                         <Grid Background="{TemplateBinding Background}">
-                            <Track Name="PART_Track" IsDirectionReversed="False">
+                            <Track Name="PART_Track" IsDirectionReversed="True">
                                 <Track.DecreaseRepeatButton>
                                     <RepeatButton Command="ScrollBar.LineUpCommand" Background="{StaticResource DarkScrollTrack}" Foreground="#777"/>
                                 </Track.DecreaseRepeatButton>
