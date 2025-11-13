@@ -126,7 +126,7 @@ namespace Ginger.Drivers.DriversWindows
             mConsoleDriver = (ConsoleDriverBase)driver;
             mAgent = agent;
             mBusinessFlow = driver.BusinessFlow;
-            Loaded += (_, __) => InitializeCommonUI();
+            Loaded += (_, _) => InitializeCommonUI();
             ((DriverBase)mConsoleDriver).DriverMessageEvent += ConsoleDriverWindow_DriverMessageEvent;
         }
 
@@ -166,7 +166,10 @@ namespace Ginger.Drivers.DriversWindows
                         try
                         {
                             if (sender is string)
+                            {
                                 ConsoleWriteCommand((string)sender);
+                            }
+                                
                         }
                         catch (Exception ex)
                         {
@@ -185,9 +188,6 @@ namespace Ginger.Drivers.DriversWindows
                             RecordButton.Foreground = mRecording ? Brushes.Red : Brushes.Black;
                         });
                     }
-                    break;
-
-                default:
                     break;
             }
         }
@@ -330,7 +330,6 @@ namespace Ginger.Drivers.DriversWindows
             try
             {
                 mConsoleDriver.Disconnect();
-                //mConsoleDriver.mConsoleDriverWindow = null;
                 mConsoleDriver.CloseDriver();
             }
             catch (Exception ex)
@@ -501,7 +500,9 @@ namespace Ginger.Drivers.DriversWindows
             CommandBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(55, 50, 70));
             CommandTextBox.Background = new SolidColorBrush(Color.FromRgb(20, 18, 29));
             if (CommandTextBox.Text != CommandPlaceholder)
+            {
                 CommandTextBox.Foreground = new SolidColorBrush(DarkThemeTextColor);
+            }
             // Command textbox scrollbar
             CommandTextBox.Resources[typeof(ScrollBar)] = FindResource("DarkScrollBarStyle");
             CommandLabelIfExists();

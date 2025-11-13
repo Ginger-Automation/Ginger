@@ -136,19 +136,24 @@ namespace Ginger.Actions
                     break;
                 case ActConsoleCommand.eConsoleCommand.ParametrizedCommand:
                     CommandPanel.Visibility = Visibility.Visible;
-                    mActConsoleCommand.RemoveAllButOneInputParam("Value");
-                    mActConsoleCommand.AddInputValueParam("Value");
+                    SetupValueInputParam();
                     mActConsoleCommand.ScriptName = string.Empty;
                     break;
                 default:
-                    mActConsoleCommand.RemoveAllButOneInputParam("Value");
-                    mActConsoleCommand.AddInputValueParam("Value");
+                    SetupValueInputParam();
                     mActConsoleCommand.ScriptName = string.Empty;
                     break;
             }
 
             UpdateVisibilityForCommand(comm);
         }
+
+        private void SetupValueInputParam()
+        {
+            mActConsoleCommand.RemoveAllButOneInputParam("Value");
+            mActConsoleCommand.AddInputValueParam("Value");
+        }
+
 
         private void UpdateVisibilityForCommand(ActConsoleCommand.eConsoleCommand command)
         {

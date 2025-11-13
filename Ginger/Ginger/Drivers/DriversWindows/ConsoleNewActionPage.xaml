@@ -167,7 +167,7 @@
         <Border Style="{StaticResource RoundedPanel}" Grid.Row="0">
             <DockPanel>
                 <TextBlock Text="Command" Foreground="#B4AFC3" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                <TextBox x:Name="CommandTextBox" Style="{StaticResource DarkTextBox}" Width="Auto" MinWidth="300" HorizontalAlignment="Stretch"/>
+                <TextBox x:Name="CommandTextBox" Style="{StaticResource DarkTextBox}" Width="Auto" MinWidth="300" HorizontalAlignment="Stretch" AutomationProperties.Name="Console Command Input"/>
             </DockPanel>
         </Border>
 
@@ -175,7 +175,7 @@
         <Border Style="{StaticResource RoundedPanel}" Grid.Row="1" Margin="0,8,0,0">
             <StackPanel>
                 <TextBlock Text="Parameters" Foreground="#B4AFC3" FontWeight="Bold" Margin="0,0,0,6"/>
-                <DataGrid x:Name="ParamsDataGrid" Style="{StaticResource DarkDataGrid}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="True" CanUserDeleteRows="True" RowStyle="{StaticResource DarkDGRow}" CellStyle="{StaticResource DarkDGCell}">
+                <DataGrid x:Name="ParamsDataGrid" Style="{StaticResource DarkDataGrid}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="True" CanUserDeleteRows="True" RowStyle="{StaticResource DarkDGRow}" CellStyle="{StaticResource DarkDGCell}" AutomationProperties.Name="Command Parameters Grid">
                     <DataGrid.Resources>
                         <Style TargetType="ScrollViewer" BasedOn="{StaticResource DarkScrollViewer}"/>
                         <Style TargetType="ScrollBar" BasedOn="{StaticResource DarkScrollBar}"/>
@@ -191,7 +191,7 @@
 
         <!-- Hint Footer -->
         <Border Style="{StaticResource RoundedPanel}" Grid.Row="2" Margin="0,8,0,0" Background="#1E1C28">
-            <TextBlock Text="Command can be like: cp, cd or any Unix command / shell script. Parameter names and values can be edited." TextWrapping="Wrap" Foreground="#8F8AA2"/>
+            <TextBlock Text="Command can be a shell command or script (e.g., cp, cd, dir). Parameter names and values can be edited." TextWrapping="Wrap" Foreground="#8F8AA2"/>
         </Border>
     </Grid>
 </Page>

@@ -48,7 +48,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
             callback?.Invoke();
         }
 
-        public void BeginInvokeShutdown(dynamic dispatherPriority)
+        public void BeginInvokeShutdown(dynamic dispatcherPriority)
         {
             // No-op for dummy dispatcher
         }
@@ -110,11 +110,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
             // Connect on current thread; DriverWindowHandler will open the window asynchronously if ShowWindow == true
             IsDriverConnected = Connect();
 
-
-            if (ShowWindow)
+            // In headless mode (ShowWindow == false), provide dummy dispatcher so actions relying on dispatcher still work
+            if (!ShowWindow)
             {
-                // Headless mode: provide dummy dispatcher so actions relying on dispatcher still work
                 Dispatcher = new DummyDispatcher();
+            }
+            else
+            {
+                // When ShowWindow == true, initialize with DummyDispatcher temporarily
+                // The real dispatcher will be set by DriverWindowHandler when the window is created
+                if (Dispatcher == null)
+                {
+                    Dispatcher = new DummyDispatcher();
+                }
             }
 
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
@@ -125,7 +133,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         public void ShowDriverWindow()
         {
             IsDriverConnected = Connect();
-            if (ShowWindow)
+            if (!ShowWindow)
             {
                 Dispatcher = new DummyDispatcher();
             }
@@ -210,9 +218,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
                             act.ExInfo = "Returned recorded console buffer content";
                             skipExecution = true;
                             break;
-                        // Other console command types fall through to generic execution logic below
-                        default:
-                            break;
                     }
 
                     if (skipExecution)
@@ -258,7 +263,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
                             }
                             sRC = RunConsoleCommand(command);
                         }
-                        if (mExpString != null && sRC.Contains(mExpString) == false)
+                        if (mExpString != null && !sRC.Contains(mExpString))
                         {
                             act.Error = "Expected String \"" + mExpString + "\" not found in command output";
                             act.Status = Execution.eRunStatus.Failed;
@@ -315,7 +320,32 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
                 Reporter.ToLog(eLogLevel.DEBUG, $"Executing console command: {command}");
                 var commandWithLineEnding = Platform.ToString() == "Unix" ? command + "\n" : command + System.Environment.NewLine;
                 taskFinished = false;
-                SendCommand(commandWithLineEnding);
+                // Send command - use dispatcher if available
+                if (Dispatcher != null)
+                {
+                    Dispatcher.Invoke(() => SendCommand(commandWithLineEnding));
+                }
+                else
+                {
+                    SendCommand(commandWithLineEnding);
+                }
+                // Wait for command to complete
+                int timeout = mWait.HasValue ? mWait.Value * 1000 : ImplicitWait * 1000;
+                int elapsed = 0;
+                int checkInterval = 100; // Check every 100ms
+
+                while (!taskFinished && elapsed < timeout)
+                {
+                    Thread.Sleep(checkInterval);
+                    elapsed += checkInterval;
+
+                    // If waiting for specific text, check if it's in the buffer
+                    if (!string.IsNullOrEmpty(waitForText) && mConsoleBuffer.ToString().Contains(waitForText))
+                    {
+                        break;
+                    }
+                }
+
                 var rc = mConsoleBuffer.ToString();
                 var GingerRCStart = "~~~GINGER_RC_START~~~";
                 var GingerRCEnd = "~~~GINGER_RC_END~~~";
@@ -368,7 +398,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
 
         public override string GetURL()
         {
-            return "TBD";
+            return string.Empty;
         }
 
         public override void HighlightActElement(Act act)
