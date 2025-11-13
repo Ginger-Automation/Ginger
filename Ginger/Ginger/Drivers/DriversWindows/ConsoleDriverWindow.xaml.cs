@@ -189,6 +189,7 @@ namespace Ginger.Drivers.DriversWindows
                         });
                     }
                     break;
+
             }
         }
 
@@ -545,7 +546,9 @@ namespace Ginger.Drivers.DriversWindows
             CommandBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(208, 208, 208));
             CommandTextBox.Background = new SolidColorBrush(Color.FromRgb(250, 250, 250));
             if (CommandTextBox.Text != CommandPlaceholder)
+            {
                 CommandTextBox.Foreground = new SolidColorBrush(Color.FromRgb(51, 51, 51));
+            }
             CommandTextBox.Resources[typeof(ScrollBar)] = FindResource("LightScrollBarStyle");
             CommandLabelIfExists();
             Style roundStyle = (Style)FindResource("ThemedRoundButtonStyle");
