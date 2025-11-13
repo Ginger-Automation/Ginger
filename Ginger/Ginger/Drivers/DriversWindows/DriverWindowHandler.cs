@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
-using Ginger.Drivers.DriversWindows;
 using GingerCore;
 using GingerCore.Drivers;
 using System;

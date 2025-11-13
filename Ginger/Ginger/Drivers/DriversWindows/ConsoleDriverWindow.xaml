@@ -110,7 +110,7 @@
         <!-- Console Output Area -->
         <Border x:Name="ConsoleBorder" Grid.Row="1" CornerRadius="4" BorderBrush="#37324B" BorderThickness="1" Background="#121118" Padding="6" SnapsToDevicePixels="True">
             <RichTextBox x:Name="ConsoleTextBox" Background="#121118" Foreground="#00AAFF" FontFamily="Consolas" FontSize="14" IsReadOnly="True" BorderThickness="0" FontWeight="Bold"
-                         ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
+                         AutomationProperties.Name="Console Output" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
         </Border>
 
         <!-- Command Entry Area -->
@@ -120,7 +120,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="CommandTextBox" Grid.Column="0" FontSize="14" FontFamily="Consolas" Background="#14121D" Foreground="#DCDCEB" BorderBrush="#37324B" BorderThickness="1" Padding="4" KeyUp="CommandTextBox_KeyUp" GotFocus="CommandTextBox_GotFocus" LostFocus="CommandTextBox_LostFocus"/>
+                <TextBox x:Name="CommandTextBox" Grid.Column="0" FontSize="14" FontFamily="Consolas" Background="#14121D" Foreground="#DCDCEB" BorderBrush="#37324B" BorderThickness="1" Padding="4" KeyUp="CommandTextBox_KeyUp" AutomationProperties.Name="Command Input" GotFocus="CommandTextBox_GotFocus" LostFocus="CommandTextBox_LostFocus"/>
                 <Button x:Name="GoButton" Grid.Column="1" Click="GoButton_Click"  Content="Run" Style="{StaticResource ThemedRoundButtonStyle}" Margin="8,0,0,0" Width="70" Background="#28263B" BorderBrush="#37324B" Foreground="White"/>
             </Grid>
         </Border>

@@ -175,7 +175,7 @@
         <Border Style="{StaticResource RoundedPanel}" Grid.Row="1" Margin="0,8,0,0">
             <StackPanel>
                 <TextBlock Text="Parameters" Foreground="#B4AFC3" FontWeight="Bold" Margin="0,0,0,6"/>
-                <DataGrid x:Name="ParamsDatGrid" Style="{StaticResource DarkDataGrid}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="True" CanUserDeleteRows="True" RowStyle="{StaticResource DarkDGRow}" CellStyle="{StaticResource DarkDGCell}">
+                <DataGrid x:Name="ParamsDataGrid" Style="{StaticResource DarkDataGrid}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="True" CanUserDeleteRows="True" RowStyle="{StaticResource DarkDGRow}" CellStyle="{StaticResource DarkDGCell}">
                     <DataGrid.Resources>
                         <Style TargetType="ScrollViewer" BasedOn="{StaticResource DarkScrollViewer}"/>
                         <Style TargetType="ScrollBar" BasedOn="{StaticResource DarkScrollBar}"/>

@@ -157,12 +157,12 @@ namespace Ginger.Actions
             // Hide all optional controls when StartRecordingBuffer or StopRecordingBuffer selected
             bool showCommonControls = command != ActConsoleCommand.eConsoleCommand.StartRecordingBuffer && command != ActConsoleCommand.eConsoleCommand.StopRecordingBuffer;
 
-            if (ExpectedStringLabel != null) ExpectedStringLabel.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed;
-            if (txtExpected != null) txtExpected.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed;
-            if (DelimiterLabel != null) DelimiterLabel.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed;
-            if (xDelimiterVE != null) xDelimiterVE.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed;
-            if (WaitTimeStackPanel != null) WaitTimeStackPanel.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed;
-            if (CommandTerminatorStackPanel != null) CommandTerminatorStackPanel.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed;
+            if (ExpectedStringLabel != null) { ExpectedStringLabel.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed; }
+            if (txtExpected != null) { txtExpected.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed; }
+            if (DelimiterLabel != null) { DelimiterLabel.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed; }
+            if (xDelimiterVE != null) { xDelimiterVE.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed; }
+            if (WaitTimeStackPanel != null) { WaitTimeStackPanel.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed; }
+            if (CommandTerminatorStackPanel != null) { CommandTerminatorStackPanel.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed; }
 
             if (!showCommonControls)
             {

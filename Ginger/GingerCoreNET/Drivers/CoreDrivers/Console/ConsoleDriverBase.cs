@@ -111,9 +111,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
             IsDriverConnected = Connect();
 
 
+            if (ShowWindow)
+            {
                 // Headless mode: provide dummy dispatcher so actions relying on dispatcher still work
-            Dispatcher = new DummyDispatcher();
-
+                Dispatcher = new DummyDispatcher();
+            }
 
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
@@ -122,7 +124,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         public void ShowDriverWindow()
         {
             IsDriverConnected = Connect();
-            if (!ShowWindow)
+            if (ShowWindow)
             {
                 Dispatcher = new DummyDispatcher();
             }
@@ -207,7 +209,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
                             act.ExInfo = "Returned recorded console buffer content";
                             skipExecution = true;
                             break;
-
                         // Other console command types fall through to generic execution logic below
                         default:
                             break;
@@ -300,31 +301,40 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
                     break;
 
                 default:
-                    throw new Exception("Action unknown/not implemented for the Driver: " + GetType().ToString());
+                    Reporter.ToLog(eLogLevel.ERROR, $"Action unknown/not implemented for the Driver: {GetType().ToString()}");
+                    break;
             }
         }
 
         public virtual string RunConsoleCommand(string command, string waitForText = null)
         {
-            mConsoleBuffer.Clear();
-            Reporter.ToLog(eLogLevel.DEBUG, $"Executing console command: {command}");
-            var commandWithLineEnding = Platform.ToString() == "Unix" ? command + "\n" : command + System.Environment.NewLine;
-            taskFinished = false;
-            SendCommand(commandWithLineEnding);
-            var rc = mConsoleBuffer.ToString();
-            var GingerRCStart = "~~~GINGER_RC_START~~~";
-            var GingerRCEnd = "~~~GINGER_RC_END~~~";
-            var i = rc.IndexOf(GingerRCStart);
-            if (i > 0)
+            try
             {
-                var i2 = rc.IndexOf(GingerRCEnd, i);
-                if (i2 > 0)
+                mConsoleBuffer.Clear();
+                Reporter.ToLog(eLogLevel.DEBUG, $"Executing console command: {command}");
+                var commandWithLineEnding = Platform.ToString() == "Unix" ? command + "\n" : command + System.Environment.NewLine;
+                taskFinished = false;
+                SendCommand(commandWithLineEnding);
+                var rc = mConsoleBuffer.ToString();
+                var GingerRCStart = "~~~GINGER_RC_START~~~";
+                var GingerRCEnd = "~~~GINGER_RC_END~~~";
+                var i = rc.IndexOf(GingerRCStart);
+                if (i > 0)
                 {
-                    rc = rc.Substring(i + GingerRCStart.Length + 1, i2 - i - GingerRCEnd.Length - 4);
+                    var i2 = rc.IndexOf(GingerRCEnd, i);
+                    if (i2 > 0)
+                    {
+                        rc = rc.Substring(i + GingerRCStart.Length + 1, i2 - i - GingerRCEnd.Length - 4);
+                    }
                 }
+                mConsoleBuffer.Clear();
+                return rc;
             }
-            mConsoleBuffer.Clear();
-            return rc;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error executing command: {command}", ex);
+                return $"Error: {ex.Message}";
+            }
         }
 
         public virtual void WriteToConsoleBuffer(string text)

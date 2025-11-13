@@ -20,18 +20,17 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.ActionsLib;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console;
-using Ginger.Drivers.DriversWindows; // ensure same namespace if needed
 using GingerCore; // for BusinessFlow and eLocateBy
 using GingerCore.Drivers;
-using System; 
+using System;
 using System.Linq;
-using System.Text; 
-using System.Windows; 
-using System.Windows.Documents; 
-using System.Windows.Input; 
-using System.Windows.Media; 
+using System.Text;
+using System.Windows;
 using System.Windows.Controls; // added for WPF controls
 using System.Windows.Controls.Primitives; // for ScrollBar
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Ginger.Drivers.DriversWindows
 {
@@ -60,6 +59,9 @@ namespace Ginger.Drivers.DriversWindows
         private TextBlock _themeText;
 
         private const string CommandPlaceholder = "Command";
+        private static readonly Color PlaceholderColor = Color.FromRgb(120, 120, 130);
+        private static readonly Color DarkThemeTextColor = Color.FromRgb(220, 220, 235);
+        private static readonly Color LightThemeTextColor = Color.FromRgb(0, 221, 0);
 
         private void InitTextBlocks()
         {
@@ -73,7 +75,7 @@ namespace Ginger.Drivers.DriversWindows
             if (string.IsNullOrEmpty(CommandTextBox.Text))
             {
                 CommandTextBox.Text = CommandPlaceholder;
-                CommandTextBox.Foreground = new SolidColorBrush(Color.FromRgb(120,120,130));
+                CommandTextBox.Foreground = new SolidColorBrush(PlaceholderColor);
             }
         }
 
@@ -82,27 +84,49 @@ namespace Ginger.Drivers.DriversWindows
             if (CommandTextBox.Text == CommandPlaceholder)
             {
                 CommandTextBox.Text = string.Empty;
-                CommandTextBox.Foreground = mIsDarkTheme ? new SolidColorBrush(Color.FromRgb(220,220,235)) : new SolidColorBrush(Color.FromRgb(0,221,0));
+                CommandTextBox.Foreground = mIsDarkTheme ? new SolidColorBrush(DarkThemeTextColor) : new SolidColorBrush(LightThemeTextColor);
             }
         }
 
         private void CommandTextBox_GotFocus(object sender, RoutedEventArgs e) => RemoveCommandPlaceholder();
         private void CommandTextBox_LostFocus(object sender, RoutedEventArgs e) => SetCommandPlaceholder();
 
-        public ConsoleDriverWindow(BusinessFlow BF)
+        private void InitializeCommonUI()
+        {
+            InitTextBlocks();
+            ApplyDarkTheme();
+            SetCommandPlaceholder();
+        }
+
+    public ConsoleDriverWindow(BusinessFlow BF)
         {
             InitializeComponent();
             mBusinessFlow = BF;
-            Loaded += (_, __) => { InitTextBlocks(); ApplyDarkTheme(); SetCommandPlaceholder(); };
+            Loaded += (_, _) => InitializeCommonUI();
         }
 
         public ConsoleDriverWindow(DriverBase driver, Agent agent)
         {
             InitializeComponent();
+            if (driver == null)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "ConsoleDriverWindow: driver is null");
+            }
+
+            if (agent == null)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "ConsoleDriverWindow: agent is null");
+            }
+
+            if (driver is not ConsoleDriverBase)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "ConsoleDriverWindow: driver is null");
+            }
+                
             mConsoleDriver = (ConsoleDriverBase)driver;
             mAgent = agent;
             mBusinessFlow = driver.BusinessFlow;
-            Loaded += (_, __) => { InitTextBlocks(); ApplyDarkTheme(); SetCommandPlaceholder(); };
+            Loaded += (_, __) => InitializeCommonUI();
             ((DriverBase)mConsoleDriver).DriverMessageEvent += ConsoleDriverWindow_DriverMessageEvent;
         }
 
@@ -128,7 +152,10 @@ namespace Ginger.Drivers.DriversWindows
                                 statusLbl.Foreground = connected ? Brushes.Green : Brushes.Red;
                             }
                         }
-                        catch { }
+                        catch(Exception ex) 
+                        { 
+                            Reporter.ToLog(eLogLevel.WARN, "Failed to update status label", ex); 
+                        }
                     });
                     break;
 
@@ -138,10 +165,13 @@ namespace Ginger.Drivers.DriversWindows
                     {
                         try
                         {
-                            if(sender is string)
+                            if (sender is string)
                                 ConsoleWriteCommand((string)sender);
                         }
-                        catch { }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to write console buffer update", ex);
+                        }
                     });
                     break;
 
@@ -156,7 +186,7 @@ namespace Ginger.Drivers.DriversWindows
                         });
                     }
                     break;
-                
+
                 default:
                     break;
             }
@@ -195,7 +225,7 @@ namespace Ginger.Drivers.DriversWindows
         public void ConsoleWriteCommand(string command)
         {
             Paragraph p = new Paragraph();
-            p.Inlines.Add(new System.Windows.Documents.Bold(new System.Windows.Documents.Run(command))
+            p.Inlines.Add(new Bold(new System.Windows.Documents.Run(command))
             {
                 Foreground = ConsoleCommandBrush
             });
@@ -216,7 +246,7 @@ namespace Ginger.Drivers.DriversWindows
             }
             else
             {
-                p.Inlines.Add(new System.Windows.Documents.Bold(new System.Windows.Documents.Run(txt))
+                p.Inlines.Add(new Bold(new System.Windows.Documents.Run(txt))
                 {
                     Foreground = ConsoleTextBrush
                 });
@@ -457,74 +487,84 @@ namespace Ginger.Drivers.DriversWindows
 
         private void ApplyDarkTheme()
         {
-            InitTextBlocks();
-            TopBarBorder.Background = new SolidColorBrush(Color.FromRgb(40,38,59));
-            TopBarBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(55,50,70));
-            xRootGrid.Background = new SolidColorBrush(Color.FromRgb(12,11,18));
+            TopBarBorder.Background = new SolidColorBrush(Color.FromRgb(40, 38, 59));
+            TopBarBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(55, 50, 70));
+            xRootGrid.Background = new SolidColorBrush(Color.FromRgb(12, 11, 18));
             this.Background = xRootGrid.Background;
-            ConsoleBorder.Background = new SolidColorBrush(Color.FromRgb(18,17,24));
-            ConsoleBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(55,50,70));
+            ConsoleBorder.Background = new SolidColorBrush(Color.FromRgb(18, 17, 24));
+            ConsoleBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(55, 50, 70));
             ConsoleTextBox.Background = ConsoleBorder.Background;
-            ConsoleTextBox.Foreground = new SolidColorBrush(Color.FromRgb(0,170,255));
+            ConsoleTextBox.Foreground = new SolidColorBrush(Color.FromRgb(0, 170, 255));
             // ScrollBars dark
             ConsoleTextBox.Resources[typeof(ScrollBar)] = FindResource("DarkScrollBarStyle");
-            CommandBorder.Background = new SolidColorBrush(Color.FromRgb(40,38,59));
-            CommandBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(55,50,70));
-            CommandTextBox.Background = new SolidColorBrush(Color.FromRgb(20,18,29));
+            CommandBorder.Background = new SolidColorBrush(Color.FromRgb(40, 38, 59));
+            CommandBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(55, 50, 70));
+            CommandTextBox.Background = new SolidColorBrush(Color.FromRgb(20, 18, 29));
             if (CommandTextBox.Text != CommandPlaceholder)
-                CommandTextBox.Foreground = new SolidColorBrush(Color.FromRgb(220,220,235));
+                CommandTextBox.Foreground = new SolidColorBrush(DarkThemeTextColor);
             // Command textbox scrollbar
             CommandTextBox.Resources[typeof(ScrollBar)] = FindResource("DarkScrollBarStyle");
             CommandLabelIfExists();
-            var btnBG = new SolidColorBrush(Color.FromRgb(40,38,59));
-            var btnBorder = new SolidColorBrush(Color.FromRgb(55,50,70));
+            var btnBG = new SolidColorBrush(Color.FromRgb(40, 38, 59));
+            var btnBorder = new SolidColorBrush(Color.FromRgb(55, 50, 70));
             var btnText = Brushes.White;
             Style roundStyle = (Style)FindResource("ThemedRoundButtonStyle");
-            foreach (var b in new[]{RecordButton,NewActionButton,ThemeToggleButton,GoButton,TopButton})
+            foreach (var b in new[] { RecordButton, NewActionButton, ThemeToggleButton, GoButton, TopButton })
             {
                 b.Style = roundStyle; b.Background = btnBG; b.BorderBrush = btnBorder; b.Foreground = btnText;
             }
             _recordText?.SetValue(TextBlock.ForegroundProperty, mRecording ? Brushes.Red : btnText);
             _newActionText?.SetValue(TextBlock.ForegroundProperty, btnText);
             _themeText?.SetValue(TextBlock.ForegroundProperty, btnText);
-            if (xStatusLabel.Content?.ToString()=="Connected") xStatusLabel.Foreground = new SolidColorBrush(Color.FromRgb(0,220,100));
+            if (xStatusLabel.Content?.ToString() == "Connected")
+            {
+                xStatusLabel.Foreground = new SolidColorBrush(Color.FromRgb(0, 220, 100));
+            }
             mIsDarkTheme = true;
-            if (CommandTextBox.Text == CommandPlaceholder) SetCommandPlaceholder();
+            if (CommandTextBox.Text == CommandPlaceholder)
+            {
+                SetCommandPlaceholder();
+            }
         }
 
         private void ApplyLightTheme()
         {
-            InitTextBlocks();
             TopBarBorder.Background = Brushes.White;
-            TopBarBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(208,208,208));
-            xRootGrid.Background = new SolidColorBrush(Color.FromRgb(244,244,244));
+            TopBarBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(208, 208, 208));
+            xRootGrid.Background = new SolidColorBrush(Color.FromRgb(244, 244, 244));
             this.Background = xRootGrid.Background;
             // Keep console background same as dark mode
-            ConsoleBorder.Background = new SolidColorBrush(Color.FromRgb(18,17,24));
-            ConsoleBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(208,208,208));
+            ConsoleBorder.Background = new SolidColorBrush(Color.FromRgb(18, 17, 24));
+            ConsoleBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(208, 208, 208));
             ConsoleTextBox.Background = ConsoleBorder.Background;
             // Optionally keep dark mode foreground for better contrast
-            ConsoleTextBox.Foreground = new SolidColorBrush(Color.FromRgb(0,170,255));
+            ConsoleTextBox.Foreground = new SolidColorBrush(Color.FromRgb(0, 170, 255));
             ConsoleTextBox.Resources[typeof(ScrollBar)] = FindResource("DarkScrollBarStyle");
             CommandBorder.Background = Brushes.White;
-            CommandBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(208,208,208));
-            CommandTextBox.Background = new SolidColorBrush(Color.FromRgb(250,250,250));
+            CommandBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(208, 208, 208));
+            CommandTextBox.Background = new SolidColorBrush(Color.FromRgb(250, 250, 250));
             if (CommandTextBox.Text != CommandPlaceholder)
-                CommandTextBox.Foreground = new SolidColorBrush(Color.FromRgb(51,51,51));
+                CommandTextBox.Foreground = new SolidColorBrush(Color.FromRgb(51, 51, 51));
             CommandTextBox.Resources[typeof(ScrollBar)] = FindResource("LightScrollBarStyle");
             CommandLabelIfExists();
             Style roundStyle = (Style)FindResource("ThemedRoundButtonStyle");
             var btnBG = Brushes.White;
-            var btnBorder = new SolidColorBrush(Color.FromRgb(208,208,208));
-            var btnText = new SolidColorBrush(Color.FromRgb(51,51,51));
-            foreach (var b in new[]{RecordButton,NewActionButton,ThemeToggleButton,GoButton,TopButton})
+            var btnBorder = new SolidColorBrush(Color.FromRgb(208, 208, 208));
+            var btnText = new SolidColorBrush(Color.FromRgb(51, 51, 51));
+            foreach (var b in new[] { RecordButton, NewActionButton, ThemeToggleButton, GoButton, TopButton })
             { b.Style = roundStyle; b.Background = btnBG; b.BorderBrush = btnBorder; b.Foreground = btnText; }
             _recordText?.SetValue(TextBlock.ForegroundProperty, mRecording ? Brushes.Red : btnText);
             _newActionText?.SetValue(TextBlock.ForegroundProperty, btnText);
             _themeText?.SetValue(TextBlock.ForegroundProperty, btnText);
-            if (xStatusLabel.Content?.ToString()=="Connected") xStatusLabel.Foreground = Brushes.Green;
+            if (xStatusLabel.Content?.ToString() == "Connected")
+            {
+                xStatusLabel.Foreground = Brushes.Green;
+            }
             mIsDarkTheme = false;
-            if (CommandTextBox.Text == CommandPlaceholder) SetCommandPlaceholder();
+            if (CommandTextBox.Text == CommandPlaceholder)
+            {
+                SetCommandPlaceholder();
+            }
         }
 
         private void CommandLabelIfExists() { /* placeholder since label removed */ }

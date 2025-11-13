@@ -45,8 +45,8 @@ namespace Ginger.Drivers.DriversWindows
             ACC.AddOrUpdateInputParamValue("Param 2", "");
             ACC.AddOrUpdateInputParamValue("Param 3", "");
 
-            ParamsDatGrid.ItemsSource = ACC.InputValues;
-            ParamsDatGrid.AutoGenerateColumns = false;
+            ParamsDataGrid.ItemsSource = ACC.InputValues;
+            ParamsDataGrid.AutoGenerateColumns = false;
         }
 
         internal void ShowAsWindow(System.Windows.Window owner)

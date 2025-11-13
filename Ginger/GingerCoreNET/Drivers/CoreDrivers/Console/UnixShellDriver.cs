@@ -216,7 +216,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
                 while (!task.IsCompleted && st.ElapsedMilliseconds < SSHConnectionTimeout * 1000)
                 {
                     task.Wait(500);  // Give user feedback every 500ms
-                    //GingerCore.General.DoEvents();
                 }
 
                 if (UnixClient.IsConnected)
