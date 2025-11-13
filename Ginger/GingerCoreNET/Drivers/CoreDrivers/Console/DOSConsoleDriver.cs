@@ -17,14 +17,17 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.ActionsLib;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
+using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
+
 using System.Diagnostics;
 using System.Threading;
 
-namespace GingerCore.Drivers.ConsoleDriverLib
+namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
 {
     public class DOSConsoleDriver : ConsoleDriverBase
     {
@@ -139,7 +142,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             {
                 while (mOutputs.Contains(mExpString) == false && ((DateTime.Now - startingTime).TotalSeconds <= mWait))
                 {
-                    if (!mConsoleDriverWindow.mConsoleDriver.IsDriverRunning)
+                    if (!IsDriverRunning)
                     {
                         break;
                     }
@@ -165,13 +168,12 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             Thread.Sleep(1000);
             while (mOutputs.Length > mlastOutputsLength)
             {
-                if (!mConsoleDriverWindow.mConsoleDriver.IsDriverRunning)
+                if (!IsDriverRunning)
                 {
                     break;
                 }
 
-                mConsoleDriverWindow.ConsoleWriteText(mOutputs[mlastOutputsLength..]);//get the output addition to console
-
+                WriteToConsoleBuffer(mOutputs[mlastOutputsLength..]);
                 if (waitForRestOfOutputs)
                 {
                     mlastOutputsLength = mOutputs.Length;

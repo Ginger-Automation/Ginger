@@ -20,12 +20,13 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace GingerCore.Actions
+namespace Amdocs.Ginger.CoreNET.ActionsLib
 {
     public class ActConsoleCommand : Act
     {
@@ -64,7 +65,10 @@ namespace GingerCore.Actions
             CopyFile = 2,
             IsFileExist = 6,
             Script = 18,
-            ParametrizedCommand = 19
+            ParametrizedCommand = 19,
+            StartRecordingBuffer = 20,
+            StopRecordingBuffer = 21,
+            ReturnBufferContent = 22
         }
 
         public enum eCommandEndKey
@@ -105,7 +109,7 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository(DefaultValue: eCommandEndKey.Enter)]
         public eCommandEndKey CommandEndKey { get; set; } = eCommandEndKey.Enter;
 
-        public override String ActionType
+        public override string ActionType
         {
             get
             {
