@@ -18,12 +18,13 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using GingerCore.Actions;
+using Amdocs.Ginger.CoreNET.ActionsLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Ginger.Actions
@@ -39,10 +40,12 @@ namespace Ginger.Actions
 
         string SHFilesPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\sh\");
 
+
         public ActConsoleCommandEditPage(ActConsoleCommand actConsoleCommand)
         {
             InitializeComponent();
             this.mActConsoleCommand = actConsoleCommand;
+
 
             if (mActConsoleCommand.Context != null)
             {
@@ -50,6 +53,7 @@ namespace Ginger.Actions
             }
 
             List<object> list = GetActionListPlatform();
+
             GingerCore.General.FillComboFromEnumObj(ConsoleActionComboBox, actConsoleCommand.ConsoleCommand, list);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConsoleActionComboBox, ComboBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.ConsoleCommand);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CommandTextBox, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.Command);
@@ -57,7 +61,17 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtWait, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.WaitTime);
             xDelimiterVE.BindControl(Context.GetAsContext(actConsoleCommand.Context), actConsoleCommand, nameof(ActConsoleCommand.Delimiter));
             txtExpected.Init(Context.GetAsContext(mActConsoleCommand.Context), mActConsoleCommand, ActConsoleCommand.Fields.ExpString);
+            GingerCore.General.FillComboFromEnumObj(CommandTerminatorComboBox, actConsoleCommand.CommandEndKey);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CommandTerminatorComboBox, ComboBox.SelectedValueProperty, actConsoleCommand, nameof(ActConsoleCommand.CommandEndKey));
+
+            // Apply initial visibility according to current selected command
+            if (ConsoleActionComboBox.SelectedItem != null)
+            {
+                UpdateVisibilityForCommand((ActConsoleCommand.eConsoleCommand)Enum.Parse(typeof(ActConsoleCommand.eConsoleCommand), ConsoleActionComboBox.SelectedItem.ToString()));
+            }
         }
+
+
 
         private List<object> GetActionListPlatform()
         {
@@ -80,6 +94,9 @@ namespace Ginger.Actions
             {
                 actionList.Add(ActConsoleCommand.eConsoleCommand.ParametrizedCommand);
                 actionList.Add(ActConsoleCommand.eConsoleCommand.Script);
+                actionList.Add(ActConsoleCommand.eConsoleCommand.StartRecordingBuffer);
+                actionList.Add(ActConsoleCommand.eConsoleCommand.StopRecordingBuffer);
+                actionList.Add(ActConsoleCommand.eConsoleCommand.ReturnBufferContent);
             }
             else if (mActConsoleCommand.Platform == ePlatformType.DOS)
             {
@@ -90,9 +107,14 @@ namespace Ginger.Actions
         }
         private void ConsoleActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ScriptStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-            CommandPanel.Visibility = System.Windows.Visibility.Collapsed;
-            //Ugly code but working, find way to make it simple use the enum val from combo            
+            if (ConsoleActionComboBox.SelectedItem == null)
+            {
+                return;
+            }
+
+            ScriptStackPanel.Visibility = Visibility.Collapsed;
+            CommandPanel.Visibility = Visibility.Collapsed;
+
             ActConsoleCommand.eConsoleCommand comm = (ActConsoleCommand.eConsoleCommand)Enum.Parse(typeof(ActConsoleCommand.eConsoleCommand), ConsoleActionComboBox.SelectedItem.ToString());
 
             switch (comm)
@@ -100,26 +122,64 @@ namespace Ginger.Actions
                 case ActConsoleCommand.eConsoleCommand.FreeCommand:
                     mActConsoleCommand.RemoveAllButOneInputParam("Free Command");
                     mActConsoleCommand.AddInputValueParam("Free Command");
-                    mActConsoleCommand.ScriptName = "";
+                    mActConsoleCommand.ScriptName = string.Empty;
+                    break;
+                case ActConsoleCommand.eConsoleCommand.StartRecordingBuffer:
+                case ActConsoleCommand.eConsoleCommand.StopRecordingBuffer:
+                    // No params required for recording buffer start/stop
+                    mActConsoleCommand.InputValues.Clear();
+                    mActConsoleCommand.ScriptName = string.Empty;
                     break;
                 case ActConsoleCommand.eConsoleCommand.Script:
-                    ScriptStackPanel.Visibility = System.Windows.Visibility.Visible;
+                    ScriptStackPanel.Visibility = Visibility.Visible;
                     FillScriptNameCombo();
                     break;
                 case ActConsoleCommand.eConsoleCommand.ParametrizedCommand:
-                    CommandPanel.Visibility = System.Windows.Visibility.Visible;
-                    mActConsoleCommand.RemoveAllButOneInputParam("Value");
-                    mActConsoleCommand.AddInputValueParam("Value");
-                    mActConsoleCommand.ScriptName = "";
+                    CommandPanel.Visibility = Visibility.Visible;
+                    SetupValueInputParam();
+                    mActConsoleCommand.ScriptName = string.Empty;
                     break;
                 default:
-                    mActConsoleCommand.RemoveAllButOneInputParam("Value");
-                    mActConsoleCommand.AddInputValueParam("Value");
-                    mActConsoleCommand.ScriptName = "";
+                    SetupValueInputParam();
+                    mActConsoleCommand.ScriptName = string.Empty;
                     break;
+            }
+
+            UpdateVisibilityForCommand(comm);
+        }
+
+        private void SetupValueInputParam()
+        {
+            mActConsoleCommand.RemoveAllButOneInputParam("Value");
+            mActConsoleCommand.AddInputValueParam("Value");
+        }
+
+
+        private void UpdateVisibilityForCommand(ActConsoleCommand.eConsoleCommand command)
+        {
+            // Hide all optional controls when StartRecordingBuffer or StopRecordingBuffer selected
+            bool showCommonControls = command != ActConsoleCommand.eConsoleCommand.StartRecordingBuffer && command != ActConsoleCommand.eConsoleCommand.StopRecordingBuffer;
+
+            if (ExpectedStringLabel != null) { ExpectedStringLabel.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed; }
+            if (txtExpected != null) { txtExpected.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed; }
+            if (DelimiterLabel != null) { DelimiterLabel.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed; }
+            if (xDelimiterVE != null) { xDelimiterVE.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed; }
+            if (WaitTimeStackPanel != null) { WaitTimeStackPanel.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed; }
+            if (CommandTerminatorStackPanel != null) { CommandTerminatorStackPanel.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed; }
+
+            if (!showCommonControls)
+            {
+                mActConsoleCommand.ScriptName = string.Empty;
             }
         }
 
+        private void CommandTerminatorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (CommandTerminatorComboBox.SelectedValue is ActConsoleCommand.eCommandEndKey key)
+            {
+                mActConsoleCommand.CommandEndKey = key;
+            }
+        }
         private void FillScriptNameCombo()
         {
             ScriptNameComboBox.Items.Clear();

@@ -71,6 +71,7 @@ namespace GingerCore.Actions
                 }
                 return mPlatforms;
             }
+
         }
 
         public override string ActionType
@@ -730,21 +731,30 @@ namespace GingerCore.Actions
                 if (URLExtensionType.JNLP == mURLExtension)
                 {
                     command = "\"" + mURL_Calc + "\"";
+
+                    if (!string.IsNullOrEmpty(commandParams_OneLine))
+                    {
+                        // Remove the last quote and add the arguments, then close with a quote
+                        if (command.EndsWith("\""))
+                        {
+                            command = command.Substring(0, command.Length - 1);
+                        }
+                        command += commandParams_OneLine + "\"";
+                    }
                 }
                 else if (URLExtensionType.JAR == mURLExtension)
                 {
                     command = "-jar \"" + mURL_Calc + "\"";
+                    if (!string.IsNullOrEmpty(commandParams_OneLine))
+                    {
+                        command += commandParams_OneLine;
+                    }
                 }
 
                 // If it java exe then directly use the exe path as java executor
                 else
                 {
                     javaExecuter = mURL_Calc;
-                }
-
-                if (commandParams_OneLine != string.Empty)
-                {
-                    command += commandParams_OneLine;
                 }
 
                 //run commnad

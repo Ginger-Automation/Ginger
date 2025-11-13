@@ -504,6 +504,7 @@ namespace Ginger
                 if (parserResult != null)
                 {
                     await cliProcessor.ProcessParsedArguments(parserResult);
+                    
                 }
             }
             catch (Exception ex)
@@ -512,7 +513,46 @@ namespace Ginger
             }
             finally
             {
+                DisposeHttpLogAppenders();
+
                 System.Windows.Application.Current.Shutdown(Environment.ExitCode);
+            }
+        }
+
+        private void DisposeHttpLogAppenders()
+        {
+            try
+            {
+                
+                var repository = log4net.LogManager.GetRepository();
+                if (repository == null)
+                {
+                    return;
+                }
+                var appenders = repository.GetAppenders();
+                if (appenders == null)
+                {
+                    return;
+                }
+                
+                var httpLogAppenders = appenders
+                                    .OfType<HttpLogAppender>().ToList();
+
+                foreach (var appender in httpLogAppenders)
+                {
+                    try
+                    {
+                        appender.Dispose();
+                    }
+                    catch (Exception appenderEx)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"[RunNewCLI] Error disposing HttpLogAppender: {appender?.Name}", appenderEx);
+                    }
+                    }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "[RunNewCLI] Error disposing HttpLogAppenders", ex);
             }
         }
 

@@ -215,7 +215,16 @@ namespace Amdocs.Ginger.UserControls
                     SetAsStaticImage("WireMock_Logo.png");
                     break;
                 case eImageType.GingerPlayLogo:
-                    SetAsStaticImage("GingerPlayLogo.png");
+                    SetAsStaticImage("GingerPlayWhiteGradiant.png", Width:20,Height:20);
+                    break;
+                case eImageType.GingerPlayGradiantBlack:
+                    SetAsStaticImage("GingerPlayGradiantBlack.png");
+                    break;
+                case eImageType.GingerPlayGradiantWhite:
+                    SetAsStaticImage("GingerPlayGradiantWhite.png");
+                    break;
+                case eImageType.GingerPlayWhiteGradiant:
+                    SetAsStaticImage("GingerPlayWhiteGradiant.png");
                     break;
                 case eImageType.ZAP:
                     SetAsStaticImage("ZAPLogo.png");
@@ -1024,6 +1033,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.AngleArrowDown:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleDown);
+                    break;
+                case eImageType.Crown:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Crown);
                     break;
                 case eImageType.AngleArrowLeft:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleLeft);

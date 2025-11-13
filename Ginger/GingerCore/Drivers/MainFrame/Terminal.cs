@@ -46,8 +46,6 @@ namespace GingerCore.Drivers.MainFrame
             this.emu.Config.HostPort = Port;
             this.emu.Config.TermType = TermType;
             this.emu.Config.UseSSL = RequireSSl;
-            emu.Config.RowsCount = RowsCount;
-            emu.Config.ColumnsCount = ColumnsCount;
             MFDriver = mdriver;
         }
 
@@ -61,8 +59,8 @@ namespace GingerCore.Drivers.MainFrame
         public XMLScreen GetScreenAsXML()
         {
             Refresh();
-            XMLScreen XmlS = (XMLScreen)emu.GetScreenAsXML();
-            XmlS.Render(emu.Config.ColumnsCount, emu.Config.RowsCount);
+            XMLScreen XmlS = (XMLScreen)emu.CurrentScreenXML;
+            XmlS.Render();
             return XmlS;
         }
 

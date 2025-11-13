@@ -18,14 +18,17 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
+using Ginger.Configurations;
 using Ginger.ExecuterService.Contracts;
 using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Requests;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration.RunsetOperations;
+using Ginger.ExecuterService.Contracts.V1.ExternalConfiguration;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
@@ -539,43 +542,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
             }
 
-            if (cliHelper.SetSealightsSettings)
-            {
-                SealightsDetails sealightsDetails = new SealightsDetails
-                {
-                    SealightsEnable = solution.SealightsConfiguration.SealightsLog == eSealightsLog.Yes,
-                    SealightsUrl = solution.SealightsConfiguration.SealightsURL,
-                    SealightsLabId = solution.SealightsConfiguration.SealightsLabId,
-                    SealightsBSId = solution.SealightsConfiguration.SealightsBuildSessionID,
-                    SealightsTestStage = solution.SealightsConfiguration.SealightsTestStage,
-                    SealightsSessionTimeout = Convert.ToInt32(solution.SealightsConfiguration.SealightsSessionTimeout),
-                    SealightsEntityLevel = (SealightsDetails.eSealightsEntityLevel)solution.SealightsConfiguration.SealightsReportedEntityLevel,
-                    SealightsAgentToken = solution.SealightsConfiguration.SealightsAgentToken,
-                    SealightsTestRecommendations = solution.SealightsConfiguration.SealightsTestRecommendations == eSealightsTestRecommendations.Yes
-                };
-
-
-                //  Check Sealights's values on run-set levels
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId != null)
-                {
-                    sealightsDetails.SealightsLabId = runsetExecutor.RunSetConfig.SealightsLabId;
-                }
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID != null)
-                {
-                    sealightsDetails.SealightsBSId = runsetExecutor.RunSetConfig.SealightsBuildSessionID;
-                }
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage != null)
-                {
-                    sealightsDetails.SealightsTestStage = runsetExecutor.RunSetConfig.SealightsTestStage;
-                }
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestRecommendationsRunsetOverrideFlag)
-                {
-                    sealightsDetails.SealightsTestRecommendations = runsetExecutor.RunSetConfig.SealightsTestRecommendations == eSealightsTestRecommendations.Yes;
-                }
-
-                executionConfig.SealightsDetails = sealightsDetails;
-            }
-
             executionConfig.SolutionLocalPath = solution.Folder;
 
             executionConfig.ShowAutoRunWindow = cliHelper.ShowAutoRunWindow;
@@ -692,7 +658,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runner.RunInSimulationMode = gingerRunner.RunInSimulationMode;
                 runner.RunInVisualTestingMode = gingerRunner.RunInVisualTestingMode;
                 runner.KeepAgentsOpen = gingerRunner.KeepAgentsOn;
-
+                runner.ForceUiScreenshot = gingerRunner.ForceUiScreenshot;
                 if (gingerRunner.BusinessFlowsRunList.Count > 0)
                 {
                     runner.BusinessFlows = [];
@@ -779,6 +745,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                         break;
                                     case VariableBase.eOutputType.ValueExpression:
                                         jsonInputVar.VariableCustomizationType = InputValue.eVariableCustomizationType.ValueExpression;
+                                        jsonInputVar.VariableCustomizedValue = customizedVar.MappedOutputValue;
+                                        break;
+                                    case VariableBase.eOutputType.Value:
+                                        jsonInputVar.VariableCustomizationType = InputValue.eVariableCustomizationType.Value;
                                         jsonInputVar.VariableCustomizedValue = customizedVar.MappedOutputValue;
                                         break;
                                     default:
@@ -981,6 +951,103 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             }
 
             executionConfig.Runset = runset;
+
+            // For All the External configurations present in Ginger
+            if (cliHelper.SetExternalConfigurationSettings)
+            {
+                executionConfig.ExternalConfigurationDetails = [];
+                GingerPlayConfiguration gingerPlayConfig = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerPlayConfiguration>();
+
+                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerPlayConfiguration>().Count > 0
+                    && gingerPlayConfig != null && gingerPlayConfig.GingerPlayEnabled && !string.IsNullOrEmpty(gingerPlayConfig.GingerPlayGatewayUrl))
+                {
+                    GingerPlayDetails gingerPlayDetails = new GingerPlayDetails
+                    {
+                        GingerPlayEnable = gingerPlayConfig.GingerPlayEnabled,
+                        GingerPlayUrl = gingerPlayConfig.GingerPlayGatewayUrl,
+                        GingerPlayClientId = gingerPlayConfig.GingerPlayClientId,
+                        GingerPlayClientSecret = gingerPlayConfig.GingerPlayClientSecret,
+                        EnableAccountReportService = gingerPlayConfig.GingerPlayReportServiceEnabled,
+                        EnableAIService = gingerPlayConfig.GingerPlayAIServiceEnabled,
+                        EnableExecutionService = gingerPlayConfig.GingerPlayExecutionServiceEnabled,
+
+                    };
+                    executionConfig.ExternalConfigurationDetails.Add(gingerPlayDetails);
+
+                }
+                if (WorkSpace.Instance.Solution.SealightsConfiguration != null && solution.SealightsConfiguration.SealightsLog == eSealightsLog.Yes &&
+                    !string.IsNullOrEmpty(solution.SealightsConfiguration.SealightsURL))
+
+                {
+                    SealightsDetails sealightsDetails = new SealightsDetails
+                    {
+                        SealightsEnable = solution.SealightsConfiguration.SealightsLog == eSealightsLog.Yes,
+                        SealightsUrl = solution.SealightsConfiguration.SealightsURL,
+                        SealightsLabId = solution.SealightsConfiguration.SealightsLabId,
+                        SealightsBSId = solution.SealightsConfiguration.SealightsBuildSessionID,
+                        SealightsTestStage = solution.SealightsConfiguration.SealightsTestStage,
+                        SealightsSessionTimeout = Convert.ToInt32(solution.SealightsConfiguration.SealightsSessionTimeout),
+                        SealightsEntityLevel = (SealightsDetails.eSealightsEntityLevel)solution.SealightsConfiguration.SealightsReportedEntityLevel,
+                        SealightsAgentToken = solution.SealightsConfiguration.SealightsAgentToken,
+                        SealightsTestRecommendations = solution.SealightsConfiguration.SealightsTestRecommendations == eSealightsTestRecommendations.Yes
+                    };
+
+                    executionConfig.ExternalConfigurationDetails.Add(sealightsDetails);
+
+                }
+                if (WorkSpace.Instance.Solution.VRTConfiguration != null && !string.IsNullOrEmpty(solution.VRTConfiguration.ApiUrl)
+                    && !string.IsNullOrEmpty(solution.VRTConfiguration.ApiKey))
+                {
+                    VRTDetails vrtDetails = new VRTDetails
+                    {
+                        VRTAPIURL = solution.VRTConfiguration.ApiUrl,
+                        VRTAPIKey = solution.VRTConfiguration.ApiKey,
+                        ProjectName = solution.VRTConfiguration.Project,
+                        BranchName = solution.VRTConfiguration.BranchName,
+                        DifferenceTolerance = solution.VRTConfiguration.DifferenceTolerance,
+                        IsFailCheckPoint = (VRTDetails.eFailActionOnCheckpointMismatch)solution.VRTConfiguration.FailActionOnCheckpointMismatch,
+
+                    };
+                    executionConfig.ExternalConfigurationDetails.Add(vrtDetails);
+
+                }
+                if (WorkSpace.Instance.Solution.ApplitoolsConfiguration != null
+                     && !string.IsNullOrEmpty(solution.ApplitoolsConfiguration.ApiUrl) && !string.IsNullOrEmpty(solution.ApplitoolsConfiguration.ApiKey))
+                {
+                    ApplitoolsDetails applitoolsDetails = new ApplitoolsDetails
+                    {
+                        ApplitoolsApiUrl = solution.ApplitoolsConfiguration.ApiUrl,
+                        ApplitoolsApiKey = solution.ApplitoolsConfiguration.ApiKey,
+                    };
+                    executionConfig.ExternalConfigurationDetails.Add(applitoolsDetails);
+                }
+                WireMockConfiguration wireMockConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<WireMockConfiguration>();
+
+                if (wireMockConfiguration != null && WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<WireMockConfiguration>().Count > 0 && !string.IsNullOrEmpty(wireMockConfiguration.WireMockUrl))
+                {
+                    WireMockDetails wireMockDetails = new WireMockDetails
+                    {
+                        WireMockURL = wireMockConfiguration.WireMockUrl
+                    };
+                    executionConfig.ExternalConfigurationDetails.Add(wireMockDetails);
+                }
+                ZAPConfiguration zAPConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ZAPConfiguration>();
+
+                if (zAPConfiguration != null && WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ZAPConfiguration>().Count > 0 && !string.IsNullOrEmpty(zAPConfiguration.ZAPUrl) && !string.IsNullOrEmpty(zAPConfiguration.ZAPApiKey))
+                {
+                    ZAPDetails zAPDetails = new ZAPDetails
+                    {
+                        ZAPURL = zAPConfiguration.ZAPUrl,
+                        ZAPAPIKey = zAPConfiguration.ZAPApiKey,
+                    };
+                    executionConfig.ExternalConfigurationDetails.Add(zAPDetails);
+                }
+
+                if (executionConfig.ExternalConfigurationDetails.Count == 0)
+                {
+                    executionConfig.ExternalConfigurationDetails = null;
+                }
+            }
             return executionConfig;
         }
 
@@ -1036,20 +1103,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Using provided ExecutionID '{0}'.", runSetConfig.ExecutionID.ToString()));
             }
 
-            if (gingerExecConfig.SealightsDetails != null)
-            {
-                runSetConfig.SealightsBuildSessionID = gingerExecConfig.SealightsDetails.SealightsBSId;
-                runSetConfig.SealightsLabId = gingerExecConfig.SealightsDetails.SealightsLabId;
-                runSetConfig.SealightsTestStage = gingerExecConfig.SealightsDetails.SealightsTestStage;
-                if (gingerExecConfig.SealightsDetails.SealightsTestRecommendations != null)
-                {
-                    runSetConfig.SealightsTestRecommendations = (bool)gingerExecConfig.SealightsDetails.SealightsTestRecommendations ? eSealightsTestRecommendations.Yes : eSealightsTestRecommendations.No;
-                }
-                else
-                {
-                    runSetConfig.SealightsTestRecommendations = eSealightsTestRecommendations.No;
-                }
-            }
 
             if (gingerExecConfig.Runset.RerunConfigurations != null)
             {
@@ -1170,6 +1223,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     {
                         gingerRunner.KeepAgentsOn = runnerConfig.KeepAgentsOpen.Value;
                     }
+
+                    gingerRunner.ForceUiScreenshot = runnerConfig.ForceUiScreenshot;
 
                     if (runnerConfig.EnvironmentName != null || runnerConfig.EnvironmentID != null)
                     {
@@ -1382,7 +1437,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                         {
                                             case InputValue.eVariableCustomizationType.Value:
                                                 customizedInputVar.VarValChanged = true;
-                                                customizedInputVar.Value = inputValueConfig.VariableCustomizedValue;
+                                                customizedInputVar.MappedOutputType = VariableBase.eOutputType.Value;
+                                                customizedInputVar.MappedOutputValue = inputValueConfig.VariableCustomizedValue;
                                                 break;
                                             case InputValue.eVariableCustomizationType.Variable://saving variable by Name- Legacy
                                                 customizedInputVar.MappedOutputType = VariableBase.eOutputType.Variable;
@@ -1444,13 +1500,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         {
                             try
                             {
-                                RunSetActionBase oper = FindItemByIDAndName<RunSetActionBase>(
+                                var oper = FindItemByIDAndName<RunSetActionBase>(
                                                     new Tuple<string, Guid?>(nameof(RunSetActionBase.Guid), runsetOperationConfigMail.ID),
                                                     new Tuple<string, string>(nameof(RunSetActionBase.Name), runsetOperationConfigMail.Name),
                                                     runSetConfig.RunSetActions);
-                                if (oper != null)
+                                mailOperation = oper as RunSetActionHTMLReportSendEmail;
+                                if (mailOperation == null && oper != null)
                                 {
-                                    mailOperation = (RunSetActionHTMLReportSendEmail)oper;
+                                    Reporter.ToLog(eLogLevel.WARN, $"Found RunSet operation with matching ID/Name but it is type '{oper.GetType().Name}' instead of expected 'RunSetActionHTMLReportSendEmail'");
                                 }
                             }
                             catch (Exception ex)

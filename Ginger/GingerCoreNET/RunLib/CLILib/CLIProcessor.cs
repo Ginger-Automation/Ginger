@@ -29,12 +29,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using static Amdocs.Ginger.CoreNET.RunLib.CLILib.OptionsBase;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
@@ -326,6 +325,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 SetVerboseLevel(verboseLevel);
                 Reporter.ToLog(eLogLevel.INFO, "Running 'dynamic' and fetching Ginger Execution Configurations from = '" + url + "'");
 
+                string baseUrl = url.GetLeftPart(UriPartial.Authority).TrimEnd('/') + "/";
+
+                // Extract instanceId
+                var queryParams = HttpUtility.ParseQueryString(url.Query);
+                string instanceId = queryParams["instanceId"];
+                if (string.IsNullOrEmpty(instanceId) || !long.TryParse(instanceId, out long instanceIdguid))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Invalid or missing instanceId in URL: {url}");
+                    Environment.ExitCode = 1;
+                    return Environment.ExitCode;
+                }
+
+                GingerLog.SetHTTPLogAppenderAPIUrl(baseUrl);
+                GingerLog.SetHTTPLogAppenderInstanceId(instanceIdguid);
                 mCLIHandler = new CLIDynamicFile(CLIDynamicFile.eFileType.JSON);
 
                 var (responseContent, statusCode) = await HttpUtilities.GetAsync(url);
@@ -473,17 +486,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.ShowAutoRunWindow = runOptions.ShowUI;
             mCLIHelper.TestArtifactsFolder = runOptions.TestArtifactsPath;
             mCLIHelper.SelfHealingCheckInConfigured = runOptions.SelfHealingCheckInConfigured;
-            mCLIHelper.SealightsEnable = runOptions.SealightsEnable;
-            mCLIHelper.SealightsUrl = runOptions.SealightsUrl;
-            mCLIHelper.SealightsAgentToken = runOptions.SealightsAgentToken;
-            mCLIHelper.SealightsLabID = runOptions.SealightsLabID;
-            mCLIHelper.SealightsSessionID = runOptions.SealightsSessionID;
-            mCLIHelper.SealightsSessionTimeOut = runOptions.SealightsSessionTimeOut;
-            mCLIHelper.SealightsTestStage = runOptions.SealightsTestStage;
-            mCLIHelper.SealightsEntityLevel = runOptions.SealightsEntityLevel?.ToString() == "None" ? null : runOptions.SealightsEntityLevel?.ToString();
-            mCLIHelper.SealightsTestRecommendations = runOptions.SealightsTestRecommendations;
             mCLIHelper.SourceApplication = runOptions.SourceApplication;
             mCLIHelper.SourceApplicationUser = runOptions.SourceApplicationUser;
+
 
 
             if (!string.IsNullOrEmpty(runOptions.RunSetExecutionId))
@@ -499,6 +504,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     mCLIHelper.ExecutionId = runOptions.RunSetExecutionId;
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Using provided ExecutionID '{0}'.", mCLIHelper.ExecutionId.ToString()));
                 }
+                GingerLog.SetHTTPLogAppenderExecutionId(temp);
             }
             mCLIHelper.ReRunFailed = runOptions.ReRunFailed;
             if (runOptions.ReRunFailed)
@@ -530,7 +536,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             if (runOptions.UseTempFolder)
             {
-                mCLIHelper.Solution = runOptions.Solution = mCLIHelper.GetTempFolderPathForRepo(runOptions.URL,runOptions.Branch);
+                mCLIHelper.Solution = runOptions.Solution = mCLIHelper.GetTempFolderPathForRepo(runOptions.URL, runOptions.Branch);
             }
 
             if (!await CLILoadAndPrepare())
@@ -674,12 +680,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     return false; // Failed to perform execution preparations
                 }
 
-                // Check for any Sealights Settings
-                if (!mCLIHelper.SetSealights())
-                {
-                    return false;
-                }
-
+                
                 // set source app and user
                 mCLIHelper.SetSourceAppAndUser();
 

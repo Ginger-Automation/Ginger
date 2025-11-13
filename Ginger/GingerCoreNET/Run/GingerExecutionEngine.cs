@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.Common.Expressions;
+using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
@@ -47,6 +48,7 @@ using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
+using GingerCoreNET.GeneralLib;
 using GingerCoreNET.RosLynLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
@@ -295,7 +297,7 @@ namespace Ginger.Run
             var accountReportExecutionLogger = RunListeners.Find((runListeners) => runListeners.GetType() == typeof(AccountReportExecutionLogger));
 
             if (mSelectedExecutionLoggerConfiguration != null
-                && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes &&
+                && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && (GingerPlayUtils.IsGingerPlayGatewayUrlConfigured() || GingerPlayUtils.IsGingerPlayBackwardUrlConfigured()) &&
                 accountReportExecutionLogger == null)
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
@@ -937,6 +939,13 @@ namespace Ginger.Run
                         if (var != null)
                         {
                             mappedValue = string.IsNullOrEmpty(var.Value) ? string.Empty : var.Value;
+                        }
+                    }
+                    else if (inputVar.MappedOutputType == VariableBase.eOutputType.Value)
+                    {
+                        if (!string.IsNullOrEmpty(inputVar.MappedOutputValue))
+                        {
+                            mappedValue = inputVar.MappedOutputValue;
                         }
                     }
                     else if (inputVar.MappedOutputType == VariableBase.eOutputType.OutputVariable)
@@ -2284,14 +2293,14 @@ namespace Ginger.Run
             }
 
             // if action failed and user don't want screen shot on failure
-            if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && !act.AutoScreenShotOnFailure)
+            if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && !act.AutoScreenShotOnFailure && !mGingerRunner.ForceUiScreenshot)
             {
                 return;
             }
 
             if (ActionExecutorType == GingerRunner.eActionExecutorType.RunOnDriver)
             {
-                if (act.TakeScreenShot || act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                if (act.TakeScreenShot || act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed || mGingerRunner.ForceUiScreenshot)
                 {
                     string msg;
                     try
@@ -2362,7 +2371,7 @@ namespace Ginger.Run
                     }
                 }
             }
-            else if (act.TakeScreenShot && act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen || act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+            else if (act.TakeScreenShot && act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen || act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed || mGingerRunner.ForceUiScreenshot)
             {
                 TakeDesktopScreenShotIntoAction(act);
             }
@@ -5835,5 +5844,6 @@ namespace Ginger.Run
                 CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
             }
         }
+     
     }
 }

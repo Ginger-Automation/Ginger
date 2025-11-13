@@ -32,16 +32,14 @@
                 <CheckBox.Content>
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <GingerCore:ucTextDicResource Text="Set ALM connection details"/>
-                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
                     </StackPanel>
                 </CheckBox.Content>
             </CheckBox>
 
-            <CheckBox x:Name="xSealightsConfigCheckBox" Style="{StaticResource $CeckBoxStyle}" Margin="5">
+            <CheckBox x:Name="xExternalConfigCheckBox" Style="{StaticResource $CeckBoxStyle}" Margin="5">
                 <CheckBox.Content>
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
-                        <GingerCore:ucTextDicResource Text="Set Sealights settings"/>
-                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
+                        <GingerCore:ucTextDicResource Text="Set External Configuration settings"/>
                     </StackPanel>
                 </CheckBox.Content>
             </CheckBox>

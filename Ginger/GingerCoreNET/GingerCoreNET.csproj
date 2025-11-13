@@ -259,9 +259,9 @@
   
     <PackageReference Include="Eyes.Selenium4" Version="2.59.0" />
   
-    <PackageReference Include="Ginger.AccountReport.Contracts" Version="2024.4.1.6" />
+    <PackageReference Include="Ginger.AccountReport.Contracts" Version="2025.4.0" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="25.3.0" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="2025.4.2.1" />
   
     <PackageReference Include="Google.Protobuf" Version="3.29.3" />
     
@@ -556,6 +556,36 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Images\%40ItemPrev.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_PP-OCRv4_det\inference.pdiparams">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_PP-OCRv4_det\inference.pdiparams.info">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_PP-OCRv4_det\inference.pdmodel">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_ppocr_mobile_v2.0_cls\._inference.pdmodel">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_ppocr_mobile_v2.0_cls\inference.pdiparams">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_ppocr_mobile_v2.0_cls\inference.pdiparams.info">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\ch_ppocr_mobile_v2.0_cls\inference.pdmodel">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\en_PP-OCRv4_rec\inference.pdiparams">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\en_PP-OCRv4_rec\inference.pdiparams.info">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="OcrModels\en_PP-OCRv4_rec\inference.pdmodel">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="SelfHealingConfig\SelfHealingPropertyWeightage.json">

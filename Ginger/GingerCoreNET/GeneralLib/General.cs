@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
@@ -1252,13 +1253,19 @@ namespace GingerCoreNET.GeneralLib
                     return null;
                 }
 
-                using (Bitmap elementImage = fullImage.Clone(cropRect, fullImage.PixelFormat))
+                using (Bitmap elementImage = new Bitmap(cropRect.Width, cropRect.Height))
                 {
+
+                    using (Graphics g = Graphics.FromImage(elementImage))
+                    {
+                        g.DrawImage(fullImage, new Rectangle(0, 0, cropRect.Width, cropRect.Height), cropRect, GraphicsUnit.Pixel);
+                    }
                     using (MemoryStream ms = new MemoryStream())
                     {
                         elementImage.Save(ms, ImageFormat.Png);
                         return Convert.ToBase64String(ms.ToArray());
                     }
+
                 }
             }
             catch (Exception ex)
@@ -1381,7 +1388,7 @@ namespace GingerCoreNET.GeneralLib
             return Response;
         }
 
-        public static async Task<string> GetResponseForprocess_extracted_elementsByOpenAI(string jsonstring, string url = null)
+        public static async Task<string> GetResponseForprocess_extracted_elementsByOpenAI(string jsonstring, eDevicePlatformType? DevicePlatformType = null, string url = null)
         {
             string Response = string.Empty;
             GingerPlayAPITokenManager gingerPlayAPITokenManager = new GingerPlayAPITokenManager();
@@ -1393,7 +1400,7 @@ namespace GingerCoreNET.GeneralLib
                 var payload = new
                 {
                     elements = jsonstring,// Your current JSON string
-                    platform = "web"  // or "mobileAndroid", "mobileIos"
+                    platform = (DevicePlatformType == eDevicePlatformType.Android ? "mobileAndroid" : DevicePlatformType == eDevicePlatformType.iOS ? "mobileIos" : "web") // or "mobileAndroid", "mobileIos"
                 };
 
                 using (var client = new HttpClient())

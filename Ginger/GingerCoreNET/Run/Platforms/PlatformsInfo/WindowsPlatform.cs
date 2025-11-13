@@ -84,7 +84,9 @@ namespace GingerCore.Platforms.PlatformsInfo
             {
                 case eElementType.Unknown:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.DoubleClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseDoubleClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.DoubleClickXY);
@@ -112,9 +114,12 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.Button:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickAndValidate);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.DoubleClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseDoubleClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.DoubleClickXY);
 
                     break;
 
@@ -154,6 +159,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.TabItem:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseDoubleClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
@@ -164,6 +170,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.CheckBox:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseDoubleClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Toggle);
@@ -173,6 +180,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.RadioButton:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseDoubleClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
@@ -192,6 +200,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.ListItem:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseDoubleClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
@@ -209,7 +218,9 @@ namespace GingerCore.Platforms.PlatformsInfo
 
                 case eElementType.TreeItem:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.DoubleClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseDoubleClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.DoubleClickXY);
@@ -246,6 +257,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.MenuBar:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseDoubleClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
                     //windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
@@ -261,6 +273,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.HyperLink:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseDoubleClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);

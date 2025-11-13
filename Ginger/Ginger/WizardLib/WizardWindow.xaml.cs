@@ -17,6 +17,8 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
 using Ginger;
 using GingerCore.Drivers;
 using GingerCore.GeneralLib;
@@ -44,7 +46,9 @@ namespace GingerWPF.WizardLib
 
         List<ValidationError> mValidationErrors = [];
 
-        public static void ShowWizard(WizardBase wizard, double width = 800, double height = 800, bool DoNotShowAsDialog = false)
+        private POMUtils _subscribedPOMUtils;
+
+        public static void ShowWizard(WizardBase wizard, double width = 1000, double height = 800, bool DoNotShowAsDialog = false)
         {
             WizardWindow wizardWindow = new WizardWindow(wizard);
             wizardWindow.Dispatcher.Invoke(() =>
@@ -386,6 +390,11 @@ namespace GingerWPF.WizardLib
                 _subscribedSeleniumDriver.PropertyChanged -= SeleniumDriver_PropertyChanged;
                 _subscribedSeleniumDriver = null;
             }
+            if(_subscribedAppiumDriver != null)
+            {
+                _subscribedAppiumDriver.PropertyChanged -= AppiumDriver_PropertyChanged;
+                _subscribedAppiumDriver = null;
+            }
             this.Close();
             CurrentWizardWindow = null;
         }
@@ -511,13 +520,29 @@ namespace GingerWPF.WizardLib
         private SeleniumDriver _subscribedSeleniumDriver;
         public void SubscribeToSeleniumDriver(SeleniumDriver seleniumDriver)
         {
-            if (seleniumDriver == null) { return; }
-            if (!ReferenceEquals(_subscribedSeleniumDriver, null))
+            // Unsubscribe from previous instance if needed
+            if (_subscribedPOMUtils != null)
             {
-                _subscribedSeleniumDriver.PropertyChanged -= SeleniumDriver_PropertyChanged;
+                _subscribedPOMUtils.ProcessingStatusChanged -= POMUtils_ProcessingStatusChanged;
             }
-            _subscribedSeleniumDriver = seleniumDriver;
-            _subscribedSeleniumDriver.PropertyChanged += SeleniumDriver_PropertyChanged;
+
+            if (seleniumDriver.POMUtils != null) 
+            { 
+                seleniumDriver.POMUtils.ProcessingStatusChanged += POMUtils_ProcessingStatusChanged;
+                _subscribedPOMUtils = seleniumDriver.POMUtils;
+            }
+        }
+
+        private void POMUtils_ProcessingStatusChanged(object sender, bool isProcessing)
+        {
+            if (isProcessing)
+            {
+                AIProcessStarted();
+            }
+            else
+            {
+                AIProcessStopped();
+            }
         }
 
         private void SeleniumDriver_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -525,6 +550,38 @@ namespace GingerWPF.WizardLib
             if (e.PropertyName == nameof(SeleniumDriver.IsProcessing))
             {
                 if (sender is SeleniumDriver seleniumDriverdata && seleniumDriverdata.IsProcessing)
+                {
+                    Dispatcher.Invoke(AIProcessStarted);
+                }
+                else
+                {
+                    Dispatcher.Invoke(AIProcessStopped);
+                }
+            }
+        }
+
+        private GenericAppiumDriver _subscribedAppiumDriver;
+        public void SubscribeToAppiumDriver(GenericAppiumDriver AppiumDriver)
+        {
+
+            // Unsubscribe from previous instance if needed
+            if (_subscribedPOMUtils != null)
+            {
+                _subscribedPOMUtils.ProcessingStatusChanged -= POMUtils_ProcessingStatusChanged;
+            }
+
+            if (AppiumDriver.POMUtils != null) 
+            {
+                AppiumDriver.POMUtils.ProcessingStatusChanged += POMUtils_ProcessingStatusChanged;
+                _subscribedPOMUtils = AppiumDriver.POMUtils;
+            }
+        }
+
+        private void AppiumDriver_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(GenericAppiumDriver.IsProcessing))
+            {
+                if (sender is GenericAppiumDriver AppiumDriverdata && AppiumDriverdata.IsProcessing)
                 {
                     Dispatcher.Invoke(AIProcessStarted);
                 }

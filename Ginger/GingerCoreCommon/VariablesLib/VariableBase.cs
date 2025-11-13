@@ -80,7 +80,8 @@ namespace GingerCore.Variables
             ApplicationModelParameter,
             DataSource,
             ActivityOutputVariable,
-            ValueExpression
+            ValueExpression,
+            Value
         }
 
         private bool mSetAsInputValue = true;
@@ -156,12 +157,122 @@ namespace GingerCore.Variables
         public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(nameof(Description)); } } }
 
         private string mValue;
-        public virtual string Value { get { return mValue; } set { if (mValue != value) { mValue = value; OnPropertyChanged(nameof(Value)); } } }
+        public virtual string Value { get { return mValue; } set { if (mValue != value) { mValue = value; OnPropertyChanged(nameof(Value)); OnPropertyChanged(nameof(CurrentEffectiveValue)); } } }
 
+        /// <summary>
+        /// Gets the effective current value that should be displayed - either the mapped value if it's a "Value" type mapping, or the regular value
+        /// </summary>
+        public string CurrentEffectiveValue
+        {
+            get
+            {
+                // If there's a "Value" type mapping with a value, return the mapped value
+                // This is what the user should see as the current value during configuration
+                if (MappedOutputType == eOutputType.Value && !string.IsNullOrEmpty(MappedOutputValue))
+                {
+                    return MappedOutputValue;
+                }
+                // Otherwise return the regular value
+                return Value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the initial value of the variable as a property for data binding
+        /// </summary>
+        public string InitialValue
+        {
+            get
+            {
+                return GetInitialValue();
+            }
+        }
 
         public override void PostDeserialization()
         {
+            // Handle backward compatibility for old runset XML files
+            // Convert variables with DiffrentFromOrigin=true and MappedOutputType=None to new "Value" mapping format
+            if (DiffrentFromOrigin && MappedOutputType == eOutputType.None)
+            {
+                string sourceValue = GetVariableSourceValueForDeserialization();
+                
+                // Convert old format to new format if we have a source value
+                if (!string.IsNullOrEmpty(sourceValue))
+                {
+                    MappedOutputType = eOutputType.Value;
+                    MappedOutputValue = sourceValue;
+                    
+                    // Log the conversion for debugging purposes
+                    try
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Converted variable '{Name}' of type '{VariableType}' from old format (DiffrentFromOrigin=True, MappedOutputType=None) to new format (MappedOutputType=Value, MappedOutputValue='{MappedOutputValue}')");
+                    }
+                    catch
+                    {
+                        // Ignore logging errors during deserialization
+                    }
+                }
+            }
+            
             ResetValue();
+        }
+
+        /// <summary>
+        /// Gets the source value for deserialization based on variable type-specific storage patterns
+        /// </summary>
+        /// <returns>The source value if found, null or empty otherwise</returns>
+        public string GetVariableSourceValueForDeserialization()
+        {
+            try
+            {
+                switch (this)
+                {
+                    case VariablePasswordString passwordVar:
+                        // For VariablePasswordString, check the Password property first, then Value
+                        return !string.IsNullOrEmpty(passwordVar.Password) ? passwordVar.Password : Value;
+                    
+                    case VariableString stringVar:
+                        // For VariableString, check InitialStringValue first, then Value
+                        return !string.IsNullOrEmpty(stringVar.InitialStringValue) ? stringVar.InitialStringValue : Value;
+                    
+                    case VariableNumber numberVar:
+                        // For VariableNumber, check InitialNumberValue first, then Value
+                        return !string.IsNullOrEmpty(numberVar.InitialNumberValue) ? numberVar.InitialNumberValue : Value;
+                    
+                    case VariableDateTime dateTimeVar:
+                        // For VariableDateTime, check InitialDateTime first, then Value
+                        return !string.IsNullOrEmpty(dateTimeVar.InitialDateTime) ? dateTimeVar.InitialDateTime : Value;
+                    
+                    case VariableSelectionList selectionVar:
+                        // For VariableSelectionList, use the SelectedValue if available, otherwise Value
+                        return !string.IsNullOrEmpty(selectionVar.SelectedValue) ? selectionVar.SelectedValue : Value;
+                    
+                    case VariableDynamic dynamicVar:
+                        // For VariableDynamic, just use the Value property (no specific initial value field)
+                        return Value;
+                    
+                    case VariableTimer timerVar:
+                        // For VariableTimer, just use the Value property (no specific initial value field)
+                        return Value;
+                    
+                    default:
+                        // For all other variable types (VariableRandomString, VariableRandomNumber, VariableSequence, etc.), use the Value property
+                        return Value;
+                }
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    Reporter.ToLog(eLogLevel.WARN, $"Exception occurred while getting source value for variable '{Name}' of type '{VariableType}': {ex.Message}");
+                }
+                catch
+                {
+                    // Ignore logging errors during deserialization
+                }
+                // Fallback to the Value property if there's any error
+                return Value;
+            }
         }
 
         private string mFormula;
@@ -607,7 +718,19 @@ namespace GingerCore.Variables
 
         private eOutputType mMappedOutputType;
         [IsSerializedForLocalRepository]
-        public eOutputType MappedOutputType { get { return mMappedOutputType; } set { if (mMappedOutputType != value) { mMappedOutputType = value; OnPropertyChanged(nameof(MappedOutputType)); } } }
+        public eOutputType MappedOutputType 
+        { 
+            get { return mMappedOutputType; } 
+            set 
+            { 
+                if (mMappedOutputType != value) 
+                { 
+                    mMappedOutputType = value; 
+                    OnPropertyChanged(nameof(MappedOutputType)); 
+                    OnPropertyChanged(nameof(CurrentEffectiveValue));
+                } 
+            } 
+        }
 
         private string mMappedOutputValue;
         [IsSerializedForLocalRepository]
@@ -623,6 +746,7 @@ namespace GingerCore.Variables
                 {
                     mMappedOutputValue = value;
                     OnPropertyChanged(nameof(MappedOutputValue));
+                    OnPropertyChanged(nameof(CurrentEffectiveValue));
                 }
                 if (String.IsNullOrEmpty(value) == false || VarValChanged == true)
                     DiffrentFromOrigin = true;

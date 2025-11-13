@@ -34,9 +34,11 @@
                     <ComboBox x:Name="xDynamicFileTypeCombo" Style="{StaticResource $FlatInputComboBoxStyle}" Width="30" Margin="5,0,0,0" VerticalAlignment="Center" DropDownClosed="xDynamicFileTypeCombo_DropDownClosed"  Visibility="{Binding IsChecked, ElementName=xDynamicRadioButton, Converter={StaticResource b2v}}" IsEnabled="False"/>
                 </StackPanel>
                 <RadioButton x:Name="xScriptRadioButton" GroupName="cliType" Checked="XScriptRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}" Visibility="Collapsed">Script</RadioButton>
-                <RadioButton x:Name="xRequestRadioButton" GroupName="cliType" Checked="xRequestRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Request</RadioButton>
+                <RadioButton x:Name="xRequestRadioButton"  GroupName="cliType" Checked="xRequestRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Request</RadioButton>
+                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Ginger Play Feature" ImageType="GingerPlayWhiteGradiant"  Width="20" Height="15" Foreground="{StaticResource $BackgroundColor_Black}" HorizontalAlignment="Left"/>
 
-                <!--<RadioButton x:Name="xExcelRadioButton" Checked="XExcelRadioButton_Checked" Margin="5">Dynamic Excel with Data</RadioButton>-->
+
+               <!--<RadioButton x:Name="xExcelRadioButton" Checked="XExcelRadioButton_Checked" Margin="5">Dynamic Excel with Data</RadioButton>-->
             </DockPanel>
             <DockPanel Grid.ColumnSpan="1" Grid.Row="1">
                 <TextBlock x:Name="xCLITypeHelpTextBlock" TextWrapping="Wrap"  Margin="0,0,0,0" Style="{StaticResource $TextBlockStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"></TextBlock>

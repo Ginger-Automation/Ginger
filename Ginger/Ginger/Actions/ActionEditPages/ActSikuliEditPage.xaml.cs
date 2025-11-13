@@ -64,7 +64,7 @@ namespace Ginger.Actions
             ChangeAppScreenSizeComboBox.Init(actSikuli.GetOrCreateInputParam(ActSikuli.Fields.ChangeAppWindowSize,
                 ActSikuli.eChangeAppWindowSize.None.ToString()), typeof(ActSikuli.eChangeAppWindowSize), false, new SelectionChangedEventHandler(ChangeAppWindowSize_Changed));
 
-            JavaPathTextBox.Init(Context.GetAsContext(actSikuli.Context), actSikuli.GetOrCreateInputParam(nameof(ActSikuli.CustomJavaPath)));
+            JavaPathTextBox.Init(Context.GetAsContext(actSikuli.Context), actSikuli.GetOrCreateInputParam(nameof(ActSikuli.CustomJavaPath)), actSikuli.CustomJavaPath, true, false);
 
 
             WeakEventManager<TextBoxBase, TextChangedEventArgs>.RemoveHandler(source: xPatternImageLocationTextBox.ValueTextBox, eventName: nameof(TextBoxBase.TextChanged), handler: ValueTextBox_TextChanged);

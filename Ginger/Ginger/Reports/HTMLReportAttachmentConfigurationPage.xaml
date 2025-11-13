@@ -18,7 +18,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" x:Name="Panel" Margin="0,5,0,0">
                     <Label Style="{StaticResource @LabelStyle}" FontSize="12" HorizontalAlignment="Left" Content="HTML Report Attachment Option : " Margin="0,0,5,0"></Label>
-                    <StackPanel ToolTip="To use the Account Report link in the email, please configure the centralized Execution Logger settings in the Configuration tab." VerticalAlignment="Center">
+                    <StackPanel ToolTip="To use Account report link in email, please configure Ginger Play setting in the Configuration Tab  >  External integration Tab." VerticalAlignment="Center">
                         <RadioButton x:Name="xAccountReportLink" Tag="AccountLink"  GroupName="LinkOptionRadio" Content="Online Account Report Link" Width="170" VerticalAlignment="Center" Checked="xAccountReportLink_Checked"   Style="{StaticResource @InputRadioButtonStyle}"/>
                     </StackPanel>
                     <RadioButton x:Name="RadioZippedReportOption" Tag="ZippedReport" GroupName="LinkOptionRadio" Content="Attached Zip Report" Width="140" VerticalAlignment="Center" Checked="RadioZippedOption_Checked" Style="{StaticResource @InputRadioButtonStyle}"/>
@@ -31,7 +31,7 @@
                     <TextBlock Height="30">Note: It is recommended to provide alternative SHARED folder,<LineBreak/>e.g \\Machine Name\\Share\\ReportPath\\</TextBlock>
                 </Label>
                 <Label x:Name="AccountReportlbl" Style="{StaticResource @LabelStyle}" FontSize="10" Height="40" Margin="0,0,10,0" HorizontalAlignment="Left" Visibility="Collapsed">
-                    <TextBlock Height="30">Note: By selecting this option, you can add the account report link to the email.<LineBreak/> To use the Account Report link in the email, please configure the centralized Execution Logger settings in the Configuration tab.</TextBlock>
+                    <TextBlock Height="30">Note: By selecting this option, you can add the account report link to the email.<LineBreak/> To use Account report link in email, please configure Ginger Play setting in the Configuration Tab  >  External integration Tab.</TextBlock>
                 </Label>
                 <CheckBox x:Name="UseAlternativeHTMLReportFolderCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5,9,5,5" Content="Save HTML report to alternative folder/shared path" Checked="UseAlternativeHTMLReportFolderCbx_Checked" Unchecked="UseAlternativeHTMLReportFolderCbx_Unchecked"></CheckBox>
                 <StackPanel x:Name="HTMLReportFolderPanel" Orientation="Vertical" IsEnabled="False">

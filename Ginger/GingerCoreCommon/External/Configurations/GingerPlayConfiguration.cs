@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.Common.External.Configurations
         public delegate void GingerPlayConfigurationChangedEvent();
 
 
-        private string mName;
+        private string mName= "GingerPlay";
         [IsSerializedForLocalRepository]
         public string Name
         {
@@ -229,6 +229,12 @@ namespace Amdocs.Ginger.Common.External.Configurations
 
         public override string GetNameForFileName() { return Name; }
 
+        public bool IsGingerPlayGateWayConfigured()
+        {
+            return GingerPlayEnabled &&
+                   !string.IsNullOrEmpty(GingerPlayGatewayUrl);
+        }
+
         public bool IsGingerPlayConfigured()
         {
             return GingerPlayEnabled &&
@@ -237,5 +243,12 @@ namespace Amdocs.Ginger.Common.External.Configurations
                    !string.IsNullOrEmpty(GingerPlayClientSecret);
         }
 
+        //for clearing the backward compatibility values when user will have the gateway url configured
+        public void ClearBackwardCompatibilityValues()
+        {
+            CentralizedAccountReportURL = string.Empty;
+            CentralizedHTMLReportServiceURL = string.Empty;
+            CentralizedExecutionHandlerURL = string.Empty;
+        }
     }
 }

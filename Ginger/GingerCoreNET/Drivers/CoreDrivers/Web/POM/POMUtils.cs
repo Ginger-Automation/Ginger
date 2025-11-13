@@ -16,23 +16,25 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.GeneralLib;
+using Amdocs.Ginger.Repository;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Amdocs.Ginger.Repository;
-using Newtonsoft.Json.Linq;
-using System.Reflection;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 {
-    internal sealed class POMUtils
+    public sealed class POMUtils
     {
 
         private static readonly HashSet<string> FilterProperties = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
@@ -40,6 +42,31 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             "name", "Platform Element Type", "Element Type", "TagName", "Text", "Value",
             "AutomationID", "Title", "AriaLabel", "DataTestId", "Placeholder", "ID"
         };
+
+        ConcurrentQueue<ElementInfo> processingQueue = new ConcurrentQueue<ElementInfo>();
+        private readonly ConcurrentDictionary<Guid, byte> _enqueuedIds = new();
+
+        private Dictionary<string, int> nameCount = new Dictionary<string, int>();
+
+        private readonly object lockObj = new object();
+
+        public event EventHandler<bool> ProcessingStatusChanged;
+
+        private volatile bool _isProcessing;
+        public bool IsProcessing => _isProcessing;
+        private void SetProcessing(bool value)
+        {
+            bool changed = false;
+            lock (lockObj)
+            {
+                if (_isProcessing != value)
+                {
+                    _isProcessing = value;
+                    changed = true;
+                }
+            }
+            if (changed) { ProcessingStatusChanged?.Invoke(this, _isProcessing); }
+        }
 
         public ElementWrapperInfo GenerateJsonToSendAIRequestByList(PomSetting pomSetting, ObservableList<ElementInfo> foundElementList)
         {
@@ -98,7 +125,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             }
             return elementWrapperInfo;
         }
-        public async Task<string> SendInBatchesList(ElementWrapperInfo elementWrapperInfo, ObservableList<ElementInfo> list, string url, ePomElementCategory? PomCategory, int batchSize = 2000)
+        public async Task<string> SendInBatchesList(ElementWrapperInfo elementWrapperInfo, ObservableList<ElementInfo> list, string url, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null, int batchSize = 2000)
         {
             var responses = new List<string>();
             var errors = new List<string>();
@@ -117,7 +144,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     string batchPayload = "[" + string.Join(",", currentBatch) + "]";
                     try
                     {
-                        await GetResponseFromGenAI(list, url, batchPayload, PomCategory);
+                        await GetResponseFromGenAI(list, url, batchPayload, PomCategory, DevicePlatformType);
                         responses.Add($"Batch processed successfully with {currentBatch.Count} elements");
                     }
                     catch (Exception ex)
@@ -141,7 +168,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 string batchPayload = "[" + string.Join(",", currentBatch) + "]";
                 try
                 {
-                    await GetResponseFromGenAI(list, url, batchPayload, PomCategory);
+                    await GetResponseFromGenAI(list, url, batchPayload, PomCategory, DevicePlatformType);
                     responses.Add($"Final batch processed successfully with {currentBatch.Count} elements");
                 }
                 catch (Exception ex)
@@ -159,9 +186,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             return string.Join("\n---\n", responses);
         }
 
-        public async Task GetResponseFromGenAI(ObservableList<ElementInfo> list, string url, string batchPayload, ePomElementCategory? PomCategory)
+        public async Task GetResponseFromGenAI(ObservableList<ElementInfo> list, string url, string batchPayload, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
         {
-            string response = await GingerCoreNET.GeneralLib.General.GetResponseForprocess_extracted_elementsByOpenAI(batchPayload);
+            string response = await GingerCoreNET.GeneralLib.General.GetResponseForprocess_extracted_elementsByOpenAI(batchPayload, DevicePlatformType, url);
             ProcessGenAIResponseAndUpdatePOM(list, response, PomCategory);
         }
         public void ProcessGenAIResponseAndUpdatePOM(ObservableList<ElementInfo> list, string response, ePomElementCategory? PomCategory)
@@ -184,7 +211,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 try
                 {
                     List<ElementWrapper> responseElements = null;
-                    
+
                     try
                     {
                         var jObject = JObject.Parse(cleanedResponse);
@@ -197,9 +224,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                         {
                             responseElements = JsonConvert.DeserializeObject<List<ElementWrapper>>(cleanedResponse);
                         }
-                    }
-                    catch (JsonException)
+                    }   
+                    catch (JsonException ex)
                     {
+                        Reporter.ToLog(eLogLevel.WARN, "AI response could not be parsed into ElementWrapper list.",ex);
                         // Fallback: response is a JSON string containing the payload
                         var inner = JsonConvert.DeserializeObject<string>(cleanedResponse);
                         if (!string.IsNullOrWhiteSpace(inner))
@@ -224,6 +252,37 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                             existingElement.ElementName = enhancedName ?? existingElement.ElementName;
                             existingElement.Description = enhancedDescription ?? existingElement.Description;
                             existingElement.IsProcessed = true;
+
+                            var baseName = existingElement.ElementName;
+                            // Strip any existing suffix to get true base name
+                            var suffixMatch = System.Text.RegularExpressions.Regex.Match(baseName, @"^(.+)_(\d+)$");
+                            if (suffixMatch.Success)
+                            {
+                                baseName = suffixMatch.Groups[1].Value;
+                            }
+
+                            if (nameCount.ContainsKey(baseName))
+                            {
+                                string candidateName;
+                                do
+                                {
+                                    nameCount[baseName]++;
+                                    candidateName = $"{baseName}_{nameCount[baseName]}";
+                                } while (list.Any(e => e != existingElement && e.ElementName == candidateName));
+                                existingElement.ElementName = candidateName;
+                            }
+                            else
+                            {
+                                nameCount[baseName] = 0; // First occurrence, no suffix
+                                // Check if base name (without suffix) is already taken
+                                string candidateName = baseName;
+                                while (list.Any(e => e != existingElement && e.ElementName == candidateName))
+                                {
+                                    nameCount[baseName]++;
+                                    candidateName = $"{baseName}_{nameCount[baseName]}";
+                                }
+                                existingElement.ElementName = candidateName;
+                            }
                             if (ele.elementinfo.locators.EnhanceLocatorsByAI != null)
                             {
                                 // Deserialize the EnhanceLocatorsByAI property
@@ -231,9 +290,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                                 string enhanceLocatorsJson = ele.elementinfo.locators.EnhanceLocatorsByAI?.ToString();
 
                                 if (string.IsNullOrWhiteSpace(enhanceLocatorsJson))
-                                    {
-                                        continue;
-                                    }
+                                {
+                                    continue;
+                                }
                                 Dictionary<string, string> enhanceLocators = JsonConvert.DeserializeObject<Dictionary<string, string>>(enhanceLocatorsJson);
 
                                 if (enhanceLocators != null)
@@ -249,7 +308,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                                             locateBy = eLocateBy.ByRelXPath;
                                         }
 
-                                        if(!string.IsNullOrEmpty(kvp.Value))
+                                        if (!string.IsNullOrEmpty(kvp.Value))
                                         {
                                             var locator = new ElementLocator
                                             {
@@ -284,18 +343,116 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
         private string CleanAIResponse(string response)
         {
-            if (string.IsNullOrWhiteSpace(response)) 
-            { 
-                return string.Empty; 
+            if (string.IsNullOrWhiteSpace(response))
+            {
+                return string.Empty;
             }
 
 
             return response
                 .Replace("```json", "", StringComparison.OrdinalIgnoreCase)
                 .Replace("```", "")
-                .Trim();
+            .Trim();
         }
 
-        
+        public void TriggerFineTuneWithAI(PomSetting pomSetting, ElementInfo foundElementInfo, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
+        {
+            if (pomSetting.LearnPOMByAI)
+            {
+                // Only enqueue if not already processed
+                if (!foundElementInfo.IsProcessed && _enqueuedIds.TryAdd(foundElementInfo.Guid, 0))
+                {
+                    processingQueue.Enqueue(foundElementInfo);
+                }
+
+                // Trigger batch processing
+                TriggerBatchProcessing(pomSetting, PomCategory, DevicePlatformType);
+            }
+        }
+
+        public void TriggerDelayProcessingfinetuneWithAI(PomSetting pomSetting, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
+        {
+            if (pomSetting.LearnPOMByAI)
+            {
+                lock (lockObj)
+                {
+                    if (processingQueue.Count < 10 && !IsProcessing)
+                    {
+                        SetProcessing(true);
+                        _ = Task.Run(() => TriggerDelayedProcessing(pomSetting, PomCategory, DevicePlatformType));
+                    }
+                }
+            }
+        }
+        private void TriggerBatchProcessing(PomSetting pomSetting, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
+        {
+            lock (lockObj)
+            {
+                if (processingQueue.Count >= 10 && !IsProcessing)
+                {
+                    SetProcessing(true);
+                    _ = Task.Run(() => ProcessBatchAsync(pomSetting, PomCategory, DevicePlatformType));
+                }
+            }
+        }
+
+        private async Task ProcessBatchAsync(PomSetting pomSetting, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
+        {
+            try
+            {
+                while (true)
+                {
+                    var batch = new ObservableList<ElementInfo>();
+                    while (batch.Count < 10 && processingQueue.TryDequeue(out var item))
+                    {
+                        if (!item.IsProcessed)
+                        {
+                            batch.Add(item);
+                        }
+                        _enqueuedIds.TryRemove(item.Guid, out _);
+                    }
+
+                    if (batch.Count == 0)
+                    { break; }
+                    await UpdateAndMarkElementsAsync(pomSetting, batch, PomCategory, DevicePlatformType);
+                }
+                await FlushRemainingAsync(pomSetting, PomCategory, DevicePlatformType);
+            }
+            finally
+            {
+                SetProcessing(false);
+            }
+        }
+
+        private async Task FlushRemainingAsync(PomSetting pomSetting, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
+        {
+            ObservableList<ElementInfo> remaining = new ObservableList<ElementInfo>();
+            while (processingQueue.TryDequeue(out var item))
+            {
+                if (!item.IsProcessed)
+                {
+                    remaining.Add(item);
+                }
+                _enqueuedIds.TryRemove(item.Guid, out _);
+            }
+
+            if (remaining.Count > 0)
+            {
+                await UpdateAndMarkElementsAsync(pomSetting, remaining, PomCategory, DevicePlatformType);
+            }
+        }
+
+        private async Task TriggerDelayedProcessing(PomSetting pomSetting, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
+        {
+            await Task.Delay(750);
+            await ProcessBatchAsync(pomSetting, PomCategory, DevicePlatformType);
+        }
+
+
+        private async Task UpdateAndMarkElementsAsync(PomSetting pomSetting, ObservableList<ElementInfo> foundElementList, ePomElementCategory? PomCategory, eDevicePlatformType? DevicePlatformType = null)
+        {
+            ElementWrapperInfo elementWrapperInfo = GenerateJsonToSendAIRequestByList(pomSetting, foundElementList);
+            await SendInBatchesList(elementWrapperInfo, foundElementList, string.Empty, PomCategory, DevicePlatformType);
+        }
     }
 }

@@ -17,25 +17,32 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Freeware;
+using GingerCore.Actions;
+using OpenCvSharp;
+using Sdcb.PaddleOCR;
+using Sdcb.PaddleOCR.Models;
+using Sdcb.PaddleOCR.Models.Online;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Tabula;
 using Tabula.Detectors;
 using Tabula.Extractors;
-using Tesseract;
 using UglyToad.PdfPig;
-using PageIterator = Tabula.PageIterator;
+using PdfDocument = PdfiumViewer.PdfDocument;
+using PdfPigDocument = UglyToad.PdfPig.PdfDocument;
 
 namespace GingerCore.GingerOCR
 {
     public static class GingerOcrOperations
     {
         private static readonly object lockObject = new object();
-        private static TesseractEngine instance = null;
-        public static TesseractEngine Instance
+        private static PaddleOcrAll instance = null;
+
+        public static PaddleOcrAll Instance
         {
             get
             {
@@ -43,27 +50,47 @@ namespace GingerCore.GingerOCR
                 {
                     if (instance == null)
                     {
-                        string exeFilePath = Path.GetDirectoryName(typeof(GingerOcrOperations).Assembly.Location);
-                        string tessDataFilePath = Path.Combine(exeFilePath, "tessdata");
-                        instance = new TesseractEngine(tessDataFilePath, "eng", EngineMode.Default);
+                        instance = new PaddleOcrAll(GetOCRModel())
+                        {
+                            AllowRotateDetection = true,
+                            Enable180Classification = false,
+
+
+                        };
                     }
                     return instance;
                 }
             }
         }
+
+        public static FullOcrModel GetOCRModel()
+        {
+            try
+            {
+                // Path to the local Paddle OCR model directory
+                Settings.GlobalModelDirectory = Path.Combine(Path.GetDirectoryName(typeof(GingerOcrOperations).Assembly.Location), "OcrModels");
+                var downloadTask = OnlineFullModels.EnglishV4.DownloadAsync();
+                return downloadTask.GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to download OCR model: {ex.Message}", ex);
+                throw new InvalidOperationException("OCR model download failed. Please check internet connection and try again.", ex);
+            }
+
+        }
+
+
         public static string ReadTextFromImage(string imageFilePath)
         {
             string textOutput = string.Empty;
             try
             {
-                using (Pix img = Pix.LoadFromFile(imageFilePath))
+                using (Mat mat = Cv2.ImRead(imageFilePath, ImreadModes.Color))
                 {
-                    using (Page page = Instance.Process(img))
-                    {
-                        textOutput = page.GetText();
-                        Reporter.ToLog(eLogLevel.INFO, string.Format("Text obtained from image {0} is successful with mean confidence: {1}",
-                                        imageFilePath, page.GetMeanConfidence().ToString()));
-                    }
+                    var ocrResult = Instance.Run(mat);
+                    textOutput = ocrResult.Text;
+                    Reporter.ToLog(eLogLevel.INFO, $"Text obtained from image {imageFilePath} is successful.");
                 }
             }
             catch (Exception ex)
@@ -76,52 +103,21 @@ namespace GingerCore.GingerOCR
         public static string ReadTextFromImageAfterLabel(string imageFilePath, string label)
         {
             string txtOutput = string.Empty;
-            Page pageObj = GetPageObjectFromFilePath(imageFilePath);
-            using (pageObj)
-            {
-                using (ResultIterator iter = pageObj.GetIterator())
-                {
-                    try
-                    {
-                        iter.Begin();
-                        do
-                        {
-                            string lineTxt = iter.GetText(PageIteratorLevel.TextLine);
-                            if (lineTxt.Contains(label))
-                            {
-                                int indexOf = lineTxt.IndexOf(label) + label.Length;
-                                txtOutput = lineTxt[indexOf..];
-                                return txtOutput;
-                            }
-                        } while (iter.Next(PageIteratorLevel.TextLine));
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
-                    }
-                }
-            }
-            return txtOutput;
-        }
-
-        public static string ReadTextFromImageBetweenStrings(string imageFilePath, string firstLabel, string secondLabel, ref string err)
-        {
-            Page pageObj = GetPageObjectFromFilePath(imageFilePath);
-            return ReadTextBetweenTwoLabels(firstLabel, secondLabel, pageObj, ref err);
-        }
-
-        public static string ReadTextFromByteArray(byte[] byteArray)
-        {
-            string txtOutput = string.Empty;
             try
             {
-                using (Pix img = Pix.LoadFromMemory(byteArray))
+                using (Mat mat = Cv2.ImRead(imageFilePath, ImreadModes.Color))
                 {
-                    using (Page page = Instance.Process(img))
+                    var ocrResult = Instance.Run(mat);
+
+                    foreach (var region in ocrResult.Regions)
                     {
-                        txtOutput = page.GetText();
-                        Reporter.ToLog(eLogLevel.INFO, string.Format("Text obtained is successful with mean confidence: {0}",
-                                        page.GetMeanConfidence().ToString()));
+                        var txt = region.Text ?? string.Empty;
+                        int indexOf = txt.IndexOf(label, StringComparison.OrdinalIgnoreCase);
+                        if (indexOf >= 0)
+                        {
+                            txtOutput = txt.Substring(indexOf + label.Length).Trim();
+                            break;
+                        }
                     }
                 }
             }
@@ -132,40 +128,195 @@ namespace GingerCore.GingerOCR
             return txtOutput;
         }
 
-        private static List<byte[]> GetPngByteArrayFromPdf(string pdfFilePath, string pageNum, int dpi, string password = null)
+        public static string ReadTextFromImageBetweenStrings(string imageFilePath, string firstLabel, string secondLabel, ref string err)
         {
-            List<byte[]> lstPngByte = [];
-            byte[] pdfByteArray = File.ReadAllBytes(pdfFilePath);
-            List<string> lstPageNum = GetListOfPageNos(pageNum);
-            foreach (string pgNum in lstPageNum)
+            using (Mat mat = Cv2.ImRead(imageFilePath, ImreadModes.Color))
             {
-                byte[] pngByte = Pdf2Png.Convert(pdfByteArray, int.Parse(pgNum), dpi, password);
-                lstPngByte.Add(pngByte);
+                var ocrResult = Instance.Run(mat);
+                return ReadTextBetweenTwoLabels(firstLabel, secondLabel, ocrResult, ref err);
             }
-            return lstPngByte;
         }
 
-        private static List<byte[]> GetListOfPngByteArrayFromPdf(string pdfFilePath, int dpi, string password = null)
-        {
-            byte[] pdfByteArray = File.ReadAllBytes(pdfFilePath);
-            List<byte[]> pngByte = Pdf2Png.ConvertAllPages(pdfByteArray, dpi, password);
-            return pngByte;
-        }
-
-        public static string ReadTextFromPdfSinglePage(string pdfFilePath, string pageNum, int dpi, string password = null)
+        public static string ReadTextFromByteArray(byte[] byteArray)
         {
             string txtOutput = string.Empty;
             try
             {
+                using (Mat src = Cv2.ImDecode(byteArray, ImreadModes.Color))
+                {
+                    var result = Instance.Run(src);
+                    txtOutput = result.Text;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+            }
+            return txtOutput;
+        }
+
+        private static PaddleOcrResult ReadOcrResultFromByteArray(byte[] byteArray)
+        {
+            try
+            {
+                using (var ms = new MemoryStream(byteArray))
+                using (var img = (Bitmap)Image.FromStream(ms))
+                using (Mat mat = OpenCvSharp.Extensions.BitmapConverter.ToMat(img))
+                {
+                    return Instance.Run(mat);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                return null;
+            }
+        }
+
+        private static string ReadTextBetweenTwoLabels(string firstLabel, string secondLabel, PaddleOcrResult ocrResult, ref string err)
+        {
+            StringBuilder resultTxt = new StringBuilder();
+            bool startedReading = false;
+
+            if (ocrResult == null || string.IsNullOrWhiteSpace(ocrResult.Text))
+            {
+                err = "OCR result is empty.";
+                return string.Empty;
+            }
+
+            try
+            {
+                foreach (var region in ocrResult.Regions)
+                {
+                    string lineTxt = region.Text ?? string.Empty;
+
+                    if (!startedReading)
+                    {
+                        int firstIndexOf = lineTxt.IndexOf(firstLabel, StringComparison.OrdinalIgnoreCase);
+                        if (firstIndexOf != -1)
+                        {
+                            startedReading = true;
+                            int secondIndexOf = lineTxt.IndexOf(secondLabel, firstIndexOf + firstLabel.Length, StringComparison.OrdinalIgnoreCase);
+
+                            if (secondIndexOf != -1)
+                            {
+                                resultTxt.Append(lineTxt.Substring(firstIndexOf + firstLabel.Length, secondIndexOf - (firstIndexOf + firstLabel.Length)));
+                                break;
+                            }
+                            else
+                            {
+                                resultTxt.Append(lineTxt.Substring(firstIndexOf + firstLabel.Length));
+                                resultTxt.Append(' '); // Adding the  space after every region
+                            }
+                        }
+                    }
+                    else
+                    {
+                        int secondIndexOf = lineTxt.IndexOf(secondLabel, StringComparison.OrdinalIgnoreCase);
+                        if (secondIndexOf != -1)
+                        {
+                            resultTxt.Append(lineTxt.Substring(0, secondIndexOf));
+                            break;
+                        }
+                        else
+                        {
+                            resultTxt.Append(lineTxt);
+                            resultTxt.Append(' '); // Adding the space after every region
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                err = "Unable to read text from Image";
+            }
+
+            return resultTxt.ToString().Trim();
+        }
+
+        // ---------------- PDF → Image Conversion Helpers ----------------
+
+        private static List<string> GetListOfPageNos(string pageNumber)
+        {
+            return pageNumber.Split(',')
+                             .Select(p => p.Trim())
+                             .Where(p => !string.IsNullOrEmpty(p))
+                             .ToList();
+        }
+
+        private static List<byte[]> GetPngByteArrayFromPdf(string pdfFilePath, string pageNum, int dpi, string password = null)
+        {
+            var list = new List<byte[]>();
+            var pageNumbers = GetListOfPageNos(pageNum);
+
+            using (var pdf = string.IsNullOrEmpty(password) ?
+                             PdfDocument.Load(pdfFilePath) :
+                             PdfDocument.Load(pdfFilePath, password))
+            {
+                foreach (var p in pageNumbers)
+                {
+                    if (int.TryParse(p, out int pageIndex))
+                    {
+                        if (pageIndex > 0 && pageIndex <= pdf.PageCount)
+                        {
+                            using (var img = pdf.Render(pageIndex - 1, dpi, dpi, true))
+                            using (var ms = new MemoryStream())
+                            {
+                                img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                                list.Add(ms.ToArray());
+                            }
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+
+
+        private static List<byte[]> GetListOfPngByteArrayFromPdf(string pdfFilePath, int dpi, string password = null)
+        {
+            var list = new List<byte[]>();
+            using (var pdf = string.IsNullOrEmpty(password) ?
+                             PdfDocument.Load(pdfFilePath) :
+                             PdfDocument.Load(pdfFilePath, password))
+            {
+                for (int i = 0; i < pdf.PageCount; i++)
+                {
+                    using (var img = pdf.Render(i, dpi, dpi, true))
+                    using (var ms = new MemoryStream())
+                    {
+                        img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                        list.Add(ms.ToArray());
+                    }
+                }
+            }
+            return list;
+        }
+
+        // ---------------- PDF OCR Methods ----------------
+
+        public static string ReadTextFromPdfSinglePage(string pdfFilePath, string pageNum, int dpi, string password = null)
+        {
+            StringBuilder result = new StringBuilder();
+            try
+            {
                 if (!string.IsNullOrEmpty(pageNum))
                 {
-                    List<byte[]> lstPngByte = GetPngByteArrayFromPdf(pdfFilePath, pageNum, dpi, password);
 
-                    foreach (byte[] pngByte in lstPngByte)
+                    List<byte[]> pages = GetPngByteArrayFromPdf(pdfFilePath, pageNum, dpi, password);
+                    foreach (byte[] pageBytes in pages)
                     {
-                        using (Page pageObj = GetPageObjectFromByteArray(pngByte))
+                        using (Mat src = Cv2.ImDecode(pageBytes, ImreadModes.Color))
                         {
-                            txtOutput = string.Concat(txtOutput, pageObj.GetText(), Environment.NewLine);
+                            var ocrResult = Instance.Run(src);
+                            foreach (var region in ocrResult.Regions)
+                            {
+                                if (!string.IsNullOrEmpty(region.Text))
+                                {
+                                    result.AppendLine(region.Text);
+                                }
+                            }
                         }
                     }
                 }
@@ -174,9 +325,10 @@ namespace GingerCore.GingerOCR
                     List<byte[]> lstByteArray = GetListOfPngByteArrayFromPdf(pdfFilePath, dpi, password);
                     foreach (byte[] byteArray in lstByteArray)
                     {
-                        using (Page pageObj = GetPageObjectFromByteArray(byteArray))
+                        using (Mat src = Cv2.ImDecode(byteArray, ImreadModes.Color))
                         {
-                            txtOutput = string.Concat(txtOutput, pageObj.GetText(), Environment.NewLine);
+                            var ocrResult = Instance.Run(src);
+                            result.AppendLine(string.Join(Environment.NewLine, ocrResult.Regions.Select(r => r.Text)));
                         }
                     }
                 }
@@ -185,263 +337,138 @@ namespace GingerCore.GingerOCR
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
-            return txtOutput;
-        }
-
-        private static Page GetPageObjectFromByteArray(byte[] byteArray)
-        {
-            try
-            {
-                using (Pix img = Pix.LoadFromMemory(byteArray))
-                {
-                    Page page = Instance.Process(img);
-                    return page;
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
-            }
-            return null;
-        }
-
-        private static Page GetPageObjectFromFilePath(string filePath)
-        {
-            try
-            {
-                using (Pix img = Pix.LoadFromFile(filePath))
-                {
-                    return Instance.Process(img);
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
-            }
-            return null;
+            return result.ToString();
         }
 
         public static string ReadTextAfterLabelPdf(string pdfFilePath, string label, int dpi, string pageNum = "", string password = null)
         {
             string resultTxt = string.Empty;
-            if (!string.IsNullOrEmpty(pageNum))
+            try
             {
-                List<byte[]> lstPngByte = GetPngByteArrayFromPdf(pdfFilePath, pageNum, dpi, password);
+                var pages = !string.IsNullOrEmpty(pageNum)
+                    ? GetPngByteArrayFromPdf(pdfFilePath, pageNum, dpi, password)
+                    : GetListOfPngByteArrayFromPdf(pdfFilePath, dpi, password);
 
-                foreach (byte[] pngByte in lstPngByte)
+                foreach (var pngByte in pages)
                 {
-                    resultTxt = GetResultTextFromByteArray(label, resultTxt, pngByte);
-                    if (!string.IsNullOrEmpty(resultTxt))
+                    using (Mat src = Cv2.ImDecode(pngByte, ImreadModes.Color))
                     {
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                List<byte[]> lstByteArray = GetListOfPngByteArrayFromPdf(pdfFilePath, dpi, password);
-                foreach (byte[] byteArray in lstByteArray)
-                {
-                    resultTxt = GetResultTextFromByteArray(label, resultTxt, byteArray);
-                    if (!string.IsNullOrEmpty(resultTxt))
-                    {
-                        break;
-                    }
-                }
-            }
-            return resultTxt;
-        }
+                        var ocrResult = Instance.Run(src);
 
-        private static string GetResultTextFromByteArray(string label, string resultTxt, byte[] byteArray)
-        {
-            Page pageObj = GetPageObjectFromByteArray(byteArray);
-            if (pageObj != null)
-            {
-                try
-                {
-                    using (pageObj)
-                    {
-                        using (ResultIterator iter = pageObj.GetIterator())
+                        foreach (var region in ocrResult.Regions)
                         {
-                            try
+                            if (region.Text.Contains(label))
                             {
-                                iter.Begin();
-                                do
-                                {
-                                    string lineTxt = iter.GetText(PageIteratorLevel.TextLine);
-                                    if (lineTxt.Contains(label))
-                                    {
-                                        int indexOf = lineTxt.IndexOf(label) + label.Length;
-                                        resultTxt = lineTxt[indexOf..];
-                                        break;
-                                    }
-                                } while (iter.Next(PageIteratorLevel.TextLine));
-                            }
-                            catch (Exception ex)
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                                int indexOf = region.Text.IndexOf(label) + label.Length;
+                                resultTxt = region.Text.Substring(indexOf).Trim();
+                                return resultTxt;
                             }
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
-                }
-                finally
-                {
-                    pageObj.Dispose();
-                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
             return resultTxt;
         }
 
         public static string ReadTextBetweenLabelsPdf(string pdfFilePath, string firstLabel, string secondLabel, string pageNum, int dpi, ref string err, string password = null)
         {
-            if (!string.IsNullOrEmpty(pageNum))
+            StringBuilder resultTxt = new StringBuilder();
+            try
             {
-                List<byte[]> lstPngByte = GetPngByteArrayFromPdf(pdfFilePath, pageNum, dpi, password);
-                foreach (byte[] pngByte in lstPngByte)
-                {
-                    Page pageObj = GetPageObjectFromByteArray(pngByte);
-                    return ReadTextBetweenTwoLabels(firstLabel, secondLabel, pageObj, ref err);
+                var pages = !string.IsNullOrEmpty(pageNum)
+                    ? GetPngByteArrayFromPdf(pdfFilePath, pageNum, dpi, password)
+                    : GetListOfPngByteArrayFromPdf(pdfFilePath, dpi, password);
 
-                }
-            }
-            else
-            {
-                List<byte[]> lstByteArray = GetListOfPngByteArrayFromPdf(pdfFilePath, dpi, password);
-                foreach (byte[] byteArray in lstByteArray)
+                foreach (var pngByte in pages)
                 {
-                    Page pageObj = GetPageObjectFromByteArray(byteArray);
-                    return ReadTextBetweenTwoLabels(firstLabel, secondLabel, pageObj, ref err);
-
-                }
-            }
-            return string.Empty;
-        }
-        private static string ReadTextBetweenTwoLabels(string firstLabel, string secondLabel, Page pageObj, ref string err)
-        {
-            StringBuilder resultTxt = new();
-            int firstIndexOf = -1;
-            int secondIndexOf = -1;
-            using (pageObj)
-            {
-                using (ResultIterator iter = pageObj.GetIterator())
-                {
-                    iter.Begin();
-                    try
+                    using (Mat src = Cv2.ImDecode(pngByte, ImreadModes.Color))
                     {
-                        do
+                        var ocrResult = Instance.Run(src);
+                        bool started = false;
+
+                        foreach (var region in ocrResult.Regions)
                         {
-                            // GetText reads the text according to the PageIteratorLevel
-                            string lineTxt = iter.GetText(PageIteratorLevel.TextLine);
+                            string lineTxt = region.Text;
 
-                            // If the firstLabel index isn't found , this block finds the index of the first label.
-                            if (firstIndexOf == -1)//
+                            if (!started)
                             {
-                                firstIndexOf = lineTxt.IndexOf(firstLabel);
-                                // if the firstLabel exists in the current textLine , check if the secondLabel exists in the same line as well.
-                                if (firstIndexOf != -1)
+                                int idx1 = lineTxt.IndexOf(firstLabel);
+                                if (idx1 != -1)
                                 {
-
-                                    // the search of the second label should start from the end of the firstLabel
-                                    // eg: firstLabel = "Hello" , secondLabel = "World"  , lineTxt = "Hello World"
-                                    // firstIndexOf = 0 
-                                    // find the secondLabel after 5th index (firstIndexOf + firstLabel.length => 0 + 5 => 5).
-                                    // Math.Min is added just in case firstIndexOf + firstLabel.Length > lineTxt.Length which would throw an exception.
-
-                                    secondIndexOf = lineTxt.IndexOf(secondLabel, Math.Min((firstIndexOf + firstLabel.Length), lineTxt.Length));
-
-                                    // if the second label exists in the same txtLine append the string between the two labels and break from the loop to return the result
-                                    if (secondIndexOf != -1)
+                                    started = true;
+                                    int idx2 = lineTxt.IndexOf(secondLabel, idx1 + firstLabel.Length);
+                                    if (idx2 != -1)
                                     {
-                                        resultTxt.Append(lineTxt.AsSpan(firstIndexOf + firstLabel.Length, secondIndexOf - (firstIndexOf + firstLabel.Length)));
-                                        break;
+                                        resultTxt.Append(lineTxt.Substring(idx1 + firstLabel.Length, idx2 - (idx1 + firstLabel.Length)));
+                                        return resultTxt.ToString();
                                     }
-
-                                    // if the second label does not exist in the same txtLine append the text after the first label and continue the search on the text line
-
                                     else
                                     {
-                                        resultTxt.Append(lineTxt.AsSpan(firstIndexOf + firstLabel.Length));
-                                        continue;
+                                        resultTxt.Append(lineTxt.Substring(idx1 + firstLabel.Length));
                                     }
                                 }
-
                             }
-
-
-                            // if the firstLabel already exists , find the second label
                             else
                             {
-                                secondIndexOf = lineTxt.IndexOf(secondLabel);
-
-                                // if the second label exists in the txtLine, append text before the secondLabel starts.
-                                if (secondIndexOf != -1)
+                                int idx2 = lineTxt.IndexOf(secondLabel);
+                                if (idx2 != -1)
                                 {
-                                    resultTxt.Append(lineTxt.AsSpan(0, secondIndexOf));
-                                    break;
+                                    resultTxt.Append(lineTxt.Substring(0, idx2));
+                                    return resultTxt.ToString();
                                 }
-
-                                // if the second label doesn't exist , append the whole txtLine
                                 else
                                 {
                                     resultTxt.Append(lineTxt);
                                 }
-
                             }
-                        } while (iter.Next(PageIteratorLevel.TextLine));
-
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
-                        err = "Unable to read text from Image";
+                        }
                     }
                 }
             }
-
-
-            // if the either or both of the labels aren't found then this error is printed on the execution section.
-            if (firstIndexOf == -1 || secondIndexOf == -1)
+            catch (Exception ex)
             {
-                err = "Text Between the two mentioned labels does not exist, Please try entering different values";
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                err = "Unable to read text between labels.";
             }
-
-
-            return (firstIndexOf != -1 && secondIndexOf != -1) ? resultTxt.ToString() : string.Empty;
+            return string.Empty;
         }
 
         public static Dictionary<string, object> ReadTextFromPdfAllPages(string pdfFilePath, int dpi, string password = null)
         {
-            Dictionary<string, object> dctOutput = [];
-
+            var result = new Dictionary<string, object>();
             try
             {
-                byte[] pdfByteArray = File.ReadAllBytes(pdfFilePath);
-                List<byte[]> pngArray = Pdf2Png.ConvertAllPages(pdfByteArray, dpi, password);
-                for (int i = 0; i < pngArray.Count; i++)
+                var pages = GetListOfPngByteArrayFromPdf(pdfFilePath, dpi, password);
+
+                for (int i = 0; i < pages.Count; i++)
                 {
-                    string output = ReadTextFromByteArray(pngArray[i]);
-                    dctOutput.Add("Page No. " + i, output);
+                    using (Mat src = Cv2.ImDecode(pages[i], ImreadModes.Color))
+                    {
+                        var ocrResult = Instance.Run(src);
+                        result[$"Page_{i + 1}"] = string.Join(Environment.NewLine, ocrResult.Regions.Select(r => r.Text));
+                    }
                 }
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
-            return dctOutput;
+            return result;
         }
 
+        // ---------------- Table extraction (with Tabula) ----------------
         public static string ReadTextFromPdfTable(string pdfFilePath, string columnName, string pageNumber, bool useRowNumber,
-                                                  int rowNumber, ActOcr.eTableElementRunColOperator elementLocateBy, string conditionColumnName,
-                                                  string conditionColumnValue, string password = null)
+                                                 int rowNumber, ActOcr.eTableElementRunColOperator elementLocateBy, string conditionColumnName,
+                                                 string conditionColumnValue, string password = null)
         {
             string txtOutput = string.Empty;
             try
             {
-                using (PdfDocument document = PdfDocument.Open(pdfFilePath, new ParsingOptions() { ClipPaths = true, Password = password }))
+                using (PdfPigDocument document = PdfPigDocument.Open(pdfFilePath, new ParsingOptions() { ClipPaths = true, Password = password }))
                 {
                     ObjectExtractor oe = new ObjectExtractor(document);
                     if (!string.IsNullOrEmpty(pageNumber))
@@ -488,15 +515,18 @@ namespace GingerCore.GingerOCR
                 Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
 
-            Reporter.ToLog(eLogLevel.ERROR, "Unable to find text in tables", null);
+            if (string.IsNullOrEmpty(txtOutput))
+            {
+                Reporter.ToLog(eLogLevel.INFO, $"No matching text found in PDF table for column '{columnName}' with specified conditions");
+            }
             return txtOutput;
         }
 
+
         private static void GetTableDataFromPageArea(string columnName, bool useRowNumber, int rowNumber, string conditionColumnName, string conditionColumnValue, ref string txtOutput, PageArea page, ActOcr.eTableElementRunColOperator elementLocateBy)
         {
-            SpreadsheetDetectionAlgorithm detector = new SpreadsheetDetectionAlgorithm();
 
-            IExtractionAlgorithm ea = new SpreadsheetExtractionAlgorithm();
+            SpreadsheetExtractionAlgorithm ea = new SpreadsheetExtractionAlgorithm();
 
             List<Table> tables = ea.Extract(page);
             foreach (Table table in tables)
@@ -504,9 +534,23 @@ namespace GingerCore.GingerOCR
                 if (useRowNumber)
                 {
                     IReadOnlyList<IReadOnlyList<Cell>> rows = table.Rows;
+                    if (rows.Count < 2 || rowNumber + 1 >= rows.Count)
+                    {
+                        continue; // Skip this table if not enough rows
+                    }
                     for (int i = 0; i < rows[0].Count; i++)
                     {
                         Cell cellObj = rows[0][i];
+                        if (cellObj.GetText(false).Equals(columnName))
+                        {
+                            txtOutput = rows[rowNumber + 1][i].GetText(false);
+                            return;
+                        }
+                    }
+
+                    for (int i = 0; i < rows[1].Count; i++)
+                    {
+                        Cell cellObj = rows[1][i];
                         if (cellObj.GetText(false).Equals(columnName))
                         {
                             txtOutput = rows[rowNumber + 1][i].GetText(false);
@@ -529,13 +573,22 @@ namespace GingerCore.GingerOCR
                             break;
                         }
                     }
+                    for (i = 0; i < rows[1].Count; i++)
+                    {
+                        Cell cellObj = rows[1][i];
+                        if (cellObj.GetText(false).Equals(columnName))
+                        {
+                            columnNameIndex = i;
+                            break;
+                        }
+                    }
                     for (i = 0; i < rows.Count; i++)
                     {
                         bool bIsConditionValFound = false;
                         for (j = 0; j < rows[i].Count; j++)
                         {
                             Cell cellObj = rows[i][j];
-                            if (rows[0][j].GetText(false).Equals(conditionColumnName))
+                            if (rows.Count > 0 && j < rows[0].Count && rows[0][j].GetText(false).Equals(conditionColumnName))
                             {
                                 switch (elementLocateBy)
                                 {
@@ -589,7 +642,7 @@ namespace GingerCore.GingerOCR
                                         }
                                         break;
                                     case ActOcr.eTableElementRunColOperator.NotEndsWith:
-                                        if (!cellObj.GetText(false).Equals(conditionColumnValue))
+                                        if (!cellObj.GetText(false).EndsWith(conditionColumnValue))
                                         {
                                             bIsConditionValFound = true;
                                             break;
@@ -607,77 +660,16 @@ namespace GingerCore.GingerOCR
                         }
                         if (bIsConditionValFound)
                         {
-                            txtOutput = rows[i][columnNameIndex].GetText(false);
+                            if (columnNameIndex == -1)
+                            {
+                                break; // col not found
+                            }
+                                txtOutput = rows[i][columnNameIndex].GetText(false);
                             return;
                         }
                     }
                 }
             }
         }
-
-        private static List<string> GetListOfPageNos(string pageNumber)
-        {
-            List<string> lstPageNos = [];
-            try
-            {
-                bool isParse = true;
-
-                if (pageNumber.Contains("-"))
-                {
-                    string[] pageArray = pageNumber.Split('-');
-                    int i, j = 0;
-                    isParse = int.TryParse(pageArray[0], out i);
-                    if (isParse)
-                    {
-                        isParse = int.TryParse(pageArray[1], out j);
-                    }
-                    if (isParse)
-                    {
-                        for (; i <= j; i++)
-                        {
-                            lstPageNos.Add(i.ToString());
-                        }
-                    }
-                    else
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Invalid Page Number");
-                        return null;
-                    }
-                }
-                else if (pageNumber.Contains(","))
-                {
-                    string[] pageArray = pageNumber.Split(',');
-                    for (int i = 0; i < pageArray.Length; i++)
-                    {
-                        int j = 0;
-                        isParse = int.TryParse(pageArray[i], out j);
-                        if (!isParse)
-                        {
-                            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Invalid Page Number");
-                            return null;
-                        }
-                        lstPageNos.Add(pageArray[i]);
-                    }
-                }
-                else
-                {
-                    int j = 0;
-                    isParse = int.TryParse(pageNumber, out j);
-                    if (!isParse)
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Invalid Page Number");
-                        return null;
-                    }
-                    lstPageNos.Add(pageNumber);
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
-                return null;
-            }
-            return lstPageNos;
-        }
-
     }
 }
