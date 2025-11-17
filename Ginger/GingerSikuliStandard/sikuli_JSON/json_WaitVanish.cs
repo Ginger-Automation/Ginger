@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace GingerSikuliStandard.sikuli_JSON
 {
@@ -38,10 +38,33 @@ namespace GingerSikuliStandard.sikuli_JSON
             timeout = tmout;
         }
 
+        // Plan (pseudocode):
+        // 1. Accept a JSON string input.
+        // 2. Create JsonSerializerOptions with PropertyNameCaseInsensitive = true so deserialization is robust to property name casing.
+        // 3. Use System.Text.Json.JsonSerializer.Deserialize<T> to deserialize the JSON into json_WaitVanish.
+        // 4. Return the deserialized json_WaitVanish object (or null if deserialization fails).
         public static json_WaitVanish getJWaitVanish(String json)
         {
-            json_WaitVanish jWaitVanish = JsonConvert.DeserializeObject<json_WaitVanish>(json);
-            return jWaitVanish;
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return null;
+            }
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            try
+            {
+                json_WaitVanish jWaitVanish = JsonSerializer.Deserialize<json_WaitVanish>(json, options);
+                return jWaitVanish;
+            }
+            catch (JsonException)
+            {
+                // If needed, handle or log the error in the caller; return null to indicate failure
+                return null;
+            }
         }
     }
 }
