@@ -17,12 +17,15 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.ActionsLib;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console;
 using Ginger;
-using GingerCore.Actions;
+using GingerCore; // Added to resolve BusinessFlow reference
 using System.Windows;
 using System.Windows.Controls;
 
-namespace GingerCore.Drivers.ConsoleDriverLib
+
+namespace Ginger.Drivers.DriversWindows
 {
     /// <summary>
     /// Interaction logic for ConsoleNewActionPage.xaml
@@ -42,8 +45,8 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             ACC.AddOrUpdateInputParamValue("Param 2", "");
             ACC.AddOrUpdateInputParamValue("Param 3", "");
 
-            ParamsDatGrid.ItemsSource = ACC.InputValues;
-            ParamsDatGrid.AutoGenerateColumns = false;
+            ParamsDataGrid.ItemsSource = ACC.InputValues;
+            ParamsDataGrid.AutoGenerateColumns = false;
         }
 
         internal void ShowAsWindow(System.Windows.Window owner)

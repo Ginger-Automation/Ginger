@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright;
 using Amdocs.Ginger.Repository;
 using Ginger.ALM;

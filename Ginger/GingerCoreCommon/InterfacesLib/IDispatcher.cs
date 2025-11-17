@@ -23,6 +23,6 @@ namespace Amdocs.Ginger.Common.InterfacesLib
     public interface IDispatcher
     {
         void Invoke(Action callback);
-        void BeginInvokeShutdown(dynamic dispatherPriority);
+        void BeginInvokeShutdown(dynamic dispatcherPriority);
     }
 }
