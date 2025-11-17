@@ -28,7 +28,6 @@ using GingerCore.Drivers.PBDriver;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using NPOI.POIFS.Properties;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -933,18 +932,7 @@ namespace GingerCore.Drivers
                             break;
                         case eLocateBy.ByAutomationID:
                             UIAuto.Condition CurCond3 = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.AutomationIdProperty, locateValue);
-
-
-                            // Create a condition for AutomationId
-                            UIAuto.Condition idCondition = new UIAuto.PropertyCondition(UIAuto.AutomationElement.AutomationIdProperty, "42171");
-
-                            // Search within the parent (or use RootElement for a global search)
-                            UIAuto.AutomationElement target = CurrentWindow.CachedParent.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, idCondition);
-                            //var dsd1 = CurrentWindow.GetCurrentPattern(CurrentWindow.);
-                            //ClickElementUsingLegacyPattern
-                            //var test = CurrentWindow.GetUpdatedCache(new System.Windows.Automation.CacheRequest()); (Interop.UIAutomationClient.TreeScope.TreeScope_Parent, CurCond3);
-
-
+                            element = CurrentWindow.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, CurCond3);
                             break;
 
                         case eLocateBy.ByClassName:
