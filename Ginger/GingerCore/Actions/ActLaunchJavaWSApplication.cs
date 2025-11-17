@@ -595,9 +595,9 @@ namespace GingerCore.Actions
                         return false;
                     }
 
-                    if (Directory.Exists(mJavaAgentPath_Calc) == false || File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgent.jar")) == false || File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgentStarter.jar")) == false)
+                    if (Directory.Exists(mJavaAgentPath_Calc) == false || File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgent.jar")) == false )
                     {
-                        Error = "The Ginger Agent path folder '" + mJavaAgentPath_Calc + "' is not valid, please select the folder which contains the 'GingerAgent.jar' &  'GingerAgentStarter.jar' files.";
+                        Error = "The Ginger Agent path folder '" + mJavaAgentPath_Calc + "' is not valid, please select the folder which contains the 'GingerAgent.jar' file.";
                         return false;
                     }
 
@@ -815,7 +815,7 @@ namespace GingerCore.Actions
                 commandParams_OneLine += " \"" + "Port=" + mPort_Calc + "\"";
 
                 //command
-                command = "-jar " + "\"" + Path.Combine(mJavaAgentPath_Calc, "GingerAgentStarter.jar") + "\" " + commandParams_OneLine;
+                command = "-jar " + "\"" + Path.Combine(mJavaAgentPath_Calc, "GingerAgent.jar") + "\" " + commandParams_OneLine;
 
                 //run commnad
                 ExecuteCommandAsync([javaExecuter, command]);
