@@ -78,6 +78,8 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ApplicationProcessNameChkBox, CheckBox.IsCheckedProperty, mAct, ActLaunchJavaWSApplication.Fields.IsCustomApplicationProcessName);
             ApplicationProcessNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct, ActLaunchJavaWSApplication.Fields.ApplicationProcessName);
 
+            xTextBoxJavaAgentJDKVersion.Init(Context.GetAsContext(mAct.Context), mAct, ActLaunchJavaWSApplication.Fields.JavaAgentJDKVersion);
+
             UpdateAgentPortTextBoxEnabledStatus();
         }
 

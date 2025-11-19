@@ -2665,9 +2665,12 @@
     <None Update="sikulirestapi-1.0.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="StaticDrivers\GingerAgent.jar">
+    <None Update="StaticDrivers\GingerAgentJDK8.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+	  <None Update="StaticDrivers\GingerAgentJDK25.jar">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
     <None Update="StaticDrivers\GingerAgentStarter.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

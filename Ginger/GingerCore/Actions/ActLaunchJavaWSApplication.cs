@@ -100,6 +100,8 @@ namespace GingerCore.Actions
             public static string DynamicPortPlaceHolder = "DynamicPortPlaceHolder";
             public static string IsCustomApplicationProcessName = "IsCustomApplicationProcessName";
             public static string ApplicationProcessName = "ApplicationProcessName";
+            public static string JavaAgentJDKVersion = "JavaAgentJDKVersion";
+
 
         }
 
@@ -329,6 +331,25 @@ namespace GingerCore.Actions
                 OnPropertyChanged(Fields.ApplicationProcessName);
             }
         }
+
+
+        string mJavaAgentJDKVersion = "GingerAgentJDK8.jar";
+        string mJavaAgentJDKVersion_calc = "GingerAgentJDK8.jar";
+        [IsSerializedForLocalRepository]
+        public string JavaAgentJDKVersion
+        {
+            get
+            {
+                return mJavaAgentJDKVersion;
+            }
+            set
+            {
+                mJavaAgentJDKVersion = value;
+                OnPropertyChanged(Fields.JavaAgentJDKVersion);
+            }
+        }
+
+
         private bool mIsCustomApplicationProcessName = false;
         [IsSerializedForLocalRepository]
         public bool IsCustomApplicationProcessName
@@ -537,6 +558,7 @@ namespace GingerCore.Actions
                 mWaitForWindowTitleMaxTime_Calc = CalculateValue(mWaitForWindowTitleMaxTime);
                 mAttachAgentProcessSyncTime_Calc = CalculateValue(mAttachAgentProcessSyncTime);
                 mJApplicationProcessName_calc = CalculateValue(mApplicationProcessName);
+                mJavaAgentJDKVersion_calc = CalculateValue(mJavaAgentJDKVersion);
                 return true;
             }
             catch (Exception ex)
@@ -556,7 +578,7 @@ namespace GingerCore.Actions
                     return false;
                 }
 
-                if (Directory.Exists(mJavaWSEXEPath_Calc) == false || File.Exists(Path.Combine(mJavaWSEXEPath_Calc, "java.exe")) == false || File.Exists(Path.Combine(mJavaWSEXEPath_Calc, "javaws.exe")) == false)
+                if (Directory.Exists(mJavaWSEXEPath_Calc) == false || File.Exists(Path.Combine(mJavaWSEXEPath_Calc, "java.exe")) == false || File.Exists(Path.Combine(mJavaWSEXEPath_Calc, "java.exe")) == false)
                 {
                     Error = "The Java path folder '" + mJavaWSEXEPath_Calc + "' is not valid, please select the Java Bin folder.";
                     return false;
@@ -594,8 +616,7 @@ namespace GingerCore.Actions
                         Error = "Process sync time for attach agent is not valid.";
                         return false;
                     }
-
-                    if (Directory.Exists(mJavaAgentPath_Calc) == false || File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgent.jar")) == false)
+                    if (Directory.Exists(mJavaAgentPath_Calc) == false || File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgentJDK8.jar")) == false|| File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgentJDK25.jar")) == false)
                     {
                         Error = "The Ginger Agent path folder '" + mJavaAgentPath_Calc + "' is not valid, please select the folder which contains the 'GingerAgent.jar' file.";
                         return false;
@@ -809,13 +830,14 @@ namespace GingerCore.Actions
 
                 //arrange java application command params
                 string commandParams_OneLine = string.Empty;
-                commandParams_OneLine += "\"" + "AgentJarPath=" + Path.Combine(mJavaAgentPath_Calc, "GingerAgent.jar") + "\"";
+                string JavaAgentjarfile = Path.Combine(mJavaAgentPath_Calc, JavaAgentJDKVersion);
+                commandParams_OneLine += "\"" + "AgentJarPath=" + JavaAgentjarfile + "\"";
                 commandParams_OneLine += " \"" + "PID=" + mProcessIDForAttach.ToString() + "\"";
                 commandParams_OneLine += " \"" + "ShowGingerAgentConsole=" + ShowAgent.ToString() + "\"";
                 commandParams_OneLine += " \"" + "Port=" + mPort_Calc + "\"";
 
                 //command
-                command = "-jar " + "\"" + Path.Combine(mJavaAgentPath_Calc, "GingerAgent.jar") + "\" " + commandParams_OneLine;
+                command = "-jar " + "\"" + JavaAgentjarfile + "\" " + commandParams_OneLine;
 
                 //run commnad
                 ExecuteCommandAsync([javaExecuter, command]);
