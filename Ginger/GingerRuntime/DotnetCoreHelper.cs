@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright;
 using Amdocs.Ginger.CoreNET.Drivers.WebServicesDriver;
 using Amdocs.Ginger.CoreNET.SourceControl;
@@ -175,6 +176,8 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                     return new GenericAppiumDriver(zAgent.BusinessFlow);
                 case Agent.eDriverType.WebServices:
                     return new WebServicesDriver(zAgent.BusinessFlow);
+                case Agent.eDriverType.UnixShell:
+                    return new UnixShellDriver(zAgent.BusinessFlow);
                 default:
                     {
                         throw new Exception("Matching Driver was not found.");
