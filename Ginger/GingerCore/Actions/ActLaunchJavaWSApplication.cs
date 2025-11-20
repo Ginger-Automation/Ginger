@@ -597,15 +597,26 @@ namespace GingerCore.Actions
                         return false;
                     }
 
-                    bool agentFilesExist = Directory.Exists(mJavaAgentPath_Calc) &&
-                                           File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgent.jar")) &&
-                                           File.Exists(Path.Combine(mJavaAgentPath_Calc, "JavaAgent_V25.jar"));
+                    string versionString = GetJavaVersion(Path.Combine(mJavaWSEXEPath_Calc, "java.exe"));
+                    int majorVersion = ExtractMajorVersion(versionString);
 
-                    if (!agentFilesExist)
+                    if (!Directory.Exists(mJavaAgentPath_Calc))
                     {
-                        Error = $"The Ginger Agent path folder '{mJavaAgentPath_Calc}' is not valid, please select the folder which contains the 'GingerAgent.jar' and 'JavaAgent_V25.jar' file.";
+                        Error = $"The Ginger Agent path folder '{mJavaAgentPath_Calc}' is not valid";
                         return false;
                     }
+
+                    // pick required jar based on version
+                    string requiredJar = majorVersion <= 8 ? "GingerAgent.jar" : "JavaAgent_V25.jar";
+
+                    JarFilePath = Path.Combine(mJavaAgentPath_Calc, requiredJar);
+
+                    if (!File.Exists(JarFilePath))
+                    {
+                        Error = $"The '{requiredJar}' file was not found in the location '{mJavaAgentPath_Calc}'";
+                        return false;
+                    }
+
 
                     if ((ePortConfigType)GetInputParamValue<ePortConfigType>(Fields.PortConfigParam) == ePortConfigType.Manual)
                     {
@@ -621,6 +632,8 @@ namespace GingerCore.Actions
                 return false;
             }
         }
+
+        private static string JarFilePath;
 
         private bool ValidatePort()
         {
@@ -813,18 +826,14 @@ namespace GingerCore.Actions
 
                 //arrange java application command params
                 string commandParams_OneLine = string.Empty;
-
-                //According to the java.exe version we are chooseing the AgentJar file for automation
-                string javaAgentJarFile = GetJavaAgentJar(javaExecuter,mJavaAgentPath_Calc);
               
-              
-                commandParams_OneLine += "\"" + "AgentJarPath=" + javaAgentJarFile + "\"";
+                commandParams_OneLine += "\"" + "AgentJarPath=" + JarFilePath + "\"";
                 commandParams_OneLine += " \"" + "PID=" + mProcessIDForAttach.ToString() + "\"";
                 commandParams_OneLine += " \"" + "ShowGingerAgentConsole=" + ShowAgent.ToString() + "\"";
                 commandParams_OneLine += " \"" + "Port=" + mPort_Calc + "\"";
 
                 //command
-                command = "-jar " + "\"" + javaAgentJarFile + "\" " + commandParams_OneLine;
+                command = "-jar " + "\"" + JarFilePath + "\" " + commandParams_OneLine;
 
                 //run commnad
                 ExecuteCommandAsync([javaExecuter, command]);
@@ -877,23 +886,7 @@ namespace GingerCore.Actions
             int end = versionLine.LastIndexOf('"');
             return (start > 0 && end > start) ? versionLine.Substring(start, end - start) : "Unknown";
         }
-
-        public static string GetJavaAgentJar(string javaExePath, string agentPath)
-        {
-            string versionString = GetJavaVersion(javaExePath);
-
-            int majorVersion = ExtractMajorVersion(versionString);
-
-            // Decide based on major version
-            if (majorVersion <= 8) // Java 8 or lower
-            {
-                return Path.Combine(agentPath, "GingerAgent.jar");
-            }
-            else
-            {
-                return Path.Combine(agentPath, "JavaAgent_V25.jar");
-            }
-        }
+    
 
         private static int ExtractMajorVersion(string versionString)
         {
