@@ -616,9 +616,9 @@ namespace GingerCore.Actions
                         Error = "Process sync time for attach agent is not valid.";
                         return false;
                     }
-                    if (Directory.Exists(mJavaAgentPath_Calc) == false || File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgentJDK8.jar")) == false|| File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgentJDK25.jar")) == false)
+                    if (Directory.Exists(mJavaAgentPath_Calc) == false || File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgent.jar")) == false|| File.Exists(Path.Combine(mJavaAgentPath_Calc, "JavaAgent_V25.jar")) == false)
                     {
-                        Error = "The Ginger Agent path folder '" + mJavaAgentPath_Calc + "' is not valid, please select the folder which contains the 'GingerAgent.jar' file.";
+                        Error = "The Ginger Agent path folder '" + mJavaAgentPath_Calc + "' is not valid, please select the folder which contains the 'GingerAgent.jar' and 'JavaAgent_V25.jar' file.";
                         return false;
                     }
 
@@ -830,7 +830,11 @@ namespace GingerCore.Actions
 
                 //arrange java application command params
                 string commandParams_OneLine = string.Empty;
-                string JavaAgentjarfile = Path.Combine(mJavaAgentPath_Calc, JavaAgentJDKVersion);
+
+                //According to the java.exe version we are chooseing the AgentJar file for automation
+                string JavaAgentjarfile = GetJavaAgentJar(javaExecuter,mJavaAgentPath_Calc);
+              
+              
                 commandParams_OneLine += "\"" + "AgentJarPath=" + JavaAgentjarfile + "\"";
                 commandParams_OneLine += " \"" + "PID=" + mProcessIDForAttach.ToString() + "\"";
                 commandParams_OneLine += " \"" + "ShowGingerAgentConsole=" + ShowAgent.ToString() + "\"";
@@ -855,6 +859,79 @@ namespace GingerCore.Actions
                 Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
                 return false;
             }
+        }
+
+        public static string GetJavaVersion(string javaExePath)
+        {
+            if (!File.Exists(javaExePath))
+            {
+                throw new FileNotFoundException("java.exe not found at the specified path.", javaExePath);
+            }
+
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = javaExePath,
+                Arguments = "-version",
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            using (Process process = Process.Start(psi))
+            {
+                string output = process.StandardError.ReadToEnd();
+                process.WaitForExit();
+
+                // First line usually: java version "17.0.2"
+                string versionLine = output.Split('\n')[0];
+                return ExtractVersion(versionLine);
+            }
+        }
+
+        private static string ExtractVersion(string versionLine)
+        {
+            int start = versionLine.IndexOf('"') + 1;
+            int end = versionLine.LastIndexOf('"');
+            return (start > 0 && end > start) ? versionLine.Substring(start, end - start) : "Unknown";
+        }
+
+        public static string GetJavaAgentJar(string javaExePath, string agentPath)
+        {
+            string versionString = GetJavaVersion(javaExePath);
+
+            int majorVersion = ExtractMajorVersion(versionString);
+
+            // Decide based on major version
+            if (majorVersion <= 8) // Java 8 or lower
+            {
+                return Path.Combine(agentPath, "GingerAgent.jar");
+            }
+            else
+            {
+                return Path.Combine(agentPath, "JavaAgent_V25.jar");
+            }
+        }
+
+        private static int ExtractMajorVersion(string versionString)
+        {
+            if (string.IsNullOrWhiteSpace(versionString))
+                return 0; // fallback
+
+            string[] parts = versionString.Split('.');
+            int majorVersion = 0;
+
+            if (parts[0] == "1" && parts.Length > 1)
+            {
+                // For Java 1.x (like 1.8.0_171)
+                int.TryParse(parts[1], out majorVersion);
+            }
+            else
+            {
+                // For Java 9+ (like 11.0.2, 17.0.2)
+                int.TryParse(parts[0], out majorVersion);
+            }
+
+            return majorVersion;
         }
 
         private bool WaitForAppWindowTitle()
