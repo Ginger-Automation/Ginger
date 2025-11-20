@@ -156,6 +156,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                 eDriverType.Playwright => typeof(PlaywrightDriver),
                 Agent.eDriverType.Appium => (typeof(GenericAppiumDriver)),
                 Agent.eDriverType.WebServices => (typeof(WebServicesDriver)),
+                Agent.eDriverType.UnixShell => typeof(UnixShellDriver),
                 _ => throw new Exception("GetDriverType: Unknown Driver type " + zAgent.DriverType),
             };
         }
