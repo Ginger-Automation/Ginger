@@ -346,13 +346,8 @@
     <None Include="Resources\%40Star_16x16.png" />
     <None Include="Resources\%40StarGray_16x16.png" />
     <None Include="Resources\%40Group_16x16.png" />
-    <None Include="Drivers\JavaDriverLib\GingerJavaAgent\bin\GingerjarPublish.bat" />
     <None Include="Resources\SoapUI.bmp" />
-    <None Include="Drivers\JavaDriverLib\GingerJavaAgent\.settings\org.eclipse.jdt.core.prefs" />
     <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Drivers\JavaDriverLib\GingerJavaAgent\bin\com\amdocs\ginger\ASCFPack\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Const.png" />
@@ -393,10 +388,6 @@
     <None Include="Resources\%40MobileDevice_32x32.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Drivers\JavaDriverLib\GingerAgentBuild.xml" />
-    <Resource Include="Drivers\JavaDriverLib\GingerJavaAgent\build.xml">
-      <SubType>Designer</SubType>
-    </Resource>
     <None Include="Resources\%40edit_16x16.png" />
     <None Include="Resources\%40executionres_16x16.png" />
     <None Include="Resources\%40image_16x16.png" />
