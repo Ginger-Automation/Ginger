@@ -198,22 +198,22 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
                     // Switch on the actual console command (no early returns)
                     switch (ACC.ConsoleCommand)
                     {
-                        case eConsoleCommand.StartRecordingBuffer:
+                        case eConsoleCommand.StartRecordingConsoleLogs:
                             mRecordingBuffer.Clear();
                             mIsRecordingBufferActive = true;
-                            act.AddOrUpdateReturnParamActual("RecordingBufferStatus", "Started");
+                            act.AddOrUpdateReturnParamActual("RecordingConsoleLogsStatus", "Started");
                             act.ExInfo = "Console output recording started";
                             skipExecution = true;
                             break;
 
-                        case eConsoleCommand.StopRecordingBuffer:
+                        case eConsoleCommand.StopRecordingConsoleLogs:
                             mIsRecordingBufferActive = false;
-                            act.AddOrUpdateReturnParamActual("RecordingBufferStatus", "Stopped");
+                            act.AddOrUpdateReturnParamActual("RecordingConsoleLogsStatus", "Stopped");
                             act.ExInfo = "Console output recording stopped";
                             skipExecution = true;
                             break;
 
-                        case eConsoleCommand.ReturnBufferContent:
+                        case eConsoleCommand.GetRecordedConsoleLogs:
                             act.AddOrUpdateReturnParamActual("Result", mRecordingBuffer.ToString());
                             act.ExInfo = "Returned recorded console buffer content";
                             skipExecution = true;
