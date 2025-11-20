@@ -100,7 +100,6 @@ namespace GingerCore.Actions
             public static string DynamicPortPlaceHolder = "DynamicPortPlaceHolder";
             public static string IsCustomApplicationProcessName = "IsCustomApplicationProcessName";
             public static string ApplicationProcessName = "ApplicationProcessName";
-            public static string JavaAgentJDKVersion = "JavaAgentJDKVersion";
 
 
         }
@@ -330,24 +329,7 @@ namespace GingerCore.Actions
                 mApplicationProcessName = value;
                 OnPropertyChanged(Fields.ApplicationProcessName);
             }
-        }
-
-
-        string mJavaAgentJDKVersion = "GingerAgentJDK8.jar";
-        string mJavaAgentJDKVersion_calc = "GingerAgentJDK8.jar";
-        [IsSerializedForLocalRepository]
-        public string JavaAgentJDKVersion
-        {
-            get
-            {
-                return mJavaAgentJDKVersion;
-            }
-            set
-            {
-                mJavaAgentJDKVersion = value;
-                OnPropertyChanged(Fields.JavaAgentJDKVersion);
-            }
-        }
+        }     
 
 
         private bool mIsCustomApplicationProcessName = false;
@@ -558,7 +540,6 @@ namespace GingerCore.Actions
                 mWaitForWindowTitleMaxTime_Calc = CalculateValue(mWaitForWindowTitleMaxTime);
                 mAttachAgentProcessSyncTime_Calc = CalculateValue(mAttachAgentProcessSyncTime);
                 mJApplicationProcessName_calc = CalculateValue(mApplicationProcessName);
-                mJavaAgentJDKVersion_calc = CalculateValue(mJavaAgentJDKVersion);
                 return true;
             }
             catch (Exception ex)

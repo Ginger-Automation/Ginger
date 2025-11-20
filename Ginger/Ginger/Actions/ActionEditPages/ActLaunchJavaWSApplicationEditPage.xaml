@@ -17,7 +17,6 @@
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
-            <RowDefinition/>
         </Grid.RowDefinitions>
 
         <!--Java Version Path-->
@@ -175,25 +174,6 @@
                     
                     <Actions:UCValueExpression x:Name="ApplicationProcessNameTextBox" Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,2,0,2"
                                                ToolTip="Java application process name. default is java and jp2. you can find the process name from task manager."/>
-                </Grid>
-            </StackPanel>
-        </StackPanel>
-
-        <StackPanel Grid.Row="5" Margin="0,20,0,0">
-            <StackPanel Margin="0,20,0,10" >
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="240"/>
-                        <ColumnDefinition Width="180*"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Row="0" Grid.Column="0"  Style="{StaticResource @InputFieldLabelStyle}">Enter Java Agent version:</Label>
-
-                    <Actions:UCValueExpression x:Name="xTextBoxJavaAgentJDKVersion" Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,2,0,2"
-                                         ToolTip="Add java agent version."/>
                 </Grid>
             </StackPanel>
         </StackPanel>

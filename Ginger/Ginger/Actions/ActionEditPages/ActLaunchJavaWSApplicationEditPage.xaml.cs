@@ -76,9 +76,7 @@ namespace Ginger.Actions
             rbGroupPortConfig.Init(typeof(ActLaunchJavaWSApplication.ePortConfigType), RadioButtonPanel, mAct.GetOrCreateInputParam(ActLaunchJavaWSApplication.Fields.PortConfigParam, ActLaunchJavaWSApplication.ePortConfigType.Manual.ToString()), new RoutedEventHandler(PortConfigRB_Click));
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ApplicationProcessNameChkBox, CheckBox.IsCheckedProperty, mAct, ActLaunchJavaWSApplication.Fields.IsCustomApplicationProcessName);
-            ApplicationProcessNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct, ActLaunchJavaWSApplication.Fields.ApplicationProcessName);
-
-            xTextBoxJavaAgentJDKVersion.Init(Context.GetAsContext(mAct.Context), mAct, ActLaunchJavaWSApplication.Fields.JavaAgentJDKVersion);
+            ApplicationProcessNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct, ActLaunchJavaWSApplication.Fields.ApplicationProcessName);           
 
             UpdateAgentPortTextBoxEnabledStatus();
         }
