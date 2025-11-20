@@ -118,7 +118,7 @@ namespace Ginger.Actions
             ScriptStackPanel.Visibility = Visibility.Collapsed;
             CommandPanel.Visibility = Visibility.Collapsed;
 
-            ActConsoleCommand.eConsoleCommand comm = (ActConsoleCommand.eConsoleCommand)Enum.Parse(typeof(ActConsoleCommand.eConsoleCommand), ConsoleActionComboBox.SelectedValue?.ToString());
+            ActConsoleCommand.eConsoleCommand comm = (ActConsoleCommand.eConsoleCommand)ConsoleActionComboBox.SelectedValue;
 
             switch (comm)
             {
@@ -148,7 +148,10 @@ namespace Ginger.Actions
                     break;
             }
 
-            UpdateVisibilityForCommand(comm);
+            if (ConsoleActionComboBox.SelectedItem != null)
+            {
+                UpdateVisibilityForCommand(comm);
+            }
         }
 
         private void SetupValueInputParam()
