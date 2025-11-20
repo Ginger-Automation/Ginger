@@ -633,7 +633,7 @@ namespace GingerCore.Actions
             }
         }
 
-        private static string JarFilePath;
+        private string JarFilePath;
 
         private bool ValidatePort()
         {
@@ -898,7 +898,7 @@ namespace GingerCore.Actions
             string[] parts = versionString.Split('.');
             int majorVersion = 0;
 
-            if (parts[0] == "1" && parts.Length > 1)
+            if (parts.Length > 1 && parts[0] == "1")
             {
                 // For Java 1.x (like 1.8.0_171)
                 int.TryParse(parts[1], out majorVersion);
