@@ -553,29 +553,28 @@ namespace GingerCore.Actions
         {
             try
             {
-                if (mLaunchJavaApplication == false && mLaunchWithAgent == false)
+                if (!mLaunchJavaApplication && !mLaunchWithAgent)
                 {
                     Error = "No action to perform was selected.";
                     return false;
                 }
 
-                if (Directory.Exists(mJavaWSEXEPath_Calc) == false || File.Exists(Path.Combine(mJavaWSEXEPath_Calc, "java.exe")) == false || File.Exists(Path.Combine(mJavaWSEXEPath_Calc, "java.exe")) == false)
+                if (!Directory.Exists(mJavaWSEXEPath_Calc) || !File.Exists(Path.Combine(mJavaWSEXEPath_Calc, "java.exe")))
                 {
-                    Error = "The Java path folder '" + mJavaWSEXEPath_Calc + "' is not valid, please select the Java Bin folder.";
+                    Error = $"The Java path folder '{mJavaWSEXEPath_Calc}' is not valid, please select the Java Bin folder.";
                     return false;
                 }
 
-                if (mLaunchJavaApplication == true)
+                if (mLaunchJavaApplication)
                 {
-                    bool isValidURL = SetURLExtensionType(mURL_Calc);
-                    if (!isValidURL)
+                    if (!SetURLExtensionType(mURL_Calc))
                     {
-                        Error = "The provided Java application path '" + mURL_Calc + "' is not valid, please select .Jar or .Jnlp file or .Exe file";
+                        Error = $"The provided Java application path '{mURL_Calc}' is not valid, please select .Jar or .Jnlp file or .Exe file";
                         return false;
                     }
                 }
 
-                if ((mLaunchJavaApplication == true && WaitForWindowWhenDoingLaunch == true) || mLaunchWithAgent == true)
+                if ((mLaunchJavaApplication && WaitForWindowWhenDoingLaunch) || mLaunchWithAgent)
                 {
                     if (string.IsNullOrEmpty(mWaitForWindowTitle_Calc))
                     {
@@ -583,39 +582,42 @@ namespace GingerCore.Actions
                         return false;
                     }
 
-                    if (string.IsNullOrEmpty(mWaitForWindowTitleMaxTime_Calc) || int.TryParse(mWaitForWindowTitleMaxTime_Calc, out mWaitForWindowTitleMaxTime_Calc_int) == false)
+                    if (string.IsNullOrEmpty(mWaitForWindowTitleMaxTime_Calc) || !int.TryParse(mWaitForWindowTitleMaxTime_Calc, out mWaitForWindowTitleMaxTime_Calc_int))
                     {
                         Error = "Max waiting time for java application window is not valid.";
                         return false;
                     }
                 }
 
-                if (mLaunchWithAgent == true)
+                if (mLaunchWithAgent)
                 {
-                    if (string.IsNullOrEmpty(mAttachAgentProcessSyncTime_Calc) || int.TryParse(mAttachAgentProcessSyncTime_Calc, out mAttachAgentProcessSyncTime_Calc_int) == false)
+                    if (string.IsNullOrEmpty(mAttachAgentProcessSyncTime_Calc) || !int.TryParse(mAttachAgentProcessSyncTime_Calc, out mAttachAgentProcessSyncTime_Calc_int))
                     {
                         Error = "Process sync time for attach agent is not valid.";
                         return false;
                     }
-                    if (Directory.Exists(mJavaAgentPath_Calc) == false || File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgent.jar")) == false|| File.Exists(Path.Combine(mJavaAgentPath_Calc, "JavaAgent_V25.jar")) == false)
+
+                    bool agentFilesExist = Directory.Exists(mJavaAgentPath_Calc) &&
+                                           File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgent.jar")) &&
+                                           File.Exists(Path.Combine(mJavaAgentPath_Calc, "JavaAgent_V25.jar"));
+
+                    if (!agentFilesExist)
                     {
-                        Error = "The Ginger Agent path folder '" + mJavaAgentPath_Calc + "' is not valid, please select the folder which contains the 'GingerAgent.jar' and 'JavaAgent_V25.jar' file.";
+                        Error = $"The Ginger Agent path folder '{mJavaAgentPath_Calc}' is not valid, please select the folder which contains the 'GingerAgent.jar' and 'JavaAgent_V25.jar' file.";
                         return false;
                     }
 
-                    ePortConfigType portConfigType = (ePortConfigType)GetInputParamValue<ePortConfigType>(Fields.PortConfigParam);
-                    if (portConfigType == ePortConfigType.Manual)
+                    if ((ePortConfigType)GetInputParamValue<ePortConfigType>(Fields.PortConfigParam) == ePortConfigType.Manual)
                     {
                         return ValidatePort();
                     }
-
                 }
 
                 return true;
             }
             catch (Exception ex)
             {
-                Error = "Error occurred while validating the action arguments. Error=" + ex.Message;
+                Error = $"Error occurred while validating the action arguments. Error={ex.Message}";
                 return false;
             }
         }
@@ -813,16 +815,16 @@ namespace GingerCore.Actions
                 string commandParams_OneLine = string.Empty;
 
                 //According to the java.exe version we are chooseing the AgentJar file for automation
-                string JavaAgentjarfile = GetJavaAgentJar(javaExecuter,mJavaAgentPath_Calc);
+                string javaAgentJarFile = GetJavaAgentJar(javaExecuter,mJavaAgentPath_Calc);
               
               
-                commandParams_OneLine += "\"" + "AgentJarPath=" + JavaAgentjarfile + "\"";
+                commandParams_OneLine += "\"" + "AgentJarPath=" + javaAgentJarFile + "\"";
                 commandParams_OneLine += " \"" + "PID=" + mProcessIDForAttach.ToString() + "\"";
                 commandParams_OneLine += " \"" + "ShowGingerAgentConsole=" + ShowAgent.ToString() + "\"";
                 commandParams_OneLine += " \"" + "Port=" + mPort_Calc + "\"";
 
                 //command
-                command = "-jar " + "\"" + JavaAgentjarfile + "\" " + commandParams_OneLine;
+                command = "-jar " + "\"" + javaAgentJarFile + "\" " + commandParams_OneLine;
 
                 //run commnad
                 ExecuteCommandAsync([javaExecuter, command]);
@@ -896,7 +898,9 @@ namespace GingerCore.Actions
         private static int ExtractMajorVersion(string versionString)
         {
             if (string.IsNullOrWhiteSpace(versionString))
+            {
                 return 0; // fallback
+            }
 
             string[] parts = versionString.Split('.');
             int majorVersion = 0;
