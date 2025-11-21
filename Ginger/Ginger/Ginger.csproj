@@ -2668,6 +2668,9 @@
     <None Update="StaticDrivers\GingerAgent.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+	  <None Update="StaticDrivers\GingerAgentStarter.jar">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="StaticDrivers\JavaAgent_V25.jar">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>

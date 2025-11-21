@@ -832,6 +832,11 @@ namespace GingerCore.Actions
                 commandParams_OneLine += " \"" + "ShowGingerAgentConsole=" + ShowAgent.ToString() + "\"";
                 commandParams_OneLine += " \"" + "Port=" + mPort_Calc + "\"";
 
+                if (JarFilePath.Contains("GingerAgent.jar"))
+                {
+                    JarFilePath= Path.Combine(mJavaAgentPath_Calc, "GingerAgentStarter.jar");
+                }
+
                 //command
                 command = "-jar " + "\"" + JarFilePath + "\" " + commandParams_OneLine;
 
