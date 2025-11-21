@@ -25,6 +25,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 
 using System.Diagnostics;
+using System.Text;
 using System.Threading;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
@@ -39,8 +40,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         ProcessStartInfo processStartInfo;
         System.IO.StreamWriter writer;
         Process process;
-        string mOutputs = string.Empty;
-        int mlastOutputsLength = 0;
+        private readonly StringBuilder mOutputsBuilder = new StringBuilder();
+        private int mProcessedLength = 0;
 
         // Add synchronization lock
         private readonly object mOutputsLock = new object();
@@ -93,13 +94,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                // Thread-safe output append
                 lock (mOutputsLock)
                 {
-                    mOutputs += e.Data + System.Environment.NewLine;
+                    mOutputsBuilder.AppendLine(e.Data);
                 }
 
-                // Update window if dispatcher available
                 if (ShowWindow && Dispatcher != null)
                 {
                     try
@@ -123,13 +122,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
 
             if (!string.IsNullOrEmpty(e.Data))
             {
-                // Thread-safe output append
                 lock (mOutputsLock)
                 {
-                    mOutputs += e.Data + System.Environment.NewLine;
+                    mOutputsBuilder.AppendLine(e.Data);
                 }
 
-                // Update window if dispatcher available
                 if (ShowWindow && Dispatcher != null)
                 {
                     try
@@ -303,7 +300,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         {
             lock (mOutputsLock)
             {
-                return mOutputs.Contains(mExpString);
+                return mOutputsBuilder.ToString().Contains(mExpString);
             }
         }
 
@@ -311,8 +308,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         {
             lock (mOutputsLock)
             {
-                mOutputs = string.Empty;
-                mlastOutputsLength = 0;
+                mOutputsBuilder.Clear();
+                mProcessedLength = 0;
             }
         }
 
@@ -320,48 +317,52 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         {
             Thread.Sleep(1000);
 
-            string currentOutput;
-            lock (mOutputsLock)
-            {
-                currentOutput = mOutputs[mlastOutputsLength..];
-            }
-
-            while (currentOutput.Length > 0)
+            while (true)
             {
                 if (!IsDriverRunning)
                 {
                     break;
                 }
 
-                // Write to console buffer with dispatcher if windowed
-                if (ShowWindow && Dispatcher != null)
-                {
-                    string outputToWrite = currentOutput;
-                    Dispatcher.Invoke(() => WriteToConsoleBuffer(outputToWrite));
-                }
-                else
-                {
-                    WriteToConsoleBuffer(currentOutput);
-                }
+                string pendingOutput;
+                int currentLength;
 
-                if (waitForRestOfOutputs)
+                lock (mOutputsLock)
                 {
-                    lock (mOutputsLock)
+                    currentLength = mOutputsBuilder.Length;
+                    if (currentLength > mProcessedLength)
                     {
-                        mlastOutputsLength = mOutputs.Length;
+                        int chunkLength = currentLength - mProcessedLength;
+                        pendingOutput = mOutputsBuilder.ToString(mProcessedLength, chunkLength);
+                        mProcessedLength = currentLength;
                     }
-
-                    Thread.Sleep(500);
-
-                    lock (mOutputsLock)
+                    else
                     {
-                        currentOutput = mOutputs[mlastOutputsLength..];
+                        pendingOutput = string.Empty;
                     }
                 }
-                else
+
+                if (string.IsNullOrEmpty(pendingOutput))
                 {
                     break;
                 }
+
+                if (ShowWindow && Dispatcher != null)
+                {
+                    string outputCopy = pendingOutput;
+                    Dispatcher.Invoke(() => WriteToConsoleBuffer(outputCopy));
+                }
+                else
+                {
+                    WriteToConsoleBuffer(pendingOutput);
+                }
+
+                if (!waitForRestOfOutputs)
+                {
+                    break;
+                }
+
+                Thread.Sleep(500);
             }
         }
 

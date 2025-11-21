@@ -76,7 +76,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
 
         public SshClient UnixClient;
         public SftpClient UnixFTPClient;
-        public TcpClient tcpClient;
+        private TcpClient tcpClient;
         string workdir;
 
         ShellStream ss;
