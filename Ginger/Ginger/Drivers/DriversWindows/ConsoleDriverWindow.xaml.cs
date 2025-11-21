@@ -159,6 +159,30 @@ namespace Ginger.Drivers.DriversWindows
                     });
                     break;
 
+                case DriverBase.eDriverMessageType.CloseDriverWindow:
+                    // Driver is closing - close window gracefully
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        try
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, "Closing console window per driver request");
+
+                            // Unsubscribe from events to prevent recursive calls
+                            if (mConsoleDriver != null)
+                            {
+                                ((DriverBase)mConsoleDriver).DriverMessageEvent -= ConsoleDriverWindow_DriverMessageEvent;
+                            }
+
+                            // Close window
+                            this.Close();
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error closing console window", ex);
+                        }
+                    });
+                    break;
+
                 case DriverBase.eDriverMessageType.ConsoleBufferUpdate:
                     // After a command/action finished, we can auto-scroll or update UI if needed
                     await Dispatcher.InvokeAsync(() =>
@@ -190,6 +214,38 @@ namespace Ginger.Drivers.DriversWindows
                     }
                     break;
 
+            }
+        }
+
+        private void ConsoleDriverWindow_Closing(Object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // Prevent recursive calls
+            if (mConsoleDriver == null)
+            {
+                return;
+            }
+
+            mRecording = false;
+
+            try
+            {
+                // Unsubscribe from events first
+                ((DriverBase)mConsoleDriver).DriverMessageEvent -= ConsoleDriverWindow_DriverMessageEvent;
+
+                // Only disconnect if driver is still running
+                if (mConsoleDriver.IsRunning())
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "User closed console window - disconnecting driver");
+                    mConsoleDriver.Disconnect();
+                    mConsoleDriver.CloseDriver();
+                }
+
+                // Clear reference
+                mConsoleDriver = null;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error during console window closing", ex);
             }
         }
 
@@ -325,19 +381,6 @@ namespace Ginger.Drivers.DriversWindows
             CNAP.ShowAsWindow(this);
         }
 
-        private void ConsoleDriverWindow_Closing(Object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            mRecording = false;
-            try
-            {
-                mConsoleDriver.Disconnect();
-                mConsoleDriver.CloseDriver();
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message);
-            }
-        }
         private void ApplyStyleToText(string result, ref Paragraph p)
         {
             try

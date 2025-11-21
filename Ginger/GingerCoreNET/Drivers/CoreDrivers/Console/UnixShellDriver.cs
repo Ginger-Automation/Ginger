@@ -27,6 +27,7 @@ using Renci.SshNet;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -75,6 +76,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
 
         public SshClient UnixClient;
         public SftpClient UnixFTPClient;
+        private TcpClient tcpClient;
         string workdir;
 
         ShellStream ss;
@@ -109,10 +111,72 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         {
             try
             {
+                Reporter.ToLog(eLogLevel.DEBUG, "Disconnecting Unix Shell Driver");
+
+                // Close shell stream first
+                if (ss != null)
+                {
+                    try
+                    {
+                        ss.Close();
+                        ss.Dispose();
+                        ss = null;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Error closing shell stream", ex);
+                    }
+                }
+
+                // Close FTP client if connected
+                if (UnixFTPClient != null && UnixFTPClient.IsConnected)
+                {
+                    try
+                    {
+                        UnixFTPClient.Disconnect();
+                        UnixFTPClient.Dispose();
+                        UnixFTPClient = null;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Error closing FTP client", ex);
+                    }
+                }
+
+                // Close SSH client
                 if (UnixClient != null)
                 {
-                    UnixClient.Disconnect();
+                    try
+                    {
+                        if (UnixClient.IsConnected)
+                        {
+                            UnixClient.Disconnect();
+                        }
+                        UnixClient.Dispose();
+                        UnixClient = null;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Error closing SSH client", ex);
+                    }
                 }
+
+                // Close TCP client
+                if (tcpClient != null)
+                {
+                    try
+                    {
+                        tcpClient.Close();
+                        tcpClient.Dispose();
+                        tcpClient = null;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Error closing TCP client", ex);
+                    }
+                }
+
+                Reporter.ToLog(eLogLevel.INFO, "Unix Shell Driver disconnected successfully");
             }
             catch (Exception ex)
             {
@@ -155,7 +219,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
 
                 try
                 {
-                    var client = new System.Net.Sockets.TcpClient(Host, Port);
+                    tcpClient = new System.Net.Sockets.TcpClient(Host, Port);
                 }
                 catch (Exception)
                 {
