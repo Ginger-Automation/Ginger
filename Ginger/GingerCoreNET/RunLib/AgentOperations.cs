@@ -127,6 +127,7 @@ namespace GingerCore
 
         public Task MSTATask = null;  // For STA Driver we keep the STA task 
         public CancellationTokenSource CTS = null;
+        private ManualResetEventSlim DriverInitializedEvent = new ManualResetEventSlim(false);
         BackgroundWorker CancelTask;
 
         public DriverBase CreateDriverInstance()
@@ -202,15 +203,20 @@ namespace GingerCore
                                 try
                                 {
                                     Driver.StartDriver();
+                                    DriverInitializedEvent.Set();
                                 }
                                 catch (Exception ex)
                                 {
                                     Reporter.ToLog(eLogLevel.ERROR, $"Error occurred! While Trying to Communicate with the {Agent.AgentType} Agent {Agent.Name}. Please try checking your Agent Configurations!", ex);
+                                    DriverInitializedEvent.Set();
                                 }
                             }
                             , CTS.Token, TaskCreationOptions.LongRunning);
                             MSTATask.Start();
-                            MSTATask.Wait();
+                            if (!DriverInitializedEvent.Wait(TimeSpan.FromSeconds(30)))
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, $"Driver initialization timed out for agent {Agent.Name}");
+                            }
                         }
                         else
                         {
@@ -696,7 +702,13 @@ namespace GingerCore
                 {
                     if (Driver.IsSTAThread())
                     {
-                        if (Driver.Dispatcher != null)
+                        if (Driver.Dispatcher == null)
+                        {
+                            act.Status = eRunStatus.Failed;
+                            act.Error = "Driver Dispatcher is not initialized. Driver may not have started properly.";
+                            Reporter.ToLog(eLogLevel.ERROR, $"Driver Dispatcher is null for agent {Agent.Name}");
+                        }
+                        else
                         {
                             Driver.Dispatcher.Invoke(() =>
                             {

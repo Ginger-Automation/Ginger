@@ -175,14 +175,29 @@ namespace GingerCore.Drivers.MainFrame
 
                 if (ConnectToMainframe())
                 {
+                    bool windowLoaded = false;
                     mDriverWindow = new MainFrameDriverWindow(this);
+                    mDriverWindow.Loaded += (s, e) => windowLoaded = true;
                     mDriverWindow.Show();
                     mDriverWindow.Refresh();
-                    Thread.Sleep(100);
+                    // Wait for window loaded event with timeout
+                    int timeout = 0;
+                    while (!windowLoaded && timeout < 100)
+                    {
+                        System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Background);
+                        Thread.Sleep(10);
+                        timeout += 10;
+                    }
+                    // Ensure dispatcher is initialized
+                    if (mDriverWindow.Dispatcher == null)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Window dispatcher not initialized after window creation");
+                        throw new InvalidOperationException("Window dispatcher not initialized");
+                    }
                     Dispatcher = new DriverWindowDispatcher(mDriverWindow.Dispatcher);
                     Dispatcher.Invoke(new Action(() => OnDriverMessage(eDriverMessageType.DriverStatusChanged)));
                     System.Windows.Threading.Dispatcher.Run();
-                    
+
                 }
                 else
                 {
@@ -190,9 +205,10 @@ namespace GingerCore.Drivers.MainFrame
 
                 }
             }
-            catch ( Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to Launch mainframe driver", ex);
+                Dispatcher = new DummyDispatcher();
             }
         }
 
