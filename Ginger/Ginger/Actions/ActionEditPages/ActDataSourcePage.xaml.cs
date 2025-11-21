@@ -103,6 +103,7 @@ namespace Ginger.Actions
             {
                 SetDataSourceVEParams(VEOrg);
             }
+            grdCondition.DataSourceList = mActDSTblElem.WhereConditions;
 
             WeakEventManager<TextBoxBase, TextChangedEventArgs>.AddHandler(source: ValueUC.ValueTextBox, eventName: nameof(TextBoxBase.TextChanged), handler: ValueChanged);
         }
