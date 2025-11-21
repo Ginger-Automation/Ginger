@@ -42,6 +42,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         string mOutputs = string.Empty;
         int mlastOutputsLength = 0;
 
+        // Add synchronization lock
+        private readonly object mOutputsLock = new object();
+
         public DOSConsoleDriver(BusinessFlow BusinessFlow)
         {
             this.BusinessFlow = BusinessFlow;
@@ -88,24 +91,117 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
 
         private void Process_ErrorDataReceivedAsync(object sender, DataReceivedEventArgs e)
         {
-            mOutputs += e.Data + System.Environment.NewLine;
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                // Thread-safe output append
+                lock (mOutputsLock)
+                {
+                    mOutputs += e.Data + System.Environment.NewLine;
+                }
+
+                // Update window if dispatcher available
+                if (ShowWindow && Dispatcher != null)
+                {
+                    try
+                    {
+                        string dataToSend = e.Data;
+                        Dispatcher.Invoke(() =>
+                        {
+                            OnDriverMessage(eDriverMessageType.ConsoleBufferUpdate, dataToSend);
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Error updating console with error data", ex);
+                    }
+                }
+            }
         }
 
         private void Process_OutputDataReceivedAsync(object sender, DataReceivedEventArgs e)
         {
 
-            mOutputs += e.Data + System.Environment.NewLine;
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                // Thread-safe output append
+                lock (mOutputsLock)
+                {
+                    mOutputs += e.Data + System.Environment.NewLine;
+                }
+
+                // Update window if dispatcher available
+                if (ShowWindow && Dispatcher != null)
+                {
+                    try
+                    {
+                        string dataToSend = e.Data;
+                        Dispatcher.Invoke(() =>
+                        {
+                            OnDriverMessage(eDriverMessageType.ConsoleBufferUpdate, dataToSend);
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Error updating console with output data", ex);
+                    }
+                }
+            }
         }
 
         public override void Disconnect()
         {
-            writer.Close();
-            writer.Dispose();
-            process.CancelErrorRead();
-            process.CancelOutputRead();
-            processStartInfo.Environment.Clear();
-            process.Close();
-            process.Dispose();
+            try
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Starting DOS Console Driver disconnect");
+
+                // Close writer stream
+                if (writer != null)
+                {
+                    try
+                    {
+                        writer.Close();
+                        writer.Dispose();
+                        writer = null;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Error disposing writer stream", ex);
+                    }
+                }
+
+                // Stop process data collection
+                if (process != null)
+                {
+                    try
+                    {
+                        process.CancelErrorRead();
+                        process.CancelOutputRead();
+                        process.Close();
+                        process.Dispose();
+                        process = null;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Error closing DOS process", ex);
+                    }
+                }
+
+                // Clear process configuration
+                if (processStartInfo != null)
+                {
+                    processStartInfo.Environment?.Clear();
+                    processStartInfo = null;
+                }
+
+                // Clear output buffers
+                RestartOutputs();
+
+                Reporter.ToLog(eLogLevel.INFO, "DOS Console Driver disconnected successfully");
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Unexpected error during disconnect", ex);
+            }
         }
 
         public override string ConsoleWindowTitle()
@@ -113,16 +209,53 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
             return "DOS Console Driver - " + CMDFileName;
         }
 
+        public override void CloseDriver()
+        {
+            try
+            {
+                // First disconnect from DOS process
+                Disconnect();
+
+                // Handle window closure if in windowed mode
+                if (ShowWindow && Dispatcher != null)
+                {
+                    try
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Requesting console window closure");
+
+                        // Signal window to close via dispatcher mechanism
+                        Dispatcher.Invoke(() =>
+                        {
+                            OnDriverMessage(eDriverMessageType.CloseDriverWindow);
+                        });
+
+                        // Allow window time for graceful shutdown
+                        Thread.Sleep(500);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Error signaling window closure", ex);
+                    }
+                }
+
+                // Clear dispatcher reference
+                Dispatcher = null;
+                IsDriverConnected = false;
+
+                // Notify status change
+                OnDriverMessage(eDriverMessageType.DriverStatusChanged);
+
+                Reporter.ToLog(eLogLevel.INFO, "DOS Console Driver fully closed");
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in CloseDriver", ex);
+            }
+        }
+
         public override bool IsBusy()
         {
-            if (process == null)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return process != null && !process.HasExited;
         }
 
         public override void SendCommand(string command)
@@ -130,17 +263,26 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
             RestartOutputs();
             DateTime startingTime = DateTime.Now;
 
-            writer.Write(command);
+            // Send command with dispatcher support
+            if (ShowWindow && Dispatcher != null)
+            {
+                Dispatcher.Invoke(() => writer.Write(command));
+            }
+            else
+            {
+                writer.Write(command);
+            }
 
             if (mWait == null)
             {
                 mWait = 5;
             }
 
-            //waiting for expected output
-            if (string.IsNullOrEmpty(mExpString) == false && mWait != null)
+            // Wait for expected output with thread safety
+            if (!string.IsNullOrEmpty(mExpString) && mWait != null)
             {
-                while (mOutputs.Contains(mExpString) == false && ((DateTime.Now - startingTime).TotalSeconds <= mWait))
+                while (!CheckForExpectedString() &&
+                       (DateTime.Now - startingTime).TotalSeconds <= mWait)
                 {
                     if (!IsDriverRunning)
                     {
@@ -157,31 +299,68 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
             }
         }
 
+        private bool CheckForExpectedString()
+        {
+            lock (mOutputsLock)
+            {
+                return mOutputs.Contains(mExpString);
+            }
+        }
+
         private void RestartOutputs()
         {
-            mOutputs = string.Empty;
-            mlastOutputsLength = 0;
+            lock (mOutputsLock)
+            {
+                mOutputs = string.Empty;
+                mlastOutputsLength = 0;
+            }
         }
 
         private void WriteOutputsToConsole(bool waitForRestOfOutputs = true)
         {
             Thread.Sleep(1000);
-            while (mOutputs.Length > mlastOutputsLength)
+
+            string currentOutput;
+            lock (mOutputsLock)
+            {
+                currentOutput = mOutputs[mlastOutputsLength..];
+            }
+
+            while (currentOutput.Length > 0)
             {
                 if (!IsDriverRunning)
                 {
                     break;
                 }
 
-                WriteToConsoleBuffer(mOutputs[mlastOutputsLength..]);
-                if (waitForRestOfOutputs)
+                // Write to console buffer with dispatcher if windowed
+                if (ShowWindow && Dispatcher != null)
                 {
-                    mlastOutputsLength = mOutputs.Length;
-                    Thread.Sleep(500);
+                    string outputToWrite = currentOutput;
+                    Dispatcher.Invoke(() => WriteToConsoleBuffer(outputToWrite));
                 }
                 else
                 {
-                    return;
+                    WriteToConsoleBuffer(currentOutput);
+                }
+
+                if (waitForRestOfOutputs)
+                {
+                    lock (mOutputsLock)
+                    {
+                        mlastOutputsLength = mOutputs.Length;
+                    }
+
+                    Thread.Sleep(500);
+
+                    lock (mOutputsLock)
+                    {
+                        currentOutput = mOutputs[mlastOutputsLength..];
+                    }
+                }
+                else
+                {
+                    break;
                 }
             }
         }

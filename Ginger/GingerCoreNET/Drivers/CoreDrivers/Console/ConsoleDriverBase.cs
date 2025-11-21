@@ -144,11 +144,45 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         {
             try
             {
-                if (Dispatcher != null && !ShowWindow)
-                {
-                    Thread.Sleep(50);
-                }
                 Disconnect();
+                // Close driver window if it exists and ShowWindow is enabled
+                if (ShowWindow && Dispatcher != null)
+                {
+                    try
+                    {
+                        // Signal window to close via dispatcher
+                        Dispatcher.Invoke(() =>
+                        {
+                            OnDriverMessage(eDriverMessageType.CloseDriverWindow);
+                        });
+
+                        // Give window time to close gracefully
+                        Thread.Sleep(500);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Error closing driver window from driver", ex);
+                    }
+                }
+
+                // Clean up dispatcher
+                if (Dispatcher != null)
+                {
+                    if (Dispatcher is DummyDispatcher)
+                    {
+                        // DummyDispatcher doesn't need cleanup
+                        Dispatcher = null;
+                    }
+                    else
+                    {
+                        // Real dispatcher - allow window to handle cleanup
+                        Dispatcher = null;
+                    }
+                }
+
+                IsDriverConnected = false;
+                OnDriverMessage(eDriverMessageType.DriverStatusChanged);
+
             }
             catch (InvalidOperationException e)
             {

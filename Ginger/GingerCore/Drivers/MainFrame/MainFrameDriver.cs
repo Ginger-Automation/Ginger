@@ -177,7 +177,7 @@ namespace GingerCore.Drivers.MainFrame
                 {
                     bool windowLoaded = false;
                     mDriverWindow = new MainFrameDriverWindow(this);
-                    mDriverWindow.Loaded += (s, e) => windowLoaded = true;
+                    mDriverWindow.Loaded += (_, e) => windowLoaded = true;
                     mDriverWindow.Show();
                     mDriverWindow.Refresh();
                     // Wait for window loaded event with timeout
