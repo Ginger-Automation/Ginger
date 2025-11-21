@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.MainFrame;
@@ -161,32 +162,37 @@ namespace GingerCore.Drivers.MainFrame
 
         private void Launchdriver()
         {
-            IsServerAvailable = GingerCore.Common.Utility.IsServerListening(this.HostName, HostPort);
-            if (!IsServerAvailable)
+            try
             {
-                Reporter.ToStatus(eStatusMsgKey.MainframeIncorrectConfiguration);
-                return;
+                IsServerAvailable = GingerCore.Common.Utility.IsServerListening(this.HostName, HostPort);
+                if (!IsServerAvailable)
+                {
+                    Reporter.ToStatus(eStatusMsgKey.MainframeIncorrectConfiguration);
+                    return;
+                }
+
+                MFE = new Terminal(this.HostName, HostPort, TermType, SSL, MFRows, MFColumns, this);
+
+                if (ConnectToMainframe())
+                {
+                    mDriverWindow = new MainFrameDriverWindow(this);
+                    mDriverWindow.Show();
+                    mDriverWindow.Refresh();
+                    Thread.Sleep(100);
+                    Dispatcher = new DriverWindowDispatcher(mDriverWindow.Dispatcher);
+                    Dispatcher.Invoke(new Action(() => OnDriverMessage(eDriverMessageType.DriverStatusChanged)));
+                    System.Windows.Threading.Dispatcher.Run();
+                    
+                }
+                else
+                {
+                    mDriverWindow = null;
+
+                }
             }
-
-            MFE = new Terminal(this.HostName, HostPort, TermType, SSL, MFRows, MFColumns, this);
-
-            if (ConnectToMainframe())
+            catch ( Exception ex)
             {
-                mDriverWindow = new MainFrameDriverWindow(this);
-                mDriverWindow.Show();
-                mDriverWindow.Refresh();
-
-                Dispatcher = new DriverWindowDispatcher(mDriverWindow.Dispatcher);
-                Dispatcher.Invoke(new Action(() => OnDriverMessage(eDriverMessageType.DriverStatusChanged)));
-                System.Windows.Threading.Dispatcher.Run();
-
-
-            }
-            else
-            {
-
-                mDriverWindow = null;
-
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Launch mainframe driver", ex);
             }
         }
 

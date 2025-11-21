@@ -210,10 +210,11 @@ namespace GingerCore
                             }
                             , CTS.Token, TaskCreationOptions.LongRunning);
                             MSTATask.Start();
+                            MSTATask.Wait();
                         }
                         else
                         {
-                            Driver.StartDriver();
+                           Driver.StartDriver();
                         }
                         if (VirtualDriver != null)
                         {
@@ -695,18 +696,21 @@ namespace GingerCore
                 {
                     if (Driver.IsSTAThread())
                     {
-                        Driver.Dispatcher.Invoke(() =>
+                        if (Driver.Dispatcher != null)
                         {
-                            try
+                            Driver.Dispatcher.Invoke(() =>
                             {
-                                Driver.RunAction(act);
-                            }
-                            catch (Exception ex)
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
-                            }
+                                try
+                                {
+                                    Driver.RunAction(act);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+                                }
 
-                        });
+                            });
+                        }
                     }
                     else
                     {

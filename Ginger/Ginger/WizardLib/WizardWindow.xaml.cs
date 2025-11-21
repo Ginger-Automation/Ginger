@@ -474,8 +474,15 @@ namespace GingerWPF.WizardLib
             // Initialize elapsed time
             AIFineTuneelapsedTime = TimeSpan.Zero;
             // Capture base label once and initialize displayed text
-            AIFineTuneBaseText = string.IsNullOrWhiteSpace(xAIProcessingText.Text) ? "AI Fine-Tuning Processing" : xAIProcessingText.Text;
-            xAIProcessingText.Text = $"{AIFineTuneBaseText},00:00";
+            string text = string.Empty;
+
+            Dispatcher.Invoke(() =>
+            {
+                text = xAIProcessingText.Text;
+                AIFineTuneBaseText = string.IsNullOrWhiteSpace(text) ? "AI Fine-Tuning Processing" : text;
+
+                xAIProcessingText.Text = $"{AIFineTuneBaseText}";
+            });
             // Start the timer
             try
             {
