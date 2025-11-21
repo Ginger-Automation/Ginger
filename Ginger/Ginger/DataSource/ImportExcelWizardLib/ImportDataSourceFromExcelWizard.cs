@@ -96,6 +96,12 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                 }
                 foreach (DataTable dt in ExcelImportData.Tables)
                 {
+                    if (!IsImportEmptyColumns)
+                    {
+                        // Removing empty rows
+                        RemoveEmptyRows(dt);
+                    }
+                    
                     string cols = GetColumnNameListForTableCreation(dt);
                     AddDefaultColumn(dt);
                     CreateTable(dt.TableName, cols);
@@ -105,6 +111,31 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             catch (System.Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+        }
+
+        private void RemoveEmptyRows(DataTable dt)
+        {
+            var rowsToRemove = new List<DataRow>();
+            foreach (DataRow row in dt.Rows)
+            {
+                bool isEmpty = true;
+                foreach (var item in row.ItemArray)
+                {
+                    if (item != null && !string.IsNullOrWhiteSpace(item.ToString()))
+                    {
+                        isEmpty = false;
+                        break;
+                    }
+                }
+                if (isEmpty)
+                {
+                    rowsToRemove.Add(row);
+                }
+            }
+            foreach (var row in rowsToRemove)
+            {
+                dt.Rows.Remove(row);
             }
         }
 
