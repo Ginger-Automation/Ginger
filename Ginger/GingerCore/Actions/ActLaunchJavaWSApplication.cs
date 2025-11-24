@@ -101,6 +101,7 @@ namespace GingerCore.Actions
             public static string IsCustomApplicationProcessName = "IsCustomApplicationProcessName";
             public static string ApplicationProcessName = "ApplicationProcessName";
 
+
         }
 
         //------------------- Java version to use args
@@ -328,7 +329,9 @@ namespace GingerCore.Actions
                 mApplicationProcessName = value;
                 OnPropertyChanged(Fields.ApplicationProcessName);
             }
-        }
+        }     
+
+
         private bool mIsCustomApplicationProcessName = false;
         [IsSerializedForLocalRepository]
         public bool IsCustomApplicationProcessName
@@ -550,29 +553,28 @@ namespace GingerCore.Actions
         {
             try
             {
-                if (mLaunchJavaApplication == false && mLaunchWithAgent == false)
+                if (!mLaunchJavaApplication && !mLaunchWithAgent)
                 {
                     Error = "No action to perform was selected.";
                     return false;
                 }
 
-                if (Directory.Exists(mJavaWSEXEPath_Calc) == false || File.Exists(Path.Combine(mJavaWSEXEPath_Calc, "java.exe")) == false || File.Exists(Path.Combine(mJavaWSEXEPath_Calc, "javaws.exe")) == false)
+                if (!Directory.Exists(mJavaWSEXEPath_Calc) || !File.Exists(Path.Combine(mJavaWSEXEPath_Calc, "java.exe")))
                 {
-                    Error = "The Java path folder '" + mJavaWSEXEPath_Calc + "' is not valid, please select the Java Bin folder.";
+                    Error = $"The Java path folder '{mJavaWSEXEPath_Calc}' is not valid, please select the Java Bin folder.";
                     return false;
                 }
 
-                if (mLaunchJavaApplication == true)
+                if (mLaunchJavaApplication)
                 {
-                    bool isValidURL = SetURLExtensionType(mURL_Calc);
-                    if (!isValidURL)
+                    if (!SetURLExtensionType(mURL_Calc))
                     {
-                        Error = "The provided Java application path '" + mURL_Calc + "' is not valid, please select .Jar or .Jnlp file or .Exe file";
+                        Error = $"The provided Java application path '{mURL_Calc}' is not valid, please select .Jar or .Jnlp file or .Exe file";
                         return false;
                     }
                 }
 
-                if ((mLaunchJavaApplication == true && WaitForWindowWhenDoingLaunch == true) || mLaunchWithAgent == true)
+                if ((mLaunchJavaApplication && WaitForWindowWhenDoingLaunch) || mLaunchWithAgent)
                 {
                     if (string.IsNullOrEmpty(mWaitForWindowTitle_Calc))
                     {
@@ -580,43 +582,58 @@ namespace GingerCore.Actions
                         return false;
                     }
 
-                    if (string.IsNullOrEmpty(mWaitForWindowTitleMaxTime_Calc) || int.TryParse(mWaitForWindowTitleMaxTime_Calc, out mWaitForWindowTitleMaxTime_Calc_int) == false)
+                    if (string.IsNullOrEmpty(mWaitForWindowTitleMaxTime_Calc) || !int.TryParse(mWaitForWindowTitleMaxTime_Calc, out mWaitForWindowTitleMaxTime_Calc_int))
                     {
                         Error = "Max waiting time for java application window is not valid.";
                         return false;
                     }
                 }
 
-                if (mLaunchWithAgent == true)
+                if (mLaunchWithAgent)
                 {
-                    if (string.IsNullOrEmpty(mAttachAgentProcessSyncTime_Calc) || int.TryParse(mAttachAgentProcessSyncTime_Calc, out mAttachAgentProcessSyncTime_Calc_int) == false)
+                    if (string.IsNullOrEmpty(mAttachAgentProcessSyncTime_Calc) || !int.TryParse(mAttachAgentProcessSyncTime_Calc, out mAttachAgentProcessSyncTime_Calc_int))
                     {
                         Error = "Process sync time for attach agent is not valid.";
                         return false;
                     }
 
-                    if (Directory.Exists(mJavaAgentPath_Calc) == false || File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgent.jar")) == false || File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgentStarter.jar")) == false)
+                    string versionString = GetJavaVersion(Path.Combine(mJavaWSEXEPath_Calc, "java.exe"));
+                    int majorVersion = ExtractMajorVersion(versionString);
+
+                    if (!Directory.Exists(mJavaAgentPath_Calc))
                     {
-                        Error = "The Ginger Agent path folder '" + mJavaAgentPath_Calc + "' is not valid, please select the folder which contains the 'GingerAgent.jar' &  'GingerAgentStarter.jar' files.";
+                        Error = $"The Ginger Agent path folder '{mJavaAgentPath_Calc}' is not valid";
                         return false;
                     }
 
-                    ePortConfigType portConfigType = (ePortConfigType)GetInputParamValue<ePortConfigType>(Fields.PortConfigParam);
-                    if (portConfigType == ePortConfigType.Manual)
+                    // pick required jar based on version
+                    string requiredJar = majorVersion <= 8 ? "GingerAgent.jar" : "JavaAgent_V25.jar";
+
+                    JarFilePath = Path.Combine(mJavaAgentPath_Calc, requiredJar);
+
+                    if (!File.Exists(JarFilePath))
+                    {
+                        Error = $"The '{requiredJar}' file was not found in the location '{mJavaAgentPath_Calc}'";
+                        return false;
+                    }
+
+
+                    if ((ePortConfigType)GetInputParamValue<ePortConfigType>(Fields.PortConfigParam) == ePortConfigType.Manual)
                     {
                         return ValidatePort();
                     }
-
                 }
 
                 return true;
             }
             catch (Exception ex)
             {
-                Error = "Error occurred while validating the action arguments. Error=" + ex.Message;
+                Error = $"Error occurred while validating the action arguments. Error={ex.Message}";
                 return false;
             }
         }
+
+        private string JarFilePath;
 
         private bool ValidatePort()
         {
@@ -809,13 +826,19 @@ namespace GingerCore.Actions
 
                 //arrange java application command params
                 string commandParams_OneLine = string.Empty;
-                commandParams_OneLine += "\"" + "AgentJarPath=" + Path.Combine(mJavaAgentPath_Calc, "GingerAgent.jar") + "\"";
+              
+                commandParams_OneLine += "\"" + "AgentJarPath=" + JarFilePath + "\"";
                 commandParams_OneLine += " \"" + "PID=" + mProcessIDForAttach.ToString() + "\"";
                 commandParams_OneLine += " \"" + "ShowGingerAgentConsole=" + ShowAgent.ToString() + "\"";
                 commandParams_OneLine += " \"" + "Port=" + mPort_Calc + "\"";
 
+                if (JarFilePath.Contains("GingerAgent.jar"))
+                {
+                    JarFilePath= Path.Combine(mJavaAgentPath_Calc, "GingerAgentStarter.jar");
+                }
+
                 //command
-                command = "-jar " + "\"" + Path.Combine(mJavaAgentPath_Calc, "GingerAgentStarter.jar") + "\" " + commandParams_OneLine;
+                command = "-jar " + "\"" + JarFilePath + "\" " + commandParams_OneLine;
 
                 //run commnad
                 ExecuteCommandAsync([javaExecuter, command]);
@@ -833,6 +856,65 @@ namespace GingerCore.Actions
                 Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
                 return false;
             }
+        }
+
+        public static string GetJavaVersion(string javaExePath)
+        {
+            if (!File.Exists(javaExePath))
+            {
+                throw new FileNotFoundException("java.exe not found at the specified path.", javaExePath);
+            }
+
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = javaExePath,
+                Arguments = "-version",
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            using (Process process = Process.Start(psi))
+            {
+                string output = process.StandardError.ReadToEnd();
+                process.WaitForExit();
+
+                // First line usually: java version "17.0.2"
+                string versionLine = output.Split('\n')[0];
+                return ExtractVersion(versionLine);
+            }
+        }
+
+        private static string ExtractVersion(string versionLine)
+        {
+            int start = versionLine.IndexOf('"') + 1;
+            int end = versionLine.LastIndexOf('"');
+            return (start > 0 && end > start) ? versionLine.Substring(start, end - start) : "Unknown";
+        }
+    
+
+        private static int ExtractMajorVersion(string versionString)
+        {
+            if (string.IsNullOrWhiteSpace(versionString))
+            {
+                return 0; // fallback
+            }
+
+            string[] parts = versionString.Split('.');
+            int majorVersion = 0;
+
+            if (parts.Length > 1 && parts[0] == "1")
+            {
+                // For Java 1.x (like 1.8.0_171)
+                int.TryParse(parts[1], out majorVersion);
+            }
+            else
+            {
+                // For Java 9+ (like 11.0.2, 17.0.2)
+                int.TryParse(parts[0], out majorVersion);
+            }
+
+            return majorVersion;
         }
 
         private bool WaitForAppWindowTitle()

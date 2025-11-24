@@ -55,7 +55,7 @@ namespace Ginger.Actions
             List<object> list = GetActionListPlatform();
 
             GingerCore.General.FillComboFromEnumObj(ConsoleActionComboBox, actConsoleCommand.ConsoleCommand, list);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConsoleActionComboBox, ComboBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.ConsoleCommand);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConsoleActionComboBox, ComboBox.SelectedValueProperty, actConsoleCommand, ActConsoleCommand.Fields.ConsoleCommand);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CommandTextBox, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.Command);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptNameComboBox, ComboBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.ScriptName);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtWait, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.WaitTime);
@@ -67,7 +67,7 @@ namespace Ginger.Actions
             // Apply initial visibility according to current selected command
             if (ConsoleActionComboBox.SelectedItem != null)
             {
-                UpdateVisibilityForCommand((ActConsoleCommand.eConsoleCommand)Enum.Parse(typeof(ActConsoleCommand.eConsoleCommand), ConsoleActionComboBox.SelectedItem.ToString()));
+                UpdateVisibilityForCommand((ActConsoleCommand.eConsoleCommand)Enum.Parse(typeof(ActConsoleCommand.eConsoleCommand), ConsoleActionComboBox.SelectedValue?.ToString()));
             }
         }
 
@@ -94,14 +94,17 @@ namespace Ginger.Actions
             {
                 actionList.Add(ActConsoleCommand.eConsoleCommand.ParametrizedCommand);
                 actionList.Add(ActConsoleCommand.eConsoleCommand.Script);
-                actionList.Add(ActConsoleCommand.eConsoleCommand.StartRecordingBuffer);
-                actionList.Add(ActConsoleCommand.eConsoleCommand.StopRecordingBuffer);
-                actionList.Add(ActConsoleCommand.eConsoleCommand.ReturnBufferContent);
+                actionList.Add(ActConsoleCommand.eConsoleCommand.StartRecordingConsoleLogs);
+                actionList.Add(ActConsoleCommand.eConsoleCommand.StopRecordingConsoleLogs);
+                actionList.Add(ActConsoleCommand.eConsoleCommand.GetRecordedConsoleLogs);
             }
             else if (mActConsoleCommand.Platform == ePlatformType.DOS)
             {
                 actionList.Add(ActConsoleCommand.eConsoleCommand.CopyFile);
                 actionList.Add(ActConsoleCommand.eConsoleCommand.IsFileExist);
+                actionList.Add(ActConsoleCommand.eConsoleCommand.StartRecordingConsoleLogs);
+                actionList.Add(ActConsoleCommand.eConsoleCommand.StopRecordingConsoleLogs);
+                actionList.Add(ActConsoleCommand.eConsoleCommand.GetRecordedConsoleLogs);
             }
             return actionList;
         }
@@ -115,7 +118,7 @@ namespace Ginger.Actions
             ScriptStackPanel.Visibility = Visibility.Collapsed;
             CommandPanel.Visibility = Visibility.Collapsed;
 
-            ActConsoleCommand.eConsoleCommand comm = (ActConsoleCommand.eConsoleCommand)Enum.Parse(typeof(ActConsoleCommand.eConsoleCommand), ConsoleActionComboBox.SelectedItem.ToString());
+            ActConsoleCommand.eConsoleCommand comm = (ActConsoleCommand.eConsoleCommand)ConsoleActionComboBox.SelectedValue;
 
             switch (comm)
             {
@@ -124,8 +127,8 @@ namespace Ginger.Actions
                     mActConsoleCommand.AddInputValueParam("Free Command");
                     mActConsoleCommand.ScriptName = string.Empty;
                     break;
-                case ActConsoleCommand.eConsoleCommand.StartRecordingBuffer:
-                case ActConsoleCommand.eConsoleCommand.StopRecordingBuffer:
+                case ActConsoleCommand.eConsoleCommand.StartRecordingConsoleLogs:
+                case ActConsoleCommand.eConsoleCommand.StopRecordingConsoleLogs:
                     // No params required for recording buffer start/stop
                     mActConsoleCommand.InputValues.Clear();
                     mActConsoleCommand.ScriptName = string.Empty;
@@ -145,7 +148,10 @@ namespace Ginger.Actions
                     break;
             }
 
-            UpdateVisibilityForCommand(comm);
+            if (ConsoleActionComboBox.SelectedItem != null)
+            {
+                UpdateVisibilityForCommand(comm);
+            }
         }
 
         private void SetupValueInputParam()
@@ -158,7 +164,7 @@ namespace Ginger.Actions
         private void UpdateVisibilityForCommand(ActConsoleCommand.eConsoleCommand command)
         {
             // Hide all optional controls when StartRecordingBuffer or StopRecordingBuffer selected
-            bool showCommonControls = command != ActConsoleCommand.eConsoleCommand.StartRecordingBuffer && command != ActConsoleCommand.eConsoleCommand.StopRecordingBuffer;
+            bool showCommonControls = command != ActConsoleCommand.eConsoleCommand.StartRecordingConsoleLogs && command != ActConsoleCommand.eConsoleCommand.StopRecordingConsoleLogs;
 
             if (ExpectedStringLabel != null) { ExpectedStringLabel.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed; }
             if (txtExpected != null) { txtExpected.Visibility = showCommonControls ? Visibility.Visible : Visibility.Collapsed; }

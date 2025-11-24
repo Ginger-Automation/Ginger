@@ -67,8 +67,6 @@ jobs:
                 echo $save > .\Ginger\GingerCoreCommon/GingerCoreCommon.csproj
                 $save=(Get-Content .\Ginger\GingerInstallerScript.iss) -replace '#define MyAppVersion "*.*.*.*"','#define MyAppVersion "${{ env.gingernumber}}"'
                 echo $save > .\Ginger\GingerInstallerScript.iss
-                $save=(Get-Content .\Ginger\GingerCore\Drivers\JavaDriverLib\GingerJavaAgent\agent\com\amdocs\ginger\GingerAgent.java) -replace 'public static final String GINGER_JAVA_AGENT_VERSION="*.*.*.*";','public static final String GINGER_JAVA_AGENT_VERSION="${{ env.gingernumber}}";'
-                echo $save > .\Ginger\GingerCore\Drivers\JavaDriverLib\GingerJavaAgent\agent\com\amdocs\ginger\GingerAgent.java
                 $save=(Get-Content .\Ginger\GingerInstallerScriptGithub.iss) -replace '#define MyAppVersion "*.*.*.*"','#define MyAppVersion "${{ env.gingernumber}}"'
                 echo $save > .\Ginger\GingerInstallerScriptGithub.iss
 
@@ -77,8 +75,7 @@ jobs:
             run: |
                 sed -i 's/<AssemblyVersion>.*<\/AssemblyVersion>/<AssemblyVersion>${{ env.gingernumber}}<\/AssemblyVersion>/' ./Ginger/GingerCoreCommon/GingerCoreCommon.csproj
                 sed -i 's/<FileVersion>.*<\/FileVersion>/<FileVersion>${{ env.gingernumber}}<\/FileVersion>/' ./Ginger/GingerCoreCommon/GingerCoreCommon.csproj
-                sed -i 's/#define MyAppVersion ".*"/#define MyAppVersion "${{ env.gingernumber}}"/' ./Ginger/GingerInstallerScript.iss
-                sed -i 's/public static final String GINGER_JAVA_AGENT_VERSION=".*";/public static final String GINGER_JAVA_AGENT_VERSION="${{ env.gingernumber}}";/' ./Ginger/GingerCore/Drivers/JavaDriverLib/GingerJavaAgent/agent/com/amdocs/ginger/GingerAgent.java
+                sed -i 's/#define MyAppVersion ".*"/#define MyAppVersion "${{ env.gingernumber}}"/' ./Ginger/GingerInstallerScript.iss               
                 sed -i 's/#define MyAppVersion ".*"/#define MyAppVersion "${{ env.gingernumber}}"/' ./Ginger/GingerInstallerScriptGithub.iss
 
         -   name: 'Update Assembly - macOS'
@@ -86,8 +83,7 @@ jobs:
             run: |
                 sed -i '' 's/<AssemblyVersion>.*<\/AssemblyVersion>/<AssemblyVersion>${{ env.gingernumber}}<\/AssemblyVersion>/' ./Ginger/GingerCoreCommon/GingerCoreCommon.csproj
                 sed -i '' 's/<FileVersion>.*<\/FileVersion>/<FileVersion>${{ env.gingernumber}}<\/FileVersion>/' ./Ginger/GingerCoreCommon/GingerCoreCommon.csproj
-                sed -i '' 's/#define MyAppVersion ".*"/#define MyAppVersion "${{ env.gingernumber}}"/' ./Ginger/GingerInstallerScript.iss
-                sed -i '' 's/public static final String GINGER_JAVA_AGENT_VERSION=".*";/public static final String GINGER_JAVA_AGENT_VERSION="${{ env.gingernumber}}";/' ./Ginger/GingerCore/Drivers/JavaDriverLib/GingerJavaAgent/agent/com/amdocs/ginger/GingerAgent.java
+                sed -i '' 's/#define MyAppVersion ".*"/#define MyAppVersion "${{ env.gingernumber}}"/' ./Ginger/GingerInstallerScript.iss                
                 sed -i '' 's/#define MyAppVersion ".*"/#define MyAppVersion "${{ env.gingernumber}}"/' ./Ginger/GingerInstallerScriptGithub.iss
 
         -   name: 'Print OS type'

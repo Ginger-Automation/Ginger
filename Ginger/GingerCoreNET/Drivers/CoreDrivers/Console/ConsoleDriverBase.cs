@@ -144,11 +144,45 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
         {
             try
             {
-                if (Dispatcher != null && !ShowWindow)
-                {
-                    Thread.Sleep(50);
-                }
                 Disconnect();
+                // Close driver window if it exists and ShowWindow is enabled
+                if (ShowWindow && Dispatcher != null)
+                {
+                    try
+                    {
+                        // Signal window to close via dispatcher
+                        Dispatcher.Invoke(() =>
+                        {
+                            OnDriverMessage(eDriverMessageType.CloseDriverWindow);
+                        });
+
+                        // Give window time to close gracefully
+                        Thread.Sleep(500);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Error closing driver window from driver", ex);
+                    }
+                }
+
+                // Clean up dispatcher
+                if (Dispatcher != null)
+                {
+                    if (Dispatcher is DummyDispatcher)
+                    {
+                        // DummyDispatcher doesn't need cleanup
+                        Dispatcher = null;
+                    }
+                    else
+                    {
+                        // Real dispatcher - allow window to handle cleanup
+                        Dispatcher = null;
+                    }
+                }
+
+                IsDriverConnected = false;
+                OnDriverMessage(eDriverMessageType.DriverStatusChanged);
+
             }
             catch (InvalidOperationException e)
             {
@@ -198,22 +232,22 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
                     // Switch on the actual console command (no early returns)
                     switch (ACC.ConsoleCommand)
                     {
-                        case eConsoleCommand.StartRecordingBuffer:
+                        case eConsoleCommand.StartRecordingConsoleLogs:
                             mRecordingBuffer.Clear();
                             mIsRecordingBufferActive = true;
-                            act.AddOrUpdateReturnParamActual("RecordingBufferStatus", "Started");
+                            act.AddOrUpdateReturnParamActual("RecordingConsoleLogsStatus", "Started");
                             act.ExInfo = "Console output recording started";
                             skipExecution = true;
                             break;
 
-                        case eConsoleCommand.StopRecordingBuffer:
+                        case eConsoleCommand.StopRecordingConsoleLogs:
                             mIsRecordingBufferActive = false;
-                            act.AddOrUpdateReturnParamActual("RecordingBufferStatus", "Stopped");
+                            act.AddOrUpdateReturnParamActual("RecordingConsoleLogsStatus", "Stopped");
                             act.ExInfo = "Console output recording stopped";
                             skipExecution = true;
                             break;
 
-                        case eConsoleCommand.ReturnBufferContent:
+                        case eConsoleCommand.GetRecordedConsoleLogs:
                             act.AddOrUpdateReturnParamActual("Result", mRecordingBuffer.ToString());
                             act.ExInfo = "Returned recorded console buffer content";
                             skipExecution = true;

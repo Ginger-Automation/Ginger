@@ -61,14 +61,22 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
         public enum eConsoleCommand
         {
+            [EnumValueDescription("Free Command")]
             FreeCommand = 1,
+            [EnumValueDescription("Copy File")]
             CopyFile = 2,
+            [EnumValueDescription("Is File Exist")]
             IsFileExist = 6,
+            [EnumValueDescription("Script")]
             Script = 18,
+            [EnumValueDescription("Parametrized Command")]
             ParametrizedCommand = 19,
-            StartRecordingBuffer = 20,
-            StopRecordingBuffer = 21,
-            ReturnBufferContent = 22
+            [EnumValueDescription("Start Recording Console Logs")]
+            StartRecordingConsoleLogs = 20,
+            [EnumValueDescription("Stop Recording Console Logs")]
+            StopRecordingConsoleLogs = 21,
+            [EnumValueDescription("Get Recorded Console Logs")]
+            GetRecordedConsoleLogs = 22
         }
 
         public enum eCommandEndKey
