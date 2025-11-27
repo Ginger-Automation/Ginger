@@ -41,7 +41,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
       
 # ------------------------------------------------------------------------------------------------------
 # Initialize CodeQL
@@ -73,7 +73,7 @@ jobs:
 
     - name: 'Install Mono - macOS'
       if: runner.os == 'macOS'
-      run: arch -x86_64 /usr/local/bin/brew install mono
+      run: brew install mono
 
 # ------------------------------------------------------------------------------------------------------
 # Build && Publish Ginger Solution
@@ -87,7 +87,7 @@ jobs:
 
     - name: Add msbuild to PATH
       if: runner.os == 'windows'
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v1.0.2
 
     - name: Build Windows Ginger Solution
       if: runner.os == 'windows'
