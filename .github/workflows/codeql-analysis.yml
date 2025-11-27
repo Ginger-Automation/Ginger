@@ -13,7 +13,7 @@ name: "CodeQL Security Scan"
 
 on:
   push:
-    branches: [ master, Features/Linux-Migration, Releases/*, Releases/*/*, codeql ]
+    branches: [ master, Features/Linux-Migration, Releases/*, Releases/*/*, security-scan ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ master ]
