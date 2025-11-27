@@ -61,13 +61,6 @@ jobs:
       with:
           dotnet-version: '8.0.100'
           
-    - name: Setup .NET ARM64 for macOS
-      if: runner.os == 'macOS'
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.0.100
-        architecture: arm64
-
 # ------------------------------------------------------------------------------------------------------
 # Install Mono - for Ubuntu & macOS as pre-requisite for building Ginger
 # ------------------------------------------------------------------------------------------------------
