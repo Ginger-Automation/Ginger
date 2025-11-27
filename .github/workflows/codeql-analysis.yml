@@ -73,7 +73,7 @@ jobs:
 
     - name: 'Install Mono - macOS'
       if: runner.os == 'macOS'
-      run: brew install mono
+      run: arch -x86_64 /usr/local/bin/brew install mono
 
 # ------------------------------------------------------------------------------------------------------
 # Build && Publish Ginger Solution
