@@ -304,6 +304,10 @@ namespace GingerCore.Actions.XML
                 valueCalculated = GetWithPrefix(valueCalculated, namespacePrefix);
             }
 
+            // Validate/Sanitize user-provided XPath before using in SelectSingleNode to prevent XPath injection
+            valueCalculated = SanitizeXPath(valueCalculated);
+            valueCalculatedBackup = SanitizeXPath(valueCalculatedBackup);
+
             try
             {
                 return xmlReqDoc.SelectSingleNode(valueCalculated, nameSpaceManager)
@@ -347,6 +351,25 @@ namespace GingerCore.Actions.XML
             }
 
             return stringBuilder.Remove(stringBuilder.Length - 1, 1).ToString();
+        }
+        // Basic sanitization to disallow common XPath-injection characters/sequences
+        // Adjust pattern according to your application's accepted XPath grammar
+        private string SanitizeXPath(string xpath)
+        {
+            if (string.IsNullOrEmpty(xpath))
+            {
+                throw new ArgumentException("XPath expression cannot be null or empty.");
+            }
+
+            // Disallow quotes, or dangerous XPath operators, to mitigate injection
+            // You can use a stricter regexp/validation based on your safe-usage
+            if (xpath.Contains("'") || xpath.Contains("\"") || xpath.Contains("//") || xpath.Contains("|") || xpath.Contains(";"))
+            {
+                throw new ArgumentException("Potentially unsafe XPath expression detected.");
+            }
+
+            // Optionally, allow only a certain safe pattern etc.
+            return xpath;
         }
     }
 }
