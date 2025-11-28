@@ -361,14 +361,6 @@ namespace GingerCore.Actions.XML
                 throw new ArgumentException("XPath expression cannot be null or empty.");
             }
 
-            // Disallow quotes, or dangerous XPath operators, to mitigate injection
-            // You can use a stricter regexp/validation based on your safe-usage
-            if (xpath.Contains("'") || xpath.Contains("\"") || xpath.Contains("//") || xpath.Contains("|") || xpath.Contains(";"))
-            {
-                throw new ArgumentException("Potentially unsafe XPath expression detected.");
-            }
-
-            // Optionally, allow only a certain safe pattern etc.
             return xpath;
         }
     }
