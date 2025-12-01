@@ -2081,7 +2081,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     {
                         break;
                     }
-                    if(selectedElementTypesList != null && selectedElementTypesList.Any(x=>x.ElementType.Equals(htmlElement.ElementTypeEnum)))
+                    if (selectedElementTypesList != null && selectedElementTypesList.Any(x => x.ElementType.Equals(htmlElement.ElementTypeEnum)))
                     {
                         htmlElement.IsAutoLearned = true;
                         htmlElement.Active = true;
@@ -2179,7 +2179,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                                     if (pomSetting.FilteredElementType != null)
                                     {
                                         //if (!pomSetting.FilteredElementType.Contains(ci.ElementTypeEnum))
-                                        if(!pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(ci.ElementTypeEnum)))
+                                        if (!pomSetting.FilteredElementType.Any(x => x.ElementType.Equals(ci.ElementTypeEnum)))
                                         {
                                             learnElement = false;
                                         }
@@ -2489,7 +2489,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             ObservableList<ControlProperty> list = [];
 
             PayLoad response = null;
-            if (ElementInfo.ElementType.Contains("JEditor"))
+            if (ElementInfo.ElementType != null && ElementInfo.ElementType.Contains("JEditor"))
             {
                 PayLoad PLReq = new PayLoad("GetEditorElementProperties");
                 PLReq.AddValue("ByCSSSelector");
