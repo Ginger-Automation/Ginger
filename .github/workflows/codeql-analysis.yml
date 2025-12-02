@@ -11,12 +11,40 @@
 #
 name: "CodeQL Security Scan"
 
+
 on:
   push:
     branches: [ master, Features/Linux-Migration, Releases/*, Releases/*/*, security-scan ]
+    paths-ignore:
+      - '**/bin/**'
+      - '**/obj/**'
+      - '**/Release/**'
+      - '**/Debug/**'
+      - 'Ginger/GingerAutoPilotTest/**'
+      - 'Ginger/GingerConsoleTest/**'
+      - 'Ginger/GingerCoreCommonTest/**'
+      - 'Ginger/GingerCoreNETUnitTest/**'
+      - 'Ginger/GingerCoreTest/**'
+      - 'Ginger/GingerPluginCoreTest/**'
+      - 'Ginger/GingerTest/**'
+      - 'Ginger/GingerUtilsTest/**'
+      - 'Ginger/GingerWPFDriverWindowTest/**'
   pull_request:
-    # The branches below must be a subset of the branches above
     branches: [ master ]
+    paths-ignore:
+      - '**/bin/**'
+      - '**/obj/**'
+      - '**/Release/**'
+      - '**/Debug/**'
+      - 'Ginger/GingerAutoPilotTest/**'
+      - 'Ginger/GingerConsoleTest/**'
+      - 'Ginger/GingerCoreCommonTest/**'
+      - 'Ginger/GingerCoreNETUnitTest/**'
+      - 'Ginger/GingerCoreTest/**'
+      - 'Ginger/GingerPluginCoreTest/**'
+      - 'Ginger/GingerTest/**'
+      - 'Ginger/GingerUtilsTest/**'
+      - 'Ginger/GingerWPFDriverWindowTest/**'
   schedule:
     - cron: '0 0 * * 0'
 
