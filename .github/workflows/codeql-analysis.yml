@@ -14,37 +14,9 @@ name: "CodeQL Security Scan"
 
 on:
   push:
-    branches: [ master, Features/Linux-Migration, Releases/*, Releases/*/*, security-scan ]
-    paths-ignore:
-      - '**/bin/**'
-      - '**/obj/**'
-      - '**/Release/**'
-      - '**/Debug/**'
-      - 'Ginger/GingerAutoPilotTest/**'
-      - 'Ginger/GingerConsoleTest/**'
-      - 'Ginger/GingerCoreCommonTest/**'
-      - 'Ginger/GingerCoreNETUnitTest/**'
-      - 'Ginger/GingerCoreTest/**'
-      - 'Ginger/GingerPluginCoreTest/**'
-      - 'Ginger/GingerTest/**'
-      - 'Ginger/GingerUtilsTest/**'
-      - 'Ginger/GingerWPFDriverWindowTest/**'
+    branches: [ master, Features/Linux-Migration, Releases/*, Releases/*/*]
   pull_request:
     branches: [ master ]
-    paths-ignore:
-      - '**/bin/**'
-      - '**/obj/**'
-      - '**/Release/**'
-      - '**/Debug/**'
-      - 'Ginger/GingerAutoPilotTest/**'
-      - 'Ginger/GingerConsoleTest/**'
-      - 'Ginger/GingerCoreCommonTest/**'
-      - 'Ginger/GingerCoreNETUnitTest/**'
-      - 'Ginger/GingerCoreTest/**'
-      - 'Ginger/GingerPluginCoreTest/**'
-      - 'Ginger/GingerTest/**'
-      - 'Ginger/GingerUtilsTest/**'
-      - 'Ginger/GingerWPFDriverWindowTest/**'
   schedule:
     - cron: '0 0 * * 0'
 
@@ -79,6 +51,7 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
+        config-file: ./.github/workflows/codeql-config.yml
 
 # ------------------------------------------------------------------------------------------------------
 # Install .Net core SDK 8.0.100
