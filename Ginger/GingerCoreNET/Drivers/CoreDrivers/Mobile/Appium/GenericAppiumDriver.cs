@@ -625,7 +625,7 @@ namespace Amdocs.Ginger.CoreNET
                     act.AnalyzerMobileAccessibility(Driver, Driver, null);
                 }
 
-                if (act.Status == eRunStatus.Pending || act.Status == 0)
+                if ((act.Status == eRunStatus.Pending || act.Status == 0) && string.IsNullOrEmpty(act.Error))
                 {
                     act.Status = eRunStatus.Passed;
                 }
