@@ -213,6 +213,8 @@ namespace GingerCore.Environments
 
                     break;
 
+                default:
+                    throw new NotImplementedException("Unhandled database type: " + Database.DBType);
             }
 
             return ConnectionStringCalculated;
@@ -428,7 +430,7 @@ namespace GingerCore.Environments
                         }
 
                     default:
-                        throw new Exception("DB Type not supported: " + Database.DBType);
+                        throw new NotImplementedException("Unhandled database type: " + Database.DBType);
                 }
 
                 if ((oConn != null) && (oConn.State == ConnectionState.Open))
@@ -574,7 +576,7 @@ namespace GingerCore.Environments
                             break;
 
                         default:
-                            throw new Exception("Unhandled database type: " + Database.DBType);
+                            throw new NotImplementedException("Unhandled database type: " + Database.DBType);
                     }
                 }
                 catch (Exception e)
