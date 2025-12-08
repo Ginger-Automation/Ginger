@@ -141,17 +141,22 @@ namespace GingerCore.Environments
         public string GetConnectionString()
         {
             string connStr;
+
             if (String.IsNullOrEmpty(ConnectionStringCalculated))
             {
                 connStr = CreateConnectionString();
             }
+            else
+            {
+                connStr = ConnectionStringCalculated;
+            }
 
-            connStr = ConnectionStringCalculated.Replace("{USER}", UserCalculated);
+            connStr = connStr.Replace("{USER}", UserCalculated);
 
-            return ReplacePasswordInConnecitonString(connStr);
+            return ReplacePasswordInConnectionString(connStr);
         }
 
-        private string ReplacePasswordInConnecitonString(string connStr)
+        private string ReplacePasswordInConnectionString(string connStr)
         {
             String deCryptValue = EncryptionHandler.DecryptwithKey(PassCalculated);
 
@@ -290,11 +295,12 @@ namespace GingerCore.Environments
                         {
                             var oleDbconnectionStringBuilder = new OleDbConnectionStringBuilder()
                             {
-                                Provider = "MSDAORA",
-                                ConnectionString = GetConnectionString()
+                                Provider = "msdaora"
                             };
 
-                            oConn = SqlClientFactory.Instance.CreateConnection();
+                            oleDbconnectionStringBuilder.ConnectionString = GetConnectionString();
+
+                            oConn = OleDbFactory.Instance.CreateConnection();
                             oConn.ConnectionString = oleDbconnectionStringBuilder.ConnectionString;
                             oConn.Open();
                         }
@@ -442,7 +448,7 @@ namespace GingerCore.Environments
                         }
 
                     default:
-                        throw   new Exception("DB Type not supported: " + Database.DBType.ToString());
+                        throw new Exception("DB Type not supported: " + Database.DBType.ToString());
                 }
 
                 if ((oConn != null) && (oConn.State == ConnectionState.Open))
