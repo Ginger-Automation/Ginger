@@ -192,7 +192,8 @@ namespace Ginger.UserControlsLib
         {
             InitializeComponent();
 
-            this.IsEnabled = false;
+            //commented this line because its casing issue in the action output values. Store to column gets disabled
+            //this.IsEnabled = false;
             InitTypeOptions();
             InitValuesOptions();
             
