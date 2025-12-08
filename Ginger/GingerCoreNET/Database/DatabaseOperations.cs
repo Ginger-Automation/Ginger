@@ -160,16 +160,7 @@ namespace GingerCore.Environments
         {
             String deCryptValue = EncryptionHandler.DecryptwithKey(PassCalculated);
 
-            if (string.IsNullOrEmpty(deCryptValue))
-            {
-                connStr = connStr.Replace("{PASS}", PassCalculated);
-            }
-            else
-            {
-                connStr = connStr.Replace("{PASS}", deCryptValue);
-            }
-
-            return connStr;
+            return connStr.Replace("{PASS}", string.IsNullOrEmpty(deCryptValue) ? PassCalculated : deCryptValue);
         }
 
         public string CreateConnectionString()
@@ -182,14 +173,9 @@ namespace GingerCore.Environments
                 case eDBTypes.MSAccess:
                     {
                         string strProvider;
-                        if (TNSCalculated.Contains(".accdb"))
-                        {
-                            strProvider = "Provider=Microsoft.ACE.OLEDB.12.0;";
-                        }
-                        else
-                        {
-                            strProvider = "Provider=Microsoft.Jet.OLEDB.4.0;";
-                        }
+                        strProvider = TNSCalculated.Contains(".accdb")
+                            ? "Provider=Microsoft.ACE.OLEDB.12.0;"
+                            : "Provider=Microsoft.Jet.OLEDB.4.0;";
 
                         Database.ConnectionString = strProvider + Database.ConnectionString;
                         break;
@@ -203,15 +189,9 @@ namespace GingerCore.Environments
                 case eDBTypes.PostgreSQL:
                     {
                         var postgreHost = TNSCalculated.Split(':');
-                        if (postgreHost.Length == 2)
-                        {
-                            Database.ConnectionString = "Server=" + postgreHost[0] + ";Port=" + postgreHost[1] + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";
-                        }
-                        else
-                        {
-                            //    connStr = "Server=" + TNS + ";Database=" + Name + ";UID=" + User + "PWD=" + deCryptValue;
-                            Database.ConnectionString = "Server=" + Database.TNS + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";
-                        }
+                        Database.ConnectionString = (postgreHost.Length == 2)
+                            ? "Server=" + postgreHost[0] + ";Port=" + postgreHost[1] + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";"
+                            : "Server=" + Database.TNS + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";
 
                         break;
                     }
