@@ -574,12 +574,12 @@ namespace GingerCore.Environments
                             break;
 
                         default:
-                            throw new Exception("Unhandled database type: " + Database.DBType.ToString());
+                            throw new Exception("Unhandled database type: " + Database.DBType);
                     }
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get table list for DB:" + Database.DBType.ToString(), e);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get table list for DB:" + Database.DBType, e);
                     throw;
                 }
             }
