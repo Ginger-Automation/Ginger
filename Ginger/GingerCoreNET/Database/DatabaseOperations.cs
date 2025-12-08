@@ -140,20 +140,29 @@ namespace GingerCore.Environments
         }
         public string GetConnectionString()
         {
-            string connStr = null;
-            bool res;
-            res = false;
-
+            string connStr;
             if (String.IsNullOrEmpty(ConnectionStringCalculated))
             {
                 connStr = CreateConnectionString();
             }
+
             connStr = ConnectionStringCalculated.Replace("{USER}", UserCalculated);
+
+            return ReplacePasswordInConnecitonString(connStr);
+        }
+
+        private string ReplacePasswordInConnecitonString(string connStr)
+        {
             String deCryptValue = EncryptionHandler.DecryptwithKey(PassCalculated);
-            if (!string.IsNullOrEmpty(deCryptValue))
-            { connStr = connStr.Replace("{PASS}", deCryptValue); }
+
+            if (string.IsNullOrEmpty(deCryptValue))
+            {
+                connStr = connStr.Replace("{PASS}", PassCalculated);
+            }
             else
-            { connStr = connStr.Replace("{PASS}", PassCalculated); }
+            {
+                connStr = connStr.Replace("{PASS}", deCryptValue);
+            }
 
             return connStr;
         }
@@ -163,53 +172,64 @@ namespace GingerCore.Environments
             //Default ConnectionString format
             Database.ConnectionString = "Data Source=" + Database.TNS + ";User Id={USER};Password={PASS};";
 
-            //Change ConnectionString according to DBType
-            if (Database.DBType == eDBTypes.MSAccess)
+            switch (Database.DBType)
             {
-                string strProvider;
-                if (TNSCalculated.Contains(".accdb"))
-                {
-                    strProvider = "Provider=Microsoft.ACE.OLEDB.12.0;";
-                }
-                else
-                {
-                    strProvider = "Provider=Microsoft.Jet.OLEDB.4.0;";
-                }
-                Database.ConnectionString = strProvider + Database.ConnectionString;
+                case eDBTypes.MSAccess:
+                    {
+                        string strProvider;
+                        if (TNSCalculated.Contains(".accdb"))
+                        {
+                            strProvider = "Provider=Microsoft.ACE.OLEDB.12.0;";
+                        }
+                        else
+                        {
+                            strProvider = "Provider=Microsoft.Jet.OLEDB.4.0;";
+                        }
+
+                        Database.ConnectionString = strProvider + Database.ConnectionString;
+                        break;
+                    }
+
+                case eDBTypes.DB2:
+
+                    Database.ConnectionString = "Server=" + Database.TNS + ";Database=" + Database.Name + ";UID={USER};PWD={PASS}";
+                    break;
+
+                case eDBTypes.PostgreSQL:
+                    {
+                        var postgreHost = TNSCalculated.Split(':');
+                        if (postgreHost.Length == 2)
+                        {
+                            Database.ConnectionString = "Server=" + postgreHost[0] + ";Port=" + postgreHost[1] + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";
+                        }
+                        else
+                        {
+                            //    connStr = "Server=" + TNS + ";Database=" + Name + ";UID=" + User + "PWD=" + deCryptValue;
+                            Database.ConnectionString = "Server=" + Database.TNS + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";
+                        }
+
+                        break;
+                    }
+
+                case eDBTypes.MySQL:
+                    Database.ConnectionString = "Server=" + Database.TNS + ";Database=" + Database.Name + ";UID={USER};PWD={PASS}";
+                    break;
+
+                case eDBTypes.CosmosDb:
+                    Database.ConnectionString = string.Format("AccountEndpoint={0};AccountKey={1}", Database.User, Database.Pass);
+                    break;
+
+                case eDBTypes.Hbase:
+                    var host = TNSCalculated.Split(':');
+                    if (host.Length == 2)
+                    {
+                        Database.ConnectionString = "Server=" + host[0] + ";Port=" + host[1] + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";
+                    }
+
+                    break;
+
             }
-            else if (Database.DBType == eDBTypes.DB2)
-            {
-                Database.ConnectionString = "Server=" + Database.TNS + ";Database=" + Database.Name + ";UID={USER};PWD={PASS}";
-            }
-            else if (Database.DBType == eDBTypes.PostgreSQL)
-            {
-                string[] host = TNSCalculated.Split(':');
-                if (host.Length == 2)
-                {
-                    Database.ConnectionString = "Server=" + host[0] + ";Port=" + host[1] + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";
-                }
-                else
-                {
-                    //    connStr = "Server=" + TNS + ";Database=" + Name + ";UID=" + User + "PWD=" + deCryptValue;
-                    Database.ConnectionString = "Server=" + Database.TNS + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";
-                }
-            }
-            else if (Database.DBType == eDBTypes.MySQL)
-            {
-                Database.ConnectionString = "Server=" + Database.TNS + ";Database=" + Database.Name + ";UID={USER};PWD={PASS}";
-            }
-            else if (Database.DBType == eDBTypes.CosmosDb)
-            {
-                Database.ConnectionString = string.Format("AccountEndpoint={0};AccountKey={1}", Database.User, Database.Pass);
-            }
-            else if (Database.DBType == eDBTypes.Hbase)
-            {
-                string[] host = TNSCalculated.Split(':');
-                if (host.Length == 2)
-                {
-                    Database.ConnectionString = "Server=" + host[0] + ";Port=" + host[1] + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";
-                }
-            }
+
             return ConnectionStringCalculated;
         }
 
@@ -245,12 +265,6 @@ namespace GingerCore.Environments
 
         public Boolean Connect(bool displayErrorPopup = false)
         {
-            DbProviderFactory factory;
-            string connectConnectionString = string.Empty;
-            if (Database.DBType is not eDBTypes.Cassandra and not eDBTypes.Couchbase and not eDBTypes.MongoDb and not eDBTypes.Hbase)
-            {
-                connectConnectionString = GetConnectionString();
-            }
             try
             {
                 Reporter.ToStatus(eStatusMsgKey.TestingDatabase, null, $"Testing Database: {Database.Name}");
@@ -258,35 +272,44 @@ namespace GingerCore.Environments
                 switch (Database.DBType)
                 {
                     case eDBTypes.MSSQL:
+                        var sqlConnectionStringBuilder = new SqlConnectionStringBuilder
+                        {
+                            ConnectionString = GetConnectionString()
+                        };
+
                         oConn = new SqlConnection
                         {
-                            ConnectionString = connectConnectionString
+                            ConnectionString = sqlConnectionStringBuilder.ConnectionString
                         };
                         oConn.Open();
                         break;
-                    case eDBTypes.Oracle:
-                        //TODO: Oracle connection is deprecated use another method - Switched to ODP.NET
-                        if (!Database.IsOracleVersionLow)
-                        {
 
-                            oConn = WorkSpace.Instance.TargetFrameworkHelper.GetOracleConnection(connectConnectionString);
+                    case eDBTypes.Oracle:
+                        //TODO: Oracle connection is deprecated use another method - Switched to ODP.NET                        
+                        if (Database.IsOracleVersionLow)
+                        {
+                            var oleDbconnectionStringBuilder = new OleDbConnectionStringBuilder()
+                            {
+                                Provider = "MSDAORA",
+                                ConnectionString = GetConnectionString()
+                            };
+
+                            oConn = SqlClientFactory.Instance.CreateConnection();
+                            oConn.ConnectionString = oleDbconnectionStringBuilder.ConnectionString;
                             oConn.Open();
                         }
                         else
                         {
-                            oConn = SqlClientFactory.Instance.CreateConnection();
-                            oConn.ConnectionString = "Provider=msdaora;" + connectConnectionString;
+                            oConn = WorkSpace.Instance.TargetFrameworkHelper.GetOracleConnection(GetConnectionString());
                             oConn.Open();
                         }
-
                         break;
 
                     case eDBTypes.MSAccess:
-
-
+                        var oleDbConnStringBuilder = new OleDbConnectionStringBuilder(GetConnectionString());
                         oConn = new OleDbConnection
                         {
-                            ConnectionString = connectConnectionString
+                            ConnectionString = oleDbConnStringBuilder.ConnectionString
                         };
                         oConn.Open();
                         break;
@@ -303,8 +326,7 @@ namespace GingerCore.Environments
                                 var class1Type = DLL.GetType("IBM.Data.DB2.DB2Connection");
 
                                 //Now you can use reflection or dynamic to call the method. I will show you the dynamic way
-                                object[] param = new object[1];
-                                param[0] = connectConnectionString;
+                                object[] param = [GetConnectionString()];
                                 dynamic c = Activator.CreateInstance(class1Type, param);
                                 oConn = (DbConnection)c;
                                 oConn.Open();
@@ -321,7 +343,12 @@ namespace GingerCore.Environments
                         break;
 
                     case eDBTypes.PostgreSQL:
-                        oConn = new NpgsqlConnection(connectConnectionString);
+                        var npgsqlconnectionStringBuilder = new Npgsql.NpgsqlConnectionStringBuilder
+                        {
+                            ConnectionString = GetConnectionString()
+                        };
+
+                        oConn = new NpgsqlConnection(npgsqlconnectionStringBuilder.ConnectionString);
                         oConn.Open();
                         break;
 
@@ -338,6 +365,7 @@ namespace GingerCore.Environments
                         {
                             return false;
                         }
+                    
                     case eDBTypes.Couchbase:
                         GingerCouchbase CouchbaseDriver = new GingerCouchbase(Database);
                         bool isConnectionCB;
@@ -352,19 +380,23 @@ namespace GingerCore.Environments
                             return false;
                         }
 
-
                     case eDBTypes.MySQL:
+                        var mySqlconnectionStringBuilder = new MySqlConnectionStringBuilder
+                        {
+                            ConnectionString = GetConnectionString()
+                        };
+
                         oConn = new MySqlConnection
                         {
-                            ConnectionString = connectConnectionString
+                            ConnectionString = mySqlconnectionStringBuilder.ConnectionString
                         };
                         oConn.Open();
                         break;
+
                     case eDBTypes.MongoDb:
-                        bool isConnectionMDB;
                         GingerMongoDb MongoDriver = new GingerMongoDb(Database);
-                        isConnectionMDB = MongoDriver.Connect();
-                        if (isConnectionMDB == true)
+
+                        if (MongoDriver.Connect())
                         {
                             LastConnectionUsedTime = DateTime.Now;
                             return true;
@@ -373,10 +405,14 @@ namespace GingerCore.Environments
                         {
                             return false;
                         }
-                    case eDBTypes.CosmosDb:
-                        GingerCosmos objGingerCosmos = new GingerCosmos();
+                    
+                    case eDBTypes.CosmosDb:                        
                         Database.ConnectionString = GetConnectionString();
-                        objGingerCosmos.Db = Database;
+                        GingerCosmos objGingerCosmos = new GingerCosmos
+                        {
+                            Db = Database
+                        };
+
                         if (objGingerCosmos.Connect())
                         {
                             LastConnectionUsedTime = DateTime.Now;
@@ -388,14 +424,13 @@ namespace GingerCore.Environments
                         }
 
                     case eDBTypes.Hbase:
-
                         Database.ConnectionString = GetConnectionString();
-
 
                         GingerHbase ghbase = new GingerHbase(Database.TNS, Database.User, Database.Pass)
                         {
                             Db = Database
                         };
+
                         if (ghbase.Connect())
                         {
                             LastConnectionUsedTime = DateTime.Now;
@@ -407,21 +442,19 @@ namespace GingerCore.Environments
                         }
 
                     default:
-                        //not implemented
-                        break;
+                        throw   new Exception("DB Type not supported: " + Database.DBType.ToString());
                 }
+
                 if ((oConn != null) && (oConn.State == ConnectionState.Open))
                 {
                     LastConnectionUsedTime = DateTime.Now;
                     return true;
                 }
-
-
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + Database.DBType.ToString() + "; Connection String =" + HidePasswordFromString(connectConnectionString), e);
-                throw (e);
+                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + Database.DBType.ToString() + "; Connection String =" + HidePasswordFromString(GetConnectionString()), e);
+                throw;
             }
             finally
             {
@@ -494,7 +527,6 @@ namespace GingerCore.Environments
 
         public async Task<List<string>> GetTablesListAsync(string Keyspace = null)
         {
-
             List<string> databaseTableNames = [""];
             if (MakeSureConnectionIsOpen())
             {
@@ -535,8 +567,7 @@ namespace GingerCore.Environments
                             break;
 
                         case eDBTypes.Oracle:
-                            string[] restr = new string[1];
-                            restr[0] = GetConnectedUsername();
+                            string[] restr = [GetConnectedUsername()];
                             table = await oConn.GetSchemaAsync("Tables", restr);
                             foreach (DataRow row in table.Rows)
                             {
@@ -557,14 +588,13 @@ namespace GingerCore.Environments
                             break;
 
                         default:
-                            //not implemented
-                            break;
+                            throw new Exception("Unhandled database type: " + Database.DBType.ToString());
                     }
                 }
                 catch (Exception e)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to get table list for DB:" + Database.DBType.ToString(), e);
-                    throw (e);
+                    throw;
                 }
             }
             return databaseTableNames;
