@@ -448,7 +448,7 @@ namespace GingerCore.Environments
                         }
 
                     default:
-                        throw new Exception("DB Type not supported: " + Database.DBType.ToString());
+                        throw new Exception("DB Type not supported: " + Database.DBType);
                 }
 
                 if ((oConn != null) && (oConn.State == ConnectionState.Open))
@@ -459,7 +459,7 @@ namespace GingerCore.Environments
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + Database.DBType.ToString() + "; Connection String =" + HidePasswordFromString(GetConnectionString()), e);
+                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + Database.DBType + "; Connection String =" + HidePasswordFromString(GetConnectionString()), e);
                 throw;
             }
             finally
@@ -523,7 +523,7 @@ namespace GingerCore.Environments
             catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to close DB Connection", e);
-                throw (e);
+                throw;
             }
             finally
             {
@@ -689,7 +689,7 @@ namespace GingerCore.Environments
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "", e);
                     //Reporter.ToUser(eUserMsgKey.DbTableError, "table columns", e.Message);
-                    throw (e);
+                    throw;
                 }
                 finally
                 {
@@ -741,7 +741,7 @@ namespace GingerCore.Environments
                     {
                         tran.Rollback();
                         Reporter.ToLog(eLogLevel.ERROR, "Commit failed for:" + updateCmd, e);
-                        throw e;
+                        throw;
                     }
                 }
             }
@@ -774,7 +774,7 @@ namespace GingerCore.Environments
                     }
                     catch (Exception e)
                     {
-                        throw e;
+                        throw;
                     }
                     finally
                     {
@@ -878,7 +878,7 @@ namespace GingerCore.Environments
                 catch (Exception e)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + SQL, e);
-                    throw e;
+                    throw;
                 }
                 finally
                 {
