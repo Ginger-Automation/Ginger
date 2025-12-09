@@ -98,6 +98,7 @@ Ginger is leveraging on a variety of great open source libraries, like: Selenium
 ### Ginger is execute script of other automation framework so you can reuse existing scripts 
 - SoapUI
 - RobotFramework
+- TestNG
 
 # ALM - Application life cycle management
 ### Ginger Can import test cases, upload test results, create defects and more
