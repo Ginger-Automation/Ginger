@@ -88,34 +88,6 @@ namespace GingerCore.Actions.RobotFramework
             return lstVarBase;
         }
 
-        public void WriteVariablesToCSVFile(string fileName, List<Variables.VariableBase> vbList)
-        {
-            using (System.IO.TextWriter writer = new StreamWriter(fileName))
-            {
-                foreach (Variables.VariableBase vbItem in vbList)
-                {
-                    StringBuilder sb = new StringBuilder();
-
-                    sb.Append(vbItem.Name);
-                    sb.Append(",");
-                    sb.Append(vbItem.Value);
-
-                    writer.WriteLine(sb.ToString());
-                }
-            }
-        }
-
-        public void WriteVariablesToJSONFile(string fileName, List<GingerParam> gingerParamsLst)
-        {
-            //open file stream
-            using (StreamWriter file = File.CreateText(fileName))
-            {
-                JsonSerializer serializer = new JsonSerializer();
-                //serialize object directly into file stream
-                serializer.Serialize(file, gingerParamsLst);
-            }
-        }
-
         public void WriteVariablesToJSONFile_V2(string fileName, List<GingerParam> gingerParamsLst)
         {
             StringBuilder sbr = new StringBuilder();
