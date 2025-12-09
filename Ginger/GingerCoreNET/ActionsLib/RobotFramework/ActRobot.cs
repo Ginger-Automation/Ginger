@@ -87,7 +87,38 @@ namespace GingerCore.Actions.RobotFramework
             ];
 
             return lstVarBase;
-        }        
+        }
+
+        public void WriteVariablesToJSONFile_V2(string fileName, List<GingerParam> gingerParamsLst)
+        {
+            StringBuilder sbr = new StringBuilder();
+            int recNum = 0;
+
+            sbr.Append("{");
+            foreach (GingerParam paramLine in gingerParamsLst)
+            {
+                if (recNum > 0)
+                {
+                    sbr.Append(", ");
+                }
+
+                sbr.Append("\"");
+                sbr.Append(paramLine.key);
+                sbr.Append("\"");
+                sbr.Append(":");
+                sbr.Append("\"");
+                sbr.Append(paramLine.value);
+                sbr.Append("\"");
+                recNum++;
+            }
+            sbr.Append("}");
+
+            //open file stream
+            using (StreamWriter file = File.CreateText(fileName))
+            {
+                file.WriteLine(JSONHelper.FormatJSON(sbr.ToString()));
+            }
+        }
 
         public List<GingerParam> GetCreateBusinessAndActivityVariablesToJSONList()
         {
@@ -161,6 +192,10 @@ namespace GingerCore.Actions.RobotFramework
                 // reset values 
                 ResetValues();
 
+                List<GingerParam> lstGingerVars = GetCreateBusinessAndActivityVariablesToJSONList();
+                string fileName = System.IO.Path.GetTempFileName().Replace(".tmp", ".json");
+                WriteVariablesToJSONFile_V2(fileName, lstGingerVars);
+
                 string robotFileName = RobotFileName.ValueForDriver;
                 if (!File.Exists(robotFileName))
                 {
@@ -183,7 +218,11 @@ namespace GingerCore.Actions.RobotFramework
                     sbr.Append("--pythonpath ");
                     sbr.Append(robotLibraries);
                 }
-                
+
+                // adding variable filename as command line parameter
+                sbr.Append(" ");
+                sbr.Append("--variable fileName:");
+                sbr.Append(fileName);
                 sbr.Append(" ");
                 sbr.Append(@robotFileName);
 
