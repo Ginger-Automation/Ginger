@@ -20,11 +20,12 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.GeneralLib;
+using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Xml;
@@ -123,8 +124,8 @@ namespace GingerCore.Actions.RobotFramework
         {
             List<GingerParam> lstGingerParam = [];
 
-            // solution variables
-            foreach (Variables.VariableBase varBase in this.RunOnBusinessFlow.GetSolutionVariables())
+            // solution variables except password variables
+            foreach (Variables.VariableBase varBase in this.RunOnBusinessFlow.GetSolutionVariables().Where(vrb => vrb is not VariablePasswordString))
             {
                 GingerParam gingerParam = new GingerParam
                 {
@@ -134,8 +135,8 @@ namespace GingerCore.Actions.RobotFramework
                 lstGingerParam.Add(gingerParam);
             }
 
-            // business flow variables
-            foreach (Variables.VariableBase varBase in this.RunOnBusinessFlow.Variables)
+            // business flow variables except password variables
+            foreach (Variables.VariableBase varBase in this.RunOnBusinessFlow.Variables.Where(vrb => vrb is not VariablePasswordString))
             {
                 GingerParam gingerParam = new GingerParam
                 {
@@ -148,8 +149,8 @@ namespace GingerCore.Actions.RobotFramework
                 }
             }
 
-            // activity variables
-            foreach (Variables.VariableBase varBase in this.RunOnBusinessFlow.CurrentActivity.Variables)
+            // activity variables except password variables
+            foreach (Variables.VariableBase varBase in this.RunOnBusinessFlow.CurrentActivity.Variables.Where(vrb => vrb is not VariablePasswordString))
             {
                 GingerParam gingerParam = new GingerParam
                 {
@@ -190,9 +191,6 @@ namespace GingerCore.Actions.RobotFramework
             {
                 // reset values 
                 ResetValues();
-
-                // create variables in CSV
-                List<Variables.VariableBase> lstVarBase = CreateBusinessAndActivityVariablesToList();
 
                 List<GingerParam> lstGingerVars = GetCreateBusinessAndActivityVariablesToJSONList();
                 string fileName = System.IO.Path.GetTempFileName().Replace(".tmp", ".json");
