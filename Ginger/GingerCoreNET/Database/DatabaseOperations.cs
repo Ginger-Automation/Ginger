@@ -131,13 +131,21 @@ namespace GingerCore.Environments
         }
         public void SplitUserIdPassFromTNS()
         {
-            SqlConnectionStringBuilder scSB = [];
-            scSB.ConnectionString = Database.TNS;
-            Database.TNS = scSB.DataSource;
-            Database.User = scSB.UserID;
-            Database.Pass = scSB.Password;
-            Database.ConnectionString = scSB.ConnectionString;
+            try
+            {
+                SqlConnectionStringBuilder scSB = [];
+                scSB.ConnectionString = Database.TNS;
+                Database.TNS = scSB.DataSource;
+                Database.User = scSB.UserID;
+                Database.Pass = scSB.Password;
+                Database.ConnectionString = scSB.ConnectionString;
+            }
+            catch (Exception)
+            {
+                // If TNS is not a full SQL connection string just leave values as-is
+            }
         }
+
         public string GetConnectionString()
         {
             string connStr;
@@ -165,59 +173,135 @@ namespace GingerCore.Environments
 
         public string CreateConnectionString()
         {
-            //Default ConnectionString format
-            Database.ConnectionString = "Data Source=" + Database.TNS + ";User Id={USER};Password={PASS};";
-
-            switch (Database.DBType)
+            try
             {
-                case eDBTypes.MSAccess:
-                    {
-                        string strProvider;
-                        strProvider = TNSCalculated.Contains(".accdb")
-                            ? "Provider=Microsoft.ACE.OLEDB.12.0;"
-                            : "Provider=Microsoft.Jet.OLEDB.4.0;";
+                switch (Database.DBType)
+                {
+                    case eDBTypes.MSAccess:
+                        {
+                            //var ole = new OleDbConnectionStringBuilder();
+                            //ole.Provider = TNSCalculated.Contains(".accdb") 
+                            //    ? "Microsoft.ACE.OLEDB.12.0":
+                            //    "Microsoft.Jet.OLEDB.4.0";
+                            //ole.DataSource = TNSCalculated;
+                            //Database.ConnectionString = ole.ConnectionString + ";User Id={USER};Password={PASS};";
 
-                        Database.ConnectionString = strProvider + Database.ConnectionString;
+                            string strProvider;
+                            strProvider = TNSCalculated.Contains(".accdb")
+                                ? "Provider=Microsoft.ACE.OLEDB.12.0;"
+                                : "Provider=Microsoft.Jet.OLEDB.4.0;";
+
+                            Database.ConnectionString = strProvider + Database.ConnectionString;
+                            break;
+                        }
+
+                    case eDBTypes.DB2:
+
+                        Database.ConnectionString = "Server=" + Database.TNS + ";Database=" + Database.Name + ";UID={USER};PWD={PASS}";
+                        //Database.ConnectionString = $"Server={TNSCalculated};Database={Database.Name};UID={{USER}};PWD={{PASS}}";
                         break;
-                    }
 
-                case eDBTypes.DB2:
+                    case eDBTypes.PostgreSQL:
+                        {
+                            string postgreSQLHost = TNSCalculated;
+                            int? port = null;
+                            if (TNSCalculated.Contains(':', StringComparison.Ordinal))
+                            {
+                                var parts = TNSCalculated.Split(':', 2);
+                                postgreSQLHost = parts[0];
+                                if (int.TryParse(parts[1], out int p)) port = p;
+                            }
+                            ValidateHostPort(postgreSQLHost, port);
 
-                    Database.ConnectionString = "Server=" + Database.TNS + ";Database=" + Database.Name + ";UID={USER};PWD={PASS}";
-                    break;
+                            var pg = new NpgsqlConnectionStringBuilder
+                            {
+                                Host = postgreSQLHost,
+                                Database = Database.Name ?? string.Empty,
+                                Username = "{USER}",
+                                Password = "{PASS}"
+                            };
+                            if (port.HasValue) pg.Port = port.Value;
+                            Database.ConnectionString = pg.ConnectionString;
+                            break;
+                        }
 
-                case eDBTypes.PostgreSQL:
-                    {
-                        var postgreHost = TNSCalculated.Split(':');
-                        Database.ConnectionString = (postgreHost.Length == 2)
-                            ? "Server=" + postgreHost[0] + ";Port=" + postgreHost[1] + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";"
-                            : "Server=" + Database.TNS + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";
+                    case eDBTypes.MySQL:
+                        {
+                            string mySQLHost = TNSCalculated;
+                            uint? port = null;
+                            if (TNSCalculated.Contains(':', StringComparison.Ordinal))
+                            {
+                                var parts = TNSCalculated.Split(':', 2);
+                                mySQLHost = parts[0];
+                                if (uint.TryParse(parts[1], out uint p)) port = p;
+                            }
 
+                            ValidateHostPort(mySQLHost, port.HasValue ? (int?)port.Value : null);
+
+                            var my = new MySqlConnectionStringBuilder
+                            {
+                                Server = mySQLHost,
+                                Database = Database.Name ?? string.Empty,
+                                UserID = "{USER}",
+                                Password = "{PASS}"
+                            };
+                            if (port.HasValue) my.Port = port.Value;
+                            Database.ConnectionString = my.ConnectionString;
+                            break;
+                        }
+
+                    case eDBTypes.CosmosDb:
+                        Database.ConnectionString = string.Format("AccountEndpoint={0};AccountKey={1}", Database.User, Database.Pass);
                         break;
-                    }
 
-                case eDBTypes.MySQL:
-                    Database.ConnectionString = "Server=" + Database.TNS + ";Database=" + Database.Name + ";UID={USER};PWD={PASS}";
-                    break;
+                    case eDBTypes.Hbase:
+                        var host = TNSCalculated.Split(':');
+                        if (host.Length == 2)
+                        {
+                            Database.ConnectionString = "Server=" + host[0] + ";Port=" + host[1] + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";
+                        }
+                        break;
+                    //{
+                    //    var hostParts = TNSCalculated.Split(':');
+                    //    if (hostParts.Length == 2)
+                    //    {
+                    //        ValidateHostPort(hostParts[0], int.TryParse(hostParts[1], out int p) ? (int?)p : null);
+                    //        Database.ConnectionString = $"Server={hostParts[0]};Port={hostParts[1]};User Id={UserCalculated}; Password={{PASS}};Database={Database.Name};";
+                    //    }
+                    //    break;
+                    //}
 
-                case eDBTypes.CosmosDb:
-                    Database.ConnectionString = string.Format("AccountEndpoint={0};AccountKey={1}", Database.User, Database.Pass);
-                    break;
+                    case eDBTypes.MSSQL:
+                        {
+                            var builder = new SqlConnectionStringBuilder();
+                            builder.DataSource = TNSCalculated;
+                            if (!string.IsNullOrEmpty(Database.Name)) builder.InitialCatalog = Database.Name;
+                            builder.IntegratedSecurity = false;
+                            builder.UserID = "{USER}";
+                            builder.Password = "{PASS}";
+                            Database.ConnectionString = builder.ConnectionString;
+                            break;
+                        }
 
-                case eDBTypes.Hbase:
-                    var host = TNSCalculated.Split(':');
-                    if (host.Length == 2)
-                    {
-                        Database.ConnectionString = "Server=" + host[0] + ";Port=" + host[1] + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";
-                    }
-
-                    break;
-
-                default:
-                    throw new NotImplementedException("Unhandled database type: " + Database.DBType);
+                    default:
+                        throw new NotImplementedException("Unhandled database type: " + Database.DBType);
+                }
+            }
+            catch (Exception)
+            {
+                Database.ConnectionString = "Data Source=" + Database.TNS + ";User Id={USER};Password={PASS};";
             }
 
             return ConnectionStringCalculated;
+        }
+
+        private static void ValidateHostPort(string hostPart, int? port)
+        {
+            if (string.IsNullOrWhiteSpace(hostPart))
+                throw new ArgumentException("Invalid host in TNS.");
+
+            if (port.HasValue && (port < 1 || port > 65535))
+                throw new ArgumentException("Invalid port in TNS.");
         }
 
         private DateTime LastConnectionUsedTime;
@@ -259,6 +343,13 @@ namespace GingerCore.Environments
                 switch (Database.DBType)
                 {
                     case eDBTypes.MSSQL:
+                        var builder = new SqlConnectionStringBuilder();
+                        builder.DataSource = TNSCalculated;
+                        if (!string.IsNullOrEmpty(Database.Name)) builder.InitialCatalog = Database.Name;
+                        builder.IntegratedSecurity = false;
+                        builder.UserID = "{USER}";
+                        builder.Password = "{PASS}";
+                        Database.ConnectionString = builder.ConnectionString;
                         var sqlConnectionStringBuilder = new SqlConnectionStringBuilder
                         {
                             ConnectionString = GetConnectionString()
@@ -331,6 +422,26 @@ namespace GingerCore.Environments
                         break;
 
                     case eDBTypes.PostgreSQL:
+                        string postgreSQLHost = TNSCalculated;
+                        int? port = null;
+                        if (TNSCalculated.Contains(':', StringComparison.Ordinal))
+                        {
+                            var parts = TNSCalculated.Split(':', 2);
+                            postgreSQLHost = parts[0];
+                            if (int.TryParse(parts[1], out int p)) port = p;
+                        }
+                        ValidateHostPort(postgreSQLHost, port);
+
+                        var pg = new NpgsqlConnectionStringBuilder
+                        {
+                            Host = postgreSQLHost,
+                            Database = Database.Name ?? string.Empty,
+                            Username = "{USER}",
+                            Password = "{PASS}"
+                        };
+                        if (port.HasValue) pg.Port = port.Value;
+                        Database.ConnectionString = pg.ConnectionString;
+
                         var npgsqlconnectionStringBuilder = new Npgsql.NpgsqlConnectionStringBuilder
                         {
                             ConnectionString = GetConnectionString()
@@ -369,6 +480,27 @@ namespace GingerCore.Environments
                         }
 
                     case eDBTypes.MySQL:
+                        string mySQLHost = TNSCalculated;
+                        uint? port1 = null;
+                        if (TNSCalculated.Contains(':', StringComparison.Ordinal))
+                        {
+                            var parts = TNSCalculated.Split(':', 2);
+                            mySQLHost = parts[0];
+                            if (uint.TryParse(parts[1], out uint p)) port = p;
+                        }
+
+                        ValidateHostPort(mySQLHost, port1.HasValue ? (int?)port1.Value : null);
+
+                        var my = new MySqlConnectionStringBuilder
+                        {
+                            Server = mySQLHost,
+                            Database = Database.Name ?? string.Empty,
+                            UserID = "{USER}",
+                            Password = "{PASS}"
+                        };
+                        if (port1.HasValue) my.Port = port1.Value;
+                        Database.ConnectionString = my.ConnectionString;
+
                         var mySqlconnectionStringBuilder = new MySqlConnectionStringBuilder
                         {
                             ConnectionString = GetConnectionString()
