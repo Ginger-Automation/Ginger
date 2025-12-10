@@ -24,9 +24,17 @@ using Ginger.UserControls;
 using Ginger.ValidationRules;
 using GingerCore;
 using GingerCore.GeneralLib;
+using RestSharp;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -474,11 +482,15 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
         }
 
-        private void DeviceSourceSelectionChanged(object sender, RoutedEventArgs e)
+        private async void DeviceSourceSelectionChanged(object sender, RoutedEventArgs e)
         {
             if (this.IsLoaded && xAutoUpdateCapabiltiies != null && xAutoUpdateCapabiltiies.IsChecked == true)
             {
                 SetDeviceSourceCapabilities();
+                if (mDeviceSource != null && mDeviceSource.Value == nameof(eDeviceSource.MicroFoucsUFTMLab))
+                {
+                    await FetchUFTMDevicesAsync();
+                }
             }
         }
 
@@ -564,6 +576,136 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         private void DeleteUFTMSupportSimulationsCapabilities()
         {
             DeleteCapabilityIfExist("uftm:installPackagedApp");
+        }
+        private async void FetchDevicesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var summary = await FetchUFTMDevicesAsync();
+            if (string.IsNullOrEmpty(summary))
+            {
+                MessageBox.Show("No devices fetched or authentication failed.", "UFT Mobile Devices");
+            }
+            else
+            {
+                MessageBox.Show(summary, "UFT Mobile Devices");
+            }
+        }
+
+        // Performs OAuth2 token request and then fetches device content from UFT Mobile
+        private async Task<string> FetchUFTMDevicesAsync()
+        {
+            try
+            {
+                //, remove the url ending after :7500
+                var baseUrl = mAppiumServer?.Value?.TrimEnd('/') ?? string.Empty;
+                if (!string.IsNullOrEmpty(baseUrl))
+                {
+                    int portIdx = baseUrl.IndexOf(":7500", StringComparison.OrdinalIgnoreCase);
+                    if (portIdx >= 0)
+                    {
+                        // keep everything up to and including ':7500'
+                        baseUrl = baseUrl.Substring(0, portIdx + 5).TrimEnd('/');
+                    }
+                }
+                if (string.IsNullOrEmpty(baseUrl))
+                {
+                    return "UFTM server URL is empty.";
+                }
+
+                string clientId = FindExistingCapability("uftm:oauthClientId")?.Value;
+                string clientSecret = FindExistingCapability("uftm:oauthClientSecret")?.Value;
+                string tenantStr = FindExistingCapability("uftm:tenantId")?.Value;
+
+                if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret) || string.IsNullOrWhiteSpace(tenantStr))
+                {
+                    return "Missing UFTM OAuth credentials (clientId/secret/tenant).";
+                }
+
+                if (tenantStr.StartsWith("\"") && tenantStr.EndsWith("\""))
+                {
+                    tenantStr = tenantStr.Trim('"');
+                }
+                if (!int.TryParse(tenantStr, out var tenantId))
+                {
+                    return "Invalid tenant id.";
+                }
+
+
+                // 1) Authenticate: POST /rest/oauth2/token (same pattern as GenericAppiumDriver)
+                var tokenUrl = baseUrl + "/rest/oauth2/token";
+                var authClient = new RestClient(tokenUrl);
+                var authRequest = new RestRequest(tokenUrl, Method.Post);
+
+                var oauthPayload = new { client = clientId, secret = clientSecret, tenant = tenantId };
+                authRequest.AddJsonBody(oauthPayload);
+
+                var authResponse = await authClient.ExecuteAsync(authRequest);
+                if (!authResponse.IsSuccessful)
+                {
+                    return $"Auth failed: {(int)authResponse.StatusCode} {authResponse.StatusDescription}\n{authResponse.Content}";
+                }
+
+                // Extract tokens from auth response
+                // 1) access token from JSON content
+                string accessToken = null;
+                try
+                {
+                    using var doc = JsonDocument.Parse(authResponse.Content ?? "{}");
+                    if (doc.RootElement.TryGetProperty("access_token", out var tokenProp))
+                    {
+                        accessToken = tokenProp.GetString();
+                    }
+                    else if (doc.RootElement.TryGetProperty("token", out var tokenProp2))
+                    {
+                        accessToken = tokenProp2.GetString();
+                    }
+                }
+                catch { }
+
+                // 2) csrf token (hp4msecret) and 3) JSESSIONID from cookies
+                string cookieHp4mSecret = authResponse.Cookies?.FirstOrDefault(c => string.Equals(c.Name, "x-hp4msecret", StringComparison.OrdinalIgnoreCase))?.Value;
+                if (string.IsNullOrEmpty(cookieHp4mSecret))
+                {
+                    // Some servers set hp4msecret as 'hp4msecret' without the 'x-'
+                    cookieHp4mSecret = authResponse.Cookies?.FirstOrDefault(c => string.Equals(c.Name, "hp4msecret", StringComparison.OrdinalIgnoreCase))?.Value;
+                }
+                string cookieSessionId = authResponse.Cookies?.FirstOrDefault(c => string.Equals(c.Name, "JSESSIONID", StringComparison.OrdinalIgnoreCase))?.Value;
+
+                
+
+               
+
+                // 3) Fetch device content: GET /rest/deviceContent
+                var devicesUrl = baseUrl + "/rest/deviceContent";
+                var devicesClient = new RestClient(devicesUrl);
+                var devicesRequest = new RestRequest(devicesUrl, Method.Get);
+
+                // Add required headers
+                if (!string.IsNullOrWhiteSpace(accessToken))
+                {
+                    devicesRequest.AddHeader("Authorization", $"Bearer {accessToken}");
+                }
+                if (!string.IsNullOrWhiteSpace(cookieHp4mSecret))
+                {
+                    devicesRequest.AddHeader("x-hp4msecret", cookieHp4mSecret);
+                }
+                if (!string.IsNullOrWhiteSpace(cookieSessionId))
+                {
+                    devicesRequest.AddHeader("JSESSIONID", cookieSessionId);
+                }
+                devicesRequest.AddHeader("Accept", "*/*");
+                devicesRequest.AddHeader("tenant-id", tenantId.ToString());
+
+                var devicesResponse = await devicesClient.ExecuteAsync(devicesRequest);
+                
+
+
+                return devicesResponse.Content;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "UFTM device fetch failed", ex);
+                return $"Error: {ex.Message}";
+            }
         }
     }
 
