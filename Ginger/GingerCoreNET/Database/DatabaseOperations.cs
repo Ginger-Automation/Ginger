@@ -486,7 +486,7 @@ namespace GingerCore.Environments
                         {
                             var parts = TNSCalculated.Split(':', 2);
                             mySQLHost = parts[0];
-                            if (uint.TryParse(parts[1], out uint p)) port = p;
+                            if (int.TryParse(parts[1], out int p)) port = p;
                         }
 
                         ValidateHostPort(mySQLHost, port1.HasValue ? (int?)port1.Value : null);
