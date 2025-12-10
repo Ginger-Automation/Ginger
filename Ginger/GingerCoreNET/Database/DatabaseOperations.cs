@@ -140,19 +140,7 @@ namespace GingerCore.Environments
                 Database.Pass = scSB.Password;
                 Database.ConnectionString = scSB.ConnectionString;
             }
-            catch (ArgumentException ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "TNS is not a full SQL connection string, leaving values as-is", ex);
-            }
-            catch (FormatException ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "TNS is not a full SQL connection string, leaving values as-is", ex);
-            }
-            catch (InvalidOperationException ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "TNS is not a full SQL connection string, leaving values as-is", ex);
-            }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is ArgumentException or FormatException or InvalidOperationException)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "TNS is not a full SQL connection string, leaving values as-is", ex);
             }
@@ -517,7 +505,7 @@ namespace GingerCore.Environments
                         var mySqlconnectionStringBuilder = new MySqlConnectionStringBuilder
                         {
                             ConnectionString = GetConnectionString()
-                        };+
+                        };
 
                         oConn = new MySqlConnection
                         {
