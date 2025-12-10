@@ -133,16 +133,28 @@ namespace GingerCore.Environments
         {
             try
             {
-                SqlConnectionStringBuilder scSB = [];
+                SqlConnectionStringBuilder scSB = new SqlConnectionStringBuilder(); ;
                 scSB.ConnectionString = Database.TNS;
                 Database.TNS = scSB.DataSource;
                 Database.User = scSB.UserID;
                 Database.Pass = scSB.Password;
                 Database.ConnectionString = scSB.ConnectionString;
             }
-            catch (Exception)
+            catch (ArgumentException ex)
             {
-                // If TNS is not a full SQL connection string just leave values as-is
+                Reporter.ToLog(eLogLevel.DEBUG, "TNS is not a full SQL connection string, leaving values as-is", ex);
+            }
+            catch (FormatException ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "TNS is not a full SQL connection string, leaving values as-is", ex);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "TNS is not a full SQL connection string, leaving values as-is", ex);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "TNS is not a full SQL connection string, leaving values as-is", ex);
             }
         }
 
@@ -196,8 +208,8 @@ namespace GingerCore.Environments
                         }
 
                     case eDBTypes.DB2:
-
-                        Database.ConnectionString = "Server=" + Database.TNS + ";Database=" + Database.Name + ";UID={USER};PWD={PASS}";
+                        
+                        Database.ConnectionString = $"Server={TNSCalculated};Database={Database.Name};UID={{USER}};PWD={{PASS}}";
                         //Database.ConnectionString = $"Server={TNSCalculated};Database={Database.Name};UID={{USER}};PWD={{PASS}}";
                         break;
 
@@ -251,7 +263,7 @@ namespace GingerCore.Environments
                         }
 
                     case eDBTypes.CosmosDb:
-                        Database.ConnectionString = string.Format("AccountEndpoint={0};AccountKey={1}", Database.User, Database.Pass);
+                        Database.ConnectionString = $"AccountEndpoint={Database.User};AccountKey={Database.Pass}";
                         break;
 
                     case eDBTypes.Hbase:
@@ -287,8 +299,9 @@ namespace GingerCore.Environments
                         throw new NotImplementedException("Unhandled database type: " + Database.DBType);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to create connection string for DB type: {Database.DBType}, falling back to default", ex);
                 Database.ConnectionString = "Data Source=" + Database.TNS + ";User Id={USER};Password={PASS};";
             }
 
@@ -486,7 +499,7 @@ namespace GingerCore.Environments
                         {
                             var parts = TNSCalculated.Split(':', 2);
                             mySQLHost = parts[0];
-                            if (int.TryParse(parts[1], out int p)) port = p;
+                            if (uint.TryParse(parts[1], out uint p)) port1 = p;
                         }
 
                         ValidateHostPort(mySQLHost, port1.HasValue ? (int?)port1.Value : null);
@@ -504,7 +517,7 @@ namespace GingerCore.Environments
                         var mySqlconnectionStringBuilder = new MySqlConnectionStringBuilder
                         {
                             ConnectionString = GetConnectionString()
-                        };
+                        };+
 
                         oConn = new MySqlConnection
                         {
