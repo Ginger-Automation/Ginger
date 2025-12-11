@@ -174,25 +174,93 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.Appium
                    element.Attribute("hint")?.Value; // Android hint
         }
 
+ 
         /// <summary>
-        /// Helper to construct a unique identifier for the element for reporting.
+        ///  Helper to construct a unique identifier for the element for reporting developer-friendly identifier for the element.
+        /// Works for both Android and iOS even when resource-id is missing.
         /// </summary>
         private string GetElementIdentifier(XElement element)
         {
-            string elementType = element.Name.LocalName;
+            string elementType = element.Name.LocalName; 
             string resourceId = element.Attribute("resource-id")?.Value;
+            string className = element.Attribute("class")?.Value;
+            string contentDesc = element.Attribute("content-desc")?.Value;  // Android
+            string name = element.Attribute("name")?.Value;          // iOS
+            string label = element.Attribute("label")?.Value;         // iOS
+            string text = element.Attribute("text")?.Value;          // Android visible text
             string bounds = element.Attribute("bounds")?.Value;
             string rect = element.Attribute("rect")?.Value;
-            string identifier = $"Type: {elementType} | ID: {resourceId ?? "N/A"}";
+
+            //best possible locator value
+            string locator = resourceId
+                             ?? contentDesc
+                             ?? name
+                             ?? label
+                             ?? text;
+
+            //fallback to class name + index
+            if (string.IsNullOrWhiteSpace(locator))
+            {
+                var parent = element.Parent;
+                if (parent != null)
+                {
+                    var sameTypeSiblings = parent.Elements(element.Name).ToList();
+                    int index = sameTypeSiblings.IndexOf(element) + 1;
+                    locator = $"{elementType}[{index}]";
+                }
+                else
+                {
+                    locator = elementType; // last fallback
+                }
+            }
+
+            // final identifier string
+            var parts = new List<string>
+            {
+                $"Type: {elementType}",
+                $"Locator: {locator}"
+            };
+
+            if (!string.IsNullOrWhiteSpace(resourceId))
+            {
+                parts.Add($"ResourceId: {resourceId}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(className))
+            {
+                parts.Add($"Class: {className}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(contentDesc))
+            {
+                parts.Add($"ContentDesc: {contentDesc}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                parts.Add($"Name: {name}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(label))
+            {
+                parts.Add($"Label: {label}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                parts.Add($"Text: {text}");
+            }
+
             if (!string.IsNullOrWhiteSpace(bounds))
             {
-                identifier += $" | Bounds: {bounds}";
+                parts.Add($"Bounds: {bounds}");
             }
             else if (!string.IsNullOrWhiteSpace(rect))
             {
-                identifier += $" | Rect: {rect}";
+                parts.Add($"Rect: {rect}");
             }
-            return identifier;
+
+            return string.Join(" | ", parts);
         }
 
         /// <summary>
