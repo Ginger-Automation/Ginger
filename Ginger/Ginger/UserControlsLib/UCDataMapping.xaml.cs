@@ -62,6 +62,7 @@ namespace Ginger.UserControlsLib
         public enum eDataType
         {
             None,
+            Variable,
             GlobalVariable,
             OutputVariable,
             ApplicationModelParameter,
@@ -107,7 +108,7 @@ namespace Ginger.UserControlsLib
             public TemplateOptions(string dataTypeProperty, string dataValueProperty)
             {
                 _DataTypeProperty = dataTypeProperty;
-                _DataValueProperty = dataValueProperty;               
+                _DataValueProperty = dataValueProperty;
             }
         }
 
@@ -153,7 +154,7 @@ namespace Ginger.UserControlsLib
             set
             {
                 SetValue(RestrictedMappingTypesProperty, value);
-                
+
                 // Whenever restrictions are set, ensure fundamental options remain available
                 if (xMappedTypeComboBox != null)
                 {
@@ -176,7 +177,7 @@ namespace Ginger.UserControlsLib
         ObservableList<VariableBase> mGlobalVariablesList = null;
         ObservableList<GlobalAppModelParameter> mModelGlobalParamsList = null;
 
-        bool EnableDataMapping = false;
+        bool EnableDataMapping = true;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName)
@@ -188,15 +189,17 @@ namespace Ginger.UserControlsLib
             }
         }
 
+
         public UCDataMapping()
         {
             InitializeComponent();
+
 
             //commented this line because its casing issue in the action output values. Store to column gets disabled
             //this.IsEnabled = false;
             InitTypeOptions();
             InitValuesOptions();
-            
+
             // IMMEDIATELY configure DatePicker to allow past dates
             if (xDatePickerWPF != null)
             {
@@ -208,16 +211,18 @@ namespace Ginger.UserControlsLib
                 }
                 catch { /* Ignore initialization errors */ }
             }
-            
+
             // Subscribe to the Unloaded event to clean up event handlers
             this.Unloaded += UCDataMapping_Unloaded;
-            
+
             // Subscribe to the Loaded event to ensure proper initialization
             this.Loaded += UCDataMapping_Loaded;
-            
+
             // Subscribe to DataContext changes to refresh the control when the variable changes
             this.DataContextChanged += UCDataMapping_DataContextChanged;
         }
+
+
 
         private void UCDataMapping_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -233,19 +238,19 @@ namespace Ginger.UserControlsLib
         {
             // Force a refresh of the UI when the control is loaded
             // This ensures DateTime pickers are properly set up if the DataContext was set after initialization
-            
+
             // FORCE DatePicker to allow past dates IMMEDIATELY on load
             if (xDatePickerWPF != null)
             {
                 try
                 {
                     xDatePickerWPF.DisplayDateStart = null;
-                    xDatePickerWPF.DisplayDateEnd = null;  
+                    xDatePickerWPF.DisplayDateEnd = null;
                     xDatePickerWPF.BlackoutDates.Clear();
                 }
                 catch { /* Ignore any setup errors */ }
             }
-            
+
             if (MappedType == eDataType.Value.ToString())
             {
                 SetValueControlsData();
@@ -291,12 +296,13 @@ namespace Ginger.UserControlsLib
         private void DisableAllTypeOptions()
         {
             // Disable all data type options initially - they will be enabled based on context availability
+            GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.Variable);
             GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.GlobalVariable);
             GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.OutputVariable);
             GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.ApplicationModelParameter);
             GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.DataSource);
             GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.ValueExpression);
-            
+
             // Always enable "None" and "Value" options - these should always be available
             GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.None);
             GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.Value);
@@ -327,12 +333,16 @@ namespace Ginger.UserControlsLib
             BindingOperations.ClearAllBindings(xSelectionListComboBox);
             BindingOperations.ClearAllBindings(xDSExpressionTxtbox);
             BindingOperations.ClearAllBindings(xValueTextBox);
-            
+
             // Remove previous event handlers to avoid multiple subscriptions
             xValueTextBox.TextChanged -= xValueTextBox_TextChanged;
             xValueTextBox.PreviewTextInput -= xValueTextBox_PreviewTextInput;
-            
-            if (MappedType == eDataType.GlobalVariable.ToString())
+
+            if (MappedType == eDataType.Variable.ToString())
+            {
+                BindingHandler.ObjFieldBinding(xVariablesComboBox, ComboBox.SelectedValueProperty, this, nameof(MappedValue));
+            }
+            else if (MappedType == eDataType.GlobalVariable.ToString())
             {
                 BindingHandler.ObjFieldBinding(xOptionalValuesComboBox, ComboBox.SelectedValueProperty, this, nameof(MappedValueGUID));
             }
@@ -350,7 +360,7 @@ namespace Ginger.UserControlsLib
             }
             else if (MappedType == eDataType.ValueExpression.ToString())
             {
-               var  mContext = Context.GetAsContext( WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault());
+                var mContext = Context.GetAsContext(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault());
                 xDBValueExpression.BindControl(mContext, this, nameof(MappedValue));
             }
             else if (MappedType == eDataType.Value.ToString())
@@ -368,7 +378,7 @@ namespace Ginger.UserControlsLib
                 else
                 {
                     BindingHandler.ObjFieldBinding(xValueTextBox, TextBox.TextProperty, this, nameof(MappedValue));
-                    
+
                     // Add input validation for number variables
                     xValueTextBox.TextChanged += xValueTextBox_TextChanged;
                     xValueTextBox.PreviewTextInput += xValueTextBox_PreviewTextInput;
@@ -386,7 +396,7 @@ namespace Ginger.UserControlsLib
             {
                 return;
             }
-            
+
             if (MappedType == eDataType.None.ToString())
             {
                 xMappedTypeColumn.Width = new GridLength(50, GridUnitType.Star);
@@ -400,6 +410,7 @@ namespace Ginger.UserControlsLib
                 xMappedValueColumn.Width = new GridLength(50, GridUnitType.Star);
             }
 
+
             // Hide all controls first
             xVariablesComboBox.Visibility = Visibility.Hidden;
             xOptionalValuesComboBox.Visibility = Visibility.Hidden;
@@ -411,7 +422,11 @@ namespace Ginger.UserControlsLib
             xDSConfigBtn.Visibility = Visibility.Hidden;
             xDBValueExpression.Visibility = Visibility.Hidden;
 
-            if ((MappedType == eDataType.OutputVariable.ToString() || MappedType == eDataType.GlobalVariable.ToString() || MappedType == eDataType.ApplicationModelParameter.ToString())
+            if (MappedType == eDataType.Variable.ToString())
+            {
+                xVariablesComboBox.Visibility = Visibility.Visible;
+            }
+            else if ((MappedType == eDataType.OutputVariable.ToString() || MappedType == eDataType.GlobalVariable.ToString() || MappedType == eDataType.ApplicationModelParameter.ToString())
                 && xOptionalValuesComboBox != null)
             {
                 xOptionalValuesComboBox.Visibility = Visibility.Visible;
@@ -433,23 +448,23 @@ namespace Ginger.UserControlsLib
                         xDatePickerWPF.DisplayDateStart = null;
                         xDatePickerWPF.DisplayDateEnd = null;
                         xDatePickerWPF.BlackoutDates.Clear();
-                        
+
                         // Force immediate refresh
                         xDatePickerWPF.InvalidateVisual();
                         xDatePickerWPF.UpdateLayout();
                     }
                     catch { /* Ignore any setup errors */ }
-                    
+
                     // Now show the control
                     xDatePickerWPF.Visibility = Visibility.Visible;
-                    
+
                     // Setup with full configuration
                     SetupWPFDatePicker();
-                    
+
                     // FINAL CHECK - ensure constraints are still clear
                     try
                     {
-                        if (DataContext is not VariableDateTime dateTimeVar || 
+                        if (DataContext is not VariableDateTime dateTimeVar ||
                             (string.IsNullOrEmpty(dateTimeVar.MinDateTime) && string.IsNullOrEmpty(dateTimeVar.MaxDateTime)))
                         {
                             // No variable constraints = no date restrictions
@@ -459,7 +474,7 @@ namespace Ginger.UserControlsLib
                         xDatePickerWPF.BlackoutDates.Clear();
                     }
                     catch { /* Ignore final check errors */ }
-                    
+
                     Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: DateTime picker shown with UNLIMITED past date access");
                 }
                 else if (xValueTextBox != null)
@@ -521,31 +536,52 @@ namespace Ginger.UserControlsLib
             }
         }
 
+
         private void MarkMappedValueValidation()
         {
+            // Cache string comparisons to avoid repeated ToString() calls and magic strings
+            string mappedType = MappedType;
+
             bool isValid = true;
             string? validationMessage = null;
 
-            if ((MappedType != eDataType.None.ToString() && MappedType != eDataType.Value.ToString() && MappedValue == string.Empty)
-                || ((MappedType == eDataType.OutputVariable.ToString() && !GingerCore.General.CheckComboItemExist(xOptionalValuesComboBox, MappedValue, nameof(VariableBase.VariableInstanceInfo)))
-                || (MappedType == eDataType.GlobalVariable.ToString() || MappedType == eDataType.ApplicationModelParameter.ToString()) && !GingerCore.General.CheckComboItemExist(xOptionalValuesComboBox, MappedValue, "Guid"))
-                || (MappedType == eDataType.DataSource.ToString() && GingerCoreNET.GeneralLib.General.CheckDataSource(MappedValue, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>()) != string.Empty))
+            // --------- Validation checks grouped and named ----------
+            bool isMappedValueEmptyForNonValueType = mappedType != eDataType.None.ToString() && mappedType != eDataType.Value.ToString() && string.IsNullOrEmpty(MappedValue);
+
+            bool isOutputVariableMissing = mappedType == eDataType.OutputVariable.ToString() && !GingerCore.General.CheckComboItemExist(xOptionalValuesComboBox, MappedValue, nameof(VariableBase.VariableInstanceInfo));
+
+            bool isVariableMissing = mappedType == eDataType.Variable.ToString() && !GingerCore.General.CheckComboItemExist(xVariablesComboBox, MappedValue);
+
+            bool isGlobalOrAMP_Missing = (mappedType == eDataType.GlobalVariable.ToString() || mappedType == eDataType.ApplicationModelParameter.ToString()) && !GingerCore.General.CheckComboItemExist(xOptionalValuesComboBox, MappedValue, "Guid");
+
+            bool isDataSourceInvalid =
+                mappedType == eDataType.DataSource.ToString() && GingerCoreNET.GeneralLib.General.CheckDataSource(MappedValue, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>()) != string.Empty;
+
+            // Combine non-Value validations
+            if (isMappedValueEmptyForNonValueType || isOutputVariableMissing || isGlobalOrAMP_Missing || isDataSourceInvalid || isVariableMissing)
             {
                 isValid = false;
             }
-            else if (MappedType == eDataType.Value.ToString())
+            else if (mappedType == eDataType.Value.ToString())
             {
+                // Validate for Value type specifically
                 var valueValidationResult = ValidateValueForVariableType();
                 isValid = valueValidationResult.IsValid;
                 validationMessage = valueValidationResult.ErrorMessage;
             }
 
-            if (isValid == false)
+            // --------- Apply UI state based on validation ----------
+            ApplyValidationUI(isValid, mappedType, validationMessage);
+        }
+
+        private void ApplyValidationUI(bool isValid, string mappedType, string? validationMessage)
+        {
+            if (!isValid)
             {
-                this.BorderThickness = new Thickness(1);
-                this.BorderBrush = Brushes.Red;
-                
-                // Set tooltip with validation message if available
+                BorderThickness = new Thickness(1);
+                BorderBrush = Brushes.Red;
+
+                // Set tooltip only if we have a validation message
                 if (!string.IsNullOrEmpty(validationMessage))
                 {
                     xValueTextBox.ToolTip = validationMessage;
@@ -553,11 +589,11 @@ namespace Ginger.UserControlsLib
             }
             else
             {
-                this.BorderThickness = new Thickness(0);
-                this.BorderBrush = null;
-                
-                // Clear tooltip when valid
-                if (MappedType == eDataType.Value.ToString())
+                BorderThickness = new Thickness(0);
+                BorderBrush = null;
+
+                // Clear tooltip when valid for Value type
+                if (mappedType == eDataType.Value.ToString())
                 {
                     xValueTextBox.ToolTip = null;
                 }
@@ -586,28 +622,28 @@ namespace Ginger.UserControlsLib
             string currentText = textBox.Text ?? "";
             int selectionStart = textBox.SelectionStart;
             int selectionLength = textBox.SelectionLength;
-            
+
             // Construct the new text after the input
             string newText = currentText.Remove(selectionStart, selectionLength).Insert(selectionStart, inputText);
-            
+
             // Allow empty string (user can delete everything)
             if (string.IsNullOrEmpty(newText))
             {
                 return true;
             }
-            
+
             // Allow single minus sign at the beginning for negative numbers
             if (newText == "-")
             {
                 return true;
             }
-            
+
             // Allow single decimal point
             if (newText == ".")
             {
                 return true;
             }
-            
+
             // Use regex to check for valid numeric input (including decimal numbers)
             // This allows: optional minus, digits, optional decimal point with digits
             var numericRegex = new Regex(@"^-?(\d+\.?\d*|\.\d+)$");
@@ -660,7 +696,7 @@ namespace Ginger.UserControlsLib
                     .FirstOrDefault(restrictedType => string.Equals(restrictedType.Name, MappedType));
 
                 // Never restrict "Value" or "None" options as they are fundamental
-                if (restrictedMappingType != null && 
+                if (restrictedMappingType != null &&
                     !string.Equals(_prevMappedType, MappedType) &&
                     MappedType != eDataType.Value.ToString() &&
                     MappedType != eDataType.None.ToString())
@@ -703,7 +739,7 @@ namespace Ginger.UserControlsLib
             if (EnableDataMapping == true)
             {
                 this.IsEnabled = true;
-                
+
                 // When data mapping is enabled, ensure fundamental options are available
                 GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.None);
                 GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.Value);
@@ -718,15 +754,21 @@ namespace Ginger.UserControlsLib
             }
         }
 
-        private void VariabelsSourcePropertyChanged(ObservableList<string> variablesList)
+
+        private void VariabelsSourcePropertyChanged(ObservableList<string> variabelsSourceList)
         {
-            if (variablesList != null)
+            if (variabelsSourceList != null)
             {
-                mVariablesList = variablesList;
-                // Variable option has been removed - no longer enable it
+                mVariablesList = variabelsSourceList;
+                GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.Variable);
+                mVariablesList.CollectionChanged += VariabelsSourceList_CollectionChanged;
+                SetValueControlsData();
             }
         }
-
+        private void VariabelsSourceList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            SetValueControlsData();
+        }
         private static void OnOutputVariabelsSourcePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             if (sender is UCDataMapping control)
@@ -746,7 +788,11 @@ namespace Ginger.UserControlsLib
 
         private void SetValueControlsData()
         {
-            if (MappedType == eDataType.GlobalVariable.ToString())
+            if (MappedType == eDataType.Variable.ToString())
+            {
+                xVariablesComboBox.ItemsSource = mVariablesList;
+            }
+            else if (MappedType == eDataType.GlobalVariable.ToString())
             {
                 xOptionalValuesComboBox.DisplayMemberPath = nameof(VariableBase.Name);
                 xOptionalValuesComboBox.SelectedValuePath = nameof(VariableBase.Guid);
@@ -786,8 +832,8 @@ namespace Ginger.UserControlsLib
         {
             // Check if the DataContext is a VariableDateTime
             bool isDateTime = false;
-            
-            try 
+
+            try
             {
                 if (DataContext is VariableDateTime)
                 {
@@ -804,7 +850,7 @@ namespace Ginger.UserControlsLib
                 Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: Error in IsDateTimeVariable: {ex.Message}");
                 isDateTime = false;
             }
-            
+
             return isDateTime;
         }
 
@@ -814,18 +860,18 @@ namespace Ginger.UserControlsLib
             {
                 // Clear any existing items
                 xSelectionListComboBox.ItemsSource = null;
-                
+
                 // Create a list of option values from the VariableSelectionList
                 ObservableList<string> optionValues = [];
-                
+
                 foreach (var optionalValue in selectionListVariable.OptionalValuesList)
                 {
                     optionValues.Add(optionalValue.Value);
                 }
-                
+
                 // Set the ComboBox items
                 xSelectionListComboBox.ItemsSource = optionValues;
-                
+
                 // Set the current selection if it exists in the list
                 if (!string.IsNullOrEmpty(MappedValue) && optionValues.Contains(MappedValue))
                 {
@@ -842,10 +888,10 @@ namespace Ginger.UserControlsLib
             {
                 // Clear any existing items
                 xSelectionListComboBox.ItemsSource = null;
-                
+
                 // Create a list of option values from the VariableList
                 ObservableList<string> optionValues = [];
-                
+
                 // Parse the ValueList (which can be comma-separated or newline-separated)
                 string formula = listVariable.GetFormula();
                 if (!string.IsNullOrEmpty(formula))
@@ -860,10 +906,10 @@ namespace Ginger.UserControlsLib
                         }
                     }
                 }
-                
+
                 // Set the ComboBox items
                 xSelectionListComboBox.ItemsSource = optionValues;
-                
+
                 // Set the current selection if it exists in the list
                 if (!string.IsNullOrEmpty(MappedValue) && optionValues.Contains(MappedValue))
                 {
@@ -882,22 +928,22 @@ namespace Ginger.UserControlsLib
         {
             if (xDatePickerWPF != null)
             {
-                try 
+                try
                 {
                     if (DataContext is VariableDateTime dateTimeVariable)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: Setting up WPF DatePicker for {dateTimeVariable.Name}");
-                        
+
                         // For runtime configuration (Value mapping), completely remove all date restrictions
                         bool isRuntimeConfiguration = MappedType == eDataType.Value.ToString();
-                        
+
                         if (isRuntimeConfiguration)
                         {
                             // RUNTIME CONFIGURATION: Allow ALL dates (just like the regular variable editor)
                             xDatePickerWPF.DisplayDateStart = null;
                             xDatePickerWPF.DisplayDateEnd = null;
                             xDatePickerWPF.BlackoutDates.Clear();
-                            
+
                             Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: Runtime configuration - allowing ALL dates including past dates");
                         }
                         else
@@ -906,7 +952,7 @@ namespace Ginger.UserControlsLib
                             xDatePickerWPF.DisplayDateStart = null;
                             xDatePickerWPF.DisplayDateEnd = null;
                             xDatePickerWPF.BlackoutDates.Clear();
-                            
+
                             if (!string.IsNullOrEmpty(dateTimeVariable.MinDateTime))
                             {
                                 if (DateTime.TryParse(dateTimeVariable.MinDateTime, out DateTime minDate))
@@ -915,7 +961,7 @@ namespace Ginger.UserControlsLib
                                     Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: Applied computed MinDate constraint: {minDate}");
                                 }
                             }
-                            
+
                             if (!string.IsNullOrEmpty(dateTimeVariable.MaxDateTime))
                             {
                                 if (DateTime.TryParse(dateTimeVariable.MaxDateTime, out DateTime maxDate))
@@ -925,10 +971,10 @@ namespace Ginger.UserControlsLib
                                 }
                             }
                         }
-                        
+
                         // Set current value
                         DateTime? currentValue = null;
-                        
+
                         if (!string.IsNullOrEmpty(MappedValue) && DateTime.TryParse(MappedValue, out DateTime parsedMappedValue))
                         {
                             currentValue = parsedMappedValue;
@@ -945,16 +991,16 @@ namespace Ginger.UserControlsLib
                         {
                             currentValue = DateTime.Today;
                         }
-                        
+
                         // Set the selected date
                         if (currentValue.HasValue)
                         {
                             xDatePickerWPF.SelectedDate = currentValue;
-                            
+
                             // Update MappedValue
                             string format = !string.IsNullOrEmpty(dateTimeVariable.DateTimeFormat) ? dateTimeVariable.DateTimeFormat : "MM/dd/yyyy";
                             string formattedValue = currentValue.Value.ToString(format, System.Globalization.CultureInfo.InvariantCulture);
-                            
+
                             if (string.IsNullOrEmpty(MappedValue))
                             {
                                 MappedValue = formattedValue;
@@ -969,13 +1015,13 @@ namespace Ginger.UserControlsLib
                         xDatePickerWPF.BlackoutDates.Clear();
                         xDatePickerWPF.SelectedDate = DateTime.Today;
                     }
-                    
+
                     Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: DatePicker configured - DisplayDateStart: {xDatePickerWPF.DisplayDateStart}, DisplayDateEnd: {xDatePickerWPF.DisplayDateEnd}");
                 }
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Error setting up WPF DatePicker: {ex.Message}", ex);
-                    
+
                     // EMERGENCY FALLBACK - Force unrestricted dates
                     try
                     {
@@ -1032,7 +1078,7 @@ namespace Ginger.UserControlsLib
                 {
                     // For runtime configuration (Value mapping), skip all validation - allow any date
                     bool isRuntimeConfiguration = MappedType == eDataType.Value.ToString();
-                    
+
                     if (!isRuntimeConfiguration)
                     {
                         // Only validate for non-runtime configuration
@@ -1042,7 +1088,7 @@ namespace Ginger.UserControlsLib
                             return;
                         }
                     }
-                    
+
                     // Update the MappedValue with the formatted date
                     string format = !string.IsNullOrEmpty(dateTimeVariable.DateTimeFormat) ? dateTimeVariable.DateTimeFormat : "MM/dd/yyyy";
                     string formattedValue = xDateTimePicker.Value.ToString(format, System.Globalization.CultureInfo.InvariantCulture);
@@ -1062,10 +1108,10 @@ namespace Ginger.UserControlsLib
                 try
                 {
                     DateTime selectedDate = xDatePickerWPF.SelectedDate.Value;
-                    
+
                     // For runtime configuration (Value mapping), skip all validation - allow any date
                     bool isRuntimeConfiguration = MappedType == eDataType.Value.ToString();
-                    
+
                     if (!isRuntimeConfiguration)
                     {
                         // Only validate for non-runtime configuration
@@ -1075,12 +1121,12 @@ namespace Ginger.UserControlsLib
                             return;
                         }
                     }
-                    
+
                     // Update the MappedValue with the formatted date
                     string format = !string.IsNullOrEmpty(dateTimeVariable.DateTimeFormat) ? dateTimeVariable.DateTimeFormat : "MM/dd/yyyy";
                     string formattedValue = selectedDate.ToString(format, System.Globalization.CultureInfo.InvariantCulture);
                     MappedValue = formattedValue;
-                    
+
                     Reporter.ToLog(eLogLevel.DEBUG, $"UCDataMapping: WPF DatePicker selected date: {selectedDate}, formatted value: {formattedValue}");
                 }
                 catch (Exception ex)
@@ -1135,7 +1181,7 @@ namespace Ginger.UserControlsLib
         /// </summary>
         /// <param name="options">Template configuration options</param>
         /// <returns>DataTemplate for the control</returns>
-        public static DataTemplate GetTemplate(TemplateOptions options)
+        public static DataTemplate GetTemplate(TemplateOptions options, bool isActionOutputValuesView = false)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory ucDataMapping = new FrameworkElementFactory(typeof(UCDataMapping));
