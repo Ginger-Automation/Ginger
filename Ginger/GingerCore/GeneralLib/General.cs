@@ -387,7 +387,8 @@ namespace GingerCore
             {
                 if (specificValueField == null)
                 {
-                    if (comboBox.Items[i] != null && string.IsNullOrEmpty(comboBox.Items[i].ToString()) && value == comboBox.Items[i].ToString())
+                    var comboBoxitem = comboBox.Items[i]?.ToString();
+                    if (!string.IsNullOrEmpty(comboBoxitem) && value == comboBoxitem)
                     {
                         return true;
                     }
