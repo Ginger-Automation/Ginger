@@ -346,33 +346,12 @@ namespace GingerCore.Environments
                 {
                     case eDBTypes.MSSQL:
                         // If a full connection string is provided use it (after resolving placeholders and decrypting password),
-                        // otherwise build from TNS/User/Pass as before.                          
-                        if (string.IsNullOrEmpty(Database.ConnectionString))
-                        {
-                            var builder = new SqlConnectionStringBuilder();
-                            builder.DataSource = TNSCalculated;
-                            if (!string.IsNullOrEmpty(Database.Name)) builder.InitialCatalog = Database.Name;
-                            builder.IntegratedSecurity = false;
-                            builder.UserID = UserCalculated;
-                            builder.Password = EncryptionHandler.DecryptwithKey(PassCalculated);
-                            Database.ConnectionString = builder.ConnectionString;
-                        }
-                        else
-                        {
-                            // GetConnectionString will replace {USER} and {PASS} placeholders and decrypt the password
-                            string connStr = ConnectionStringCalculated;
-                            connStr = connStr.Replace("{USER}", UserCalculated);
-                            connStr = ReplacePasswordInConnectionString(connStr);
+                        // otherwise build from TNS/User/Pass as before.
+                        string connectionString = string.Empty;
+                        var mailBuilder = GetMSSQLConnectionStringBuilder();
 
-                            // Parse and normalise the connection string using SqlConnectionStringBuilder
-                            var parsedBuilder = new SqlConnectionStringBuilder(connStr);
-                            Database.ConnectionString = parsedBuilder.ConnectionString;
-                        }
+                        oConn = new SqlConnection(mailBuilder.ConnectionString);
 
-                        oConn = new SqlConnection
-                        {
-                            ConnectionString = Database.ConnectionString
-                        };
                         oConn.Open();
                         break;
 
@@ -587,6 +566,32 @@ namespace GingerCore.Environments
 
             return false;
         }
+
+        private SqlConnectionStringBuilder GetMSSQLConnectionStringBuilder()
+        {
+            if (string.IsNullOrEmpty(Database.ConnectionString))
+            {
+                var builder = new SqlConnectionStringBuilder();
+                builder.DataSource = TNSCalculated;
+                if (!string.IsNullOrEmpty(Database.Name)) builder.InitialCatalog = Database.Name;
+                builder.IntegratedSecurity = false;
+                builder.UserID = UserCalculated;
+                builder.Password = EncryptionHandler.DecryptwithKey(PassCalculated);
+                return builder;
+            }
+            else
+            {
+                // GetConnectionString will replace {USER} and {PASS} placeholders and decrypt the password
+                string connStr = ConnectionStringCalculated;
+                connStr = connStr.Replace("{USER}", UserCalculated);
+                connStr = ReplacePasswordInConnectionString(connStr);
+
+                // Parse and normalise the connection string using SqlConnectionStringBuilder
+                var parsedBuilder = new SqlConnectionStringBuilder(connStr);
+                return parsedBuilder;
+            }
+        }
+
         public static string HidePasswordFromString(string dataString)
         {
             string passwordValue = dataString.Replace(" ", "");//remove spaces
