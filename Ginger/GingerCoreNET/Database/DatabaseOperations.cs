@@ -196,7 +196,7 @@ namespace GingerCore.Environments
                         }
 
                     case eDBTypes.DB2:
-                        
+
                         Database.ConnectionString = $"Server={TNSCalculated};Database={Database.Name};UID={{USER}};PWD={{PASS}}";
                         //Database.ConnectionString = $"Server={TNSCalculated};Database={Database.Name};UID={{USER}};PWD={{PASS}}";
                         break;
@@ -272,16 +272,17 @@ namespace GingerCore.Environments
                     //}
 
                     case eDBTypes.MSSQL:
+                        var builder = new SqlConnectionStringBuilder
                         {
-                            var builder = new SqlConnectionStringBuilder();
-                            builder.DataSource = TNSCalculated;
-                            if (!string.IsNullOrEmpty(Database.Name)) builder.InitialCatalog = Database.Name;
-                            builder.IntegratedSecurity = false;
-                            builder.UserID = "{USER}";
-                            builder.Password = "{PASS}";
-                            Database.ConnectionString = builder.ConnectionString;
-                            break;
-                        }
+                            DataSource = TNSCalculated
+                        };
+
+                        if (!string.IsNullOrEmpty(Database.Name)) builder.InitialCatalog = Database.Name;
+                        builder.IntegratedSecurity = false;
+                        builder.UserID = UserCalculated;
+                        builder.Password = EncryptionHandler.DecryptwithKey(PassCalculated);
+                        Database.ConnectionString = builder.ConnectionString;
+                        break;
 
                     default:
                         throw new NotImplementedException("Unhandled database type: " + Database.DBType);
@@ -344,22 +345,13 @@ namespace GingerCore.Environments
                 switch (Database.DBType)
                 {
                     case eDBTypes.MSSQL:
-                        var builder = new SqlConnectionStringBuilder();
-                        builder.DataSource = TNSCalculated;
-                        if (!string.IsNullOrEmpty(Database.Name)) builder.InitialCatalog = Database.Name;
-                        builder.IntegratedSecurity = false;
-                        builder.UserID = "{USER}";
-                        builder.Password = "{PASS}";
-                        Database.ConnectionString = builder.ConnectionString;
-                        var sqlConnectionStringBuilder = new SqlConnectionStringBuilder
-                        {
-                            ConnectionString = GetConnectionString()
-                        };
+                        // If a full connection string is provided use it (after resolving placeholders and decrypting password),
+                        // otherwise build from TNS/User/Pass as before.
+                        string connectionString = string.Empty;
+                        var mailBuilder = GetMSSQLConnectionStringBuilder();
 
-                        oConn = new SqlConnection
-                        {
-                            ConnectionString = sqlConnectionStringBuilder.ConnectionString
-                        };
+                        oConn = new SqlConnection(mailBuilder.ConnectionString);
+
                         oConn.Open();
                         break;
 
@@ -437,18 +429,13 @@ namespace GingerCore.Environments
                         {
                             Host = postgreSQLHost,
                             Database = Database.Name ?? string.Empty,
-                            Username = "{USER}",
-                            Password = "{PASS}"
+                            Username = UserCalculated,
+                            Password = EncryptionHandler.DecryptwithKey(PassCalculated)
                         };
                         if (port.HasValue) pg.Port = port.Value;
                         Database.ConnectionString = pg.ConnectionString;
 
-                        var npgsqlconnectionStringBuilder = new Npgsql.NpgsqlConnectionStringBuilder
-                        {
-                            ConnectionString = GetConnectionString()
-                        };
-
-                        oConn = new NpgsqlConnection(npgsqlconnectionStringBuilder.ConnectionString);
+                        oConn = new NpgsqlConnection(pg.ConnectionString);
                         oConn.Open();
                         break;
 
@@ -465,7 +452,7 @@ namespace GingerCore.Environments
                         {
                             return false;
                         }
-                    
+
                     case eDBTypes.Couchbase:
                         GingerCouchbase CouchbaseDriver = new GingerCouchbase(Database);
                         bool isConnectionCB;
@@ -496,20 +483,15 @@ namespace GingerCore.Environments
                         {
                             Server = mySQLHost,
                             Database = Database.Name ?? string.Empty,
-                            UserID = "{USER}",
-                            Password = "{PASS}"
+                            UserID = UserCalculated,
+                            Password = EncryptionHandler.DecryptwithKey(PassCalculated)
                         };
                         if (port1.HasValue) my.Port = port1.Value;
                         Database.ConnectionString = my.ConnectionString;
 
-                        var mySqlconnectionStringBuilder = new MySqlConnectionStringBuilder
-                        {
-                            ConnectionString = GetConnectionString()
-                        };
-
                         oConn = new MySqlConnection
                         {
-                            ConnectionString = mySqlconnectionStringBuilder.ConnectionString
+                            ConnectionString = my.ConnectionString
                         };
                         oConn.Open();
                         break;
@@ -526,8 +508,8 @@ namespace GingerCore.Environments
                         {
                             return false;
                         }
-                    
-                    case eDBTypes.CosmosDb:                        
+
+                    case eDBTypes.CosmosDb:
                         Database.ConnectionString = GetConnectionString();
                         GingerCosmos objGingerCosmos = new GingerCosmos
                         {
@@ -584,6 +566,32 @@ namespace GingerCore.Environments
 
             return false;
         }
+
+        private SqlConnectionStringBuilder GetMSSQLConnectionStringBuilder()
+        {
+            //if (string.IsNullOrEmpty(Database.ConnectionString))
+            {
+                var builder = new SqlConnectionStringBuilder();
+                builder.DataSource = TNSCalculated;
+                if (!string.IsNullOrEmpty(Database.Name)) builder.InitialCatalog = Database.Name;
+                builder.IntegratedSecurity = false;
+                builder.UserID = UserCalculated;
+                builder.Password = EncryptionHandler.DecryptwithKey(PassCalculated);
+                return builder;
+            }
+            //else
+            //{
+            //    // GetConnectionString will replace {USER} and {PASS} placeholders and decrypt the password
+            //    string connStr = ConnectionStringCalculated;
+            //    connStr = connStr.Replace("{USER}", UserCalculated);
+            //    connStr = ReplacePasswordInConnectionString(connStr);
+
+            //    // Parse and normalise the connection string using SqlConnectionStringBuilder
+            //    var parsedBuilder = new SqlConnectionStringBuilder(connStr);
+            //    return parsedBuilder;
+            //}
+        }
+
         public static string HidePasswordFromString(string dataString)
         {
             string passwordValue = dataString.Replace(" ", "");//remove spaces
