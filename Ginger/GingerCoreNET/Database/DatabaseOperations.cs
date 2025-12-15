@@ -569,7 +569,7 @@ namespace GingerCore.Environments
 
         private SqlConnectionStringBuilder GetMSSQLConnectionStringBuilder()
         {
-            if (string.IsNullOrEmpty(Database.ConnectionString))
+            //if (string.IsNullOrEmpty(Database.ConnectionString))
             {
                 var builder = new SqlConnectionStringBuilder();
                 builder.DataSource = TNSCalculated;
@@ -579,17 +579,17 @@ namespace GingerCore.Environments
                 builder.Password = EncryptionHandler.DecryptwithKey(PassCalculated);
                 return builder;
             }
-            else
-            {
-                // GetConnectionString will replace {USER} and {PASS} placeholders and decrypt the password
-                string connStr = ConnectionStringCalculated;
-                connStr = connStr.Replace("{USER}", UserCalculated);
-                connStr = ReplacePasswordInConnectionString(connStr);
+            //else
+            //{
+            //    // GetConnectionString will replace {USER} and {PASS} placeholders and decrypt the password
+            //    string connStr = ConnectionStringCalculated;
+            //    connStr = connStr.Replace("{USER}", UserCalculated);
+            //    connStr = ReplacePasswordInConnectionString(connStr);
 
-                // Parse and normalise the connection string using SqlConnectionStringBuilder
-                var parsedBuilder = new SqlConnectionStringBuilder(connStr);
-                return parsedBuilder;
-            }
+            //    // Parse and normalise the connection string using SqlConnectionStringBuilder
+            //    var parsedBuilder = new SqlConnectionStringBuilder(connStr);
+            //    return parsedBuilder;
+            //}
         }
 
         public static string HidePasswordFromString(string dataString)
