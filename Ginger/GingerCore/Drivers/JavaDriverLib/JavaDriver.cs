@@ -2464,7 +2464,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 }
 
                 HTMLElementInfo HEI = (HTMLElementInfo)ElementInfo;
-                if (ElementInfo.ElementType.Contains("JEditor"))
+                if (ElementInfo.ElementType != null && ElementInfo.ElementType.Contains("JEditor"))
                 {
                     PayLoad Request = new PayLoad("HighLightEditorElement");
                     Request.AddValue(HEI.Path);
@@ -2753,7 +2753,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     }
                 }
 
-                if (ElementInfo.ElementType.Contains("JEditor"))
+                if (ElementInfo.ElementType != null && ElementInfo.ElementType.Contains("JEditor"))
                 {
                     if (!String.IsNullOrEmpty(ElementInfo.Path))
                     {
