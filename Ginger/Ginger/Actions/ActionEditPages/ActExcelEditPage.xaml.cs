@@ -82,7 +82,7 @@ namespace Ginger.Actions
         private void UpdateVisibility()
         {
             // 1. DATABASE OPTIONS (Header, Select Row, Primary Key)
-            // Showing only for legacy Read/Write data. Hide for new Index/Details actions.
+            // Show only for legacy Read/Write data. Hide for new Index/Details actions.
             if (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellByIndex
                 || mAct.ExcelActionType == ActExcel.eExcelActionType.GetSheetDetails)
             {
@@ -185,22 +185,9 @@ namespace Ginger.Actions
             }
         }
 
-        private void DisableSheetNameComboBox()
-        {
-            WeakEventManager<ComboBox, EventArgs>.RemoveHandler(source: SheetNamComboBox, eventName: nameof(ComboBox.DropDownOpened), handler: SheetNamComboBox_DropDownOpened); 
-        }
-        private void EnableSheetNameComboBox() 
-        {
-            WeakEventManager<ComboBox, EventArgs>.AddHandler(source: SheetNamComboBox, eventName: nameof(ComboBox.DropDownOpened), handler: SheetNamComboBox_DropDownOpened); 
-        }
-        private void ContextProcessInputValueForDriver()
-        {
-            var context = Context.GetAsContext(mAct.Context);
-            if (context != null)
-            {
-                context.Runner.ProcessInputValueForDriver(mAct);
-            }
-        }
+        private void DisableSheetNameComboBox() { WeakEventManager<ComboBox, EventArgs>.RemoveHandler(source: SheetNamComboBox, eventName: nameof(ComboBox.DropDownOpened), handler: SheetNamComboBox_DropDownOpened); }
+        private void EnableSheetNameComboBox() { WeakEventManager<ComboBox, EventArgs>.AddHandler(source: SheetNamComboBox, eventName: nameof(ComboBox.DropDownOpened), handler: SheetNamComboBox_DropDownOpened); }
+        private void ContextProcessInputValueForDriver() { var context = Context.GetAsContext(mAct.Context); if (context != null) context.Runner.ProcessInputValueForDriver(mAct); }
 
         private async void ViewDataButton_Click(object sender, RoutedEventArgs e)
         {
@@ -299,29 +286,9 @@ namespace Ginger.Actions
         }
 
         private void SheetNamComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) { mAct.SheetName = SheetNamComboBox.Text; ContextProcessInputValueForDriver(); }
-        private void SheetNamComboBox_DropDownOpened(object sender, EventArgs e)
-        {
-            if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName)]))
-            {
-                return;
-            }
-
-            FillSheetCombo(); 
-        }
-
-        private void xOpenExcelButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName)]))
-            {
-                return;
-            }
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = mAct.CalculatedFileName, UseShellExecute = true });
-        }
-
-        private void HeaderNumValidation(object sender, TextCompositionEventArgs e) 
-        {
-            Regex regex = new Regex("[^0-9]+");
-            e.Handled = regex.IsMatch(e.Text);
-        }
+        private void SheetNamComboBox_DropDownOpened(object sender, EventArgs e) { if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName)])) return; FillSheetCombo(); }
+        private void SheetNamVEButton_Click(object sender, RoutedEventArgs e) { ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, nameof(ActExcel.SheetName), Context.GetAsContext(mAct.Context)); w.ShowAsWindow(eWindowShowStyle.Dialog); SheetNamComboBox.Text = mAct.SheetName; }
+        private void xOpenExcelButton_Click(object sender, RoutedEventArgs e) { if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName)])) return; System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = mAct.CalculatedFileName, UseShellExecute = true }); }
+        private void HeaderNumValidation(object sender, TextCompositionEventArgs e) { Regex regex = new Regex("[^0-9]+"); e.Handled = regex.IsMatch(e.Text); }
     }
 }
