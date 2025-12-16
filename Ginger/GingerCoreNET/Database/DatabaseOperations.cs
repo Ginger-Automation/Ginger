@@ -364,7 +364,9 @@ namespace GingerCore.Environments
                                 Provider = "msdaora"
                             };
 
-                            oleDbconnectionStringBuilder.ConnectionString = GetConnectionString();
+                            String deCryptValue = EncryptionHandler.DecryptwithKey(PassCalculated);
+
+                            oleDbconnectionStringBuilder.ConnectionString = ConnectionStringCalculated.Replace("{USER}", UserCalculated).Replace("{PASS}", string.IsNullOrEmpty(deCryptValue) ? PassCalculated : deCryptValue);
 
                             oConn = OleDbFactory.Instance.CreateConnection();
                             oConn.ConnectionString = oleDbconnectionStringBuilder.ConnectionString;
