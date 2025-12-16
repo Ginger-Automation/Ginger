@@ -20,11 +20,12 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.GeneralLib;
+using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Xml;
@@ -88,34 +89,6 @@ namespace GingerCore.Actions.RobotFramework
             return lstVarBase;
         }
 
-        public void WriteVariablesToCSVFile(string fileName, List<Variables.VariableBase> vbList)
-        {
-            using (System.IO.TextWriter writer = new StreamWriter(fileName))
-            {
-                foreach (Variables.VariableBase vbItem in vbList)
-                {
-                    StringBuilder sb = new StringBuilder();
-
-                    sb.Append(vbItem.Name);
-                    sb.Append(",");
-                    sb.Append(vbItem.Value);
-
-                    writer.WriteLine(sb.ToString());
-                }
-            }
-        }
-
-        public void WriteVariablesToJSONFile(string fileName, List<GingerParam> gingerParamsLst)
-        {
-            //open file stream
-            using (StreamWriter file = File.CreateText(fileName))
-            {
-                JsonSerializer serializer = new JsonSerializer();
-                //serialize object directly into file stream
-                serializer.Serialize(file, gingerParamsLst);
-            }
-        }
-
         public void WriteVariablesToJSONFile_V2(string fileName, List<GingerParam> gingerParamsLst)
         {
             StringBuilder sbr = new StringBuilder();
@@ -151,8 +124,8 @@ namespace GingerCore.Actions.RobotFramework
         {
             List<GingerParam> lstGingerParam = [];
 
-            // solution variables
-            foreach (Variables.VariableBase varBase in this.RunOnBusinessFlow.GetSolutionVariables())
+            // solution variables except password variables
+            foreach (Variables.VariableBase varBase in this.RunOnBusinessFlow.GetSolutionVariables().Where(vrb => vrb is not VariablePasswordString))
             {
                 GingerParam gingerParam = new GingerParam
                 {
@@ -162,8 +135,8 @@ namespace GingerCore.Actions.RobotFramework
                 lstGingerParam.Add(gingerParam);
             }
 
-            // business flow variables
-            foreach (Variables.VariableBase varBase in this.RunOnBusinessFlow.Variables)
+            // business flow variables except password variables
+            foreach (Variables.VariableBase varBase in this.RunOnBusinessFlow.Variables.Where(vrb => vrb is not VariablePasswordString))
             {
                 GingerParam gingerParam = new GingerParam
                 {
@@ -176,8 +149,8 @@ namespace GingerCore.Actions.RobotFramework
                 }
             }
 
-            // activity variables
-            foreach (Variables.VariableBase varBase in this.RunOnBusinessFlow.CurrentActivity.Variables)
+            // activity variables except password variables
+            foreach (Variables.VariableBase varBase in this.RunOnBusinessFlow.CurrentActivity.Variables.Where(vrb => vrb is not VariablePasswordString))
             {
                 GingerParam gingerParam = new GingerParam
                 {
@@ -218,9 +191,6 @@ namespace GingerCore.Actions.RobotFramework
             {
                 // reset values 
                 ResetValues();
-
-                // create variables in CSV
-                List<Variables.VariableBase> lstVarBase = CreateBusinessAndActivityVariablesToList();
 
                 List<GingerParam> lstGingerVars = GetCreateBusinessAndActivityVariablesToJSONList();
                 string fileName = System.IO.Path.GetTempFileName().Replace(".tmp", ".json");
