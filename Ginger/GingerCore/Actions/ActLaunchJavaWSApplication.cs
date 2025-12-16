@@ -865,6 +865,11 @@ namespace GingerCore.Actions
                 throw new FileNotFoundException("java.exe not found at the specified path.", javaExePath);
             }
 
+            if (!string.Equals(Path.GetFileName(javaExePath), "java.exe", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException($"The specified Java executable path '{javaExePath}' does not end with 'java.exe'. Aborting for security reasons.");
+            }
+
             ProcessStartInfo psi = new ProcessStartInfo
             {
                 FileName = javaExePath,
