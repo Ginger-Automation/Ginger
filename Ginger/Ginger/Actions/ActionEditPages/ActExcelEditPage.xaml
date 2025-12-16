@@ -1,75 +1,115 @@
-    <Page x:Class="Ginger.Actions.ActExcelEditPage" xmlns:Actions="clr-namespace:Ginger.Actions" 
+<Page x:Class="Ginger.Actions.ActExcelEditPage" xmlns:Actions="clr-namespace:Ginger.Actions" 
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
-      d:DesignHeight="380" d:DesignWidth="700"
-	Title="ActExcelEditPage" >
+      d:DesignHeight="450" d:DesignWidth="700"
+      Title="ActExcelEditPage" >
 
     <Grid Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250*"/>
             <ColumnDefinition Width="250*"/>
-            <ColumnDefinition Width="60"/>            
+            <ColumnDefinition Width="60"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="55"/>
             <RowDefinition Height="55"/>
-            <RowDefinition Height="*"/>        
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Grid.ColumnSpan="3">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Excel Action:</Label>
-            <ComboBox x:Name="ExcelActionComboBox" SelectionChanged="ExcelActionComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" Width="250" HorizontalAlignment="Left"/>            
+            <ComboBox x:Name="ExcelActionComboBox" 
+                      SelectedValue="{Binding ExcelActionType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                      SelectionChanged="ExcelActionComboBox_SelectionChanged" 
+                      Style="{StaticResource $FlatInputComboBoxStyle}" 
+                      Width="250" HorizontalAlignment="Left"/>
         </StackPanel>
-        
+
         <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Excel File Path:</Label>
-            <Actions:UCValueExpression x:Name="ExcelFileNameTextBox" ToolTip="Excel file full/relative path"/>           
+            <Actions:UCValueExpression x:Name="ExcelFileNameTextBox" ToolTip="Excel file full/relative path"/>
         </StackPanel>
         <Button x:Name="BrowseExcelButton" Content="Browse" Grid.Row="1" Grid.Column="2" Click="BrowseExcelButton_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{StaticResource @InputButtonStyle}" Margin="5,0,5,3"/>
 
         <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,2,0">
+
             <StackPanel>
-                <StackPanel>
-                    <Label Style="{StaticResource @InputFieldLabelStyle}">Sheet Name:</Label>
-                    <DockPanel >
-                        <ComboBox x:Name="SheetNamComboBox" SelectionChanged="SheetNamComboBox_SelectionChanged" DropDownOpened="SheetNamComboBox_DropDownOpened" Style="{StaticResource $FlatInputComboBoxStyle}" IsEditable="True" HorizontalAlignment="Stretch" DockPanel.Dock="Left" Width="250"></ComboBox>
-                        <Button x:Name="SheetNamVEButton" Content="..." Click="SheetNamVEButton_Click" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="1,0,5,0" Width="30" Height="24"/>
-                        <usercontrols:ImageMakerControl x:Name="xLoader" ImageType="Processing" VerticalAlignment="Center" HorizontalAlignment="Left" Visibility="Hidden" DockPanel.Dock="Left" Width="20" Height="20"/>
-                    </DockPanel>
-                </StackPanel>
+                <Label Style="{StaticResource @InputFieldLabelStyle}">Sheet Name:</Label>
+                <DockPanel >
+                    <ComboBox x:Name="SheetNamComboBox" SelectionChanged="SheetNamComboBox_SelectionChanged" DropDownOpened="SheetNamComboBox_DropDownOpened" Style="{StaticResource $FlatInputComboBoxStyle}" IsEditable="True" HorizontalAlignment="Stretch" DockPanel.Dock="Left" Width="250"></ComboBox>
+                    <Button x:Name="SheetNamVEButton" Content="..." Click="SheetNamVEButton_Click" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="1,0,5,0" Width="30" Height="24"/>
+                    <usercontrols:ImageMakerControl x:Name="xLoader" ImageType="Processing" VerticalAlignment="Center" HorizontalAlignment="Left" Visibility="Hidden" DockPanel.Dock="Left" Width="20" Height="20"/>
+                </DockPanel>
+            </StackPanel>
+
+            <StackPanel x:Name="pnlDatabaseOptions">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ExcelActionType}" Value="ReadCellByIndex">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ExcelActionType}" Value="GetSheetDetails">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+
                 <StackPanel>
                     <Label Style="{StaticResource @InputFieldLabelStyle}">Table Header Row Number:</Label>
                     <Actions:UCValueExpression HorizontalAlignment="Left" Width="250" x:Name="HeaderRowNumTextBox" ToolTip="Enter the Row Number at which the Table Headers Exists" PreviewTextInput="HeaderNumValidation"/>
                 </StackPanel>
+
+                <StackPanel x:Name="xSelectAllRowsSP">
+                    <Label Style="{StaticResource @InputFieldLabelStyle}">Select Row(s) Where:</Label>
+                    <Actions:UCValueExpression x:Name="SelectRowsWhereTextBox" Margin="0,0,105,0" ToolTip="[Column Name]=Value to filter the rows by, like: Available='Yes' or Num=1"/>
+                    <CheckBox x:Name="SelectAllRows" ToolTip="Select all Rows" HorizontalAlignment="Right" IsChecked="False" Margin="0,-20,0,0" Style="{StaticResource @CheckBoxStyle}">Select All Rows</CheckBox>
+                </StackPanel>
+
+                <StackPanel x:Name="xPrimaryKeyColSP">
+                    <Label Style="{StaticResource @InputFieldLabelStyle}">Primary Key Column:</Label>
+                    <Actions:UCValueExpression x:Name="PrimaryKeyColumnTextBox" ToolTip="Unique ColumnName to identify the single row by, like: ID"/>
+                </StackPanel>
             </StackPanel>
 
-            <StackPanel>
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Select Row(s) Where:</Label>
-                <Actions:UCValueExpression x:Name="SelectRowsWhereTextBox" Margin="0,0,105,0" ToolTip="[Column Name]=Value to filter the rows by, like: Available='Yes' or Num=1 or [Team Name]='Ginger' or Account=XYZ or [Client Name]='Q#E' or [Client Name]=QER"/>
-                <CheckBox x:Name="SelectAllRows" ToolTip="Select all Rows" HorizontalAlignment="Right" IsChecked="False" Margin="0,-20,0,0" Style="{StaticResource @CheckBoxStyle}">Select All Rows</CheckBox>
-            </StackPanel>
+            <StackPanel x:Name="pnlIndexOptions">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ExcelActionType}" Value="ReadCellByIndex">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
 
-            <StackPanel>
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Primary Key Column:</Label>
-                <Actions:UCValueExpression x:Name="PrimaryKeyColumnTextBox" ToolTip="Unique ColumnName to identify the single row by, like: ID"/>
+                <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,10,0,0">Row Index (e.g. 1):</Label>
+                <Actions:UCValueExpression x:Name="RowIndexTextBox" ToolTip="Enter Row Number (Integer) or Variable"/>
+
+                <Label Style="{StaticResource @InputFieldLabelStyle}">Column Index (e.g. 5):</Label>
+                <Actions:UCValueExpression x:Name="ColumnIndexTextBox" ToolTip="Enter Column Number (Integer) or Variable"/>
             </StackPanel>
 
             <StackPanel x:Name="SetDataUsedSection" Visibility="Visible">
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Set Data Used Value:</Label>
-                <Actions:UCValueExpression x:Name="SetDataUsedTextBox" ToolTip="[Column Name1]=Value1, ColumnName2=Value2... to update after row was used, like: Used='Y',User=ABC ,[Updated By]='Ginger', [Created by]='R$T' , [Created By]=YUO"/>
+                <Label Style="{StaticResource @InputFieldLabelStyle}">Set Data Used Value / Write Value:</Label>
+                <Actions:UCValueExpression x:Name="SetDataUsedTextBox" ToolTip="Value to write."/>
             </StackPanel>
 
             <StackPanel x:Name="ColMappingRulesSection" Visibility="Collapsed">
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Data To Write:</Label>
-                <Actions:UCValueExpression x:Name="ColMappingRulesTextBox" ToolTip="[Column Name1]=Value1, ColumnName2=Value2... values to write, like: FirstName='John', [Middle Name]=Adam ,[Last Name]='Smith', [First Name]='Me#a', [First Name]=MTR"/>
-            </StackPanel>                       
+                <Actions:UCValueExpression x:Name="ColMappingRulesTextBox" ToolTip="[Column Name1]=Value1..."/>
+            </StackPanel>
+
         </StackPanel>
 
         <GridSplitter x:Name="GridSplitter" ResizeDirection="Columns" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $PrimaryColor_Black}" IsEnabled="False" Margin="0,0,0,0" />
-        
+
         <DockPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5,0,0,0">
             <DockPanel DockPanel.Dock="Top">
                 <Label Style="{StaticResource @InputFieldLabelStyle}" DockPanel.Dock="Left">Excel Data:</Label>
@@ -87,7 +127,6 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="DataGridColumnHeader">
-
                                     <ContentPresenter RecognizesAccessKey="False"></ContentPresenter>
                                 </ControlTemplate>
                             </Setter.Value>
@@ -95,7 +134,7 @@
                     </Style>
                 </DataGrid.ColumnHeaderStyle>
             </DataGrid>
-            <usercontrols:ImageMakerControl x:Name="xViewDataLoader" ImageType="Processing"   Visibility="Collapsed"  Width="20" Height="20"/>
+            <usercontrols:ImageMakerControl x:Name="xViewDataLoader" ImageType="Processing"    Visibility="Collapsed"  Width="20" Height="20"/>
         </DockPanel>
-    </Grid>   
+    </Grid>
 </Page>
