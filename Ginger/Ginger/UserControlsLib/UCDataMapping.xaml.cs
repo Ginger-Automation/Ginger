@@ -270,8 +270,14 @@ namespace Ginger.UserControlsLib
             xValueTextBox.PreviewTextInput -= xValueTextBox_PreviewTextInput;
             xSelectionListComboBox.SelectionChanged -= xSelectionListComboBox_SelectionChanged;
             xDatePickerWPF.SelectedDateChanged -= xDatePickerWPF_SelectedDateChanged;
-            mVariablesList.CollectionChanged -= VariabelsSourceList_CollectionChanged;
-            mGlobalVariablesList.CollectionChanged -= VariabelsSourceList_CollectionChanged;
+            if (mVariablesList != null)
+            {
+                mVariablesList.CollectionChanged -= VariabelsSourceList_CollectionChanged;
+            }
+            if (mGlobalVariablesList != null)
+            {
+                mGlobalVariablesList.CollectionChanged -= VariabelsSourceList_CollectionChanged;
+            }
             if (xDateTimePicker != null)
             {
                 xDateTimePicker.TextChanged -= xDateTimePicker_TextChanged;
