@@ -120,7 +120,10 @@ namespace Ginger.UserControlsLib
             }
             set
             {
-
+                if (value == null)
+                {
+                    return;
+                }
                 SetValue(MappedValueProperty, value);
                 if (WorkSpace.Instance != null
                     && WorkSpace.Instance.RunsetExecutor != null
@@ -182,6 +185,10 @@ namespace Ginger.UserControlsLib
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName)
         {
+            if (PropertyChanged == null)
+            {
+                return;
+            }
             PropertyChangedEventHandler? handler = PropertyChanged;
             if (handler != null)
             {
@@ -195,8 +202,6 @@ namespace Ginger.UserControlsLib
             InitializeComponent();
 
 
-            //commented this line because its casing issue in the action output values. Store to column gets disabled
-            //this.IsEnabled = false;
             InitTypeOptions();
             InitValuesOptions();
 
@@ -265,6 +270,8 @@ namespace Ginger.UserControlsLib
             xValueTextBox.PreviewTextInput -= xValueTextBox_PreviewTextInput;
             xSelectionListComboBox.SelectionChanged -= xSelectionListComboBox_SelectionChanged;
             xDatePickerWPF.SelectedDateChanged -= xDatePickerWPF_SelectedDateChanged;
+            mVariablesList.CollectionChanged -= VariabelsSourceList_CollectionChanged;
+            mGlobalVariablesList.CollectionChanged -= VariabelsSourceList_CollectionChanged;
             if (xDateTimePicker != null)
             {
                 xDateTimePicker.TextChanged -= xDateTimePicker_TextChanged;
@@ -783,6 +790,8 @@ namespace Ginger.UserControlsLib
             {
                 mOutputVariablesList = outputVariablesList;
                 GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.OutputVariable);
+                mOutputVariablesList.CollectionChanged += VariabelsSourceList_CollectionChanged;
+                SetValueControlsData();
             }
         }
 
@@ -1181,7 +1190,7 @@ namespace Ginger.UserControlsLib
         /// </summary>
         /// <param name="options">Template configuration options</param>
         /// <returns>DataTemplate for the control</returns>
-        public static DataTemplate GetTemplate(TemplateOptions options, bool isActionOutputValuesView = false)
+        public static DataTemplate GetTemplate(TemplateOptions options)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory ucDataMapping = new FrameworkElementFactory(typeof(UCDataMapping));
