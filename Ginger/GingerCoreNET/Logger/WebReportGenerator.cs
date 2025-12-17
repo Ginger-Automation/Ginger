@@ -189,38 +189,38 @@ namespace Amdocs.Ginger.CoreNET.Logger
             try
             {
                 string backDir = System.IO.Directory.GetParent(clientAppFolderPath).FullName;
-                string viewReportTemplatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", "HTMLTemplates", "viewreport.html");
-                string strViewReport = System.IO.File.ReadAllText(viewReportTemplatePath);
-                strViewReport = strViewReport.Replace("<!--FULLREPORTPATH-->", Path.GetFileName(clientAppFolderPath));
-                System.IO.File.WriteAllText(Path.Combine(backDir, "viewreport.html"), strViewReport);
-                json = $"window.runsetData={json};";
+                if (IsSafeDirectoryToOpen(backDir))
+                {
+                    string viewReportTemplatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", "HTMLTemplates", "viewreport.html");
+                    string strViewReport = System.IO.File.ReadAllText(viewReportTemplatePath);
+                    strViewReport = strViewReport.Replace("<!--FULLREPORTPATH-->", Path.GetFileName(clientAppFolderPath));
+                    System.IO.File.WriteAllText(Path.Combine(backDir, "viewreport.html"), strViewReport);
+                    json = $"window.runsetData={json};";
 
 #warning Report Fix MEN not stable approach 
-                StringBuilder pageDataSb = new StringBuilder();
-                pageDataSb.Append("file:///");
-                pageDataSb.Append(backDir.Replace('\\', '/'));
-                pageDataSb.Append("/");
-                pageDataSb.Append("viewreport.html");
-                if (openObject != null)
-                {
-                    pageDataSb.Append("#/?Routed_Guid=");
-                    pageDataSb.Append(openObject.Guid);
-                }
-                string taskCommand = $"\"{pageDataSb}\"";
-                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets", "Execution_Data", "executiondata.js"), json);
+                    StringBuilder reportLocalUrl = new StringBuilder();
+                    reportLocalUrl.Append("file:///");
+                    reportLocalUrl.Append(backDir.Replace('\\', '/'));
+                    reportLocalUrl.Append("/");
+                    reportLocalUrl.Append("viewreport.html");
+                    if (openObject != null)
+                    {
+                        reportLocalUrl.Append("#/?Routed_Guid=");
+                        reportLocalUrl.Append(openObject.Guid);
+                    }
+                    string taskCommand = $"\"{reportLocalUrl}\"";
+                    System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets", "Execution_Data", "executiondata.js"), json);
 
-                if (shouldDisplayReport && !Assembly.GetEntryAssembly().FullName.ToUpper().Contains("CONSOLE"))
-                {
-                    if (IsSafeDirectoryToOpen(backDir))
+                    if (shouldDisplayReport && !Assembly.GetEntryAssembly().FullName.ToUpper().Contains("CONSOLE"))
                     {
                         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = @browserPath, Arguments = taskCommand, UseShellExecute = true });
                         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = backDir, UseShellExecute = true });
                         response = true;
                     }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.WARN, $"The report directory '{backDir}' is not considered safe to open automatically.");
-                    }
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.WARN, $"The report directory '{backDir}' is not considered safe to open automatically.");
                 }
             }
             catch (Exception ex)
