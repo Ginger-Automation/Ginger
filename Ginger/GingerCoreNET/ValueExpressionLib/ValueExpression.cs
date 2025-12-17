@@ -293,8 +293,7 @@ namespace GingerCore
                 catch (Exception ex)
                 {
                     mValueCalculated = mValueCalculated.Replace(match.Value, $"Expression is not valid, Error:'{ex.Message}'");
-                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to evaluate flow details expression, Error: '{match.Value}'");
-                    Reporter.ToLog(eLogLevel.ERROR, $"{ex}");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to evaluate flow details expression, Error: '{match.Value}'", ex);                    
                 }
             }
 
@@ -306,9 +305,8 @@ namespace GingerCore
                 }
                 catch (Exception ex)
                 {
-                    mValueCalculated = mValueCalculated.Replace(match.Value, $"[Expression is not valid, Error:'{0}'] {ex.Message}");
-                    Reporter.ToLog(eLogLevel.ERROR, $"[Expression is not valid, Error:'{0}'] {match.Value}");
-                    Reporter.ToLog(eLogLevel.ERROR, $"{ex}");
+                    mValueCalculated = mValueCalculated.Replace(match.Value, $"Failed to evaluate ExecutionJsonData expression, Error:'{ex.Message}'");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to evaluate ExecutionJsonData expression, Error:'{match.Value}'", ex);                    
                 }
             }
         }
@@ -1286,7 +1284,7 @@ namespace GingerCore
                 }
                 catch (Exception e)
                 {
-                    mValueCalculated = $"ERROR: Failed to query data source";
+                    mValueCalculated = "ERROR: Failed to query data source";
                     Reporter.ToLog(eLogLevel.ERROR, "LiteDB data source query failed", e);
                 }
             }
