@@ -186,7 +186,6 @@ namespace Amdocs.Ginger.CoreNET.Logger
         {
             bool response = false;
 
-
             try
             {
                 string backDir = System.IO.Directory.GetParent(clientAppFolderPath).FullName;
@@ -212,10 +211,17 @@ namespace Amdocs.Ginger.CoreNET.Logger
 
                 if (shouldDisplayReport && !Assembly.GetEntryAssembly().FullName.ToUpper().Contains("CONSOLE"))
                 {
-                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = @browserPath, Arguments = taskCommand, UseShellExecute = true });
-                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = backDir, UseShellExecute = true });
+                    if (IsSafeDirectoryToOpen(backDir))
+                    {
+                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = @browserPath, Arguments = taskCommand, UseShellExecute = true });
+                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = backDir, UseShellExecute = true });
+                        response = true;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, $"The report directory '{backDir}' is not considered safe to open automatically.");
+                    }
                 }
-                response = true;
             }
             catch (Exception ex)
             {
@@ -223,6 +229,22 @@ namespace Amdocs.Ginger.CoreNET.Logger
             }
 
             return response;
+        }
+
+        private static bool IsSafeDirectoryToOpen(string dir)
+        {
+            try
+            {
+                string reportsRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports"));
+                string fullDir = Path.GetFullPath(dir);
+
+                return Directory.Exists(fullDir) && fullDir.StartsWith(reportsRoot, StringComparison.OrdinalIgnoreCase);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception:", ex);
+                return false;
+            }
         }
 
 
