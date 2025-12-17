@@ -357,7 +357,6 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.RowIndex), "2");
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.ColumnIndex), "2");
 
-            actExcel.ExcelActionType = ActExcel.eExcelActionType.ReadCellByIndex;
             actExcel.AddNewReturnParams = true;
 
             //Act
