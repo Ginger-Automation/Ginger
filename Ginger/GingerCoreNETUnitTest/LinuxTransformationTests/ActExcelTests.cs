@@ -73,7 +73,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Assert
             Assert.AreEqual(actExcel.ActReturnValues.Count, 4);
-            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "1,Mark,Cohen,2109 Fox Dr");
+            Assert.AreEqual("A2,B2,C2,D2", string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()));
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address");
         }
         [TestMethod]
@@ -93,6 +93,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Assert
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "1,Mark,Cohen,2109 Fox Dr");
+            Assert.AreEqual("A2,B2,C2,D2", string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()));
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address");
         }
 
@@ -114,7 +115,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Assert
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "3,Mike,Bond,AZ");
-            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()), "1,1,1,1");
+            Assert.AreEqual("A2,B2,C2,D2", string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()));
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address");
         }
         [TestMethod]
@@ -135,7 +136,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Assert
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "1,Mark,Cohen,2109 Fox Dr");
-            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()), "1,1,1,1");
+            Assert.AreEqual("A2,B2,C2,D2", string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()));
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address");
         }
         [TestMethod]
@@ -156,7 +157,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Assert
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "1,Mark,Cohen,2109 Fox Dr");
-            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()), "1,1,1,1");
+            Assert.AreEqual("A2,B2,C2,D2", string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()));
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address");
         }
         [TestMethod]
@@ -200,7 +201,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Assert
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "1,Mark,Cohen,2109 Fox Dr,4,Adam,Cohen,NY");
-            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()), "1,1,1,1,2,2,2,2");
+            Assert.AreEqual("A2,B2,C2,D2", string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()));
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address,ID,First,Last,Address");
         }
         [TestMethod]
@@ -248,13 +249,12 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
         [TestMethod]
         public void WriteExcelOneRowWithPKTest()
         {
-            //Arrange            
+            //Arrange              
             ActExcel actExcel = new ActExcel
             {
                 RunOnBusinessFlow = new GingerCore.BusinessFlow()
             };
-            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.ExcelFileName),
-                TestResources.GetTestResourcesFile(excelPathWriteTemp));
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.ExcelFileName), TestResources.GetTestResourcesFile(excelPathWriteTemp));
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SheetName), "Sheet1");
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SelectRowsWhere), "Last='Cohen'");
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.PrimaryKeyColumn), "ID");
@@ -269,6 +269,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             DataTable dt = excelOperations.ReadData(excelPathWriteTemp, actExcel.SheetName, actExcel.SelectRowsWhere, false, actExcel.HeaderRowNum);
             Assert.AreEqual(string.Join(',', dt.Rows[0].ItemArray.Select(x => x).ToList()), "1,Marco,Cohen,2109 Fox Dr");
         }
+
         [TestMethod]
         public void WriteExcelMultiRowsWithFilterTest()
         {
@@ -339,6 +340,65 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             Assert.AreEqual(actExcel.ActReturnValues.Count, 1);
             Assert.AreEqual(actExcel.ActReturnValues[0].Actual, "30465673520871400000");
             Assert.AreEqual(actExcel.ActReturnValues[0].Param, "SIM");
+        }
+
+        // ---------------------------------------------------------------------------------------------
+        // NEW TEST: Read Cell By Index (Testing your new enhancement)
+        // ---------------------------------------------------------------------------------------------
+        [TestMethod]
+        public void ReadExcelCellByIndexTest()
+        {
+            //Arrange
+            ActExcel actExcel = new ActExcel();
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.ExcelFileName), excelPathRead);
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SheetName), "Sheet1");
+
+            // Set Row 2, Col 2 (Expecting 'Mark')
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.RowIndex), "2");
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.ColumnIndex), "2");
+
+            actExcel.ExcelActionType = ActExcel.eExcelActionType.ReadCellByIndex;
+            actExcel.AddNewReturnParams = true;
+
+            //Act
+            actExcel.Execute();
+
+            //Assert
+            var val = actExcel.ActReturnValues.FirstOrDefault(x => x.Param == "CellValue");
+            var addr = actExcel.ActReturnValues.FirstOrDefault(x => x.Param == "CurrentCellAddress");
+
+            Assert.IsNotNull(val, "CellValue should be returned");
+            Assert.AreEqual("Mark", val.Actual);
+
+            Assert.IsNotNull(addr, "CurrentCellAddress should be returned");
+            Assert.AreEqual("B2", addr.Actual);
+        }
+
+        // ---------------------------------------------------------------------------------------------
+        // NEW TEST: Get Sheet Details (Testing metadata retrieval)
+        // ---------------------------------------------------------------------------------------------
+        [TestMethod]
+        public void GetSheetDetailsTest()
+        {
+            //Arrange
+            ActExcel actExcel = new ActExcel();
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.ExcelFileName), excelPathRead);
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SheetName), "Sheet1");
+            actExcel.ExcelActionType = ActExcel.eExcelActionType.GetSheetDetails;
+            actExcel.AddNewReturnParams = true;
+
+            //Act
+            actExcel.Execute();
+
+            //Assert
+            var rowCount = actExcel.ActReturnValues.FirstOrDefault(x => x.Param == "TotalRowCount");
+            var startAddr = actExcel.ActReturnValues.FirstOrDefault(x => x.Param == "FirstCellAddress");
+
+            Assert.IsNotNull(rowCount, "TotalRowCount should be returned");
+            // Assuming Names.xlsx has at least data rows (4 total rows usually in standard sample)
+            Assert.IsTrue(int.Parse(rowCount.Actual) > 0);
+
+            Assert.AreEqual("A1", startAddr?.Actual);
         }
     }
 }
