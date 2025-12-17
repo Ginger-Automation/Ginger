@@ -120,10 +120,6 @@ namespace Ginger.UserControlsLib
             }
             set
             {
-                if (value == null)
-                {
-                    return;
-                }
                 SetValue(MappedValueProperty, value);
                 if (WorkSpace.Instance != null
                     && WorkSpace.Instance.RunsetExecutor != null
