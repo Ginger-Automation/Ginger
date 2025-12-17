@@ -73,5 +73,16 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         /// </summary>
         /// <returns>List excel sheets name</returns>
         List<string> GetSheets(string fileName);
+
+        /// <summary>
+        /// For writing data into a specific cell in excel sheet
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="sheetName"></param>
+        /// <param name="address"></param>
+        /// <param name="value"></param>
+        /// <param name="headerRowNumber"></param>
+        /// <returns></returns>
+        bool WriteCellData(string fileName, string sheetName, string address, string value, string headerRowNumber);
     }
 }

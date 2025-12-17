@@ -24,6 +24,7 @@ using Amdocs.Ginger.CoreNET.ActionsLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using NPOI.SS.Util;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -82,10 +83,8 @@ namespace GingerCore.Actions
             WriteData = 1,
             [EnumValueDescription("Read Cell Data")]
             ReadCellData = 2,
-            [EnumValueDescription("Read Cell By Index")]
-            ReadCellByIndex = 3,
             [EnumValueDescription("Get Sheet Details")]
-            GetSheetDetails = 5
+            GetSheetDetails = 3
         }
 
         // --- NEW PROPERTIES ---
@@ -93,6 +92,31 @@ namespace GingerCore.Actions
         {
             get { return GetInputParamValue(nameof(RowIndex)); }
             set { AddOrUpdateInputParamValue(nameof(RowIndex), value); OnPropertyChanged(nameof(RowIndex)); }
+        }
+        public enum eDataSelectionMethod
+        {
+            [EnumValueDescription("By Parameters")]
+            ByParameters = 0,
+            [EnumValueDescription("By Cell Address")]
+            ByCellAddress = 1
+        }
+
+        // --- PROPERTIES ---
+
+        public eDataSelectionMethod DataSelectionMethod
+        {
+            get { return GetOrCreateInputParam<eDataSelectionMethod>(nameof(DataSelectionMethod), eDataSelectionMethod.ByParameters); }
+            set { AddOrUpdateInputParamValue(nameof(DataSelectionMethod), value.ToString()); }
+        }
+        public bool PullCellAddress
+        {
+            get
+            {
+                bool value = false;
+                bool.TryParse(GetOrCreateInputParam(nameof(PullCellAddress)).Value, out value);
+                return value;
+            }
+            set { AddOrUpdateInputParamValue(nameof(PullCellAddress), value.ToString()); }
         }
 
         public string ColumnIndex
@@ -138,10 +162,22 @@ namespace GingerCore.Actions
             get { return GetInputParamValue(nameof(SelectRowsWhere)); }
             set { AddOrUpdateInputParamValue(nameof(SelectRowsWhere), value); OnPropertyChanged(nameof(SelectRowsWhere)); }
         }
+
+        public string SelectCellAddress
+        {
+            get { return GetInputParamValue(nameof(SelectCellAddress)); }
+            set { AddOrUpdateInputParamValue(nameof(SelectCellAddress), value); OnPropertyChanged(nameof(SelectCellAddress)); }
+        }
+
         public string CalculatedFilter
         {
             get
             {
+                if (DataSelectionMethod == eDataSelectionMethod.ByCellAddress)
+                {
+                    return GetInputParamCalculatedValue(nameof(SelectCellAddress));
+                }
+
                 string filter = GetInputParamCalculatedValue(nameof(SelectRowsWhere));
                 return filter == null ? filter : filter.Replace("\"", "'");
             }
@@ -210,26 +246,25 @@ namespace GingerCore.Actions
             }
             using (excelOperator = new ExcelNPOIOperations())
             {
-                switch (ExcelActionType)
+                if (ExcelActionType == eExcelActionType.ReadData)
                 {
-                    case eExcelActionType.ReadData:
-                        ReadData();
-                        break;
-                    case eExcelActionType.WriteData:
-                        WriteData();
-                        break;
-                    case eExcelActionType.ReadCellData:
-                        ReadCellData();
-                        break;
-                    case eExcelActionType.ReadCellByIndex:
-                        ReadCellByIndex();
-                        break;
-                    case eExcelActionType.GetSheetDetails:
-                        GetSheetDetails();
-                        break;
-                    default:
-                        Reporter.ToLog(eLogLevel.INFO, "Only action type can be selected");
-                        break;
+                    ReadData();
+                }
+                else if (ExcelActionType == eExcelActionType.WriteData)
+                {
+                    WriteData();
+                }
+                else if (ExcelActionType == eExcelActionType.ReadCellData)
+                {
+                    ReadCellData();
+                }
+                else if (ExcelActionType == eExcelActionType.GetSheetDetails)
+                {
+                    GetSheetDetails();
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.INFO, "Only action type can be selected");
                 }
             }
         }
@@ -262,14 +297,14 @@ namespace GingerCore.Actions
 
                 if (dt != null)
                 {
-                    // --- PART 1: COUNTS (Your original request) ---
+                    // --- PART 1: COUNTS 
                     int rowCount = dt.Rows.Count;
                     int colCount = dt.Columns.Count;
 
                     AddOrUpdateReturnParamActual("TotalRowCount", rowCount.ToString());
                     AddOrUpdateReturnParamActual("TotalColumnCount", colCount.ToString());
 
-                    // --- PART 2: ADDRESS RANGES (Your new request) ---
+                    // --- PART 2: ADDRESS RANGES
 
                     // Calculate Start Indices
                     int startRowIndex = 0;
@@ -315,45 +350,7 @@ namespace GingerCore.Actions
         }
 
 
-        private void ReadCellByIndex()
-        {
-            int row = 0;
-            int col = 0;
-            int.TryParse(GetInputParamCalculatedValue(nameof(RowIndex)), out row);
-            int.TryParse(GetInputParamCalculatedValue(nameof(ColumnIndex)), out col);
-
-            if (row < 1 || col < 1)
-            {
-                Error = "Row and Column Index must be greater than 0";
-                return;
-            }
-
-            string address = GetColumnName(col) + row;
-
-            try
-            {
-                DataTable dt = excelOperator.ReadCellData(CalculatedFileName, CalculatedSheetName, address, false, CalculatedHeaderRowNum);
-                if (dt != null && dt.Rows.Count > 0)
-                {
-                    string val = dt.Rows[0][0].ToString();
-                    AddOrUpdateReturnParamActual("CellValue", val);
-
-                    // Populate Metadata for user audit
-                    AddOrUpdateReturnParamActual("CurrentCellAddress", address);
-                    AddOrUpdateReturnParamActual("CurrentRowIndex", row.ToString());
-                    AddOrUpdateReturnParamActual("CurrentColumnIndex", col.ToString());
-                }
-                else
-                {
-                    Error = $"No data found at {address}";
-                }
-            }
-            catch (Exception ex)
-            {
-                Error = "Error reading cell by index: " + ex.Message;
-            }
-        }
-
+        
         // ----------------------------------------------------------------------------------
         // READ DATA (Enhanced to put Address in Path)
         // ----------------------------------------------------------------------------------
@@ -362,7 +359,6 @@ namespace GingerCore.Actions
             try
             {
                 DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, CalculatedHeaderRowNum);
-
                 int headerRow = 1;
                 int.TryParse(CalculatedHeaderRowNum, out headerRow);
 
@@ -371,18 +367,54 @@ namespace GingerCore.Actions
                     for (int j = 0; j < excelDataTable.Rows.Count; j++)
                     {
                         DataRow r = excelDataTable.Rows[j];
-                        // Calculate Current Excel Row Number (Header + 1 for start + loop index)
                         int currentRowNum = headerRow + 1 + j;
 
                         for (int i = 0; i < excelDataTable.Columns.Count; i++)
                         {
-                            // Calculate Excel Address (e.g. A2)
+                            string colName = excelDataTable.Columns[i].ColumnName;
+                            string val = r[i].ToString();
+
+                            // 1. Calculate Address
                             string cellAddress = GetColumnName(i + 1) + currentRowNum;
 
-                            // Pass 'cellAddress' as the Path (3rd argument)
-                            AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, r[i].ToString(), cellAddress);
+                            // 2. CHECKBOX LOGIC
+                            if (PullCellAddress)
+                            {
+                                // A. Add Value with Path (This creates the FIRST row: Value="Data", Path="A1")
+                                AddOrUpdateReturnParamActualWithPath(colName, val, cellAddress);
+
+                                // B. Add Address as a separate param (This creates the SECOND row: Value="A1")
+                                AddOrUpdateReturnParamActual($"{colName}_CellAddress", cellAddress);
+                            }
+                            else
+                            {
+                                // Standard behavior: Just add the value (No path, No extra param)
+                                AddOrUpdateReturnParamActual(colName, val);
+                            }
                         }
                     }
+
+                    bool isUpdated = true;
+                    if (SelectAllRows)
+                    {
+                        if (!String.IsNullOrWhiteSpace(SetDataUsed))
+                        {
+                            isUpdated = excelOperator.UpdateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, FieldsValueToTupleList(CalculatedSetDataUsed), CalculatedHeaderRowNum);
+                        }
+                    }
+                    else
+                    {
+                        if (!String.IsNullOrWhiteSpace(SetDataUsed))
+                        {
+                            if (string.IsNullOrWhiteSpace(PrimaryKeyColumn))
+                            {
+                                Error += "Missing or Invalid Primary Key";
+                                return;
+                            }
+                            isUpdated = excelOperator.UpdateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, FieldsValueToTupleList(CalculatedSetDataUsed), CalculatedHeaderRowNum, CalculatedPrimaryKeyFilter(excelDataTable.Rows[0]));
+                        }
+                    }
+                    if (!isUpdated) { Error = "Failed updated excel data: " + CalculatedSetDataUsed; }
                 }
                 else
                 {
@@ -396,16 +428,24 @@ namespace GingerCore.Actions
             }
         }
 
-        // Keep standard ReadCellData / WriteData / Helpers below...
         private void ReadCellData()
         {
             try
             {
                 DataTable excelDataTable = excelOperator.ReadCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, CalculatedHeaderRowNum);
+
                 if (!string.IsNullOrEmpty(SelectRowsWhere) && !SelectAllRows)
                 {
-                    if (excelDataTable == null) { Error = SelectAllRows ? "No Cells Found" : "Given Cell [" + CalculatedFilter + "] contains empty value"; return; }
-                    else { string CellValue = excelDataTable.Rows[0][0].ToString(); AddOrUpdateReturnParamActual(excelDataTable.Columns[0].ColumnName, CellValue); }
+                    if (excelDataTable == null)
+                    {
+                        Error = "Given Cell [" + CalculatedFilter + "] contains empty value";
+                        return;
+                    }
+                    else
+                    {
+                        string CellValue = excelDataTable.Rows[0][0].ToString();
+                        AddOrUpdateReturnParamActual(excelDataTable.Columns[0].ColumnName, CellValue);
+                    }
                 }
                 else
                 {
@@ -426,9 +466,41 @@ namespace GingerCore.Actions
         {
             try
             {
+                // ---------------------------------------------------------------------------
+                // 1. "BY CELL ADDRESS" MODE (Direct Write)
+                // ---------------------------------------------------------------------------
+                if (DataSelectionMethod == eDataSelectionMethod.ByCellAddress)
+                {
+                    string val = ValueExpression.Calculate(SetDataUsed);
+
+                    // We cannot use standard WriteData because "A5" is not a valid DataTable filter.
+                    // We call the new WriteCellData method directly.
+                    bool isUpdated = excelOperator.WriteCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, val, CalculatedHeaderRowNum);
+
+                    if (isUpdated)
+                    {
+                        this.ExInfo = "Write action done";
+                    }
+                    else
+                    {
+                        this.Error = "Failed to write to cell " + CalculatedFilter;
+                    }
+                    return; 
+                }
+
+                // ---------------------------------------------------------------------------
+                // 2. "BY PARAMETERS" MODE (Database/Filter Logic)
+                // ---------------------------------------------------------------------------
                 List<Tuple<string, object>> cellValuesToUpdateList = [.. FieldsValueToTupleList(CalculatedSetDataUsed), .. FieldsValueToTupleList(CalculatedColMappingRules)];
+
+                // This ReadData call is safe here because CalculatedFilter is a valid query (e.g., "ID=1")
                 DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, CalculatedHeaderRowNum);
-                if (excelDataTable == null) { Error = "Table return no Rows with given filter"; return; }
+
+                if (excelDataTable == null)
+                {
+                    Error = "Table return no Rows with given filter";
+                    return;
+                }
                 if (excelDataTable.Rows.Count == 1 && !SelectAllRows)
                 {
                     DataRow r = excelDataTable.Rows[0];
@@ -444,9 +516,16 @@ namespace GingerCore.Actions
                     bool isUpdated = excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList, CalculatedHeaderRowNum);
                     this.ExInfo += "write action done";
                 }
-                else if (excelDataTable.Rows.Count == 0) { this.ExInfo = "No Rows updated with given criteria"; }
+                else if (excelDataTable.Rows.Count == 0)
+                {
+                    this.ExInfo = "No Rows updated with given criteria";
+                }
             }
-            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, "Error while writing to Excel", ex); this.Error = "Error when trying to update the excel, Please check write data content"; }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while writing to Excel", ex);
+                this.Error = "Error when trying to update the excel";
+            }
         }
 
         public bool CheckMandatoryFieldsExists(List<string> fields)

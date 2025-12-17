@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.ActionsLib;
 using GingerCore.Actions;
+using Org.BouncyCastle.Ocsp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -67,9 +68,10 @@ namespace Ginger.Actions
             SetDataUsedTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.SetDataUsed));
             ColMappingRulesTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.ColMappingRules));
 
-            // --- FIXED: Bind the new Index TextBoxes (Renamed to RowIndexTextBox/ColumnIndexTextBox) ---
-            RowIndexTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.RowIndex));
-            ColumnIndexTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.ColumnIndex));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPullCellAddressCheckBox, CheckBox.IsCheckedProperty, mAct, nameof(ActExcel.PullCellAddress));
+            CellAddressTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.SelectCellAddress));
+
+           
 
             UpdateVisibility();
             EnableSheetNameComboBox();
@@ -79,36 +81,52 @@ namespace Ginger.Actions
             }
         }
 
+
         private void UpdateVisibility()
         {
-            // 1. DATABASE OPTIONS (Header, Select Row, Primary Key)
-            // Show only for legacy Read/Write data. Hide for new Index/Details actions.
-            if (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellByIndex
-                || mAct.ExcelActionType == ActExcel.eExcelActionType.GetSheetDetails)
+            // 1. Radio Buttons Visibility (Only for ReadCellData & WriteData)
+            bool showRadios = mAct.ExcelActionType is ActExcel.eExcelActionType.ReadCellData or ActExcel.eExcelActionType.WriteData;
+            xRadioDataSelectionPanel.Visibility = showRadios ? Visibility.Visible : Visibility.Collapsed;
+
+            // 2. Determine if "By Address" is active
+            // Safety check: rdByAddress might be null during init, so we check visibility too
+            bool isByAddress = showRadios && (rdByAddress.IsChecked == true);
+
+            // 3. Main Input Panels Logic
+            if (mAct.ExcelActionType == ActExcel.eExcelActionType.GetSheetDetails)
             {
+                // Hide inputs for GetSheetDetails
                 pnlDatabaseOptions.Visibility = Visibility.Collapsed;
+                xAddressInputPanel.Visibility = Visibility.Collapsed;
+            }
+            else if (isByAddress)
+            {
+                // ADDRESS MODE: Show Address Box, Hide Database params
+                pnlDatabaseOptions.Visibility = Visibility.Collapsed;
+                xAddressInputPanel.Visibility = Visibility.Visible;
             }
             else
             {
+                // PARAM MODE: Show Database params, Hide Address Box
                 pnlDatabaseOptions.Visibility = Visibility.Visible;
+                xAddressInputPanel.Visibility = Visibility.Collapsed;
             }
 
-            // 2. INDEX OPTIONS (Row Index, Col Index)
-            // Showing ONLY for "Read Cell By Index"
-            if (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellByIndex)
+            // 4. "Pull Cell Address" Checkbox (Only ReadData)
+            if (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData)
             {
-                pnlIndexOptions.Visibility = Visibility.Visible;
+                xPullCellAddressCheckBox.Visibility = Visibility.Visible;
             }
             else
             {
-                pnlIndexOptions.Visibility = Visibility.Collapsed;
+                xPullCellAddressCheckBox.Visibility = Visibility.Collapsed;
             }
 
-            // 3. SET DATA USED (Write Value)
-            // Showing for WriteData or legacy ReadData/ReadCellData (if used for updates)
-            if (mAct.ExcelActionType is ActExcel.eExcelActionType.ReadData
-                or ActExcel.eExcelActionType.ReadCellData
-                or ActExcel.eExcelActionType.WriteData)
+            // 5. Write Value Field (SetDataUsed)
+            // Show for WriteData (Always)
+            // Show for ReadData
+            // HIDE for ReadCellData 
+            if (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData || mAct.ExcelActionType == ActExcel.eExcelActionType.WriteData)
             {
                 SetDataUsedSection.Visibility = Visibility.Visible;
             }
@@ -117,8 +135,9 @@ namespace Ginger.Actions
                 SetDataUsedSection.Visibility = Visibility.Collapsed;
             }
 
-            // Showing ONLY for "Write Data"
-            if (mAct.ExcelActionType == ActExcel.eExcelActionType.WriteData)
+            // 6. Bulk Write Field (ColMappingRules)
+            // Show ONLY for WriteData in PARAMETER mode.
+            if (mAct.ExcelActionType == ActExcel.eExcelActionType.WriteData && !isByAddress)
             {
                 ColMappingRulesSection.Visibility = Visibility.Visible;
             }
@@ -284,7 +303,35 @@ namespace Ginger.Actions
             }
             catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex); throw; }
         }
+        private void DataSelection_Changed(object sender, RoutedEventArgs e)
+        {
+            if (rdByAddress == null || rdByParams == null) return;
 
+            // Update Enum based on Radio Button
+            if ((bool)rdByAddress.IsChecked)
+            {
+                mAct.DataSelectionMethod = ActExcel.eDataSelectionMethod.ByCellAddress;
+                xAddressInputPanel.Visibility = Visibility.Visible;
+                if (mAct.ExcelActionType is ActExcel.eExcelActionType.WriteData )
+                {
+                    ColMappingRulesSection.Visibility = Visibility.Visible;
+                    SetDataUsedSection.Visibility = Visibility.Collapsed;
+
+                }
+                else
+                {
+                    ColMappingRulesSection.Visibility = Visibility.Collapsed;
+                    SetDataUsedSection.Visibility = Visibility.Collapsed;
+
+                }
+            }
+            else
+            {
+                mAct.DataSelectionMethod = ActExcel.eDataSelectionMethod.ByParameters;
+            }
+
+            UpdateVisibility();
+        }
         private void SheetNamComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) { mAct.SheetName = SheetNamComboBox.Text; ContextProcessInputValueForDriver(); }
         private void SheetNamComboBox_DropDownOpened(object sender, EventArgs e) { if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName)])) return; FillSheetCombo(); }
         private void SheetNamVEButton_Click(object sender, RoutedEventArgs e) { ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, nameof(ActExcel.SheetName), Context.GetAsContext(mAct.Context)); w.ShowAsWindow(eWindowShowStyle.Dialog); SheetNamComboBox.Text = mAct.SheetName; }

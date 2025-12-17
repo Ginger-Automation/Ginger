@@ -44,22 +44,12 @@
                     <usercontrols:ImageMakerControl x:Name="xLoader" ImageType="Processing" VerticalAlignment="Center" HorizontalAlignment="Left" Visibility="Hidden" DockPanel.Dock="Left" Width="20" Height="20"/>
                 </DockPanel>
             </StackPanel>
-
+            <StackPanel x:Name="xRadioDataSelectionPanel" Orientation="Horizontal" Margin="0,10,0,5" Visibility="Collapsed">
+                <RadioButton x:Name="rdByParams" Content="By Parameters" GroupName="DataSelection" Checked="DataSelection_Changed" Margin="0,0,10,0"  IsChecked="True"/>
+                <RadioButton x:Name="rdByAddress" Content="By Cell Address" GroupName="DataSelection" Checked="DataSelection_Changed"/>
+            </StackPanel>
             <StackPanel x:Name="pnlDatabaseOptions">
-                <StackPanel.Style>
-                    <Style TargetType="StackPanel">
-                        <Setter Property="Visibility" Value="Visible"/>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ExcelActionType}" Value="ReadCellByIndex">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding ExcelActionType}" Value="GetSheetDetails">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </StackPanel.Style>
-
+                
                 <StackPanel>
                     <Label Style="{StaticResource @InputFieldLabelStyle}">Table Header Row Number:</Label>
                     <Actions:UCValueExpression HorizontalAlignment="Left" Width="250" x:Name="HeaderRowNumTextBox" ToolTip="Enter the Row Number at which the Table Headers Exists" PreviewTextInput="HeaderNumValidation"/>
@@ -67,7 +57,7 @@
 
                 <StackPanel x:Name="xSelectAllRowsSP">
                     <Label Style="{StaticResource @InputFieldLabelStyle}">Select Row(s) Where:</Label>
-                    <Actions:UCValueExpression x:Name="SelectRowsWhereTextBox" Margin="0,0,105,0" ToolTip="[Column Name]=Value to filter the rows by, like: Available='Yes' or Num=1"/>
+                    <Actions:UCValueExpression x:Name="SelectRowsWhereTextBox" Margin="0,0,105,0" ToolTip="[Column Name]=Value OR Cell Address (e.g. A2)"/>
                     <CheckBox x:Name="SelectAllRows" ToolTip="Select all Rows" HorizontalAlignment="Right" IsChecked="False" Margin="0,-20,0,0" Style="{StaticResource @CheckBoxStyle}">Select All Rows</CheckBox>
                 </StackPanel>
 
@@ -76,28 +66,19 @@
                     <Actions:UCValueExpression x:Name="PrimaryKeyColumnTextBox" ToolTip="Unique ColumnName to identify the single row by, like: ID"/>
                 </StackPanel>
             </StackPanel>
-
-            <StackPanel x:Name="pnlIndexOptions">
-                <StackPanel.Style>
-                    <Style TargetType="StackPanel">
-                        <Setter Property="Visibility" Value="Collapsed"/>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ExcelActionType}" Value="ReadCellByIndex">
-                                <Setter Property="Visibility" Value="Visible"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </StackPanel.Style>
-
-                <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,10,0,0">Row Index (e.g. 1):</Label>
-                <Actions:UCValueExpression x:Name="RowIndexTextBox" ToolTip="Enter Row Number (Integer) or Variable"/>
-
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Column Index (e.g. 5):</Label>
-                <Actions:UCValueExpression x:Name="ColumnIndexTextBox" ToolTip="Enter Column Number (Integer) or Variable"/>
+            <StackPanel x:Name="xAddressInputPanel" Visibility="Collapsed">
+                <Label Style="{StaticResource @InputFieldLabelStyle}">Cell Address (e.g. A5):</Label>
+                <Actions:UCValueExpression x:Name="CellAddressTextBox" ToolTip="Enter Cell Address (e.g. A5)"/>
             </StackPanel>
+            <CheckBox x:Name="xPullCellAddressCheckBox" 
+                      Content="Pull Cell Address (In Output Value Tab)"
+                      Margin="0,10,0,5"
+                      Style="{StaticResource @CheckBoxStyle}"
+                      Visibility="Collapsed"/>
+        
 
             <StackPanel x:Name="SetDataUsedSection" Visibility="Visible">
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Set Data Used Value / Write Value:</Label>
+                <Label Style="{StaticResource @InputFieldLabelStyle}">Set Data Used Value:</Label>
                 <Actions:UCValueExpression x:Name="SetDataUsedTextBox" ToolTip="Value to write."/>
             </StackPanel>
 

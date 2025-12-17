@@ -18,8 +18,10 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
+using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -446,7 +448,68 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         {
             return (rowLimit == -1) ? currentRow != null : currentRow != null && (startRowNumber + rowLimit - currentRowNumber) > 0;
         }
+
+        /// <summary>
+        /// This method writes data into a specific cell in excel sheet
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="sheetName"></param>
+        /// <param name="address"></param>
+        /// <param name="value"></param>
+        /// <param name="headerRowNumber"></param>
+        /// <returns></returns>
+        public bool WriteCellData(string fileName, string sheetName, string address, string value, string headerRowNumber)
+        {
+            try
+            {
+                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.ReadWrite))
+                {
+                    IWorkbook workbook = null;
+                    if (fileName.EndsWith(".xlsx"))
+                    {
+                        workbook = new XSSFWorkbook(fs);
+                    }
+                    else if (fileName.EndsWith(".xls"))
+                    {
+                        workbook = new HSSFWorkbook(fs);
+                    }
+
+                    if (workbook == null)
+                    {
+                        return false;
+                    }
+
+                    ISheet sheet = workbook.GetSheet(sheetName);
+                    if (sheet == null)
+                    {
+                        return false;
+                    }
+
+                    // Using NPOI CellReference to parse "A5" -> Row 4, Col 0
+                    NPOI.SS.Util.CellReference cellRef = new NPOI.SS.Util.CellReference(address);
+                    IRow row = sheet.GetRow(cellRef.Row) ?? sheet.CreateRow(cellRef.Row);
+                    ICell cell = row.GetCell(cellRef.Col) ?? row.CreateCell(cellRef.Col);
+
+                    // Set Value
+                    cell.SetCellValue(value);
+
+                    // Force formula recalculation if needed
+                    sheet.ForceFormulaRecalculation = true;
+
+                    // Save
+                    using (FileStream fsOut = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                    {
+                        workbook.Write(fsOut);
+                    }
+                    workbook.Close();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error writing cell data: " + ex.Message);
+                return false;
+            }
+        }
     }
 }
-
-// change 5t
