@@ -70,11 +70,7 @@
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Cell Address (e.g. A5):</Label>
                 <Actions:UCValueExpression x:Name="CellAddressTextBox" ToolTip="Enter Cell Address (e.g. A5)"/>
             </StackPanel>
-            <CheckBox x:Name="xPullCellAddressCheckBox" 
-                      Content="Pull Cell Address (In Output Value Tab)"
-                      Margin="0,10,0,5"
-                      Style="{StaticResource @CheckBoxStyle}"
-                      Visibility="Collapsed"/>
+          
         
 
             <StackPanel x:Name="SetDataUsedSection" Visibility="Visible">
@@ -86,7 +82,11 @@
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Data To Write:</Label>
                 <Actions:UCValueExpression x:Name="ColMappingRulesTextBox" ToolTip="[Column Name1]=Value1..."/>
             </StackPanel>
-
+            <CheckBox x:Name="xPullCellAddressCheckBox" 
+            Content="Pull Cell Address"
+            Margin="0,10,0,5"
+            Style="{StaticResource @CheckBoxStyle}"
+            Visibility="Collapsed"/>
         </StackPanel>
 
         <GridSplitter x:Name="GridSplitter" ResizeDirection="Columns" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $PrimaryColor_Black}" IsEnabled="False" Margin="0,0,0,0" />
