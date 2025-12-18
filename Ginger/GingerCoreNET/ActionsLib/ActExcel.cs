@@ -103,11 +103,13 @@ namespace GingerCore.Actions
 
         // --- PROPERTIES ---
 
+        [IsSerializedForLocalRepository]
         public eDataSelectionMethod DataSelectionMethod
         {
             get { return GetOrCreateInputParam<eDataSelectionMethod>(nameof(DataSelectionMethod), eDataSelectionMethod.ByParameters); }
             set { AddOrUpdateInputParamValue(nameof(DataSelectionMethod), value.ToString()); }
         }
+        [IsSerializedForLocalRepository]
         public bool PullCellAddress
         {
             get
