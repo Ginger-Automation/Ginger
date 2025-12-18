@@ -28,9 +28,9 @@
                 </Expander.Header>
                 <Expander.Content>
                     <StackPanel Margin="10,0,10,0">
-                        <!-- Added fetch devices button -->
+                        <!-- UFT Mobile configuration button -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                            <Button x:Name="xFetchDevicesBtn" Content="Fetch UFT Mobile Devices" Click="FetchDevicesButton_Click" Visibility="{Binding IsChecked, ElementName=xUFTRdBtn, Converter={StaticResource b2v}}" Style="{StaticResource $InputButtonStyle}" />
+                            <Button x:Name="xFetchDevicesBtn" Content="UFT Mobile Settings" Click="FetchDevicesButton_Click" Visibility="{Binding IsChecked, ElementName=xUFTRdBtn, Converter={StaticResource b2v}}" Style="{StaticResource $InputButtonStyle}" />
                         </StackPanel>
                         <TextBlock Style="{StaticResource $TextBlockStyle}" Margin="0,5,0,5"> 
                             Appium Server (for installation steps, 

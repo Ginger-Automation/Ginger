@@ -577,17 +577,108 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         {
             DeleteCapabilityIfExist("uftm:installPackagedApp");
         }
-        private async void FetchDevicesButton_Click(object sender, RoutedEventArgs e)
+        private void FetchDevicesButton_Click(object sender, RoutedEventArgs e)
         {
-            var summary = await FetchUFTMDevicesAsync();
-            if (string.IsNullOrEmpty(summary))
+            if (mAppiumCapabilities?.MultiValues == null)
             {
-                MessageBox.Show("No devices fetched or authentication failed.", "UFT Mobile Devices");
+                return;
             }
-            else
+
+            var credentials = EnsureUftCredentialParams();
+            string currentDeviceName = FindExistingCapability("appium:deviceName")?.Value;
+            string currentDeviceUuid = FindExistingCapability("appium:udid")?.Value;
+            if (string.IsNullOrWhiteSpace(currentDeviceUuid))
             {
-                MessageBox.Show(summary, "UFT Mobile Devices");
+                currentDeviceUuid = FindExistingCapability("appium:uid")?.Value;
             }
+
+            UFTCredentialsDialog dialog = new UFTCredentialsDialog(credentials.clientId, credentials.clientSecret, credentials.tenantId, FetchUFTMDevicesAsync, currentDeviceName, currentDeviceUuid);
+
+            Window owner = Window.GetWindow(this);
+
+            bool? dialogResult = dialog.ShowDialog(owner);
+            if (dialogResult == true)
+            {
+                ApplySelectedPhoneDetails(dialog);
+            }
+        }
+
+        private void ApplySelectedPhoneDetails(UFTCredentialsDialog dialog)
+        {
+            if (dialog == null || (string.IsNullOrWhiteSpace(dialog.SelectedPhoneUuid) && string.IsNullOrWhiteSpace(dialog.SelectedPhoneName)))
+            {
+                return;
+            }
+
+            bool wasUpdated = false;
+
+            if (!string.IsNullOrWhiteSpace(dialog.SelectedPhoneName))
+            {
+                wasUpdated |= UpdateCapabilityValue("appium:deviceName", dialog.SelectedPhoneName);
+            }
+
+            if (!string.IsNullOrWhiteSpace(dialog.SelectedPhoneUuid))
+            {
+                wasUpdated |= UpdateCapabilityValue("appium:udid", dialog.SelectedPhoneUuid);
+                wasUpdated |= UpdateCapabilityValue("appium:uid", dialog.SelectedPhoneUuid);
+            }
+
+            if (wasUpdated)
+            {
+                xCapabilitiesGrid.Grid?.Items.Refresh();
+            }
+        }
+
+        private bool UpdateCapabilityValue(string parameterName, string value)
+        {
+            if (string.IsNullOrWhiteSpace(parameterName) || value == null)
+            {
+                return false;
+            }
+
+            DriverConfigParam capability = FindExistingCapability(parameterName);
+            if (capability == null)
+            {
+                capability = new DriverConfigParam() { Parameter = parameterName };
+                mAppiumCapabilities.MultiValues.Add(capability);
+            }
+
+            if (capability.Value == value)
+            {
+                return false;
+            }
+
+            capability.Value = value;
+            return true;
+        }
+
+        private (DriverConfigParam clientId, DriverConfigParam clientSecret, DriverConfigParam tenantId) EnsureUftCredentialParams()
+        {
+            DriverConfigParam clientId = EnsureCapabilityExists("uftm:oauthClientId", "UFT Execution key Client Id");
+            DriverConfigParam clientSecret = EnsureCapabilityExists("uftm:oauthClientSecret", "UFT Execution key Client Password");
+            DriverConfigParam tenantId = EnsureCapabilityExists("uftm:tenantId", "Default value (Need to change only when using UFT shared spaces))");
+            if (string.IsNullOrEmpty(tenantId.Value))
+            {
+                tenantId.Value = "\"999999999\"";
+            }
+
+            return (clientId, clientSecret, tenantId);
+        }
+
+        private DriverConfigParam EnsureCapabilityExists(string parameter, string description)
+        {
+            DriverConfigParam capability = FindExistingCapability(parameter);
+            if (capability == null)
+            {
+                capability = new DriverConfigParam() { Parameter = parameter, Description = description };
+                mAppiumCapabilities.MultiValues.Add(capability);
+            }
+            else if (string.IsNullOrEmpty(capability.Description))
+            {
+                capability.Description = description;
+            }
+
+            return capability;
         }
 
         // Performs OAuth2 token request and then fetches device content from UFT Mobile
