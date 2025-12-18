@@ -206,7 +206,14 @@ namespace Ginger.Actions
 
         private void DisableSheetNameComboBox() { WeakEventManager<ComboBox, EventArgs>.RemoveHandler(source: SheetNamComboBox, eventName: nameof(ComboBox.DropDownOpened), handler: SheetNamComboBox_DropDownOpened); }
         private void EnableSheetNameComboBox() { WeakEventManager<ComboBox, EventArgs>.AddHandler(source: SheetNamComboBox, eventName: nameof(ComboBox.DropDownOpened), handler: SheetNamComboBox_DropDownOpened); }
-        private void ContextProcessInputValueForDriver() { var context = Context.GetAsContext(mAct.Context); if (context != null) context.Runner.ProcessInputValueForDriver(mAct); }
+        private void ContextProcessInputValueForDriver()
+        {
+            var context = Context.GetAsContext(mAct.Context);
+            if (context != null)
+            {
+                context.Runner.ProcessInputValueForDriver(mAct);
+            }
+        }
 
         private async void ViewDataButton_Click(object sender, RoutedEventArgs e)
         {
@@ -271,7 +278,10 @@ namespace Ginger.Actions
                 try
                 {
                     ContextProcessInputValueForDriver();
-                    if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName), nameof(mAct.SelectRowsWhere)])) return;
+                    if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName), nameof(mAct.SelectRowsWhere)]))
+                    {
+                        return;
+                    }
                     DataTable excelSheetData = GetExcelSheetData(false);
                     if (excelSheetData == null)
                     {
@@ -305,9 +315,11 @@ namespace Ginger.Actions
         }
         private void DataSelection_Changed(object sender, RoutedEventArgs e)
         {
-            if (rdByAddress == null || rdByParams == null) return;
+            if (rdByAddress == null || rdByParams == null)
+            {
+                return;
+            }
 
-            // Update Enum based on Radio Button
             if ((bool)rdByAddress.IsChecked)
             {
                 mAct.DataSelectionMethod = ActExcel.eDataSelectionMethod.ByCellAddress;
@@ -332,10 +344,45 @@ namespace Ginger.Actions
 
             UpdateVisibility();
         }
-        private void SheetNamComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) { mAct.SheetName = SheetNamComboBox.Text; ContextProcessInputValueForDriver(); }
-        private void SheetNamComboBox_DropDownOpened(object sender, EventArgs e) { if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName)])) return; FillSheetCombo(); }
-        private void SheetNamVEButton_Click(object sender, RoutedEventArgs e) { ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, nameof(ActExcel.SheetName), Context.GetAsContext(mAct.Context)); w.ShowAsWindow(eWindowShowStyle.Dialog); SheetNamComboBox.Text = mAct.SheetName; }
-        private void xOpenExcelButton_Click(object sender, RoutedEventArgs e) { if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName)])) return; System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = mAct.CalculatedFileName, UseShellExecute = true }); }
-        private void HeaderNumValidation(object sender, TextCompositionEventArgs e) { Regex regex = new Regex("[^0-9]+"); e.Handled = regex.IsMatch(e.Text); }
+        private void SheetNamComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            mAct.SheetName = SheetNamComboBox.Text;
+            ContextProcessInputValueForDriver();
+        }
+
+        private void SheetNamComboBox_DropDownOpened(object sender, EventArgs e)
+        {
+            if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName)]))
+            {
+                return;
+            }
+            FillSheetCombo();
+        }
+
+        private void SheetNamVEButton_Click(object sender, RoutedEventArgs e)
+        {
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, nameof(ActExcel.SheetName), Context.GetAsContext(mAct.Context));
+            w.ShowAsWindow(eWindowShowStyle.Dialog);
+            SheetNamComboBox.Text = mAct.SheetName;
+        }
+
+        private void xOpenExcelButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName)]))
+            {
+                return;
+            }
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
+            {
+                FileName = mAct.CalculatedFileName,
+                UseShellExecute = true
+            });
+        }
+
+        private void HeaderNumValidation(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
     }
 }

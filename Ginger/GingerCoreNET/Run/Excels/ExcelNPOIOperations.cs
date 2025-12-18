@@ -456,9 +456,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         /// <param name="sheetName"></param>
         /// <param name="address"></param>
         /// <param name="value"></param>
-        /// <param name="headerRowNumber"></param>
         /// <returns></returns>
-        public bool WriteCellData(string fileName, string sheetName, string address, string value, string headerRowNumber)
+        public bool WriteCellData(string fileName, string sheetName, string address, string value)
         {
             try
             {
@@ -486,7 +485,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     }
 
                     // Using NPOI CellReference to parse "A5" -> Row 4, Col 0
-                    NPOI.SS.Util.CellReference cellRef = new NPOI.SS.Util.CellReference(address);
+                    CellReference cellRef = new CellReference(address);
                     IRow row = sheet.GetRow(cellRef.Row) ?? sheet.CreateRow(cellRef.Row);
                     ICell cell = row.GetCell(cellRef.Col) ?? row.CreateCell(cellRef.Col);
 
@@ -507,7 +506,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error writing cell data: " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Error writing cell data: " + ex.Message, ex);
                 return false;
             }
         }

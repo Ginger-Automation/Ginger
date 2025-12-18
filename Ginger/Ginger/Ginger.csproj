@@ -744,7 +744,7 @@
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.9.1" />
     <PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="9.4.0-preview.1.25207.5" />
     <PackageReference Include="Microsoft.NETCore.App" Version="2.1.30" />
-    <PackageReference Include="Microsoft.Office.Interop.Excel" Version="16.0.18925.20022" />
+    <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
     <PackageReference Include="Microsoft.VisualStudio.Services.MemberEntitlementManagement.WebApi" Version="16.205.1" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3179.45" />  
     <PackageReference Include="Mono.Posix" Version="7.1.0-final.1.21458.1" />

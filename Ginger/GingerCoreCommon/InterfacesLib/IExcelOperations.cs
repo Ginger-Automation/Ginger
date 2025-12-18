@@ -83,6 +83,6 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         /// <param name="value"></param>
         /// <param name="headerRowNumber"></param>
         /// <returns></returns>
-        bool WriteCellData(string fileName, string sheetName, string address, string value, string headerRowNumber);
+        bool WriteCellData(string fileName, string sheetName, string address, string value);
     }
 }

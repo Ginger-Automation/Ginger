@@ -309,7 +309,7 @@ namespace GingerCore.Actions
                     // Calculate Start Indices
                     int startRowIndex = 0;
                     int.TryParse(CalculatedHeaderRowNum, out startRowIndex);
-                    if (startRowIndex < 1) startRowIndex = 1; // Default to 1 if invalid
+                    if (startRowIndex < 1) { startRowIndex = 1; } // Default to 1 if invalid
 
                     int startColIndex = 1; // Excel starts at 'A' (1)
 
@@ -317,7 +317,10 @@ namespace GingerCore.Actions
                     // The last row is the Start Row + the number of data rows found
                     int endRowIndex = startRowIndex + rowCount;
                     int endColIndex = startColIndex + (colCount - 1);
-                    if (endColIndex < 1) endColIndex = 1;
+                    if (endColIndex < 1) 
+                    {
+                        endColIndex = 1;
+                    }
 
                     // Generate Address Strings
                     string startCellAddress = GetColumnName(startColIndex) + startRowIndex;      // e.g. "A1"
@@ -475,7 +478,7 @@ namespace GingerCore.Actions
 
                     // We cannot use standard WriteData because "A5" is not a valid DataTable filter.
                     // We call the new WriteCellData method directly.
-                    bool isUpdated = excelOperator.WriteCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, val, CalculatedHeaderRowNum);
+                    bool isUpdated = excelOperator.WriteCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, val);
 
                     if (isUpdated)
                     {
@@ -549,7 +552,10 @@ namespace GingerCore.Actions
         private List<Tuple<string, object>> FieldsValueToTupleList(string updatedFieldsValue)
         {
             List<Tuple<string, object>> columnNameAndValue = [];
-            if (String.IsNullOrEmpty(updatedFieldsValue)) return columnNameAndValue;
+            if (String.IsNullOrEmpty(updatedFieldsValue))
+            {
+                return columnNameAndValue;
+            }
             string result = System.Text.RegularExpressions.Regex.Replace(updatedFieldsValue, @",(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-COMMA-REPLACE^~");
             string[] varColMaps = result.Split(',');
             varColMaps.ToList().ForEach(c =>
