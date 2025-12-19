@@ -266,6 +266,23 @@ namespace Ginger.Run
 
             try
             {
+                // Handle backward compatibility for old runset XML files first
+                // Convert variables with DiffrentFromOrigin=true and MappedOutputType=None to new "Value" mapping format
+                if (var.DiffrentFromOrigin && var.MappedOutputType == VariableBase.eOutputType.None)
+                {
+                    string sourceValue = GetVariableSourceValue(var);
+
+                    // Convert old format to new format if we have a source value
+                    if (!string.IsNullOrEmpty(sourceValue))
+                    {
+                        var.MappedOutputType = VariableBase.eOutputType.Value;
+                        var.MappedOutputValue = sourceValue;
+
+                        Reporter.ToLog(eLogLevel.DEBUG, $"UpdateOldOutputVariableMappedValues: Converted variable '{var.Name}' of type '{var.VariableType}' from old format (DiffrentFromOrigin=True, MappedOutputType=None) to new format (MappedOutputType=Value, MappedOutputValue='{var.MappedOutputValue}')");
+                    }
+                }
+
+                // Handle OutputVariable mapping backward compatibility
                 if (var.MappedOutputType == VariableBase.eOutputType.OutputVariable && !var.MappedOutputValue.Contains('_'))
                 {
                     for (int i = AllPreviousBusinessFlowRuns.Count - 1; i >= 0; i--)//doing in reverse for sorting by latest value in case having the same var more than once
@@ -285,14 +302,49 @@ namespace Ginger.Run
             {
                 Reporter.ToLog(eLogLevel.WARN, "Exception occurred when trying to update outputvariable mapped value ", ex);
             }
+        }
 
-
+        /// <summary>
+        /// Gets the source value from different variable types based on their specific storage patterns
+        /// </summary>
+        /// <param name="var">The variable to extract the source value from</param>
+        /// <returns>The source value if found, null or empty otherwise</returns>
+        private string GetVariableSourceValue(VariableBase var)
+        {
+            try
+            {
+                return var.GetVariableSourceValueForDeserialization();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, $"Exception occurred while getting source value for variable '{var?.Name}' of type '{var?.VariableType}': {ex.Message}");
+                // Fallback to the Value property if there's any error
+                return var?.Value;
+            }
         }
 
         private void CopyCustomizedVariableConfigurations(VariableBase customizedVar, VariableBase originalVar)
         {
             //keep original description values
             VariableBase originalCopy = (VariableBase)originalVar.CreateCopy(false);
+
+            // Handle backward compatibility for old runset XML files before any other processing
+            if (customizedVar.DiffrentFromOrigin && customizedVar.MappedOutputType == VariableBase.eOutputType.None)
+            {
+                string sourceValue = GetVariableSourceValue(customizedVar);
+
+                // Convert old format to new format if we have a source value
+                if (!string.IsNullOrEmpty(sourceValue))
+                {
+                    customizedVar.MappedOutputType = VariableBase.eOutputType.Value;
+                    customizedVar.MappedOutputValue = sourceValue;
+
+                    Reporter.ToLog(eLogLevel.DEBUG, $"CopyCustomizedVariableConfigurations: Converted variable '{customizedVar.Name}' of type '{customizedVar.VariableType}' from old format to new format");
+                }
+            }
+
+            // Store the original initial value before any mapping
+            string preservedInitialValue = originalVar.GetInitialValue();
 
             //ovveride original variable configurations with user customizations
             string varType = customizedVar.GetType().Name;
@@ -306,13 +358,40 @@ namespace Ginger.Run
 
             originalVar.DiffrentFromOrigin = customizedVar.DiffrentFromOrigin;
             originalVar.MappedOutputVariable = customizedVar.MappedOutputVariable;
-
+            originalVar.MappedOutputType = customizedVar.MappedOutputType;
+            originalVar.MappedOutputValue = customizedVar.MappedOutputValue;
 
             //Fix for Empty variable are not being saved in Run Configuration (when variable has value in BusinessFlow but is changed to empty in RunSet)
             if (customizedVar.DiffrentFromOrigin && string.IsNullOrEmpty(customizedVar.MappedOutputVariable))
             {
                 originalVar.Value = customizedVar.Value;
             }
+
+            // Restore the original initial value to ensure it's not changed by mapping
+            originalVar.SetInitialValue(preservedInitialValue);
+
+            // Handle "Value" mapping type - copy the mapped value to the current value
+            if (customizedVar.MappedOutputType == VariableBase.eOutputType.Value && !string.IsNullOrEmpty(customizedVar.MappedOutputValue))
+            {
+                if (customizedVar.MappedOutputType == VariableBase.eOutputType.Value
+                    && !string.IsNullOrEmpty(customizedVar.MappedOutputValue))
+                {
+                    if (originalVar is VariablePasswordString)
+                    {
+                        var mapped = customizedVar.MappedOutputValue;
+                        if (!EncryptionHandler.IsStringEncrypted(mapped))
+                        {
+                            mapped = EncryptionHandler.EncryptwithKey(mapped);
+                        }
+                        ((VariablePasswordString)originalVar).Password = mapped; // keeps Value aligned
+                    }
+                    else
+                    {
+                        originalVar.Value = customizedVar.MappedOutputValue;
+                    }
+                    originalVar.DiffrentFromOrigin = true;
+                }
+            }          
 
             //Restore original description values
             originalVar.Name = originalCopy.Name;
@@ -962,24 +1041,24 @@ namespace Ginger.Run
             switch (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel)
             {
                 case SealightsConfiguration.eSealightsEntityLevel.BusinessFlow:
-                {
-                    DisableBFExecution(testsToExclude, runsetConfig);
-                    break;
-                }
+                    {
+                        DisableBFExecution(testsToExclude, runsetConfig);
+                        break;
+                    }
                 case SealightsConfiguration.eSealightsEntityLevel.ActivitiesGroup:
-                {
-                    DisableActivitiesGroupExecution(testsToExclude, runsetConfig);
-                    break;
-                }
+                    {
+                        DisableActivitiesGroupExecution(testsToExclude, runsetConfig);
+                        break;
+                    }
                 case SealightsConfiguration.eSealightsEntityLevel.Activity:
-                {
-                    DisableActivitiesExecution(testsToExclude, runsetConfig);
-                    break;
-                }
+                    {
+                        DisableActivitiesExecution(testsToExclude, runsetConfig);
+                        break;
+                    }
                 default:
-                {
-                    throw new InvalidEnumArgumentException("Not a valid value");
-                }
+                    {
+                        throw new InvalidEnumArgumentException("Not a valid value");
+                    }
             }
         }
 

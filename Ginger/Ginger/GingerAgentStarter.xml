@@ -14,7 +14,7 @@
 
   <target name="create_run_jar6" depends="CheckJdk6" if="CheckJdk6.present">
 
-    <jar destfile="GingerAgentStarter.jar" filesetmanifest="mergewithoutmain">
+    <jar destfile="GingerAgent.jar" filesetmanifest="mergewithoutmain">
       <manifest>
         <attribute name="Main-Class" value="com.amdocs.ginger.GingerAgent"/>
         <attribute name="Class-Path" value="."/>
@@ -26,7 +26,7 @@
 
   <target name="create_run_jar7" depends="CheckJdk7" if="CheckJdk6.present">
 
-    <jar destfile="GingerAgentStarter.jar" filesetmanifest="mergewithoutmain">
+    <jar destfile="GingerAgent.jar" filesetmanifest="mergewithoutmain">
       <manifest>
         <attribute name="Main-Class" value="com.amdocs.ginger.GingerAgent"/>
         <attribute name="Class-Path" value="."/>

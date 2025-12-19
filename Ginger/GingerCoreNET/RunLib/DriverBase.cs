@@ -203,6 +203,8 @@ namespace GingerCore.Drivers
             HighlightElement,
             UnHighlightElement,
             RotateEvent,
+            ConsoleBufferUpdate,
+            CloseDriverWindow
         }
 
         public void OnDriverMessage(eDriverMessageType DriverMessageType, object CustomSenderObj = null)

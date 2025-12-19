@@ -941,6 +941,13 @@ namespace Ginger.Run
                             mappedValue = string.IsNullOrEmpty(var.Value) ? string.Empty : var.Value;
                         }
                     }
+                    else if (inputVar.MappedOutputType == VariableBase.eOutputType.Value)
+                    {
+                        if (!string.IsNullOrEmpty(inputVar.MappedOutputValue))
+                        {
+                            mappedValue = inputVar.MappedOutputValue;
+                        }
+                    }
                     else if (inputVar.MappedOutputType == VariableBase.eOutputType.OutputVariable)
                     {
                         if (outputVariables == null)

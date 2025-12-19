@@ -542,7 +542,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
             }
 
-                     executionConfig.SolutionLocalPath = solution.Folder;
+            executionConfig.SolutionLocalPath = solution.Folder;
 
             executionConfig.ShowAutoRunWindow = cliHelper.ShowAutoRunWindow;
             executionConfig.VerboseLevel = GingerExecConfig.eVerboseLevel.normal;
@@ -745,6 +745,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                         break;
                                     case VariableBase.eOutputType.ValueExpression:
                                         jsonInputVar.VariableCustomizationType = InputValue.eVariableCustomizationType.ValueExpression;
+                                        jsonInputVar.VariableCustomizedValue = customizedVar.MappedOutputValue;
+                                        break;
+                                    case VariableBase.eOutputType.Value:
+                                        jsonInputVar.VariableCustomizationType = InputValue.eVariableCustomizationType.Value;
                                         jsonInputVar.VariableCustomizedValue = customizedVar.MappedOutputValue;
                                         break;
                                     default:
@@ -992,7 +996,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
                 }
                 if (WorkSpace.Instance.Solution.VRTConfiguration != null && !string.IsNullOrEmpty(solution.VRTConfiguration.ApiUrl)
-                    && !string.IsNullOrEmpty(solution.VRTConfiguration.ApiKey) )
+                    && !string.IsNullOrEmpty(solution.VRTConfiguration.ApiKey))
                 {
                     VRTDetails vrtDetails = new VRTDetails
                     {
@@ -1007,7 +1011,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     executionConfig.ExternalConfigurationDetails.Add(vrtDetails);
 
                 }
-                if (WorkSpace.Instance.Solution.ApplitoolsConfiguration != null 
+                if (WorkSpace.Instance.Solution.ApplitoolsConfiguration != null
                      && !string.IsNullOrEmpty(solution.ApplitoolsConfiguration.ApiUrl) && !string.IsNullOrEmpty(solution.ApplitoolsConfiguration.ApiKey))
                 {
                     ApplitoolsDetails applitoolsDetails = new ApplitoolsDetails
@@ -1099,7 +1103,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Using provided ExecutionID '{0}'.", runSetConfig.ExecutionID.ToString()));
             }
 
-         
+
             if (gingerExecConfig.Runset.RerunConfigurations != null)
             {
                 runSetConfig.ReRunConfigurations.Active = gingerExecConfig.Runset.RerunConfigurations.Active;
@@ -1433,7 +1437,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                         {
                                             case InputValue.eVariableCustomizationType.Value:
                                                 customizedInputVar.VarValChanged = true;
-                                                customizedInputVar.Value = inputValueConfig.VariableCustomizedValue;
+                                                customizedInputVar.MappedOutputType = VariableBase.eOutputType.Value;
+                                                customizedInputVar.MappedOutputValue = inputValueConfig.VariableCustomizedValue;
                                                 break;
                                             case InputValue.eVariableCustomizationType.Variable://saving variable by Name- Legacy
                                                 customizedInputVar.MappedOutputType = VariableBase.eOutputType.Variable;
@@ -1495,13 +1500,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         {
                             try
                             {
-                                RunSetActionBase oper = FindItemByIDAndName<RunSetActionBase>(
+                                var oper = FindItemByIDAndName<RunSetActionBase>(
                                                     new Tuple<string, Guid?>(nameof(RunSetActionBase.Guid), runsetOperationConfigMail.ID),
                                                     new Tuple<string, string>(nameof(RunSetActionBase.Name), runsetOperationConfigMail.Name),
                                                     runSetConfig.RunSetActions);
-                                if (oper != null)
+                                mailOperation = oper as RunSetActionHTMLReportSendEmail;
+                                if (mailOperation == null && oper != null)
                                 {
-                                    mailOperation = (RunSetActionHTMLReportSendEmail)oper;
+                                    Reporter.ToLog(eLogLevel.WARN, $"Found RunSet operation with matching ID/Name but it is type '{oper.GetType().Name}' instead of expected 'RunSetActionHTMLReportSendEmail'");
                                 }
                             }
                             catch (Exception ex)

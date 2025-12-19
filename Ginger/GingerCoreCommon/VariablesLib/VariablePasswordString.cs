@@ -76,11 +76,37 @@ namespace GingerCore.Variables
         {
             get { return "PasswordString"; }
         }
-        public override bool SupportSetValue { get { return false; } }
+        public override bool SupportSetValue { get { return true; } }
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
-            throw new System.NotImplementedException();
+            List<VariableBase.eSetValueOptions> supportedOperations =
+            [
+                VariableBase.eSetValueOptions.SetValue,
+                VariableBase.eSetValueOptions.ResetValue,
+            ];
+            return supportedOperations;
+        }
+
+        public override bool SetValue(string value)
+        {
+            if (this.SupportSetValue)
+            {
+                // Route through encryption to avoid storing plaintext
+                if (!string.IsNullOrEmpty(value) && !EncryptionHandler.IsStringEncrypted(value))
+                {
+                    Password = EncryptionHandler.EncryptwithKey(value);
+                }
+                else
+                {
+                    Password = value;
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public override void SetInitialValue(string InitialValue)
@@ -93,6 +119,11 @@ namespace GingerCore.Variables
             {
                 Password = InitialValue;
             }
+        }
+
+        public override string GetInitialValue()
+        {
+            return Password;
         }
 
         public override bool SupportResetValue { get { return true; } }

@@ -4,5 +4,4 @@
   <InnoSetupScriptPath>GingerInstallerScript.iss</InnoSetupScriptPath>
   <GetLatestCommandPath> </GetLatestCommandPath>
   <CheckinCommandPath></CheckinCommandPath>
-  <JavaClassFilePath>GingerCore\Drivers\JavaDriverLib\GingerJavaAgent\agent\com\amdocs\ginger\GingerAgent.java</JavaClassFilePath>
 </ComponentInfo>

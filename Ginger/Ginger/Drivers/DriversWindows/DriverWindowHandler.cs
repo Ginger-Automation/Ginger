@@ -50,6 +50,7 @@ namespace Ginger.Drivers.DriversWindows
                             {
                                 DriverBase driver = args.Driver;
                                 AgentOperations agentOperations = (AgentOperations)args.DataObject;
+
                                 string classname = "Ginger.Drivers.DriversWindows." + ((IDriverWindow)driver).GetDriverWindowName(agentOperations.Agent.DriverType);
                                 Type t = Assembly.GetExecutingAssembly().GetType(classname);
                                 if (t == null)

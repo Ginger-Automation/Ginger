@@ -120,6 +120,24 @@ namespace Ginger.Variables
                 return;
             }
 
+            // Check if the selected variable supports set value operation
+            if (SelectedListView is VariableBase selectedVariable)
+            {
+                // Hide "Set as Input" checkbox for variables that don't support setting values
+                if (!selectedVariable.SupportSetValue)
+                {
+                    xSetAsInputValueCheckBox.Visibility = Visibility.Collapsed;
+                    xMandatoryInputCheckBox.Visibility = Visibility.Collapsed;
+                    // Keep other checkboxes visible since output doesn't require SupportSetValue
+                }
+                else
+                {
+                    // Show "Set as Input" checkbox for variables that support setting values
+                    xSetAsInputValueCheckBox.Visibility = Visibility.Visible;
+                    // Mandatory input checkbox visibility is controlled by the InputOutputChecked event
+                }
+            }
+
             if (SelectedListView is VariableRandomNumber or VariableRandomString or VariableTimer or VariableSelectionList)
             {
                 ValueStackPanel.Visibility = Visibility.Collapsed;
@@ -348,9 +366,20 @@ namespace Ginger.Variables
 
             if (mVariablesLevel.Equals(eVariablesLevel.Activity) || mVariablesLevel.Equals(eVariablesLevel.BusinessFlow))
             {
-                addedVar.SetAsInputValue = xSetAsInputValueCheckBox.IsChecked ?? false;
+                // Only set input-related properties for variables that support setting values
+                if (addedVar.SupportSetValue)
+                {
+                    addedVar.SetAsInputValue = xSetAsInputValueCheckBox.IsChecked ?? false;
+                    addedVar.MandatoryInput = xMandatoryInputCheckBox.IsChecked ?? false;
+                }
+                else
+                {
+                    // Variables that don't support setting values should not be set as input
+                    addedVar.SetAsInputValue = false;
+                    addedVar.MandatoryInput = false;
+                }
+                
                 addedVar.SetAsOutputValue = xSetAsOutputValueCheckBox.IsChecked ?? false;
-                addedVar.MandatoryInput = xMandatoryInputCheckBox.IsChecked ?? false;
                 addedVar.Publish = xPublishcheckbox.IsChecked ?? false;
             }
 

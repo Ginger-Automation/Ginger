@@ -7425,7 +7425,10 @@ namespace GingerCore.Drivers
             AddIfNotEmpty(list, "TagName", el.TagName);
             AddIfNotEmpty(list, "Displayed", el.Displayed.ToString());
             AddIfNotEmpty(list, "Enabled", el.Enabled.ToString());
-            AddIfNotEmpty(list, "Selected", el.Selected.ToString());
+            if (el.GetAttribute("type") == "checkbox" || el.GetAttribute("type") == "radio")
+            {
+                AddIfNotEmpty(list, "Selected", el.Selected.ToString());
+            }
             AddIfNotEmpty(list, "Text", el.Text);
         }
 
@@ -10568,7 +10571,7 @@ namespace GingerCore.Drivers
 
                                 if (currentPOMElementInfo != null)
                                 {
-                                    act.Error = $"{act.Error}Element not found: {act.ElementLocateBy} = POM {currentPOM.Name} and element name = {currentPOMElementInfo.ElementName} ";
+                                    act.Error = $"{act.Error} POM Element not found: POM = '{currentPOM.Name}' , Element = '{currentPOMElementInfo.ElementName}'";
                                     return;
                                 }
                             }

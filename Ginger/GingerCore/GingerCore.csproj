@@ -27,8 +27,8 @@
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-	<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-	  <enableDefaultPageItems>false</enableDefaultPageItems>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <enableDefaultPageItems>false</enableDefaultPageItems>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <RegisterForComInterop>false</RegisterForComInterop>
@@ -89,8 +89,7 @@
     <Reference Include="OctaneSdkStandard">
       <HintPath>..\GingerCoreNET\DLLS\OctaneSdkStandard.dll</HintPath>
     </Reference>
-    <Reference Include="Open3270, Version=1.5.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Open3270">
       <HintPath>..\Ginger\DLLs\Open3270.dll</HintPath>
     </Reference>
     <Reference Include="QCRestClientStd">
@@ -143,14 +142,6 @@
     <Page Include="DragDrop\VisualDrag.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Drivers\ConsoleDriverLib\ConsoleDriverWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Drivers\ConsoleDriverLib\ConsoleNewActionPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Drivers\InternalBrowserLib\CreateNewActionPage.xaml">
       <SubType>Designer</SubType>
@@ -206,7 +197,6 @@
     <Compile Include="Actions\ActCreatePDFChart.cs" />
     <Compile Include="Actions\ActActivateRow.cs" />
     <Compile Include="Actions\ActGetMsgboxText.cs" />
-    <Compile Include="Actions\ActConsoleCommand.cs" />
     <Compile Include="Actions\ActLaunchJavaWSApplication.cs" />
     <Compile Include="Actions\ActGenerateFileFromTemplate.cs" />
     <Compile Include="Actions\ActionFlowControl.cs" />
@@ -304,16 +294,7 @@
     <Compile Include="DragDrop\VisualDrag.xaml.cs">
       <DependentUpon>VisualDrag.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\ConsoleDriverLib\ConsoleNewActionPage.xaml.cs">
-      <DependentUpon>ConsoleNewActionPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Drivers\ConsoleDriverLib\UnixShellDriver.cs" />
-    <Compile Include="Drivers\ConsoleDriverLib\ConsoleDriverBase.cs" />
-    <Compile Include="Drivers\ConsoleDriverLib\ConsoleDriverWindow.xaml.cs">
-      <DependentUpon>ConsoleDriverWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Drivers\ConsoleDriverLib\UnixServerSimulator.cs" />
-    <Compile Include="Drivers\ConsoleDriverLib\DOSConsoleDriver.cs" />
     <Compile Include="Drivers\InternalBrowserLib\CreateNewActionPage.xaml.cs">
       <DependentUpon>CreateNewActionPage.xaml</DependentUpon>
     </Compile>
@@ -365,13 +346,8 @@
     <None Include="Resources\%40Star_16x16.png" />
     <None Include="Resources\%40StarGray_16x16.png" />
     <None Include="Resources\%40Group_16x16.png" />
-    <None Include="Drivers\JavaDriverLib\GingerJavaAgent\bin\GingerjarPublish.bat" />
     <None Include="Resources\SoapUI.bmp" />
-    <None Include="Drivers\JavaDriverLib\GingerJavaAgent\.settings\org.eclipse.jdt.core.prefs" />
     <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Drivers\JavaDriverLib\GingerJavaAgent\bin\com\amdocs\ginger\ASCFPack\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Const.png" />
@@ -412,10 +388,6 @@
     <None Include="Resources\%40MobileDevice_32x32.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Drivers\JavaDriverLib\GingerAgentBuild.xml" />
-    <Resource Include="Drivers\JavaDriverLib\GingerJavaAgent\build.xml">
-      <SubType>Designer</SubType>
-    </Resource>
     <None Include="Resources\%40edit_16x16.png" />
     <None Include="Resources\%40executionres_16x16.png" />
     <None Include="Resources\%40image_16x16.png" />
