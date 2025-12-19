@@ -103,13 +103,12 @@ namespace GingerCore.Actions
 
         // --- PROPERTIES ---
 
-        [IsSerializedForLocalRepository]
         public eDataSelectionMethod DataSelectionMethod
         {
             get { return GetOrCreateInputParam<eDataSelectionMethod>(nameof(DataSelectionMethod), eDataSelectionMethod.ByParameters); }
-            set { AddOrUpdateInputParamValue(nameof(DataSelectionMethod), value.ToString()); }
+            set { AddOrUpdateInputParamValue(nameof(DataSelectionMethod), value.ToString()); OnPropertyChanged(nameof(DataSelectionMethod)); }
         }
-        [IsSerializedForLocalRepository]
+     
         public bool PullCellAddress
         {
             get
@@ -118,7 +117,7 @@ namespace GingerCore.Actions
                 bool.TryParse(GetOrCreateInputParam(nameof(PullCellAddress)).Value, out value);
                 return value;
             }
-            set { AddOrUpdateInputParamValue(nameof(PullCellAddress), value.ToString()); }
+            set { AddOrUpdateInputParamValue(nameof(PullCellAddress), value.ToString()); OnPropertyChanged(nameof(PullCellAddress)); }
         }
 
         public string ColumnIndex
