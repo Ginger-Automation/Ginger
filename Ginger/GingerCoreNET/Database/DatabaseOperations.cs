@@ -133,7 +133,7 @@ namespace GingerCore.Environments
         {
             try
             {
-                SqlConnectionStringBuilder scSB = new SqlConnectionStringBuilder(); ;
+                SqlConnectionStringBuilder scSB = [];
                 scSB.ConnectionString = Database.TNS;
                 Database.TNS = scSB.DataSource;
                 Database.User = scSB.UserID;
@@ -142,7 +142,7 @@ namespace GingerCore.Environments
             }
             catch (Exception ex) when (ex is ArgumentException or FormatException or InvalidOperationException)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "TNS is not a full SQL connection string, leaving values as-is", ex);
+                // If TNS is not a full SQL connection string just leave values as-is
             }
         }
 
@@ -251,7 +251,7 @@ namespace GingerCore.Environments
                         }
 
                     case eDBTypes.CosmosDb:
-                        Database.ConnectionString = $"AccountEndpoint={Database.User};AccountKey={Database.Pass}";
+                        Database.ConnectionString = string.Format("AccountEndpoint={0};AccountKey={1}", Database.User, Database.Pass);
                         break;
 
                     case eDBTypes.Hbase:
@@ -288,9 +288,8 @@ namespace GingerCore.Environments
                         throw new NotImplementedException("Unhandled database type: " + Database.DBType);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to create connection string for DB type: {Database.DBType}, falling back to default", ex);
                 Database.ConnectionString = "Data Source=" + Database.TNS + ";User Id={USER};Password={PASS};";
             }
 
@@ -476,7 +475,7 @@ namespace GingerCore.Environments
                         {
                             var parts = TNSCalculated.Split(':', 2);
                             mySQLHost = parts[0];
-                            if (uint.TryParse(parts[1], out uint p)) port1 = p;
+                            if (int.TryParse(parts[1], out int p)) port = p;
                         }
 
                         ValidateHostPort(mySQLHost, port1.HasValue ? (int?)port1.Value : null);
