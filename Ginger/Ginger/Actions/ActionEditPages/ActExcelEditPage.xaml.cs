@@ -48,6 +48,7 @@ namespace Ginger.Actions
         private List<string>? SheetsList;
         public ActExcelEditPage(ActExcel act)
         {
+            
             InitializeComponent();
             mAct = act;
             this.DataContext = mAct;
@@ -57,6 +58,8 @@ namespace Ginger.Actions
 
         public void Bind()
         {
+            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(rdByAddress, RadioButton.IsCheckedProperty, mAct, nameof(ActExcel.eDataSelectionMethod));
+
             ExcelActionComboBox.BindControl(mAct, nameof(ActExcel.ExcelActionType));
             ExcelFileNameTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.ExcelFileName));
             SheetNamComboBox.BindControl(mAct, nameof(ActExcel.SheetName));
@@ -85,13 +88,13 @@ namespace Ginger.Actions
         private void UpdateVisibility()
         {
             // 1. Radio Buttons Visibility (Only for ReadCellData & WriteData)
-            bool showRadios = mAct.ExcelActionType is ActExcel.eExcelActionType.ReadCellData or ActExcel.eExcelActionType.WriteData;
-            xRadioDataSelectionPanel.Visibility = showRadios ? Visibility.Visible : Visibility.Collapsed;
+            bool showRadios = mAct.ExcelActionType is ActExcel.eExcelActionType.ReadData or ActExcel.eExcelActionType.ReadCellData or ActExcel.eExcelActionType.WriteData; xRadioDataSelectionPanel.Visibility = showRadios ? Visibility.Visible : Visibility.Collapsed;
 
             // 2. Determine if "By Address" is active
             // Safety check: rdByAddress might be null during init, so we check visibility too
-            bool isByAddress = showRadios && (rdByAddress.IsChecked == true);
-
+            bool isByAddress = (mAct.GetInputParamValue(nameof(mAct.DataSelectionMethod)) == "ByCellAddress" ? true : false);
+            rdByAddress.IsChecked = isByAddress;
+            rdByParams.IsChecked = !isByAddress;
             // 3. Main Input Panels Logic
             if (mAct.ExcelActionType == ActExcel.eExcelActionType.GetSheetDetails)
             {
@@ -113,7 +116,7 @@ namespace Ginger.Actions
             }
 
             // 4. "Pull Cell Address" Checkbox (Only ReadData)
-            if (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData)
+            if (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData ||  mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellData)
             {
                 xPullCellAddressCheckBox.Visibility = Visibility.Visible;
             }
@@ -126,18 +129,7 @@ namespace Ginger.Actions
             // Show for WriteData (Always)
             // Show for ReadData
             // HIDE for ReadCellData 
-            if (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData || mAct.ExcelActionType == ActExcel.eExcelActionType.WriteData)
-            {
-                SetDataUsedSection.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                SetDataUsedSection.Visibility = Visibility.Collapsed;
-            }
-
-            // 6. Bulk Write Field (ColMappingRules)
-            // Show ONLY for WriteData in PARAMETER mode.
-            if (mAct.ExcelActionType == ActExcel.eExcelActionType.WriteData && !isByAddress)
+            if (mAct.ExcelActionType == ActExcel.eExcelActionType.WriteData )
             {
                 ColMappingRulesSection.Visibility = Visibility.Visible;
             }
@@ -145,11 +137,26 @@ namespace Ginger.Actions
             {
                 ColMappingRulesSection.Visibility = Visibility.Collapsed;
             }
+
+            // 6. Bulk Write Field (ColMappingRules)
+            // Show ONLY for WriteData in PARAMETER mode.
+            if (mAct.ExcelActionType == ActExcel.eExcelActionType.WriteData && isByAddress)
+            {
+                ColMappingRulesSection.Visibility = Visibility.Visible;
+                SetDataUsedSection.Visibility = Visibility.Collapsed;
+
+            }
+            else
+            {
+                ColMappingRulesSection.Visibility = Visibility.Collapsed;
+                SetDataUsedSection.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void ExcelActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ContextProcessInputValueForDriver();
+            //mAct.SelectCellAddress = string.Empty;
             UpdateVisibility();
 
             if (mAct.ExcelActionType != ActExcel.eExcelActionType.WriteData)
@@ -315,27 +322,32 @@ namespace Ginger.Actions
         }
         private void DataSelection_Changed(object sender, RoutedEventArgs e)
         {
+           
             if (rdByAddress == null || rdByParams == null)
             {
+                //rdByAddress.IsChecked = (mAct.GetInputParamValue(nameof(mAct.DataSelectionMethod)) == "ByCellAddress" ? true : false);
+
                 return;
             }
 
             if ((bool)rdByAddress.IsChecked)
             {
+                //mAct.ActInputValues.FirstOrDefault()
                 mAct.DataSelectionMethod = ActExcel.eDataSelectionMethod.ByCellAddress;
-                xAddressInputPanel.Visibility = Visibility.Visible;
-                if (mAct.ExcelActionType is ActExcel.eExcelActionType.WriteData )
-                {
-                    ColMappingRulesSection.Visibility = Visibility.Visible;
-                    SetDataUsedSection.Visibility = Visibility.Collapsed;
+                rdByParams.IsChecked = false;
+                //xAddressInputPanel.Visibility = Visibility.Visible;
+                //if (mAct.ExcelActionType is ActExcel.eExcelActionType.WriteData )
+                //{
+                //    ColMappingRulesSection.Visibility = Visibility.Visible;
+                //    SetDataUsedSection.Visibility = Visibility.Collapsed;
 
-                }
-                else
-                {
-                    ColMappingRulesSection.Visibility = Visibility.Collapsed;
-                    SetDataUsedSection.Visibility = Visibility.Collapsed;
+                //}
+                //else
+                //{
+                //    ColMappingRulesSection.Visibility = Visibility.Collapsed;
+                //    SetDataUsedSection.Visibility = Visibility.Collapsed;
 
-                }
+                //}
             }
             else
             {

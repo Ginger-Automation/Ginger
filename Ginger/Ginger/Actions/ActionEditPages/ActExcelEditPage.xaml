@@ -22,7 +22,7 @@
         <StackPanel Grid.Row="0" Grid.ColumnSpan="3">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Excel Action:</Label>
             <ComboBox x:Name="ExcelActionComboBox" 
-                      SelectedValue="{Binding ExcelActionType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                     
                       SelectionChanged="ExcelActionComboBox_SelectionChanged" 
                       Style="{StaticResource $FlatInputComboBoxStyle}" 
                       Width="250" HorizontalAlignment="Left"/>
@@ -45,7 +45,7 @@
                 </DockPanel>
             </StackPanel>
             <StackPanel x:Name="xRadioDataSelectionPanel" Orientation="Horizontal" Margin="0,10,0,5" Visibility="Collapsed">
-                <RadioButton x:Name="rdByParams" Content="By Parameters" GroupName="DataSelection" Checked="DataSelection_Changed" Margin="0,0,10,0"  IsChecked="True"/>
+                <RadioButton x:Name="rdByParams" Content="By Parameters" GroupName="DataSelection" Checked="DataSelection_Changed" Margin="0,0,10,0"  />
                 <RadioButton x:Name="rdByAddress" Content="By Cell Address" GroupName="DataSelection" Checked="DataSelection_Changed"/>
             </StackPanel>
             <StackPanel x:Name="pnlDatabaseOptions">
