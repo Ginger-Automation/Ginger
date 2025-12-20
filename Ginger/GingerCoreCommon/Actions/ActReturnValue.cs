@@ -180,7 +180,7 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                if (mStoreToValue != value)
+                if (value != null && mStoreToValue != value)
                 {
                     mStoreToValue = value;
                     OnPropertyChanged(Fields.StoreToValue);

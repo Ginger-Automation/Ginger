@@ -613,8 +613,6 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                IWebElement elementInfo = null;
-
                 if (act.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Element)
                 {
                     act.Status = eRunStatus.Failed;
@@ -623,20 +621,13 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else if (act.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Page)
                 {
-
-                    // For 'Page', use the root element to analyze the full screen
-                    elementInfo = (AppiumElement)Driver.FindElement(By.ClassName("android.widget.FrameLayout"));
+                    // For 'Page', we don't actually need a root element.
+                    act.AnalyzerMobileAccessibility(Driver, Driver, null);
                 }
 
-                if (elementInfo != null)
+                if ((act.Status == eRunStatus.Pending || act.Status == 0) && string.IsNullOrEmpty(act.Error))
                 {
-                    act.AnalyzerMobileAccessibility(Driver, elementInfo);
-                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
-                }
-                else
-                {
-                    act.Error = "Element not found.";
-                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                    act.Status = eRunStatus.Passed;
                 }
             }
             catch (Exception ex)

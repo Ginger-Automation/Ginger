@@ -11,15 +11,15 @@
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>Amdocs.Ginger.Common</RootNamespace>
 
-    <AssemblyVersion>25.5.1.0</AssemblyVersion>
-    <FileVersion>25.5.1.0</FileVersion>
+    <AssemblyVersion>25.5.0.0</AssemblyVersion>
+    <FileVersion>25.5.0.0</FileVersion>
 
     <PackageId>Ginger.Core.Common</PackageId>
     <Authors>Amdocs</Authors>
     <Company>Amdocs</Company>
     <Product>Ginger by Amdocs</Product>
-    <Copyright>Copyright © 2014-2024 European Support Limited</Copyright>
-    <Version>2025.5.1-Beta</Version>
+    <Copyright>Copyright © 2014-2026 European Support Limited</Copyright>
+    <Version>2025.5.0</Version>
     <Title>Ginger Core Common</Title>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
