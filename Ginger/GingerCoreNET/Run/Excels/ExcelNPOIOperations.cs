@@ -461,9 +461,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         {
             try
             {
+                IWorkbook workbook = null;
+
                 using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.ReadWrite))
                 {
-                    IWorkbook workbook = null;
                     if (fileName.EndsWith(".xlsx"))
                     {
                         workbook = new XSSFWorkbook(fs);
