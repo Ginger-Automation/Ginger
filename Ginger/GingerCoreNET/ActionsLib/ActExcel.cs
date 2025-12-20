@@ -266,7 +266,7 @@ namespace GingerCore.Actions
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "Only action type can be selected");
+                    Reporter.ToLog(eLogLevel.WARN, "Only action type can be selected");
                 }
             }
         }
