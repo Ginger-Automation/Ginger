@@ -459,11 +459,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         /// <returns></returns>
         public bool WriteCellData(string fileName, string sheetName, string address, string value)
         {
+            IWorkbook workbook = null;
+
             try
             {
+
                 lock (lockObj)
                 {
-                    IWorkbook workbook = null;
 
                     using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     {
@@ -479,12 +481,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
                     if (workbook == null)
                     {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to open workbook from file: {fileName}");
                         return false;
                     }
 
                     ISheet sheet = workbook.GetSheet(sheetName);
                     if (sheet == null)
                     {
+                       Reporter.ToLog(eLogLevel.ERROR, $"Sheet '{sheetName}' not found in file: {fileName}");
                         return false;
                     }
 
@@ -509,6 +513,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error writing cell data: " + ex.Message, ex);
                 return false;
+            }
+            finally
+            {
+                workbook?.Close();
+
             }
         }
     }
