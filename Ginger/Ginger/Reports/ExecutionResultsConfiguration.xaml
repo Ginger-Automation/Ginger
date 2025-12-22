@@ -135,12 +135,7 @@
                                     x:Name="liteDbRadioBtnsPnl"
                                     Content="LiteDB"
                                     Padding="5,0,5,0"
-                                    Checked="LiteDbRadioBtnsPnl_Checked" />
-                                <RadioButton
-                                    x:Name="textFileRadioBtnsPnl"
-                                    Content="Text File"
-                                    Padding="5,0,0,0"
-                                    Checked="TextFileRadioBtnsPnl_Checked" />
+                                    Checked="LiteDbRadioBtnsPnl_Checked" />                                
                             </StackPanel>
                             <Label
                                 Content="Execution Logger Results Folder:"

@@ -80,14 +80,8 @@ namespace Ginger.Reports
                 executionResultOnRadioBtnsPnl.IsChecked = false;
                 executionResultOffRadioBtnsPnl.IsChecked = true;
             }
-            if (_selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
-            {
-                textFileRadioBtnsPnl.IsChecked = true;
-            }
-            else
-            {
-                liteDbRadioBtnsPnl.IsChecked = true;
-            }
+
+            liteDbRadioBtnsPnl.IsChecked = true;
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralExecutionLoggerExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
 
@@ -100,7 +94,6 @@ namespace Ginger.Reports
                 nameof(ExecutionLoggerConfiguration.PublishLogToCentralDB), PublishLogToCentralDBRadioButton_CheckedHandler);
             xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish), xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.DeleteLocalDataOnPublish));
             xUploadArtifactsButton.Init(typeof(ExecutionLoggerConfiguration.eUploadExecutionArtifactsToCentralizedReport), xUploadArtifactsPanel, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.UploadArtifactsToCentralizedReport));
-
         }
 
         private void SelectFolderButton_Click(object sender, RoutedEventArgs e)
@@ -172,19 +165,7 @@ namespace Ginger.Reports
 
             // validate the paths of inserted folders
             Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationHTMLReportsFolder);
-        }
-        private void TextFileRadioBtnsPnl_Checked(object sender, RoutedEventArgs e)
-        {
-            if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
-            {
-                _selectedExecutionLoggerConfiguration.PublishLogToCentralDB = ExecutionLoggerConfiguration.ePublishToCentralDB.No;
-                SetExecutionLoggerRadioButtonToOff();
-                _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
-                xCentralExecutionLoggerExpander.Visibility = Visibility.Collapsed;
-                xFolderMaximumSizeRow.Height = new GridLength(30);
-                _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
-            }
-        }
+        }        
         private void LiteDbRadioBtnsPnl_Checked(object sender, RoutedEventArgs e)
         {
             if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)

@@ -386,7 +386,16 @@ namespace Ginger.Reports
             get { return mDataRepositoryMethod; }
             set
             {
-                if (mDataRepositoryMethod != value)
+                /* After deprecating TextFile as Execution Results Database option, need to keep it working for backward compatibility, 
+                 * so when existing solution has TextFile as ExecutionResults DB option then change it to LiteDB.
+                 */
+                if (mDataRepositoryMethod == DataRepositoryMethod.TextFile || value == DataRepositoryMethod.TextFile)
+                {
+                    mDataRepositoryMethod = DataRepositoryMethod.LiteDB;
+                    OnPropertyChanged(nameof(SelectedDataRepositoryMethod));
+                    DataRepositoryChanged?.Invoke();
+                }
+                else if (mDataRepositoryMethod != value)
                 {
                     mDataRepositoryMethod = value;
                     OnPropertyChanged(nameof(SelectedDataRepositoryMethod));

@@ -20,7 +20,7 @@
         </Grid.Resources>
 
         <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <TabControl x:Name="tabConfigurations" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="tabConfigurations_SelectionChanged" Background="{StaticResource $BackgroundColor_White}" >
+            <TabControl x:Name="tabConfigurations" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}" >
                 <TabItem x:Name="tbiConfigurations" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
@@ -554,23 +554,6 @@
                         </Grid>
                 </StackPanel>
             </TabItem>
-
-                <TabItem x:Name="tbiPreview" Style="{StaticResource $RoundedTab}">
-                    <TabItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Preview"/>
-                        </StackPanel>
-                    </TabItem.Header>
-                    <DockPanel >
-                        <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Left" >
-                            <Button x:Name="RefreshPreviewButton" usercontrols:ImageMaker.Content="Refresh" Width="16" Style="{StaticResource @InputImageButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Click="RefreshPreviewButton_Click" ToolTip="Refresh">                                
-                            </Button>
-                        </DockPanel>
-                        <DockPanel DockPanel.Dock="Bottom" >
-                            <Frame x:Name="frmBrowser" NavigationUIVisibility="Hidden"  Content="Report Preview according to Template" ></Frame>
-                        </DockPanel>
-                    </DockPanel>
-                </TabItem>
         </TabControl>
         </ScrollViewer>
     </Grid>
