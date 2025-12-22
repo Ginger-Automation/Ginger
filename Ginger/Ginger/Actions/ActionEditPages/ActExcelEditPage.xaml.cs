@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.ActionsLib;
 using GingerCore.Actions;
+using Org.BouncyCastle.Ocsp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -47,14 +48,18 @@ namespace Ginger.Actions
         private List<string>? SheetsList;
         public ActExcelEditPage(ActExcel act)
         {
+            
             InitializeComponent();
             mAct = act;
+            this.DataContext = mAct;
             Bind();
             mAct.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
         }
 
         public void Bind()
         {
+            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(rdByAddress, RadioButton.IsCheckedProperty, mAct, nameof(ActExcel.eDataSelectionMethod));
+
             ExcelActionComboBox.BindControl(mAct, nameof(ActExcel.ExcelActionType));
             ExcelFileNameTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.ExcelFileName));
             SheetNamComboBox.BindControl(mAct, nameof(ActExcel.SheetName));
@@ -66,21 +71,97 @@ namespace Ginger.Actions
             SetDataUsedTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.SetDataUsed));
             ColMappingRulesTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.ColMappingRules));
 
-            if (mAct.ExcelActionType is ActExcel.eExcelActionType.ReadData or ActExcel.eExcelActionType.ReadCellData)
-            {
-                this.ColMappingRulesSection.Visibility = Visibility.Collapsed;
-                SetDataUsedSection.Visibility = Visibility.Visible;
-            }
-            if (mAct.ExcelActionType == ActExcel.eExcelActionType.WriteData)
-            {
-                this.ColMappingRulesSection.Visibility = Visibility.Visible;
-            }
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPullCellAddressCheckBox, CheckBox.IsCheckedProperty, mAct, nameof(ActExcel.PullCellAddress));
+            CellAddressTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.SelectCellAddress));
 
+           
+
+            UpdateVisibility();
             EnableSheetNameComboBox();
-            // populate Sheet drop down
             if (!string.IsNullOrEmpty(mAct.ExcelFileName))
             {
                 FillSheetCombo();
+            }
+        }
+
+
+        private void UpdateVisibility()
+        {
+            // 1. Radio Buttons Visibility (Only for ReadCellData & WriteData)
+            bool showRadios = mAct.ExcelActionType is ActExcel.eExcelActionType.ReadData or ActExcel.eExcelActionType.ReadCellData or ActExcel.eExcelActionType.WriteData; xRadioDataSelectionPanel.Visibility = showRadios ? Visibility.Visible : Visibility.Collapsed;
+
+            // 2. Determine if "By Address" is active
+            // Safety check: rdByAddress might be null during init, so we check visibility too
+            bool isByAddress = (mAct.GetInputParamValue(nameof(mAct.DataSelectionMethod)) == "ByCellAddress" ? true : false);
+            rdByAddress.IsChecked = isByAddress;
+            rdByParams.IsChecked = !isByAddress;
+            // 3. Main Input Panels Logic
+            if (mAct.ExcelActionType == ActExcel.eExcelActionType.GetSheetDetails)
+            {
+                // Hide inputs for GetSheetDetails
+                pnlDatabaseOptions.Visibility = Visibility.Collapsed;
+                xAddressInputPanel.Visibility = Visibility.Collapsed;
+            }
+            else if (isByAddress)
+            {
+                // ADDRESS MODE: Show Address Box, Hide Database params
+                pnlDatabaseOptions.Visibility = Visibility.Collapsed;
+                xAddressInputPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                // PARAM MODE: Show Database params, Hide Address Box
+                pnlDatabaseOptions.Visibility = Visibility.Visible;
+                xAddressInputPanel.Visibility = Visibility.Collapsed;
+            }
+
+            // 4. "Pull Cell Address" Checkbox (Only ReadData)
+            if (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData ||  mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellData)
+            {
+                xPullCellAddressCheckBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xPullCellAddressCheckBox.Visibility = Visibility.Collapsed;
+            }
+
+            // 5. Write Value Field (SetDataUsed)
+            // Show for WriteData (Always)
+            // Show for ReadData
+            // HIDE for ReadCellData 
+            if (mAct.ExcelActionType == ActExcel.eExcelActionType.WriteData )
+            {
+                ColMappingRulesSection.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ColMappingRulesSection.Visibility = Visibility.Collapsed;
+            }
+
+            // 6. Bulk Write Field (ColMappingRules)
+            // Show ONLY for WriteData in PARAMETER mode.
+            if (mAct.ExcelActionType == ActExcel.eExcelActionType.WriteData && isByAddress)
+            {
+                ColMappingRulesSection.Visibility = Visibility.Visible;
+                SetDataUsedSection.Visibility = Visibility.Collapsed;
+
+            }
+            else
+            {
+                ColMappingRulesSection.Visibility = Visibility.Collapsed;
+                SetDataUsedSection.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void ExcelActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ContextProcessInputValueForDriver();
+            //mAct.SelectCellAddress = string.Empty;
+            UpdateVisibility();
+
+            if (mAct.ExcelActionType != ActExcel.eExcelActionType.WriteData)
+            {
+                mAct.ColMappingRules = string.Empty;
             }
         }
 
@@ -94,7 +175,6 @@ namespace Ginger.Actions
             {
                 ExcelFileNameTextBox.ValueTextBox.Text = fileName;
                 SheetsList = null;
-                // Empty the list in the UI before Creating a new list
                 GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
                 mAct.SheetName = "";
                 FillSheetCombo();
@@ -118,38 +198,21 @@ namespace Ginger.Actions
                         {
                             GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
                         });
-                        if (SheetsList == null || SheetsList.Count == 0)
-                        {
-                            ShowErrorResponse();
-                            return;
-                        }
-
                     }
-                    catch (Exception)
+                    catch (Exception) 
                     {
-                        ShowErrorResponse();
+                        ShowErrorResponse(); 
                     }
-                    finally
-                    {
-                        Dispatcher.Invoke(() =>
-                        {
-                            EnableSheetNameComboBox();
-                            HideLoader();
-                        });
+                    finally 
+                    { 
+                        Dispatcher.Invoke(() => { EnableSheetNameComboBox(); HideLoader(); }); 
                     }
                 });
             }
         }
-        private void DisableSheetNameComboBox()
-        {
-            WeakEventManager<ComboBox, EventArgs>.RemoveHandler(source: SheetNamComboBox, eventName: nameof(ComboBox.DropDownOpened), handler: SheetNamComboBox_DropDownOpened);
-        }
 
-        private void EnableSheetNameComboBox()
-        {
-            WeakEventManager<ComboBox, EventArgs>.AddHandler(source: SheetNamComboBox, eventName: nameof(ComboBox.DropDownOpened), handler: SheetNamComboBox_DropDownOpened);
-        }
-
+        private void DisableSheetNameComboBox() { WeakEventManager<ComboBox, EventArgs>.RemoveHandler(source: SheetNamComboBox, eventName: nameof(ComboBox.DropDownOpened), handler: SheetNamComboBox_DropDownOpened); }
+        private void EnableSheetNameComboBox() { WeakEventManager<ComboBox, EventArgs>.AddHandler(source: SheetNamComboBox, eventName: nameof(ComboBox.DropDownOpened), handler: SheetNamComboBox_DropDownOpened); }
         private void ContextProcessInputValueForDriver()
         {
             var context = Context.GetAsContext(mAct.Context);
@@ -163,7 +226,6 @@ namespace Ginger.Actions
         {
             xViewDataLoader.Visibility = Visibility.Visible;
             ExcelDataGrid.Visibility = Visibility.Collapsed;
-
             await Task.Run(() =>
             {
                 try
@@ -174,38 +236,25 @@ namespace Ginger.Actions
                     {
                         return;
                     }
-
-                    Dispatcher.Invoke(() =>
-                    {
-                        ExcelDataGrid.Visibility = Visibility.Visible;
-
-                        SetExcelDataGridItemsSource(excelSheetData);
-
-                    });
+                    Dispatcher.Invoke(() => { ExcelDataGrid.Visibility = Visibility.Visible; SetExcelDataGridItemsSource(excelSheetData); });
                 }
                 catch (Exception ex)
                 {
-                    Dispatcher.Invoke(() =>
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
-                    });
+                    Dispatcher.Invoke(() => { Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message); });
                 }
-                finally
-                {
-                    Dispatcher.Invoke(() => xViewDataLoader.Visibility = Visibility.Collapsed);
+                finally 
+                { 
+                    Dispatcher.Invoke(() => xViewDataLoader.Visibility = Visibility.Collapsed); 
                 }
             });
         }
 
-
         private void SetExcelDataGridItemsSource(DataTable excelSheetData)
         {
             CreateExcelDataGridColumns(excelSheetData);
-
             ObservableCollection<object?[]> excelDataGridRows = [];
             BindingOperations.EnableCollectionSynchronization(excelDataGridRows, excelDataGridRows);
             ExcelDataGrid.ItemsSource = excelDataGridRows;
-
             CopyExcelSheetRowsToExcelDataGridRows(excelSheetData.Rows, excelDataGridRows);
         }
 
@@ -215,60 +264,28 @@ namespace Ginger.Actions
             for (int columnIndex = 0; columnIndex < excelSheetData.Columns.Count; columnIndex++)
             {
                 DataColumn excelSheetColumn = excelSheetData.Columns[columnIndex];
-                ExcelDataGrid.Columns.Add(
-                    new DataGridTextColumn()
-                    {
-                        Header = excelSheetColumn.ColumnName,
-                        Binding = new Binding($"[{columnIndex}]")
-                    });
+                ExcelDataGrid.Columns.Add(new DataGridTextColumn() { Header = excelSheetColumn.ColumnName, Binding = new Binding($"[{columnIndex}]") });
             }
         }
 
-        private void ShowErrorResponse()
-        {
-            Dispatcher.Invoke(() =>
-            {
-                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
-            });
-        }
-
+        private void ShowErrorResponse() { Dispatcher.Invoke(() => { Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData); }); }
         private Task CopyExcelSheetRowsToExcelDataGridRows(DataRowCollection excelSheetRows, ObservableCollection<object?[]> excelDataGridRows)
         {
-            return Task.Run(() =>
-            {
-                foreach (DataRow excelSheetRow in excelSheetRows)
-                {
-                    lock (excelDataGridRows)
-                    {
-                        excelDataGridRows.Add(excelSheetRow.ItemArray);
-                    }
-                }
-            });
+            return Task.Run(() => { foreach (DataRow excelSheetRow in excelSheetRows) { lock (excelDataGridRows) { excelDataGridRows.Add(excelSheetRow.ItemArray); } } });
         }
-        private void MakeLoaderVisible()
-        {
-            xLoader.Visibility = Visibility.Visible;
-        }
-
-        private void HideLoader()
-        {
-            xLoader.Visibility = Visibility.Hidden;
-
-        }
+        private void MakeLoaderVisible() { xLoader.Visibility = Visibility.Visible; }
+        private void HideLoader() { xLoader.Visibility = Visibility.Hidden; }
 
         private async void ViewWhereButton_Click(object sender, RoutedEventArgs e)
         {
             xViewDataLoader.Visibility = Visibility.Visible;
             ExcelDataGrid.Visibility = Visibility.Collapsed;
-
             await Task.Run(() =>
             {
                 try
                 {
                     ContextProcessInputValueForDriver();
-
-                    if (!mAct.CheckMandatoryFieldsExists([
-                nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName),  nameof(mAct.SelectRowsWhere)]))
+                    if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName), nameof(mAct.SelectRowsWhere)]))
                     {
                         return;
                     }
@@ -277,30 +294,16 @@ namespace Ginger.Actions
                     {
                         return;
                     }
-                    Dispatcher.Invoke(() =>
-                    {
-                        ExcelDataGrid.Visibility = Visibility.Visible;
-                        SetExcelDataGridItemsSource(excelSheetData);
-                    });
+                    Dispatcher.Invoke(() => { ExcelDataGrid.Visibility = Visibility.Visible; SetExcelDataGridItemsSource(excelSheetData); });
                 }
                 catch (Exception ex)
                 {
-                    string errorMessage = ex.Message;
-                    if (!string.IsNullOrEmpty(ex.Message) && ex.Message.StartsWith("Cannot find column"))
-                    {
-                        errorMessage = errorMessage + " " + $"at Row Number {mAct.HeaderRowNum}";
-                    }
-
-                    Dispatcher.Invoke(() =>
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, errorMessage);
-                    });
+                    Dispatcher.Invoke(() => { Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message); });
                 }
                 finally
                 {
                     Dispatcher.Invoke(() => xViewDataLoader.Visibility = Visibility.Collapsed);
                 }
-
             });
         }
 
@@ -308,40 +311,51 @@ namespace Ginger.Actions
         {
             try
             {
-                if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName)]))
-                {
-                    return null;
-                }
+                if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName)])) return null;
                 if (!isViewAllData && mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellData && !string.IsNullOrWhiteSpace(mAct.CalculatedFilter))
                 {
                     return mExcelOperations.ReadCellData(mAct.CalculatedFileName, mAct.CalculatedSheetName, mAct.CalculatedFilter, mAct.SelectAllRows, mAct.CalculatedHeaderRowNum);
                 }
                 return mExcelOperations.ReadDataWithRowLimit(mAct.CalculatedFileName, mAct.CalculatedSheetName, isViewAllData ? null : mAct.CalculatedFilter, mAct.SelectAllRows, mAct.CalculatedHeaderRowNum, VIEW_DATA_ROW_LIMIT);
             }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
-                throw;
-            }
+            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex); throw; }
         }
-        private void ExcelActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void DataSelection_Changed(object sender, RoutedEventArgs e)
         {
-            ContextProcessInputValueForDriver();
-
-            if (ExcelActionComboBox.SelectedValue.ToString() is "ReadData" or "ReadCellData")
+           
+            if (rdByAddress == null || rdByParams == null)
             {
-                SetDataUsedSection.Visibility = Visibility.Visible;
-                ColMappingRulesSection.Visibility = Visibility.Collapsed;
-                //fixing for #3811 : to clear Data from Write Data column
-                mAct.ColMappingRules = string.Empty;
+                //rdByAddress.IsChecked = (mAct.GetInputParamValue(nameof(mAct.DataSelectionMethod)) == "ByCellAddress" ? true : false);
+
+                return;
             }
 
-            if (ExcelActionComboBox.SelectedValue.ToString() == "WriteData")
+            if ((bool)rdByAddress.IsChecked)
             {
-                ColMappingRulesSection.Visibility = Visibility.Visible;
+                //mAct.ActInputValues.FirstOrDefault()
+                mAct.DataSelectionMethod = ActExcel.eDataSelectionMethod.ByCellAddress;
+                rdByParams.IsChecked = false;
+                //xAddressInputPanel.Visibility = Visibility.Visible;
+                //if (mAct.ExcelActionType is ActExcel.eExcelActionType.WriteData )
+                //{
+                //    ColMappingRulesSection.Visibility = Visibility.Visible;
+                //    SetDataUsedSection.Visibility = Visibility.Collapsed;
+
+                //}
+                //else
+                //{
+                //    ColMappingRulesSection.Visibility = Visibility.Collapsed;
+                //    SetDataUsedSection.Visibility = Visibility.Collapsed;
+
+                //}
             }
+            else
+            {
+                mAct.DataSelectionMethod = ActExcel.eDataSelectionMethod.ByParameters;
+            }
+
+            UpdateVisibility();
         }
-
         private void SheetNamComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mAct.SheetName = SheetNamComboBox.Text;
@@ -370,7 +384,11 @@ namespace Ginger.Actions
             {
                 return;
             }
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = mAct.CalculatedFileName, UseShellExecute = true });
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
+            {
+                FileName = mAct.CalculatedFileName,
+                UseShellExecute = true
+            });
         }
 
         private void HeaderNumValidation(object sender, TextCompositionEventArgs e)
