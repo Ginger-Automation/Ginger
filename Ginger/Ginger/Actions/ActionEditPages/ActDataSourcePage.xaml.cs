@@ -386,6 +386,11 @@ namespace Ginger.Actions
                                             else if (condVal.Length > 1)
                                             {
                                                 wColVal = condVal[2].Replace("$$$", " ");
+                                                int quoteCount = wColVal.Count(ch => ch == '"');
+                                                if (wColVal.Contains("\"") && quoteCount == 1 && condVal.Length > 2)
+                                                {
+                                                    wColVal = wColVal + " " + condVal[3];
+                                                }
                                             }
                                         }
                                         else if (condVal[1] == "<>")
