@@ -153,7 +153,11 @@ namespace GingerCore.Actions
         }
         public override void DoNewActionSetup()
         {
-            CalcEngineType = eCalcEngineType.CS;
+            base.DoNewActionSetup();
+            if (string.IsNullOrEmpty(this.Description) && !string.IsNullOrEmpty(this.ActionDescription))
+            {
+                this.Description = this.ActionDescription;
+            }
         }
     }
 }

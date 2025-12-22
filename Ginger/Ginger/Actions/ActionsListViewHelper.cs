@@ -152,6 +152,15 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemNameField()
         {
+            // which is the canonical human-readable name of the action type (e.g. "Mobile/Tv Device Action")
+            if (PageViewMode == General.eRIPageViewMode.Add
+                || PageViewMode == General.eRIPageViewMode.AddFromModel
+                || PageViewMode == General.eRIPageViewMode.AddFromShardRepository)
+            {
+                return nameof(Act.ActionDescription);
+            }
+
+            // Default behavior: show the action instance Description (existing behavior)
             return nameof(Act.Description);
         }
 

@@ -573,6 +573,20 @@ namespace GingerCore.Actions
 
         public override string ToString()
         {
+            try
+            {
+                // Prefer the action-level description if provided by the derived action (e.g. "Mobile/Tv Device Action")
+                if (!string.IsNullOrWhiteSpace(this.ActionDescription))
+                {
+                    return this.ActionDescription;
+                }
+            }
+            catch
+            {
+                // in case derived class throws, fall back to description
+            }
+
+            // Fall back to stored description (legacy behavior)
             return mDescription;
         }
 

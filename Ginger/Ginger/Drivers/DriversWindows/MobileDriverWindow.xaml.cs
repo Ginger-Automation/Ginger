@@ -66,6 +66,99 @@ namespace Ginger.Drivers.DriversWindows
 
        
         ObservableList <DeviceInfo> mDeviceDetails = [];
+        public (int x, int y) GetMousePositionOnDevice()
+        {
+            try
+            {
+                var img = this.FindName("xDeviceImage") as Image;
+                if (img == null) throw new InvalidOperationException("Device image control 'xDeviceImage' not found in MobileDriverWindow.");
+
+                Point relative = Mouse.GetPosition(img);
+
+                if (img.Source is BitmapSource bmp && img.ActualWidth > 0 && img.ActualHeight > 0)
+                {
+                    double sx = bmp.PixelWidth / img.ActualWidth;
+                    double sy = bmp.PixelHeight / img.ActualHeight;
+                    int dx = Math.Max(0, (int)Math.Round(relative.X * sx));
+                    int dy = Math.Max(0, (int)Math.Round(relative.Y * sy));
+                    return (dx, dy);
+                }
+
+                return ((int)relative.X, (int)relative.Y);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("GetMousePositionOnDevice failed: " + ex.Message, ex);
+            }
+        }
+
+        public void HighlightElementOnDevice(Amdocs.Ginger.Common.UIElement.ElementInfo element)
+        {
+            try
+            {
+                var canvas = this.FindName("xHighlightCanvas") as System.Windows.Controls.Canvas;
+                if (canvas == null) return;
+
+                canvas.Dispatcher.Invoke(() =>
+                {
+                    canvas.Children.Clear();
+                    var rect = new System.Windows.Shapes.Rectangle
+                    {
+                        Stroke = Brushes.Red,
+                        StrokeThickness = 3,
+                        Fill = new SolidColorBrush(Color.FromArgb(40, 255, 0, 0))
+                    };
+
+                    // element.X/Y/Width/Height are device pixels; map to image control size
+                    var img = this.FindName("xDeviceImage") as Image;
+                    if (img != null && img.Source is BitmapSource bmp && img.ActualWidth > 0 && img.ActualHeight > 0)
+                    {
+                        double sx = img.ActualWidth / bmp.PixelWidth;
+                        double sy = img.ActualHeight / bmp.PixelHeight;
+                        Canvas.SetLeft(rect, element.X * sx);
+                        Canvas.SetTop(rect, element.Y * sy);
+                        rect.Width = Math.Max(1, element.Width * sx);
+                        rect.Height = Math.Max(1, element.Height * sy);
+                        canvas.Children.Add(rect);
+                        canvas.Visibility = Visibility.Visible;
+                    }
+                });
+            }
+            catch { /* non-fatal */ }
+        }
+
+        public void ClearHighlightedElementOnDevice()
+        {
+            try
+            {
+                var canvas = this.FindName("xHighlightCanvas") as System.Windows.Controls.Canvas;
+                if (canvas == null) return;
+                canvas.Dispatcher.Invoke(() => { canvas.Children.Clear(); canvas.Visibility = Visibility.Collapsed; });
+            }
+            catch { }
+        }
+
+        public void BringToFront()
+        {
+            try
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    if (!this.IsVisible) this.Show();
+                    this.Activate();
+                    this.Topmost = true;
+                    this.Topmost = false;
+                });
+            }
+            catch { }
+        }
+
+        // optional: receive tap command from driver and forward to real device via Appium/ADB - placeholder that UI may call
+        public void TapAt(int deviceX, int deviceY)
+        {
+            // This method is a thin UI helper. Actual device tap should be performed by the driver (Appium). Keep as no-op or wire to driver if you prefer.
+        }
+    
 
         public MobileDriverWindow(DriverBase driver, Agent agent)
         {
@@ -1211,11 +1304,72 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     this.Icon = ImageMakerControl.GetImageSource(eImageType.Android);
                 }
+                else if(mDriver.GetDevicePlatformType() == eDevicePlatformType.AndroidTv)
+                {
+                    this.Icon = ImageMakerControl.GetImageSource(eImageType.AndroidTv , width: 200);
+                }
                 else
                 {
                     this.Icon = ImageMakerControl.GetImageSource(eImageType.Ios);
                 }
                 xMessageLbl.Content = "Connecting to Device...";
+
+                // --- NEW: if the configured driver is AndroidTV, set the initial preview/window size
+                // to better match a typical TV native resolution so the user doesn't see a mobile-sized window
+                // while the agent is loading. This does not affect mobile devices.
+                try
+                {
+                    if (mDriver != null && mDriver.GetDevicePlatformType() == eDevicePlatformType.AndroidTv)
+                    {
+                        // Prefer a 16:9 default TV native resolution (1920x1080) for initial sizing
+                        const double defaultTvWidth = 1920.0;
+                        const double defaultTvHeight = 1080.0;
+                        double hostHalfWidth = SystemParameters.PrimaryScreenWidth * 0.5; // keep it usable on laptops
+                        double targetWidth = Math.Max(250, Math.Min(hostHalfWidth, defaultTvWidth)); // clamp to usable range
+                        double aspectRatio = defaultTvHeight / defaultTvWidth;
+                        double targetHeight = Math.Max(150, targetWidth * aspectRatio);
+
+                        // Apply TV-only behavior so we do not affect mobile agents:
+                        // - Clip canvas so children can't draw outside the column
+                        // - Force left alignment and Transparent background so canvas captures mouse events
+                        xDeviceSectionMainPnl.ClipToBounds = true;
+                        xDeviceScreenshotCanvas.ClipToBounds = true;
+                        xDeviceScreenshotCanvas.HorizontalAlignment = HorizontalAlignment.Left;
+                        xDeviceScreenshotCanvas.Background = Brushes.Transparent;
+
+                        // Reserve space for the right-side controls so the canvas won't expand underneath them
+                        double reservedRight = 250; // safe default
+                        try
+                        {
+                            reservedRight = Math.Max(150, xWindowGrid.ColumnDefinitions[2].ActualWidth + 40);
+                        }
+                        catch
+                        {
+                            // keep fallback if layout not measured yet
+                            reservedRight = 250;
+                        }
+
+                        // Clamp the canvas width so it cannot overlap the controls column
+                        double maxAllowedCanvas = Math.Max(250, SystemParameters.PrimaryScreenWidth - reservedRight);
+                        double finalWidth = Math.Min(targetWidth, maxAllowedCanvas);
+
+                        // Set initial zoom based on chosen final width
+                        mZoomSize = finalWidth / defaultTvWidth;
+                        if (mZoomSize <= 0) mZoomSize = 0.5;
+
+                        xDeviceScreenshotCanvas.Width = finalWidth;
+                        xDeviceScreenshotCanvas.Height = targetHeight;
+
+                        // Update window so the canvas is visible when it first opens and doesn't cover the controls
+                        this.Width = Math.Max(this.Width, xDeviceScreenshotCanvas.Width + reservedRight);
+                        this.Height = Math.Max(this.Height, xDeviceScreenshotCanvas.Height + 180);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "InitWindowLook: failed to apply AndroidTV initial sizing, continuing with defaults", ex);
+                }
+                // --- END NEW
 
                 //Configurations & Metrics
                 SetTabsColumnView(eTabsViewMode.None);
@@ -1240,9 +1394,13 @@ namespace Ginger.Drivers.DriversWindows
                 //Loading Pnl
                 xDeviceScreenshotCanvas.Visibility = Visibility.Collapsed;
                 xMessagePnl.Visibility = Visibility.Visible;
-                if (mDriver.GetDevicePlatformType() == eDevicePlatformType.Android)
+                if (mDriver.GetDevicePlatformType() == eDevicePlatformType.Android )
                 {
                     xMessageImage.ImageType = eImageType.AndroidWhite;
+                }
+                else if(mDriver.GetDevicePlatformType() == eDevicePlatformType.AndroidTv)
+                {
+                    xMessageImage.ImageType = eImageType.AndroidTvWhite;
                 }
                 else
                 {
@@ -1786,21 +1944,77 @@ namespace Ginger.Drivers.DriversWindows
             if (xDeviceScreenshotImage.Source != null)
             {
                 double imageSourceHightWidthRatio = xDeviceScreenshotImage.Source.Height / xDeviceScreenshotImage.Source.Width;
+                if (mDriver != null && mDriver.GetDevicePlatformType() == eDevicePlatformType.AndroidTv)
+                {
+                    double reservedRightForClamp = 250;
+                    try
+                    {
+                        reservedRightForClamp = Math.Max(150, xWindowGrid.ColumnDefinitions[2].ActualWidth + 40);
+                    }
+                    catch
+                    {
+                        reservedRightForClamp = 250;
+                    }
+
+                    // Ensure we don't allow the canvas to grow under the side panel
+                    double maxAllowedCanvasWidth = Math.Max(250, this.ActualWidth - reservedRightForClamp);
+                    xDeviceScreenshotCanvas.Width = Math.Min(xDeviceScreenshotCanvas.Width, maxAllowedCanvasWidth);
+
+                    // Recompute zoom size and height after final clamp
+                    mZoomSize = xDeviceScreenshotCanvas.Width / xDeviceScreenshotImage.Source.Width;
+                    xDeviceScreenshotCanvas.Height = xDeviceScreenshotCanvas.Width * imageSourceHightWidthRatio;
+                }
                 if (resetCanvasSize)
                 {
-                    mZoomSize = 0.25;
-                    xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * mZoomSize;
-                    while (xDeviceScreenshotCanvas.Width < 250)
+                    // For Android TV devices prefer to size the device image to ~50% of the host primary screen width
+                    // so it will be visible and usable on typical laptop screens.
+                    try
                     {
-                        mZoomSize *= 1.05;
+                        if (mDriver != null && mDriver.GetDevicePlatformType() == eDevicePlatformType.AndroidTv)
+                        {
+                            // target width is half of the primary monitor width
+                            double hostHalfWidth = SystemParameters.PrimaryScreenWidth * 0.5;
+
+                            // compute zoom so image width becomes ~hostHalfWidth
+                            double computedZoom = hostHalfWidth / xDeviceScreenshotImage.Source.Width;
+
+                            // Clamp zoom to reasonable range so we don't produce tiny/huge canvases
+                            mZoomSize = Math.Max(0.15, Math.Min(1.0, computedZoom));
+
+                            xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * mZoomSize;
+
+                            // ensure a minimum canvas width for usability
+                            if (xDeviceScreenshotCanvas.Width < 250)
+                            {
+                                xDeviceScreenshotCanvas.Width = 250;
+                                mZoomSize = xDeviceScreenshotCanvas.Width / xDeviceScreenshotImage.Source.Width;
+                            }
+                        }
+                        else
+                        {
+                            // default behavior for non-TV devices (preserve previous UX)
+                            mZoomSize = 0.25;
+                            xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * mZoomSize;
+                            while (xDeviceScreenshotCanvas.Width < 250)
+                            {
+                                mZoomSize *= 1.05;
+                                xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * mZoomSize;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "AdjustWindowSize: failed to compute default zoom, falling back to 25%: " + ex.Message);
+                        mZoomSize = 0.25;
                         xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * mZoomSize;
                     }
                 }
+
                 double previousCanasWidth = xDeviceScreenshotCanvas.ActualWidth;
                 double previousCanasHeight = xDeviceScreenshotCanvas.ActualHeight;
                 double targetWidthRatio = xDeviceScreenshotImage.Source.Width / xDeviceScreenshotCanvas.Width;
 
-                //Update canvas size
+                //Update canvas size (keeps current zoom behavior intact)
                 xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width / targetWidthRatio);
                 switch (operationType)
                 {

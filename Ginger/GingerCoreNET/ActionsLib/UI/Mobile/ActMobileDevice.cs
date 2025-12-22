@@ -23,33 +23,84 @@ using Amdocs.Ginger.CoreNET.ActionsLib.UI.Mobile;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace GingerCore.Actions
 {
     public class ActMobileDevice : Act
+
+
     {
-        public override string ActionDescription { get { return "Mobile Device Action"; } }
+
+        // Add constructor to initialize Description when creating new instance
+        public ActMobileDevice()
+        {
+            // If Description not set, default it to the canonical action-level description
+            if (string.IsNullOrEmpty(this.Description) && !string.IsNullOrEmpty(this.ActionDescription))
+            {
+                this.Description = this.ActionDescription;
+            }
+        }
+        public override string ActionDescription { get { return "Mobile/Tv Device Action"; } }
         public override string ActionUserDescription { get { return "USed to performe operations on the connected mobile device"; } }
+
+        public static List<eMobileDeviceAction> GetSupportedActionsByPlatform(ePlatformType platform)
+        {
+            // Define the limited set of actions for Android TV. Adjust as required.
+            if (platform == ePlatformType.AndroidTV)
+            {
+                return new List<eMobileDeviceAction>
+        {
+            // typical remote/TV related operations - change to match product requirements
+            eMobileDeviceAction.PressBackButton,
+            eMobileDeviceAction.PressHomeButton,
+            eMobileDeviceAction.PressMenuButton,
+            eMobileDeviceAction.PressVolumeUp,
+            eMobileDeviceAction.PressVolumeDown,
+            eMobileDeviceAction.PressKey,
+            eMobileDeviceAction.OpenApp,
+            eMobileDeviceAction.CloseApp,
+            eMobileDeviceAction.IsAppInstalled,
+            eMobileDeviceAction.GetAppPackage,
+            eMobileDeviceAction.GetDeviceBattery,
+            eMobileDeviceAction.GetDeviceGeneralInfo,
+            eMobileDeviceAction.GetCurrentActivityDetails,
+            eMobileDeviceAction.GetDeviceOSType
+        };
+            }
+
+            // default: full mobile actions list
+            return Enum.GetValues(typeof(eMobileDeviceAction)).Cast<eMobileDeviceAction>().ToList();
+        }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
         }
 
+        public override void DoNewActionSetup()
+        {
+            base.DoNewActionSetup();
+            if (string.IsNullOrEmpty(this.Description) && !string.IsNullOrEmpty(this.ActionDescription))
+            {
+                this.Description = this.ActionDescription;
+            }
+        }
+
         public override String ToString()
         {
-            return "Mobile Device Action: " + MobileDeviceAction.ToString();
+            return "Mobile/Tv Device Action: " + MobileDeviceAction.ToString();
         }
 
         public override String ActionType
         {
             get
             {
-                return "Mobile Device Action: " + MobileDeviceAction.ToString();
+                return "Mobile/Tv Device Action: " + MobileDeviceAction.ToString();
             }
         }
 
-        public override eImageType Image { get { return eImageType.Mobile; } }
+        public override eImageType Image { get { return eImageType.MultipleScreen; } }
 
         public eMobileDeviceAction MobileDeviceAction
         {
@@ -102,6 +153,21 @@ namespace GingerCore.Actions
             }
         }
 
+        public override void PostDeserialization()
+        {
+            base.PostDeserialization();
+            try
+            {
+                if (string.IsNullOrEmpty(this.Description) && !string.IsNullOrEmpty(this.ActionDescription))
+                {
+                    this.Description = this.ActionDescription;
+                }
+            }
+            catch
+            {
+                // be defensive - do not throw during deserialization
+            }
+        }
         public eUnlockType UnLockType
 
         {
