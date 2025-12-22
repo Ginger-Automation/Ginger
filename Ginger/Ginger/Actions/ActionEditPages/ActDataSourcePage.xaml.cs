@@ -387,7 +387,7 @@ namespace Ginger.Actions
                                             {
                                                 wColVal = condVal[2].Replace("$$$", " ");
                                                 int quoteCount = wColVal.Count(ch => ch == '"');
-                                                if (wColVal.Contains("\"") && quoteCount == 1 && condVal.Length > 2)
+                                                if (wColVal.Contains("\"") && quoteCount == 1 && condVal.Length >= 4)
                                                 {
                                                     wColVal = wColVal + " " + condVal[3];
                                                 }
