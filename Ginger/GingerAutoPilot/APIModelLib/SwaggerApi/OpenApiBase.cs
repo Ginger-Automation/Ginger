@@ -113,7 +113,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
             AAM.EndpointURL = path;
             AAM.APIType = ApplicationAPIUtils.eWebApiType.REST;
-            AAM.Name = Operation.Summary;
+            AAM.Name = Convert.ToString(Operation.Summary).Length > 50 ? Convert.ToString(Operation.Summary).Substring(0, 50) : Convert.ToString(Operation.Summary);
 
             if (string.IsNullOrWhiteSpace(AAM.Name))
             {
