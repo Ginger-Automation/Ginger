@@ -56,6 +56,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
+using static Ginger.UserControlsLib.UCDataMapping;
 using static GingerCore.Actions.Act;
 
 namespace Ginger.Actions
@@ -1010,7 +1011,14 @@ namespace Ginger.Actions
                         dataTypeProperty: ActReturnValue.Fields.StoreTo,
                         dataValueProperty: ActReturnValue.Fields.StoreToValue)
                     {
-                        _VariabelsSourceList = mStoreToVarsList
+                        _VariabelsSourceList = mStoreToVarsList,
+
+                        _RestrictedMappingTypes = new List<UCDataMapping.RestrictedMappingType>
+            {
+                new UCDataMapping.RestrictedMappingType(nameof(eDataType.Value), "Raw user values are not allowed on Action page."),
+                new UCDataMapping.RestrictedMappingType(nameof(eDataType.ValueExpression), "Value expressions are not allowed on Action page.")
+            }
+
                     })
                 });
 
@@ -1303,8 +1311,8 @@ namespace Ginger.Actions
                 view = GetGridViewForFilePathsInputValues();
             }
             else
-            { 
-                view = GetGridViewForParamValueInputValues(); 
+            {
+                view = GetGridViewForParamValueInputValues();
             }
             //view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Value ForDriver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
 

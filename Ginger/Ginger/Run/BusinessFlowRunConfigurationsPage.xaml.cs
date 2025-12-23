@@ -36,6 +36,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using static Ginger.UserControlsLib.UCDataMapping;
 
 namespace Ginger.Run
 {
@@ -180,10 +181,16 @@ namespace Ginger.Run
                     {
                         _EnableDataMappingProperty = nameof(VariableBase.SupportSetValue),
                         _VariabelsSourceProperty = nameof(VariableBase.PossibleVariables),
-                        _OutputVariabelsSourceProperty = nameof(VariableBase.PossibleOutputVariables)
+                        _OutputVariabelsSourceProperty = nameof(VariableBase.PossibleOutputVariables),
+
+                        _RestrictedMappingTypes = new List<UCDataMapping.RestrictedMappingType>
+                {
+                    new UCDataMapping.RestrictedMappingType(nameof(eDataType.Variable), "Direct variables are not allowed in Runset configuration.")
+                }
+
                     }),
                     WidthWeight = 40,
-                
+
                 });
             }
             else if (mWindowMode == eWindowMode.SummaryView)
