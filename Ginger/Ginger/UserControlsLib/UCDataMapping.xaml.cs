@@ -700,18 +700,21 @@ namespace Ginger.UserControlsLib
 
         private void xMappedTypeComboBox_DropDownClosed(object sender, EventArgs e)
         {
-            // If the selection changed, handle restricted types defensively
             if (RestrictedMappingTypes != null)
             {
                 var restricted = RestrictedMappingTypes.ToDictionary(r => r.Name, r => r.Reason ?? $"{r.Name} is not allowed here.", StringComparer.OrdinalIgnoreCase);
 
                 if (!string.Equals(_prevMappedType, MappedType, StringComparison.Ordinal))
                 {
-                    if (!string.IsNullOrEmpty(MappedType) && restricted.ContainsKey(MappedType))
+                    var selectedType = MappedType;
+
+                    if (!string.IsNullOrEmpty(selectedType) && restricted.ContainsKey(selectedType))
                     {
                         // revert selection
                         MappedType = _prevMappedType ?? nameof(eDataType.None);
-                        Reporter.ToUser(eUserMsgKey.NotAllowedForMappedRuntimeValue, restricted[MappedType]);
+
+                        // use ORIGINAL restricted value
+                        Reporter.ToUser(eUserMsgKey.NotAllowedForMappedRuntimeValue, restricted[selectedType]);
                     }
                 }
             }
@@ -727,7 +730,6 @@ namespace Ginger.UserControlsLib
             {
                 MappedValue = string.Empty;
             }
-
         }
 
         private static void OnEnableDataMappingPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
