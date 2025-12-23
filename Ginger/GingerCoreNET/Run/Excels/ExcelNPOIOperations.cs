@@ -18,8 +18,10 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
+using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -446,7 +448,77 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         {
             return (rowLimit == -1) ? currentRow != null : currentRow != null && (startRowNumber + rowLimit - currentRowNumber) > 0;
         }
+
+        /// <summary>
+        /// This method writes data into a specific cell in excel sheet
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="sheetName"></param>
+        /// <param name="address"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public bool WriteCellData(string fileName, string sheetName, string address, string value)
+        {
+            IWorkbook workbook = null;
+
+            try
+            {
+
+                lock (lockObj)
+                {
+
+                    using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        if (fileName.EndsWith(".xlsx"))
+                        {
+                            workbook = new XSSFWorkbook(fs);
+                        }
+                        else if (fileName.EndsWith(".xls"))
+                        {
+                            workbook = new HSSFWorkbook(fs);
+                        }
+                    }
+
+                    if (workbook == null)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to open workbook from file: {fileName}");
+                        return false;
+                    }
+
+                    ISheet sheet = workbook.GetSheet(sheetName);
+                    if (sheet == null)
+                    {
+                       Reporter.ToLog(eLogLevel.ERROR, $"Sheet '{sheetName}' not found in file: {fileName}");
+                        return false;
+                    }
+
+                    CellReference cellRef = new CellReference(address);
+                    IRow row = sheet.GetRow(cellRef.Row) ?? sheet.CreateRow(cellRef.Row);
+                    ICell cell = row.GetCell(cellRef.Col) ?? row.CreateCell(cellRef.Col);
+
+                    cell.SetCellValue(value);
+
+                    sheet.ForceFormulaRecalculation = true;
+
+                    using (FileStream fsOut = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                    {
+                        workbook.Write(fsOut);
+                    }
+
+                    workbook.Close();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error writing cell data: " + ex.Message, ex);
+                return false;
+            }
+            finally
+            {
+                workbook?.Close();
+
+            }
+        }
     }
 }
-
-// change 5t
