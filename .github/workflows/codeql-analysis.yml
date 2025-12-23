@@ -16,7 +16,7 @@ on:
   push:
     branches: [ master, Features/Linux-Migration, Releases/*, Releases/*/*]
   pull_request:
-    branches: [ master ]
+    branches: [ master, Releases/*, Releases/*/*]
   schedule:
     - cron: '0 0 * * 0'
 
