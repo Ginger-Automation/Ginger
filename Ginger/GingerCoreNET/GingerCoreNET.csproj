@@ -73,7 +73,6 @@
     <None Remove="Reports\GingerExecutionReport\assets\img\@item_prev.png" />
     <None Remove="Reports\GingerExecutionReport\assets\img\comments-icon.jpg" />
     <None Remove="Reports\GingerExecutionReport\assets\js\babel.js" />
-    <None Remove="Reports\GingerExecutionReport\assets\js\bootstrap.js" />
     <None Remove="Reports\GingerExecutionReport\assets\js\circlechart.js" />
     <None Remove="Reports\GingerExecutionReport\assets\js\donutchart.js" />
     <None Remove="Reports\GingerExecutionReport\assets\js\jquery.js" />
@@ -154,9 +153,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\assets\js\babel.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\GingerExecutionReport\assets\js\bootstrap.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\assets\js\circlechart.js">
