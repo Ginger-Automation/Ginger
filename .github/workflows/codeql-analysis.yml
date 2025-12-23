@@ -16,7 +16,7 @@ on:
   push:
     branches: [ master, Features/Linux-Migration, Releases/*, Releases/*/*]
   pull_request:
-    branches: [ master, Releases/*, Releases/*/*]
+    branches: [ master ]
   schedule:
     - cron: '0 0 * * 0'
 
@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'csharp' ]
+        language: [ 'csharp', 'javascript' ]
         os: [windows-latest]
 
 # ------------------------------------------------------------------------------------------------------
