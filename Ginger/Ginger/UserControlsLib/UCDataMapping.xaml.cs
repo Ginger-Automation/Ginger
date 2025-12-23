@@ -1267,49 +1267,30 @@ namespace Ginger.UserControlsLib
         #endregion Template Creation
 
 
+
         private void ApplyTypeRestrictions()
         {
             if (xMappedTypeComboBox == null)
-            { return; }
+            {
+                return;
+            }
+
             var restrictions = RestrictedMappingTypes?.ToList();
             if (restrictions == null || restrictions.Count == 0)
-            { return; }
+            {
+                return;
+            }
 
-            // Build a fast lookup of restricted names (case-insensitive)
+            // Fast lookup of restricted names (case-insensitive)
             var restrictedNames = new HashSet<string>(
                 restrictions.Select(r => r.Name),
                 StringComparer.OrdinalIgnoreCase);
 
-            // Remove items from the ComboBox that match restricted names
-            // Depending on how the ComboBox is populated by FillComboItemsFromEnumType,
-            // items could be:
-            //  - the enum value eDataType directly,
-            //  - a ComboBoxItem with Tag or Content holding eDataType or a string.
+            // 1) Remove restricted items (iterate backwards)
             for (int i = xMappedTypeComboBox.Items.Count - 1; i >= 0; i--)
             {
                 var item = xMappedTypeComboBox.Items[i];
-
-                string? itemName = null;
-
-                if (item is eDataType et)
-                {
-                    itemName = et.ToString();
-                }
-                else if (item is ComboBoxItem cbi)
-                {
-                    if (cbi.Tag is eDataType etTag)
-                    { itemName = etTag.ToString(); }
-                    else if (cbi.Content is eDataType etContent)
-                    { itemName = etContent.ToString(); }
-                    else if (cbi.Tag is string sTag)
-                    { itemName = sTag; }
-                    else if (cbi.Content is string sContent)
-                    { itemName = sContent; }
-                }
-                else if (item is string s)
-                {
-                    itemName = s;
-                }
+                var itemName = GetItemName(item);
 
                 if (itemName != null && restrictedNames.Contains(itemName))
                 {
@@ -1317,64 +1298,108 @@ namespace Ginger.UserControlsLib
                 }
             }
 
-            // If current selection got removed, pick a safe default
-            var current = MappedType; // string
-            if (!string.IsNullOrEmpty(current) && restrictedNames.Contains(current))
-            {
-                // Prefer "None" if available, else first item
-                var fallback = FindAvailableTypeNameOrNull(nameof(eDataType.None))
-                               ?? FindFirstAvailableTypeNameOrNull();
-
-                MappedType = fallback ?? nameof(eDataType.None);
-            }
-
-            try { xMappedTypeComboBox.Items.Refresh(); } catch { }
-        }
-
-        private string? FindAvailableTypeNameOrNull(string preferredName)
-        {
+            // 2) Build available names set and list
+            var availableNames = new List<String>();
             for (int i = 0; i < xMappedTypeComboBox.Items.Count; i++)
             {
-                var item = xMappedTypeComboBox.Items[i];
-                string? itemName = null;
-
-                if (item is eDataType et)
-                { itemName = et.ToString(); }
-                else if (item is ComboBoxItem cbi)
+                var name = GetItemName(xMappedTypeComboBox.Items[i]);
+                if (!string.IsNullOrEmpty(name))
                 {
-                    if (cbi.Tag is eDataType etTag) { itemName = etTag.ToString(); }
-                    else if (cbi.Content is eDataType etContent) { itemName = etContent.ToString(); }
-                    else if (cbi.Tag is string sTag) { itemName = sTag; }
-                    else if (cbi.Content is string sContent) { itemName = sContent; }
+                    availableNames.Add(name);
                 }
-                else if (item is string s)
-                { itemName = s; }
-
-                if (string.Equals(itemName, preferredName, StringComparison.OrdinalIgnoreCase))
-                { return itemName; }
             }
-            return null;
+            var availableSet = new HashSet<string>(availableNames, StringComparer.OrdinalIgnoreCase);
+
+            // 3) Fix current selection if it's restricted or no longer available
+            if (!string.IsNullOrEmpty(MappedType))
+            {
+                if (restrictedNames.Contains(MappedType) || !availableSet.Contains(MappedType))
+                {
+                    MappedType = SelectFallback(availableSet, availableNames, nameof(eDataType.None));
+                }
+            }
+            else
+            {
+                MappedType = SelectFallback(availableSet, availableNames, nameof(eDataType.None));
+            }
+
+            try
+            {
+                xMappedTypeComboBox.Items.Refresh();
+            }
+            catch
+            {
+                // Ignore refresh issues
+            }
         }
 
-        private string? FindFirstAvailableTypeNameOrNull()
+        private static string? GetItemName(object? item)
         {
-            if (xMappedTypeComboBox.Items.Count == 0)
-            { return null; }
+            if (item is null)
+            {
+                return null;
+            }
 
-            var item = xMappedTypeComboBox.Items[0];
-            if (item is eDataType et) { return et.ToString(); }
+            if (item is eDataType et)
+            {
+                return et.ToString();
+            }
+
             if (item is ComboBoxItem cbi)
             {
-                if (cbi.Tag is eDataType etTag) { return etTag.ToString(); }
-                if (cbi.Content is eDataType etContent) { return etContent.ToString(); }
-                if (cbi.Tag is string sTag) { return sTag; }
-                if (cbi.Content is string sContent) { return sContent; }
-            }
-            if (item is string s)
-            { return s; }
+                if (cbi.Tag is eDataType etTag)
+                {
+                    return etTag.ToString();
+                }
 
-            return null;
+                if (cbi.Content is eDataType etContent)
+                {
+                    return etContent.ToString();
+                }
+
+                if (cbi.Tag is string sTag)
+                {
+                    return sTag;
+                }
+
+                if (cbi.Content is string sContent)
+                {
+                    return sContent;
+                }
+
+                return cbi.Content?.ToString();
+            }
+
+            if (item is string s)
+            {
+                return s;
+            }
+
+            // Fallback: try ToString for unknown types
+            return item.ToString();
         }
+
+        private static string SelectFallback(
+            HashSet<string> availableSet,
+            List<string> availableNames,
+            string preferredName)
+        {
+            // Prefer the "None" option if it exists
+            if (availableSet.Contains(preferredName))
+            {
+                return preferredName;
+            }
+
+            // Else pick the first available item (if any)
+            if (availableNames.Count > 0)
+            {
+                return availableNames[0];
+            }
+
+            // Else default to "None" to keep binding consistent
+            return preferredName;
+        }
+
 
     }
 }
