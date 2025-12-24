@@ -760,7 +760,6 @@ namespace Ginger.UserControlsLib
             }
         }
 
-
         private void VariabelsSourcePropertyChanged(ObservableList<string> variabelsSourceList)
         {
             if (variabelsSourceList != null)
