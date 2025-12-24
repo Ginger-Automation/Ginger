@@ -487,7 +487,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     ISheet sheet = workbook.GetSheet(sheetName);
                     if (sheet == null)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Sheet Was Not Selected: {fileName}");
+                        Reporter.ToLog(eLogLevel.ERROR, $"Sheet '{sheetName}' not found in file: {fileName}");
                         return false;
                     }
 

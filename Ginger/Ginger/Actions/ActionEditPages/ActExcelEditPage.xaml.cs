@@ -290,15 +290,14 @@ namespace Ginger.Actions
                 try
                 {
                     ContextProcessInputValueForDriver();
-                    if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName), nameof(mAct.SelectRowsWhere),nameof(mAct.SelectCellAddress)]))
+                    bool isByAddressPresent = mAct.DataSelectionMethod == ActExcel.eDataSelectionMethod.ByCellAddress;
+                    List<string> requiredFields = isByAddressPresent ? [nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName), nameof(mAct.SelectCellAddress)] : [nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName), nameof(mAct.SelectRowsWhere)];
+                    if (!mAct.CheckMandatoryFieldsExists(requiredFields))
                     {
-                        if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName), nameof(mAct.SelectCellAddress)]))
-                        {
-                            return;
-                        }
+                        return;
                     }
-                   
-                    DataTable excelSheetData = GetExcelSheetData(false);
+
+                        DataTable excelSheetData = GetExcelSheetData(false);
                     if (excelSheetData == null)
                     {
                         return;
