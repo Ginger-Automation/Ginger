@@ -116,7 +116,7 @@ namespace Ginger.Actions
             }
 
             // 4. "Pull Cell Address" Checkbox (Only ReadData)
-            if (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData ||  mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellData)
+            if ((mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData &&  rdByParams.IsChecked == true))
             {
                 xPullCellAddressCheckBox.Visibility = Visibility.Visible;
             }
@@ -145,6 +145,11 @@ namespace Ginger.Actions
                 ColMappingRulesSection.Visibility = Visibility.Visible;
                 SetDataUsedSection.Visibility = Visibility.Collapsed;
 
+            }
+            else if (mAct.ExcelActionType == ActExcel.eExcelActionType.WriteData && !isByAddress)
+            {
+                ColMappingRulesSection.Visibility = Visibility.Visible;
+                SetDataUsedSection.Visibility = Visibility.Visible;
             }
             else
             {
@@ -285,10 +290,14 @@ namespace Ginger.Actions
                 try
                 {
                     ContextProcessInputValueForDriver();
-                    if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName), nameof(mAct.SelectRowsWhere)]))
+                    if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName), nameof(mAct.SelectRowsWhere),nameof(mAct.SelectCellAddress)]))
                     {
-                        return;
+                        if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName), nameof(mAct.SelectCellAddress)]))
+                        {
+                            return;
+                        }
                     }
+                   
                     DataTable excelSheetData = GetExcelSheetData(false);
                     if (excelSheetData == null)
                     {
@@ -325,33 +334,24 @@ namespace Ginger.Actions
            
             if (rdByAddress == null || rdByParams == null)
             {
-                //rdByAddress.IsChecked = (mAct.GetInputParamValue(nameof(mAct.DataSelectionMethod)) == "ByCellAddress" ? true : false);
-
                 return;
             }
 
             if ((bool)rdByAddress.IsChecked)
             {
-                //mAct.ActInputValues.FirstOrDefault()
+              
                 mAct.DataSelectionMethod = ActExcel.eDataSelectionMethod.ByCellAddress;
                 rdByParams.IsChecked = false;
-                //xAddressInputPanel.Visibility = Visibility.Visible;
-                //if (mAct.ExcelActionType is ActExcel.eExcelActionType.WriteData )
-                //{
-                //    ColMappingRulesSection.Visibility = Visibility.Visible;
-                //    SetDataUsedSection.Visibility = Visibility.Collapsed;
+                xPullCellAddressCheckBox.IsChecked = false;
+                mAct.SelectRowsWhere = string.Empty;
+                mAct.PrimaryKeyColumn = string.Empty;
 
-                //}
-                //else
-                //{
-                //    ColMappingRulesSection.Visibility = Visibility.Collapsed;
-                //    SetDataUsedSection.Visibility = Visibility.Collapsed;
-
-                //}
             }
             else
             {
                 mAct.DataSelectionMethod = ActExcel.eDataSelectionMethod.ByParameters;
+                xPullCellAddressCheckBox.IsChecked = false;
+                mAct.SelectCellAddress = string.Empty;
             }
 
             UpdateVisibility();

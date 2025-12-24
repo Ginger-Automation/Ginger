@@ -463,7 +463,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
             try
             {
-
                 lock (lockObj)
                 {
 
@@ -488,24 +487,43 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     ISheet sheet = workbook.GetSheet(sheetName);
                     if (sheet == null)
                     {
-                       Reporter.ToLog(eLogLevel.ERROR, $"Sheet '{sheetName}' not found in file: {fileName}");
+                        Reporter.ToLog(eLogLevel.ERROR, $"Sheet Was Not Selected: {fileName}");
                         return false;
                     }
 
-                    CellReference cellRef = new CellReference(address);
-                    IRow row = sheet.GetRow(cellRef.Row) ?? sheet.CreateRow(cellRef.Row);
-                    ICell cell = row.GetCell(cellRef.Col) ?? row.CreateCell(cellRef.Col);
+                    // Handle Range vs Single Cell Writing
+                    if (address.Contains(":"))
+                    {
+                        // --- RANGE LOGIC (e.g. "A5:A11") ---
+                        CellRangeAddress range = CellRangeAddress.ValueOf(address);
 
-                    cell.SetCellValue(value);
+                        for (int r = range.FirstRow; r <= range.LastRow; r++)
+                        {
+                            IRow row = sheet.GetRow(r) ?? sheet.CreateRow(r);
+                            for (int c = range.FirstColumn; c <= range.LastColumn; c++)
+                            {
+                                ICell cell = row.GetCell(c) ?? row.CreateCell(c);
+                                cell.SetCellValue(value); // Writes the same value to all cells in range
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // --- SINGLE CELL LOGIC (e.g. "A5") ---
+                        CellReference cellRef = new CellReference(address);
+                        IRow row = sheet.GetRow(cellRef.Row) ?? sheet.CreateRow(cellRef.Row);
+                        ICell cell = row.GetCell(cellRef.Col) ?? row.CreateCell(cellRef.Col);
+                        cell.SetCellValue(value);
+                    }
 
                     sheet.ForceFormulaRecalculation = true;
 
+                    // 3. WRITE Phase
                     using (FileStream fsOut = new FileStream(fileName, FileMode.Create, FileAccess.Write))
                     {
                         workbook.Write(fsOut);
                     }
 
-                    workbook.Close();
                     return true;
                 }
             }

@@ -248,25 +248,23 @@ namespace GingerCore.Actions
             }
             using (excelOperator = new ExcelNPOIOperations())
             {
-                if (ExcelActionType == eExcelActionType.ReadData)
+                switch (ExcelActionType)
                 {
-                    ReadData();
-                }
-                else if (ExcelActionType == eExcelActionType.WriteData)
-                {
-                    WriteData();
-                }
-                else if (ExcelActionType == eExcelActionType.ReadCellData)
-                {
-                    ReadCellData();
-                }
-                else if (ExcelActionType == eExcelActionType.GetSheetDetails)
-                {
-                    GetSheetDetails();
-                }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.WARN, "Only action type can be selected");
+                    case eExcelActionType.ReadData:
+                        ReadData();
+                        break;
+                    case eExcelActionType.WriteData:
+                        WriteData();
+                        break;
+                    case eExcelActionType.ReadCellData:
+                        ReadCellData();
+                        break;
+                    case eExcelActionType.GetSheetDetails:
+                        GetSheetDetails();
+                        break;
+                    default:
+                        Reporter.ToLog(eLogLevel.ERROR, "No Matched Excel Action found");
+                        break;
                 }
             }
         }
@@ -293,10 +291,7 @@ namespace GingerCore.Actions
         {
             try
             {
-                // 1. Read the data to get the dimensions
-                // Note: We set "UseHeaderRow" to true so it respects your "Header Row Number" input
-                DataTable dt = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, "", true, CalculatedHeaderRowNum);
-
+                DataTable dt = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, "", true, CalculatedHeaderRowNum);
                 if (dt != null)
                 {
                     // --- PART 1: COUNTS 
@@ -350,7 +345,7 @@ namespace GingerCore.Actions
                 else
                 {
                     // Handle empty sheet case
-                    AddOrUpdateReturnParamActual("TotalRowCount", "0");
+                    AddOrUpdateReturnParamActual("TotalRowCount", "0");
                     AddOrUpdateReturnParamActual("TotalColumnCount", "0");
                     AddOrUpdateReturnParamActual("UsedRangeAddress", "");
                 }
@@ -391,15 +386,8 @@ namespace GingerCore.Actions
 
                             string cellAddress = GetColumnName(startCoord.Col + i) + currentRowNum;
 
-                            if (PullCellAddress)
-                            {
-                                AddOrUpdateReturnParamActualWithPath(colName, val, cellAddress);
-                                AddOrUpdateReturnParamActual($"{colName}_CellAddress", cellAddress);
-                            }
-                            else
-                            {
-                                AddOrUpdateReturnParamActualWithPath(colName, val, cellAddress);
-                            }
+                            AddOrUpdateReturnParamActualWithPath(colName, val, cellAddress);
+                            
                         }
                     }
                     return;
@@ -407,14 +395,14 @@ namespace GingerCore.Actions
 
                 // --- Standard By Parameters Logic ---
                 DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, CalculatedHeaderRowNum);
-                int headerRow = 1;
-                int.TryParse(CalculatedHeaderRowNum, out headerRow);
+           
+           
                 if (excelDataTable != null && excelDataTable.Rows.Count > 0)
                 {
                     for (int currentRow = 0; currentRow < excelDataTable.Rows.Count; currentRow++)
                     {
                         DataRow r = excelDataTable.Rows[currentRow];
-                         int currentRowNum = headerRow + 1 + currentRow;
+                         int currentRowNum = 1 + currentRow;
 
 
                         for (int currentCol = 0; currentCol < excelDataTable.Columns.Count; currentCol++)
