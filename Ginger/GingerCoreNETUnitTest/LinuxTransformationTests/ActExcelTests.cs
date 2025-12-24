@@ -242,7 +242,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             //Assert
             Assert.AreEqual(actExcel.ActReturnValues.Count, 9);
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "Mark,Cohen,2109 Fox Dr,Julia,Smith,LA,Mike,Bond,AZ");
-            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()), "B2,C2,D2,B3,C3,D3,B4,C4,D4");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()), "11,12,13,21,22,23,31,32,33");
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "First,Last,Address,First,Last,Address,First,Last,Address");
         }
         [TestMethod]

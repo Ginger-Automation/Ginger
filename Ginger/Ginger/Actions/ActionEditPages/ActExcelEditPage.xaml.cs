@@ -116,7 +116,7 @@ namespace Ginger.Actions
             }
 
             // 4. "Pull Cell Address" Checkbox (Only ReadData)
-            if ((mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData &&  rdByParams.IsChecked == true))
+            if ((mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData || mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellData) &&  rdByParams.IsChecked == true)
             {
                 xPullCellAddressCheckBox.Visibility = Visibility.Visible;
             }

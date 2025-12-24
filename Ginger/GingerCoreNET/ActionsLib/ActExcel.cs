@@ -512,9 +512,18 @@ namespace GingerCore.Actions
 
                         for (int i = 0; i < excelDataTable.Columns.Count; i++)
                         {
+                            if (PullCellAddress)
+                            {
+                                // Calculate proper address (e.g. A5)
                                 string cellAddress = GetColumnName(startCoord.Col + i) + currentRowNum;
-                                AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, r[i].ToString(), cellAddress);
-                                                        
+                                AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, r[i].ToString(), (j + 1).ToString() + (i + 1).ToString());
+                                AddOrUpdateReturnParamActual($"{excelDataTable.Columns[i].ColumnName}_CellAddress", cellAddress);
+
+                            }
+                            else
+                            {
+                                AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, r[i].ToString(), (j + 1).ToString() + (i + 1).ToString());
+                            }
                         }
                     }
                 }
