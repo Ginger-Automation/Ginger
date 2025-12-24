@@ -56,8 +56,14 @@ namespace Ginger.UserControlsLib
         public static DependencyProperty OutputVariabelsSourceProperty =
         DependencyProperty.Register("OutputVariabelsSource", typeof(ObservableList<VariableBase>), typeof(UCDataMapping), new PropertyMetadata(OnOutputVariabelsSourcePropertyChanged));
 
-        public static readonly DependencyProperty RestrictedMappingTypesProperty = DependencyProperty.Register("RestrictedMappingTypes",
-            typeof(IEnumerable<RestrictedMappingType>), typeof(UCDataMapping));
+        public static readonly DependencyProperty RestrictedMappingTypesProperty = DependencyProperty.Register(nameof(RestrictedMappingTypes), typeof(IEnumerable<RestrictedMappingType>), typeof(UCDataMapping), new PropertyMetadata(null, OnRestrictedMappingTypesChanged));
+
+
+        private static void OnRestrictedMappingTypesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var uc = (UCDataMapping)d;
+            uc.ApplyTypeRestrictions();   // authoritative application
+        }
 
         public enum eDataType
         {
@@ -154,12 +160,6 @@ namespace Ginger.UserControlsLib
             {
                 SetValue(RestrictedMappingTypesProperty, value);
 
-                // Whenever restrictions are set, ensure fundamental options remain available
-                if (xMappedTypeComboBox != null)
-                {
-                    GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.None);
-                    GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.Value);
-                }
             }
         }
 
@@ -233,6 +233,7 @@ namespace Ginger.UserControlsLib
                 SetValueControlsData();
                 SetValueControlsView();
             }
+            ApplyTypeRestrictions();
         }
 
         private void UCDataMapping_Loaded(object sender, RoutedEventArgs e)
@@ -257,6 +258,7 @@ namespace Ginger.UserControlsLib
                 SetValueControlsData();
                 SetValueControlsView();
             }
+            ApplyTypeRestrictions();
         }
 
         private void UCDataMapping_Unloaded(object sender, RoutedEventArgs e)
@@ -698,41 +700,36 @@ namespace Ginger.UserControlsLib
 
         private void xMappedTypeComboBox_DropDownClosed(object sender, EventArgs e)
         {
-            // Handle restricted mapping types, but never restrict "Value" or "None" options
             if (RestrictedMappingTypes != null)
             {
-                RestrictedMappingType? restrictedMappingType = RestrictedMappingTypes
-                    .FirstOrDefault(restrictedType => string.Equals(restrictedType.Name, MappedType));
+                var restricted = RestrictedMappingTypes.ToDictionary(r => r.Name, r => r.Reason ?? $"{r.Name} is not allowed here.", StringComparer.OrdinalIgnoreCase);
 
-                // Never restrict "Value" or "None" options as they are fundamental
-                if (restrictedMappingType != null &&
-                    !string.Equals(_prevMappedType, MappedType) &&
-                    MappedType != eDataType.Value.ToString() &&
-                    MappedType != eDataType.None.ToString())
+                if (!string.Equals(_prevMappedType, MappedType, StringComparison.Ordinal))
                 {
-                    MappedType = _prevMappedType!;
-                    string? reason = restrictedMappingType.Reason;
-                    if (reason == null)
+                    var selectedType = MappedType;
+
+                    if (!string.IsNullOrEmpty(selectedType) && restricted.ContainsKey(selectedType))
                     {
-                        reason = $"{restrictedMappingType.Name} is not allowed for Mapped Runtime Value.";
+                        // revert selection
+                        MappedType = _prevMappedType ?? nameof(eDataType.None);
+
+                        // use ORIGINAL restricted value
+                        Reporter.ToUser(eUserMsgKey.NotAllowedForMappedRuntimeValue, restricted[selectedType]);
                     }
-                    Reporter.ToUser(eUserMsgKey.NotAllowedForMappedRuntimeValue, reason);
                 }
             }
 
+            // reset value when type changes
             if (_prevMappedType != MappedType)
             {
-                //reset value between type selection
                 MappedValue = string.Empty;
             }
 
+            // If "None" selected → clear value
             if (MappedType == eDataType.None.ToString())
             {
                 MappedValue = string.Empty;
             }
-
-            // Ensure "Value" option is always available after any restriction processing
-            GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.Value);
         }
 
         private static void OnEnableDataMappingPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
@@ -762,7 +759,6 @@ namespace Ginger.UserControlsLib
                 control.VariabelsSourcePropertyChanged((ObservableList<string>)args.NewValue);
             }
         }
-
 
         private void VariabelsSourcePropertyChanged(ObservableList<string> variabelsSourceList)
         {
@@ -1270,5 +1266,141 @@ namespace Ginger.UserControlsLib
             return template;
         }
         #endregion Template Creation
+
+
+
+        private void ApplyTypeRestrictions()
+        {
+            if (xMappedTypeComboBox == null)
+            {
+                return;
+            }
+
+            var restrictions = RestrictedMappingTypes?.ToList();
+            if (restrictions == null || restrictions.Count == 0)
+            {
+                return;
+            }
+
+            // Fast lookup of restricted names (case-insensitive)
+            var restrictedNames = new HashSet<string>(
+                restrictions.Select(r => r.Name),
+                StringComparer.OrdinalIgnoreCase);
+
+            // 1) Remove restricted items (iterate backwards)
+            for (int i = xMappedTypeComboBox.Items.Count - 1; i >= 0; i--)
+            {
+                var item = xMappedTypeComboBox.Items[i];
+                var itemName = GetItemName(item);
+
+                if (itemName != null && restrictedNames.Contains(itemName))
+                {
+                    xMappedTypeComboBox.Items.RemoveAt(i);
+                }
+            }
+
+            // 2) Build available names set and list
+            var availableNames = new List<String>();
+            for (int i = 0; i < xMappedTypeComboBox.Items.Count; i++)
+            {
+                var name = GetItemName(xMappedTypeComboBox.Items[i]);
+                if (!string.IsNullOrEmpty(name))
+                {
+                    availableNames.Add(name);
+                }
+            }
+            var availableSet = new HashSet<string>(availableNames, StringComparer.OrdinalIgnoreCase);
+
+            // 3) Fix current selection if it's restricted or no longer available
+            if (!string.IsNullOrEmpty(MappedType))
+            {
+                if (restrictedNames.Contains(MappedType) || !availableSet.Contains(MappedType))
+                {
+                    MappedType = SelectFallback(availableSet, availableNames, nameof(eDataType.None));
+                }
+            }
+            else
+            {
+                MappedType = SelectFallback(availableSet, availableNames, nameof(eDataType.None));
+            }
+
+            try
+            {
+                xMappedTypeComboBox.Items.Refresh();
+            }
+            catch
+            {
+                // Ignore refresh issues
+            }
+        }
+
+        private static string? GetItemName(object? item)
+        {
+            if (item is null)
+            {
+                return null;
+            }
+
+            if (item is eDataType et)
+            {
+                return et.ToString();
+            }
+
+            if (item is ComboBoxItem cbi)
+            {
+                if (cbi.Tag is eDataType etTag)
+                {
+                    return etTag.ToString();
+                }
+
+                if (cbi.Content is eDataType etContent)
+                {
+                    return etContent.ToString();
+                }
+
+                if (cbi.Tag is string sTag)
+                {
+                    return sTag;
+                }
+
+                if (cbi.Content is string sContent)
+                {
+                    return sContent;
+                }
+
+                return cbi.Content?.ToString();
+            }
+
+            if (item is string s)
+            {
+                return s;
+            }
+
+            // Fallback: try ToString for unknown types
+            return item.ToString();
+        }
+
+        private static string SelectFallback(
+            HashSet<string> availableSet,
+            List<string> availableNames,
+            string preferredName)
+        {
+            // Prefer the "None" option if it exists
+            if (availableSet.Contains(preferredName))
+            {
+                return preferredName;
+            }
+
+            // Else pick the first available item (if any)
+            if (availableNames.Count > 0)
+            {
+                return availableNames[0];
+            }
+
+            // Else default to "None" to keep binding consistent
+            return preferredName;
+        }
+
+
     }
 }
