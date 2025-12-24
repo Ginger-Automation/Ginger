@@ -116,7 +116,7 @@ namespace Ginger.Actions
             }
 
             // 4. "Pull Cell Address" Checkbox (Only ReadData)
-            if ((mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData &&  rdByParams.IsChecked == true))
+            if ((mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData || mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellData) &&  rdByParams.IsChecked == true)
             {
                 xPullCellAddressCheckBox.Visibility = Visibility.Visible;
             }
@@ -320,7 +320,7 @@ namespace Ginger.Actions
             try
             {
                 if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName)])) return null;
-                if (!isViewAllData && (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellData || mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData) && !string.IsNullOrWhiteSpace(mAct.CalculatedFilter))
+                if (!isViewAllData && (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellData || (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData)) && mAct.DataSelectionMethod == ActExcel.eDataSelectionMethod.ByCellAddress && !string.IsNullOrWhiteSpace(mAct.CalculatedFilter))
                 {
                     return mExcelOperations.ReadCellData(mAct.CalculatedFileName, mAct.CalculatedSheetName, mAct.CalculatedFilter, mAct.SelectAllRows, mAct.CalculatedHeaderRowNum);
                 }

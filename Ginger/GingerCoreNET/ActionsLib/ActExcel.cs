@@ -294,8 +294,8 @@ namespace GingerCore.Actions
                 DataTable dt = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, "", true, CalculatedHeaderRowNum);
                 if (dt != null)
                 {
-                    // --- PART 1: COUNTS 
-                    int rowCount = 0;
+                    // --- PART 1: COUNTS 
+                    int rowCount = 0;
                     int colCount = dt.Columns.Count;
                     foreach (DataRow row in dt.Rows)
                     {
@@ -306,34 +306,39 @@ namespace GingerCore.Actions
                         }
                     }
 
-                    AddOrUpdateReturnParamActual("TotalRowCount", rowCount.ToString());
+                    // Include header row in the count
+                    int headerRowNum = 1;
+                    int.TryParse(CalculatedHeaderRowNum, out headerRowNum);
+                    if (headerRowNum < 1)
+                    {
+                        headerRowNum = 1;
+                    }
+                    int totalRowCount = rowCount + headerRowNum;
+
+                    AddOrUpdateReturnParamActual("TotalRowCount", totalRowCount.ToString());
                     AddOrUpdateReturnParamActual("TotalColumnCount", colCount.ToString());
 
-                    // --- PART 2: ADDRESS RANGES
+                    // --- PART 2: ADDRESS RANGES
 
-                    // Calculate Start Indices
-                    int startRowIndex = 0;
-                    int.TryParse(CalculatedHeaderRowNum, out startRowIndex);
-                    if (startRowIndex < 1) { startRowIndex = 1; } // Default to 1 if invalid
+                    // Calculate Start Indices
+                    int startRowIndex = headerRowNum;
+                    int startColIndex = 1; // Excel starts at 'A' (1)
 
-                    int startColIndex = 1; // Excel starts at 'A' (1)
-
-                    // Calculate End Indices
-                    // The last row is the Start Row + the number of data rows found
-                    int endRowIndex = startRowIndex + rowCount;
+                    // Calculate End Indices
+                    int endRowIndex = startRowIndex + rowCount;
                     int endColIndex = startColIndex + (colCount - 1);
-                    if (endColIndex < 1) 
+                    if (endColIndex < 1)
                     {
                         endColIndex = 1;
                     }
 
-                    // Generate Address Strings
-                    string startCellAddress = GetColumnName(startColIndex) + startRowIndex;      // e.g. "A1"
-                    string endCellAddress = GetColumnName(endColIndex) + endRowIndex;            // e.g. "D10"
-                    string rangeAddress = $"{startCellAddress}:{endCellAddress}";                // e.g. "A1:D10"
+                    // Generate Address Strings
+                    string startCellAddress = GetColumnName(startColIndex) + startRowIndex;      // e.g. "A1"
+                    string endCellAddress = GetColumnName(endColIndex) + endRowIndex;            // e.g. "D10"
+                    string rangeAddress = $"{startCellAddress}:{endCellAddress}";                // e.g. "A1:D10"
 
-                    // Add to Output Values
-                    AddOrUpdateReturnParamActual("StartRow", startRowIndex.ToString());
+                    // Add to Output Values
+                    AddOrUpdateReturnParamActual("StartRow", startRowIndex.ToString());
                     AddOrUpdateReturnParamActual("EndRow", endRowIndex.ToString());
                     AddOrUpdateReturnParamActual("StartColumn", GetColumnName(startColIndex));
                     AddOrUpdateReturnParamActual("EndColumn", GetColumnName(endColIndex));
@@ -344,7 +349,7 @@ namespace GingerCore.Actions
                 }
                 else
                 {
-                    // Handle empty sheet case
+                    // Handle empty sheet case
                     AddOrUpdateReturnParamActual("TotalRowCount", "0");
                     AddOrUpdateReturnParamActual("TotalColumnCount", "0");
                     AddOrUpdateReturnParamActual("UsedRangeAddress", "");
@@ -395,14 +400,15 @@ namespace GingerCore.Actions
 
                 // --- Standard By Parameters Logic ---
                 DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, CalculatedHeaderRowNum);
-           
+                int headerRow = 1;
+                int.TryParse(CalculatedHeaderRowNum,out headerRow);
            
                 if (excelDataTable != null && excelDataTable.Rows.Count > 0)
                 {
                     for (int currentRow = 0; currentRow < excelDataTable.Rows.Count; currentRow++)
                     {
                         DataRow r = excelDataTable.Rows[currentRow];
-                         int currentRowNum = 1 + currentRow;
+                         int currentRowNum = headerRow + 1 + currentRow;
 
 
                         for (int currentCol = 0; currentCol < excelDataTable.Columns.Count; currentCol++)
@@ -506,12 +512,13 @@ namespace GingerCore.Actions
 
                         for (int i = 0; i < excelDataTable.Columns.Count; i++)
                         {
-                         
                             if (PullCellAddress)
                             {
                                 // Calculate proper address (e.g. A5)
                                 string cellAddress = GetColumnName(startCoord.Col + i) + currentRowNum;
-                                AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, r[i].ToString(), cellAddress);
+                                AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, r[i].ToString(), (j + 1).ToString() + (i + 1).ToString());
+                                AddOrUpdateReturnParamActual($"{excelDataTable.Columns[i].ColumnName}_CellAddress", cellAddress);
+
                             }
                             else
                             {
