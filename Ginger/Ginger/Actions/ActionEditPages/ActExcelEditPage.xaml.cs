@@ -293,11 +293,11 @@ namespace Ginger.Actions
                     bool isByAddressPresent = mAct.DataSelectionMethod == ActExcel.eDataSelectionMethod.ByCellAddress;
                     List<string> requiredFields = isByAddressPresent ? [nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName), nameof(mAct.SelectCellAddress)] : [nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName), nameof(mAct.SelectRowsWhere)];
                     if (!mAct.CheckMandatoryFieldsExists(requiredFields))
-                    {
-                        return;
-                    }
+                        {
+                            return;
+                        }
 
-                        DataTable excelSheetData = GetExcelSheetData(false);
+                    DataTable excelSheetData = GetExcelSheetData(false);
                     if (excelSheetData == null)
                     {
                         return;
@@ -320,7 +320,7 @@ namespace Ginger.Actions
             try
             {
                 if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName)])) return null;
-                if (!isViewAllData && mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellData && !string.IsNullOrWhiteSpace(mAct.CalculatedFilter))
+                if (!isViewAllData && (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellData || mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData) && !string.IsNullOrWhiteSpace(mAct.CalculatedFilter))
                 {
                     return mExcelOperations.ReadCellData(mAct.CalculatedFileName, mAct.CalculatedSheetName, mAct.CalculatedFilter, mAct.SelectAllRows, mAct.CalculatedHeaderRowNum);
                 }
