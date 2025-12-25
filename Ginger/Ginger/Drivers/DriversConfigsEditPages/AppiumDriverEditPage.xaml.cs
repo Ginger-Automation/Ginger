@@ -587,10 +587,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             var credentials = EnsureUftCredentialParams();
             string currentDeviceName = FindExistingCapability("appium:deviceName")?.Value;
             string currentDeviceUuid = FindExistingCapability("appium:udid")?.Value;
-            if (string.IsNullOrWhiteSpace(currentDeviceUuid))
-            {
-                currentDeviceUuid = FindExistingCapability("appium:uid")?.Value;
-            }
+
+
 
             UFTCredentialsDialog dialog = new UFTCredentialsDialog(credentials.clientId, credentials.clientSecret, credentials.tenantId, FetchUFTMDevicesAsync, currentDeviceName, currentDeviceUuid);
 
@@ -620,13 +618,75 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             if (!string.IsNullOrWhiteSpace(dialog.SelectedPhoneUuid))
             {
                 wasUpdated |= UpdateCapabilityValue("appium:udid", dialog.SelectedPhoneUuid);
-                wasUpdated |= UpdateCapabilityValue("appium:uid", dialog.SelectedPhoneUuid);
             }
 
-            if (wasUpdated)
+            bool platformUpdated = ApplyPlatformFromSelection(dialog.SelectedPhonePlatform);
+
+            if (wasUpdated || platformUpdated)
             {
                 xCapabilitiesGrid.Grid?.Items.Refresh();
             }
+        }
+
+        private bool ApplyPlatformFromSelection(string selectedPlatform)
+        {
+            if (string.IsNullOrWhiteSpace(selectedPlatform))
+            {
+                return false;
+            }
+
+            if (!TryResolvePlatformType(selectedPlatform, out eDevicePlatformType platformType))
+            {
+                return false;
+            }
+
+            string platformName = platformType == eDevicePlatformType.Android
+                ? nameof(eDevicePlatformType.Android)
+                : nameof(eDevicePlatformType.iOS);
+
+            if (string.Equals(mDevicePlatformType?.Value, platformName, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            mDevicePlatformType.Value = platformName;
+
+            if (xAutoUpdateCapabiltiies?.IsChecked == true)
+            {
+                SetPlatformCapabilities();
+                SetApplicationCapabilities();
+            }
+
+            xAndroidRdBtn.IsChecked = platformType == eDevicePlatformType.Android;
+            xIOSRdBtn.IsChecked = platformType == eDevicePlatformType.iOS;
+
+            return true;
+        }
+
+        private static bool TryResolvePlatformType(string platformValue, out eDevicePlatformType platformType)
+        {
+            platformType = eDevicePlatformType.Android;
+
+            if (string.IsNullOrWhiteSpace(platformValue))
+            {
+                return false;
+            }
+
+            string normalized = platformValue.Trim().ToLowerInvariant();
+
+            if (normalized.Contains("ios") || normalized.Contains("iphone") || normalized.Contains("ipad") || normalized.Contains("apple"))
+            {
+                platformType = eDevicePlatformType.iOS;
+                return true;
+            }
+
+            if (normalized.Contains("android"))
+            {
+                platformType = eDevicePlatformType.Android;
+                return true;
+            }
+
+            return false;
         }
 
         private bool UpdateCapabilityValue(string parameterName, string value)

@@ -56,6 +56,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         public string SelectedPhoneName { get; private set; }
 
+        public string SelectedPhonePlatform { get; private set; }
+
         public bool? DialogResult { get; private set; }
 
         public UFTCredentialsDialog(DriverConfigParam clientIdParam, DriverConfigParam clientSecretParam, DriverConfigParam tenantIdParam, Func<Task<string>> fetchDevicesFunc, string initialDeviceName = null, string initialDeviceUuid = null)
@@ -128,6 +130,12 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 return;
             }
 
+            if (!ValidateCredentials(out string validationMessage))
+            {
+                DisplayPhonesResult(validationMessage, treatContentAsMessage: true);
+                return;
+            }
+
             Button triggerButton = sender as Button;
             if (triggerButton != null)
             {
@@ -144,7 +152,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 }
                 else
                 {
-                    DisplayPhonesResult(summary);
+                    bool treatContentAsMessage = ShouldTreatFetchResultAsMessage(summary);
+                    DisplayPhonesResult(summary, treatContentAsMessage);
                 }
             }
             catch (Exception ex)
@@ -160,6 +169,57 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                     triggerButton.Content = "Show Phones";
                 }
             }
+        }
+
+        private bool ValidateCredentials(out string message)
+        {
+            List<string> missingFields = [];
+
+            if (string.IsNullOrWhiteSpace(mClientIdParam?.Value))
+            {
+                missingFields.Add("Client Id");
+            }
+
+            if (string.IsNullOrWhiteSpace(mClientSecretParam?.Value))
+            {
+                missingFields.Add("Client Secret");
+            }
+
+            if (string.IsNullOrWhiteSpace(mTenantIdParam?.Value))
+            {
+                missingFields.Add("Tenant Id");
+            }
+
+            if (missingFields.Count > 0)
+            {
+                message = $"Missing credential values: {string.Join(", ", missingFields)}.";
+                return false;
+            }
+
+            message = string.Empty;
+            return true;
+        }
+
+        private static bool ShouldTreatFetchResultAsMessage(string summary)
+        {
+            if (string.IsNullOrWhiteSpace(summary))
+            {
+                return true;
+            }
+
+            string normalized = summary.Trim().ToLowerInvariant();
+
+            string[] errorMarkers =
+            {
+                "error:",
+                "auth failed",
+                "missing uftm oauth credentials",
+                "missing uftm",
+                "invalid tenant id",
+                "uftm server url is empty"
+            };
+
+            return errorMarkers.Any(marker => normalized.StartsWith(marker) || normalized.Contains(marker));
         }
 
         private void DisplayPhonesResult(string content, bool treatContentAsMessage = false)
@@ -408,6 +468,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 {
                     SelectedPhoneUuid = null;
                     SelectedPhoneName = null;
+                    SelectedPhonePlatform = null;
                 }
                 else
                 {
@@ -415,10 +476,12 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                     SelectedPhoneName = string.IsNullOrWhiteSpace(mSelectedPhone.DeviceName)
                         ? mSelectedPhone.DisplayName
                         : mSelectedPhone.DeviceName;
+                    SelectedPhonePlatform = mSelectedPhone.Platform;
                 }
 
                 mPreferredDeviceUuid = SelectedPhoneUuid;
                 mPreferredDeviceName = SelectedPhoneName;
+                UpdateCurrentPhoneMarker();
             }
         }
 
@@ -474,6 +537,50 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
         }
 
+        private void UpdateCurrentPhoneMarker()
+        {
+            if (mPhones == null || mPhones.Count == 0)
+            {
+                return;
+            }
+
+            foreach (UftPhoneViewModel phone in mPhones)
+            {
+                phone.IsCurrent = IsPreferredPhone(phone);
+            }
+
+            xPhonesListBox?.Items?.Refresh();
+        }
+
+        private bool IsPreferredPhone(UftPhoneViewModel phone)
+        {
+            if (phone == null)
+            {
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(mPreferredDeviceUuid) && !string.IsNullOrEmpty(phone.Uuid) &&
+                string.Equals(phone.Uuid, mPreferredDeviceUuid, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            if (!string.IsNullOrEmpty(mPreferredDeviceName))
+            {
+                if (!string.IsNullOrEmpty(phone.DeviceName) && string.Equals(phone.DeviceName, mPreferredDeviceName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+
+                if (!string.IsNullOrEmpty(phone.DisplayName) && string.Equals(phone.DisplayName, mPreferredDeviceName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private sealed class UftPhoneViewModel
         {
             public string Uuid { get; init; }
@@ -488,6 +595,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             public bool? IsConnected { get; init; }
             public bool? HealthError { get; init; }
             public string HealthMessage { get; init; }
+            public bool IsCurrent { get; set; }
 
             public string DisplayName
             {
@@ -534,6 +642,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             public string UuidDisplay => string.IsNullOrWhiteSpace(Uuid) ? "UUID: Unknown" : $"UUID: {Uuid}";
 
             public string ConnectionText => IsConnected == true ? "Connected" : IsConnected == false ? "Offline" : "Unknown";
+
+            public Visibility CurrentBadgeVisibility => IsCurrent ? Visibility.Visible : Visibility.Collapsed;
 
             public eImageType IconType => string.Equals(Platform, "ios", StringComparison.OrdinalIgnoreCase)
                 ? eImageType.Ios
