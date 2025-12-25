@@ -91,7 +91,7 @@ namespace Ginger.Agents
                     mOriginalPlatformType = mAgent.Platform;
                     mOriginalDriverType = mAgent.DriverType.ToString();
 
-                    xPlatformTxtBox.Text = mOriginalPlatformType.ToString();
+                    xPlatformTxtBox.Text = GingerCore.General.GetEnumValueDescription(typeof(ePlatformType), mOriginalPlatformType);
                     SetDriverInformation();
                     BindingHandler.ObjFieldBinding(xDriverTypeComboBox, ComboBox.TextProperty, mAgent, nameof(Agent.DriverType));
                     xDriverTypeComboBox.SelectionChanged += driverTypeComboBox_SelectionChanged;

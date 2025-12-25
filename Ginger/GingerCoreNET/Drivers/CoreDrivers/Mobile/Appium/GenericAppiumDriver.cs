@@ -75,6 +75,105 @@ namespace Amdocs.Ginger.CoreNET
     {
         public override ePlatformType Platform { get { return ePlatformType.Mobile; } }
 
+        public ElementInfo GetFocusedElementInfo()
+        {
+            try
+            {
+                // Only meaningful for Android TV/Appium Android session
+                if (DevicePlatformType != Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eDevicePlatformType.AndroidTv)
+                {
+                    return null;
+                }
+
+                // Try Appium Android driver
+                if (Driver is AndroidDriver androidDriver)
+                {
+                    try
+                    {
+                        // Strategy: find element with focused attribute = true in page source via XPath
+                        // Some Android nodes expose attribute 'focused' or 'focused="true"'
+                        IWebElement focusedElem = null;
+                        try
+                        {
+                            focusedElem = androidDriver.FindElement(By.XPath("//*[@focused='true' or @focused='True' or @focused='1']"));
+                        }
+                        catch (NoSuchElementException) { focusedElem = null; }
+                        catch (WebDriverException) { focusedElem = null; }
+
+                        // If not found by XPath, try using UIAutomator for focused element
+                        if (focusedElem == null)
+                        {
+                            try
+                            {
+                                // UIAutomator selector for focused: new UiSelector().focused(true)
+                                // Execute as mobile: shell to query view hierarchy is not always available, but attempt Use XPath fallback below
+                                focusedElem = androidDriver.FindElement(MobileBy.AndroidUIAutomator("new UiSelector().focused(true)"));
+                            }
+                            catch { focusedElem = null; }
+                        }
+
+                        if (focusedElem == null)
+                        {
+                            // Last resort: try to parse page source and find focused attribute node
+                            try
+                            {
+                                string src = androidDriver.PageSource;
+                                if (!string.IsNullOrEmpty(src))
+                                {
+                                    var doc = new XmlDocument();
+                                    doc.LoadXml(src);
+                                    XmlNode node = doc.SelectSingleNode("//*[@focused='true' or @focused='True' or @focused='1']");
+                                    if (node != null)
+                                    {
+                                        // Try to extract some meaningful attributes
+                                        string text = node.Attributes?["text"]?.Value ?? node.Attributes?["content-desc"]?.Value ?? node.Attributes?["resource-id"]?.Value ?? node.Name;
+                                        ElementInfo resEI = new ElementInfo();
+                                        resEI.ElementTitle = text;
+                                        resEI.ElementType = node.Attributes?["class"]?.Value ?? node.Name;
+                                        // Let WindowExplorer driver populate locators/properties
+                                        return resEI;
+                                    }
+                                }
+                            }
+                            catch { }
+                        }
+
+                        if (focusedElem != null)
+                        {
+                            ElementInfo ei = new ElementInfo();
+
+                            // Populate basic, learnable info - driver will enrich via LearnElementInfoDetails
+                            string title = string.Empty;
+                            try
+                            {
+                                title = focusedElem.GetAttribute("content-desc") ?? focusedElem.GetAttribute("text") ?? focusedElem.GetAttribute("resource-id") ?? focusedElem.TagName;
+                            }
+                            catch { title = focusedElem.TagName; }
+
+                            ei.ElementTitle = title;
+                            try
+                            {
+                                ei.ElementType = focusedElem.GetAttribute("class") ?? focusedElem.TagName;
+                            }
+                            catch { ei.ElementType = focusedElem.TagName; }
+
+                            return ei;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "GetFocusedElementInfo failed to locate focused element via Appium: " + ex.Message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "GetFocusedElementInfo error: " + ex.Message, ex);
+            }
+
+            return null;
+        }
+
         public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA, IEnumerable<DriverConfigParam> driverConfigParams = null)
         {
             return "AppiumDriverEditPage";
@@ -300,13 +399,14 @@ namespace Amdocs.Ginger.CoreNET
                     return false;
                 }
 
-                //Setting capabilities                                
+                // Setting capabilities                                
                 DriverOptions driverOptions = this.GetCapabilities();
 
-                //creating driver
+                // creating driver - include AndroidTv and protect against unsupported platform
                 switch (DevicePlatformType)
                 {
                     case eDevicePlatformType.Android:
+                    case eDevicePlatformType.AndroidTv: // handle Android TV same as Android
                         if (string.IsNullOrEmpty(Proxy))
                         {
                             Driver = new AndroidDriver(serverUri, driverOptions, TimeSpan.FromSeconds(DriverLoadWaitingTime));
@@ -316,6 +416,7 @@ namespace Amdocs.Ginger.CoreNET
                             Driver = new AndroidDriver(new HttpCommandExecutor(serverUri, TimeSpan.FromSeconds(DriverLoadWaitingTime)) { Proxy = new WebProxy(this.Proxy) }, driverOptions);
                         }
                         break;
+
                     case eDevicePlatformType.iOS:
                         if (string.IsNullOrEmpty(Proxy))
                         {
@@ -326,17 +427,34 @@ namespace Amdocs.Ginger.CoreNET
                             Driver = new IOSDriver(new HttpCommandExecutor(serverUri, TimeSpan.FromSeconds(DriverLoadWaitingTime)) { Proxy = new WebProxy(this.Proxy) }, driverOptions);
                         }
                         break;
+
+                    default:
+                        {
+                            string error = $"Unsupported DevicePlatformType: '{DevicePlatformType}' - cannot create Appium driver";
+                            Reporter.ToLog(eLogLevel.ERROR, error);
+                            ErrorMessageFromDriver = error;
+                            return false;
+                        }
                 }
 
-                if (String.IsNullOrEmpty(Driver.SessionId.ToString()))
+                // defensive checks to avoid NullReferenceException
+                if (Driver == null)
                 {
-                    string error = "Failed to start Appium session, created Driver not seems to be valid (it SessionId is null), please validate the Appium server URL and capabilities";
+                    string error = "Failed to create Appium driver instance (Driver is null). Please validate Appium server and capabilities.";
                     Reporter.ToLog(eLogLevel.ERROR, error);
                     ErrorMessageFromDriver = error;
                     return false;
                 }
 
-                if (Driver.Capabilities.HasCapability("message") && Driver.Capabilities.GetCapability("message").ToString() == "Could not find available device")
+                if (Driver.SessionId == null || String.IsNullOrEmpty(Driver.SessionId.ToString()))
+                {
+                    string error = "Failed to start Appium session, created Driver does not seem to be valid (SessionId is null). Please validate the Appium server URL and capabilities";
+                    Reporter.ToLog(eLogLevel.ERROR, error);
+                    ErrorMessageFromDriver = error;
+                    return false;
+                }
+
+                if (Driver.Capabilities != null && Driver.Capabilities.HasCapability("message") && Driver.Capabilities.GetCapability("message")?.ToString() == "Could not find available device")
                 {
                     string error = string.Format("Failed to start Appium session.{0}Error: Mobile device is already in use. Please close all other sessions and try again.", System.Environment.NewLine);
                     Reporter.ToLog(eLogLevel.ERROR, error);
@@ -344,15 +462,7 @@ namespace Amdocs.Ginger.CoreNET
                     return false;
                 }
 
-                if (DevicePlatformType == eDevicePlatformType.Android || DevicePlatformType == eDevicePlatformType.Android)
-                {
-
-                }
-                else
-                {
-
-                }
-                mSeleniumDriver = new SeleniumDriver(Driver)//used for running regular Selenium actions
+                mSeleniumDriver = new SeleniumDriver(Driver) // used for running regular Selenium actions
                 {
                     isAppiumSession = true,
                     BusinessFlow = this.BusinessFlow,
@@ -372,11 +482,10 @@ namespace Amdocs.Ginger.CoreNET
                     }
                 }
 
-                //Pull device screen sizes for calculations
+                // Pull device screen sizes for calculations
                 CalculateMobileDeviceScreenSizes();
 
                 return true;
-
             }
             catch (Exception ex)
             {
@@ -1842,14 +1951,86 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
             int? customeWidth = null;
             int? customeHeight = null;
 
-            //override with user configured sizes
+            // If Android TV and user left Auto, prefer TV defaults
+            if (DevicePlatformType == eDevicePlatformType.AndroidTv)
+            {
+                if (ScreenshotWidth != null && !ScreenshotWidth.Trim().Equals("auto", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (int.TryParse(ScreenshotWidth.Trim(), out int w) && w >= 200)
+                    {
+                        customeWidth = w;
+                    }
+                }
+
+                if (ScreenshotHeight != null && !ScreenshotHeight.Trim().Equals("auto", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (int.TryParse(ScreenshotHeight.Trim(), out int h) && h >= 200)
+                    {
+                        customeHeight = h;
+                    }
+                }
+
+                // if neither configured then return 70% of device resolution if available, otherwise fallback to 70% of 1920x1080
+                if (customeWidth == null && customeHeight == null)
+                {
+                    try
+                    {
+                        var devInfo = (Dictionary<string, object>)Driver.ExecuteScript("mobile: deviceInfo");
+                        if (devInfo != null && devInfo.TryGetValue("realDisplaySize", out var realDisplaySizeObj) && realDisplaySizeObj is string realDisplaySize)
+                        {
+                            var parts = realDisplaySize.Split(new char[] { 'x', 'X', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (parts.Length >= 2 && int.TryParse(parts[0], out int rW) && int.TryParse(parts[1], out int rH))
+                            {
+                                int scaledW = (int)Math.Round(rW * 0.7);
+                                int scaledH = (int)Math.Round(rH * 0.7);
+                                return new Tuple<int?, int?>(scaledW, scaledH);
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // ignore and fallback
+                    }
+                    return new Tuple<int?, int?>((int?)(int)Math.Round(1920 * 0.7), (int?)(int)Math.Round(1080 * 0.7));
+                }
+
+                // if only one configured - use device 70% for the other if available else driver-calculated or fallback to 70% defaults
+                if (customeWidth == null || customeHeight == null)
+                {
+                    try
+                    {
+                        var devInfo = (Dictionary<string, object>)Driver.ExecuteScript("mobile: deviceInfo");
+                        if (devInfo != null && devInfo.TryGetValue("realDisplaySize", out var realDisplaySizeObj) && realDisplaySizeObj is string realDisplaySize)
+                        {
+                            var parts = realDisplaySize.Split(new char[] { 'x', 'X', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (parts.Length >= 2 && int.TryParse(parts[0], out int rW) && int.TryParse(parts[1], out int rH))
+                            {
+                                if (customeWidth == null) customeWidth = (int)Math.Round(rW * 0.7);
+                                if (customeHeight == null) customeHeight = (int)Math.Round(rH * 0.7);
+                                return new Tuple<int?, int?>(customeWidth, customeHeight);
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // ignore and fallback
+                    }
+
+                    if (customeWidth == null) customeWidth = mWindowWidth > 0 ? (int?)Math.Round(mWindowWidth * 0.7) : (int?)(int)Math.Round(1920 * 0.7);
+                    if (customeHeight == null) customeHeight = mWindowHeight > 0 ? (int?)Math.Round(mWindowHeight * 0.7) : (int?)(int)Math.Round(1080 * 0.7);
+
+                    return new Tuple<int?, int?>(customeWidth, customeHeight);
+                }
+
+                return new Tuple<int?, int?>(customeWidth, customeHeight);
+            }
+
+            //override with user configured sizes for other platforms
             if (ScreenshotWidth.ToLower().Trim() != "auto")
             {
-                //convert from int
                 int userConfiguredWidth;
                 if (int.TryParse(ScreenshotWidth, out userConfiguredWidth))
                 {
-                    //validate user configured width is at least 300 pixels, if not than use the calculated width and write Warn message
                     if (userConfiguredWidth < 200)
                     {
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The user configured screenshot width is less than 200 pixels, using the calculated width '" + mWindowWidth.ToString() + "' instead.");
@@ -1866,11 +2047,9 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
             }
             if (ScreenshotHeight.ToLower().Trim() != "auto")
             {
-                //convert from int
                 int userConfiguredHeight;
                 if (int.TryParse(ScreenshotHeight, out userConfiguredHeight))
                 {
-                    //validate user configured height is at least 300 pixels, if not than use the calculated height and write Warn message
                     if (userConfiguredHeight < 200)
                     {
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The user configured screenshot height is less than 200 pixels, using the calculated height '" + mWindowHeight.ToString() + "' instead.");
@@ -1887,6 +2066,8 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
             }
 
             return new Tuple<int?, int?>(customeWidth, customeHeight);
+
+
         }
 
         public ICollection<IWebElement> GetAllElements()
@@ -2405,32 +2586,40 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
         {
             try
             {
-                if (DevicePlatformType == eDevicePlatformType.Android)
+                // Prefer inspecting actual driver runtime type rather than DevicePlatformType enum
+                if (Driver is OpenQA.Selenium.Appium.Android.AndroidDriver android)
                 {
-                    return string.Format("{0} | {1}", ((AndroidDriver)Driver).CurrentPackage.Split('.').Last(),
-                        ((AndroidDriver)Driver).CurrentActivity.Split('.').Last());
+                    // Use driver properties when available; fall back safely to capabilities or "Unknown"
+                    var pkgRaw = android.CurrentPackage ?? Driver?.Capabilities?.GetCapability("appPackage")?.ToString();
+                    var actRaw = android.CurrentActivity ?? Driver?.Capabilities?.GetCapability("appActivity")?.ToString();
+
+                    var pkg = pkgRaw?.Split('.').LastOrDefault() ?? "Unknown";
+                    var act = actRaw?.Split('.').LastOrDefault() ?? "Unknown";
+                    return string.Format("{0} | {1}", pkg, act);
                 }
-                else if (DevicePlatformType == eDevicePlatformType.iOS)
+
+                if (Driver is OpenQA.Selenium.Appium.iOS.IOSDriver ios)
                 {
-                    var detail = ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier");
-                    if (detail != null)
-                    {
-                        return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
-                    }
-                    else
-                    {
-                        return "Package | Activity";
-                    }
+                    var detail = ios.GetSessionDetail("CFBundleIdentifier") ?? Driver?.Capabilities?.GetCapability("bundleId");
+                    return detail?.ToString() ?? "Package | Activity";
                 }
-                else
+
+                // Generic safe fallback
+                var cap = Driver?.Capabilities;
+                var appPackage = cap?.GetCapability("appPackage")?.ToString() ?? cap?.GetCapability("bundleId")?.ToString() ?? "Unknown";
+                var appActivity = cap?.GetCapability("appActivity")?.ToString() ?? "Unknown";
+
+                // Log when falling back to capabilities so missing keys can be diagnosed
+                if (appPackage == "Unknown" || appActivity == "Unknown")
                 {
-                    return string.Format("{0} | {1}", Driver.Capabilities.GetCapability("appPackage").ToString(),
-                                                    Driver.Capabilities.GetCapability("appActivity").ToString());
+                    Reporter.ToLog(eLogLevel.DEBUG, $"GetCurrentActivityDetails: falling back to capabilities. appPackage='{appPackage}', appActivity='{appActivity}'");
                 }
+
+                return string.Format("{0} | {1}", appPackage, appActivity);
             }
             catch (Exception exc)
             {
-                Reporter.ToLog(eLogLevel.WARN, "An error ocured while fetching the current App details", exc);
+                Reporter.ToLog(eLogLevel.WARN, "An error occurred while fetching the current App details", exc);
                 return "Package | Activity";
             }
         }
@@ -3674,40 +3863,99 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
 
         public void PerformTap(long x, long y)
         {
-            if (IsRecording)
+            try
             {
-                //ElementInfo elemInfo = GetElementAtPoint(x, y).Result;
-                ElementInfo elemInfo = GetElementAtMousePosition();
-
-                if (elemInfo != null)
+                // Recording: keep existing behavior (try to map clicked point to element for recording)
+                if (IsRecording)
                 {
-                    RecordingEventArgs args = new RecordingEventArgs
-                    {
-                        EventType = eRecordingEvent.ElementRecorded
-                    };
+                    // Try to get the element under the mouse (used for recording)
+                    ElementInfo elemInfo = GetElementAtMousePosition();
 
-                    ElementActionCongifuration configArgs = new ElementActionCongifuration();
-
-                    if (TestLocatorOutput(elemInfo, elemInfo.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByXPath)))
+                    if (elemInfo != null)
                     {
-                        configArgs.LocateBy = eLocateBy.ByXPath;
-                        configArgs.LocateValue = elemInfo.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByXPath).LocateValue;
+                        RecordingEventArgs args = new RecordingEventArgs
+                        {
+                            EventType = eRecordingEvent.ElementRecorded
+                        };
+
+                        ElementActionCongifuration configArgs = new ElementActionCongifuration();
+
+                        if (TestLocatorOutput(elemInfo, elemInfo.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByXPath)))
+                        {
+                            configArgs.LocateBy = eLocateBy.ByXPath;
+                            configArgs.LocateValue = elemInfo.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByXPath).LocateValue;
+                        }
+                        else
+                        {
+                            configArgs.LocateBy = eLocateBy.ByXY;
+                            configArgs.LocateValue = string.Format("{0},{1}", elemInfo.X, elemInfo.Y);
+                        }
+                        configArgs.ElementValue = elemInfo.Value;
+                        configArgs.Type = elemInfo.ElementTypeEnum;
+                        configArgs.LearnedElementInfo = elemInfo;
+                        configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+
+                        args.EventArgs = configArgs;
+                        RecordingEvent?.Invoke(this, args);
                     }
-                    else
-                    {
-                        configArgs.LocateBy = eLocateBy.ByXY;
-                        configArgs.LocateValue = string.Format("{0},{1}", elemInfo.X, elemInfo.Y);
-                    }
-                    configArgs.ElementValue = elemInfo.Value;
-                    configArgs.Type = elemInfo.ElementTypeEnum;
-                    configArgs.LearnedElementInfo = elemInfo;
-                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
-
-                    args.EventArgs = configArgs;
-                    RecordingEvent?.Invoke(this, args);
                 }
+
+                // Android TV special handling:
+                // Many Android TV devices are not touch-based and do not respond to pointer touch events.
+                // Attempt to resolve clicks by:
+                // 1. locating the element at the tapped coordinates and clicking it via IWebElement (if possible)
+                // 2. falling back to sending DPAD_CENTER key event (remote "OK" press)
+                if (DevicePlatformType == eDevicePlatformType.AndroidTv)
+                {
+                    try
+                    {
+                        // Try to find the ElementInfo for the tapped point and click the element by its locators
+                        ElementInfo ei = GetElementAtPoint(x, y).Result;
+                        if (ei != null && ei.Locators != null && ei.Locators.Count > 0)
+                        {
+                            object locatedElem = null;
+                            try
+                            {
+                                locatedElem = LocateElementByLocators(ei.Locators);
+                            }
+                            catch (Exception) { locatedElem = null; }
+
+                            if (locatedElem is IWebElement webElem)
+                            {
+                                try
+                                {
+                                    webElem.Click();
+                                    return;
+                                }
+                                catch (Exception) { /* fall back to DPAD */ }
+                            }
+                        }
+                    }
+                    catch (Exception) { /* continue to DPAD fallback */ }
+
+                    // Fallback: send DPAD center key (works for remote-controlled TV UI)
+                    try
+                    {
+                        if (Driver is AndroidDriver)
+                        {
+                            ((AndroidDriver)Driver).PressKeyCode(AndroidKeyCode.Keycode_DPAD_CENTER);
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "AndroidTV: failed to send DPAD_CENTER, falling back to touch. " + ex.Message, ex);
+                        // continue to attempt touch as final fallback
+                    }
+                }
+
+                // Default path for touch devices
+                TapXY((int)x, (int)y);
             }
-            TapXY((int)x, (int)y);
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to perform tap operation", ex);
+            }
         }
 
         public bool TestLocatorOutput(ElementInfo Elem, ElementLocator LocatorToTest)
@@ -4021,6 +4269,8 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
             try
             {
                 var windowSize = Driver.Manage().Window.Size;
+
+                // Default scale factor behavior for iOS
                 if (DevicePlatformType == eDevicePlatformType.iOS)
                 {
                     var nativeSize = (Dictionary<string, object>)Driver.ExecuteScript("mobile: viewportRect");
@@ -4030,26 +4280,213 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                 {
                     mWindowScaleFactor = 1;
                 }
-                mWindowWidth = (int)(windowSize.Width * mWindowScaleFactor);
-                mWindowHeight = (int)(windowSize.Height * mWindowScaleFactor);
+
+                // Compute by default from the driver window size
+                int calculatedWidth = (int)(windowSize.Width * mWindowScaleFactor);
+                int calculatedHeight = (int)(windowSize.Height * mWindowScaleFactor);
+
+                // If Android TV we prefer configured/custom values or fallback to 70% of device resolution
+                if (DevicePlatformType == eDevicePlatformType.AndroidTv)
+                {
+                    bool useConfigured = false;
+                    int cfgWidth = 0;
+                    int cfgHeight = 0;
+
+                    // Try using driver configured properties (user set via Agent/Driver configuration)
+                    if (!string.IsNullOrEmpty(ScreenshotWidth) && !ScreenshotWidth.Trim().Equals("auto", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (int.TryParse(ScreenshotWidth.Trim(), out cfgWidth) && cfgWidth > 0)
+                            useConfigured = true;
+                    }
+
+                    if (!string.IsNullOrEmpty(ScreenshotHeight) && !ScreenshotHeight.Trim().Equals("auto", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (int.TryParse(ScreenshotHeight.Trim(), out cfgHeight) && cfgHeight > 0)
+                            useConfigured = useConfigured && true;
+                        else
+                            useConfigured = false;
+                    }
+                    else
+                    {
+                        useConfigured = false;
+                    }
+
+                    if (useConfigured)
+                    {
+                        mWindowWidth = cfgWidth;
+                        mWindowHeight = cfgHeight;
+                    }
+                    else
+                    {
+                        // Try to read from device info if available and use 70%
+                        try
+                        {
+                            var devInfo = (Dictionary<string, object>)Driver.ExecuteScript("mobile: deviceInfo");
+                            if (devInfo != null && devInfo.TryGetValue("realDisplaySize", out var realDisplaySizeObj) && realDisplaySizeObj is string realDisplaySize)
+                            {
+                                var parts = realDisplaySize.Split(new char[] { 'x', 'X', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                if (parts.Length >= 2 && int.TryParse(parts[0], out int rW) && int.TryParse(parts[1], out int rH))
+                                {
+                                    mWindowWidth = (int)Math.Round(rW * 0.7);
+                                    mWindowHeight = (int)Math.Round(rH * 0.7);
+                                }
+                                else
+                                {
+                                    mWindowWidth = (int)Math.Round(1920 * 0.7);
+                                    mWindowHeight = (int)Math.Round(1080 * 0.7);
+                                }
+                            }
+                            else
+                            {
+                                // final fallback 70% TV defaults
+                                mWindowWidth = (int)Math.Round(1920 * 0.7);
+                                mWindowHeight = (int)Math.Round(1080 * 0.7);
+                            }
+                        }
+                        catch
+                        {
+                            // In case deviceInfo is not available -> fallback 70% defaults
+                            mWindowWidth = (int)Math.Round(1920 * 0.7);
+                            mWindowHeight = (int)Math.Round(1080 * 0.7);
+                        }
+                    }
+                    // ensure non zero
+                    if (mWindowWidth <= 0) mWindowWidth = (int)Math.Round(1920 * 0.7);
+                    if (mWindowHeight <= 0) mWindowHeight = (int)Math.Round(1080 * 0.7);
+
+                    return;
+                }
+
+                // Default for non-TV platforms
+                mWindowWidth = calculatedWidth;
+                mWindowHeight = calculatedHeight;
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to get Mobile Device Screen Sizes", ex);
+
+                // safe defaults in case of failure
+                if (DevicePlatformType == eDevicePlatformType.AndroidTv)
+                {
+                    mWindowWidth = (int)Math.Round(1920 * 0.7);
+                    mWindowHeight = (int)Math.Round(1080 * 0.7);
+                }
+                else
+                {
+                    // keep some reasonable defaults
+                    if (mWindowWidth == 0) mWindowWidth = 400;
+                    if (mWindowHeight == 0) mWindowHeight = 800;
+                }
             }
         }
 
         public override Point GetPointOnAppWindow(Point clickedPoint, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight)
         {
-            Point pointOnMobile = new Point();
+            // Preserve original behavior for non-TV devices
+            if (DevicePlatformType != eDevicePlatformType.AndroidTv)
+            {
+                double safeScale = WindowScaleFactor;
+                if (safeScale <= 0) safeScale = 1;
 
-            double xRatio = (double)(SrcWidth / ActWidth);
-            double yRatio = (double)(SrcHeight / ActHeight);
+                double xRatio = (double)(SrcWidth / ActWidth);
+                double yRatio = (double)(SrcHeight / ActHeight);
 
-            pointOnMobile.X = (int)(clickedPoint.X * xRatio / WindowScaleFactor);
-            pointOnMobile.Y = (int)(clickedPoint.Y * yRatio / WindowScaleFactor);
+                return new Point
+                {
+                    X = (int)(clickedPoint.X * xRatio / safeScale),
+                    Y = (int)(clickedPoint.Y * yRatio / safeScale)
+                };
+            }
 
-            return pointOnMobile;
+            // Android TV: robust mapping control -> screenshot -> device pixels, accounting for letterboxing & device real resolution
+            try
+            {
+                if (SrcWidth <= 0 || SrcHeight <= 0 || ActWidth <= 0 || ActHeight <= 0)
+                {
+                    // fallback simple ratio
+                    double xRatio = (double)(SrcWidth / Math.Max(1.0, ActWidth));
+                    double yRatio = (double)(SrcHeight / Math.Max(1.0, ActHeight));
+                    return new Point
+                    {
+                        X = (int)(clickedPoint.X * xRatio),
+                        Y = (int)(clickedPoint.Y * yRatio)
+                    };
+                }
+
+                // displayed image scale (Uniform fit) and offsets like in DeviceViewPage
+                double scale = Math.Min(ActWidth / SrcWidth, ActHeight / SrcHeight);
+                double displayedWidth = SrcWidth * scale;
+                double displayedHeight = SrcHeight * scale;
+                double offsetX = (ActWidth - displayedWidth) / 2.0;
+                double offsetY = (ActHeight - displayedHeight) / 2.0;
+
+                // map control click to image coords
+                double relX = clickedPoint.X - offsetX;
+                double relY = clickedPoint.Y - offsetY;
+                relX = Math.Max(0, Math.Min(relX, displayedWidth - 1));
+                relY = Math.Max(0, Math.Min(relY, displayedHeight - 1));
+
+                double imageX = relX / scale;
+                double imageY = relY / scale;
+
+                // resolve device native resolution
+                int deviceWidth = 0, deviceHeight = 0;
+                try
+                {
+                    var devInfo = (Dictionary<string, object>?)Driver?.ExecuteScript("mobile: deviceInfo");
+                    if (devInfo != null && devInfo.TryGetValue("realDisplaySize", out var realDisplayObj) && realDisplayObj is string realDisplay)
+                    {
+                        var parts = realDisplay.Split(new[] { 'x', 'X', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (parts.Length >= 2 && int.TryParse(parts[0], out var rw) && int.TryParse(parts[1], out var rh))
+                        {
+                            deviceWidth = rw;
+                            deviceHeight = rh;
+                        }
+                    }
+                }
+                catch { /* ignore */ }
+
+                if (deviceWidth == 0 || deviceHeight == 0)
+                {
+                    if (mWindowWidth > 0 && mWindowHeight > 0)
+                    {
+                        deviceWidth = mWindowWidth;
+                        deviceHeight = mWindowHeight;
+                    }
+                    else
+                    {
+                        deviceWidth = (int)Math.Round(SrcWidth);
+                        deviceHeight = (int)Math.Round(SrcHeight);
+                    }
+                }
+
+                // map image pixels -> device native pixels
+                double scaleX = SrcWidth > 0 ? (double)deviceWidth / SrcWidth : 1.0;
+                double scaleY = SrcHeight > 0 ? (double)deviceHeight / SrcHeight : 1.0;
+
+                int devX = (int)Math.Round(imageX * scaleX);
+                int devY = (int)Math.Round(imageY * scaleY);
+
+                devX = Math.Clamp(devX, 0, Math.Max(0, deviceWidth - 1));
+                devY = Math.Clamp(devY, 0, Math.Max(0, deviceHeight - 1));
+
+                return new Point(devX, devY);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, $"GetPointOnAppWindow (AndroidTv) failed, falling back to default: {ex.Message}", ex);
+                // fallback to previous mapping
+                double safeScale = WindowScaleFactor;
+                if (safeScale <= 0) safeScale = 1;
+                double xRatio = (double)(SrcWidth / Math.Max(1.0, ActWidth));
+                double yRatio = (double)(SrcHeight / Math.Max(1.0, ActHeight));
+                return new Point
+                {
+                    X = (int)(clickedPoint.X * xRatio / safeScale),
+                    Y = (int)(clickedPoint.Y * yRatio / safeScale)
+                };
+            }
+
         }
 
         public override bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, ElementInfo clickedElementInfo)
@@ -4519,7 +4956,15 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
 
         public string GetAgentAppName()
         {
-            return this.Platform.ToString();
+            try
+            {
+                return Amdocs.Ginger.Common.GeneralLib.General.GetEnumValueDescription(typeof(ePlatformType), this.Platform);
+            }
+            catch
+            {
+                // fallback to enum name if helper fails
+                return this.Platform.ToString();
+            }
         }
 
         public string GetViewport()

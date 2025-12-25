@@ -112,11 +112,12 @@ namespace GingerCore.Platforms
             {
                 if (AppPlatform != null)
                 {
-                    return AppPlatform.Platform.ToString();
+                    // Return enum description (e.g. "Mobile/TV") when attribute exists, otherwise fall back to enum name
+                    return Amdocs.Ginger.Common.GeneralLib.General.GetEnumValueDescription(typeof(ePlatformType), AppPlatform.Platform);
                 }
                 else
                 {
-                    return ePlatformType.NA.ToString();
+                    return Amdocs.Ginger.Common.GeneralLib.General.GetEnumValueDescription(typeof(ePlatformType), ePlatformType.NA);
                 }
             }
         }

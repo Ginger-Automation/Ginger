@@ -96,6 +96,10 @@ namespace GingerCore
             [Description("Appium")]
             Appium,
 
+            // New: Appium for Android TV (shows as "Mobile / AndroidTV" in driver lists)
+            [Description("Appium (Android TV)")]
+            AppiumAndroidTv,
+
             //MF
             [Description("MainFrame 3270")]
             MainFrame3270,
@@ -197,6 +201,48 @@ namespace GingerCore
                 if (mDriverType != value)
                 {
                     mDriverType = value;
+
+                    // If user explicitly selected the AndroidTV flavor, ensure driver config defaults
+                    // contain DevicePlatformType=AndroidTv so downstream pages/drivers pick the TV flavor.
+                    try
+                    {
+                        if (mDriverType == eDriverType.AppiumAndroidTv)
+                        {
+                            try
+                            {
+                                // ensure device window is opened by default for TV so UI can click the screenshot
+                                var loadWindowParam = DriverConfiguration.FirstOrDefault(x => string.Equals(x.Parameter, "LoadDeviceWindow", StringComparison.OrdinalIgnoreCase));
+                                if (loadWindowParam == null)
+                                {
+                                    DriverConfiguration.Add(new DriverConfigParam() { Parameter = "LoadDeviceWindow", Value = "true" });
+                                }
+                                else
+                                {
+                                    loadWindowParam.Value = "true";
+                                }
+
+                                // enable live screenshot auto refresh by default
+                                var ssModeParam = DriverConfiguration.FirstOrDefault(x => string.Equals(x.Parameter, "DeviceAutoScreenshotRefreshMode", StringComparison.OrdinalIgnoreCase));
+                                if (ssModeParam == null)
+                                {
+                                    DriverConfiguration.Add(new DriverConfigParam() { Parameter = "DeviceAutoScreenshotRefreshMode", Value = "Live" }); // uses enum name used elsewhere
+                                }
+                                else
+                                {
+                                    ssModeParam.Value = "Live";
+                                }
+                            }
+                            catch
+                            {
+                                // best effort - don't break agent creation
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // Best-effort only - do not break agent creation if something unexpected happens.
+                    }
+
                     OnPropertyChanged(nameof(DriverType));
                 }
             }
@@ -322,6 +368,8 @@ namespace GingerCore
                 eDriverType.WebServices => ePlatformType.WebServices,
                 eDriverType.WindowsAutomation => ePlatformType.Windows,
                 eDriverType.Appium => ePlatformType.Mobile,
+                // Treat the AppiumAndroidTv driver as Mobile platform (UI/agents treat it as Appium session with AndroidTv param)
+                eDriverType.AppiumAndroidTv => ePlatformType.Mobile,
                 eDriverType.PowerBuilder => ePlatformType.PowerBuilder,
                 eDriverType.JavaDriver => ePlatformType.Java,
                 eDriverType.MainFrame3270 => ePlatformType.MainFrame,
@@ -333,7 +381,28 @@ namespace GingerCore
 
         public List<object> GetDriverTypesByPlatfrom(string platformType)
         {
-            List<object> driverTypes = [];
+            List<object> driverTypes = new List<object>();
+            ePlatformType resolvedPlatform = ePlatformType.NA;
+            bool parsed = false;
+            try
+            {
+                parsed = Enum.TryParse<ePlatformType>(platformType, ignoreCase: true, out resolvedPlatform);
+            }
+            catch { parsed = false; }
+
+            if (!parsed)
+            {
+                foreach (ePlatformType p in Enum.GetValues(typeof(ePlatformType)))
+                {
+                    string desc = Amdocs.Ginger.Common.GeneralLib.General.GetEnumValueDescription(typeof(ePlatformType), p);
+                    if (!string.IsNullOrEmpty(desc) && string.Equals(desc, platformType, StringComparison.OrdinalIgnoreCase))
+                    {
+                        resolvedPlatform = p;
+                        parsed = true;
+                        break;
+                    }
+                }
+            }
 
             if (platformType == ePlatformType.Web.ToString())
             {
@@ -347,7 +416,9 @@ namespace GingerCore
             }
             else if (platformType == ePlatformType.Mobile.ToString())
             {
+                // expose both Appium (mobile) and the AndroidTV flavor
                 driverTypes.Add(Agent.eDriverType.Appium);
+                driverTypes.Add(Agent.eDriverType.AppiumAndroidTv);
             }
             else if (platformType == ePlatformType.Windows.ToString())
             {

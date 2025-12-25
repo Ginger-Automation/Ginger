@@ -328,6 +328,9 @@ namespace Amdocs.Ginger.Common.Enums
         IosOutline,
         IosWhite,
         Android,
+        AndroidTv,
+        AndroidTvWhite,
+        MultipleScreen,
         AndroidOutline,
         AndroidWhite,
         AngleArrowUp,
@@ -373,6 +376,7 @@ namespace Amdocs.Ginger.Common.Enums
         AnglesArrowRight,
         Katalon,
         Shield,
+
 
         #region Comparison Status Images
         Unchanged,

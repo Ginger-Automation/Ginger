@@ -86,7 +86,13 @@
                     <Label  Content="Desired Capabilities" Style="{StaticResource $HorizontalExpanderLabelStyle}" />
                 </Expander.Header>
                 <Expander.Content>
+                    
                     <StackPanel Margin="10,0,10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Platforms:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
+                            <RadioButton x:Name="xMobileRdBtn" Content="Mobile" Style="{StaticResource $InputRadioButtonStyle}" GroupName="Platforms" VerticalAlignment="Center" Margin="8,0,0,0" IsChecked="True" Checked="PlatformSelectionChanged"/>
+                            <RadioButton x:Name="xTvRdBtn" Content="TV" Style="{StaticResource $InputRadioButtonStyle}" GroupName="Platforms" VerticalAlignment="Center" Margin="8,0,0,0" Checked="PlatformSelectionChanged"/>
+                        </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
                             <Label  Content="Mobile lab:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
                             <RadioButton x:Name="xUFTRdBtn" Content="UFT Mobile" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="DeviceSource" VerticalAlignment="Center"  Checked="DeviceSourceSelectionChanged"/>
@@ -94,9 +100,11 @@
                             <RadioButton x:Name="xLocalAppiumRdBtn" Content="Other" Style="{StaticResource $InputRadioButtonStyle}" GroupName="DeviceSource" VerticalAlignment="Center" Margin="10,0,0,0" IsChecked="True" Checked="DeviceSourceSelectionChanged"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <Label  Content="Platform:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
+                            <Label  Content="SubPlatforms:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
                             <RadioButton x:Name="xAndroidRdBtn" Content="Android" Style="{StaticResource $InputRadioButtonStyle}" GroupName="PlatformType" VerticalAlignment="Center" Margin="11,0,0,0" IsChecked="True" Checked="PlatformSelectionChanged"/>
                             <usercontrols:ImageMakerControl x:Name="xAndroidIconImg" ImageType="Android" Width="16" Margin="5,0,0,0"/>
+                            <RadioButton x:Name="xAndroidTvRdBtn" Content="Android TV" Style="{StaticResource $InputRadioButtonStyle}" GroupName="PlatformType" VerticalAlignment="Center" Margin="10,0,0,0" Checked="PlatformSelectionChanged"/>
+                            <usercontrols:ImageMakerControl x:Name="xAndroidTvIconImg" ImageType="AndroidTv" Width="20" Margin="5,0,0,2"/>
                             <RadioButton x:Name="xIOSRdBtn" Content="iOS" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="PlatformType" VerticalAlignment="Center" Margin="10,0,0,0" Checked="PlatformSelectionChanged"/>
                             <usercontrols:ImageMakerControl x:Name="xIosIconImg" ImageType="ios" Width="16" Margin="5,0,0,2"/>
                         </StackPanel>
