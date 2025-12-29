@@ -1,0 +1,198 @@
+﻿<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <title>Ginger Execution Report</title>
+    <meta name="description" content="Static &amp; Dynamic Tables" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    {css_path}     
+    <style type="text/css">
+       {css_to_place}
+    </style>   
+</head>
+<body class="no-skin">
+    <div style="background-color:#EBEFF2">
+        <div style="height:50px;background-color:#AAD0EE">
+        </div>
+        <div id="navbar" class="navbar navbar-default">
+            <div class="navbar-container" id="navbar-container">
+                <div class="navbar-header pull-left" style="margin-top:10px">
+                    {beat_logo}
+                </div>
+                <div style="float:left;display:block;width:47%">
+                    {ginger_logo}
+                </div>
+                <div class="navbar-buttons navbar-header pull-right" style="margin-right:80px;">
+                    {company_logo}
+                </div>
+            </div>
+        </div>
+        <div class="main-container" id="main-container">
+            <div class="main-content">
+                <div class="main-content-inner">
+                    <div class="breadcrumbs" id="breadcrumbs">
+                    </div>
+                    <div class="page-content">
+                        <div class="page-header">
+                            <h1 class="clss1" id="breadcum">
+                                <a href=".\..\..\..\..\GingerExecutionReport.html">{Parent_RunSetReport_Name_Link}</a>
+                                <small>
+                                    {Parent_RunSetReport_delimiter}
+                                    <a href=".\..\..\..\GingerRunnerReport.html">{Parent_GingerRunner_Name_Link}</a>
+                                    {Parent_GingerRunner_delimiter}
+                                    <a href=".\..\..\BusinessFlowReport.html">{Parent_BusinessFlow_Name_Link}</a>
+                                    {Parent_BusinessFlow_delimiter}
+                                    <a href=".\ActivityGroupReport.html">{Parent_ActivityGroup_Name}</a>
+                                </small>
+                            </h1>
+                            <h1 id="clsh1">
+                                Ginger Execution Report
+                            </h1>
+                            <div>
+                                <table style="width:100%">
+                                    <tr>
+                                        <td align="left">
+                                            <span class="clsb1" id="b1">Activities Group Execution Details - '{Parent_ActivityGroup_Name}'</span>
+                                        </td>
+                                        <td align="right">
+                                            <div style="margin-right:5px">
+                                                <!--Prev_ActivitiesGroupLink_Start-->
+                                                <a href=".\..\{Prev_ActivitiesGroupFolder_Link}\ActivityGroupReport.html" title='{ItemPrevToolTip}'>{item_prev}</a>
+                                                <!--Prev_ActivitiesGroupLink_End-->
+                                                <!--Next_ActivitiesGroupLink_Start-->
+                                                <a href=".\..\{Next_ActivitiesGroupFolder_Link}\ActivityGroupReport.html" title='{ItemNextToolTip}'>{item_next}</a>
+                                                <!--Next_ActivitiesGroupLink_End-->
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-content" style="margin-top:0 auto">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="panel-heading">
+                                            <a class="accordion-toggle" data-toggle="collapse" href="#collapseBusinessFlow">
+                                                <i class="ace-icon fa fa-angle-down bigger202" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
+                                                <h4 class="orangetxt"> Activities Group General Details </h4>
+                                            </a>
+                                        </div>
+                                        <div class="collapse in tableScroll" id="collapseBusinessFlow">
+                                            <table class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        {ActivityGroup_Headers}
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        {ActivityGroup_Data}
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="page-content">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <!--Section_PlaceHolder_SolutionVariablesDetails-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!--ActivitiesDetails_Start-->
+                    <div class="page-content" style="margin-top:0 auto">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="panel-heading">
+                                            <a class="accordion-toggle" data-toggle="collapse" href="#collapseActivities">
+                                                <i class="{ActivitiesStyle}" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
+                                                <h4 class="orangetxt"> Activities Group's Activities Execution Details </h4>
+                                            </a>
+                                        </div>
+                                        <div class="{ActivitiesIscollapse}" id="collapseActivities">
+                                            <div class="tableScroll">
+                                                <table class="table table-striped table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            {Activities_Headers}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {Activities_Data}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--ActivitiesDetails_End-->
+
+                    <div class="alert alert-info" style="margin-top:10px">{ReportCreated}</div>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="footer-inner">
+                    <div class="footer-content">
+                    </div>
+                </div>
+            </div>
+            <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+                <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
+            </a>
+        </div>
+        {js_path}
+        <script type="text/javascript">
+            { js_to_place }
+        </script>
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <span class="close">&times;</span>
+            <img class="modal-content" id="current_image_in_modal">
+            <div id="caption">sdafasd asdfasdf</div>
+        </div>
+
+        <script>
+            // Get the modal
+            var modal = document.getElementById('myModal');
+
+            function show_modal(image_id) {
+                var img = document.getElementById(image_id);
+                var modalImg = document.getElementById("current_image_in_modal");
+                var captionText = document.getElementById("caption");
+
+                modal.style.display = "block";
+                modalImg.src = img.src;
+                captionText.innerHTML = img.alt;
+            }
+
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("close")[0];
+
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function () {
+                modal.style.display = "none";
+            }
+        </script>
+
+    </div>
+</body>
+</html>
