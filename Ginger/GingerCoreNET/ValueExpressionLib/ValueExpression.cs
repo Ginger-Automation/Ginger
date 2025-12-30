@@ -292,8 +292,8 @@ namespace GingerCore
                 }
                 catch (Exception ex)
                 {
-                    mValueCalculated = mValueCalculated.Replace(match.Value, string.Format("['{0}' Expression is not valid, Error:'{1}']", match.Value, ex.Message));
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}'", match.Value), ex);
+                    mValueCalculated = mValueCalculated.Replace(match.Value, $"Expression is not valid, Error:'{ex.Message}'");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to evaluate flow details expression, Error: '{match.Value}'", ex);                    
                 }
             }
 
@@ -305,8 +305,8 @@ namespace GingerCore
                 }
                 catch (Exception ex)
                 {
-                    mValueCalculated = mValueCalculated.Replace(match.Value, string.Format("['{0}' Expression is not valid, Error:'{1}']", match.Value, ex.Message));
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}'", match.Value), ex);
+                    mValueCalculated = mValueCalculated.Replace(match.Value, $"Failed to evaluate ExecutionJsonData expression, Error:'{ex.Message}'");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to evaluate ExecutionJsonData expression, Error:'{match.Value}'", ex);                    
                 }
             }
         }
@@ -340,7 +340,7 @@ namespace GingerCore
             }
             else
             {
-                mValueCalculated = mValueCalculated.Replace(josnExpression, string.Format("['{0}' Expression Supported only in case the selected Execution Logger type is DB.]", josnExpression));
+                mValueCalculated = mValueCalculated.Replace(josnExpression, $"[Expression Supported only in case the selected Execution Logger type is DB.]");
                 return;
             }
 
@@ -558,8 +558,8 @@ namespace GingerCore
                 }
                 else
                 {
-                    mValueCalculated = mValueCalculated.Replace(flowDetailsExpression, string.Format("['{0}' Expression is not valid]", flowDetailsExpression));
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}' due to invalid 'Field'", flowDetailsExpression));
+                    mValueCalculated = mValueCalculated.Replace(flowDetailsExpression, "[Expression is not valid]");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to evaluate flow details expression '{flowDetailsExpression}' due to invalid 'Field'");
                     return;
                 }
             }
@@ -671,7 +671,7 @@ namespace GingerCore
             }
             else
             {
-                mValueCalculated = mValueCalculated.Replace(p, string.Format("ERROR: The Global Model Parameter '{0}' was not found", VarName));
+                mValueCalculated = mValueCalculated.Replace(p, $"ERROR: The Global Model Parameter was not found");
             }
         }
 
@@ -795,7 +795,7 @@ namespace GingerCore
                 // use only the error string otherwise the output might look anamalous
                 // eg: //*[text()="{Error: The Data Source Variable was not found }"]
 
-                mValueCalculated = string.Format("ERROR: The Data Source Variable '{0}' was not found", DSName);
+                mValueCalculated = $"ERROR: The Data Source Variable was not found";
                 return;
             }
 
@@ -1071,7 +1071,7 @@ namespace GingerCore
                         }
                         else
                         {
-                            mValueCalculated = "ERROR: Not Valid RowNum:" + rowNum;
+                            mValueCalculated = $"ERROR: Not Valid RowNum:";
                         }
                     }
 
@@ -1284,9 +1284,8 @@ namespace GingerCore
                 }
                 catch (Exception e)
                 {
-                    mValueCalculated = e.Message.Contains("There is no row at") ? "No Row Found" : pOrg;
-                    // Is there a reason to print an error in the console? 
-                    Console.WriteLine(e.StackTrace);
+                    mValueCalculated = "ERROR: Failed to query data source";
+                    Reporter.ToLog(eLogLevel.ERROR, "LiteDB data source query failed", e);
                 }
             }
         }
