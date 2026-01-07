@@ -24,7 +24,7 @@
                
         <TextBlock x:Name="MessageLabel" Grid.Row="1" Text="Message" HorizontalAlignment="Stretch" Margin="10,10,10,10" VerticalAlignment="Center" Style="{StaticResource @TextBlockStyle}" Foreground="{StaticResource $PrimaryColor_Black}" FontSize="14"/>
 
-        <TextBox x:Name="ValueTextBox" Grid.Row="2" HorizontalAlignment="Stretch" Text="Value" MaxLength="30" Margin="10,0,10,10" Style="{StaticResource @MultiRowsTextBoxStyle}"/>
+        <TextBox x:Name="ValueTextBox" Grid.Row="2" HorizontalAlignment="Stretch" Text="Value" Margin="10,0,10,10" Style="{StaticResource @MultiRowsTextBoxStyle}"/>
         <ComboBox x:Name="xValueComboBox" Grid.Row="2" HorizontalAlignment="Stretch" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="10,0,10,10" Visibility="Collapsed" />
 
         <DockPanel Background="{StaticResource $BackgroundColor_White}" Grid.Row="3">            
