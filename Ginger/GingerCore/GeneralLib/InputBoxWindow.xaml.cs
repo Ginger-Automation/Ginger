@@ -34,7 +34,7 @@ namespace GingerCore.GeneralLib
 
         public static InputBoxWindow CurrentInputBoxWindow = null;
 
-
+        private const int MAX_LENGTH = 30;
         ~InputBoxWindow()
         {
             CurrentInputBoxWindow = null;
@@ -115,12 +115,14 @@ namespace GingerCore.GeneralLib
             winTitle.Content = title;
             MessageLabel.Text = message;
             ValueTextBox.Text = Value;
+            ValueTextBox.MaxLength = message.Contains("Folder") ? MAX_LENGTH : 0;
             ValueTextBox.Focus();
         }
 
         public void Init(string title, string message, List<string> possibleValues)
         {
             winTitle.Content = title;
+            ValueTextBox.MaxLength = message.Contains("Folder") ? MAX_LENGTH : 0;
             MessageLabel.Text = message;
             if (possibleValues == null || possibleValues.Count == 0)
             {
@@ -136,6 +138,7 @@ namespace GingerCore.GeneralLib
         public void Init(string title, string message, Object obj, string Property)
         {
             winTitle.Content = title;
+            ValueTextBox.MaxLength = message.Contains("Folder") ? MAX_LENGTH : 0;
             MessageLabel.Text = message;
             ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, Property);
             mOriginalValue = ValueTextBox.Text;
