@@ -590,7 +590,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
 
 
-            UFTCredentialsDialog dialog = new UFTCredentialsDialog(credentials.clientId, credentials.clientSecret, credentials.tenantId, FetchUFTMDevicesAsync, currentDeviceName, currentDeviceUuid);
+            DriverConfigParam serverParam = mAppiumServer;
+            UFTCredentialsDialog dialog = new UFTCredentialsDialog(serverParam, credentials.clientId, credentials.clientSecret, credentials.tenantId, FetchUFTMDevicesAsync, currentDeviceName, currentDeviceUuid);
 
             Window owner = Window.GetWindow(this);
 

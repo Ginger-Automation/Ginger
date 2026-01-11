@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Ginger.Activities;
 
 namespace Ginger.Drivers.DriversConfigsEditPages
 {
@@ -40,6 +41,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
     {
         private const string DialogTitleText = "UFT Mobile Credentials";
         private GenericWindow mDialogWindow;
+        private readonly DriverConfigParam mServerParam;
         private readonly DriverConfigParam mClientIdParam;
         private readonly DriverConfigParam mClientSecretParam;
         private readonly DriverConfigParam mTenantIdParam;
@@ -48,9 +50,11 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         private const string PhonesListBoxName = "xPhonesListBox";
         private const string PhonesMessageTextBlockName = "xPhonesMessageTextBlock";
         private readonly ObservableCollection<UftPhoneViewModel> mPhones = new();
+        // UI controls are defined in XAML and exposed by InitializeComponent
         private UftPhoneViewModel mSelectedPhone;
         private string mPreferredDeviceName;
         private string mPreferredDeviceUuid;
+        private readonly HashSet<string> mWorkspaces = new();
 
         public string SelectedPhoneUuid { get; private set; }
 
@@ -60,10 +64,11 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         public bool? DialogResult { get; private set; }
 
-        public UFTCredentialsDialog(DriverConfigParam clientIdParam, DriverConfigParam clientSecretParam, DriverConfigParam tenantIdParam, Func<Task<string>> fetchDevicesFunc, string initialDeviceName = null, string initialDeviceUuid = null)
+        public UFTCredentialsDialog(DriverConfigParam serverParam, DriverConfigParam clientIdParam, DriverConfigParam clientSecretParam, DriverConfigParam tenantIdParam, Func<Task<string>> fetchDevicesFunc, string initialDeviceName = null, string initialDeviceUuid = null)
         {
             InitializeComponent();
 
+            mServerParam = serverParam;
             mClientIdParam = clientIdParam;
             mClientSecretParam = clientSecretParam;
             mTenantIdParam = tenantIdParam;
@@ -108,9 +113,55 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void InitCredentialsEditors()
         {
+            // try to find controls by name from XAML
+            xServerUrlVE = this.FindName("xServerUrlVE") as UCValueExpression;
+            xOsTypeCombo = this.FindName("xOsTypeCombo") as ComboBox;
+            xWorkspaceCombo = this.FindName("xWorkspaceCombo") as ComboBox;
+            xStatusCombo = this.FindName("xStatusCombo") as ComboBox;
+            xAvailabilityCombo = this.FindName("xAvailabilityCombo") as ComboBox;
+
+            xServerUrlVE?.Init(null, mServerParam, nameof(DriverConfigParam.Value));
             xClientIdVE?.Init(null, mClientIdParam, nameof(DriverConfigParam.Value));
             xClientSecretVE?.Init(null, mClientSecretParam, nameof(DriverConfigParam.Value));
             xTenantIdVE?.Init(null, mTenantIdParam, nameof(DriverConfigParam.Value));
+
+            // react to changes in credential fields to show/hide the inline hint
+            if (mClientIdParam != null)
+            {
+                mClientIdParam.PropertyChanged += CredentialsParam_PropertyChanged;
+            }
+            if (mClientSecretParam != null)
+            {
+                mClientSecretParam.PropertyChanged += CredentialsParam_PropertyChanged;
+            }
+            if (mTenantIdParam != null)
+            {
+                mTenantIdParam.PropertyChanged += CredentialsParam_PropertyChanged;
+            }
+
+            // initial hint visibility
+            UpdateCredentialsHintVisibility();
+        }
+
+        private void CredentialsParam_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(DriverConfigParam.Value))
+            {
+                // update UI on dispatcher thread
+                this.Dispatcher?.Invoke(UpdateCredentialsHintVisibility);
+            }
+        }
+
+        private void UpdateCredentialsHintVisibility()
+        {
+            bool missing = string.IsNullOrWhiteSpace(mClientIdParam?.Value)
+                           || string.IsNullOrWhiteSpace(mClientSecretParam?.Value)
+                           || string.IsNullOrWhiteSpace(mTenantIdParam?.Value);
+
+            if (this.FindName("xCredentialsHintTextBlock") is TextBlock hint)
+            {
+                hint.Visibility = missing ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
 
         private void InitPhonesList()
@@ -137,8 +188,11 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
 
             Button triggerButton = sender as Button;
+            object originalButtonContent = null;
             if (triggerButton != null)
             {
+                // preserve original content so we can restore it after the async operation
+                originalButtonContent = triggerButton.Content;
                 triggerButton.IsEnabled = false;
                 triggerButton.Content = "Loading...";
             }
@@ -166,7 +220,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 if (triggerButton != null)
                 {
                     triggerButton.IsEnabled = true;
-                    triggerButton.Content = "Show Phones";
+                    // restore the original button text (avoid hard-coded different label)
+                    triggerButton.Content = originalButtonContent ?? "Load/Refresh Devices";
                 }
             }
         }
@@ -350,6 +405,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             bool? healthError = obj.SelectToken("healthStatus.error")?.Value<bool?>();
             string healthMessage = ExtractHealthMessage(obj.SelectToken("healthStatus.message"));
 
+            string workspace = GetStringValue(obj, "workspace", "space", "originWorkspace", "workspaceName");
+
             if (string.IsNullOrWhiteSpace(uuid) && string.IsNullOrWhiteSpace(nickname) && string.IsNullOrWhiteSpace(name))
             {
                 return null;
@@ -369,6 +426,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 IsConnected = isConnected,
                 HealthError = healthError,
                 HealthMessage = healthMessage
+                , Workspace = workspace
             };
         }
 
@@ -385,6 +443,64 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 }
             }
             return phones;
+        }
+
+        private void PopulateFilters()
+        {
+            // OS types
+            var osTypes = mPhones.Select(p => p.Platform).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(x => x).ToList();
+            var osList = new List<string> { "All" };
+            osList.AddRange(osTypes);
+            xOsTypeCombo.ItemsSource = osList;
+            xOsTypeCombo.SelectedIndex = 0;
+
+            // Workspaces
+            var ws = mWorkspaces.OrderBy(x => x).ToList();
+            var wsList = new List<string> { "All" };
+            wsList.AddRange(ws);
+            xWorkspaceCombo.ItemsSource = wsList;
+            xWorkspaceCombo.SelectedIndex = 0;
+
+            // Status
+            xStatusCombo.ItemsSource = new[] { "All", "Connected", "Free", "Reserved", "Offline" };
+            xStatusCombo.SelectedIndex = 0;
+
+            // Availability
+            xAvailabilityCombo.ItemsSource = new[] { "All", "Free", "Busy" };
+            xAvailabilityCombo.SelectedIndex = 0;
+        }
+
+        private void Filters_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFilters();
+        }
+
+        private void ApplyFilters()
+        {
+            var filtered = mPhones.AsEnumerable();
+
+            if (xOsTypeCombo?.SelectedItem is string os && !string.IsNullOrWhiteSpace(os) && os != "All")
+            {
+                filtered = filtered.Where(p => string.Equals(p.Platform, os, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (xWorkspaceCombo?.SelectedItem is string ws && !string.IsNullOrWhiteSpace(ws) && ws != "All")
+            {
+                filtered = filtered.Where(p => string.Equals(p.Workspace, ws, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (xStatusCombo?.SelectedItem is string status && !string.IsNullOrWhiteSpace(status) && status != "All")
+            {
+                filtered = filtered.Where(p => string.Equals(p.StatusText, status, StringComparison.OrdinalIgnoreCase) || string.Equals(p.Status, status, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (xAvailabilityCombo?.SelectedItem is string avail && !string.IsNullOrWhiteSpace(avail) && avail != "All")
+            {
+                string normalizedAvail = avail.Trim().ToLowerInvariant();
+                filtered = filtered.Where(p => string.Equals(p.GetStatusNormalized(), normalizedAvail, StringComparison.OrdinalIgnoreCase) || string.Equals(p.Status, avail, StringComparison.OrdinalIgnoreCase));
+            }
+
+            xPhonesListBox.ItemsSource = filtered.ToList();
         }
 
         private UftPhoneViewModel CreatePhoneFromPlainText(string line)
@@ -617,6 +733,10 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             public string DeviceNameDisplay => string.IsNullOrWhiteSpace(DeviceName) ? string.Empty : DeviceName;
 
+            public string Workspace { get; init; }
+
+            public string WorkspaceDisplay => string.IsNullOrWhiteSpace(Workspace) ? string.Empty : $"Workspace: {Workspace}";
+
             public string StatusDisplay => string.IsNullOrWhiteSpace(Status) ? string.Empty : $"Status: {Status}";
 
             public string StatusText => string.IsNullOrWhiteSpace(Status) ? "UNKNOWN" : Status.Trim();
@@ -683,6 +803,11 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             private string StatusNormalized => string.IsNullOrWhiteSpace(Status)
                 ? string.Empty
                 : Status.Trim().ToLowerInvariant();
+
+            public string GetStatusNormalized()
+            {
+                return StatusNormalized;
+            }
         }
     }
 }
