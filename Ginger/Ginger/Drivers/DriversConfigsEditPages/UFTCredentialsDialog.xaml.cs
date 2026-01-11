@@ -295,6 +295,20 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                     mPhones.Add(phone);
                 }
 
+                // collect workspaces from parsed phones for filter population
+                mWorkspaces.Clear();
+                foreach (var p in mPhones)
+                {
+                    if (!string.IsNullOrWhiteSpace(p.Workspace))
+                    {
+                        mWorkspaces.Add(p.Workspace);
+                    }
+                }
+
+                // populate filters and apply current selections (show filtered results)
+                PopulateFilters();
+                ApplyFilters();
+
                 xPhonesListBox.Visibility = mPhones.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
             }
             else
@@ -453,7 +467,6 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             osList.AddRange(osTypes);
             xOsTypeCombo.ItemsSource = osList;
             xOsTypeCombo.SelectedIndex = 0;
-
             // Workspaces
             var ws = mWorkspaces.OrderBy(x => x).ToList();
             var wsList = new List<string> { "All" };
@@ -461,12 +474,50 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             xWorkspaceCombo.ItemsSource = wsList;
             xWorkspaceCombo.SelectedIndex = 0;
 
-            // Status
-            xStatusCombo.ItemsSource = new[] { "All", "Connected", "Free", "Reserved", "Offline" };
+            // Status - derive from actual device statuses
+            var statusValues = mPhones.Select(p => p.StatusText).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(x => x).ToList();
+            var statusList = new List<string> { "All" };
+            statusList.AddRange(statusValues);
+            xStatusCombo.ItemsSource = statusList;
             xStatusCombo.SelectedIndex = 0;
 
-            // Availability
-            xAvailabilityCombo.ItemsSource = new[] { "All", "Free", "Busy" };
+            // Availability - normalize statuses into availability buckets present in the devices
+            List<string> availSet = new();
+            foreach (var p in mPhones)
+            {
+                string normalized = p.GetStatusNormalized();
+                string avail = string.Empty;
+                if (string.IsNullOrWhiteSpace(normalized))
+                {
+                    avail = p.StatusText ?? string.Empty;
+                }
+                else if (normalized.Contains("free") || normalized.Contains("available"))
+                {
+                    avail = "Free";
+                }
+                else if (normalized.Contains("used") || normalized.Contains("busy") || normalized.Contains("in use") || normalized.Contains("reserved"))
+                {
+                    avail = "Busy";
+                }
+                else if (normalized.Contains("off") || normalized.Contains("offline") || normalized.Contains("disconnected"))
+                {
+                    avail = "Offline";
+                }
+                else
+                {
+                    // fallback to raw status text
+                    avail = p.StatusText ?? string.Empty;
+                }
+
+                if (!string.IsNullOrWhiteSpace(avail) && !availSet.Contains(avail, StringComparer.OrdinalIgnoreCase))
+                {
+                    availSet.Add(avail);
+                }
+            }
+
+            var availList = new List<string> { "All" };
+            availList.AddRange(availSet.OrderBy(x => x));
+            xAvailabilityCombo.ItemsSource = availList;
             xAvailabilityCombo.SelectedIndex = 0;
         }
 
