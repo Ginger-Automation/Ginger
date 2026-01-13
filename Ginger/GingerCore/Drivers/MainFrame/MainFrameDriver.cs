@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.ActionsLib.MainFrame;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -262,7 +263,9 @@ namespace GingerCore.Drivers.MainFrame
                         PerformActMainframeSetText(act);
 
                         break;
-
+                    case "Amdocs.Ginger.CoreNET.ActionsLib.MainFrame.ActMainframeClipboardPaste":
+                        PerformActMainframeClipboardPaste(act);
+                        break;
                     default:
                         throw new NotSupportedException("Action not Implemented");
                 }
@@ -408,6 +411,35 @@ namespace GingerCore.Drivers.MainFrame
                 }
             }
 
+        }
+
+        private void PerformActMainframeClipboardPaste(Act act)
+        {
+            ActMainframeClipboardPaste MFCP = (ActMainframeClipboardPaste)act;
+           // MFE.SendText(MFCP.ValueToPaste);
+
+            //var clipAct = (GingerCore.Actions.MainFrame.ActMainframeClipboardPaste)act;
+
+            // 2. Get the value (e.g., "MYTÖ")
+            string valueToPaste = MFCP.Value;
+
+            // 3. Set the Windows Clipboard
+            // We must run this on an STA thread, or it will crash/fail
+            System.Threading.Thread staThread = new System.Threading.Thread(() =>
+            {
+                System.Windows.Forms.Clipboard.SetText(valueToPaste);
+            });
+            staThread.SetApartmentState(System.Threading.ApartmentState.STA);
+            staThread.Start();
+            staThread.Join(); // Wait for clipboard to be set
+
+            // 4. Send "Ctrl + V" to the Mainframe
+            // Note: Ensure the mainframe window is focused.
+            // If MFE.SendKey supports normal keystrokes, try that first:
+            // MFE.SendKey("^v"); 
+
+            // If MFE doesn't support Ctrl+V, use standard Windows SendKeys:
+            //System.Windows.Forms.SendKeys.SendWait("^v");
         }
 
         private void PerformActMainframeSetText(Act act)
