@@ -449,7 +449,7 @@ namespace GingerCore.Actions.WebAPI
             {
                 if (Response != null)
                 {
-                    rawMsg = $"HTTP/{Response.Version} {Response.ReasonPhrase}{Environment.NewLine}";
+                    rawMsg = $"HTTP/{Response.Version} {(int)Response.StatusCode} {Response.ReasonPhrase}{Environment.NewLine}";
                     rawMsg += $"{Response.Headers}";
                     rawMsg += $"{Response.Content.Headers}{Environment.NewLine}";
                     if (ResponseMessage.Contains("xml"))
@@ -644,7 +644,7 @@ namespace GingerCore.Actions.WebAPI
         {
             if (Response != null)
             {
-                mAct.AddOrUpdateReturnParamActual("Header: Status Code ", Response.StatusCode.ToString());
+                mAct.AddOrUpdateReturnParamActual("Header: Status Code ", $"{(int)Response.StatusCode}");
                 Reporter.ToLog(eLogLevel.DEBUG, "Retrieve Response Status Code passed successfully");
                 foreach (var Header in Response.Headers)
                 {
