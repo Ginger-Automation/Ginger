@@ -7425,7 +7425,10 @@ namespace GingerCore.Drivers
             AddIfNotEmpty(list, "TagName", el.TagName);
             AddIfNotEmpty(list, "Displayed", el.Displayed.ToString());
             AddIfNotEmpty(list, "Enabled", el.Enabled.ToString());
-            AddIfNotEmpty(list, "Selected", el.Selected.ToString());
+            if (el.GetAttribute("type") == "checkbox" || el.GetAttribute("type") == "radio")
+            {
+                AddIfNotEmpty(list, "Selected", el.Selected.ToString());
+            }
             AddIfNotEmpty(list, "Text", el.Text);
         }
 

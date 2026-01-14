@@ -102,7 +102,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                     {
                         WorkSpace.Instance.EventHandler.ShowUpgradeGinger(solutionFolder, higherVersionFiles.ToList());
                     }
-                    Reporter.ToLog(eLogLevel.WARN, "Ginger upgrade is needed for loading the Solution, aborting Solution load.");
+                    Reporter.ToLog(eLogLevel.ERROR, "Ginger upgrade is needed for loading the Solution, aborting Solution load.");
                     return true;
                 }
 
