@@ -645,7 +645,7 @@ namespace GingerCore.Actions.WebAPI
             if (Response != null)
             {
                 mAct.AddOrUpdateReturnParamActual("Header: Status Code ", Response.StatusCode.ToString());
-                mAct.AddOrUpdateReturnParamActual("Header: Status Code type ", $"{(int)Response.StatusCode}");
+                mAct.AddOrUpdateReturnParamActual("Header: Status Code number ", $"{(int)Response.StatusCode}");
                 Reporter.ToLog(eLogLevel.DEBUG, "Retrieve Response Status Code passed successfully");
                 foreach (var Header in Response.Headers)
                 {
