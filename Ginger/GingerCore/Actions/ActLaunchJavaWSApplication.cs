@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
@@ -596,8 +597,15 @@ namespace GingerCore.Actions
                         Error = "Process sync time for attach agent is not valid.";
                         return false;
                     }
+                    string versionString = string.Empty;
+                    string error = string.Empty;
 
-                    string versionString = GetJavaVersion(Path.Combine(mJavaWSEXEPath_Calc, "java.exe"));
+                    if (!TryGetJavaVersion(Path.Combine(mJavaWSEXEPath_Calc, "java.exe"), out versionString, out error))
+                    {
+                        Error = $"Failed to get Java version from path '{mJavaWSEXEPath_Calc}'. Error: {error}";
+                        return false;
+                    }
+
                     int majorVersion = ExtractMajorVersion(versionString);
 
                     if (!Directory.Exists(mJavaAgentPath_Calc))
@@ -858,35 +866,84 @@ namespace GingerCore.Actions
             }
         }
 
-        public static string GetJavaVersion(string javaExePath)
+        private static bool TryGetJavaVersion(string javaExePath, out string javaVersion, out string error)
         {
-            if (!File.Exists(javaExePath))
+            javaVersion = string.Empty;
+            error = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(javaExePath))
             {
-                throw new FileNotFoundException("java.exe not found at the specified path.", javaExePath);
+                error = "Java path cannot be empty.";
+                return false;
             }
 
-            if (!string.Equals(Path.GetFileName(javaExePath), "java.exe", StringComparison.OrdinalIgnoreCase))
+            // 1. Normalize and ensure absolute path
+            string fullPath;
+            try
             {
-                throw new InvalidOperationException($"The specified Java executable path '{javaExePath}' does not end with 'java.exe'. Aborting for security reasons.");
+                fullPath = Path.GetFullPath(javaExePath);
+            }
+            catch (Exception ex)
+            {
+                error = $"Invalid path: {ex.Message}";
+                return false;
             }
 
-            ProcessStartInfo psi = new ProcessStartInfo
+            // 2. Validate filename
+            string fileName = Path.GetFileName(fullPath);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                FileName = javaExePath,
-                Arguments = "-version",
+                if (!fileName.Equals("java.exe", StringComparison.OrdinalIgnoreCase))
+                {
+                    error = "Executable must be java.exe.";
+                    return false;
+                }
+            }
+            else
+            {
+                if (!fileName.Equals("java", StringComparison.Ordinal))
+                {
+                    error = "Executable must be 'java'.";
+                    return false;
+                }
+            }
+
+            // 3. Check existence and ensure it's a file
+            if (!File.Exists(fullPath))
+            {
+                error = "Java executable not found.";
+                return false;
+            }
+
+            // 5. Build ProcessStartInfo safely
+            var psi = new ProcessStartInfo
+            {
+                FileName = fullPath,
                 RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
 
-            using (Process process = Process.Start(psi))
-            {
-                string output = process.StandardError.ReadToEnd();
-                process.WaitForExit();
+            // Use ArgumentList instead of concatenated string
+            psi.ArgumentList.Add("--version");
 
-                // First line usually: java version "17.0.2"
-                string versionLine = output.Split('\n')[0];
-                return ExtractVersion(versionLine);
+            try
+            {
+                using (Process process = Process.Start(psi))
+                {
+                    string output = process.StandardError.ReadToEnd();
+                    process.WaitForExit();
+
+                    // First line usually: java version "17.0.2"
+                    string versionLine = output.Split('\n')[0];
+                    javaVersion= ExtractVersion(versionLine);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                error = $"Failed to start process: {ex.Message}";
+                return false;
             }
         }
 
