@@ -29,6 +29,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using Ginger.Activities;
 
@@ -481,35 +482,12 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             xStatusCombo.ItemsSource = statusList;
             xStatusCombo.SelectedIndex = 0;
 
-            // Availability - normalize statuses into availability buckets present in the devices
-            List<string> availSet = new();
+            // Availability - normalize to Online/Offline based on connection state when possible
+            HashSet<string> availSet = new(StringComparer.OrdinalIgnoreCase);
             foreach (var p in mPhones)
             {
-                string normalized = p.GetStatusNormalized();
-                string avail = string.Empty;
-                if (string.IsNullOrWhiteSpace(normalized))
-                {
-                    avail = p.StatusText ?? string.Empty;
-                }
-                else if (normalized.Contains("free") || normalized.Contains("available"))
-                {
-                    avail = "Free";
-                }
-                else if (normalized.Contains("used") || normalized.Contains("busy") || normalized.Contains("in use") || normalized.Contains("reserved"))
-                {
-                    avail = "Busy";
-                }
-                else if (normalized.Contains("off") || normalized.Contains("offline") || normalized.Contains("disconnected"))
-                {
-                    avail = "Offline";
-                }
-                else
-                {
-                    // fallback to raw status text
-                    avail = p.StatusText ?? string.Empty;
-                }
-
-                if (!string.IsNullOrWhiteSpace(avail) && !availSet.Contains(avail, StringComparer.OrdinalIgnoreCase))
+                string avail = p.GetAvailabilityDisplay();
+                if (!string.IsNullOrWhiteSpace(avail))
                 {
                     availSet.Add(avail);
                 }
@@ -548,7 +526,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             if (xAvailabilityCombo?.SelectedItem is string avail && !string.IsNullOrWhiteSpace(avail) && avail != "All")
             {
                 string normalizedAvail = avail.Trim().ToLowerInvariant();
-                filtered = filtered.Where(p => string.Equals(p.GetStatusNormalized(), normalizedAvail, StringComparison.OrdinalIgnoreCase) || string.Equals(p.Status, avail, StringComparison.OrdinalIgnoreCase));
+                filtered = filtered.Where(p => string.Equals(p.GetAvailabilityNormalized(), normalizedAvail, StringComparison.OrdinalIgnoreCase));
             }
 
             xPhonesListBox.ItemsSource = filtered.ToList();
@@ -648,6 +626,42 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
                 mPreferredDeviceUuid = SelectedPhoneUuid;
                 mPreferredDeviceName = SelectedPhoneName;
+                UpdateCurrentPhoneMarker();
+            }
+        }
+
+        private void CopyUuid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is FrameworkElement fe && fe.DataContext is UftPhoneViewModel phone)
+            {
+                GingerCore.General.SetClipboardText(phone.Uuid ?? string.Empty);
+                e.Handled = true;
+            }
+        }
+
+        private void CopyDeviceName_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is FrameworkElement fe && fe.DataContext is UftPhoneViewModel phone)
+            {
+                string name = string.IsNullOrWhiteSpace(phone.DeviceName) ? phone.DisplayName : phone.DeviceName;
+                GingerCore.General.SetClipboardText(name ?? string.Empty);
+                e.Handled = true;
+            }
+        }
+
+        private void PhoneItem_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is not ListBoxItem item)
+            {
+                return;
+            }
+
+            if (item.IsSelected)
+            {
+                e.Handled = true;
+                xPhonesListBox.SelectedItem = null;
+                mPreferredDeviceUuid = null;
+                mPreferredDeviceName = null;
                 UpdateCurrentPhoneMarker();
             }
         }
@@ -792,6 +806,20 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             public string StatusText => string.IsNullOrWhiteSpace(Status) ? "UNKNOWN" : Status.Trim();
 
+            public string AvailabilityText
+            {
+                get
+                {
+                    string availability = GetAvailabilityNormalized();
+                    return availability switch
+                    {
+                        "offline" => "Offline",
+                        "online" => "Online",
+                        _ => "Unknown"
+                    };
+                }
+            }
+
             public string PlatformDisplay
             {
                 get
@@ -815,6 +843,10 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             public string ConnectionText => IsConnected == true ? "Connected" : IsConnected == false ? "Offline" : "Unknown";
 
             public Visibility CurrentBadgeVisibility => IsCurrent ? Visibility.Visible : Visibility.Collapsed;
+
+            public Brush CardBorderBrush => IsCurrent
+                ? (Brush)new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E20074"))
+                : Brushes.Black;
 
             public eImageType IconType => string.Equals(Platform, "ios", StringComparison.OrdinalIgnoreCase)
                 ? eImageType.Ios
@@ -841,6 +873,12 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             private Brush GetStatusBrush()
             {
+                // If device is offline, don't present busy/free colors.
+                if (GetAvailabilityNormalized() == "offline")
+                {
+                    return Brushes.DimGray;
+                }
+
                 string normalized = StatusNormalized;
                 return normalized switch
                 {
@@ -858,6 +896,52 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             public string GetStatusNormalized()
             {
                 return StatusNormalized;
+            }
+
+            public string GetAvailabilityNormalized()
+            {
+                if (IsConnected == true)
+                {
+                    return "online";
+                }
+
+                if (IsConnected == false)
+                {
+                    return "offline";
+                }
+
+                string normalizedStatus = StatusNormalized;
+                if (string.IsNullOrWhiteSpace(normalizedStatus))
+                {
+                    return string.Empty;
+                }
+
+                if (normalizedStatus.Contains("off") || normalizedStatus.Contains("offline") || normalizedStatus.Contains("disconnected"))
+                {
+                    return "offline";
+                }
+
+                // If the device is marked as offline/disconnected in any supported field, force offline.
+                // This prevents showing misleading availability such as "Free"/"Busy" for offline devices.
+                string connectionText = ConnectionText?.Trim().ToLowerInvariant();
+                if (connectionText == "offline")
+                {
+                    return "offline";
+                }
+
+                // Any other status is best treated as online for the user-facing availability filter
+                return "online";
+            }
+
+            public string GetAvailabilityDisplay()
+            {
+                string normalized = GetAvailabilityNormalized();
+                return normalized switch
+                {
+                    "online" => "Online",
+                    "offline" => "Offline",
+                    _ => string.Empty
+                };
             }
         }
     }

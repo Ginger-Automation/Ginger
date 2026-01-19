@@ -604,22 +604,17 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void ApplySelectedPhoneDetails(UFTCredentialsDialog dialog)
         {
-            if (dialog == null || (string.IsNullOrWhiteSpace(dialog.SelectedPhoneUuid) && string.IsNullOrWhiteSpace(dialog.SelectedPhoneName)))
+            if (dialog == null)
             {
                 return;
             }
 
             bool wasUpdated = false;
 
-            if (!string.IsNullOrWhiteSpace(dialog.SelectedPhoneName))
-            {
-                wasUpdated |= UpdateCapabilityValue("appium:deviceName", dialog.SelectedPhoneName);
-            }
-
-            if (!string.IsNullOrWhiteSpace(dialog.SelectedPhoneUuid))
-            {
-                wasUpdated |= UpdateCapabilityValue("appium:udid", dialog.SelectedPhoneUuid);
-            }
+            // Apply the dialog selection state as-is.
+            // If user unselected the device, clear the capabilities.
+            wasUpdated |= UpdateCapabilityValue("appium:deviceName", dialog.SelectedPhoneName ?? string.Empty);
+            wasUpdated |= UpdateCapabilityValue("appium:udid", dialog.SelectedPhoneUuid ?? string.Empty);
 
             bool platformUpdated = ApplyPlatformFromSelection(dialog.SelectedPhonePlatform);
 
