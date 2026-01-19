@@ -39,6 +39,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// <summary>
     /// Interaction logic for LiveSpyPage.xaml
     /// </summary>
+    
     public partial class LiveSpyPage : Page
     {
         bool isSpying = false;
@@ -132,6 +133,20 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             this.Dispatcher.Invoke(() =>
             {
+                // Minimal fallback: if caller passed null try to resolve from current context.Agent
+                if (windowExplorerDriver == null && mContext?.Agent != null)
+                {
+                    try
+                    {
+                        windowExplorerDriver = ((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "SetDriver fallback failed to get driver from context.Agent", ex);
+                        windowExplorerDriver = null;
+                    }
+                }
+
                 if (mWindowExplorerDriver != windowExplorerDriver)
                 {
                     mWindowExplorerDriver = windowExplorerDriver;
@@ -233,7 +248,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void SpyTimerHandler(object sender, EventArgs e)
         {
-            if (mWindowExplorerDriver != null && ((AgentOperations)mContext.Agent.AgentOperations).Status == Agent.eStatus.Running)    //((GingerCore.Drivers.DriverBase)mWindowExplorerDriver).IsDriverRunning)
+            if (mWindowExplorerDriver != null && ((AgentOperations)mContext.Agent.AgentOperations).Status == Agent.eStatus.Running)
             {
                 try
                 {
@@ -249,8 +264,21 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                         {
                             mWindowExplorerDriver.UnHighLightElements();
                             mSpyElement.WindowExplorer = mWindowExplorerDriver;
+
+                            // Learn details (fills properties/locators)
                             xWindowSelectionUC.mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
-                            xStatusTextBlock.Text = "Element was identified, see details below.";//string.Format("The element '{0}' was identified", mSpyElement.ElementName);                    
+
+                            // Ensure element location/size fields are updated (important for mobile highlighting)
+                            try
+                            {
+                                mWindowExplorerDriver.UpdateElementInfoFields(mSpyElement);
+                            }
+                            catch (Exception exUpd)
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, "UpdateElementInfoFields failed during live-spy: " + exUpd.Message, exUpd);
+                            }
+
+                            xStatusTextBlock.Text = "Element was identified, see details below.";
                             xStatusTextBlock.Foreground = (Brush)FindResource("$PassedStatusColor");
                             GingerCore.General.DoEvents();
                             mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSpyElement);

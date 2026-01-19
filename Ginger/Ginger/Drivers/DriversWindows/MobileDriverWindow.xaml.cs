@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.UserControls;
@@ -29,6 +30,7 @@ using GingerCore.Actions;
 using GingerCore.Drivers;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -39,6 +41,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 
 namespace Ginger.Drivers.DriversWindows
@@ -66,24 +69,78 @@ namespace Ginger.Drivers.DriversWindows
 
        
         ObservableList <DeviceInfo> mDeviceDetails = [];
+
+        private System.Windows.Media.Imaging.BitmapSource SafeGetDeviceImageSource()
+        {
+            try
+            {
+                // Prefer the screenshot image control instance used elsewhere in this window
+                System.Windows.Controls.Image img = null;
+
+                // Most of this class uses "xDeviceScreenshotImage" - try that first
+                try { img = this.xDeviceScreenshotImage; } catch { img = null; }
+
+                // Fallback to FindName for other possible names (xDeviceImage used in some places)
+                if (img == null)
+                {
+                    try { img = this.FindName("xDeviceScreenshotImage") as System.Windows.Controls.Image; } catch { img = null; }
+                }
+                if (img == null)
+                {
+                    try { img = this.FindName("xDeviceImage") as System.Windows.Controls.Image; } catch { img = null; }
+                }
+
+                if (img == null)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "SafeGetDeviceImageSource: no image control found (xDeviceScreenshotImage/xDeviceImage).");
+                    return null;
+                }
+
+                // Use the control's dispatcher to access Source safely from any thread
+                var dispatcher = img.Dispatcher ?? this.Dispatcher;
+                if (dispatcher == null)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "SafeGetDeviceImageSource: dispatcher is null.");
+                    return img.Source as System.Windows.Media.Imaging.BitmapSource;
+                }
+
+                if (dispatcher.CheckAccess())
+                {
+                    return img.Source as System.Windows.Media.Imaging.BitmapSource;
+                }
+                else
+                {
+                    return dispatcher.Invoke(() => img.Source as System.Windows.Media.Imaging.BitmapSource);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "SafeGetDeviceImageSource failed", ex);
+                return null;
+            }
+        }
         public (int x, int y) GetMousePositionOnDevice()
         {
             try
             {
-                var img = this.FindName("xDeviceImage") as Image;
-                if (img == null) throw new InvalidOperationException("Device image control 'xDeviceImage' not found in MobileDriverWindow.");
+                // Prefer the main screenshot image control
+                var img = this.xDeviceScreenshotImage ?? this.FindName("xDeviceScreenshotImage") as Image ?? this.FindName("xDeviceImage") as Image;
+                if (img == null) throw new InvalidOperationException("Device image control not found in MobileDriverWindow.");
 
                 Point relative = Mouse.GetPosition(img);
 
-                if (img.Source is BitmapSource bmp && img.ActualWidth > 0 && img.ActualHeight > 0)
+                // Use pixel dimensions when available for correct mapping
+                var src = SafeGetDeviceImageSource();
+                if (src != null && img.ActualWidth > 0 && img.ActualHeight > 0)
                 {
-                    double sx = bmp.PixelWidth / img.ActualWidth;
-                    double sy = bmp.PixelHeight / img.ActualHeight;
+                    double sx = src.PixelWidth / img.ActualWidth;
+                    double sy = src.PixelHeight / img.ActualHeight;
                     int dx = Math.Max(0, (int)Math.Round(relative.X * sx));
                     int dy = Math.Max(0, (int)Math.Round(relative.Y * sy));
                     return (dx, dy);
                 }
 
+                // Fallback to control coordinates
                 return ((int)relative.X, (int)relative.Y);
             }
             catch (Exception ex)
@@ -92,50 +149,223 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
 
+        private DateTime? mLastHighlightTime = null;
+        private readonly TimeSpan mHighlightPreserveDuration = TimeSpan.FromSeconds(5); // keep highlights visible this long after being set
+        private readonly object mHighlightLock = new object();
+        private bool mKeepHighlightTv = false;
         public void HighlightElementOnDevice(Amdocs.Ginger.Common.UIElement.ElementInfo element)
         {
+
             try
             {
-                var canvas = this.FindName("xHighlightCanvas") as System.Windows.Controls.Canvas;
-                if (canvas == null) return;
+                if (element == null) return;
+
+                var platform = mDriver.GetDevicePlatformType();
+
+                // ─────────────────────────────────────────────────────────────
+                // ANDROID / iOS  →  Use the driver mapping (accurate & stable)
+                // - Draw via DrawRectangle() which calls SetRectangleProperties(...)
+                // - Start a 5s one-shot timer to auto-clear the rectangle
+                // ─────────────────────────────────────────────────────────────
+                if (platform == eDevicePlatformType.Android || platform == eDevicePlatformType.iOS)
+                {
+                    // Seed points; the driver will compute the accurate rectangle (XML fallback inside driver)
+                    System.Drawing.Point start = new System.Drawing.Point(element.X, element.Y);
+                    System.Drawing.Point end = new System.Drawing.Point(
+                        element.X + Math.Max(1, element.Width),
+                        element.Y + Math.Max(1, element.Height));
+
+                    DrawRectangle(start, end, element);   // <-- calls driver SetRectangleProperties (old, working path)
+
+                    // Record highlight time (used by your refresh logic)
+                    lock (mHighlightLock) { mLastHighlightTime = DateTime.UtcNow; }
+
+                    // Auto-clear after 5s (mobile only)
+                    var t = new DispatcherTimer { Interval = mHighlightPreserveDuration }; // e.g., 5 seconds
+                    t.Tick += (s, e) =>
+                    {
+                        try { ClearHighlightedElementOnDevice(); }
+                        finally { ((DispatcherTimer)s).Stop(); }
+                    };
+                    t.Start();
+
+                    return;
+                }
+
+                // ─────────────────────────────────────────────────────────────
+                // ANDROID TV  →  Keep your on-device highlight + screenshot overlay
+                // (Uniform scale + letterbox mapping using screenshot pixel size)
+                // ─────────────────────────────────────────────────────────────
+                // Keep the overlay sticky for TV (don’t auto-clear here)
+                mKeepHighlightTv = true;   // set this field in your class (bool mKeepHighlightTv = false;)
+
+                var canvas = this.FindName("xDeviceScreenshotCanvas") as System.Windows.Controls.Canvas
+                             ?? this.FindName("xCordsStack") as System.Windows.Controls.Canvas;
+                var img = this.xDeviceScreenshotImage ?? this.FindName("xDeviceScreenshotImage") as Image;
+                var highlighter = this.FindName("xHighlighterBorder") as System.Windows.Controls.Border;
+
+                if (canvas == null || img == null)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "HighlightElementOnDevice(TV): missing canvas or image control.");
+                    return;
+                }
 
                 canvas.Dispatcher.Invoke(() =>
                 {
-                    canvas.Children.Clear();
-                    var rect = new System.Windows.Shapes.Rectangle
+                    try
                     {
-                        Stroke = Brushes.Red,
-                        StrokeThickness = 3,
-                        Fill = new SolidColorBrush(Color.FromArgb(40, 255, 0, 0))
-                    };
+                        if (highlighter != null) highlighter.Visibility = Visibility.Collapsed;
 
-                    // element.X/Y/Width/Height are device pixels; map to image control size
-                    var img = this.FindName("xDeviceImage") as Image;
-                    if (img != null && img.Source is BitmapSource bmp && img.ActualWidth > 0 && img.ActualHeight > 0)
+                        var src = SafeGetDeviceImageSource();
+                        double srcW = src?.PixelWidth ?? (double)Math.Max(1, img.Source?.Width ?? 1);
+                        double srcH = src?.PixelHeight ?? (double)Math.Max(1, img.Source?.Height ?? 1);
+                        if (srcW <= 0 || srcH <= 0) { Reporter.ToLog(eLogLevel.WARN, "TV highlight: invalid screenshot source"); return; }
+
+                        // Parse bounds then fallback to X/Y/Width/Height
+                        long l = -1, t = -1, r = -1, b = -1; bool haveBounds = false;
+                        try
+                        {
+                            var boundsProp = element?.Properties?.FirstOrDefault(p => string.Equals(p.Name, "bounds", StringComparison.InvariantCultureIgnoreCase))?.Value;
+                            if (!string.IsNullOrEmpty(boundsProp))
+                            {
+                                string cleaned = boundsProp.Replace("][", ",").Replace("[", "").Replace("]", "").Replace(" ", "");
+                                var parts = cleaned.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                                if (parts.Length >= 4 &&
+                                    long.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out l) &&
+                                    long.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out t) &&
+                                    long.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out r) &&
+                                    long.TryParse(parts[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out b))
+                                {
+                                    haveBounds = true;
+                                }
+                            }
+                        }
+                        catch { haveBounds = false; }
+
+                        if (!haveBounds && element != null && element.X >= 0 && element.Y >= 0)
+                        {
+                            l = element.X;
+                            t = element.Y;
+                            r = element.X + Math.Max(1, element.Width);
+                            b = element.Y + Math.Max(1, element.Height);
+                            haveBounds = true;
+                        }
+
+                        if (!haveBounds)
+                        {
+                            Reporter.ToLog(eLogLevel.WARN, "TV highlight: element has no bounds/size.");
+                            return;
+                        }
+
+                        // Map device pixels -> control using Uniform scale + centered letterbox
+                        double controlW = img.ActualWidth > 0 ? img.ActualWidth : (double)img.Width;
+                        double controlH = img.ActualHeight > 0 ? img.ActualHeight : (double)img.Height;
+                        if (controlW <= 0 || controlH <= 0)
+                        {
+                            controlW = xDeviceScreenshotCanvas?.ActualWidth ?? controlW;
+                            controlH = xDeviceScreenshotCanvas?.ActualHeight ?? controlH;
+                        }
+
+                        double scaleUniform = Math.Min(controlW / Math.Max(1.0, srcW), controlH / Math.Max(1.0, srcH));
+                        double displayedW = srcW * scaleUniform;
+                        double displayedH = srcH * scaleUniform;
+                        double offsetX = (controlW - displayedW) / 2.0;
+                        double offsetY = (controlH - displayedH) / 2.0;
+
+                        double startX = l * scaleUniform + offsetX;
+                        double startY = t * scaleUniform + offsetY;
+                        double width = Math.Max(2, (r - l) * scaleUniform);
+                        double height = Math.Max(2, (b - t) * scaleUniform);
+
+                        if (highlighter != null)
+                        {
+                            Canvas.SetLeft(highlighter, startX);
+                            Canvas.SetTop(highlighter, startY);
+                            highlighter.Width = width;
+                            highlighter.Height = height;
+                            highlighter.Visibility = Visibility.Visible;
+                            Canvas.SetZIndex(highlighter, 9999);
+                        }
+                        else
+                        {
+                            // Fallback to a transient rectangle if the border is not available
+                            for (int i = canvas.Children.Count - 1; i >= 0; i--)
+                            {
+                                if (canvas.Children[i] is System.Windows.Shapes.Rectangle r0 && r0.Tag is string s && s == "GingerHighlighter")
+                                    canvas.Children.RemoveAt(i);
+                            }
+                            var rect = new System.Windows.Shapes.Rectangle
+                            {
+                                Stroke = Brushes.Red,
+                                StrokeThickness = 3,
+                                Fill = new SolidColorBrush(Color.FromArgb(40, 255, 0, 0)),
+                                Width = width,
+                                Height = height,
+                                IsHitTestVisible = false,
+                                Tag = "GingerHighlighter"
+                            };
+                            Canvas.SetLeft(rect, startX);
+                            Canvas.SetTop(rect, startY);
+                            Canvas.SetZIndex(rect, 9999);
+                            canvas.Children.Add(rect);
+                        }
+
+                        // Update last time for logs/refresh logic (not used to auto-clear TV)
+                        lock (mHighlightLock) { mLastHighlightTime = DateTime.UtcNow; }
+                    }
+                    catch (Exception ex)
                     {
-                        double sx = img.ActualWidth / bmp.PixelWidth;
-                        double sy = img.ActualHeight / bmp.PixelHeight;
-                        Canvas.SetLeft(rect, element.X * sx);
-                        Canvas.SetTop(rect, element.Y * sy);
-                        rect.Width = Math.Max(1, element.Width * sx);
-                        rect.Height = Math.Max(1, element.Height * sy);
-                        canvas.Children.Add(rect);
-                        canvas.Visibility = Visibility.Visible;
+                        Reporter.ToLog(eLogLevel.WARN, "TV highlight mapping/drawing failed: " + ex.Message, ex);
                     }
                 });
             }
-            catch { /* non-fatal */ }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "HighlightElementOnDevice failed: " + ex.Message, ex);
+            }
+
         }
 
         public void ClearHighlightedElementOnDevice()
         {
             try
             {
-                var canvas = this.FindName("xHighlightCanvas") as System.Windows.Controls.Canvas;
-                if (canvas == null) return;
-                canvas.Dispatcher.Invoke(() => { canvas.Children.Clear(); canvas.Visibility = Visibility.Collapsed; });
+                this.Dispatcher.Invoke(() =>
+                {
+                    try
+                    {
+                        var canvas = this.FindName("xDeviceScreenshotCanvas") as System.Windows.Controls.Canvas;
+                        var highlighter = this.FindName("xHighlighterBorder") as System.Windows.Controls.Border;
+                        if (highlighter != null)
+                        {
+                            highlighter.Visibility = Visibility.Collapsed;
+                        }
+                        if (canvas != null)
+                        {
+                            for (int i = canvas.Children.Count - 1; i >= 0; i--)
+                            {
+                                if (canvas.Children[i] is System.Windows.Shapes.Rectangle r && r.Tag is string s && s == "GingerHighlighter")
+                                {
+                                    canvas.Children.RemoveAt(i);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "ClearHighlightedElementOnDevice UI clear failed: " + ex.Message, ex);
+                    }
+                });
+
+                lock (mHighlightLock)
+                {
+                    mLastHighlightTime = null;
+                }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "ClearHighlightedElementOnDevice failed: " + ex.Message, ex);
+            }
         }
 
         public void BringToFront()
@@ -158,7 +388,7 @@ namespace Ginger.Drivers.DriversWindows
         {
             // This method is a thin UI helper. Actual device tap should be performed by the driver (Appium). Keep as no-op or wire to driver if you prefer.
         }
-    
+
 
         public MobileDriverWindow(DriverBase driver, Agent agent)
         {
@@ -244,51 +474,113 @@ namespace Ginger.Drivers.DriversWindows
 
         private object CurrentMousePosToSpy()
         {
-            Point mousePos = new Point(-1, -1);
 
+            Point mousePos = new Point(-1, -1);
             Dispatcher.Invoke(() => mousePos = Mouse.GetPosition(xDeviceScreenshotImage));
 
             System.Drawing.Point pointOnAppScreen = new System.Drawing.Point(-1, -1);
 
             this.Dispatcher.Invoke(() =>
-                pointOnAppScreen = ((DriverBase)mDriver).GetPointOnAppWindow(new System.Drawing.Point((int)mousePos.X, (int)mousePos.Y),
-                    xDeviceScreenshotImage.Source.Width, xDeviceScreenshotImage.Source.Height, xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight)
+                pointOnAppScreen = ((DriverBase)mDriver).GetPointOnAppWindow(
+                    new System.Drawing.Point((int)mousePos.X, (int)mousePos.Y),
+                    xDeviceScreenshotImage.Source.Width,
+                    xDeviceScreenshotImage.Source.Height,
+                    xDeviceScreenshotImage.ActualWidth,
+                    xDeviceScreenshotImage.ActualHeight)
             );
 
             return pointOnAppScreen;
+
         }
+
 
         private void HighlightElementEvent(Amdocs.Ginger.Common.UIElement.ElementInfo elementInfo)
         {
-            System.Drawing.Point ElementStartPoint = new System.Drawing.Point(elementInfo.X, elementInfo.Y);
-            System.Drawing.Point ElementMaxPoint = new System.Drawing.Point(elementInfo.X + elementInfo.Width, elementInfo.Y + elementInfo.Height);
+            // Called from driver message - ensure device bounds exist and draw
 
-            this.Dispatcher.Invoke(() =>
-                    DrawRectangle(ElementStartPoint, ElementMaxPoint, elementInfo)
-            );
+            try
+            {
+                if (elementInfo == null) return;
+
+                this.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    try
+                    {
+                        // Mobile (Android/iOS) -> Use driver rectangle mapping (old, stable path)
+                        if (mDriver.GetDevicePlatformType() == eDevicePlatformType.Android ||
+                            mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
+                        {
+                            // Seed points; driver will compute the accurate rectangle via XML fallback if needed
+                            System.Drawing.Point start = new System.Drawing.Point(elementInfo.X, elementInfo.Y);
+                            System.Drawing.Point end = new System.Drawing.Point(
+                                elementInfo.X + Math.Max(1, elementInfo.Width),
+                                elementInfo.Y + Math.Max(1, elementInfo.Height));
+
+                            DrawRectangle(start, end, elementInfo);
+                        }
+                        else
+                        {
+                            // Android TV -> Keep your on-device highlight + screenshot overlay
+                            HighlightElementOnDevice(elementInfo);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "HighlightElementEvent failed: " + ex.Message, ex);
+                    }
+                }));
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "HighlightElementEvent outer failed: " + ex.Message, ex);
+            }
+
+
         }
 
         private void UnHighlightElementEvent()
         {
-            this.Dispatcher.Invoke(() => RemoveRectangle());
+           try
+    {
+        ClearHighlightedElementOnDevice();
+    }
+    catch (Exception ex)
+    {
+        Reporter.ToLog(eLogLevel.WARN, "UnHighlightElementEvent failed: " + ex.Message, ex);
+    }
         }
 
         private void DrawRectangle(System.Drawing.Point ElementStartPoint, System.Drawing.Point ElementMaxPoint, Amdocs.Ginger.Common.UIElement.ElementInfo elementInfo)
         {
-            ((DriverBase)mDriver).SetRectangleProperties(ref ElementStartPoint, ref ElementMaxPoint, xDeviceScreenshotImage.Source.Width, xDeviceScreenshotImage.Source.Height,
-                xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight, elementInfo);
 
-            xHighlighterBorder.SetValue(Canvas.LeftProperty, ElementStartPoint.X + ((xDeviceScreenshotCanvas.ActualWidth - xDeviceScreenshotImage.ActualWidth) / 2));
-            xHighlighterBorder.SetValue(Canvas.TopProperty, ElementStartPoint.Y + ((xDeviceScreenshotCanvas.ActualHeight - xDeviceScreenshotImage.ActualHeight) / 2));
-            xHighlighterBorder.Margin = new Thickness(0);
-            xHighlighterBorder.Width = (ElementMaxPoint.X - ElementStartPoint.X);
-            int calcHeight = (ElementMaxPoint.Y - ElementStartPoint.Y);
-            if (calcHeight < 0)
+
+            try
             {
-                calcHeight = 0 - calcHeight;
+                ((DriverBase)mDriver).SetRectangleProperties(ref ElementStartPoint, ref ElementMaxPoint,
+                    xDeviceScreenshotImage.Source.Width, xDeviceScreenshotImage.Source.Height,
+                    xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight,
+                    elementInfo);
+
+                xHighlighterBorder.SetValue(Canvas.LeftProperty,
+                    ElementStartPoint.X + ((xDeviceScreenshotCanvas.ActualWidth - xDeviceScreenshotImage.ActualWidth) / 2));
+                xHighlighterBorder.SetValue(Canvas.TopProperty,
+                    ElementStartPoint.Y + ((xDeviceScreenshotCanvas.ActualHeight - xDeviceScreenshotImage.ActualHeight) / 2));
+
+                xHighlighterBorder.Margin = new Thickness(0);
+                xHighlighterBorder.Width = (ElementMaxPoint.X - ElementStartPoint.X);
+
+                int calcHeight = (ElementMaxPoint.Y - ElementStartPoint.Y);
+                if (calcHeight < 0) calcHeight = -calcHeight;
+                xHighlighterBorder.Height = calcHeight;
+
+                xHighlighterBorder.Visibility = Visibility.Visible;
             }
-            xHighlighterBorder.Height = calcHeight;
-            xHighlighterBorder.Visibility = Visibility.Visible;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "DrawRectangle failed: " + ex.Message, ex);
+            }
+
+
         }
 
         private void RemoveRectangle()
@@ -1314,16 +1606,16 @@ namespace Ginger.Drivers.DriversWindows
                 }
                 xMessageLbl.Content = "Connecting to Device...";
 
-                // --- NEW: if the configured driver is AndroidTV, set the initial preview/window size
-                // to better match a typical TV native resolution so the user doesn't see a mobile-sized window
-                // while the agent is loading. This does not affect mobile devices.
+                //---NEW: if the configured driver is AndroidTV, set the initial preview/ window size
+                //to better match a typical TV native resolution so the user doesn't see a mobile-sized window
+                // while the agent is loading.This does not affect mobile devices.
                 try
                 {
                     if (mDriver != null && mDriver.GetDevicePlatformType() == eDevicePlatformType.AndroidTv)
                     {
                         // Prefer a 16:9 default TV native resolution (1920x1080) for initial sizing
-                        const double defaultTvWidth = 1920.0;
-                        const double defaultTvHeight = 1080.0;
+                        const double defaultTvWidth = 500.0;
+                        const double defaultTvHeight = 500.0;
                         double hostHalfWidth = SystemParameters.PrimaryScreenWidth * 0.5; // keep it usable on laptops
                         double targetWidth = Math.Max(250, Math.Min(hostHalfWidth, defaultTvWidth)); // clamp to usable range
                         double aspectRatio = defaultTvHeight / defaultTvWidth;
@@ -1369,7 +1661,7 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     Reporter.ToLog(eLogLevel.WARN, "InitWindowLook: failed to apply AndroidTV initial sizing, continuing with defaults", ex);
                 }
-                // --- END NEW
+                //---END NEW
 
                 //Configurations & Metrics
                 SetTabsColumnView(eTabsViewMode.None);
@@ -1400,7 +1692,7 @@ namespace Ginger.Drivers.DriversWindows
                 }
                 else if(mDriver.GetDevicePlatformType() == eDevicePlatformType.AndroidTv)
                 {
-                    xMessageImage.ImageType = eImageType.AndroidTvWhite;
+                    xMessageImage.ImageType = eImageType.AndroidTv;
                 }
                 else
                 {
@@ -1518,8 +1810,31 @@ namespace Ginger.Drivers.DriversWindows
 
                 if (!clearedHighlights) //bool is for clearing only once in 2 refresh for allowing user to see the highlighted area
                 {
-                    UnHighlightElementEvent();
-                    clearedHighlights = true;
+                    bool shouldClear = true;
+                    if (mLastHighlightTime.HasValue)
+                    {
+                        if ((DateTime.UtcNow - mLastHighlightTime.Value) < mHighlightPreserveDuration)
+                        {
+                            shouldClear = false; // keep recent highlight
+                        }
+                        else
+                        {
+                            // expired, forget timestamp and allow clear
+                            mLastHighlightTime = null;
+                            shouldClear = true;
+                        }
+                    }
+
+                    if (shouldClear)
+                    {
+                        UnHighlightElementEvent();
+                        clearedHighlights = true;
+                    }
+                    else
+                    {
+                        // keep it visible; don't flip toggle to avoid immediate clear next cycle
+                        clearedHighlights = false;
+                    }
                 }
                 else
                 {
@@ -1648,10 +1963,35 @@ namespace Ginger.Drivers.DriversWindows
         {
             try
             {
-                var point = ((DriverBase)mDriver).GetPointOnAppWindow(new System.Drawing.Point((int)pointOnImage.X, (int)pointOnImage.Y),
-                  xDeviceScreenshotImage.Source.Width, xDeviceScreenshotImage.Source.Height, xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight);
-                System.Windows.Point pointOnMobile = new System.Windows.Point(point.X, point.Y);
-                return pointOnMobile;
+                var src = SafeGetDeviceImageSource();
+                if (src == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "GetPointOnMobile: image source is null");
+                    return new Point(0, 0);
+                }
+
+                // Use pixel dimensions for mapping
+                double imgPixelWidth = src.PixelWidth;
+                double imgPixelHeight = src.PixelHeight;
+                double controlWidth = xDeviceScreenshotImage.ActualWidth;
+                double controlHeight = xDeviceScreenshotImage.ActualHeight;
+
+                if (controlWidth <= 0 || controlHeight <= 0)
+                {
+                    return new Point(0, 0);
+                }
+
+                // Map pointOnImage (control coordinates) to image pixel coordinates
+                double sx = imgPixelWidth / controlWidth;
+                double sy = imgPixelHeight / controlHeight;
+
+                int imgX = Math.Max(0, (int)Math.Round(pointOnImage.X * sx));
+                int imgY = Math.Max(0, (int)Math.Round(pointOnImage.Y * sy));
+
+                var point = ((DriverBase)mDriver).GetPointOnAppWindow(new System.Drawing.Point(imgX, imgY),
+                      imgPixelWidth, imgPixelHeight, controlWidth, controlHeight);
+
+                return new System.Windows.Point(point.X, point.Y);
             }
             catch (Exception ex)
             {
@@ -1699,12 +2039,26 @@ namespace Ginger.Drivers.DriversWindows
                     });
                 }
 
-                //update the screen
+                //update the screen if configured
                 if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
                 {
                     RefreshDeviceScreenshotAsync(100);
                 }
-                UnHighlightElementEvent();
+
+                // NOTE: previously we called UnHighlightElementEvent() here which removed the
+                // screenshot overlay/highlighter immediately after a user click. That caused the
+                // red highlight rectangle to disappear right after clicking.
+                //
+                // To keep the light-red rectangle visible after a click (so the user can see the
+                // selected element on the screenshot), we intentionally DO NOT clear highlights here.
+                // Highlights will still be cleared:
+                //  - by explicit user action (Clear Highlights button),
+                //  - by subsequent highlight requests (new element) which overwrite the overlay,
+                //  - or by the periodic screenshot refresh logic (RefreshDeviceScreenshotAsync) which
+                //    alternates clearing to allow visibility (preserves prior behavior there).
+                //
+                // If you want to auto-clear after a short delay instead of keeping it forever,
+                // replace the comment below with a delayed call to ClearHighlightedElementOnDevice().
             }
             catch (Exception ex)
             {
@@ -1941,117 +2295,61 @@ namespace Ginger.Drivers.DriversWindows
         private double mZoomSize = 0.25;
         private void AdjustWindowSize(eImageChangeType operationType, bool resetCanvasSize)
         {
-            if (xDeviceScreenshotImage.Source != null)
+            var src = SafeGetDeviceImageSource();
+            if (src == null)
             {
-                double imageSourceHightWidthRatio = xDeviceScreenshotImage.Source.Height / xDeviceScreenshotImage.Source.Width;
-                if (mDriver != null && mDriver.GetDevicePlatformType() == eDevicePlatformType.AndroidTv)
-                {
-                    double reservedRightForClamp = 250;
-                    try
-                    {
-                        reservedRightForClamp = Math.Max(150, xWindowGrid.ColumnDefinitions[2].ActualWidth + 40);
-                    }
-                    catch
-                    {
-                        reservedRightForClamp = 250;
-                    }
+                // no image, nothing to adjust
+                return;
+            }
 
-                    // Ensure we don't allow the canvas to grow under the side panel
-                    double maxAllowedCanvasWidth = Math.Max(250, this.ActualWidth - reservedRightForClamp);
-                    xDeviceScreenshotCanvas.Width = Math.Min(xDeviceScreenshotCanvas.Width, maxAllowedCanvasWidth);
-
-                    // Recompute zoom size and height after final clamp
-                    mZoomSize = xDeviceScreenshotCanvas.Width / xDeviceScreenshotImage.Source.Width;
-                    xDeviceScreenshotCanvas.Height = xDeviceScreenshotCanvas.Width * imageSourceHightWidthRatio;
-                }
+            try
+            {
+                double imageSourceHightWidthRatio = (double)src.PixelHeight / src.PixelWidth;
                 if (resetCanvasSize)
                 {
-                    // For Android TV devices prefer to size the device image to ~50% of the host primary screen width
-                    // so it will be visible and usable on typical laptop screens.
-                    try
+                    mZoomSize = 0.25;
+                    xDeviceScreenshotCanvas.Width = src.PixelWidth * mZoomSize;
+                    while (xDeviceScreenshotCanvas.Width < 250)
                     {
-                        if (mDriver != null && mDriver.GetDevicePlatformType() == eDevicePlatformType.AndroidTv)
-                        {
-                            // target width is half of the primary monitor width
-                            double hostHalfWidth = SystemParameters.PrimaryScreenWidth * 0.5;
-
-                            // compute zoom so image width becomes ~hostHalfWidth
-                            double computedZoom = hostHalfWidth / xDeviceScreenshotImage.Source.Width;
-
-                            // Clamp zoom to reasonable range so we don't produce tiny/huge canvases
-                            mZoomSize = Math.Max(0.15, Math.Min(1.0, computedZoom));
-
-                            xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * mZoomSize;
-
-                            // ensure a minimum canvas width for usability
-                            if (xDeviceScreenshotCanvas.Width < 250)
-                            {
-                                xDeviceScreenshotCanvas.Width = 250;
-                                mZoomSize = xDeviceScreenshotCanvas.Width / xDeviceScreenshotImage.Source.Width;
-                            }
-                        }
-                        else
-                        {
-                            // default behavior for non-TV devices (preserve previous UX)
-                            mZoomSize = 0.25;
-                            xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * mZoomSize;
-                            while (xDeviceScreenshotCanvas.Width < 250)
-                            {
-                                mZoomSize *= 1.05;
-                                xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * mZoomSize;
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.WARN, "AdjustWindowSize: failed to compute default zoom, falling back to 25%: " + ex.Message);
-                        mZoomSize = 0.25;
-                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * mZoomSize;
+                        mZoomSize *= 1.05;
+                        xDeviceScreenshotCanvas.Width = src.PixelWidth * mZoomSize;
                     }
                 }
 
                 double previousCanasWidth = xDeviceScreenshotCanvas.ActualWidth;
                 double previousCanasHeight = xDeviceScreenshotCanvas.ActualHeight;
-                double targetWidthRatio = xDeviceScreenshotImage.Source.Width / xDeviceScreenshotCanvas.Width;
+                double targetWidthRatio = src.PixelWidth / xDeviceScreenshotCanvas.Width;
 
-                //Update canvas size (keeps current zoom behavior intact)
-                xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width / targetWidthRatio);
+                //Update canvas size
+                xDeviceScreenshotCanvas.Width = (src.PixelWidth / targetWidthRatio);
                 switch (operationType)
                 {
                     case eImageChangeType.Increase:
                         xDeviceScreenshotCanvas.Width = xDeviceScreenshotCanvas.Width * 1.15;
                         break;
-
                     case eImageChangeType.Decrease:
                         xDeviceScreenshotCanvas.Width = xDeviceScreenshotCanvas.Width * 0.85;
                         break;
                 }
-                mZoomSize = xDeviceScreenshotCanvas.Width / xDeviceScreenshotImage.Source.Width;
+
+                mZoomSize = xDeviceScreenshotCanvas.Width / src.PixelWidth;
                 xDeviceScreenshotCanvas.Height = xDeviceScreenshotCanvas.Width * imageSourceHightWidthRatio;
 
                 //Update window size
                 this.Width = this.Width + (xDeviceScreenshotCanvas.Width - previousCanasWidth);
                 this.Height = xDeviceScreenshotCanvas.Height + 100;
 
-                if (mZoomSize >= 1)
-                {
-                    xZoomInBtn.IsEnabled = false;
-                }
-                else
-                {
-                    xZoomInBtn.IsEnabled = true;
-                }
-                if (mZoomSize <= 0.2)
-                {
-                    xZoomOutBtn.IsEnabled = false;
-                }
-                else
-                {
-                    xZoomOutBtn.IsEnabled = true;
-                }
+                xZoomInBtn.IsEnabled = mZoomSize < 1;
+                xZoomOutBtn.IsEnabled = mZoomSize > 0.2;
+
                 int roundedNumber = (int)Math.Round(mZoomSize * 100);
                 xZoomSizeLbl.Content = roundedNumber.ToString() + "%";
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "AdjustWindowSize failed", ex);
             }
         }
     }
 }
+

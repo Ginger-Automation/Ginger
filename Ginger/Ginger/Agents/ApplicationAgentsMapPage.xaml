@@ -22,7 +22,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" Height="22" VerticalAlignment="Center">
-                        <UserControls:ImageMakerControl ImageType="{Binding Path=AppPlatformImage}" SetAsFontImageWithSize="16" Width="16" Height="16" ImageToolTip="{Binding Path=AppPlatformName}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,2,5,0"/>
+                        <UserControls:ImageMakerControl ImageType="{Binding Path=AppPlatformImage}" SetAsFontImageWithSize="20" Width="20" Height="20" ImageToolTip="{Binding Path=AppPlatformName}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,2,5,0"/>
                         <TextBlock x:Name="xAppNameTextBlock" Text="{Binding Path=AppName}" ToolTip="{Binding Path=AppName}" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" FontWeight="Normal" Width="130" FontSize="14" Style="{StaticResource $TextBlockStyle}" VerticalAlignment="Center" Margin="0,2,4,0"/>
 
                         <UserControls:ImageMakerControl ImageType="ArrowRight" SetAsFontImageWithSize="16" Width="16" Height="16" ToolTip="Mapped to..." Foreground="{Binding Path=Agent, Converter={StaticResource AgentForgroundTypeConverterKey}}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,2,2,0"/>
