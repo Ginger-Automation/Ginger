@@ -256,31 +256,51 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Console
                 }
                 connectionInfo.Timeout = new TimeSpan(0, 0, SSHConnectionTimeout);
                 UnixClient = new SshClient(connectionInfo);
+                UnixClient.Connect();
 
-                var task = Task.Factory.StartNew(() =>
-                 {
-                     try
-                     {
-                         UnixClient.Connect();
+                //Commenting the code for testing the change
+                //var task = Task.Factory.StartNew(() =>
+                // {
+                //     try
+                //     {                         
+                //         UnixClient.Connect();
 
-                         if (UnixClient.IsConnected)
-                         {
-                             UnixClient.SendKeepAlive();
-                             ss = UnixClient.CreateShellStream("dumb", 240, 24, 800, 600, 1024);
-                         }
-                     }
-                     catch (Exception ex)
-                     {
-                         Reporter.ToLog(eLogLevel.ERROR, "Error while connecting to Unix Client.", ex);
-                     }
-                 });
+                //         if (UnixClient.IsConnected)
+                //         {
+                //             UnixClient.SendKeepAlive();
+                //             ss = UnixClient.CreateShellStream("dumb", 240, 24, 800, 600, 1024);
+                //         }
+                //     }
+                //     catch (Exception ex)
+                //     {
+                //         Reporter.ToLog(eLogLevel.ERROR, "Error while connecting to Unix Client.", ex);
+                //     }
+                // });
 
-                var st = Stopwatch.StartNew();
+                //var st = Stopwatch.StartNew();
+                //while (!task.IsCompleted && st.ElapsedMilliseconds < SSHConnectionTimeout * 1000)
+                //{
+                //    task.Wait(500);  // Give user feedback every 500ms
+                //}
 
-                while (!task.IsCompleted && st.ElapsedMilliseconds < SSHConnectionTimeout * 1000)
+                try
                 {
-                    task.Wait(500);  // Give user feedback every 500ms
+                    var st = Stopwatch.StartNew();
+                    while (st.ElapsedMilliseconds < SSHConnectionTimeout * 1000)
+                    {
+                        Thread.Sleep(500);
+                        if (UnixClient.IsConnected)
+                        {
+                            UnixClient.SendKeepAlive();
+                            ss = UnixClient.CreateShellStream("dumb", 240, 24, 800, 600, 1024);
+                            break;
+                        }
+                    }
                 }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error while connecting to Unix Client.", ex);
+                }            
 
                 if (UnixClient.IsConnected)
                 {
