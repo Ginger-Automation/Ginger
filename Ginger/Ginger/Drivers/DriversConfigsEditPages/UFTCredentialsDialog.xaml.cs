@@ -46,7 +46,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         private readonly DriverConfigParam mClientIdParam;
         private readonly DriverConfigParam mClientSecretParam;
         private readonly DriverConfigParam mTenantIdParam;
-        private readonly Func<Task<string>> mFetchDevicesFunc;
+        private readonly Func<string, Task<string>> mUftmBasicCallFunc;
         private const string PhonesResultBorderName = "xPhonesResultBorder";
         private const string PhonesListBoxName = "xPhonesListBox";
         private const string PhonesMessageTextBlockName = "xPhonesMessageTextBlock";
@@ -56,6 +56,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         private string mPreferredDeviceName;
         private string mPreferredDeviceUuid;
         private readonly HashSet<string> mWorkspaces = new();
+        private readonly Dictionary<string, string> mWorkspaceNameToUuid = new(StringComparer.OrdinalIgnoreCase);
 
         public string SelectedPhoneUuid { get; private set; }
 
@@ -65,7 +66,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         public bool? DialogResult { get; private set; }
 
-        public UFTCredentialsDialog(DriverConfigParam serverParam, DriverConfigParam clientIdParam, DriverConfigParam clientSecretParam, DriverConfigParam tenantIdParam, Func<Task<string>> fetchDevicesFunc, string initialDeviceName = null, string initialDeviceUuid = null)
+        public UFTCredentialsDialog(DriverConfigParam serverParam, DriverConfigParam clientIdParam, DriverConfigParam clientSecretParam, DriverConfigParam tenantIdParam, Func<string, Task<string>> uftmBasicCallFunc, string initialDeviceName = null, string initialDeviceUuid = null)
         {
             InitializeComponent();
 
@@ -73,13 +74,31 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             mClientIdParam = clientIdParam;
             mClientSecretParam = clientSecretParam;
             mTenantIdParam = tenantIdParam;
-            mFetchDevicesFunc = fetchDevicesFunc;
+            mUftmBasicCallFunc = uftmBasicCallFunc;
             DialogResult = false;
             mPreferredDeviceName = initialDeviceName;
             mPreferredDeviceUuid = initialDeviceUuid;
 
             InitCredentialsEditors();
             InitPhonesList();
+            // When the page is first loaded, automatically trigger the refresh to load devices
+            this.Loaded += UFTCredentialsDialog_Loaded;
+        }
+
+        private void UFTCredentialsDialog_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Ensure UI is ready then invoke the same logic as the Refresh button
+            this.Dispatcher?.BeginInvoke(new Action(() =>
+            {
+                try
+                {
+                    ShowPhonesButton_Click(xShowPhonesBtn, new RoutedEventArgs());
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.INFO, "Auto refresh on load failed", ex);
+                }
+            }));
         }
 
         public bool? ShowDialog(Window ownerWindow = null)
@@ -176,7 +195,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private async void ShowPhonesButton_Click(object sender, RoutedEventArgs e)
         {
-            if (mFetchDevicesFunc == null)
+            if (mUftmBasicCallFunc == null)
             {
                 DisplayPhonesResult("Fetching devices is not available in the current context.", treatContentAsMessage: true);
                 return;
@@ -198,9 +217,13 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 triggerButton.Content = "Loading...";
             }
 
+            // Show loading placeholder where the phones list normally appears.
+            DisplayPhonesResult("Loading...", treatContentAsMessage: true);
+
             try
             {
-                string summary = await mFetchDevicesFunc();
+                await FetchWorkspacesAsync();
+                string summary = await FetchDevicesAsync();
                 if (string.IsNullOrWhiteSpace(summary))
                 {
                     DisplayPhonesResult("No devices fetched or authentication failed.", treatContentAsMessage: true);
@@ -225,6 +248,118 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                     triggerButton.Content = originalButtonContent ?? "Load/Refresh Devices";
                 }
             }
+
+        }
+
+        private async Task FetchWorkspacesAsync()
+        {
+            if (mUftmBasicCallFunc == null)
+            {
+                return;
+            }
+
+            try
+            {
+                string json = await mUftmBasicCallFunc("/rest/v2/workspaces");
+                ParseWorkspacesIntoMap(json);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.INFO, "Failed to fetch UFTM workspaces", ex);
+            }
+        }
+
+        private async void Filters_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFilters();
+
+            if (ReferenceEquals(sender, xWorkspaceCombo))
+            {
+                await FetchAppsForSelectedWorkspaceAsync();
+            }
+        }
+
+        private async Task FetchAppsForSelectedWorkspaceAsync()
+        {
+            if (mUftmBasicCallFunc == null)
+            {
+                return;
+            }
+
+            if (xWorkspaceCombo?.SelectedItem is not string workspaceName)
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(workspaceName) || workspaceName == "All")
+            {
+                return;
+            }
+
+            if (!mWorkspaceNameToUuid.TryGetValue(workspaceName, out string workspaceUuid) || string.IsNullOrWhiteSpace(workspaceUuid))
+            {
+                return;
+            }
+
+            try
+            {
+                _ = await mUftmBasicCallFunc($"/rest/v2/workspaces/{workspaceUuid}/apps");
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.INFO, "Failed to fetch UFTM apps for workspace", ex);
+            }
+        }
+
+        private void ParseWorkspacesIntoMap(string json)
+        {
+            mWorkspaceNameToUuid.Clear();
+
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return;
+            }
+
+            try
+            {
+                JToken token = JToken.Parse(json);
+                if (token is not JArray arr)
+                {
+                    return;
+                }
+
+                foreach (JToken item in arr)
+                {
+                    if (item is not JObject obj)
+                    {
+                        continue;
+                    }
+
+                    string uuid = GetStringValue(obj, "uuid", "id");
+                    string name = GetStringValue(obj, "name");
+
+                    if (string.IsNullOrWhiteSpace(uuid) || string.IsNullOrWhiteSpace(name))
+                    {
+                        continue;
+                    }
+
+                    mWorkspaceNameToUuid[name] = uuid;
+                }
+            }
+            catch (JsonReaderException)
+            {
+                // ignore: not a JSON payload
+            }
+        }
+
+        private Task<string> FetchDevicesAsync()
+        {
+            if (mUftmBasicCallFunc == null)
+            {
+                return Task.FromResult("Fetching devices is not available in the current context.");
+            }
+
+            return mUftmBasicCallFunc("/rest/deviceContent");
         }
 
         private bool ValidateCredentials(out string message)
@@ -499,11 +634,6 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             xAvailabilityCombo.SelectedIndex = 0;
         }
 
-        private void Filters_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ApplyFilters();
-        }
-
         private void ApplyFilters()
         {
             var filtered = mPhones.AsEnumerable();
@@ -712,10 +842,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
 
             xPhonesListBox.SelectedItem = targetPhone;
-            if (targetPhone != null)
-            {
-                xPhonesListBox.ScrollIntoView(targetPhone);
-            }
+            
         }
 
         private void UpdateCurrentPhoneMarker()

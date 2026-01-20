@@ -489,7 +489,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 SetDeviceSourceCapabilities();
                 if (mDeviceSource != null && mDeviceSource.Value == nameof(eDeviceSource.MicroFoucsUFTMLab))
                 {
-                    await FetchUFTMDevicesAsync();
+                    //await FetchUFTMDevicesAsync();
                 }
             }
         }
@@ -591,7 +591,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
 
             DriverConfigParam serverParam = mAppiumServer;
-            UFTCredentialsDialog dialog = new UFTCredentialsDialog(serverParam, credentials.clientId, credentials.clientSecret, credentials.tenantId, FetchUFTMDevicesAsync, currentDeviceName, currentDeviceUuid);
+            UFTCredentialsDialog dialog = new UFTCredentialsDialog(serverParam, credentials.clientId, credentials.clientSecret, credentials.tenantId, UFTMBasicCallAsync, currentDeviceName, currentDeviceUuid);
 
             Window owner = Window.GetWindow(this);
 
@@ -737,13 +737,17 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             return capability;
         }
 
-        // Performs OAuth2 token request and then fetches device content from UFT Mobile
-        private async Task<string> FetchUFTMDevicesAsync()
+        private async Task<string> UFTMBasicCallAsync(string apiSuffix)
         {
             try
             {
-                //, remove the url ending after :7500
-                var baseUrl = mAppiumServer?.Value?.TrimEnd('/') ?? string.Empty;
+                if (string.IsNullOrWhiteSpace(apiSuffix))
+                {
+                    return "Error: API suffix is empty.";
+                }
+
+                // remove the url ending after :7500
+                string baseUrl = mAppiumServer?.Value?.TrimEnd('/') ?? string.Empty;
                 if (!string.IsNullOrEmpty(baseUrl))
                 {
                     int portIdx = baseUrl.IndexOf(":7500", StringComparison.OrdinalIgnoreCase);
@@ -817,36 +821,34 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 }
                 string cookieSessionId = authResponse.Cookies?.FirstOrDefault(c => string.Equals(c.Name, "JSESSIONID", StringComparison.OrdinalIgnoreCase))?.Value;
 
-                
+                string normalizedSuffix = apiSuffix.Trim();
+                if (!normalizedSuffix.StartsWith("/", StringComparison.Ordinal))
+                {
+                    normalizedSuffix = "/" + normalizedSuffix;
+                }
 
-               
-
-                // 3) Fetch device content: GET /rest/deviceContent
-                var devicesUrl = baseUrl + "/rest/deviceContent";
-                var devicesClient = new RestClient(devicesUrl);
-                var devicesRequest = new RestRequest(devicesUrl, Method.Get);
+                string url = baseUrl + normalizedSuffix;
+                var client = new RestClient(url);
+                var request = new RestRequest(url, Method.Get);
 
                 // Add required headers
                 if (!string.IsNullOrWhiteSpace(accessToken))
                 {
-                    devicesRequest.AddHeader("Authorization", $"Bearer {accessToken}");
+                    request.AddHeader("Authorization", $"Bearer {accessToken}");
                 }
                 if (!string.IsNullOrWhiteSpace(cookieHp4mSecret))
                 {
-                    devicesRequest.AddHeader("x-hp4msecret", cookieHp4mSecret);
+                    request.AddHeader("x-hp4msecret", cookieHp4mSecret);
                 }
                 if (!string.IsNullOrWhiteSpace(cookieSessionId))
                 {
-                    devicesRequest.AddHeader("JSESSIONID", cookieSessionId);
+                    request.AddHeader("JSESSIONID", cookieSessionId);
                 }
-                devicesRequest.AddHeader("Accept", "*/*");
-                devicesRequest.AddHeader("tenant-id", tenantId.ToString());
+                request.AddHeader("Accept", "*/*");
+                request.AddHeader("tenant-id", tenantId.ToString());
 
-                var devicesResponse = await devicesClient.ExecuteAsync(devicesRequest);
-                
-
-
-                return devicesResponse.Content;
+                var response = await client.ExecuteAsync(request);
+                return response.Content;
             }
             catch (Exception ex)
             {
@@ -854,6 +856,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 return $"Error: {ex.Message}";
             }
         }
+
+        
     }
 
 
