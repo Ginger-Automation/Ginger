@@ -593,15 +593,23 @@ namespace GingerCore.Actions
 
         private void SetProcessAsPerVE()
         {
-            string calculateValue = GetInputParamCalculatedValue(nameof(ProcessNameForSikuliOperation));
-            bool bSimilar = ActiveProcessWindows.Any(p => p.Contains(calculateValue));
-            if (bSimilar)
+            try
             {
-                ProcessNameForSikuliOperation = ActiveProcessWindows.First(p => p.Contains(calculateValue));
+                string calculateValue = GetInputParamCalculatedValue(nameof(ProcessNameForSikuliOperation));
+                bool bSimilar = ActiveProcessWindows.Any(p => p.Contains(calculateValue));
+                if (bSimilar)
+                {
+                    ProcessNameForSikuliOperation = ActiveProcessWindows.First(p => p.Contains(calculateValue));
+                }
+                else
+                {
+                    ProcessNameForSikuliOperation = String.Empty;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                ProcessNameForSikuliOperation = String.Empty;
+
+                Reporter.ToLog(eLogLevel.ERROR, $"Error executing Sikuli Action : {ex.Message}");
             }
         }
     }

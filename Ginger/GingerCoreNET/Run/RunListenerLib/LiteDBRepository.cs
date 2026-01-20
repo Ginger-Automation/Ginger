@@ -239,7 +239,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 }
             }
             AR.AllActionsColl.AddRange(liteDbActionList);
-
             AR.ChildExecutableItemsCount = activity.Acts.Count(x => x.Active && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Blocked));
             AR.ChildExecutedItemsCount = activity.Acts.Count(x => x.Status is eRunStatus.Passed or eRunStatus.Failed or eRunStatus.FailIgnored);
             AR.ChildPassedItemsCount = activity.Acts.Count(x => x.Status == eRunStatus.Passed);
