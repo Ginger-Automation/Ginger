@@ -24,14 +24,17 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.BusinessFlowPages.ListHelpers;
+using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerWPF.DragDropLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
@@ -110,9 +113,50 @@ namespace Ginger.UserControlsLib.UCListView
 
         IListViewHelper mListViewHelper = null;
 
+        bool mFolderViewActive = false;
+        ITreeViewItem mFolderTreeRoot;
+        CancellationTokenSource? mTreeSearchCts;
+
+        public void SetFolderTreeRoot(ITreeViewItem root)
+        {
+            mFolderTreeRoot = root;
+            if (xFolderTreeView != null)
+            {
+                xFolderTreeView.ClearTreeItems();
+                xFolderTreeView.AddItem(mFolderTreeRoot);
+            }
+        }
         public UcListView()
         {
             InitializeComponent();
+
+            // Default tree root shows full Shared Repository unless a page sets a specific root
+            //if (mFolderTreeRoot == null)
+            //{
+            //    mFolderTreeRoot = new SharedRepositoryTreeItem();
+            //}
+
+            //// UCTreeView configuration for folder view
+            //xFolderTreeView.EnableDragDrop = true;         // allow drag from tree to Automate
+            //xFolderTreeView.EnableRightClick = true;
+            //xFolderTreeView.TreeChildFolderOnly = false;   // show folders and items
+            //xFolderTreeView.ClearTreeItems();
+            //xFolderTreeView.AddItem(mFolderTreeRoot);
+
+            if (xFolderTreeView != null)
+            {
+                xFolderTreeView.EnableDragDrop = true;     // allow drag to Automate
+                xFolderTreeView.EnableRightClick = true;
+                xFolderTreeView.TreeChildFolderOnly = false; // show folders + items
+
+                if (mFolderTreeRoot == null)
+                {
+                    // Will be overridden by per-tab root (Activities/Groups/Actions)
+                    mFolderTreeRoot = new SharedRepositoryTreeItem();
+                }
+                xFolderTreeView.ClearTreeItems();
+                xFolderTreeView.AddItem(mFolderTreeRoot);
+            }
 
             //Hook Drag Drop handler
             mIsDragDropCompatible = true;
@@ -1067,6 +1111,26 @@ namespace Ginger.UserControlsLib.UCListView
         private async void xSearchTextBox_TextChangedAsync(object sender, TextChangedEventArgs e)
         {
 
+            if (mFolderViewActive)
+            {
+                // debounce like API Models feel
+                async Task<bool> UserKeepsTyping()
+                {
+                    string txt = xSearchTextBox.Text;
+                    await Task.Delay(300);
+                    return txt != xSearchTextBox.Text;
+                }
+                if (await UserKeepsTyping())
+                {
+                    return;
+                }
+
+                var text = xSearchTextBox.Text ?? string.Empty;
+                mTreeSearchCts?.Cancel();
+                mTreeSearchCts = new CancellationTokenSource();
+                xFolderTreeView.FilterItemsByText(xFolderTreeView.TreeItemsCollection, text, mTreeSearchCts.Token);
+                return;
+            }
             if (string.IsNullOrWhiteSpace(xSearchTextBox.Text))
             {
                 xSearchClearBtn.Visibility = Visibility.Collapsed;
@@ -1106,10 +1170,25 @@ namespace Ginger.UserControlsLib.UCListView
         {
             xSearchTextBox.Clear();
             mSearchString = null;
+
+            if (mFolderViewActive)
+            {
+                // clear tree filter to show all
+                mTreeSearchCts?.Cancel();
+                xFolderTreeView.FilterItemsByText(xFolderTreeView.TreeItemsCollection, string.Empty);
+            }
         }
 
         private void xSearchBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (mFolderViewActive)
+            {
+                var text = xSearchTextBox.Text ?? string.Empty;
+                mTreeSearchCts?.Cancel();
+                mTreeSearchCts = new CancellationTokenSource();
+                xFolderTreeView.FilterItemsByText(xFolderTreeView.TreeItemsCollection, text, mTreeSearchCts.Token);
+                return;
+            }
             if (!string.IsNullOrWhiteSpace(xSearchTextBox.Text))
             {
                 mSearchString = xSearchTextBox.Text;
@@ -1180,6 +1259,64 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 //delete selected
                 mListViewHelper.DeleteSelected();
+            }
+        }
+
+        private void xToggleBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (xToggleBtn.ButtonImageType == eImageType.InActive)
+            {
+                xToggleBtn.ButtonImageType = eImageType.Active;
+            }
+            else
+            {
+                xToggleBtn.ButtonImageType = eImageType.InActive;
+            }
+            // Toggle between folder view (UCTreeView) and list view (UCListView)
+            mFolderViewActive = !mFolderViewActive;
+
+            //if (mFolderViewActive)
+            //{
+            //    xFolderTreeContainer.Visibility = Visibility.Visible;
+            //    xTreeCol.Width = new GridLength(280);
+            //    xListView.Visibility = Visibility.Collapsed; // hide list when folder view is active
+            //                                                 // Ensure tree shows folders + items of the set root (per tab)
+            //    xFolderTreeView.EnableDragDrop = true;
+            //    xFolderTreeView.TreeChildFolderOnly = false;
+            //}
+            //else
+            //{
+            //    xFolderTreeContainer.Visibility = Visibility.Collapsed;
+            //    xTreeCol.Width = new GridLength(0);
+            //    xListView.Visibility = Visibility.Visible;   // show list when toggle off
+            //    if (mObjList != null)
+            //    {
+            //        xListView.ItemsSource = mObjList;
+            //    }
+            //}
+
+            if (mFolderViewActive)
+            {
+                // folder-only view (clean like API Models): show tree, hide list
+                xFolderTreeContainer.Visibility = Visibility.Visible;
+                xTreeCol.Width = new GridLength(280);
+                xListView.Visibility = Visibility.Collapsed;
+
+                // ensure folders + items are presented for current tab root
+                xFolderTreeView.EnableDragDrop = true;
+                xFolderTreeView.TreeChildFolderOnly = false;
+            }
+            else
+            {
+                xFolderTreeContainer.Visibility = Visibility.Collapsed;
+                xTreeCol.Width = new GridLength(0);
+                xListView.Visibility = Visibility.Visible;
+
+                // restore list ItemsSource
+                if (mObjList != null)
+                {
+                    xListView.ItemsSource = mObjList;
+                }
             }
         }
     }

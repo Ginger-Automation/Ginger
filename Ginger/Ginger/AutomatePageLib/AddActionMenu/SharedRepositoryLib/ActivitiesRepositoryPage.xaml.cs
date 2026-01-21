@@ -23,6 +23,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Run;
+using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
 using GingerWPF.DragDropLib;
 using GingerWPF.WizardLib;
@@ -132,6 +133,9 @@ namespace Ginger.Repository
             {
                 xActivitiesRepositoryListView.DataSourceList = mActivitiesFolder.GetFolderItems();
             }
+
+            xActivitiesRepositoryListView.SetFolderTreeRoot(new SharedActivitiesFolderTreeItem(mActivitiesFolder));
+
         }
 
         public void UpdateBusinessFlow(BusinessFlow bf)

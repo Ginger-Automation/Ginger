@@ -22,6 +22,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository.AddItemToRepositoryWizard;
+using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
 using GingerCore.Actions;
 using GingerWPF.DragDropLib;
@@ -77,6 +78,7 @@ namespace Ginger.Repository
             {
                 xActionListView.DataSourceList = mActionsFolder.GetFolderItems();
             }
+            xActionListView.SetFolderTreeRoot(new SharedActionsFolderTreeItem(mActionsFolder));
         }
 
         private void grdActions_PreviewDragItem(object sender, EventArgs e)

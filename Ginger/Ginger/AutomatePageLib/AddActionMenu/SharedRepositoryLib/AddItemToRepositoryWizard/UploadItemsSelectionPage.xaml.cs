@@ -22,6 +22,23 @@ using Ginger.UserControls;
 using GingerWPF.WizardLib;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET;
+using Ginger.SolutionGeneral;
+using Ginger.UserControls;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Controls.Primitives;
+using Amdocs.Ginger.UserControls;
 
 namespace Ginger.Repository.ItemToRepositoryWizard
 {
@@ -58,7 +75,16 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                     CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(UploadItemSelection.eActivityInstanceType)), nameof(UploadItemSelection.ReplaceType), false, false, nameof(UploadItemSelection.IsActivity), true),
                     ReadOnly = isConvertPage
                 },
-            ]
+                new GridColView()
+                {
+                    Field = nameof(UploadItemSelection.TargetFolderDisplay),
+                    Header = "Add to Folder",
+                    WidthWeight = 20,
+                    StyleType = GridColView.eGridColStyleType.Template,
+                    CellTemplate = CreateSelectFolderTemplate(),
+                    ReadOnly = false 
+                },
+                ]
             };
 
             GridColView GCWUploadType = new GridColView()
@@ -142,6 +168,55 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             }
         }
 
+        private DataTemplate CreateSelectFolderTemplate()
+        {
+            var template = new DataTemplate();
+
+            // Horizontal panel: [Selected path text] [ ... button ]
+            var panel = new FrameworkElementFactory(typeof(StackPanel));
+            panel.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
+            panel.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
+            panel.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+
+            // Path text (bound to TargetFolderDisplay)
+            var txt = new FrameworkElementFactory(typeof(TextBlock));
+            txt.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
+            txt.SetValue(TextBlock.MarginProperty, new Thickness(0, 0, 6, 0));
+            txt.SetValue(TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis);
+            txt.SetValue(TextBlock.ToolTipProperty, new Binding(nameof(UploadItemSelection.TargetFolderDisplay)));
+            txt.SetBinding(TextBlock.TextProperty, new Binding(nameof(UploadItemSelection.TargetFolderDisplay)) { Mode = BindingMode.OneWay });
+            panel.AppendChild(txt);
+
+            // Ellipsis button to open the folder selection window
+            var btn = new FrameworkElementFactory(typeof(Button));
+            btn.SetValue(Amdocs.Ginger.UserControls.ucButton.ButtonTypeProperty, Amdocs.Ginger.Core.eButtonType.ImageButton);
+            btn.SetValue(Amdocs.Ginger.UserControls.ucButton.ButtonImageTypeProperty, Amdocs.Ginger.Common.Enums.eImageType.EllipsisH);
+            btn.SetValue(FrameworkElement.ToolTipProperty, "Select Shared Repository Folder");
+            btn.SetValue(FrameworkElement.WidthProperty, 24.0);
+            btn.SetValue(FrameworkElement.HeightProperty, 22.0);
+            btn.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            btn.AddHandler(Button.ClickEvent , new RoutedEventHandler(SelectFolder_Click));
+            panel.AppendChild(btn);
+
+            template.VisualTree = panel;
+            return template;
+        }
+
+        private void SelectFolder_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.DataContext is UploadItemSelection row)
+            {
+                // Open folder picker; returns RepositoryFolderBase or null
+                var owner = Window.GetWindow(this);
+                var selectedFolder = SelectSharedRepositoryFolderPage.ShowWindow(owner, eWindowShowStyle.Dialog);
+
+                if (selectedFolder != null)
+                {
+                    // Persist the chosen folder full path on the row
+                    row.TargetFolderFullPath = selectedFolder.FolderFullPath;
+                }
+            }
+        }
         private void SelectUnSelectAll(bool activeStatus)
         {
             if (UploadItemSelection.mSelectedItems.Count > 0)

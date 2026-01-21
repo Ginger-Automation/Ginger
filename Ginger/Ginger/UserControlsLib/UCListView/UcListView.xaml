@@ -4,6 +4,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+                          xmlns:uctv="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
+
              xmlns:Ginger="clr-namespace:Ginger" 
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="500" KeyDown="UserControl_KeyDown">
@@ -23,6 +25,7 @@
         
         <DockPanel Grid.Row="0" Margin="-7,0,0,0" HorizontalAlignment="Stretch">
             <usercontrols:ucButton x:Name="xExpandCollapseBtn" DockPanel.Dock="Left"  ToolTip="Expand/Collapse All" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="ExpandAll" Visibility="Visible" Click="XExpandCollapseBtn_Click"  />
+            <usercontrols:ucButton x:Name="xToggleBtn" DockPanel.Dock="Left"  ToolTip="Active/Inactive" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="InActive" Visibility="Visible" Click="xToggleBtn_Click"  />
 
             <DockPanel x:Name="xListTitlePnl" DockPanel.Dock="Left">
                 <usercontrols:ImageMakerControl x:Name="xListTitleImage" DockPanel.Dock="Left" SetAsFontImageWithSize="20" ImageType="Null"  Width="20" Height="20" FontWeight="Thin" VerticalAlignment="Center" HorizontalAlignment="Left" ImageToolTip="" ImageForeground="{StaticResource $BackgroundColor_DarkGray}"/>
@@ -54,13 +57,45 @@
         <Label Margin="5,0,0,0" x:Name="SelectionTitle" Height="40" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource $SubHeaderLabelStyle}"  FontSize="18" Visibility="Hidden"/>
         <GridSplitter Height="1" ResizeDirection="Rows" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0" IsEnabled="False" Background="LightGray" />
 
-        <Border Grid.Row="3" Background="{StaticResource $BackgroundColor_VeryLightGray}" BorderThickness="10" CornerRadius="20" >
-                <ListView x:Name="xListView" 
-                  Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" 
-                  VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" 
-                  VerticalContentAlignment="Top"  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" SelectionMode="Single" IsSynchronizedWithCurrentItem="True" ItemContainerStyle="{StaticResource $UcListViewItemStyle}" 
-                  SelectionChanged="xListView_SelectionChanged" AllowDrop="True" >
+        <!-- Content row -->
+        <Grid Grid.Row="3" Background="{StaticResource $BackgroundColor_VeryLightGray}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="xTreeCol" Width="0" />
+                <!-- collapsed by default -->
+                <ColumnDefinition Width="6" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
+            <!-- Folder view: UCTreeView -->
+            <Border x:Name="xFolderTreeContainer"
+        Grid.Column="0"
+        Visibility="Collapsed"
+        Background="Transparent"
+        BorderThickness="0"
+        Padding="0"
+        Margin="0">
+                <uctv:UCTreeView x:Name="xFolderTreeView"/>
+            </Border>
+            <!-- List view: existing UCListView List -->
+            <Border Grid.Column="2" Background="{StaticResource $BackgroundColor_VeryLightGray}" BorderThickness="10" CornerRadius="20">
+                <ListView x:Name="xListView"
+               Margin="5"
+               VerticalAlignment="Stretch"
+               HorizontalAlignment="Stretch"
+               BorderThickness="0"
+               Background="Transparent"
+               VirtualizingPanel.IsVirtualizing="True"
+               VirtualizingPanel.IsContainerVirtualizable="True"
+               VerticalContentAlignment="Top"
+               HorizontalContentAlignment="Stretch"
+               ScrollViewer.HorizontalScrollBarVisibility="Auto"
+               ScrollViewer.VerticalScrollBarVisibility="Auto"
+               SelectionMode="Single"
+               IsSynchronizedWithCurrentItem="True"
+               ItemContainerStyle="{StaticResource $UcListViewItemStyle}"
+               SelectionChanged="xListView_SelectionChanged"
+               AllowDrop="True">
+                    <!-- existing GroupStyle remains -->
                     <ListView.GroupStyle>
                         <GroupStyle>
                             <GroupStyle.ContainerStyle>
@@ -103,6 +138,7 @@
                         </GroupStyle>
                     </ListView.GroupStyle>
                 </ListView>
-        </Border>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>
