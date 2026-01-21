@@ -331,6 +331,7 @@ namespace Amdocs.Ginger.Common.Enums
         AndroidTv,
         AndroidTvWhite,
         MultipleScreen,
+        MultipleScreenGrey,
         AndroidOutline,
         AndroidWhite,
         AngleArrowUp,

@@ -29,8 +29,6 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
         Web,
         [EnumValueDescription("Mobile/TV")]
         Mobile,
-        [EnumValueDescription("Android TV")]
-        AndroidTV,
         [EnumValueDescription("Unix")]
         Unix,
         [EnumValueDescription("ASCF")]

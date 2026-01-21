@@ -15,6 +15,7 @@
 		<Resource Include="UserControlsLib\ImageMakerLib\Images\radio-androidtv.png"></Resource>
 		<Resource Include="UserControlsLib\ImageMakerLib\Images\whiteTv.png"></Resource>
 		<Resource Include="UserControlsLib\ImageMakerLib\Images\multiple_screens.png"></Resource>
+		<Resource Include="UserControlsLib\ImageMakerLib\Images\multiple_screen_grey.png"></Resource>
 	</ItemGroup>
 
   <ItemGroup>

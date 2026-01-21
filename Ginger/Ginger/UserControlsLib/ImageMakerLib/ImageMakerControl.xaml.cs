@@ -249,6 +249,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.MultipleScreen:
                     SetAsStaticImage("multiple_screens.png");
                     break;
+                case eImageType.MultipleScreenGrey:
+                    SetAsStaticImage("multiple_screen_grey.png");
+                    break;
                 #endregion
                 #region Repository Items Images
                 //############################## Repository Items Images:
