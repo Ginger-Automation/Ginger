@@ -110,6 +110,15 @@ namespace Ginger.UserControlsLib.UCListView
 
             }
         }
+        public static readonly DependencyProperty IsToggleButtonVisibleProperty =
+          DependencyProperty.Register(nameof(IsToggleButtonVisible), typeof(bool), typeof(UcListView),
+              new PropertyMetadata(false));
+
+        public bool IsToggleButtonVisible
+        {
+            get { return (bool)GetValue(IsToggleButtonVisibleProperty); }
+            set { SetValue(IsToggleButtonVisibleProperty, value); }
+        }
 
         IListViewHelper mListViewHelper = null;
 
@@ -254,7 +263,7 @@ namespace Ginger.UserControlsLib.UCListView
                     this.Dispatcher.BeginInvoke(() =>
                     {
                         xSearchTextBox.Text = "";
-
+                      
                         // Make the first row selected
                         if (value != null && value.Count > 0 && value is not ObservableList<VariableBase>)
                         {
@@ -433,6 +442,19 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     return -1;
                 }
+            }
+        }
+
+        //For Toggle button
+        public Visibility FolderListViewToggleBtn
+        {
+            get
+            {
+                return xToggleBtn.Visibility;
+            }
+            set
+            {
+                xToggleBtn.Visibility = value;
             }
         }
 

@@ -75,7 +75,7 @@ namespace Ginger.Repository
                 xActivitiesGroupsRepositoryListView.DataSourceList = mActivitiesGroupFolder.GetFolderItems();
             }
             xActivitiesGroupsRepositoryListView.SetFolderTreeRoot(new SharedActivitiesGroupsFolderTreeItem(mActivitiesGroupFolder));
-
+            xActivitiesGroupsRepositoryListView.IsToggleButtonVisible = true;
         }
 
         public void UpdateBusinessFlow(BusinessFlow bf)

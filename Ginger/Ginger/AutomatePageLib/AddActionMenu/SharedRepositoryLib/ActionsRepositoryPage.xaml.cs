@@ -79,6 +79,7 @@ namespace Ginger.Repository
                 xActionListView.DataSourceList = mActionsFolder.GetFolderItems();
             }
             xActionListView.SetFolderTreeRoot(new SharedActionsFolderTreeItem(mActionsFolder));
+            xActionListView.IsToggleButtonVisible = true;
         }
 
         private void grdActions_PreviewDragItem(object sender, EventArgs e)

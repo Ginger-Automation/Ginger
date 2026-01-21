@@ -188,14 +188,14 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             panel.AppendChild(txt);
 
             // Ellipsis button to open the folder selection window
-            var btn = new FrameworkElementFactory(typeof(Button));
+            var btn = new FrameworkElementFactory(typeof(ucButton));
             btn.SetValue(Amdocs.Ginger.UserControls.ucButton.ButtonTypeProperty, Amdocs.Ginger.Core.eButtonType.ImageButton);
             btn.SetValue(Amdocs.Ginger.UserControls.ucButton.ButtonImageTypeProperty, Amdocs.Ginger.Common.Enums.eImageType.EllipsisH);
             btn.SetValue(FrameworkElement.ToolTipProperty, "Select Shared Repository Folder");
             btn.SetValue(FrameworkElement.WidthProperty, 24.0);
             btn.SetValue(FrameworkElement.HeightProperty, 22.0);
             btn.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
-            btn.AddHandler(Button.ClickEvent , new RoutedEventHandler(SelectFolder_Click));
+            btn.AddHandler(ButtonBase.ClickEvent, new RoutedEventHandler(SelectFolder_Click));
             panel.AppendChild(btn);
 
             template.VisualTree = panel;

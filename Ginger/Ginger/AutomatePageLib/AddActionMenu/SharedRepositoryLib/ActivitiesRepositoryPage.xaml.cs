@@ -135,7 +135,7 @@ namespace Ginger.Repository
             }
 
             xActivitiesRepositoryListView.SetFolderTreeRoot(new SharedActivitiesFolderTreeItem(mActivitiesFolder));
-
+            xActivitiesRepositoryListView.IsToggleButtonVisible = true;
         }
 
         public void UpdateBusinessFlow(BusinessFlow bf)
