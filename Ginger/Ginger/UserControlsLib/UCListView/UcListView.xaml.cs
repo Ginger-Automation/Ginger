@@ -1132,10 +1132,21 @@ namespace Ginger.UserControlsLib.UCListView
 
         private async void xSearchTextBox_TextChangedAsync(object sender, TextChangedEventArgs e)
         {
-
             if (mFolderViewActive)
             {
-                // debounce like API Models feel
+                // Toggle icons for folder view too
+                if (string.IsNullOrWhiteSpace(xSearchTextBox.Text))
+                {
+                    xSearchClearBtn.Visibility = Visibility.Collapsed;
+                    xSearchBtn.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    xSearchClearBtn.Visibility = Visibility.Visible;
+                    xSearchBtn.Visibility = Visibility.Collapsed;
+                }
+
+                // debounce
                 async Task<bool> UserKeepsTyping()
                 {
                     string txt = xSearchTextBox.Text;
@@ -1153,6 +1164,7 @@ namespace Ginger.UserControlsLib.UCListView
                 xFolderTreeView.FilterItemsByText(xFolderTreeView.TreeItemsCollection, text, mTreeSearchCts.Token);
                 return;
             }
+
             if (string.IsNullOrWhiteSpace(xSearchTextBox.Text))
             {
                 xSearchClearBtn.Visibility = Visibility.Collapsed;
@@ -1163,7 +1175,7 @@ namespace Ginger.UserControlsLib.UCListView
                 xSearchClearBtn.Visibility = Visibility.Visible;
                 xSearchBtn.Visibility = Visibility.Collapsed;
 
-                // this inner method checks if user is still typing
+                // debounce for list view
                 async Task<bool> UserKeepsTyping()
                 {
                     string txt = xSearchTextBox.Text;
@@ -1193,6 +1205,10 @@ namespace Ginger.UserControlsLib.UCListView
             xSearchTextBox.Clear();
             mSearchString = null;
 
+            // Always reset icons after clear
+            xSearchClearBtn.Visibility = Visibility.Collapsed;
+            xSearchBtn.Visibility = Visibility.Visible;
+
             if (mFolderViewActive)
             {
                 // clear tree filter to show all
@@ -1209,8 +1225,13 @@ namespace Ginger.UserControlsLib.UCListView
                 mTreeSearchCts?.Cancel();
                 mTreeSearchCts = new CancellationTokenSource();
                 xFolderTreeView.FilterItemsByText(xFolderTreeView.TreeItemsCollection, text, mTreeSearchCts.Token);
+
+                // Sync icons based on text content
+                xSearchClearBtn.Visibility = string.IsNullOrWhiteSpace(text) ? Visibility.Collapsed : Visibility.Visible;
+                xSearchBtn.Visibility = string.IsNullOrWhiteSpace(text) ? Visibility.Visible : Visibility.Collapsed;
                 return;
             }
+
             if (!string.IsNullOrWhiteSpace(xSearchTextBox.Text))
             {
                 mSearchString = xSearchTextBox.Text;
@@ -1297,31 +1318,13 @@ namespace Ginger.UserControlsLib.UCListView
             // Toggle between folder view (UCTreeView) and list view (UCListView)
             mFolderViewActive = !mFolderViewActive;
 
-            //if (mFolderViewActive)
-            //{
-            //    xFolderTreeContainer.Visibility = Visibility.Visible;
-            //    xTreeCol.Width = new GridLength(280);
-            //    xListView.Visibility = Visibility.Collapsed; // hide list when folder view is active
-            //                                                 // Ensure tree shows folders + items of the set root (per tab)
-            //    xFolderTreeView.EnableDragDrop = true;
-            //    xFolderTreeView.TreeChildFolderOnly = false;
-            //}
-            //else
-            //{
-            //    xFolderTreeContainer.Visibility = Visibility.Collapsed;
-            //    xTreeCol.Width = new GridLength(0);
-            //    xListView.Visibility = Visibility.Visible;   // show list when toggle off
-            //    if (mObjList != null)
-            //    {
-            //        xListView.ItemsSource = mObjList;
-            //    }
-            //}
-
+      
             if (mFolderViewActive)
             {
                 // folder-only view (clean like API Models): show tree, hide list
                 xFolderTreeContainer.Visibility = Visibility.Visible;
-                xTreeCol.Width = new GridLength(280);
+                xTreeCol.Width = new GridLength(400);
+            
                 xListView.Visibility = Visibility.Collapsed;
 
                 // ensure folders + items are presented for current tab root

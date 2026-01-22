@@ -23,22 +23,12 @@ using GingerWPF.WizardLib;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET;
-using Ginger.SolutionGeneral;
-using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Controls.Primitives;
 using Amdocs.Ginger.UserControls;
+using GingerCore.Activities;
+using GingerCore.Variables;
 
 namespace Ginger.Repository.ItemToRepositoryWizard
 {
@@ -195,7 +185,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             btn.SetValue(FrameworkElement.WidthProperty, 24.0);
             btn.SetValue(FrameworkElement.HeightProperty, 22.0);
             btn.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
-            btn.AddHandler(ButtonBase.ClickEvent, new RoutedEventHandler(SelectFolder_Click));
+            btn.AddHandler(ButtonBase.ClickEvent, new RoutedEventHandler(SelectFolder_Click), true);
             panel.AppendChild(btn);
 
             template.VisualTree = panel;
@@ -204,15 +194,20 @@ namespace Ginger.Repository.ItemToRepositoryWizard
 
         private void SelectFolder_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.DataContext is UploadItemSelection row)
+            if (sender is ucButton btn && btn.DataContext is UploadItemSelection row)
             {
-                // Open folder picker; returns RepositoryFolderBase or null
                 var owner = Window.GetWindow(this);
-                var selectedFolder = SelectSharedRepositoryFolderPage.ShowWindow(owner, eWindowShowStyle.Dialog);
 
+                // Choose filter by item type
+                var filter = SharedRepoRootFilter.All;
+                if (row.UsageItem is ActivitiesGroup) filter = SharedRepoRootFilter.ActivitiesGroups;
+                else if (row.UsageItem is Activity) filter = SharedRepoRootFilter.Activities;
+                else if (row.UsageItem is Act) filter = SharedRepoRootFilter.Actions;
+                else if (row.UsageItem is VariableBase) filter = SharedRepoRootFilter.Variables;
+
+                var selectedFolder = SelectSharedRepositoryFolderPage.ShowWindow(owner, eWindowShowStyle.Dialog, filter);
                 if (selectedFolder != null)
                 {
-                    // Persist the chosen folder full path on the row
                     row.TargetFolderFullPath = selectedFolder.FolderFullPath;
                 }
             }

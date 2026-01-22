@@ -81,8 +81,7 @@
             <Border x:Name="xFolderTreeContainer"
                     Grid.Column="0"
                     Visibility="Collapsed"
-                    Background="Transparent"
-                    BorderThickness="0"
+                    Background="{StaticResource $BackgroundColor_VeryLightGray}"
                     Padding="0"
                     Margin="0">
                 <uctv:UCTreeView x:Name="xFolderTreeView"/>
