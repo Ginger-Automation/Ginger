@@ -61,7 +61,6 @@ namespace Ginger.Repository
                     xFolderTree.AddItem(new SharedVariablesFolderTreeItem(
                         WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>()));
                     break;
-
                 case SharedRepoRootFilter.All:
                 default:
                     xFolderTree.AddItem(new SharedRepositoryTreeItem());

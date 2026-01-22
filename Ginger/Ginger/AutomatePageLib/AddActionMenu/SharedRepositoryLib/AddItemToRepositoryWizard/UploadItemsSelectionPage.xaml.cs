@@ -200,11 +200,22 @@ namespace Ginger.Repository.ItemToRepositoryWizard
 
                 // Choose filter by item type
                 var filter = SharedRepoRootFilter.All;
-                if (row.UsageItem is ActivitiesGroup) filter = SharedRepoRootFilter.ActivitiesGroups;
-                else if (row.UsageItem is Activity) filter = SharedRepoRootFilter.Activities;
-                else if (row.UsageItem is Act) filter = SharedRepoRootFilter.Actions;
-                else if (row.UsageItem is VariableBase) filter = SharedRepoRootFilter.Variables;
-
+                if (row.UsageItem is ActivitiesGroup)
+                {
+                    filter = SharedRepoRootFilter.ActivitiesGroups;
+                }
+                else if (row.UsageItem is Activity)
+                {
+                    filter = SharedRepoRootFilter.Activities;
+                }
+                else if (row.UsageItem is Act)
+                {
+                    filter = SharedRepoRootFilter.Actions;
+                }
+                else if (row.UsageItem is VariableBase)
+                {
+                    filter = SharedRepoRootFilter.Variables;
+                }
                 var selectedFolder = SelectSharedRepositoryFolderPage.ShowWindow(owner, eWindowShowStyle.Dialog, filter);
                 if (selectedFolder != null)
                 {

@@ -47,7 +47,7 @@ namespace Ginger.UserControlsLib.UCListView
     /// <summary>
     /// Interaction logic for UserControl1.xaml
     /// </summary>
-    public partial class UcListView : UserControl, IDragDrop, IClipboardOperations
+    public partial class UcListView : UserControl, IDragDrop, IClipboardOperations, IDisposable
     {
         IObservableList mObjList;
         ICollectionView filteredView;
@@ -139,18 +139,6 @@ namespace Ginger.UserControlsLib.UCListView
         {
             InitializeComponent();
 
-            // Default tree root shows full Shared Repository unless a page sets a specific root
-            //if (mFolderTreeRoot == null)
-            //{
-            //    mFolderTreeRoot = new SharedRepositoryTreeItem();
-            //}
-
-            //// UCTreeView configuration for folder view
-            //xFolderTreeView.EnableDragDrop = true;         // allow drag from tree to Automate
-            //xFolderTreeView.EnableRightClick = true;
-            //xFolderTreeView.TreeChildFolderOnly = false;   // show folders and items
-            //xFolderTreeView.ClearTreeItems();
-            //xFolderTreeView.AddItem(mFolderTreeRoot);
 
             if (xFolderTreeView != null)
             {
@@ -181,6 +169,15 @@ namespace Ginger.UserControlsLib.UCListView
                 xTagsFilter.Init(Tags);
                 xTagsFilter.TagsStackPanlChanged += TagsFilter_TagsStackPanlChanged;
             }
+
+            this.Unloaded += UcListView_Unloaded;
+        }
+
+        private void UcListView_Unloaded(object sender, RoutedEventArgs e)
+        {
+            mTreeSearchCts?.Cancel();
+            mTreeSearchCts?.Dispose();
+            mTreeSearchCts = null;
         }
 
         private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -444,20 +441,6 @@ namespace Ginger.UserControlsLib.UCListView
                 }
             }
         }
-
-        //For Toggle button
-        public Visibility FolderListViewToggleBtn
-        {
-            get
-            {
-                return xToggleBtn.Visibility;
-            }
-            set
-            {
-                xToggleBtn.Visibility = value;
-            }
-        }
-
         public Visibility ExpandCollapseBtnVisiblity
         {
             get
@@ -1160,6 +1143,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                 var text = xSearchTextBox.Text ?? string.Empty;
                 mTreeSearchCts?.Cancel();
+                mTreeSearchCts?.Dispose();
                 mTreeSearchCts = new CancellationTokenSource();
                 xFolderTreeView.FilterItemsByText(xFolderTreeView.TreeItemsCollection, text, mTreeSearchCts.Token);
                 return;
@@ -1223,6 +1207,7 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 var text = xSearchTextBox.Text ?? string.Empty;
                 mTreeSearchCts?.Cancel();
+                mTreeSearchCts?.Dispose();
                 mTreeSearchCts = new CancellationTokenSource();
                 xFolderTreeView.FilterItemsByText(xFolderTreeView.TreeItemsCollection, text, mTreeSearchCts.Token);
 
@@ -1343,6 +1328,13 @@ namespace Ginger.UserControlsLib.UCListView
                     xListView.ItemsSource = mObjList;
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            mTreeSearchCts?.Cancel();
+            mTreeSearchCts?.Dispose();
+            mTreeSearchCts = null;
         }
     }
 
