@@ -1,0 +1,18 @@
+<Page x:Class="Ginger.Repository.SelectSharedRepositoryFolderPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:uctv="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
+      Title="Select Shared Repository Folder">
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Select a folder from Shared Repository" Margin="2" FontSize="14" FontWeight="SemiBold"/>
+
+        <Border Grid.Row="1" BorderThickness="0" Background="Transparent">
+            <uctv:UCTreeView x:Name="xFolderTree" />
+        </Border>
+    </Grid>
+</Page>
