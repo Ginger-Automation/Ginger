@@ -24,6 +24,8 @@ using Amdocs.Ginger.CoreNET.ActionsLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using NPOI.OpenXmlFormats.Dml.Diagram;
+using NPOI.SS.Util;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -77,23 +79,59 @@ namespace GingerCore.Actions
         public enum eExcelActionType
         {
             [EnumValueDescription("Read Data")]
-            ReadData,
+            ReadData = 0,
             [EnumValueDescription("Write Data")]
-            WriteData,
+            WriteData = 1,
             [EnumValueDescription("Read Cell Data")]
-            ReadCellData
+            ReadCellData = 2,
+            [EnumValueDescription("Get Sheet Details")]
+            GetSheetDetails = 3
         }
-        public string ExcelFileName
+
+        // --- NEW PROPERTIES ---
+        public string RowIndex
+        {
+            get { return GetInputParamValue(nameof(RowIndex)); }
+            set { AddOrUpdateInputParamValue(nameof(RowIndex), value); OnPropertyChanged(nameof(RowIndex)); }
+        }
+        public enum eDataSelectionMethod
+        {
+            [EnumValueDescription("By Parameters")]
+            ByParameters = 0,
+            [EnumValueDescription("By Cell Address")]
+            ByCellAddress = 1
+        }
+
+        // --- PROPERTIES ---
+
+        public eDataSelectionMethod DataSelectionMethod
+        {
+            get { return GetOrCreateInputParam<eDataSelectionMethod>(nameof(DataSelectionMethod), eDataSelectionMethod.ByParameters); }
+            set { AddOrUpdateInputParamValue(nameof(DataSelectionMethod), value.ToString()); OnPropertyChanged(nameof(DataSelectionMethod)); }
+        }
+     
+        public bool PullCellAddress
         {
             get
             {
-                return GetInputParamValue(nameof(ExcelFileName));
+                bool value = false;
+                bool.TryParse(GetOrCreateInputParam(nameof(PullCellAddress)).Value, out value);
+                return value;
             }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(ExcelFileName), value);
-                OnPropertyChanged(nameof(ExcelFileName));
-            }
+            set { AddOrUpdateInputParamValue(nameof(PullCellAddress), value.ToString()); OnPropertyChanged(nameof(PullCellAddress)); }
+        }
+
+        public string ColumnIndex
+        {
+            get { return GetInputParamValue(nameof(ColumnIndex)); }
+            set { AddOrUpdateInputParamValue(nameof(ColumnIndex), value); OnPropertyChanged(nameof(ColumnIndex)); }
+        }
+
+        // --- EXISTING PROPERTIES ---
+        public string ExcelFileName
+        {
+            get { return GetInputParamValue(nameof(ExcelFileName)); }
+            set { AddOrUpdateInputParamValue(nameof(ExcelFileName), value); OnPropertyChanged(nameof(ExcelFileName)); }
         }
         public string CalculatedFileName
         {
@@ -103,98 +141,58 @@ namespace GingerCore.Actions
                 return WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(file);
             }
         }
-
-        private string CalculatedColMappingRules
-        {
-            get
-            {
-                string mapping = GetInputParamCalculatedValue(nameof(ColMappingRules));
-                return mapping == null ? mapping : mapping.Replace("\"", "'");
-            }
-        }
         public string SheetName
         {
-            get
-            {
-                return GetInputParamValue(nameof(SheetName));
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(SheetName), value);
-                OnPropertyChanged(nameof(SheetName));
-            }
+            get { return GetInputParamValue(nameof(SheetName)); }
+            set { AddOrUpdateInputParamValue(nameof(SheetName), value); OnPropertyChanged(nameof(SheetName)); }
         }
         public string HeaderRowNum
         {
-            get
-            {
-                return GetInputParamValue(nameof(HeaderRowNum)) ?? "1";
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(HeaderRowNum), value);
-                OnPropertyChanged(nameof(HeaderRowNum));
-            }
+            get { return GetInputParamValue(nameof(HeaderRowNum)) ?? "1"; }
+            set { AddOrUpdateInputParamValue(nameof(HeaderRowNum), value); OnPropertyChanged(nameof(HeaderRowNum)); }
         }
         public string CalculatedSheetName
         {
-            get
-            {
-                string sheet = GetInputParamCalculatedValue(nameof(SheetName)) ?? "";
-                return sheet.Trim();
-            }
+            get { return (GetInputParamCalculatedValue(nameof(SheetName)) ?? "").Trim(); }
         }
         public string CalculatedHeaderRowNum
         {
-            get
-            {
-                string headerRowNum = GetInputParamCalculatedValue(nameof(HeaderRowNum)) ?? "1";
-                return headerRowNum;
-            }
+            get { return GetInputParamCalculatedValue(nameof(HeaderRowNum)) ?? "1"; }
         }
         public string SelectRowsWhere
         {
-            get
-            {
-                return GetInputParamValue(nameof(SelectRowsWhere));
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(SelectRowsWhere), value);
-                OnPropertyChanged(nameof(SelectRowsWhere));
-            }
+            get { return GetInputParamValue(nameof(SelectRowsWhere)); }
+            set { AddOrUpdateInputParamValue(nameof(SelectRowsWhere), value); OnPropertyChanged(nameof(SelectRowsWhere)); }
         }
+
+        public string SelectCellAddress
+        {
+            get { return GetInputParamValue(nameof(SelectCellAddress)); }
+            set { AddOrUpdateInputParamValue(nameof(SelectCellAddress), value); OnPropertyChanged(nameof(SelectCellAddress)); }
+        }
+
         public string CalculatedFilter
         {
             get
             {
+                if (DataSelectionMethod == eDataSelectionMethod.ByCellAddress)
+                {
+                    return GetInputParamCalculatedValue(nameof(SelectCellAddress));
+                }
+
                 string filter = GetInputParamCalculatedValue(nameof(SelectRowsWhere));
                 return filter == null ? filter : filter.Replace("\"", "'");
             }
         }
         public string PrimaryKeyColumn
         {
-            get
-            {
-                return GetInputParamValue(nameof(PrimaryKeyColumn));
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(PrimaryKeyColumn), value);
-                OnPropertyChanged(nameof(PrimaryKeyColumn));
-            }
+            get { return GetInputParamValue(nameof(PrimaryKeyColumn)); }
+            set { AddOrUpdateInputParamValue(nameof(PrimaryKeyColumn), value); OnPropertyChanged(nameof(PrimaryKeyColumn)); }
         }
         public string SetDataUsed
         {
-            get
-            {
-                return GetInputParamValue(nameof(SetDataUsed));
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(SetDataUsed), value);
-                OnPropertyChanged(nameof(SetDataUsed));
-            }
+            get { return GetInputParamValue(nameof(SetDataUsed)); }
+            set { AddOrUpdateInputParamValue(nameof(SetDataUsed), value); OnPropertyChanged(nameof(SetDataUsed)); }
         }
         private string CalculatedSetDataUsed
         {
@@ -206,16 +204,9 @@ namespace GingerCore.Actions
         }
         public eExcelActionType ExcelActionType
         {
-            get
-            {
-                return GetOrCreateInputParam<eExcelActionType>(nameof(ExcelActionType), eExcelActionType.ReadData);
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(ExcelActionType), value.ToString());
-            }
+            get { return GetOrCreateInputParam<eExcelActionType>(nameof(ExcelActionType), eExcelActionType.ReadData); }
+            set { AddOrUpdateInputParamValue(nameof(ExcelActionType), value.ToString()); }
         }
-
         public bool SelectAllRows
         {
             get
@@ -224,21 +215,19 @@ namespace GingerCore.Actions
                 bool.TryParse(GetOrCreateInputParam(nameof(SelectAllRows)).Value, out value);
                 return value;
             }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(SelectAllRows), value.ToString());
-            }
+            set { AddOrUpdateInputParamValue(nameof(SelectAllRows), value.ToString()); }
         }
         public string ColMappingRules
         {
+            get { return GetInputParamValue(nameof(ColMappingRules)); }
+            set { AddOrUpdateInputParamValue(nameof(ColMappingRules), value); OnPropertyChanged(nameof(ColMappingRules)); }
+        }
+        private string CalculatedColMappingRules
+        {
             get
             {
-                return GetInputParamValue(nameof(ColMappingRules));
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(ColMappingRules), value);
-                OnPropertyChanged(nameof(ColMappingRules));
+                string mapping = GetInputParamCalculatedValue(nameof(ColMappingRules));
+                return mapping == null ? mapping : mapping.Replace("\"", "'");
             }
         }
 
@@ -270,105 +259,179 @@ namespace GingerCore.Actions
                     case eExcelActionType.ReadCellData:
                         ReadCellData();
                         break;
+                    case eExcelActionType.GetSheetDetails:
+                        GetSheetDetails();
+                        break;
                     default:
-                        Reporter.ToLog(eLogLevel.INFO, "Only action type can be selected");
+                        Reporter.ToLog(eLogLevel.ERROR, "No Matched Excel Action found");
                         break;
                 }
             }
         }
-        public object this[string propertyName]
-        {
-            get { return this.GetType().GetProperty(propertyName).GetValue(this, null); }
-        }
 
-        /*
-         Checks if certain fields exist. If they don't, an Error (Pop up) is shown to the user
-         
-         */
-        public bool CheckMandatoryFieldsExists(List<string> fields)
+        // ----------------------------------------------------------------------------------
+        // HELPER: Convert Column Number to Letter (1->A, 2->B)
+        // ----------------------------------------------------------------------------------
+        private string GetColumnName(int columnNumber)
         {
-            foreach (string field in fields)
+            string columnName = "";
+            while (columnNumber > 0)
             {
-                if (String.IsNullOrWhiteSpace((string)this[field]))
-                {
-                    string calculated = "Calculated";
-                    // Some fields start with Calculated eg: CalculatedSheetName. first the substring 'SheetName' is considered and then it is split according to Capital Letters
-                    int indexOfField = field.IndexOf(calculated);
-                    // Regex used to split the string by Capital Letters eg: SheetName becomes Sheet Name
-                    var splitBetCapLetters = new Regex(@"(?<=[A-Z])(?=[A-Z][a-z]) | (?<=[^A-Z])(?=[A-Z]) | (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
-                    // if the field name startwith Calculated then consider the substring after 'Calculated' otherwise use the field itself
-                    string substr = indexOfField != -1 ? field[(indexOfField + calculated.Length)..] : field;
-                    string actualFieldValue = splitBetCapLetters.Replace(substr, " ");
-                    this.Error = $"The Mandatory field : {actualFieldValue} cannot be empty";
-                    return false;
-                }
+                int modulo = (columnNumber - 1) % 26;
+                columnName = Convert.ToChar('A' + modulo) + columnName;
+                columnNumber = (columnNumber - 1) / 26;
             }
-            return true;
+            return columnName;
         }
 
-        private void ReadCellData()
+        // ----------------------------------------------------------------------------------
+        // NEW IMPLEMENTATIONS
+        // ----------------------------------------------------------------------------------
+        private void GetSheetDetails()
         {
             try
             {
-                DataTable excelDataTable = excelOperator.ReadCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, CalculatedHeaderRowNum);
-
-                if (!string.IsNullOrEmpty(SelectRowsWhere) && !SelectAllRows)
+                DataTable dt = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, "", true, CalculatedHeaderRowNum);
+                if (dt != null)
                 {
-
-                    if (excelDataTable == null)
+                    // --- PART 1: COUNTS 
+                    int rowCount = 0;
+                    int colCount = dt.Columns.Count;
+                    foreach (DataRow row in dt.Rows)
                     {
-                        Error = SelectAllRows ? "No Cells Found" : "Given Cell [" + CalculatedFilter + "] contains empty value";
-                        return;
-                    }
-                    else
-                    {
-                        string CellValue = excelDataTable.Rows[0][0].ToString();
-                        AddOrUpdateReturnParamActual(excelDataTable.Columns[0].ColumnName, CellValue);
-                    }
-                }
-                else
-                {
-                    for (int j = 0; j < excelDataTable.Rows.Count; j++)
-                    {
-                        DataRow r = excelDataTable.Rows[j];
-                        //Read data to return values
-                        // in case the user didn't select cols then get all excel output columns
-                        for (int i = 0; i < excelDataTable.Columns.Count; i++)
+                        // Check if row has at least one non-empty value
+                        if (row.ItemArray.Any(item => item != null && !string.IsNullOrWhiteSpace(item.ToString())))
                         {
-                            AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, r[i].ToString(), (j + 1).ToString() + (i + 1).ToString());
+                            rowCount++;
                         }
                     }
 
-                }
+                    // Include header row in the count
+                    int headerRowNum = 1;
+                    int.TryParse(CalculatedHeaderRowNum, out headerRowNum);
+                    if (headerRowNum < 1)
+                    {
+                        headerRowNum = 1;
+                    }
+                    int totalRowCount = rowCount + headerRowNum;
 
+                    AddOrUpdateReturnParamActual("TotalRowCount", totalRowCount.ToString());
+                    AddOrUpdateReturnParamActual("TotalColumnCount", colCount.ToString());
+
+                    // --- PART 2: ADDRESS RANGES
+
+                    // Calculate Start Indices
+                    int startRowIndex = headerRowNum;
+                    int startColIndex = 1; // Excel starts at 'A' (1)
+
+                    // Calculate End Indices
+                    int endRowIndex = startRowIndex + rowCount;
+                    int endColIndex = startColIndex + (colCount - 1);
+                    if (endColIndex < 1)
+                    {
+                        endColIndex = 1;
+                    }
+
+                    // Generate Address Strings
+                    string startCellAddress = GetColumnName(startColIndex) + startRowIndex;      // e.g. "A1"
+                    string endCellAddress = GetColumnName(endColIndex) + endRowIndex;            // e.g. "D10"
+                    string rangeAddress = $"{startCellAddress}:{endCellAddress}";                // e.g. "A1:D10"
+
+                    // Add to Output Values
+                    AddOrUpdateReturnParamActual("StartRow", startRowIndex.ToString());
+                    AddOrUpdateReturnParamActual("EndRow", endRowIndex.ToString());
+                    AddOrUpdateReturnParamActual("StartColumn", GetColumnName(startColIndex));
+                    AddOrUpdateReturnParamActual("EndColumn", GetColumnName(endColIndex));
+
+                    AddOrUpdateReturnParamActual("FirstCellAddress", startCellAddress);
+                    AddOrUpdateReturnParamActual("LastCellAddress", endCellAddress);
+                    AddOrUpdateReturnParamActual("UsedRangeAddress", rangeAddress);
+                }
+                else
+                {
+                    // Handle empty sheet case
+                    AddOrUpdateReturnParamActual("TotalRowCount", "0");
+                    AddOrUpdateReturnParamActual("TotalColumnCount", "0");
+                    AddOrUpdateReturnParamActual("UsedRangeAddress", "");
+                }
             }
             catch (Exception ex)
             {
-                Error += eUserMsgKey.ExcelInvalidFieldData + ", " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Error while reading cell data from Excel", ex);
+                Error = "Error retrieving sheet details: " + ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, "Error in GetSheetDetails", ex);
             }
         }
+
+
+        
+        // ----------------------------------------------------------------------------------
+        // READ DATA (Enhanced to put Address in Path)
+        // ----------------------------------------------------------------------------------
         public void ReadData()
         {
             try
             {
+                if (DataSelectionMethod == eDataSelectionMethod.ByCellAddress)
+                {
+                    DataTable dtAddr = excelOperator.ReadCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, CalculatedHeaderRowNum);
+                    if (dtAddr == null) { Error = "No data found at " + CalculatedFilter; return; }
+
+                    // Parse start address (e.g. "A5") to calculate paths
+                    var startCoord = ParseCellAddress(CalculatedFilter.Split(':')[0]);
+
+                    for (int j = 0; j < dtAddr.Rows.Count; j++)
+                    {
+                        DataRow r = dtAddr.Rows[j];
+                        int currentRowNum = startCoord.Row + j;
+
+                        for (int i = 0; i < dtAddr.Columns.Count; i++)
+                        {
+                            string colName = dtAddr.Columns[i].ColumnName;
+                            string val = r[i].ToString();
+
+                            string cellAddress = GetColumnName(startCoord.Col + i) + currentRowNum;
+
+                            AddOrUpdateReturnParamActualWithPath(colName, val, cellAddress);
+                            
+                        }
+                    }
+                    return;
+                }
+
+                // --- Standard By Parameters Logic ---
                 DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, CalculatedHeaderRowNum);
+                int headerRow = 1;
+                int.TryParse(CalculatedHeaderRowNum,out headerRow);
+           
                 if (excelDataTable != null && excelDataTable.Rows.Count > 0)
                 {
-                    for (int j = 0; j < excelDataTable.Rows.Count; j++)
+                    for (int currentRow = 0; currentRow < excelDataTable.Rows.Count; currentRow++)
                     {
-                        DataRow r = excelDataTable.Rows[j];
-                        for (int i = 0; i < excelDataTable.Columns.Count; i++)
+                        DataRow r = excelDataTable.Rows[currentRow];
+                         int currentRowNum = headerRow + 1 + currentRow;
+
+
+                        for (int currentCol = 0; currentCol < excelDataTable.Columns.Count; currentCol++)
                         {
                             if (SelectAllRows)
                             {
-                                AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, r[i].ToString(), "" + (j + 1).ToString());
+                                AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[currentCol].ColumnName, r[currentCol].ToString(), "" + (currentRow + 1).ToString());
+                             
 
                             }
                             else
                             {
-                                AddOrUpdateReturnParamActual(excelDataTable.Columns[i].ColumnName, r[i].ToString());
+                                AddOrUpdateReturnParamActual(excelDataTable.Columns[currentCol].ColumnName, r[currentCol].ToString());
+                         
                             }
+
+                            if (PullCellAddress)
+                            {
+                                string cellAddress = GetColumnName(currentCol + 1) + currentRowNum;
+
+                                AddOrUpdateReturnParamActual($"{excelDataTable.Columns[currentCol].ColumnName}_CellAddress", cellAddress);
+                            }
+
                         }
                     }
                     bool isUpdated = true;
@@ -401,37 +464,112 @@ namespace GingerCore.Actions
                     Error = SelectAllRows ? "No Rows Found" : "No Rows Found with given filter";
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) { Error = ex.Message; Reporter.ToLog(eLogLevel.ERROR, "Error while reading data from Excel", ex); }
+        }
+        private (int Col, int Row) ParseCellAddress(string address)
+        {
+            try
             {
-                if (ex.Message != null && ex.Message.StartsWith("Cannot find column"))
+                if (string.IsNullOrEmpty(address)) return (1, 1);
+                var match = Regex.Match(address, @"([A-Z]+)([0-9]+)");
+                if (!match.Success) return (1, 1);
+
+                string colStr = match.Groups[1].Value;
+                int row = int.Parse(match.Groups[2].Value);
+
+                int colIndex = 0;
+                foreach (char c in colStr)
                 {
-                    Error = $"{ex.Message} at Row Number {HeaderRowNum}";
+                    colIndex = colIndex * 26 + (c - 'A' + 1);
+                }
+                return (colIndex, row);
+            }
+            catch { return (1, 1); }
+        }
+        private void ReadCellData()
+        {
+            try
+            {
+                DataTable excelDataTable = excelOperator.ReadCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, CalculatedHeaderRowNum);
+
+                var startCoord = ParseCellAddress(CalculatedFilter.Split(':')[0]);
+
+                if (!string.IsNullOrEmpty(CalculatedFilter) && !SelectAllRows)
+                {
+                    if (excelDataTable == null) { Error = "Given Cell [" + CalculatedFilter + "] contains empty value"; return; }
+                    else
+                    {
+                        string CellValue = excelDataTable.Rows[0][0].ToString();
+                        AddOrUpdateReturnParamActual(excelDataTable.Columns[0].ColumnName, CellValue);
+                    }
                 }
                 else
                 {
-                    Error = ex.Message;
-                }
+                    for (int j = 0; j < excelDataTable.Rows.Count; j++)
+                    {
+                        DataRow r = excelDataTable.Rows[j];
+                        int currentRowNum = startCoord.Row + j;
 
-                Reporter.ToLog(eLogLevel.ERROR, "Error while reading data from Excel", ex);
+                        for (int i = 0; i < excelDataTable.Columns.Count; i++)
+                        {
+                            if (PullCellAddress)
+                            {
+                                // Calculate proper address (e.g. A5)
+                                string cellAddress = GetColumnName(startCoord.Col + i) + currentRowNum;
+                                AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, r[i].ToString(), (j + 1).ToString() + (i + 1).ToString());
+                                AddOrUpdateReturnParamActual($"{excelDataTable.Columns[i].ColumnName}_CellAddress", cellAddress);
+
+                            }
+                            else
+                            {
+                                AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, r[i].ToString(), (j + 1).ToString() + (i + 1).ToString());
+                            }
+                        }
+                    }
+                }
             }
+            catch (Exception ex) { Error += eUserMsgKey.ExcelInvalidFieldData + ", " + ex.Message; Reporter.ToLog(eLogLevel.ERROR, "Error while reading cell data from Excel", ex); }
         }
 
         public void WriteData()
         {
             try
             {
-                List<Tuple<string, object>> cellValuesToUpdateList =
-                [
-                    .. FieldsValueToTupleList(CalculatedSetDataUsed),
-                    .. FieldsValueToTupleList(CalculatedColMappingRules),
-                ];
+                // ---------------------------------------------------------------------------
+                // 1. "BY CELL ADDRESS" MODE (Direct Write)
+                // ---------------------------------------------------------------------------
+                if (DataSelectionMethod == eDataSelectionMethod.ByCellAddress)
+                {
+                    string val = ValueExpression.Calculate(ColMappingRules);
+
+                    // We cannot use standard WriteData because "A5" is not a valid DataTable filter.
+                    // We call the new WriteCellData method directly.
+                    bool isUpdated = excelOperator.WriteCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, val);
+
+                    if (isUpdated)
+                    {
+                        this.ExInfo = "Write action done";
+                    }
+                    else
+                    {
+                        this.Error = "Failed to write to cell " + CalculatedFilter;
+                    }
+                    return; 
+                }
+
+                // ---------------------------------------------------------------------------
+                // 2. "BY PARAMETERS" MODE (Database/Filter Logic)
+                // ---------------------------------------------------------------------------
+                List<Tuple<string, object>> cellValuesToUpdateList = [.. FieldsValueToTupleList(CalculatedSetDataUsed), .. FieldsValueToTupleList(CalculatedColMappingRules)];
+
+                // This ReadData call is safe here because CalculatedFilter is a valid query (e.g., "ID=1")
                 DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, CalculatedHeaderRowNum);
+
                 if (excelDataTable == null)
                 {
                     Error = "Table return no Rows with given filter";
                     return;
                 }
-                // we expect only 1 record
                 if (excelDataTable.Rows.Count == 1 && !SelectAllRows)
                 {
                     DataRow r = excelDataTable.Rows[0];
@@ -445,7 +583,6 @@ namespace GingerCore.Actions
                 else if (excelDataTable.Rows.Count > 0 && SelectAllRows)
                 {
                     bool isUpdated = excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList, CalculatedHeaderRowNum);
-
                     this.ExInfo += "write action done";
                 }
                 else if (excelDataTable.Rows.Count == 0)
@@ -456,69 +593,52 @@ namespace GingerCore.Actions
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error while writing to Excel", ex);
-                this.Error = "Error when trying to update the excel, Please check write data content";
+                this.Error = "Error when trying to update the excel";
             }
         }
+
+        public bool CheckMandatoryFieldsExists(List<string> fields)
+        {
+            foreach (string field in fields)
+            {
+                if (String.IsNullOrWhiteSpace((string)this[field]))
+                {
+                    string calculated = "Calculated";
+                    int indexOfField = field.IndexOf(calculated);
+                    var splitBetCapLetters = new Regex(@"(?<=[A-Z])(?=[A-Z][a-z]) | (?<=[^A-Z])(?=[A-Z]) | (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
+                    string substr = indexOfField != -1 ? field[(indexOfField + calculated.Length)..] : field;
+                    string actualFieldValue = splitBetCapLetters.Replace(substr, " ");
+                    this.Error = $"The Mandatory field : {actualFieldValue} cannot be empty";
+                    return false;
+                }
+            }
+            return true;
+        }
+        public object this[string propertyName] { get { return this.GetType().GetProperty(propertyName).GetValue(this, null); } }
         private List<Tuple<string, object>> FieldsValueToTupleList(string updatedFieldsValue)
         {
             List<Tuple<string, object>> columnNameAndValue = [];
-
             if (String.IsNullOrEmpty(updatedFieldsValue))
             {
                 return columnNameAndValue;
             }
-            bool isError = false;
             string result = System.Text.RegularExpressions.Regex.Replace(updatedFieldsValue, @",(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-COMMA-REPLACE^~");
             string[] varColMaps = result.Split(',');
             varColMaps.ToList().ForEach(c =>
             {
                 result = System.Text.RegularExpressions.Regex.Replace(c, @"=(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-EQUAL-REPLACE^~");
                 string[] setData = result.Split('=');
-
                 if (setData.Length == 2)
                 {
                     string rowToSet = setData[0].Replace("[", "").Replace("]", "");
-                    string valueToSet = setData[1].Replace("~^GINGER-EXCEL-COMMA-REPLACE^~", ",").Replace("~^GINGER-EXCEL-EQUAL-REPLACE^~", "=")
-                                        .TrimStart('\'').TrimEnd('\'');
+                    string valueToSet = setData[1].Replace("~^GINGER-EXCEL-COMMA-REPLACE^~", ",").Replace("~^GINGER-EXCEL-EQUAL-REPLACE^~", "=").TrimStart('\'').TrimEnd('\'');
                     string fieldValue = valueToSet;
-                    //keeping the translation of vars to support previous implementation
                     VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
-                    if (var != null)
-                    {
-                        var.Value = ValueExpression.Calculate(valueToSet);
-                        fieldValue = var.Value;
-                    }
+                    if (var != null) { var.Value = ValueExpression.Calculate(valueToSet); fieldValue = var.Value; }
                     columnNameAndValue.Add(new Tuple<string, object>(rowToSet, fieldValue));
                 }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.INFO, "Invalid data added to 'SetDataUsed' text box");
-                    isError = true;
-                }
-
             });
-            return isError ? null : columnNameAndValue;
-        }
-        internal static ObservableList<ActReturnValue> GetVarColsFromString(string sVarCols)
-        {
-            ObservableList<ActReturnValue> VarCols = [];
-
-            string[] VarColMap = sVarCols.Split(',');
-
-
-            foreach (var c in VarColMap)
-            {
-                VarCols.Add(new ActReturnValue() { Param = c });
-            }
-
-
-
-            return VarCols;
-        }
-
-        private DataTable GetFilteredDataTable(DataTable dataTable, bool selectAllRows)
-        {
-            return selectAllRows ? dataTable.DefaultView.ToTable() : dataTable.DefaultView.ToTable().AsEnumerable().Take(1).CopyToDataTable();
+            return columnNameAndValue;
         }
         private string CalculatedPrimaryKeyFilter(DataRow dataRow)
         {
