@@ -378,131 +378,105 @@ namespace GingerCore
             if (Agent.AgentType == Agent.eAgentType.Service)
             {
                 SetServiceConfiguration();
-                return;
             }
-
-            Agent.DriverClass = TargetFrameworkHelper.Helper.GetDriverType(Agent);
-            SetDriverMissingParams(Agent.DriverClass);
-
-            // First: always evaluate VE expressions and update the Agent.DriverConfiguration (persisted config)
-            foreach (DriverConfigParam DCP in Agent.DriverConfiguration)
+            else
             {
-                if (DCP == null) continue;
+                Agent.DriverClass = TargetFrameworkHelper.Helper.GetDriverType(Agent);
 
-                if (DCP.MultiValues != null && DCP.MultiValues.Count > 0)
+                SetDriverMissingParams(Agent.DriverClass);
+
+
+                foreach (DriverConfigParam DCP in Agent.DriverConfiguration)
                 {
-                    foreach (DriverConfigParam subValue in DCP.MultiValues)
+                    string value = null;
+                    ObservableList<DriverConfigParam> multiValues = null;
+
+                    //process Value expression in case used                    
+                    if (DCP.MultiValues != null)
                     {
-                        ve.Value = subValue.Value;
-                        subValue.Value = ve.ValueCalculated;
-                    }
-                }
-                else
-                {
-                    ve.Value = DCP.Value;
-                    DCP.Value = ve.ValueCalculated;
-                }
-            }
-
-            // If no runtime driver instance - we only update persisted config and return (prevents NRE)
-            if (Driver == null)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "SetDriverConfiguration: runtime Driver instance not created yet - Agent.DriverConfiguration updated only.");
-                return;
-            }
-
-            // Runtime driver exists - apply evaluated values to the driver via reflection
-            foreach (DriverConfigParam DCP in Agent.DriverConfiguration)
-            {
-                if (DCP == null) continue;
-
-                string value = null;
-                ObservableList<DriverConfigParam> multiValues = null;
-
-                // process VE for this param
-                if (DCP.MultiValues != null && DCP.MultiValues.Count > 0)
-                {
-                    multiValues = new ObservableList<DriverConfigParam>();
-                    foreach (DriverConfigParam subValue in DCP.MultiValues)
-                    {
-                        ve.Value = subValue.Value;
-                        multiValues.Add(new DriverConfigParam() { Parameter = subValue.Parameter, Value = ve.ValueCalculated });
-                    }
-                }
-                else
-                {
-                    ve.Value = DCP.Value;
-                    value = ve.ValueCalculated;
-                }
-
-                PropertyInfo driverProp = Driver.GetType().GetProperty(DCP.Parameter);
-                if (driverProp != null)
-                {
-                    // set multi values prop
-                    if (DCP.MultiValues != null && DCP.MultiValues.Count > 0)
-                    {
-                        driverProp.SetValue(Driver, multiValues);
-                        continue;
-                    }
-
-                    // set enum prop if annotated
-                    UserConfiguredEnumTypeAttribute enumTypeConfig = null;
-                    try
-                    {
-                        MemberInfo[] mf = Driver.GetType().GetMember(DCP.Parameter);
-                        if (mf != null && mf.Length > 0)
+                        multiValues = [];
+                        foreach (DriverConfigParam subValue in DCP.MultiValues)
                         {
-                            enumTypeConfig = Attribute.GetCustomAttribute(mf[0], typeof(UserConfiguredEnumTypeAttribute), false) as UserConfiguredEnumTypeAttribute;
-                            if (enumTypeConfig != null)
-                            {
-                                driverProp.SetValue(Driver, Enum.Parse(enumTypeConfig.EnumType, value));
-                                continue;
-                            }
+                            ve.Value = subValue.Value;
+                            multiValues.Add(new DriverConfigParam() { Parameter = subValue.Parameter, Value = ve.ValueCalculated });
                         }
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to check if the driver configuration '{0}' is from EnumType", DCP.Parameter), ex);
+                        ve.Value = DCP.Value;
+                        value = ve.ValueCalculated;
                     }
 
-                    // set standard prop types
-                    string driverPropType = driverProp.PropertyType.Name;
-                    switch (driverPropType)
+                    PropertyInfo driverProp = Driver.GetType().GetProperty(DCP.Parameter);
+                    if (driverProp != null)
                     {
-                        case "String":
-                            driverProp.SetValue(Driver, value);
-                            break;
-                        case "Boolean":
-                            try
+                        //set multi values prop
+                        if (DCP.MultiValues != null)
+                        {
+                            Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, multiValues);
+                            continue;
+                        }
+
+                        //set eNum prop
+                        UserConfiguredEnumTypeAttribute enumTypeConfig = null;
+                        try
+                        {
+                            MemberInfo[] mf = Driver.GetType().GetMember(DCP.Parameter);
+                            if (mf != null)
                             {
-                                driverProp.SetValue(Driver, Convert.ToBoolean(value));
+                                enumTypeConfig = Attribute.GetCustomAttribute(mf[0], typeof(UserConfiguredEnumTypeAttribute), false) as UserConfiguredEnumTypeAttribute;
+                                if (enumTypeConfig != null)
+                                {
+                                    Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, Enum.Parse(enumTypeConfig.EnumType, value));
+                                    continue;
+                                }
                             }
-                            catch (Exception)
-                            {
-                                driverProp.SetValue(Driver, true);
-                            }
-                            break;
-                        case "Int32":
-                            if (!string.IsNullOrEmpty(value))
-                            {
-                                driverProp.SetValue(Driver, int.Parse(value));
-                            }
-                            break;
-                        default:
-                            Reporter.ToUser(eUserMsgKey.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
-                            Reporter.ToLog(eLogLevel.ERROR, string.Format("The driver configuration '{0}' field type '{1}' is unknown", DCP.Parameter, driverPropType));
-                            break;
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to check if the driver configuration '{0}' is from EnumType", DCP.Parameter), ex);
+                        }
+
+                        //set standard prop types
+                        string driverPropType = driverProp.PropertyType.Name;
+                        switch (driverPropType)
+                        {
+                            case "String":
+                                Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, value);
+                                break;
+                            case "Boolean":
+                                try
+                                {
+                                    Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, Convert.ToBoolean(value));
+                                }
+                                catch (Exception)
+                                {
+                                    Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, true);
+                                }
+                                break;
+                            case "Int32":
+                                if (!string.IsNullOrEmpty(value))
+                                {
+                                    Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, int.Parse(value));
+                                }
+                                break;
+                            default:
+                                Reporter.ToUser(eUserMsgKey.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
+                                Reporter.ToLog(eLogLevel.ERROR, string.Format("The driver configuration '{0}' field type '{1}' is unknown", DCP.Parameter, driverPropType));
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("The driver configuration '{0}' was not found on the driver class", DCP.Parameter));
                     }
                 }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("The driver configuration '{0}' was not found on the driver class", DCP.Parameter));
-                }
+
+                Driver.AdvanceDriverConfigurations = Agent.AdvanceAgentConfigurations;
             }
-
-            Driver.AdvanceDriverConfigurations = Agent.AdvanceAgentConfigurations;
-
         }
+
+        
 
 
 

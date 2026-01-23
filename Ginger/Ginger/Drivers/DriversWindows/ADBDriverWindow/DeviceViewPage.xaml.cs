@@ -274,37 +274,21 @@ namespace GingerCore.Drivers.Common
 
         private void ResizeDeviceButtons()
         {
-            if (DeviceScreenCanvas == null || DeviceImage == null || DeviceScreenShotImageBK == null)
+            if (DeviceScreenShotImageBK.ActualWidth == 0)
             {
                 return;
             }
-
-            // if we don't have a valid scale or image sizes yet bail out
-            if (scaleFactor <= 0 || DeviceScreenShotImageBK.ActualWidth == 0)
-            {
-                return;
-            }
-
-            // DeviceScreenCanvas.Margin is set to DeviceImage.Margin in SizeChanged handler,
-            // so it reflects the actual device image placement relative to the grid.
-            double canvasLeft = DeviceScreenCanvas.Margin.Left;
-            double canvasTop = DeviceScreenCanvas.Margin.Top;
 
             foreach (Shape s in mButtons)
             {
-                if (s?.Tag == null) continue;
-
                 DeviceButton DB = (DeviceButton)s.Tag;
 
-                // size the visual element according to the computed scale factor
                 s.Width = DB.Width / scaleFactor;
                 s.Height = DB.Height / scaleFactor;
 
-                // compute position relative to the DeviceScreenCanvas (which overlays the actual device image)
-                double left = canvasLeft + DB.Left / scaleFactor;
-                double top = canvasTop + DB.Top / scaleFactor;
+                double left = (DeviceScreenShotGrid.ActualWidth - DeviceScreenShotImageBK.ActualWidth) / 2 + DB.Left / scaleFactor;
+                double top = (DeviceScreenShotGrid.ActualHeight - DeviceScreenShotImageBK.ActualHeight) / 2 + DB.Top / scaleFactor;
 
-                // set margin to place the shape inside the grid at the correct absolute location
                 s.Margin = new Thickness(left, top, 0, 0);
             }
         }
@@ -417,85 +401,13 @@ namespace GingerCore.Drivers.Common
        
         private System.Windows.Point GetDevicePoint(System.Windows.Point point)
         {
-            // Map a point relative to the Image control (DeviceImage) to source image pixel coordinates.
-            // Use BitmapSource.PixelWidth/PixelHeight to get the true screenshot pixel size (fixes TV scaling issues).
-            var bitmap = DeviceImage.Source as System.Windows.Media.Imaging.BitmapSource;
-            if (bitmap == null || DeviceImage.ActualWidth <= 0 || DeviceImage.ActualHeight <= 0)
+            System.Windows.Point p = new System.Windows.Point
             {
-                return new System.Windows.Point(0, 0);
-            }
+                X = Convert.ToInt16(DeviceImage.Source.Width * point.X / DeviceImage.ActualWidth),
+                Y = Convert.ToInt16(DeviceImage.Source.Height * point.Y / DeviceImage.ActualHeight)
+            };
 
-            double srcPixelWidth = bitmap.PixelWidth;
-            double srcPixelHeight = bitmap.PixelHeight;
-            double controlWidth = DeviceImage.ActualWidth;
-            double controlHeight = DeviceImage.ActualHeight;
-
-            if (srcPixelWidth <= 0 || srcPixelHeight <= 0)
-            {
-                return new System.Windows.Point(0, 0);
-            }
-
-            // Compute based on Image.Stretch
-            double imageX, imageY;
-            switch (DeviceImage.Stretch)
-            {
-                case Stretch.Fill:
-                    {
-                        // image stretched non-uniformly to fill control
-                        double scaleX = srcPixelWidth / controlWidth;
-                        double scaleY = srcPixelHeight / controlHeight;
-                        imageX = point.X * scaleX;
-                        imageY = point.Y * scaleY;
-                        break;
-                    }
-
-                case Stretch.UniformToFill:
-                    {
-                        double scale = Math.Max(controlWidth / srcPixelWidth, controlHeight / srcPixelHeight);
-                        double displayedWidth = srcPixelWidth * scale;
-                        double displayedHeight = srcPixelHeight * scale;
-                        double offsetX = (controlWidth - displayedWidth) / 2.0;
-                        double offsetY = (controlHeight - displayedHeight) / 2.0;
-                        double relX = point.X - offsetX;
-                        double relY = point.Y - offsetY;
-                        relX = Math.Max(0, Math.Min(relX, displayedWidth - 1));
-                        relY = Math.Max(0, Math.Min(relY, displayedHeight - 1));
-                        imageX = relX / scale;
-                        imageY = relY / scale;
-                        break;
-                    }
-
-                case Stretch.None:
-                    {
-                        // No scaling: control shows image at native (or clipped) size
-                        imageX = point.X;
-                        imageY = point.Y;
-                        break;
-                    }
-
-                case Stretch.Uniform:
-                default:
-                    {
-                        double scale = Math.Min(controlWidth / srcPixelWidth, controlHeight / srcPixelHeight);
-                        double displayedWidth = srcPixelWidth * scale;
-                        double displayedHeight = srcPixelHeight * scale;
-                        double offsetX = (controlWidth - displayedWidth) / 2.0;
-                        double offsetY = (controlHeight - displayedHeight) / 2.0;
-                        double relX = point.X - offsetX;
-                        double relY = point.Y - offsetY;
-                        relX = Math.Max(0, Math.Min(relX, displayedWidth - 1));
-                        relY = Math.Max(0, Math.Min(relY, displayedHeight - 1));
-                        imageX = relX / scale;
-                        imageY = relY / scale;
-                        break;
-                    }
-            }
-
-            // Clamp to source bounds and return (image source pixels)
-            imageX = Math.Max(0, Math.Min(imageX, srcPixelWidth - 1));
-            imageY = Math.Max(0, Math.Min(imageY, srcPixelHeight - 1));
-
-            return new System.Windows.Point(imageX, imageY);
+            return p;
         }
 
 

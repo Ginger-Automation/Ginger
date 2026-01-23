@@ -30,8 +30,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile
         LocalAppium = 0,
         MicroFoucsUFTMLab = 1,
         Kobiton = 2,
-        LambdaTest = 3,
-        AndroidTV = 4
+        AndroidTV = 3
 
     }
 

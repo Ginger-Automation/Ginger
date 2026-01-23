@@ -1,8 +1,15 @@
 ﻿
 /*
 Copyright © 2014-2020 European Support Limited
-
 Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+http://www.apache.org/licenses/LICENSE-2.0 
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
 http://www.apache.org/licenses/LICENSE-2.0
 */
 
@@ -158,6 +165,38 @@ function define_GingerLibLiveSpy() {
 
         return element;
     };
+
+    GingerLibLiveSpy.ElementFromPoint = function () {
+        const X = GingerLibLiveSpy.GetXPoint();
+        const Y = GingerLibLiveSpy.GetYPoint();
+        let depth = 0;
+        let resultElementFromPoint = null;
+        function getCurrentDepth(element) {
+            let depth = 0;
+
+            while (element.parentNode) {
+                element = element.parentNode;
+                depth++;
+            }
+            return depth;
+        }
+
+        allShadowRoots.forEach((shadowRoot) => {
+            let element = shadowRoot.elementFromPoint(X, Y);
+            const currentDepth = getCurrentDepth(element);
+
+            if (depth < currentDepth) {
+                depth = currentDepth;
+                resultElementFromPoint = element;
+            }
+        });
+
+        if (!resultElementFromPoint) {
+            return document.elementFromPoint(X, Y);
+        }
+
+        return resultElementFromPoint;
+    }
 
     //------------------------------------------------------------------------------------------------------------------
     // ✅ Correct Deepest Element (SAFE, backward compatible)
