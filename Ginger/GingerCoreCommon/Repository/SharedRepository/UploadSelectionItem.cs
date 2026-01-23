@@ -282,18 +282,25 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                     return rootName;
                 }
 
+                // Normalize paths for consistent comparison and slicing
+                var normRoot = Normalize(rootPath);
+                var normTarget = Normalize(TargetFolderFullPath);
+
                 // If selection equals root, show just root
-                if (!string.IsNullOrEmpty(rootPath) &&
-                    string.Equals(Normalize(rootPath), Normalize(TargetFolderFullPath), StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(normRoot) &&
+                    string.Equals(normRoot, normTarget, StringComparison.OrdinalIgnoreCase))
                 {
                     return rootName;
                 }
 
                 // Otherwise show relative path from the root, prefixed with root name
-                if (!string.IsNullOrEmpty(rootPath) &&
-                    TargetFolderFullPath.StartsWith(rootPath, StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(normRoot) &&
+                    normTarget.StartsWith(normRoot, StringComparison.OrdinalIgnoreCase))
                 {
-                    var rel = TargetFolderFullPath[rootPath.Length..].Trim('\\', '/');
+                    var rel = normTarget.Length > normRoot.Length
+                        ? normTarget[normRoot.Length..].Trim('\\', '/')
+                        : string.Empty;
+
                     return string.IsNullOrEmpty(rel) ? rootName : $"{rootName}/{rel}";
                 }
 
