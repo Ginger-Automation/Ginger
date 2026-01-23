@@ -172,7 +172,7 @@ namespace Amdocs.Ginger.UserControls
         private void xButton_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            Click(this, e);
+            Click?.Invoke(this, e);
         }
 
         public void DoClick()

@@ -24,14 +24,17 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.BusinessFlowPages.ListHelpers;
+using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerWPF.DragDropLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
@@ -44,7 +47,7 @@ namespace Ginger.UserControlsLib.UCListView
     /// <summary>
     /// Interaction logic for UserControl1.xaml
     /// </summary>
-    public partial class UcListView : UserControl, IDragDrop, IClipboardOperations
+    public partial class UcListView : UserControl, IDragDrop, IClipboardOperations, IDisposable
     {
         IObservableList mObjList;
         ICollectionView filteredView;
@@ -107,12 +110,50 @@ namespace Ginger.UserControlsLib.UCListView
 
             }
         }
+        public static readonly DependencyProperty IsToggleButtonVisibleProperty =
+          DependencyProperty.Register(nameof(IsToggleButtonVisible), typeof(bool), typeof(UcListView),
+              new PropertyMetadata(false));
+
+        public bool IsToggleButtonVisible
+        {
+            get { return (bool)GetValue(IsToggleButtonVisibleProperty); }
+            set { SetValue(IsToggleButtonVisibleProperty, value); }
+        }
 
         IListViewHelper mListViewHelper = null;
 
+        bool mFolderViewActive = false;
+        ITreeViewItem mFolderTreeRoot;
+        CancellationTokenSource? mTreeSearchCts;
+
+        public void SetFolderTreeRoot(ITreeViewItem root)
+        {
+            mFolderTreeRoot = root;
+            if (xFolderTreeView != null)
+            {
+                xFolderTreeView.ClearTreeItems();
+                xFolderTreeView.AddItem(mFolderTreeRoot);
+            }
+        }
         public UcListView()
         {
             InitializeComponent();
+
+
+            if (xFolderTreeView != null)
+            {
+                xFolderTreeView.EnableDragDrop = true;     // allow drag to Automate
+                xFolderTreeView.EnableRightClick = true;
+                xFolderTreeView.TreeChildFolderOnly = false; // show folders + items
+
+                if (mFolderTreeRoot == null)
+                {
+                    // Will be overridden by per-tab root (Activities/Groups/Actions)
+                    mFolderTreeRoot = new SharedRepositoryTreeItem();
+                }
+                xFolderTreeView.ClearTreeItems();
+                xFolderTreeView.AddItem(mFolderTreeRoot);
+            }
 
             //Hook Drag Drop handler
             mIsDragDropCompatible = true;
@@ -128,6 +169,15 @@ namespace Ginger.UserControlsLib.UCListView
                 xTagsFilter.Init(Tags);
                 xTagsFilter.TagsStackPanlChanged += TagsFilter_TagsStackPanlChanged;
             }
+
+            this.Unloaded += UcListView_Unloaded;
+        }
+
+        private void UcListView_Unloaded(object sender, RoutedEventArgs e)
+        {
+            mTreeSearchCts?.Cancel();
+            mTreeSearchCts?.Dispose();
+            mTreeSearchCts = null;
         }
 
         private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -210,7 +260,7 @@ namespace Ginger.UserControlsLib.UCListView
                     this.Dispatcher.BeginInvoke(() =>
                     {
                         xSearchTextBox.Text = "";
-
+                      
                         // Make the first row selected
                         if (value != null && value.Count > 0 && value is not ObservableList<VariableBase>)
                         {
@@ -391,7 +441,6 @@ namespace Ginger.UserControlsLib.UCListView
                 }
             }
         }
-
         public Visibility ExpandCollapseBtnVisiblity
         {
             get
@@ -1066,6 +1115,39 @@ namespace Ginger.UserControlsLib.UCListView
 
         private async void xSearchTextBox_TextChangedAsync(object sender, TextChangedEventArgs e)
         {
+            if (mFolderViewActive)
+            {
+                // Toggle icons for folder view too
+                if (string.IsNullOrWhiteSpace(xSearchTextBox.Text))
+                {
+                    xSearchClearBtn.Visibility = Visibility.Collapsed;
+                    xSearchBtn.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    xSearchClearBtn.Visibility = Visibility.Visible;
+                    xSearchBtn.Visibility = Visibility.Collapsed;
+                }
+
+                // debounce
+                async Task<bool> UserKeepsTyping()
+                {
+                    string txt = xSearchTextBox.Text;
+                    await Task.Delay(300);
+                    return txt != xSearchTextBox.Text;
+                }
+                if (await UserKeepsTyping())
+                {
+                    return;
+                }
+
+                var text = xSearchTextBox.Text ?? string.Empty;
+                mTreeSearchCts?.Cancel();
+                mTreeSearchCts?.Dispose();
+                mTreeSearchCts = new CancellationTokenSource();
+                xFolderTreeView.FilterItemsByText(xFolderTreeView.TreeItemsCollection, text, mTreeSearchCts.Token);
+                return;
+            }
 
             if (string.IsNullOrWhiteSpace(xSearchTextBox.Text))
             {
@@ -1077,7 +1159,7 @@ namespace Ginger.UserControlsLib.UCListView
                 xSearchClearBtn.Visibility = Visibility.Visible;
                 xSearchBtn.Visibility = Visibility.Collapsed;
 
-                // this inner method checks if user is still typing
+                // debounce for list view
                 async Task<bool> UserKeepsTyping()
                 {
                     string txt = xSearchTextBox.Text;
@@ -1106,10 +1188,35 @@ namespace Ginger.UserControlsLib.UCListView
         {
             xSearchTextBox.Clear();
             mSearchString = null;
+
+            // Always reset icons after clear
+            xSearchClearBtn.Visibility = Visibility.Collapsed;
+            xSearchBtn.Visibility = Visibility.Visible;
+
+            if (mFolderViewActive)
+            {
+                // clear tree filter to show all
+                mTreeSearchCts?.Cancel();
+                xFolderTreeView.FilterItemsByText(xFolderTreeView.TreeItemsCollection, string.Empty);
+            }
         }
 
         private void xSearchBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (mFolderViewActive)
+            {
+                var text = xSearchTextBox.Text ?? string.Empty;
+                mTreeSearchCts?.Cancel();
+                mTreeSearchCts?.Dispose();
+                mTreeSearchCts = new CancellationTokenSource();
+                xFolderTreeView.FilterItemsByText(xFolderTreeView.TreeItemsCollection, text, mTreeSearchCts.Token);
+
+                // Sync icons based on text content
+                xSearchClearBtn.Visibility = string.IsNullOrWhiteSpace(text) ? Visibility.Collapsed : Visibility.Visible;
+                xSearchBtn.Visibility = string.IsNullOrWhiteSpace(text) ? Visibility.Visible : Visibility.Collapsed;
+                return;
+            }
+
             if (!string.IsNullOrWhiteSpace(xSearchTextBox.Text))
             {
                 mSearchString = xSearchTextBox.Text;
@@ -1181,6 +1288,53 @@ namespace Ginger.UserControlsLib.UCListView
                 //delete selected
                 mListViewHelper.DeleteSelected();
             }
+        }
+
+        private void xToggleBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (xToggleBtn.ButtonImageType == eImageType.InActive)
+            {
+                xToggleBtn.ButtonImageType = eImageType.Active;
+            }
+            else
+            {
+                xToggleBtn.ButtonImageType = eImageType.InActive;
+            }
+            // Toggle between folder view (UCTreeView) and list view (UCListView)
+            mFolderViewActive = !mFolderViewActive;
+
+      
+            if (mFolderViewActive)
+            {
+                // folder-only view (clean like API Models): show tree, hide list
+                xFolderTreeContainer.Visibility = Visibility.Visible;
+                xTreeCol.Width = new GridLength(400);
+            
+                xListView.Visibility = Visibility.Collapsed;
+
+                // ensure folders + items are presented for current tab root
+                xFolderTreeView.EnableDragDrop = true;
+                xFolderTreeView.TreeChildFolderOnly = false;
+            }
+            else
+            {
+                xFolderTreeContainer.Visibility = Visibility.Collapsed;
+                xTreeCol.Width = new GridLength(0);
+                xListView.Visibility = Visibility.Visible;
+
+                // restore list ItemsSource
+                if (mObjList != null)
+                {
+                    xListView.ItemsSource = mObjList;
+                }
+            }
+        }
+
+        public void Dispose()
+        {
+            mTreeSearchCts?.Cancel();
+            mTreeSearchCts?.Dispose();
+            mTreeSearchCts = null;
         }
     }
 
