@@ -28,7 +28,6 @@
                 </Expander.Header>
                 <Expander.Content>
                     <StackPanel Margin="10,0,10,0">
-                        <!--<Label Content="Appium server:" Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top"/>-->
                         <TextBlock Style="{StaticResource $TextBlockStyle}" Margin="0,5,0,5"> 
                             Appium Server (for installation steps, 
                             <Hyperlink NavigateUri="https://appium.io/" RequestNavigate="AppiumCapabilities_RequestNavigate">
@@ -49,8 +48,6 @@
                             </Expander.Header>
                             <Expander.Content>
                                 <StackPanel Margin="10,0,0,0">
-                                    <!--<CheckBox x:Name="xSSLChkBox" Content="Use SSL" Style="{StaticResource $CeckBoxStyle}" Margin="0,5,0,0"/>-->
-                                    <!--<CheckBox x:Name="xAllowUnahutCertChkBox" Content="Allow unauthorized certificates" Style="{StaticResource $CeckBoxStyle}" Margin="0,5,0,0"/>-->
                                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                                         <CheckBox x:Name="xUseProxyChkBox" Content="Use proxy" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Checked="xUseProxyChkBox_Checked" Unchecked="xUseProxyChkBox_Unchecked"/>
                                         <Actions:UCValueExpression x:Name="xProxyTextBox" Width="190" Margin="10,0,0,0" IsEnabled="False"/>
@@ -59,14 +56,6 @@
                                         <Label Content="Load timeout (seconds):" Style="{StaticResource $LabelStyle}"/>
                                         <Actions:UCValueExpression x:Name="xLoadTimeoutTxtbox" Width="122" Margin="17,0,0,0"/>
                                     </StackPanel>
-                                    <!--<StackPanel Orientation="Horizontal" Margin="0,2,0,10">
-                                        <Label Content="Screen click correction X:" Style="{StaticResource $LabelStyle}"/>
-                                        <Actions:UCValueExpression x:Name="xScreenScaleFactorCorrectionXTextBox" Width="120" Margin="5,0,0,0"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0,2,0,10">
-                                        <Label Content="Screen click correction Y:" Style="{StaticResource $LabelStyle}"/>
-                                        <Actions:UCValueExpression x:Name="xScreenScaleFactorCorrectionYTextBox" Width="120" Margin="5,0,0,0"/>
-                                    </StackPanel>-->
                                     <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
                                         <Label Content="Screenshot height (pixels):" Style="{StaticResource $LabelStyle}"/>
                                         <Actions:UCValueExpression x:Name="xScreenshotHeightTextBox" Width="120" Margin="5,0,0,0"/>
@@ -108,6 +97,24 @@
                         <StackPanel Orientation="Vertical"  Margin="0,5,0,0">
                             <CheckBox x:Name="xUFTMSupportSimulations" Content="Include UFT Mobile simulations support" Style="{StaticResource $CeckBoxStyle}" Margin="0,4.5,5,0" IsChecked="False" Click="xSupportSimulations_Click" Visibility="{Binding IsChecked, ElementName=xUFTRdBtn,Converter={StaticResource b2v}}"/>
                             <CheckBox x:Name="xAutoUpdateCapabiltiies" Content="Auto update capabilities table" Style="{StaticResource $CeckBoxStyle}" Margin="0,4.5,5,0" IsChecked="True" Checked="xAutoUpdateCapabiltiies_Checked"/>
+                            <Grid Margin="0,5,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <usercontrols:ucButton x:Name="xFetchDevicesBtn"
+                                                       Grid.Column="1"
+                                                       ButtonType="RoundTextAndImageButton"
+                                                       ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"
+                                                       ButtonText="Select Lab Device"
+                                                       ButtonImageType="Mobile"
+                                                       ButtonFontImageSize="12"
+                                                       ButtonImageWidth="14"
+                                                       ButtonImageHeight="14"
+                                                       Click="FetchDevicesButton_Click"
+                                                       Visibility="{Binding IsChecked, ElementName=xUFTRdBtn, Converter={StaticResource b2v}}"
+                                                       HorizontalAlignment="Right" />
+                            </Grid>
                             <TextBlock Style="{StaticResource $TextBlockStyle}" Margin="0,5,0,0"> 
                             (for full Appium desired capabilities list,
                             <Hyperlink NavigateUri="https://appium.io/docs/en/2.2/guides/caps/" RequestNavigate="AppiumCapabilities_RequestNavigate">
