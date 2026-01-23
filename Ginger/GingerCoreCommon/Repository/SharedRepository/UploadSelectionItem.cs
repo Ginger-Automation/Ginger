@@ -19,8 +19,12 @@ limitations under the License.
 using System;
 using System.ComponentModel;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Activities;
+using GingerCore.Variables;
 
 namespace Ginger.Repository.ItemToRepositoryWizard
 {
@@ -244,12 +248,65 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         {
             get
             {
+                // Determine the shared root folder and friendly name based on item type
+                string rootPath = string.Empty;
+                string rootName = "Shared Repository";
+                if (UsageItem is ActivitiesGroup)
+                {
+                    var root = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>();
+                    rootPath = root?.FolderFullPath ?? string.Empty;
+                    rootName = "(root) Shared Activities Groups";
+                }
+                else if (UsageItem is Activity)
+                {
+                    var root = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>();
+                    rootPath = root?.FolderFullPath ?? string.Empty;
+                    rootName = "(root) Shared Activities";
+                }
+                else if (UsageItem is Act)
+                {
+                    var root = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>();
+                    rootPath = root?.FolderFullPath ?? string.Empty;
+                    rootName = "(root) Shared Actions";
+                }
+                else if (UsageItem is VariableBase)
+                {
+                    var root = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>();
+                    rootPath = root?.FolderFullPath ?? string.Empty;
+                    rootName = "(root) Shared Variables";
+                }
+
+                // No selection yet: show the root folder name
                 if (string.IsNullOrEmpty(TargetFolderFullPath))
                 {
-                    return "Select...";
+                    return rootName;
                 }
-                return TargetFolderFullPath;
+
+                // If selection equals root, show just root
+                if (!string.IsNullOrEmpty(rootPath) &&
+                    string.Equals(Normalize(rootPath), Normalize(TargetFolderFullPath), StringComparison.OrdinalIgnoreCase))
+                {
+                    return rootName;
+                }
+
+                // Otherwise show relative path from the root, prefixed with root name
+                if (!string.IsNullOrEmpty(rootPath) &&
+                    TargetFolderFullPath.StartsWith(rootPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    var rel = TargetFolderFullPath[rootPath.Length..].Trim('\\', '/');
+                    return string.IsNullOrEmpty(rel) ? rootName : $"{rootName}/{rel}";
+                }
+
+                // Fallback: if not under the expected root, show the last segment
+                return System.IO.Path.GetFileName(TargetFolderFullPath);
             }
+        }
+
+        // helper to normalize paths for comparison
+        private static string Normalize(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return string.Empty;
+            return path.Replace('/', '\\').TrimEnd('\\');
         }
     }
 }
