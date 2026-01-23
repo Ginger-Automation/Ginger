@@ -24,9 +24,17 @@ using Ginger.UserControls;
 using Ginger.ValidationRules;
 using GingerCore;
 using GingerCore.GeneralLib;
+using RestSharp;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -615,6 +623,10 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             if (this.IsLoaded && xAutoUpdateCapabiltiies != null && xAutoUpdateCapabiltiies.IsChecked == true)
             {
                 SetDeviceSourceCapabilities();
+                if (mDeviceSource != null && mDeviceSource.Value == nameof(eDeviceSource.MicroFoucsUFTMLab))
+                {
+                    //await FetchUFTMDevicesAsync();
+                }
             }
         }
 
@@ -802,6 +814,287 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         {
             DeleteCapabilityIfExist("uftm:installPackagedApp");
         }
+        private void FetchDevicesButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (mAppiumCapabilities?.MultiValues == null)
+            {
+                return;
+            }
+
+            var credentials = EnsureUftCredentialParams();
+            string currentDeviceName = FindExistingCapability("appium:deviceName")?.Value;
+            string currentDeviceUuid = FindExistingCapability("appium:udid")?.Value;
+
+
+
+            DriverConfigParam serverParam = mAppiumServer;
+            UFTCredentialsDialog dialog = new UFTCredentialsDialog(serverParam, credentials.clientId, credentials.clientSecret, credentials.tenantId, UFTMBasicCallAsync, currentDeviceName, currentDeviceUuid);
+
+            Window owner = Window.GetWindow(this);
+
+            bool? dialogResult = dialog.ShowDialog(owner);
+            if (dialogResult == true)
+            {
+                ApplySelectedPhoneDetails(dialog);
+            }
+        }
+
+        private void ApplySelectedPhoneDetails(UFTCredentialsDialog dialog)
+        {
+            if (dialog == null)
+            {
+                return;
+            }
+
+            bool wasUpdated = false;
+
+            // Apply the dialog selection state as-is.
+            // If user unselected the device, clear the capabilities.
+            wasUpdated |= UpdateCapabilityValue("appium:deviceName", dialog.SelectedPhoneName ?? string.Empty);
+            wasUpdated |= UpdateCapabilityValue("appium:udid", dialog.SelectedPhoneUuid ?? string.Empty);
+
+            bool platformUpdated = ApplyPlatformFromSelection(dialog.SelectedPhonePlatform);
+
+            if (wasUpdated || platformUpdated)
+            {
+                xCapabilitiesGrid.Grid?.Items.Refresh();
+            }
+        }
+
+        private bool ApplyPlatformFromSelection(string selectedPlatform)
+        {
+            if (string.IsNullOrWhiteSpace(selectedPlatform))
+            {
+                return false;
+            }
+
+            if (!TryResolvePlatformType(selectedPlatform, out eDevicePlatformType platformType))
+            {
+                return false;
+            }
+
+            string platformName = platformType == eDevicePlatformType.Android
+                ? nameof(eDevicePlatformType.Android)
+                : nameof(eDevicePlatformType.iOS);
+
+            if (string.Equals(mDevicePlatformType?.Value, platformName, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            mDevicePlatformType.Value = platformName;
+
+            if (xAutoUpdateCapabiltiies?.IsChecked == true)
+            {
+                SetPlatformCapabilities();
+                SetApplicationCapabilities();
+            }
+
+            xAndroidRdBtn.IsChecked = platformType == eDevicePlatformType.Android;
+            xIOSRdBtn.IsChecked = platformType == eDevicePlatformType.iOS;
+
+            return true;
+        }
+
+        private static bool TryResolvePlatformType(string platformValue, out eDevicePlatformType platformType)
+        {
+            platformType = eDevicePlatformType.Android;
+
+            if (string.IsNullOrWhiteSpace(platformValue))
+            {
+                return false;
+            }
+
+            string normalized = platformValue.Trim().ToLowerInvariant();
+
+            if (normalized.Contains("ios") || normalized.Contains("iphone") || normalized.Contains("ipad") || normalized.Contains("apple"))
+            {
+                platformType = eDevicePlatformType.iOS;
+                return true;
+            }
+
+            if (normalized.Contains("android"))
+            {
+                platformType = eDevicePlatformType.Android;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool UpdateCapabilityValue(string parameterName, string value)
+        {
+            if (string.IsNullOrWhiteSpace(parameterName) || value == null)
+            {
+                return false;
+            }
+
+            DriverConfigParam capability = FindExistingCapability(parameterName);
+            if (capability == null)
+            {
+                capability = new DriverConfigParam() { Parameter = parameterName };
+                mAppiumCapabilities.MultiValues.Add(capability);
+            }
+
+            if (capability.Value == value)
+            {
+                return false;
+            }
+
+            capability.Value = value;
+            return true;
+        }
+
+        private (DriverConfigParam clientId, DriverConfigParam clientSecret, DriverConfigParam tenantId) EnsureUftCredentialParams()
+        {
+            DriverConfigParam clientId = EnsureCapabilityExists("uftm:oauthClientId", "UFT Execution key Client Id");
+            DriverConfigParam clientSecret = EnsureCapabilityExists("uftm:oauthClientSecret", "UFT Execution key Client Password");
+            DriverConfigParam tenantId = EnsureCapabilityExists("uftm:tenantId", "Default value (Need to change only when using UFT shared spaces))");
+            if (string.IsNullOrEmpty(tenantId.Value))
+            {
+                tenantId.Value = "\"999999999\"";
+            }
+
+            return (clientId, clientSecret, tenantId);
+        }
+
+        private DriverConfigParam EnsureCapabilityExists(string parameter, string description)
+        {
+            DriverConfigParam capability = FindExistingCapability(parameter);
+            if (capability == null)
+            {
+                capability = new DriverConfigParam() { Parameter = parameter, Description = description };
+                mAppiumCapabilities.MultiValues.Add(capability);
+            }
+            else if (string.IsNullOrEmpty(capability.Description))
+            {
+                capability.Description = description;
+            }
+
+            return capability;
+        }
+
+        private async Task<string> UFTMBasicCallAsync(string apiSuffix)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(apiSuffix))
+                {
+                    return "Error: API suffix is empty.";
+                }
+
+                // remove the url ending after :7500
+                string baseUrl = mAppiumServer?.Value?.TrimEnd('/') ?? string.Empty;
+                if (!string.IsNullOrEmpty(baseUrl))
+                {
+                    int portIdx = baseUrl.IndexOf(":7500", StringComparison.OrdinalIgnoreCase);
+                    if (portIdx >= 0)
+                    {
+                        // keep everything up to and including ':7500'
+                        baseUrl = baseUrl.Substring(0, portIdx + 5).TrimEnd('/');
+                    }
+                }
+                if (string.IsNullOrEmpty(baseUrl))
+                {
+                    return "UFTM server URL is empty.";
+                }
+
+                string clientId = FindExistingCapability("uftm:oauthClientId")?.Value;
+                string clientSecret = FindExistingCapability("uftm:oauthClientSecret")?.Value;
+                string tenantStr = FindExistingCapability("uftm:tenantId")?.Value;
+
+                if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret) || string.IsNullOrWhiteSpace(tenantStr))
+                {
+                    return "Missing UFTM OAuth credentials (clientId/secret/tenant).";
+                }
+
+                if (tenantStr.StartsWith("\"") && tenantStr.EndsWith("\""))
+                {
+                    tenantStr = tenantStr.Trim('"');
+                }
+                if (!int.TryParse(tenantStr, out var tenantId))
+                {
+                    return "Invalid tenant id.";
+                }
+
+
+                // 1) Authenticate: POST /rest/oauth2/token (same pattern as GenericAppiumDriver)
+                var tokenUrl = baseUrl + "/rest/oauth2/token";
+                var authClient = new RestClient(tokenUrl);
+                var authRequest = new RestRequest(tokenUrl, Method.Post);
+
+                var oauthPayload = new { client = clientId, secret = clientSecret, tenant = tenantId };
+                authRequest.AddJsonBody(oauthPayload);
+
+                var authResponse = await authClient.ExecuteAsync(authRequest);
+                if (!authResponse.IsSuccessful)
+                {
+                    return $"Auth failed: {(int)authResponse.StatusCode} {authResponse.StatusDescription}\n{authResponse.Content}";
+                }
+
+                // Extract tokens from auth response
+                // 1) access token from JSON content
+                string accessToken = null;
+                try
+                {
+                    using var doc = JsonDocument.Parse(authResponse.Content ?? "{}");
+                    if (doc.RootElement.TryGetProperty("access_token", out var tokenProp))
+                    {
+                        accessToken = tokenProp.GetString();
+                    }
+                    else if (doc.RootElement.TryGetProperty("token", out var tokenProp2))
+                    {
+                        accessToken = tokenProp2.GetString();
+                    }
+                }
+                catch { }
+
+                // 2) csrf token (hp4msecret) and 3) JSESSIONID from cookies
+                string cookieHp4mSecret = authResponse.Cookies?.FirstOrDefault(c => string.Equals(c.Name, "x-hp4msecret", StringComparison.OrdinalIgnoreCase))?.Value;
+                if (string.IsNullOrEmpty(cookieHp4mSecret))
+                {
+                    // Some servers set hp4msecret as 'hp4msecret' without the 'x-'
+                    cookieHp4mSecret = authResponse.Cookies?.FirstOrDefault(c => string.Equals(c.Name, "hp4msecret", StringComparison.OrdinalIgnoreCase))?.Value;
+                }
+                string cookieSessionId = authResponse.Cookies?.FirstOrDefault(c => string.Equals(c.Name, "JSESSIONID", StringComparison.OrdinalIgnoreCase))?.Value;
+
+                string normalizedSuffix = apiSuffix.Trim();
+                if (!normalizedSuffix.StartsWith("/", StringComparison.Ordinal))
+                {
+                    normalizedSuffix = "/" + normalizedSuffix;
+                }
+
+                string url = baseUrl + normalizedSuffix;
+                var client = new RestClient(url);
+                var request = new RestRequest(url, Method.Get);
+
+                // Add required headers
+                if (!string.IsNullOrWhiteSpace(accessToken))
+                {
+                    request.AddHeader("Authorization", $"Bearer {accessToken}");
+                }
+                if (!string.IsNullOrWhiteSpace(cookieHp4mSecret))
+                {
+                    request.AddHeader("x-hp4msecret", cookieHp4mSecret);
+                }
+                if (!string.IsNullOrWhiteSpace(cookieSessionId))
+                {
+                    request.AddHeader("JSESSIONID", cookieSessionId);
+                }
+                request.AddHeader("Accept", "*/*");
+                request.AddHeader("tenant-id", tenantId.ToString());
+
+                var response = await client.ExecuteAsync(request);
+                return response.Content;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "UFTM device fetch failed", ex);
+                return $"Error: {ex.Message}";
+            }
+        }
+
+        
     }
 
 
