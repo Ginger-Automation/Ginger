@@ -228,101 +228,31 @@ namespace Ginger.ApplicationModelsLib.POMModels
         public ElementInfo mSpyElement;
 
         private void timenow(object sender, EventArgs e)
-        {
-            // Get control info only if control key is pressed
+        { // Get control info only if control key is pressed
             try
             {
-                // Only act while Ctrl is pressed
-                if (!(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
-                    return;
-
-                xStatusLable.Content = "Spying element, please wait...";
-                xCreateNewElement.Visibility = Visibility.Collapsed;
-                GingerCore.General.DoEvents();
-
-                ElementInfo foundElement = null;
-
-                // Preferred path: if running Appium-based driver, get device coords from MobileDriverWindow and ask driver for element at point
-                if (mWinExplorer is Amdocs.Ginger.CoreNET.GenericAppiumDriver appiumDriver)
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
                 {
-                    try
-                    {
-                        var deviceWindow = App.Current?.Windows
-                            .OfType<Ginger.Drivers.DriversWindows.MobileDriverWindow>()
-                            .FirstOrDefault();
-
-                        if (deviceWindow != null)
-                        {
-                            (int x, int y) p;
-                            try
-                            {
-                                p = deviceWindow.GetMousePositionOnDevice();
-                            }
-                            catch
-                            {
-                                p = (0, 0);
-                            }
-
-                            if (p.x >= 0 && p.y >= 0)
-                            {
-                                try
-                                {
-                                    // Run async driver call on thread-pool and block here safely
-                                    foundElement = Task.Run(() => appiumDriver.GetElementAtPoint(p.x, p.y)).GetAwaiter().GetResult();
-                                    Reporter.ToLog(eLogLevel.DEBUG, $"LiveSpy: mapped mouse -> device ({p.x},{p.y}), driver returned {(foundElement != null ? "element" : "null")}");
-                                }
-                                catch (Exception exSync)
-                                {
-                                    Reporter.ToLog(eLogLevel.DEBUG, "GetElementAtPoint failed: " + exSync.Message, exSync);
-                                    foundElement = null;
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception exDriver)
-                    {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Appium live-spy attempt failed: " + exDriver.Message, exDriver);
-                        foundElement = null;
-                    }
-                }
-
-                // Fallback to WinExplorer synchronous API
-                if (foundElement == null)
-                {
-                    try
-                    {
-                        var ctrl = mWinExplorer.GetControlFromMousePosition();
-                        if (ctrl != null)
-                        {
-                            ctrl.WindowExplorer = mWinExplorer;
-                            ctrl.IsAutoLearned = true;
-                            ctrl.SetLocatorsAndPropertiesCategory(((DriverBase)mWinExplorer).PomCategory);
-
-                            foundElement = mWinExplorer.LearnElementInfoDetails(ctrl);
-                        }
-                    }
-                    catch (Exception exFallback)
-                    {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Fallback GetControlFromMousePosition failed: " + exFallback.Message, exFallback);
-                        foundElement = null;
-                    }
-                }
-
-                if (foundElement != null)
-                {
-                    mSpyElement = foundElement;
-                    mSpyElement.WindowExplorer = mWinExplorer;
-                    mSpyElement.IsAutoLearned = true;
-                    mSpyElement.SetLocatorsAndPropertiesCategory(((DriverBase)mWinExplorer).PomCategory);
-                    xStatusLable.Content = "Element found";
-                    FocusSpyItemOnElementsGrid();
-                    mWinExplorer.HighLightElement(mSpyElement);
-                }
-                else
-                {
-                    xStatusLable.Content = "Failed to spy element.";
+                    xStatusLable.Content = "Spying element, please wait...";
                     xCreateNewElement.Visibility = Visibility.Collapsed;
                     GingerCore.General.DoEvents();
+                    mSpyElement = mWinExplorer.GetControlFromMousePosition();
+                    if (mSpyElement != null)
+                    {
+
+                        mSpyElement.WindowExplorer = mWinExplorer;
+                        mSpyElement.IsAutoLearned = true;
+                        mSpyElement.SetLocatorsAndPropertiesCategory(((DriverBase)mWinExplorer).PomCategory);
+                        xStatusLable.Content = "Element found";
+                        FocusSpyItemOnElementsGrid();
+                        mWinExplorer.HighLightElement(mSpyElement);
+                    }
+                    else
+                    {
+                        xStatusLable.Content = "Failed to spy element.";
+                        xCreateNewElement.Visibility = Visibility.Collapsed;
+                        GingerCore.General.DoEvents();
+                    }
                 }
             }
             catch (Exception ex)

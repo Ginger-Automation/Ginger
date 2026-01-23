@@ -1,6 +1,7 @@
 ﻿
-/* 
+/*
 Copyright © 2014-2020 European Support Limited
+
 Licensed under the Apache License, Version 2.0 (the "License")
 http://www.apache.org/licenses/LICENSE-2.0
 */
@@ -24,26 +25,33 @@ function define_GingerLibLiveSpy() {
     var CurrentClickedX;
     var CurrentClickedY;
 
-    // ✅ Android TV / Focus based platforms
+    // ✅ Android TV / Focus-based platforms
     var CurrentFocusedElement = null;
 
     //------------------------------------------------------------------------------------------------------------------
-    // Shadow DOM Support
+    // Utilities
     //------------------------------------------------------------------------------------------------------------------
-    function getAllShadowRoots(node, result = []) {
+    function getAllShadowRoots(node, result) {
+        result = result || [];
+        if (!node) return result;
+
         if (node.shadowRoot) {
             result.push(node.shadowRoot);
             getAllShadowRoots(node.shadowRoot, result);
         }
-        node = node.firstChild;
-        while (node) {
-            getAllShadowRoots(node, result);
-            node = node.nextSibling;
+
+        var child = node.firstChild;
+        while (child) {
+            getAllShadowRoots(child, result);
+            child = child.nextSibling;
         }
+
         return result;
     }
 
-    var allShadowRoots = getAllShadowRoots(document);
+    function normalizeNode(el) {
+        return (el && el.nodeType === 3) ? el.parentElement : el;
+    }
 
     //------------------------------------------------------------------------------------------------------------------
     // Script Injection
@@ -57,26 +65,15 @@ function define_GingerLibLiveSpy() {
     };
 
     //------------------------------------------------------------------------------------------------------------------
-    // Coordinate Getters
+    // Coordinate Getters (DO NOT change return type)
     //------------------------------------------------------------------------------------------------------------------
-    GingerLibLiveSpy.GetXPoint = function () {
-        return CurrentX + "";
-    };
-
-    GingerLibLiveSpy.GetYPoint = function () {
-        return CurrentY + "";
-    };
-
-    GingerLibLiveSpy.GetClickedXPoint = function () {
-        return CurrentClickedX + "";
-    };
-
-    GingerLibLiveSpy.GetClickedYPoint = function () {
-        return CurrentClickedY + "";
-    };
+    GingerLibLiveSpy.GetXPoint = function () { return CurrentX + ""; };
+    GingerLibLiveSpy.GetYPoint = function () { return CurrentY + ""; };
+    GingerLibLiveSpy.GetClickedXPoint = function () { return CurrentClickedX + ""; };
+    GingerLibLiveSpy.GetClickedYPoint = function () { return CurrentClickedY + ""; };
 
     //------------------------------------------------------------------------------------------------------------------
-    // Mouse Handlers (Existing platforms)
+    // Mouse / Pointer Handlers (Web)
     //------------------------------------------------------------------------------------------------------------------
     function getMousePos(event) {
         CurrentX = event.clientX;
@@ -89,17 +86,14 @@ function define_GingerLibLiveSpy() {
     }
 
     //------------------------------------------------------------------------------------------------------------------
-    // ✅ Focus Handler (Android TV / D‑Pad navigation)
+    // ✅ Android TV / D‑Pad Handlers
     //------------------------------------------------------------------------------------------------------------------
     function getFocusedElement(event) {
         CurrentFocusedElement = event.target;
     }
 
-    //------------------------------------------------------------------------------------------------------------------
-    // ✅ Remote Key Handler (Android TV)
-    //------------------------------------------------------------------------------------------------------------------
     function getRemoteClick(event) {
-        // 23 = DPAD_CENTER, 66 = ENTER
+        // Android TV ENTER keys
         if (event.keyCode === 23 || event.keyCode === 66) {
             CurrentClickedX = 0;
             CurrentClickedY = 0;
@@ -112,7 +106,9 @@ function define_GingerLibLiveSpy() {
     //------------------------------------------------------------------------------------------------------------------
     GingerLibLiveSpy.StartEventListner = function () {
         if (document.addEventListener) {
-            document.addEventListener("mouseover", getMousePos);
+            // ✅ Keep mouseover + add mousemove for accuracy
+            document.addEventListener("mouseover", getMousePos, true);
+            document.addEventListener("mousemove", getMousePos, true);
         } else if (document.attachEvent) {
             document.attachEvent("onmouseover", getMousePos);
         }
@@ -120,7 +116,7 @@ function define_GingerLibLiveSpy() {
 
     GingerLibLiveSpy.StartClickEventListner = function () {
         if (document.addEventListener) {
-            document.addEventListener("click", getMouseClickedPos);
+            document.addEventListener("click", getMouseClickedPos, true);
         } else if (document.attachEvent) {
             document.attachEvent("onclick", getMouseClickedPos);
         }
@@ -128,97 +124,74 @@ function define_GingerLibLiveSpy() {
 
     // ✅ Android TV
     GingerLibLiveSpy.StartFocusEventListener = function () {
-        if (document.addEventListener) {
-            document.addEventListener("focus", getFocusedElement, true);
-        } else if (document.attachEvent) {
-            document.attachEvent("onfocusin", getFocusedElement);
-        }
+        document.addEventListener("focus", getFocusedElement, true);
     };
 
     GingerLibLiveSpy.StartKeyEventListener = function () {
-        if (document.addEventListener) {
-            document.addEventListener("keydown", getRemoteClick);
-        } else if (document.attachEvent) {
-            document.attachEvent("onkeydown", getRemoteClick);
-        }
+        document.addEventListener("keydown", getRemoteClick, true);
     };
 
     //------------------------------------------------------------------------------------------------------------------
-    // Element From Point (Mouse + Shadow DOM + Android TV fallback)
+    // Element From Point (Web + Shadow DOM + Android TV fallback)
     //------------------------------------------------------------------------------------------------------------------
     GingerLibLiveSpy.ElementFromPoint = function () {
 
-        var X = GingerLibLiveSpy.GetXPoint();
-        var Y = GingerLibLiveSpy.GetYPoint();
+        var X = +GingerLibLiveSpy.GetXPoint();
+        var Y = +GingerLibLiveSpy.GetYPoint();
 
-        // ✅ Android TV & focus-only fallback
-        if ((!X || !Y || X === "0" || Y === "0") && CurrentFocusedElement) {
+        // ✅ Android TV fallback
+        if ((!X || !Y) && CurrentFocusedElement) {
             return CurrentFocusedElement;
         }
 
-        var depth = 0;
-        var resultElementFromPoint = null;
+        var element = document.elementFromPoint(X, Y);
+        element = normalizeNode(element);
 
-        function getCurrentDepth(element) {
-            var d = 0;
-            while (element && element.parentNode) {
-                element = element.parentNode;
-                d++;
-            }
-            return d;
+        // ✅ Dynamic shadow DOM support (SAFE)
+        var shadowRoots = getAllShadowRoots(document, []);
+        for (var i = 0; i < shadowRoots.length; i++) {
+            try {
+                var el = shadowRoots[i].elementFromPoint(X, Y);
+                if (el) element = normalizeNode(el);
+            } catch (e) { }
         }
 
-        for (var i = 0; i < allShadowRoots.length; i++) {
-            var shadowRoot = allShadowRoots[i];
-            var element = shadowRoot.elementFromPoint(X, Y);
-            if (!element) continue;
-
-            var currentDepth = getCurrentDepth(element);
-            if (depth < currentDepth) {
-                depth = currentDepth;
-                resultElementFromPoint = element;
-            }
-        }
-
-        if (!resultElementFromPoint) {
-            return document.elementFromPoint(X, Y);
-        }
-
-        return resultElementFromPoint;
+        return element;
     };
 
     //------------------------------------------------------------------------------------------------------------------
-    // Deepest Element From Point
+    // ✅ Correct Deepest Element (SAFE, backward compatible)
     //------------------------------------------------------------------------------------------------------------------
     GingerLibLiveSpy.DeepestElementFromPoint = function () {
 
-        var x = GingerLibLiveSpy.GetXPoint();
-        var y = GingerLibLiveSpy.GetYPoint();
+        var x = +GingerLibLiveSpy.GetXPoint();
+        var y = +GingerLibLiveSpy.GetYPoint();
 
-        var element = document.elementFromPoint(x, y) || CurrentFocusedElement;
-        if (!element) return null;
+        var base = GingerLibLiveSpy.ElementFromPoint();
+        if (!base) return null;
 
-        function getDeepestElement(currElement, x, y) {
+        var candidate = base;
 
-            var children = currElement.querySelectorAll('*');
-
-            if (children.length === 0 && currElement.shadowRoot) {
-                children = currElement.shadowRoot.querySelectorAll('*');
-            }
+        while (true) {
+            var found = null;
+            var children = candidate.shadowRoot
+                ? candidate.shadowRoot.children
+                : candidate.children;
 
             for (var i = 0; i < children.length; i++) {
-                var child = children[i];
-                var bounds = child.getBoundingClientRect();
-
-                if (x >= bounds.left && x <= bounds.right &&
-                    y >= bounds.top && y <= bounds.bottom) {
-                    return getDeepestElement(child, x, y);
+                var r = children[i].getBoundingClientRect();
+                if (x >= r.left && x <= r.right &&
+                    y >= r.top && y <= r.bottom) {
+                    found = children[i];
+                    break;
                 }
             }
-            return currElement;
+
+            if (!found) break;
+            candidate = found;
         }
 
-        return getDeepestElement(element, x, y);
+        return candidate;
     };
 
     //------------------------------------------------------------------------------------------------------------------
@@ -227,75 +200,9 @@ function define_GingerLibLiveSpy() {
     GingerLibLiveSpy.IsLiveSpyExist = function () {
         return "yes";
     };
-
-    try {
-    if (typeof define_GingerLibLiveSpy === 'function') define_GingerLibLiveSpy();
-    window._GingerLiveSpy = window._GingerLiveSpy || GingerLibLiveSpy || {};
-
-    (function () {
-        function ensureOverlay() {
-            var id = 'ginger-live-spy-overlay';
-            var el = document.getElementById(id);
-            if (!el) {
-                el = document.createElement('div');
-                el.id = id;
-                el.style.position = 'fixed';
-                el.style.pointerEvents = 'none';
-                el.style.zIndex = 2147483646;
-                el.style.border = '3px solid rgba(255,0,0,0.95)';
-                el.style.background = 'rgba(255,0,0,0.08)';
-                el.style.borderRadius = '4px';
-                document.body.appendChild(el);
-            }
-            return el;
-        }
-
-        function clearOverlay() {
-            var el = document.getElementById('ginger-live-spy-overlay');
-            if (el && el.parentNode) {
-                el.parentNode.removeChild(el);
-            }
-        }
-
-        window._GingerLiveSpy.highlightElement = function (el) {
-            try {
-                if (!el) return "no-element";
-                var rect = el.getBoundingClientRect();
-                var overlay = ensureOverlay();
-                overlay.style.left = rect.left + 'px';
-                overlay.style.top = rect.top + 'px';
-                overlay.style.width = rect.width + 'px';
-                overlay.style.height = rect.height + 'px';
-                overlay.style.display = 'block';
-                return "ok";
-            } catch (e) {
-                return "error";
-            }
-        };
-
-        window._GingerLiveSpy.highlightRect = function (x, y, w, h) {
-            try {
-                if (isNaN(x) || isNaN(y) || isNaN(w) || isNaN(h)) return "invalid";
-                var overlay = ensureOverlay();
-                overlay.style.left = (x) + 'px';
-                overlay.style.top = (y) + 'px';
-                overlay.style.width = (w) + 'px';
-                overlay.style.height = (h) + 'px';
-                overlay.style.display = 'block';
-                return "ok";
-            } catch (e) {
-                return "error";
-            }
-        };
-
-        window._GingerLiveSpy.clearHighlight = function () {
-            try {
-                clearOverlay();
-                return "ok";
-            } catch (e) {
-                return "error";
-            }
-        };
-    })();
-} catch (e) { /* tolerate errors */ }
 }
+
+// ✅ Initialize once (NO recursion)
+try {
+    define_GingerLibLiveSpy();
+} catch (e) { }
