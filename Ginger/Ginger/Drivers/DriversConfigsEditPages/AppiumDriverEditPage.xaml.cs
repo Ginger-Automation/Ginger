@@ -141,6 +141,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             mDevicePlatformType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DevicePlatformType));
             BindingHandler.ObjFieldBinding(xAndroidRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDevicePlatformType.Android));
+            BindingHandler.ObjFieldBinding(xAndroidTvRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDevicePlatformType.AndroidTv));
             BindingHandler.ObjFieldBinding(xIOSRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDevicePlatformType.iOS));
 
             if (IsUFTCapabilityExist())
@@ -186,11 +187,17 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void SetPlatformCapabilities()
         {
-            DriverConfigParam platformName = new DriverConfigParam() { Parameter = "platformName", Description = "Which mobile OS platform to use" };
+            DriverConfigParam platformName = new DriverConfigParam() { Parameter = "platformName", Description = "Which OS platform to use" };
             DriverConfigParam automationName = new DriverConfigParam() { Parameter = "appium:automationName", Description = "Which automation engine to use" };
             if (mDevicePlatformType.Value == nameof(eDevicePlatformType.Android))
             {
                 platformName.Value = "Android";
+                automationName.Value = "UiAutomator2";
+            }
+
+            else if(mDevicePlatformType.Value == nameof(eDevicePlatformType.AndroidTv))
+            {
+                platformName.Value = "AndroidTV";
                 automationName.Value = "UiAutomator2";
             }
             else
@@ -320,6 +327,10 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             {
                 SetCurrentCapabilityValue(deviceName);
                 SetCurrentCapabilityValue(udid);
+            }
+             if (mDevicePlatformType.Value == nameof(eDevicePlatformType.AndroidTv))
+            {
+                DeleteCapabilityIfExist("appium:bundleId");
             }
             AddOrUpdateCapability(deviceName);
             AddOrUpdateCapability(udid);
@@ -475,14 +486,139 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void PlatformSelectionChanged(object sender, RoutedEventArgs e)
         {
-            if (this.IsLoaded && xAutoUpdateCapabiltiies != null && xAutoUpdateCapabiltiies.IsChecked == true)
+            if (!this.IsLoaded) return;
+
+            bool isTvSelected = xTvRdBtn?.IsChecked == true;
+            bool isMobileSelected = xMobileRdBtn?.IsChecked == true;
+
+            // 1) UI visibility & enabled state
+            // Device source (mobile labs) - for TV only "Other" should be visible/used
+            if (xUFTRdBtn != null) xUFTRdBtn.Visibility = isTvSelected ? Visibility.Collapsed : Visibility.Visible;
+            if (xKobitonRdBtn != null) xKobitonRdBtn.Visibility = isTvSelected ? Visibility.Collapsed : Visibility.Visible;
+            if (xLocalAppiumRdBtn != null) xLocalAppiumRdBtn.Visibility = Visibility.Visible; // always visible
+
+            // SubPlatforms
+            if (xAndroidRdBtn != null) xAndroidRdBtn.Visibility = isTvSelected ? Visibility.Collapsed : Visibility.Visible;
+            if (xIOSRdBtn != null) xIOSRdBtn.Visibility = isTvSelected ? Visibility.Collapsed : Visibility.Visible;
+            if (xAndroidTvRdBtn != null) xAndroidTvRdBtn.Visibility = isTvSelected ? Visibility.Visible : Visibility.Collapsed;
+
+            // Icons visibility (keep in sync)
+            if (xAndroidIconImg != null) xAndroidIconImg.Visibility = xAndroidRdBtn.Visibility;
+            if (xIosIconImg != null) xIosIconImg.Visibility = xIOSRdBtn.Visibility;
+            if (xAndroidTvIconImg != null) xAndroidTvIconImg.Visibility = xAndroidTvRdBtn.Visibility;
+
+            // App Type - for TV only Native/Hybrid allowed
+            if (xNativeHybRdBtn != null) xNativeHybRdBtn.Visibility = Visibility.Visible;
+            if (xWebRdBtn != null) xWebRdBtn.Visibility = isTvSelected ? Visibility.Collapsed : Visibility.Visible;
+
+            // 2) Force logical selections and update bound DriverConfigParam values so runtime config and capabilities reflect the UI
+            // Device platform (DevicePlatformType)
+            if (mDevicePlatformType != null)
             {
-                SetPlatformCapabilities();
-                SetApplicationCapabilities();
+                if (isTvSelected)
+                {
+                    // Set to AndroidTv for TV selection
+                    mDevicePlatformType.Value = nameof(eDevicePlatformType.AndroidTv);
+                    if (xAndroidTvRdBtn != null) xAndroidTvRdBtn.IsChecked = true;
+                }
+                else if (isMobileSelected)
+                {
+                    // If switching back to Mobile and current value was AndroidTv, pick Android as default
+                    if (mDevicePlatformType.Value == nameof(eDevicePlatformType.AndroidTv) || string.IsNullOrEmpty(mDevicePlatformType.Value))
+                    {
+                        mDevicePlatformType.Value = nameof(eDevicePlatformType.Android);
+                        if (xAndroidRdBtn != null) xAndroidRdBtn.IsChecked = true;
+                    }
+                }
+                mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.DevicePlatformType));
+            }
+
+            // Device source (DeviceSource)
+            if (mDeviceSource != null)
+            {
+                if (isTvSelected)
+                {
+                    // TV uses "LocalAppium" only
+                    mDeviceSource.Value = nameof(eDeviceSource.LocalAppium);
+                    if (xLocalAppiumRdBtn != null) xLocalAppiumRdBtn.IsChecked = true;
+                }
+                // if Mobile, keep the user's selection (no forced change)
+                mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.DeviceSource));
+            }
+
+            // App type
+            if (mAppType != null)
+            {
+                if (isTvSelected)
+                {
+                    mAppType.Value = nameof(eAppType.NativeHybride);
+                    if (xNativeHybRdBtn != null) xNativeHybRdBtn.IsChecked = true;
+                }
+                // if Mobile, keep current selection
+                mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.AppType));
+            }
+
+            // 3) Update capabilities according to the new platform selection when Auto Update is enabled
+            try
+            {
+                if (xAutoUpdateCapabiltiies != null && xAutoUpdateCapabiltiies.IsChecked == true)
+                {
+                    if (isTvSelected)
+                    {
+                        // For TV: ensure AndroidTV platform capabilities applied and device-source specific capabilities removed
+                        // Update platform & device caps
+                        SetPlatformCapabilities();
+                        SetDeviceCapabilities();
+                        SetApplicationCapabilities();
+                        SetOtherCapabilities();
+
+                        // Ensure server-specific capabilities are removed (not relevant for TV)
+                        DeleteUFTMServerCapabilities();
+                        DeleteKobitonServerCapabilities();
+                    }
+                    else
+                    {
+                        // Mobile: restore mobile defaults and add device-source capabilities if needed
+                        SetPlatformCapabilities();
+                        SetDeviceCapabilities();
+                        SetApplicationCapabilities();
+                        SetOtherCapabilities();
+                        // Device source caps reflect actual source, call SetDeviceSourceCapabilities to add/remove UFT/Kobiton caps if needed
+                        SetDeviceSourceCapabilities();
+                    }
+
+                    // Ensure grid UI shows updated capabilities
+                    xCapabilitiesGrid?.InitViewItems();
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to auto-update capabilities after platform change", ex);
+            }
+
+            // 4) If driver is running, apply the config change at runtime
+            if (mAgent?.AgentOperations != null)
+            {
+                if (mAgent.AgentOperations is GingerCore.AgentOperations ops && ops.Driver != null)
+                {
+                    System.Threading.Tasks.Task.Run(() =>
+                    {
+                        try
+                        {
+                            ops.SetDriverConfiguration();
+                            ops.WaitForAgentToBeReady();
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to apply agent driver configuration after platform change", ex);
+                        }
+                    });
+                }
             }
         }
 
-        private async void DeviceSourceSelectionChanged(object sender, RoutedEventArgs e)
+
+        private void DeviceSourceSelectionChanged(object sender, RoutedEventArgs e)
         {
             if (this.IsLoaded && xAutoUpdateCapabiltiies != null && xAutoUpdateCapabiltiies.IsChecked == true)
             {
@@ -529,11 +665,112 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if ((xAndroidRdBtn.IsChecked == null || xAndroidRdBtn.IsChecked == false) && (xIOSRdBtn.IsChecked == null || xIOSRdBtn.IsChecked == false))
+            if ((xAndroidRdBtn.IsChecked == null || xAndroidRdBtn.IsChecked == false) &&
+       (xIOSRdBtn.IsChecked == null || xIOSRdBtn.IsChecked == false) &&
+       (xAndroidTvRdBtn.IsChecked == null || xAndroidTvRdBtn.IsChecked == false))
             {
-                //TODO: binding lost from some reason- need to find out why
+                // binding may have been lost - rebind radio buttons
                 BindRadioButtons();
             }
+
+            // Ensure config DriverConfigParam instances are available
+            if (mDevicePlatformType == null)
+            {
+                mDevicePlatformType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DevicePlatformType));
+                // re-bind UI to param if needed
+                BindingHandler.ObjFieldBinding(xAndroidRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDevicePlatformType.Android));
+                BindingHandler.ObjFieldBinding(xAndroidTvRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDevicePlatformType.AndroidTv));
+                BindingHandler.ObjFieldBinding(xIOSRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDevicePlatformType.iOS));
+            }
+
+            if (mDeviceSource == null)
+            {
+                mDeviceSource = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceSource));
+                BindingHandler.ObjFieldBinding(xLocalAppiumRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDeviceSource.LocalAppium));
+                BindingHandler.ObjFieldBinding(xUFTRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDeviceSource.MicroFoucsUFTMLab));
+                BindingHandler.ObjFieldBinding(xKobitonRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDeviceSource.Kobiton));
+            }
+
+            if (mAppType == null)
+            {
+                mAppType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppType));
+                BindingHandler.ObjFieldBinding(xNativeHybRdBtn, RadioButton.IsCheckedProperty, mAppType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eAppType.NativeHybride));
+                BindingHandler.ObjFieldBinding(xWebRdBtn, RadioButton.IsCheckedProperty, mAppType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eAppType.Web));
+            }
+
+            // Default values (keep Mobile as default platform)
+            if (string.IsNullOrEmpty(mDevicePlatformType.Value))
+            {
+                mDevicePlatformType.Value = nameof(eDevicePlatformType.Android);
+                mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.DevicePlatformType));
+            }
+
+            // Default device source if not set
+            if (string.IsNullOrEmpty(mDeviceSource.Value))
+            {
+                mDeviceSource.Value = nameof(eDeviceSource.LocalAppium);
+                mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.DeviceSource));
+            }
+
+            // Default app type if not set
+            if (string.IsNullOrEmpty(mAppType.Value))
+            {
+                mAppType.Value = nameof(eAppType.NativeHybride);
+                mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.AppType));
+            }
+
+            // Ensure radio buttons reflect the DriverConfigParam values and then apply visibility rules
+            try
+            {
+                // Platform radios
+                if (mDevicePlatformType.Value == nameof(eDevicePlatformType.AndroidTv))
+                {
+                    xTvRdBtn.IsChecked = true;
+                    xAndroidTvRdBtn.IsChecked = true;
+                }
+                else if (mDevicePlatformType.Value == nameof(eDevicePlatformType.iOS))
+                {
+                    xMobileRdBtn.IsChecked = true;
+                    xIOSRdBtn.IsChecked = true;
+                }
+                else
+                {
+                    // default / Android
+                    xMobileRdBtn.IsChecked = true;
+                    xAndroidRdBtn.IsChecked = true;
+                }
+
+                // Device source radios
+                if (mDeviceSource.Value == nameof(eDeviceSource.MicroFoucsUFTMLab))
+                {
+                    xUFTRdBtn.IsChecked = true;
+                }
+                else if (mDeviceSource.Value == nameof(eDeviceSource.Kobiton))
+                {
+                    xKobitonRdBtn.IsChecked = true;
+                }
+                else
+                {
+                    xLocalAppiumRdBtn.IsChecked = true;
+                }
+
+                // App type radios
+                if (mAppType.Value == nameof(eAppType.Web))
+                {
+                    xWebRdBtn.IsChecked = true;
+                }
+                else
+                {
+                    xNativeHybRdBtn.IsChecked = true;
+                }
+            }
+            catch
+            {
+                // ignore individual control issues during load
+            }
+
+            // Apply visibility + capabilities according to current platform selection
+            PlatformSelectionChanged(null, null);
         }
 
         private void DeleteUFTMServerCapabilities()

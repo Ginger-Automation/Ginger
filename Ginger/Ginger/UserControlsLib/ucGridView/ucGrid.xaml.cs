@@ -28,6 +28,7 @@ using Ginger.Extensions;
 using Ginger.Help;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
+using Ginger.UserControlsLib.ucGridView;
 using GingerCore.GeneralLib;
 using GingerWPF.DragDropLib;
 using System;
@@ -1572,16 +1573,31 @@ namespace Ginger
                             case GridColView.eGridColStyleType.ComboBox:
                                 gridCol = new DataGridComboBoxColumn();
                                 // We can get a list which was converted from enum value and contains value and text CEI style
-                                if (colView.CellValuesList is List<ComboEnumItem>)
+
+                                // If we got an explicit list of ComboEnumItem values we must convert between the model and enum/object used by the ComboBox
+                                if (colView.CellValuesList is List<ComboEnumItem> comboEnumItems)
                                 {
-                                    ((DataGridComboBoxColumn)gridCol).DisplayMemberPath = ComboEnumItem.Fields.text;
-                                    ((DataGridComboBoxColumn)gridCol).SelectedValuePath = ComboEnumItem.Fields.Value;
-                                    ((DataGridComboBoxColumn)gridCol).SelectedValueBinding = binding;
+                                    ((DataGridComboBoxColumn)gridCol).DisplayMemberPath = nameof(ComboEnumItem.text);
+                                    ((DataGridComboBoxColumn)gridCol).SelectedValuePath = nameof(ComboEnumItem.Value);
+
+                                    // SelectedValueBinding using converter that maps model <-> combo
+                                    var selBinding = new Binding(colView.Field)
+                                    {
+                                        Mode = binding.Mode,
+                                        UpdateSourceTrigger = binding.UpdateSourceTrigger,
+                                        Converter = new ComboEnumItemValueConverter(comboEnumItems),
+                                        // Choose store behavior:
+                                        // "StoreDescription" -> save the enum description string to model (string property)
+                                        // "StoreEnum" -> save the enum object/value to model (enum-typed property)
+                                        ConverterParameter = "StoreDescription"
+                                    };
+                                    ((DataGridComboBoxColumn)gridCol).SelectedValueBinding = selBinding;
+
+                                    ((DataGridComboBoxColumn)gridCol).ItemsSource = comboEnumItems;
                                 }
                                 else
                                 {
-                                    //or we can get just simple list of strings if not CEI list
-                                    // Assume we got List<string>
+                                    // keep existing fallback behavior for non-ComboEnumItem lists
                                     if (colView.ComboboxDisplayMemberField is not null and not "")
                                     {
                                         ((DataGridComboBoxColumn)gridCol).DisplayMemberPath = colView.ComboboxDisplayMemberField;
@@ -1596,17 +1612,16 @@ namespace Ginger
                                     {
                                         ((DataGridComboBoxColumn)gridCol).TextBinding = binding;
                                     }
-                                }
 
-                                if (!colView.ComboboxSortBy.IsNullOrEmpty() && colView.CellValuesList is IObservableList)
-                                {
-                                    ((DataGridComboBoxColumn)gridCol).ItemsSource = ((IObservableList)colView.CellValuesList).AsCollectionViewOrderBy(colView.ComboboxSortBy);
+                                    if (!colView.ComboboxSortBy.IsNullOrEmpty() && colView.CellValuesList is IObservableList)
+                                    {
+                                        ((DataGridComboBoxColumn)gridCol).ItemsSource = ((IObservableList)colView.CellValuesList).AsCollectionViewOrderBy(colView.ComboboxSortBy);
+                                    }
+                                    else
+                                    {
+                                        ((DataGridComboBoxColumn)gridCol).ItemsSource = colView.CellValuesList;
+                                    }
                                 }
-                                else
-                                {
-                                    ((DataGridComboBoxColumn)gridCol).ItemsSource = colView.CellValuesList;
-                                }
-
                                 break;
 
                             case GridColView.eGridColStyleType.Link:
@@ -1810,9 +1825,12 @@ namespace Ginger
             Binding selectedValueBinding = new Binding(selectedValueField)
             {
                 Mode = BindingMode.TwoWay,
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                Converter = new ComboEnumItemValueConverter(valuesList),
+                ConverterParameter = "StoreDescription" // change to "StoreEnum" if you want enum value stored
             };
             combo.SetBinding(ComboBox.SelectedValueProperty, selectedValueBinding);
+
             if (isreadonly)
             {
                 Binding ReadonlyBinding = new Binding(readonlyfield)
@@ -2143,11 +2161,17 @@ namespace Ginger
 
         public class ImageMakerToSourceConverter : IValueConverter
         {
+
             public object Convert(object value, Type targetType, object parameter,
                     System.Globalization.CultureInfo culture)
             {
-                eImageType imageType = (eImageType)value;
-                return ImageMakerControl.GetImageSource(imageType);
+                if (value is Amdocs.Ginger.Common.Enums.eImageType imageType)
+                {
+                    // Increase width for MultipleScreen image (used for Mobile/TV) while keeping default for others
+                    double desiredWidth = imageType == Amdocs.Ginger.Common.Enums.eImageType.MultipleScreen ? 27.0 : 0.0;
+                    return ImageMakerControl.GetImageSource(imageType, null, 0, null, desiredWidth);
+                }
+                return ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.Empty);
             }
 
             public object ConvertBack(object value, Type targetType,

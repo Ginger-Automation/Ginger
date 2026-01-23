@@ -164,7 +164,7 @@ namespace Ginger.SolutionWindows
             {
                 "Windows" => ePlatformType.Windows,
                 "Unix" => ePlatformType.Unix,
-                "Mobile" => ePlatformType.Mobile,
+                "Mobile/TV" => ePlatformType.Mobile,
                 "Web" => ePlatformType.Web,
                 "DOS" => ePlatformType.DOS,
                 "Java" => ePlatformType.Java,
