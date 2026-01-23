@@ -234,11 +234,48 @@ namespace GingerCore.Environments
                 return nameof(this.Name);
             }
         }
+        //public ePlatformType Platform
+        //{
+        //    get;
+        //    set;
+        //} = ePlatformType.NA;
+        private ePlatformType mPlatform = ePlatformType.NA;
+
+        [IsSerializedForLocalRepository]
         public ePlatformType Platform
         {
-            get;
-            set;
-        } = ePlatformType.NA;
+            get => mPlatform;
+            set
+            {
+                if (mPlatform != value)
+                {
+                    mPlatform = value;
+                    OnPropertyChanged(nameof(Platform));
+                    // Notify UI the description changed
+                    OnPropertyChanged(nameof(PlatformDescription));
+                    // ItemImageType depends on Platform so notify it too
+                    OnPropertyChanged(nameof(ItemImageType));
+                }
+            }
+        }
+
+        // Expose the enum description for UI binding (uses existing helper)
+        public string PlatformDescription
+        {
+            get
+            {
+                try
+                {
+                    // Use the shared helper that returns EnumValueDescription (falls back to name)
+                    return Amdocs.Ginger.Common.GeneralLib.General.GetEnumValueDescription(typeof(ePlatformType), this.Platform);
+                }
+                catch
+                {
+                    return this.Platform.ToString();
+                }
+            }
+        }
+
 
         public void SetDataFromAppPlatform(ObservableList<ApplicationPlatform> ApplicationPlatforms)
         {

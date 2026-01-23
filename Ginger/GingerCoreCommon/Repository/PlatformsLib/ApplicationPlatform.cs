@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
+using System;
 
 namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
 {
@@ -25,7 +26,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
     {
         //[IsSerializedForLocalRepository]
         //public Guid GUID { get; set; }//Need to be deleted, conflicts with base 'Guid' property
-
+        
         string mAppName;
         [IsSerializedForLocalRepository]
         public string AppName
@@ -82,10 +83,71 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
                 {
                     mPlatform = value;
                     OnPropertyChanged(nameof(Platform));
+                    // notify UI that the description changed as well
+                    OnPropertyChanged(nameof(PlatformDescription));
                 }
             }
         }
 
+        public string PlatformDescription
+        {
+            get
+            {
+                try
+                {
+                    // Return human friendly description if available, otherwise enum name
+                    return Amdocs.Ginger.Common.GeneralLib.General.GetEnumValueDescription(typeof(ePlatformType), this.Platform);
+                }
+                catch
+                {
+                    return this.Platform.ToString();
+                }
+            }
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    return;
+
+                // If value is already the enum name, try parse directly
+                if (Enum.TryParse<ePlatformType>(value, ignoreCase: true, out var parsedByName))
+                {
+                    if (this.Platform != parsedByName)
+                    {
+                        this.Platform = parsedByName;
+                        OnPropertyChanged(nameof(Platform));
+                        OnPropertyChanged(nameof(PlatformDescription));
+                    }
+                    return;
+                }
+
+                // Try to match the provided description to an enum value
+                foreach (ePlatformType p in Enum.GetValues(typeof(ePlatformType)))
+                {
+                    string desc;
+                    try
+                    {
+                        desc = Amdocs.Ginger.Common.GeneralLib.General.GetEnumValueDescription(typeof(ePlatformType), p);
+                    }
+                    catch
+                    {
+                        desc = p.ToString();
+                    }
+
+                    if (!string.IsNullOrEmpty(desc) && string.Equals(desc, value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (this.Platform != p)
+                        {
+                            this.Platform = p;
+                            OnPropertyChanged(nameof(Platform));
+                            OnPropertyChanged(nameof(PlatformDescription));
+                        }
+                        return;
+                    }
+                }
+
+                // If nothing matched - ignore silently (keeps previous safe state)
+            }
+        }
         string mDescription;
         [IsSerializedForLocalRepository]
         public string Description
@@ -138,6 +200,8 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
             }
         }
 
+
+
         public static eImageType GetPlatformImage(ePlatformType platformType = ePlatformType.NA)
         {
             return platformType switch
@@ -146,7 +210,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
                 ePlatformType.Web => eImageType.Globe,
                 ePlatformType.WebServices => eImageType.Exchange,
                 ePlatformType.Java => eImageType.Java,
-                ePlatformType.Mobile => eImageType.Mobile,
+                ePlatformType.Mobile => eImageType.MultipleScreen,
                 ePlatformType.Windows => eImageType.WindowsIcon,
                 ePlatformType.PowerBuilder => eImageType.Runing,
                 ePlatformType.DOS => eImageType.Dos,

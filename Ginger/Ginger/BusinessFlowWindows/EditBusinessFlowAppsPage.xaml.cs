@@ -58,11 +58,12 @@ namespace Ginger.BusinessFlowWindows
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
             {
                 GridColsView =
-            [
-                new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 },
-                new GridColView() { Field = "AppName", Header = "Application Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay },
-                new GridColView() { Field = "Platform", Header = "Platform", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay },
-            ]
+                [
+                    new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 },
+                    new GridColView() { Field = "AppName", Header = "Application Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay },
+                    // Use description so UI shows "Mobile/TV"
+                    new GridColView() { Field = nameof(ApplicationPlatform.PlatformDescription), Header = "Platform", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay },
+                ]
             };
 
             AppsGrid.SetAllColumnsDefaultView(view);

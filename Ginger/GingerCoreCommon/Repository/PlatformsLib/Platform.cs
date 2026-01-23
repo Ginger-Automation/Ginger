@@ -27,7 +27,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
         NA,
         [EnumValueDescription("Web")]
         Web,
-        [EnumValueDescription("Mobile")]
+        [EnumValueDescription("Mobile/TV")]
         Mobile,
         [EnumValueDescription("Unix")]
         Unix,
@@ -51,6 +51,8 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
         Service
         //AndroidDevice,  // rename to Android, join with Android
     }
+
+
 
     //public class Platform // : RepositoryItem
     //{
