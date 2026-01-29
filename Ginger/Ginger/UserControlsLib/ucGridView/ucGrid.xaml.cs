@@ -1572,24 +1572,19 @@ namespace Ginger
 
                             case GridColView.eGridColStyleType.ComboBox:
                                 gridCol = new DataGridComboBoxColumn();
-                                // We can get a list which was converted from enum value and contains value and text CEI style
 
-                                // If we got an explicit list of ComboEnumItem values we must convert between the model and enum/object used by the ComboBox
                                 if (colView.CellValuesList is List<ComboEnumItem> comboEnumItems)
                                 {
                                     ((DataGridComboBoxColumn)gridCol).DisplayMemberPath = nameof(ComboEnumItem.text);
                                     ((DataGridComboBoxColumn)gridCol).SelectedValuePath = nameof(ComboEnumItem.Value);
 
-                                    // SelectedValueBinding using converter that maps model <-> combo
                                     var selBinding = new Binding(colView.Field)
                                     {
                                         Mode = binding.Mode,
                                         UpdateSourceTrigger = binding.UpdateSourceTrigger,
                                         Converter = new ComboEnumItemValueConverter(comboEnumItems),
-                                        // Choose store behavior:
-                                        // "StoreDescription" -> save the enum description string to model (string property)
-                                        // "StoreEnum" -> save the enum object/value to model (enum-typed property)
-                                        ConverterParameter = "StoreDescription"
+                                        // CHANGED: store enum, not description
+                                        ConverterParameter = "StoreEnum"
                                     };
                                     ((DataGridComboBoxColumn)gridCol).SelectedValueBinding = selBinding;
 
@@ -1827,7 +1822,8 @@ namespace Ginger
                 Mode = BindingMode.TwoWay,
                 UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
                 Converter = new ComboEnumItemValueConverter(valuesList),
-                ConverterParameter = "StoreDescription" // change to "StoreEnum" if you want enum value stored
+                // CHANGED: store enum value, not description string
+                ConverterParameter = "StoreEnum"
             };
             combo.SetBinding(ComboBox.SelectedValueProperty, selectedValueBinding);
 
