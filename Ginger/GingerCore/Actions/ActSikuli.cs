@@ -291,7 +291,7 @@ namespace GingerCore.Actions
 
                     if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
                     {
-                        System.Threading.Tasks.Task.Run(() => SetFocusToSelectedApplicationInstance());
+                        SetFocusToSelectedApplicationInstance();
                     }
                     switch (ActSikuliOperation)
                     {
@@ -299,7 +299,16 @@ namespace GingerCore.Actions
                             sekuliScreen.Click(sikuliPattern);
                             break;
                         case eActSikuliOperation.SetValue:
-                            sekuliScreen.Type(sikuliPattern, ValueExpression.Calculate(SetTextValue));
+                            string textValue = ValueExpression.Calculate(SetTextValue);
+                            if (!string.IsNullOrEmpty(textValue))
+                            {
+                                // Use KeyModifier.NONE for normal typing
+                                sekuliScreen.Type(sikuliPattern, textValue, KeyModifier.NONE);
+                            }
+                            else
+                            {
+                                Error = "SetTextValue is empty";
+                            }
                             break;
                         case eActSikuliOperation.DoubleClick:
                             sekuliScreen.DoubleClick(sikuliPattern);
