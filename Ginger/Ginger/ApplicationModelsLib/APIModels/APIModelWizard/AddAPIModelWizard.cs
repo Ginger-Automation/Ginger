@@ -449,7 +449,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 else
                 {
                     RepositoryFolderBase rfFolderBase = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(apiModel.ContainingFolder);
-                    rfFolderBase.AddRepositoryItem(apiModel);
+                    if (rfFolderBase != null)
+                    {
+                        rfFolderBase.AddRepositoryItem(apiModel);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to find repository folder at path: '{apiModel.ContainingFolder}'. Adding API model '{apiModel.Name}' to parent folder '{APIModelFolder?.FolderFullPath}' instead.");
+                        APIModelFolder?.AddRepositoryItem(apiModel);
+                    }
                 }
             }
         }
