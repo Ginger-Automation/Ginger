@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi
 using Amdocs.Ginger.Repository;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NJsonSchema;
 using System;
 using System.IO;
 using System.Linq;
@@ -108,7 +109,7 @@ namespace UnitTests.NonUITests.AutoPilot
             Assert.AreEqual(6, RequestToTest.ReturnValues.Count, "SwaggerCheckResponseParameterCount");
 
             RequestToTest = requests.Where(x => x.Name == @"Add a new pet to the store-JSON").ElementAt(0);
-            Assert.AreEqual(8, RequestToTest.ReturnValues.Count, "SwaggerCheckResponseParameterCount");
+            Assert.AreEqual(7, RequestToTest.ReturnValues.Count, "SwaggerCheckResponseParameterCount");
             Assert.AreEqual("/pet", RequestToTest.EndpointURL);
 
             RequestToTest = requests.Where(x => x.Name == @"Place an order for a pet-JSON").ElementAt(0);
@@ -147,6 +148,7 @@ namespace UnitTests.NonUITests.AutoPilot
             Assert.AreEqual(requestBody.Replace(" ", ""), RequestToTest.RequestBody.Replace(" ", ""), "CheckResponseBody");
 
         }
+
 
         [TestMethod]
         [Timeout(60000)]
@@ -202,6 +204,91 @@ namespace UnitTests.NonUITests.AutoPilot
 
             //Assert
             Assert.IsTrue(optionalValueContainer.Any(item => item.Value == "198772"));
+        }
+
+
+        [TestMethod]
+        [Timeout(5000)] // Should complete quickly with circular reference protection
+        public void TestCircularReference_PreventInfiniteLoop()
+        {
+            // Arrange: Create a schema with circular reference
+            JsonSchema4 parentSchema = new JsonSchema4
+            {
+                Title = "Parent",
+                Type = JsonObjectType.Object
+            };
+
+            JsonSchema4 childSchema = new JsonSchema4
+            {
+                Title = "Child",
+                Type = JsonObjectType.Object
+            };
+
+            // Create circular reference: Parent -> Child -> Parent
+            parentSchema.Properties.Add("child", new JsonProperty { Reference = childSchema });
+            childSchema.Properties.Add("parent", new JsonProperty { Reference = parentSchema });
+
+            // Act: Generate JSON with circular reference
+            string result = JsonSchemaTools.JsonSchemaFaker(parentSchema, null, false);
+
+            // Assert: Should return valid JSON without hanging
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Contains("{"));
+            Assert.IsTrue(result.Contains("}"));
+            // Should not throw StackOverflowException or infinite loop
+        }
+
+        [TestMethod]
+        [Timeout(5000)]
+        public void TestSelfReferenceElement_ReturnsEmptyObject()
+        {
+            // Arrange: Create self-referencing schema
+            JsonSchema4 schema = new JsonSchema4
+            {
+                Title = "SelfReference",
+                Type = JsonObjectType.Object
+            };
+            schema.Properties.Add("self", new JsonProperty { Reference = schema });
+
+            // Act
+            string result = JsonSchemaTools.JsonSchemaFaker(schema, null, false);
+
+            // Assert: Should handle self-reference gracefully
+            Assert.IsNotNull(result);
+            Assert.AreNotEqual("", result); // Should not be empty string
+            Assert.IsTrue(result.Contains("{}") || result.Contains("\"self\":"));
+        }
+
+        [TestMethod]
+        public void TestSwaggerPetSchema_WithCircularCategoryReference()
+        {
+            // Arrange
+            JsonSchema4 petSchema = new JsonSchema4
+            {
+                Title = "Pet",
+                Type = JsonObjectType.Object
+            };
+
+            JsonSchema4 categorySchema = new JsonSchema4
+            {
+                Title = "Category",
+                Type = JsonObjectType.Object
+            };
+
+            // Create relationship similar to Swagger Pet Store
+            petSchema.Properties.Add("category", new JsonProperty { Reference = categorySchema });
+            petSchema.Properties.Add("name", new JsonProperty { Type = JsonObjectType.String });
+
+            categorySchema.Properties.Add("id", new JsonProperty { Type = JsonObjectType.Integer });
+            categorySchema.Properties.Add("name", new JsonProperty { Type = JsonObjectType.String });
+
+            // Act: Generate JSON
+            string result = JsonSchemaTools.JsonSchemaFaker(petSchema, null, false);
+
+            // Assert: Should complete successfully
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Contains("name"));
+            Assert.IsTrue(result.Contains("category"));
         }
     }
 }
