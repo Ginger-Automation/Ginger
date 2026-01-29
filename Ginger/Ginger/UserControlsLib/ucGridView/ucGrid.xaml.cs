@@ -1822,7 +1822,7 @@ namespace Ginger
                 Mode = BindingMode.TwoWay,
                 UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
                 Converter = new ComboEnumItemValueConverter(valuesList),
-                // CHANGED: store enum value, not description string
+                
                 ConverterParameter = "StoreEnum"
             };
             combo.SetBinding(ComboBox.SelectedValueProperty, selectedValueBinding);
