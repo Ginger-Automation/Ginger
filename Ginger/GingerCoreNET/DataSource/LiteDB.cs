@@ -669,6 +669,10 @@ namespace GingerCoreNET.DataSource
         {
             //db." + DSTableName + ".find"
             DataTable dt = GetQueryOutput($"SELECT $ FROM {DSTableName}");
+            if (dt.Rows.Count == 0)
+            {
+                throw new Exception($"No row found in the datasource table: {DSTableName}");                
+            }
             DataRow row = dt.Rows[LocateRowValue];
             string rowValue = Convert.ToString(row["GINGER_ID"]);
 
