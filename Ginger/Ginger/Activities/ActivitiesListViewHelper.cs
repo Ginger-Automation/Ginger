@@ -209,28 +209,33 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return nameof(Activity.TargetApplicationPlatformName);
         }
 
-        public List<ListItemOperation> GetListOperations()
+        public List<ListItemOperation> GetListOperations(bool AddOperationIcon = true)
         {
             List<ListItemOperation> operationsList = [];
 
-            ListItemOperation addNew = new ListItemOperation
+            if (AddOperationIcon)
             {
-                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
-                AutomationID = "addNew",
-                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add,
-                ToolTip = "Add New " + GingerDicser.GetTermResValue(eTermResKey.Activity),
-                OperationHandler = AddNewHandler
-            };
-            operationsList.Add(addNew);
+                ListItemOperation addNew = new ListItemOperation
+                {
+                    SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                    AutomationID = "addNew",
+                    ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add,
+                    ToolTip = "Add New " + GingerDicser.GetTermResValue(eTermResKey.Activity),
+                    OperationHandler = AddNewHandler
+                };
+                operationsList.Add(addNew);
 
-            ListItemOperation addToFlow = new ListItemOperation
-            {
-                SupportedViews = [General.eRIPageViewMode.AddFromShardRepository, General.eRIPageViewMode.AddFromModel],
-                ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft,
-                ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "Add to"),
-                OperationHandler = AddFromRepository
-            };
-            operationsList.Add(addToFlow);
+                ListItemOperation addToFlow = new ListItemOperation
+                {
+                    SupportedViews = [General.eRIPageViewMode.AddFromShardRepository, General.eRIPageViewMode.AddFromModel],
+                    ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft,
+                    ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "Add to"),
+                    OperationHandler = AddFromRepository
+                };
+                operationsList.Add(addToFlow);
+            }
+
+            
 
             ListItemOperation editItem = new ListItemOperation
             {
