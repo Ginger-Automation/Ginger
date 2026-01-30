@@ -1329,12 +1329,6 @@ namespace Ginger.UserControlsLib.UCListView
                     xListView.ItemsSource = mObjList;
                 }
             }
-           
-            //if (mListViewHelper != null)
-            //{
-            //    SetListOperations();
-            //    SetListExtraOperations();
-            //}
         }
 
         public void Dispose()
