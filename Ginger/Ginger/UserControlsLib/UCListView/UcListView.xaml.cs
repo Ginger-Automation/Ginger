@@ -1321,7 +1321,7 @@ namespace Ginger.UserControlsLib.UCListView
                 xFolderTreeContainer.Visibility = Visibility.Collapsed;
                 xTreeCol.Width = new GridLength(0);
                 xListView.Visibility = Visibility.Visible;
-                this.Dispatcher.Invoke(() => SetListOperations(true));
+                this.Dispatcher.Invoke(() => SetListOperations());
 
                 // restore list ItemsSource
                 if (mObjList != null)
