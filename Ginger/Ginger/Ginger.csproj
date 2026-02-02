@@ -761,6 +761,7 @@
     <PackageReference Include="RoyWpf.System.Windows.Interactivity" Version="0.1.2" />
     <PackageReference Include="Selenium.WebDriver.IEDriver" Version="4.14.0" />
     <PackageReference Include="sharpadbclient" Version="2.3.23" />
+    <PackageReference Include="SSH.NET" Version="2023.0.1" />
     <PackageReference Include="Syncfusion.Shared.WPF" Version="20.1.0.55" />
     <PackageReference Include="System.Data.OleDb" Version="8.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />

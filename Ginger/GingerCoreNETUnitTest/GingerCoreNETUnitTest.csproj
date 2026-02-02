@@ -99,6 +99,7 @@
     <PackageReference Include="Moq" Version="4.20.69" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
     <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
+    <PackageReference Include="SSH.NET" Version="2023.0.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="System.Formats.Asn1" Version="9.0.1" />
     <PackageReference Include="System.IO.Packaging" Version="9.0.1" />

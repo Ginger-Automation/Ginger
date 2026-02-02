@@ -26,6 +26,7 @@
     <PackageReference Include="MimeKit" Version="4.10.0" />
     <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SSH.NET" Version="2023.0.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="System.Formats.Asn1" Version="9.0.1" />
     <PackageReference Include="System.IO.Packaging" Version="9.0.1" />
