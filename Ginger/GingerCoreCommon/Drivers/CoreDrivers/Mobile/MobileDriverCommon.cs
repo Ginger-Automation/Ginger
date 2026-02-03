@@ -21,14 +21,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile
     public enum eDevicePlatformType
     {
         Android = 0,
-        iOS = 1
+        iOS = 1,
+        AndroidTv = 2
     }
 
     public enum eDeviceSource
     {
         LocalAppium = 0,
         MicroFoucsUFTMLab = 1,
-        Kobiton = 2
+        Kobiton = 2,
+        AndroidTV = 3
+
     }
 
     public enum eAppType

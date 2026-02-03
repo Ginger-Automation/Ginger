@@ -1,94 +1,90 @@
-﻿/*
+﻿
+/*
 Copyright © 2014-2020 European Support Limited
-
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at 
-
 http://www.apache.org/licenses/LICENSE-2.0 
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS, 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
 See the License for the specific language governing permissions and 
 limitations under the License. 
+http://www.apache.org/licenses/LICENSE-2.0
 */
 
-// This JS will be injected into Browser active page, for use in Selenium driver and Java driver for Widgets 
-
-GingerLibLiveSpy = {};
-
-// Define the GingerLib of function we can use, in this way it is kind of JS OO, will not overlap with other JS scripts running on the page
-
 'use strict';
+
+// This JS will be injected into Browser active page,
+// for use in Selenium driver, Java driver, mobile, TV, etc.
+
+var GingerLibLiveSpy = {};
+
 function define_GingerLibLiveSpy() {
+
     GingerLibLiveSpy = {};
 
-    //----------------------------------------------------------------------------------------------------------------------
-    // To Highlight element we keep the current element and add/remove the GingerHighlight style to the element
-    //----------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    // Global State
+    //------------------------------------------------------------------------------------------------------------------
     var CurrentX;
-    var CurrentClickedX;
     var CurrentY;
+    var CurrentClickedX;
     var CurrentClickedY;
 
-    //----------------------------------------------------------------------------------------------------------------------
-    // Add Java Script to page
-    //----------------------------------------------------------------------------------------------------------------------
+    // ✅ Android TV / Focus-based platforms
+    var CurrentFocusedElement = null;
 
-    // Function to get all shadow roots recursively
-    function getAllShadowRoots(node, result = []) {
+    //------------------------------------------------------------------------------------------------------------------
+    // Utilities
+    //------------------------------------------------------------------------------------------------------------------
+    function getAllShadowRoots(node, result) {
+        result = result || [];
+        if (!node) return result;
+
         if (node.shadowRoot) {
             result.push(node.shadowRoot);
-            // Recursively get shadow roots inside the current shadow root
             getAllShadowRoots(node.shadowRoot, result);
         }
 
-        node = node.firstChild;
-        while (node) {
-            getAllShadowRoots(node, result);
-            node = node.nextSibling;
+        var child = node.firstChild;
+        while (child) {
+            getAllShadowRoots(child, result);
+            child = child.nextSibling;
         }
 
         return result;
     }
 
-    // Get all shadow roots in the entire document
-    const allShadowRoots = getAllShadowRoots(document);
+    function normalizeNode(el) {
+        return (el && el.nodeType === 3) ? el.parentElement : el;
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Script Injection
+    //------------------------------------------------------------------------------------------------------------------
     GingerLibLiveSpy.AddScript = function (JavaScriptCode) {
         var script = document.createElement('script');
         script.type = "text/javascript";
         script.text = JavaScriptCode;
-        var head = document.getElementsByTagName('head')[0];
-        head.appendChild(script);
+        document.getElementsByTagName('head')[0].appendChild(script);
         return "OK";
-    }
+    };
 
-    GingerLibLiveSpy.GetXPoint = function () {
+    //------------------------------------------------------------------------------------------------------------------
+    // Coordinate Getters (DO NOT change return type)
+    //------------------------------------------------------------------------------------------------------------------
+    GingerLibLiveSpy.GetXPoint = function () { return CurrentX + ""; };
+    GingerLibLiveSpy.GetYPoint = function () { return CurrentY + ""; };
+    GingerLibLiveSpy.GetClickedXPoint = function () { return CurrentClickedX + ""; };
+    GingerLibLiveSpy.GetClickedYPoint = function () { return CurrentClickedY + ""; };
 
-        console.log("CurrentX: " + CurrentX);
-        return CurrentX + "";
-    }
-
-    GingerLibLiveSpy.GetYPoint = function () {
-
-        console.log("CurrentY: " + CurrentY);
-        return CurrentY + "";
-    }
-
-    GingerLibLiveSpy.GetClickedXPoint = function () {
-        return CurrentClickedX + "";
-    }
-
-    GingerLibLiveSpy.GetClickedYPoint = function () {
-        return CurrentClickedY + "";
-    }
-
+    //------------------------------------------------------------------------------------------------------------------
+    // Mouse / Pointer Handlers (Web)
+    //------------------------------------------------------------------------------------------------------------------
     function getMousePos(event) {
         CurrentX = event.clientX;
-        console.log("getMousePos-X " + CurrentX);
         CurrentY = event.clientY;
-        console.log("getMousePos-Y " + CurrentY);
     }
 
     function getMouseClickedPos(event) {
@@ -96,28 +92,79 @@ function define_GingerLibLiveSpy() {
         CurrentClickedY = event.clientY;
     }
 
-    GingerLibLiveSpy.StartEventListner = function () {
-        console.log("Event started");
-        if (document.addEventListener) {
-            document.addEventListener("mouseover", getMousePos);
+    //------------------------------------------------------------------------------------------------------------------
+    // ✅ Android TV / D‑Pad Handlers
+    //------------------------------------------------------------------------------------------------------------------
+    function getFocusedElement(event) {
+        CurrentFocusedElement = event.target;
+    }
+
+    function getRemoteClick(event) {
+        // Android TV ENTER keys
+        if (event.keyCode === 23 || event.keyCode === 66) {
+            CurrentClickedX = 0;
+            CurrentClickedY = 0;
+            CurrentFocusedElement = document.activeElement;
         }
-        else if (document.attachEvent)// Add to support erlier Version on IE .
-        {
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Event Listener Starters
+    //------------------------------------------------------------------------------------------------------------------
+    GingerLibLiveSpy.StartEventListner = function () {
+        if (document.addEventListener) {
+            // ✅ Keep mouseover + add mousemove for accuracy
+            document.addEventListener("mouseover", getMousePos, true);
+            document.addEventListener("mousemove", getMousePos, true);
+        } else if (document.attachEvent) {
             document.attachEvent("onmouseover", getMousePos);
         }
-    }
+    };
 
     GingerLibLiveSpy.StartClickEventListner = function () {
-        console.log("Event started");
         if (document.addEventListener) {
-            document.addEventListener("click", getMouseClickedPos);
+            document.addEventListener("click", getMouseClickedPos, true);
+        } else if (document.attachEvent) {
+            document.attachEvent("onclick", getMouseClickedPos);
+        }
+    };
 
+    // ✅ Android TV
+    GingerLibLiveSpy.StartFocusEventListener = function () {
+        document.addEventListener("focus", getFocusedElement, true);
+    };
+
+    GingerLibLiveSpy.StartKeyEventListener = function () {
+        document.addEventListener("keydown", getRemoteClick, true);
+    };
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Element From Point (Web + Shadow DOM + Android TV fallback)
+    //------------------------------------------------------------------------------------------------------------------
+    GingerLibLiveSpy.ElementFromPoint = function () {
+
+        var X = +GingerLibLiveSpy.GetXPoint();
+        var Y = +GingerLibLiveSpy.GetYPoint();
+
+        // ✅ Android TV fallback
+        if ((!X || !Y) && CurrentFocusedElement) {
+            return CurrentFocusedElement;
         }
-        else if (document.attachEvent)// Add to support earlier Version on IE .
-        {
-            document.attachEvent("click", getMouseClickedPos);
+
+        var element = document.elementFromPoint(X, Y);
+        element = normalizeNode(element);
+
+        // ✅ Dynamic shadow DOM support (SAFE)
+        var shadowRoots = getAllShadowRoots(document, []);
+        for (var i = 0; i < shadowRoots.length; i++) {
+            try {
+                var el = shadowRoots[i].elementFromPoint(X, Y);
+                if (el) element = normalizeNode(el);
+            } catch (e) { }
         }
-    }
+
+        return element;
+    };
 
     GingerLibLiveSpy.ElementFromPoint = function () {
         const X = GingerLibLiveSpy.GetXPoint();
@@ -151,33 +198,50 @@ function define_GingerLibLiveSpy() {
         return resultElementFromPoint;
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // ✅ Correct Deepest Element (SAFE, backward compatible)
+    //------------------------------------------------------------------------------------------------------------------
     GingerLibLiveSpy.DeepestElementFromPoint = function () {
-        const x = GingerLibLiveSpy.GetXPoint();
-        const y = GingerLibLiveSpy.GetYPoint();
 
-        let element = document.elementFromPoint(x, y);
+        var x = +GingerLibLiveSpy.GetXPoint();
+        var y = +GingerLibLiveSpy.GetYPoint();
 
-        function getDeepestElement(currElement, x, y) {
-            let children = currElement.querySelectorAll('*');
-            if (children.length === 0)
-                children = currElement.shadowRoot.querySelectorAll('*');
+        var base = GingerLibLiveSpy.ElementFromPoint();
+        if (!base) return null;
 
-            for (let i = 0; i < children.length; i++) {
-                let child = children[i];
-                let bounds = child.getBoundingClientRect();
-                if (x >= bounds.left && x <= bounds.right && y >= bounds.top && y <= bounds.bottom)
-                    return getDeepestElement(child, x, y);
+        var candidate = base;
+
+        while (true) {
+            var found = null;
+            var children = candidate.shadowRoot
+                ? candidate.shadowRoot.children
+                : candidate.children;
+
+            for (var i = 0; i < children.length; i++) {
+                var r = children[i].getBoundingClientRect();
+                if (x >= r.left && x <= r.right &&
+                    y >= r.top && y <= r.bottom) {
+                    found = children[i];
+                    break;
+                }
             }
 
-            return currElement;
+            if (!found) break;
+            candidate = found;
         }
 
-        return getDeepestElement(element, x, y);
-    }
+        return candidate;
+    };
 
+    //------------------------------------------------------------------------------------------------------------------
+    // Check LiveSpy Presence
+    //------------------------------------------------------------------------------------------------------------------
     GingerLibLiveSpy.IsLiveSpyExist = function () {
-        //  Return true if there is click event on the element
-        //  Return el.haveclickevent…
         return "yes";
-    }
+    };
 }
+
+// ✅ Initialize once (NO recursion)
+try {
+    define_GingerLibLiveSpy();
+} catch (e) { }

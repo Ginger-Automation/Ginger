@@ -143,7 +143,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return nameof(ElementInfo.ElementTypeEnum);
         }
 
-        public List<ListItemOperation> GetListOperations()
+        public List<ListItemOperation> GetListOperations(bool AddOperationsIcon=true)
         {
             List<ListItemOperation> operationsList = [];
 

@@ -27,6 +27,7 @@ using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -227,8 +228,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         public ElementInfo mSpyElement;
 
         private void timenow(object sender, EventArgs e)
-        {
-            // Get control info only if control key is pressed
+        { // Get control info only if control key is pressed
             try
             {
                 if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))

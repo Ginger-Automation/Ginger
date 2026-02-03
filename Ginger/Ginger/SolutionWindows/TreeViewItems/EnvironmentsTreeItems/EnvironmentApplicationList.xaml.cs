@@ -46,13 +46,14 @@ namespace Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
             {
                 GridColsView =
-            [
-                new GridColView() { Field = "Selected", Header = "Select" ,WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox },
-                new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 },
-                new GridColView() { Field = "AppName", Header = "Application Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay },
-                new GridColView() { Field = "Platform", Header = "Platform", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay },
-                new GridColView() { Field = "Description", Header = "Description", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay },
-            ]
+                [
+                    new GridColView() { Field = "Selected", Header = "Select", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox },
+                    new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 },
+                    new GridColView() { Field = "AppName", Header = "Application Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay },
+                    // Show the friendly enum description
+                    new GridColView() { Field = nameof(ApplicationPlatform.PlatformDescription), Header = "Platform", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay },
+                    new GridColView() { Field = "Description", Header = "Description", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay },
+                ]
             };
 
             AppsGrid.SetAllColumnsDefaultView(view);

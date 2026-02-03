@@ -190,11 +190,40 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         private string BitmapToBase64(Bitmap bImage)
         {
-            using (MemoryStream ms = new MemoryStream())
+            if (bImage == null)
+                return string.Empty;
+
+            try
             {
-                bImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                byte[] byteImage = ms.ToArray();
-                return Convert.ToBase64String(byteImage); //Get Base64
+                // Clone to ensure image data is owned by this Bitmap instance (fixes FromStream/closed-stream and locked-image issues)
+                using (var clone = new Bitmap(bImage))
+                using (var ms = new MemoryStream())
+                {
+                    clone.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    return Convert.ToBase64String(ms.ToArray());
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "BitmapToBase64 failed to save bitmap", ex);
+
+                // Fallback: create a new bitmap and draw into it (works when clone ctor fails for some pixel formats)
+                try
+                {
+                    using (var bmp = new Bitmap(bImage.Width, bImage.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+                    using (var g = Graphics.FromImage(bmp))
+                    using (var ms = new MemoryStream())
+                    {
+                        g.DrawImage(bImage, 0, 0, bImage.Width, bImage.Height);
+                        bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                        return Convert.ToBase64String(ms.ToArray());
+                    }
+                }
+                catch (Exception inner)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "BitmapToBase64 fallback failed", inner);
+                    return string.Empty;
+                }
             }
         }
 

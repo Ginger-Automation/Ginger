@@ -669,9 +669,9 @@ namespace Ginger.UserControlsLib.UCListView
             });
         }
 
-        public void SetListOperations()
+        public void SetListOperations(bool AddOperationsIcon = true)
         {
-            List<ListItemOperation> listOperations = mListViewHelper.GetListOperations();
+            List<ListItemOperation> listOperations = mListViewHelper.GetListOperations(AddOperationsIcon);
             if (listOperations != null && listOperations.Any())
             {
                 xListOperationsPnl.Children.Clear();
@@ -1309,7 +1309,7 @@ namespace Ginger.UserControlsLib.UCListView
                 // folder-only view (clean like API Models): show tree, hide list
                 xFolderTreeContainer.Visibility = Visibility.Visible;
                 xTreeCol.Width = new GridLength(400);
-            
+                this.Dispatcher.Invoke(() => SetListOperations(false));
                 xListView.Visibility = Visibility.Collapsed;
 
                 // ensure folders + items are presented for current tab root
@@ -1321,6 +1321,7 @@ namespace Ginger.UserControlsLib.UCListView
                 xFolderTreeContainer.Visibility = Visibility.Collapsed;
                 xTreeCol.Width = new GridLength(0);
                 xListView.Visibility = Visibility.Visible;
+                this.Dispatcher.Invoke(() => SetListOperations());
 
                 // restore list ItemsSource
                 if (mObjList != null)
@@ -1329,6 +1330,14 @@ namespace Ginger.UserControlsLib.UCListView
                 }
             }
         }
+
+        public void Dispose()
+        {
+            mTreeSearchCts?.Cancel();
+            mTreeSearchCts?.Dispose();
+            mTreeSearchCts = null;
+        }
+    }
 
         public void Dispose()
         {
