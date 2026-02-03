@@ -315,32 +315,5 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             if (string.IsNullOrEmpty(path)) return string.Empty;
             return path.Replace('/', '\\').TrimEnd('\\');
         }
-
-        string mTargetFolderFullPath = string.Empty;
-        public string TargetFolderFullPath
-        {
-            get { return mTargetFolderFullPath; }
-            set
-            {
-                if (mTargetFolderFullPath != value)
-                {
-                    mTargetFolderFullPath = value ?? string.Empty;
-                    OnPropertyChanged(nameof(TargetFolderFullPath));
-                    OnPropertyChanged(nameof(TargetFolderDisplay));
-                }
-            }
-        }
-
-        public string TargetFolderDisplay
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(TargetFolderFullPath))
-                {
-                    return "Select...";
-                }
-                return TargetFolderFullPath;
-            }
-        }
     }
 }
