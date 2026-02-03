@@ -32,8 +32,8 @@
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Center"
                                    ButtonFontImageSize="18"
-                                   ButtonImageWidth="18"
-                                   ButtonImageHeight="18"
+                                   ButtonImageWidth="22"
+                                   ButtonImageHeight="22"
                                    ButtonImageType="InActive"
                                    Visibility="{Binding IsToggleButtonVisible, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibility}}"
                                    Click="xToggleBtn_Click"  />

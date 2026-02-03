@@ -69,7 +69,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                 {
                     Field = nameof(UploadItemSelection.TargetFolderDisplay),
                     Header = "Add to Folder",
-                    WidthWeight = 20,
+                    WidthWeight = 40,
                     StyleType = GridColView.eGridColStyleType.Template,
                     CellTemplate = CreateSelectFolderTemplate(),
                     ReadOnly = false 
@@ -138,7 +138,6 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             //    UploadItemToRepositoryWizard.NextEnabled = true;
             //}
         }
-
         private void SetSamePartToAll(object sender, RoutedEventArgs e)
         {
             if (itemSelectionGrid.CurrentItem != null)
@@ -157,18 +156,15 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                 Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
-
         private DataTemplate CreateSelectFolderTemplate()
         {
             var template = new DataTemplate();
 
-            // Horizontal panel: [Selected path text] [ ... button ]
             var panel = new FrameworkElementFactory(typeof(StackPanel));
             panel.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
             panel.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
             panel.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
 
-            // Path text (bound to TargetFolderDisplay)
             var txt = new FrameworkElementFactory(typeof(TextBlock));
             txt.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
             txt.SetValue(TextBlock.MarginProperty, new Thickness(0, 0, 6, 0));
@@ -177,19 +173,37 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             txt.SetBinding(TextBlock.TextProperty, new Binding(nameof(UploadItemSelection.TargetFolderDisplay)) { Mode = BindingMode.OneWay });
             panel.AppendChild(txt);
 
-            // Ellipsis button to open the folder selection window
             var btn = new FrameworkElementFactory(typeof(ucButton));
             btn.SetValue(Amdocs.Ginger.UserControls.ucButton.ButtonTypeProperty, Amdocs.Ginger.Core.eButtonType.ImageButton);
-            btn.SetValue(Amdocs.Ginger.UserControls.ucButton.ButtonImageTypeProperty, Amdocs.Ginger.Common.Enums.eImageType.EllipsisH);
+            btn.SetValue(Amdocs.Ginger.UserControls.ucButton.ButtonImageTypeProperty, Amdocs.Ginger.Common.Enums.eImageType.Folder);
             btn.SetValue(FrameworkElement.ToolTipProperty, "Select Shared Repository Folder");
-            btn.SetValue(FrameworkElement.WidthProperty, 24.0);
+            btn.SetValue(FrameworkElement.WidthProperty, 30.0);
             btn.SetValue(FrameworkElement.HeightProperty, 22.0);
             btn.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            btn.SetValue(FrameworkElement.MarginProperty, new Thickness(2, 0, 0, 0));
+
+            // Set icon size when the control is instantiated
+            btn.AddHandler(FrameworkElement.LoadedEvent, new RoutedEventHandler(UcSelectFolderButton_Loaded), true);
+
+            // Click handler
             btn.AddHandler(ButtonBase.ClickEvent, new RoutedEventHandler(SelectFolder_Click), true);
+
             panel.AppendChild(btn);
 
             template.VisualTree = panel;
             return template;
+        }
+
+        // folder icon size
+        private void UcSelectFolderButton_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is ucButton ub)
+            {
+                ub.ButtonFontImageSize = 16;
+                ub.ButtonImageWidth = 16;
+                ub.ButtonImageHeight = 16;
+
+            }
         }
 
         private void SelectFolder_Click(object sender, RoutedEventArgs e)

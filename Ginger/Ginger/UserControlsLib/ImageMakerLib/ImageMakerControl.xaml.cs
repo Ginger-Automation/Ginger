@@ -82,6 +82,8 @@ namespace Amdocs.Ginger.UserControls
             {
                 xFAImage.ToolTip = ImageToolTip;
                 xFAFont.ToolTip = ImageToolTip;
+                xStaticImage.ToolTip = ImageToolTip;   // apply tooltip for static image
+                xViewBox.ToolTip = ImageToolTip;
             }
         }
 
@@ -240,6 +242,15 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Chat:
                     SetAsStaticImage("chat.png");
+                    break;
+                case eImageType.AndroidTvWhite:
+                    SetAsStaticImage("whiteTv.png");
+                    break;
+                case eImageType.MultipleScreen:
+                    SetAsStaticImage("multiple_screens.png");
+                    break;
+                case eImageType.MultipleScreenGrey:
+                    SetAsStaticImage("multiple_screen_grey.png");
                     break;
                 #endregion
                 #region Repository Items Images
@@ -921,7 +932,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
 
                 case eImageType.Mobile:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MobileScreenButton);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MobileScreenButton, toolTip: "Mobile/Tv");
                     break;
 
                 case eImageType.Codepen:
@@ -1154,6 +1165,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.AndroidOutline:
                     SetAsStaticImage("androidOutline.png");
                     break;
+                case eImageType.AndroidTv:
+                    SetAsStaticImage("radio-androidtv.png");
+                    break;
                 case eImageType.AndroidWhite:
                     SetAsStaticImage("androidWhite.png");
                     break;
@@ -1183,6 +1197,11 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.VerticalBars:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Bars, rotation: 90);
                     break;
+
+                //case eImageType.RadioButton_AndroidTV:
+                //    // static Android TV radio icon (adjust size if needed)
+                //    SetAsStaticImage("radio-androidtv.png", Width: 16, Height: 16);
+                //    break;
 
                 default:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Question, Brushes.Red);
@@ -1302,7 +1321,23 @@ namespace Amdocs.Ginger.UserControls
             {
                 return IM.xStaticImage.Source;
             }
-            return null;
+            double desiredWidth = width;
+            // Choose a height that matches control aspect or use square if unknown
+            double desiredHeight = width;
+
+            // Force layout pass
+            IM.Measure(new Size(desiredWidth, desiredHeight));
+            IM.Arrange(new Rect(0, 0, desiredWidth, desiredHeight));
+            IM.UpdateLayout();
+
+            int pixelWidth = Math.Max(1, (int)Math.Ceiling(desiredWidth));
+            int pixelHeight = Math.Max(1, (int)Math.Ceiling(desiredHeight));
+
+            var rtb = new RenderTargetBitmap(pixelWidth, pixelHeight, 96, 96, PixelFormats.Pbgra32);
+            rtb.Render(IM);
+            rtb.Freeze();
+
+            return rtb;
         }
 
         private void SetAsStaticImage(string imageName = "", BitmapImage imageBitMap = null, double Width = 0, double Height = 0)

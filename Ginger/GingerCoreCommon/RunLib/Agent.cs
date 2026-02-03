@@ -95,7 +95,6 @@ namespace GingerCore
             //Mobile           
             [Description("Appium")]
             Appium,
-
             //MF
             [Description("MainFrame 3270")]
             MainFrame3270,
@@ -197,6 +196,9 @@ namespace GingerCore
                 if (mDriverType != value)
                 {
                     mDriverType = value;
+
+ 
+
                     OnPropertyChanged(nameof(DriverType));
                 }
             }
@@ -333,7 +335,28 @@ namespace GingerCore
 
         public List<object> GetDriverTypesByPlatfrom(string platformType)
         {
-            List<object> driverTypes = [];
+            List<object> driverTypes = new List<object>();
+            ePlatformType resolvedPlatform = ePlatformType.NA;
+            bool parsed = false;
+            try
+            {
+                parsed = Enum.TryParse<ePlatformType>(platformType, ignoreCase: true, out resolvedPlatform);
+            }
+            catch { parsed = false; }
+
+            if (!parsed)
+            {
+                foreach (ePlatformType p in Enum.GetValues(typeof(ePlatformType)))
+                {
+                    string desc = Amdocs.Ginger.Common.GeneralLib.General.GetEnumValueDescription(typeof(ePlatformType), p);
+                    if (!string.IsNullOrEmpty(desc) && string.Equals(desc, platformType, StringComparison.OrdinalIgnoreCase))
+                    {
+                        resolvedPlatform = p;
+                        parsed = true;
+                        break;
+                    }
+                }
+            }
 
             if (platformType == ePlatformType.Web.ToString())
             {
@@ -347,6 +370,7 @@ namespace GingerCore
             }
             else if (platformType == ePlatformType.Mobile.ToString())
             {
+                // expose both Appium (mobile) and the AndroidTV flavor
                 driverTypes.Add(Agent.eDriverType.Appium);
             }
             else if (platformType == ePlatformType.Windows.ToString())

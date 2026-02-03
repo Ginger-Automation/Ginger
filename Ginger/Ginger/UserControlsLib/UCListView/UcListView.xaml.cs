@@ -260,7 +260,7 @@ namespace Ginger.UserControlsLib.UCListView
                     this.Dispatcher.BeginInvoke(() =>
                     {
                         xSearchTextBox.Text = "";
-                      
+
                         // Make the first row selected
                         if (value != null && value.Count > 0 && value is not ObservableList<VariableBase>)
                         {
@@ -669,9 +669,9 @@ namespace Ginger.UserControlsLib.UCListView
             });
         }
 
-        public void SetListOperations()
+        public void SetListOperations(bool AddOperationsIcon = true)
         {
-            List<ListItemOperation> listOperations = mListViewHelper.GetListOperations();
+            List<ListItemOperation> listOperations = mListViewHelper.GetListOperations(AddOperationsIcon);
             if (listOperations != null && listOperations.Any())
             {
                 xListOperationsPnl.Children.Clear();
@@ -1303,13 +1303,13 @@ namespace Ginger.UserControlsLib.UCListView
             // Toggle between folder view (UCTreeView) and list view (UCListView)
             mFolderViewActive = !mFolderViewActive;
 
-      
+
             if (mFolderViewActive)
             {
                 // folder-only view (clean like API Models): show tree, hide list
                 xFolderTreeContainer.Visibility = Visibility.Visible;
                 xTreeCol.Width = new GridLength(400);
-            
+                this.Dispatcher.Invoke(() => SetListOperations(false));
                 xListView.Visibility = Visibility.Collapsed;
 
                 // ensure folders + items are presented for current tab root
@@ -1321,6 +1321,7 @@ namespace Ginger.UserControlsLib.UCListView
                 xFolderTreeContainer.Visibility = Visibility.Collapsed;
                 xTreeCol.Width = new GridLength(0);
                 xListView.Visibility = Visibility.Visible;
+                this.Dispatcher.Invoke(() => SetListOperations());
 
                 // restore list ItemsSource
                 if (mObjList != null)

@@ -140,18 +140,21 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return null;
         }
 
-        public List<ListItemOperation> GetListOperations()
+        public List<ListItemOperation> GetListOperations(bool AddOperationIcon = true)
         {
             List<ListItemOperation> operationsList = [];
 
-            ListItemOperation addToFlow = new ListItemOperation
+            if (AddOperationIcon)
             {
-                SupportedViews = [General.eRIPageViewMode.AddFromShardRepository],
-                ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft,
-                ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "Add to"),
-                OperationHandler = AddFromRepository
-            };
-            operationsList.Add(addToFlow);
+                ListItemOperation addToFlow = new ListItemOperation
+                {
+                    SupportedViews = [General.eRIPageViewMode.AddFromShardRepository],
+                    ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft,
+                    ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "Add to"),
+                    OperationHandler = AddFromRepository
+                };
+                operationsList.Add(addToFlow); 
+            }
 
             ListItemOperation editItem = new ListItemOperation
             {
@@ -301,5 +304,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             throw new System.NotImplementedException();
         }
+
+       
     }
 }
