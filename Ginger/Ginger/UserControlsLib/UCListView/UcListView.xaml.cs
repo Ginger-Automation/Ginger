@@ -260,7 +260,7 @@ namespace Ginger.UserControlsLib.UCListView
                     this.Dispatcher.BeginInvoke(() =>
                     {
                         xSearchTextBox.Text = "";
-                      
+
                         // Make the first row selected
                         if (value != null && value.Count > 0 && value is not ObservableList<VariableBase>)
                         {
@@ -1303,7 +1303,7 @@ namespace Ginger.UserControlsLib.UCListView
             // Toggle between folder view (UCTreeView) and list view (UCListView)
             mFolderViewActive = !mFolderViewActive;
 
-      
+
             if (mFolderViewActive)
             {
                 // folder-only view (clean like API Models): show tree, hide list
@@ -1330,14 +1330,6 @@ namespace Ginger.UserControlsLib.UCListView
                 }
             }
         }
-
-        public void Dispose()
-        {
-            mTreeSearchCts?.Cancel();
-            mTreeSearchCts?.Dispose();
-            mTreeSearchCts = null;
-        }
-    }
 
         public void Dispose()
         {
