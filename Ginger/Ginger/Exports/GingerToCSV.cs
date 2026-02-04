@@ -54,20 +54,33 @@ namespace Ginger.Export
         {
             StringBuilder Output = new StringBuilder();
 
-            Output.AppendLine(BF.Name.Replace(",", " ") + ",,,,,");
+            string bfName = BF.Name.Replace(",", " ");
+            string bfNameCheck = bfName.TrimStart();
+            if (!string.IsNullOrEmpty(bfNameCheck) && "=+-@".Contains(bfNameCheck[0])) bfName = "'" + bfName;
+            Output.AppendLine(bfName + ",,,,,");
 
             foreach (Activity a in BF.Activities)
             {
-                Output.AppendLine("," + a.Active.ToString() + "," + a.ActivityName.Replace(",", " ") + ",,,");
+                string actName = a.ActivityName.Replace(",", " ");
+                string actNameCheck = actName.TrimStart();
+                if (!string.IsNullOrEmpty(actNameCheck) && "=+-@".Contains(actNameCheck[0])) actName = "'" + actName;
+                Output.AppendLine("," + a.Active.ToString() + "," + actName + ",,,");
                 foreach (Act act in a.Acts)
                 {
                     string inputParam = act.GetInputParamValue("Value") == null ? "" : act.GetInputParamValue("Value").Replace(",", " ").Replace(Environment.NewLine, " ");
-                    Output.AppendLine(",,," + act.Active.ToString() + "," + act.Description.Replace(",", " ") + "," + inputParam);
+                    string inputParamCheck = inputParam.TrimStart();
+                    if (!string.IsNullOrEmpty(inputParamCheck) && "=+-@".Contains(inputParamCheck[0])) inputParam = "'" + inputParam;
 
+                    string desc = act.Description.Replace(",", " ");
+                    string descCheck = desc.TrimStart();
+                    if (!string.IsNullOrEmpty(descCheck) && "=+-@".Contains(descCheck[0])) desc = "'" + desc;
+
+                    Output.AppendLine(",,," + act.Active.ToString() + "," + desc + "," + inputParam);
                 }
             }
             Output.AppendLine("EOBF,,,,,");
             return Output.ToString();
+
         }
     }
 }
