@@ -50,28 +50,28 @@ namespace Ginger.Export
             }
         }
 
-        private static string GenerateCSVfromBusinessFlow(BusinessFlow BF)
+        private static string GenerateCSVfromBusinessFlow(BusinessFlow businessFlow)
         {
             StringBuilder Output = new StringBuilder();
 
-            string bfName = BF.Name.Replace(",", " ");
+            string bfName = businessFlow.Name.Replace(",", " ");
             string bfNameCheck = bfName.TrimStart();
             if (!string.IsNullOrEmpty(bfNameCheck) && "=+-@".Contains(bfNameCheck[0])) bfName = "'" + bfName;
             Output.AppendLine(bfName + ",,,,,");
 
-            foreach (Activity a in BF.Activities)
+            foreach (Activity activity in businessFlow.Activities)
             {
-                string actName = a.ActivityName.Replace(",", " ");
+                string actName = activity.ActivityName.Replace(",", " ");
                 string actNameCheck = actName.TrimStart();
                 if (!string.IsNullOrEmpty(actNameCheck) && "=+-@".Contains(actNameCheck[0])) actName = "'" + actName;
-                Output.AppendLine("," + a.Active.ToString() + "," + actName + ",,,");
-                foreach (Act act in a.Acts)
+                Output.AppendLine("," + activity.Active.ToString() + "," + actName + ",,,");
+                foreach (Act act in activity.Acts)
                 {
                     string inputParam = act.GetInputParamValue("Value") == null ? "" : act.GetInputParamValue("Value").Replace(",", " ").Replace(Environment.NewLine, " ");
                     string inputParamCheck = inputParam.TrimStart();
                     if (!string.IsNullOrEmpty(inputParamCheck) && "=+-@".Contains(inputParamCheck[0])) inputParam = "'" + inputParam;
 
-                    string desc = act.Description.Replace(",", " ");
+                    string desc = (act.Description ?? string.Empty).Replace(",", " ");
                     string descCheck = desc.TrimStart();
                     if (!string.IsNullOrEmpty(descCheck) && "=+-@".Contains(descCheck[0])) desc = "'" + desc;
 
