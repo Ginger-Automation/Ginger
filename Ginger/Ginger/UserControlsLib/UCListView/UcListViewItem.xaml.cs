@@ -58,7 +58,9 @@ namespace Ginger.UserControlsLib.UCListView
                 if (item is Act act)
                 {
                     // Prefer ActionDescription; fall back to Description
-                    string displayTitle = !string.IsNullOrEmpty(act.ActionDescription) ? act.ActionDescription : (act.Description ?? string.Empty);
+                    string displayTitle = !string.IsNullOrEmpty(act.Description)
+    ? act.Description
+    : (act.ActionDescription ?? string.Empty);
 
                     // Update UI safely on UI thread
                     Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
