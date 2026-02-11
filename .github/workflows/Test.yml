@@ -58,7 +58,7 @@ jobs:
         -   name: Setup .NET
             uses: actions/setup-dotnet@v3
             with:
-                dotnet-version: 8.0.100
+                dotnet-version: 10.3.0
 # ------------------------------------------------------------------------------------------------------
 # Install Mono - for Ubuntu as pre-requisite for building Ginger
 # ------------------------------------------------------------------------------------------------------
