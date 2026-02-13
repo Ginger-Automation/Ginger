@@ -2,7 +2,7 @@ Write-Host "-------------------------------------------------------------"
 Write-Host "-                         Run CLI Tests                     -"
 Write-Host "-------------------------------------------------------------"
 
-cd /home/vsts/work/1/s/Ginger/GingerRuntime/bin/Release/net8.0/publish/
+cd /home/vsts/work/1/s/Ginger/GingerRuntime/bin/Release/net10.0/publish/
 
 
 Write-Host "******************************************************************************************************************************"
