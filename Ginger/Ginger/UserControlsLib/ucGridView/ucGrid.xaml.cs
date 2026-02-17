@@ -1,13 +1,13 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
-
+Copyright © 2014-2026 European Support Limited
+ 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
-
-http://www.apache.org/licenses/LICENSE-2.0 
-
+You may obtain a copy of the License at
+ 
+http://www.apache.org/licenses/LICENSE-2.0
+ 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS, 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
@@ -15,7 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
@@ -362,7 +361,7 @@ namespace Ginger
             DragDrop2.HookEventHandlers(this);
 
             // Prevent bug when typing few letters fast in the search text box
-            // Set undo to 0 so will not get the error: “Cannot Undo or Redo while undo unit is open.”            
+            // Set undo to 0 so will not get the error: Ã¢â‚¬Å“Cannot Undo or Redo while undo unit is open.Ã¢â‚¬Â            
             txtSearch.UndoLimit = 0;
             if (Tags == null)
             {

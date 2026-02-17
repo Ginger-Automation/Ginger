@@ -1,13 +1,13 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
-
+Copyright © 2014-2026 European Support Limited
+ 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
-
-http://www.apache.org/licenses/LICENSE-2.0 
-
+You may obtain a copy of the License at
+ 
+http://www.apache.org/licenses/LICENSE-2.0
+ 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS, 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
@@ -15,7 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-
 using AlmDataContractsStd.Contracts;
 using AlmDataContractsStd.Enums;
 using amdocs.ginger.GingerCoreNET;
@@ -373,8 +372,7 @@ namespace GingerCore.ALM.JIRA.Bll
                             if ((actGroup.TempReportFolder != null) && (actGroup.TempReportFolder != string.Empty) &&
                             (System.IO.Directory.Exists(actGroup.TempReportFolder)))
                             {
-                                //Creating the Zip file - start
-                                string targetZipPath = System.IO.Directory.GetParent(actGroup.TempReportFolder).ToString();
+                                string targetZipPath = System.IO.Directory.GetParent(actGroup.TempReportFolder).ToString();
                                 string zipFileName = targetZipPath + "\\" + actGroup.Name.ToString() + "_GingerHTMLReport.zip";
                                 if (System.IO.File.Exists(zipFileName))
                                 {
@@ -382,7 +380,7 @@ namespace GingerCore.ALM.JIRA.Bll
                                 }
                                 ZipFile.CreateFromDirectory(actGroup.TempReportFolder, zipFileName);
                                 System.IO.Directory.Delete(actGroup.TempReportFolder, true);
-                                //Creating the Zip file - finish                                
+                                //Creating the Zip file - 
                                 if (this.jiraRepObj.AddAttachment(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, relevantTcRun.TestExecutionId, zipFileName) == null)
                                 {
                                     Reporter.ToLog(eLogLevel.ERROR, "Failed to create attachment");

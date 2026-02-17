@@ -1,13 +1,13 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
-
+Copyright © 2014-2026 European Support Limited
+ 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
-
-http://www.apache.org/licenses/LICENSE-2.0 
-
+You may obtain a copy of the License at
+ 
+http://www.apache.org/licenses/LICENSE-2.0
+ 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS, 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
@@ -15,7 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
@@ -56,47 +55,47 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddBoldText("Raw data Values");
             TBH.AddLineBreak();
-            TBH.AddText("• navigationStart");
+            TBH.AddText("Ã¢â‚¬Â¢ navigationStart");
             TBH.AddLineBreak();
-            TBH.AddText("• unloadEventStart");
+            TBH.AddText("Ã¢â‚¬Â¢ unloadEventStart");
             TBH.AddLineBreak();
-            TBH.AddText("• unloadEventEnd");
+            TBH.AddText("Ã¢â‚¬Â¢ unloadEventEnd");
             TBH.AddLineBreak();
-            TBH.AddText("• redirectStart");
+            TBH.AddText("Ã¢â‚¬Â¢ redirectStart");
             TBH.AddLineBreak();
-            TBH.AddText("• redirectEnd");
+            TBH.AddText("Ã¢â‚¬Â¢ redirectEnd");
             TBH.AddLineBreak();
-            TBH.AddText("• fetchStart");
+            TBH.AddText("Ã¢â‚¬Â¢ fetchStart");
             TBH.AddLineBreak();
-            TBH.AddText("• domainLookupStart");
+            TBH.AddText("Ã¢â‚¬Â¢ domainLookupStart");
             TBH.AddLineBreak();
-            TBH.AddText("• domainLookupEnd");
+            TBH.AddText("Ã¢â‚¬Â¢ domainLookupEnd");
             TBH.AddLineBreak();
-            TBH.AddText("• connectStart");
+            TBH.AddText("Ã¢â‚¬Â¢ connectStart");
             TBH.AddLineBreak();
-            TBH.AddText("• connectEnd");
+            TBH.AddText("Ã¢â‚¬Â¢ connectEnd");
             TBH.AddLineBreak();
-            TBH.AddText("• secureConnectionStart");
+            TBH.AddText("Ã¢â‚¬Â¢ secureConnectionStart");
             TBH.AddLineBreak();
-            TBH.AddText("• requestStart");
+            TBH.AddText("Ã¢â‚¬Â¢ requestStart");
             TBH.AddLineBreak();
-            TBH.AddText("• responseStart");
+            TBH.AddText("Ã¢â‚¬Â¢ responseStart");
             TBH.AddLineBreak();
-            TBH.AddText("• responseEnd");
+            TBH.AddText("Ã¢â‚¬Â¢ responseEnd");
             TBH.AddLineBreak();
-            TBH.AddText("• domLoading");
+            TBH.AddText("Ã¢â‚¬Â¢ domLoading");
             TBH.AddLineBreak();
-            TBH.AddText("• domInteractive");
+            TBH.AddText("Ã¢â‚¬Â¢ domInteractive");
             TBH.AddLineBreak();
-            TBH.AddText("• domContentLoadedEventStart");
+            TBH.AddText("Ã¢â‚¬Â¢ domContentLoadedEventStart");
             TBH.AddLineBreak();
-            TBH.AddText("• domContentLoadedEventEnd");
+            TBH.AddText("Ã¢â‚¬Â¢ domContentLoadedEventEnd");
             TBH.AddLineBreak();
-            TBH.AddText("• domComplete");
+            TBH.AddText("Ã¢â‚¬Â¢ domComplete");
             TBH.AddLineBreak();
-            TBH.AddText("• loadEventStart");
+            TBH.AddText("Ã¢â‚¬Â¢ loadEventStart");
             TBH.AddLineBreak();
-            TBH.AddText("• loadEventEnd");
+            TBH.AddText("Ã¢â‚¬Â¢ loadEventEnd");
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddBoldText("Supported browser");

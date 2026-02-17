@@ -1,13 +1,13 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
-
+Copyright © 2014-2026 European Support Limited
+ 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
-
-http://www.apache.org/licenses/LICENSE-2.0 
-
+You may obtain a copy of the License at
+ 
+http://www.apache.org/licenses/LICENSE-2.0
+ 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS, 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
@@ -81,8 +81,8 @@ namespace Ginger.ALM.MapToALMWizard
                 }
                 xUnMapTestStepsGrid.DataSourceList = mWizard.testCaseUnmappedStepsDic[selectedTCConfig.aLMTSTest.TestID];
                 xMapTestCasesGrid.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, "Ginger", "& ALM Test Cases - Steps Mapping Status");
-                xMapTestStepsGrid.Title = GingerDicser.GetTermResValue(eTermResKey.Activities, $"Ginger ‘{mWizard.mappedTestCasesStepPageList[0].ActivityGroupName}’ ", "- ALM Steps Mapping");
-                xUnMapTestStepsGrid.Title = $"ALM ‘{mWizard.mappedTestCasesStepPageList[0].TestCaseName}’ Steps";
+                xMapTestStepsGrid.Title = GingerDicser.GetTermResValue(eTermResKey.Activities, $"Ginger Ã¢â‚¬Ëœ{mWizard.mappedTestCasesStepPageList[0].ActivityGroupName}Ã¢â‚¬â„¢ ", "- ALM Steps Mapping");
+                xUnMapTestStepsGrid.Title = $"ALM Ã¢â‚¬Ëœ{mWizard.mappedTestCasesStepPageList[0].TestCaseName}Ã¢â‚¬â„¢ Steps";
             }
         }
 
@@ -259,8 +259,8 @@ namespace Ginger.ALM.MapToALMWizard
                 xMapTestStepsGrid.DataSourceList = selectedTCConfig.testStepsMappingList;
                 xUnMapTestStepsGrid.DataSourceList = mWizard.testCaseUnmappedStepsDic[selectedTCConfig.aLMTSTest.TestID];
                 selectedTCConfig.UpdateTestCaseMapStatus(mWizard.testCaseUnmappedStepsDic[selectedTCConfig.aLMTSTest.TestID].Count);
-                xMapTestStepsGrid.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, $"Ginger ‘{selectedTCConfig.ActivityGroupName}’");
-                xUnMapTestStepsGrid.Title = $"ALM ‘{selectedTCConfig.TestCaseName}’ Steps";
+                xMapTestStepsGrid.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, $"Ginger Ã¢â‚¬Ëœ{selectedTCConfig.ActivityGroupName}Ã¢â‚¬â„¢");
+                xUnMapTestStepsGrid.Title = $"ALM Ã¢â‚¬Ëœ{selectedTCConfig.TestCaseName}Ã¢â‚¬â„¢ Steps";
             }
         }
 

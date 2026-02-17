@@ -1,13 +1,13 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
-
+Copyright © 2014-2026 European Support Limited
+ 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
-
-http://www.apache.org/licenses/LICENSE-2.0 
-
+You may obtain a copy of the License at
+ 
+http://www.apache.org/licenses/LICENSE-2.0
+ 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS, 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
@@ -15,7 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
@@ -275,7 +274,7 @@ namespace UnitTests.NonUITests
             bool failFlag = false;
             string webRespone = webServiceCall.SendXMLRequest(URL, soapAction, xmlRequest, ref Status, ref failFlag, null);
 
-            StringAssert.Contains(webRespone, "<m:sName>Åland Islands</m:sName>");
+            StringAssert.Contains(webRespone, "<m:sName>Ãƒâ€¦land Islands</m:sName>");
 
 
         }
@@ -954,7 +953,7 @@ namespace UnitTests.NonUITests
             mGR.Executor.RunRunner();
 
             Assert.AreNotEqual(0, actLegacyWebService.ReturnValues.Count);
-            Assert.AreEqual("Åland Islands", actLegacyWebService.ReturnValues.FirstOrDefault(x => x.Param == @"m:sName").Actual);
+            Assert.AreEqual("Ãƒâ€¦land Islands", actLegacyWebService.ReturnValues.FirstOrDefault(x => x.Param == @"m:sName").Actual);
 
             //Convert the legacy action
             Activity newActivity = new Activity
@@ -974,14 +973,14 @@ namespace UnitTests.NonUITests
 
             //Assert converted action
             Assert.AreNotEqual(0, newAction.ReturnValues.Count);
-            Assert.AreEqual("Åland Islands", newAction.ReturnValues.FirstOrDefault(x => x.Param == @"m:sName").Actual);
+            Assert.AreEqual("Ãƒâ€¦land Islands", newAction.ReturnValues.FirstOrDefault(x => x.Param == @"m:sName").Actual);
 
             //Run newAction
             mGR.Executor.RunRunner();
 
             //assert newaction
             Assert.AreNotEqual(0, newAction.ReturnValues.Count);
-            Assert.AreEqual("Åland Islands", newAction.ReturnValues.FirstOrDefault(x => x.Param == @"m:sName").Actual);
+            Assert.AreEqual("Ãƒâ€¦land Islands", newAction.ReturnValues.FirstOrDefault(x => x.Param == @"m:sName").Actual);
         }
 
         [TestMethod]
