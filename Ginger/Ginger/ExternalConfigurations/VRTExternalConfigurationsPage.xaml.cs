@@ -108,6 +108,12 @@ namespace Ginger.Configurations
 
             if (!string.IsNullOrEmpty(masked) && !string.Equals(apiKeyBox.Text, masked))
             {
+                if (string.IsNullOrWhiteSpace(apiKeyBox.Text))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "API Key cannot be empty");
+                    apiKeyBox.Text = masked;
+                    return;
+                }
                 _VRTConfiguration.ApiKey = apiKeyBox.Text;  // assign new key
                 apiKeyBox.Text = masked;                     // re-mask after save
             }
