@@ -132,6 +132,7 @@ jobs:
             if: success() || failure()  
             run: dotnet test  Ginger/GingerAutoPilotTest --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal     
         
+            
 # ------------------------------------------------------------------------------------------------------
 # Run .Net Framework tests using powershell and publish the results
 # ------------------------------------------------------------------------------------------------------
