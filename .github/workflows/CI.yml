@@ -3,7 +3,15 @@ name: CI Process
 on:
   workflow_call:
   workflow_dispatch:
-      
+  
+  push:
+    branches:
+      - master
+      - Features/Linux-Migration
+      - Releases/*
+      - Releases/*/*
+      - Test*
+
   pull_request:
     branches: 
       - master
