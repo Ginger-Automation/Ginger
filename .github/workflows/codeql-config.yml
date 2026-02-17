@@ -1,5 +1,6 @@
 name: "CodeQL Config"
-
+on:
+  workflow_call:
 paths:
   - 'Ginger'  # Only scan the Ginger directory for CodeQL
 
