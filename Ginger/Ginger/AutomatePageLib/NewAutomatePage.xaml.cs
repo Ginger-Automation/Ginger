@@ -326,7 +326,7 @@ namespace GingerWPF.BusinessFlowsLib
 
                 ExpandAddActionsPnl();
                 Ginger.General.DoEvents();
-                App.MainWindow.AddHelpLayoutToShow("AutomatePage_AddActionsPageHelp", xAddActionMenuFrame, string.Format("List of options is dynamic, options are loaded based on the target platform of current {0} and on it mapped Agent status.For example, Ã¢â‚¬Å“RecordÃ¢â‚¬Â option will be added only if the platform is UI based (like Web, Java, etc.) and Agent it loaded", GingerDicser.GetTermResValue(eTermResKey.Activity)));
+                App.MainWindow.AddHelpLayoutToShow("AutomatePage_AddActionsPageHelp", xAddActionMenuFrame, string.Format("List of options is dynamic, options are loaded based on the target platform of current {0} and on it mapped Agent status.For example, “Record” option will be added only if the platform is UI based (like Web, Java, etc.) and Agent it loaded", GingerDicser.GetTermResValue(eTermResKey.Activity)));
             }
             else
             {
@@ -2150,7 +2150,7 @@ namespace GingerWPF.BusinessFlowsLib
             //Help Layouts            
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_BusinessFlowLayerHelp", xBusinessFlowItemComboBox, string.Format("Select here which layer of {0} you want to configure: {1}, {2} or Details", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables)));
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_AppsAgentsMappingHelp", xAppsAgentsMappingFrame, "Here you should match between the Application and the Agent which will be used for communicating and automating it");
-            App.MainWindow.AddHelpLayoutToShow("AutomatePage_EnvironmentSelectionHelp", xEnvironmentComboBox, "Environments should be used for storing environment level parameters, DB connection details and more, go to Ã¢â‚¬Å“Resources-> EnvironmentsÃ¢â‚¬Â to configure all environments you need and select here which environment data to use in execution time");
+            App.MainWindow.AddHelpLayoutToShow("AutomatePage_EnvironmentSelectionHelp", xEnvironmentComboBox, "Environments should be used for storing environment level parameters, DB connection details and more, go to “Resources-> Environments” to configure all environments you need and select here which environment data to use in execution time");
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_AddActionsBtnHelp", xAddActionsBtn, "Click here to view all options to add automation Actions into your flow");
         }
 
