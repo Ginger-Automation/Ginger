@@ -55,7 +55,7 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Copy Ginger repo
 # ------------------------------------------------------------------------------------------------------
-        -   uses: actions/checkout@v3
+        -   uses: actions/checkout@v6
                 
 # ------------------------------------------------------------------------------------------------------
 # Update Ginger Version 
@@ -94,7 +94,7 @@ jobs:
 # Install .Net core SDK 8.0.100
 # ------------------------------------------------------------------------------------------------------
         -   name: 'Install .NET 10'
-            uses: actions/setup-dotnet@v3
+            uses: actions/setup-dotnet@v5
             with:
                 dotnet-version: 10.0.103
 # ------------------------------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ jobs:
 # Install Nuget tool v1.0.5
 # ------------------------------------------------------------------------------------------------------
         -   name: 'Setup Nuget'
-            uses: Nuget/setup-nuget@v1.0.5
+            uses: Nuget/setup-nuget@v2.0.1
 
 # ------------------------------------------------------------------------------------------------------
 # Restore Ginger solution NuGet packages
@@ -127,7 +127,7 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
         -   name: 'Add msbuild to PATH'
             if: runner.os == 'Windows'
-            uses: microsoft/setup-msbuild@v1.0.2
+            uses: microsoft/setup-msbuild@v2
 
         -   name: 'Build Ginger Windows Solution'
             if: runner.os == 'Windows'
@@ -146,7 +146,7 @@ jobs:
         -   name: Cache static site content - Windows
             id: cache_windows
             if: runner.os == 'Windows'
-            uses: actions/cache@v4
+            uses: actions/cache@v5
             with:
                 path: 
                     ./**
@@ -158,7 +158,7 @@ jobs:
         -   name: Cache static site content - Linux
             id: cache_linux
             if: runner.os == 'Linux'
-            uses: actions/cache@v4
+            uses: actions/cache@v5
             with:
                 path: 
                     ./**
@@ -171,7 +171,7 @@ jobs:
         -   name: Cache static site content - macOS
             id: cache_macos
             if: runner.os == 'macOS'
-            uses: actions/cache@v4
+            uses: actions/cache@v5
             with:
                 path: 
                     ./**
