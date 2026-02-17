@@ -261,7 +261,7 @@
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="2025.4.0" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="2025.4.2.1" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="2026.3.0" />
   
     <PackageReference Include="Google.Protobuf" Version="3.33.5" />
     

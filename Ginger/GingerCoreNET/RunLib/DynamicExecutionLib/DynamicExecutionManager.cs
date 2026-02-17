@@ -564,7 +564,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 Name = runsetExecutor.RunSetConfig.Name,
                 ID = runsetExecutor.RunSetConfig.Guid,
                 Description = runsetExecutor.RunSetConfig.Description,
-
+                RunDescription = runsetExecutor.RunSetConfig.RunDescription,
                 EnvironmentName = runsetExecutor.RunsetExecutionEnvironment.Name,
                 EnvironmentID = runsetExecutor.RunsetExecutionEnvironment.Guid,
 
