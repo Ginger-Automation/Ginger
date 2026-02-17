@@ -78,6 +78,16 @@ jobs:
         -   name: Setup Nuget
             uses: Nuget/setup-nuget@v1.0.5
 
+
+        -   name: Run Standalone CLI Test for Linux
+            if: (success() || failure()) && (runner.os == 'Linux')       # run this step even if previous step failed
+            shell: bash
+            run: |
+                ls -alt
+                echo "====================================="
+                cd Ginger
+                ls -alt
+
 # ------------------------------------------------------------------------------------------------------
 # Restore Ginger solution NuGet packages
 # ------------------------------------------------------------------------------------------------------
