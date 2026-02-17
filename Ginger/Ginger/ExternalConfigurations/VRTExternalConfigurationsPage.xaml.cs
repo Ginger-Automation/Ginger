@@ -66,6 +66,8 @@ namespace Ginger.Configurations
 
             if (!string.IsNullOrEmpty(_VRTConfiguration.ApiKey))  
             {
+                xAPIKeyTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("API Key cannot be empty"));
+
                 // Now that validation is attached, remove the binding so the real key won't show
                 BindingOperations.ClearBinding(xAPIKeyTextBox.ValueTextBox, TextBox.TextProperty);
 
@@ -100,36 +102,16 @@ namespace Ginger.Configurations
 
         private void xSaveButton_Click(object sender, RoutedEventArgs e)
         {
+            // Preserve existing key unless user edited the field
             var apiKeyBox = xAPIKeyTextBox.ValueTextBox;
+            string masked = apiKeyBox.Tag as string;
 
-            // Use existing mask marker if present; otherwise set a default
-            string masked = apiKeyBox.Tag as string ?? "••••••••••••••••••••";
-
-            // If the user typed something (field differs from mask), treat it as an edit
-            if (!string.Equals(apiKeyBox.Text, masked))
+            if (!string.IsNullOrEmpty(masked) && !string.Equals(apiKeyBox.Text, masked))
             {
-                
-                if (string.IsNullOrWhiteSpace(apiKeyBox.Text))
-                {
-                    // Warn and do not overwrite stored key with empty value
-                    Reporter.ToLog(eLogLevel.WARN, "API Key cannot be empty");
-
-                    // Restore the mask so we don’t reveal anything and keep UX consistent
-                    BindingOperations.ClearBinding(apiKeyBox, TextBox.TextProperty);
-                    apiKeyBox.Text = masked;
-                    apiKeyBox.Tag = masked;
-
-                    return; // stop here; nothing to save for key
-                }
-             
-                // Assign new key only when user entered a non-empty value
-                _VRTConfiguration.ApiKey = apiKeyBox.Text;
-
-                // Immediately re-mask after assigning to avoid exposure
-                BindingOperations.ClearBinding(apiKeyBox, TextBox.TextProperty);
-                apiKeyBox.Text = masked;
-                apiKeyBox.Tag = masked;
+                _VRTConfiguration.ApiKey = apiKeyBox.Text;  // assign new key
+                apiKeyBox.Text = masked;                     // re-mask after save
             }
+            // else: field untouched or no mask in use -> keep existing _VRTConfiguration.ApiKey
 
             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
         }
