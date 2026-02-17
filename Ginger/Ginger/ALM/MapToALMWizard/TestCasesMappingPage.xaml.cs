@@ -74,7 +74,7 @@ namespace Ginger.ALM.MapToALMWizard
         {
             xMapActivityGroupToTestCaseGrid.DataSourceList = mWizard.testCasesMappingList;
             xUnMapTestCaseGrid.DataSourceList = mWizard.testCasesUnMappedList;
-            xMapActivityGroupToTestCaseGrid.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, $"Ginger Ã¢â‚¬Ëœ{mWizard.mapBusinessFlow.Name}Ã¢â‚¬â„¢ ", "Ã¢â‚¬â€œ ALM Test Cases Mapping");
+            xMapActivityGroupToTestCaseGrid.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, $"Ginger ‘{mWizard.mapBusinessFlow.Name}’ ", "– ALM Test Cases Mapping");
             if (mWizard.AlmTestSetData.TestSetName is not null)
             {
                 xUnMapTestCaseGrid.Title = $"ALM '{mWizard.AlmTestSetData.TestSetName}' Test Cases";

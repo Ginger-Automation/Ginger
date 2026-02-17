@@ -81,8 +81,8 @@ namespace Ginger.ALM.MapToALMWizard
                 }
                 xUnMapTestStepsGrid.DataSourceList = mWizard.testCaseUnmappedStepsDic[selectedTCConfig.aLMTSTest.TestID];
                 xMapTestCasesGrid.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, "Ginger", "& ALM Test Cases - Steps Mapping Status");
-                xMapTestStepsGrid.Title = GingerDicser.GetTermResValue(eTermResKey.Activities, $"Ginger Ã¢â‚¬Ëœ{mWizard.mappedTestCasesStepPageList[0].ActivityGroupName}Ã¢â‚¬â„¢ ", "- ALM Steps Mapping");
-                xUnMapTestStepsGrid.Title = $"ALM Ã¢â‚¬Ëœ{mWizard.mappedTestCasesStepPageList[0].TestCaseName}Ã¢â‚¬â„¢ Steps";
+                xMapTestStepsGrid.Title = GingerDicser.GetTermResValue(eTermResKey.Activities, $"Ginger ‘{mWizard.mappedTestCasesStepPageList[0].ActivityGroupName}’ ", "- ALM Steps Mapping");
+                xUnMapTestStepsGrid.Title = $"ALM ‘{mWizard.mappedTestCasesStepPageList[0].TestCaseName}’ Steps";
             }
         }
 
@@ -259,8 +259,8 @@ namespace Ginger.ALM.MapToALMWizard
                 xMapTestStepsGrid.DataSourceList = selectedTCConfig.testStepsMappingList;
                 xUnMapTestStepsGrid.DataSourceList = mWizard.testCaseUnmappedStepsDic[selectedTCConfig.aLMTSTest.TestID];
                 selectedTCConfig.UpdateTestCaseMapStatus(mWizard.testCaseUnmappedStepsDic[selectedTCConfig.aLMTSTest.TestID].Count);
-                xMapTestStepsGrid.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, $"Ginger Ã¢â‚¬Ëœ{selectedTCConfig.ActivityGroupName}Ã¢â‚¬â„¢");
-                xUnMapTestStepsGrid.Title = $"ALM Ã¢â‚¬Ëœ{selectedTCConfig.TestCaseName}Ã¢â‚¬â„¢ Steps";
+                xMapTestStepsGrid.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, $"Ginger ‘{selectedTCConfig.ActivityGroupName}’");
+                xUnMapTestStepsGrid.Title = $"ALM ‘{selectedTCConfig.TestCaseName}’ Steps";
             }
         }
 

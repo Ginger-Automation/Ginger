@@ -417,7 +417,7 @@ namespace Ginger.Actions
                     }
                     xUnlockDevicePnl.Visibility = Visibility.Visible;
                     xInputPnl.Visibility = Visibility.Visible;
-                    xInputTextBlock.Text = "Unlock operation (Android only)\r\nÃ¢â‚¬Â¯\r\n1. Pick the unlock type Ã¢â€ â€™\r\nÃ‚Â Ã‚Â Ã¢â‚¬Â¢Ã¢â‚¬Â¯PIN Ã¢â‚¬â€œ enter digits only, e.g.Ã¢â‚¬Â¯1234\r\nÃ‚Â Ã‚Â Ã¢â‚¬Â¢Ã¢â‚¬Â¯Password Ã¢â‚¬â€œ enter your full device password, e.g.Ã¢â‚¬Â¯Pass@1234\r\nÃ‚Â Ã‚Â Ã¢â‚¬Â¢Ã¢â‚¬Â¯Pattern Ã¢â‚¬â€œ describe the 3Ã¢â‚¬Â¯Ãƒâ€”Ã¢â‚¬Â¯3 Android pattern using the letters AÃ¢â‚¬Â¯Ã¢â‚¬Â¦Ã¢â‚¬Â¯I\r\n\r\nMathematica\r\nCopy\r\nEdit\r\n1 2 3\r\n4 5 6\r\n7 8 9\r\nÃ‚Â Ã‚Â Ã‚Â Ã‚Â Example Ã¢â‚¬Å“ZÃ¢â‚¬â€˜shapeÃ¢â‚¬Â pattern Ã¢â€¡Â¢Ã¢â‚¬Â¯147369\r\n 2.iOS devices cannot be unlocked by Appium Ã¢â‚¬â€œ run tests with the device already unlocked.";
+                    xInputTextBlock.Text = "Unlock operation (Android only)\r\n \r\n1. Pick the unlock type →\r\n  • PIN – enter digits only, e.g. 1234\r\n  • Password – enter your full device password, e.g. Pass@1234\r\n  • Pattern – describe the 3 × 3 Android pattern using the letters A … I\r\n\r\nMathematica\r\nCopy\r\nEdit\r\n1 2 3\r\n4 5 6\r\n7 8 9\r\n    Example “Z‑shape” pattern ⇢ 147369\r\n 2.iOS devices cannot be unlocked by Appium – run tests with the device already unlocked.";
 
                     break;
                 case ActMobileDevice.eMobileDeviceAction.SetDeviceLocation:
