@@ -30,6 +30,7 @@ using System.Windows.Controls.Primitives; // for ScrollBar
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Markup;
 
 namespace Ginger.Drivers.DriversWindows
 {
@@ -56,6 +57,7 @@ namespace Ginger.Drivers.DriversWindows
         private TextBlock _recordText;
         private TextBlock _newActionText;
         private TextBlock _themeText;
+        private TextBlock _colorText;
 
         private const string CommandPlaceholder = "Command";
         private static readonly Color PlaceholderColor = Color.FromRgb(120, 120, 130);
@@ -67,6 +69,41 @@ namespace Ginger.Drivers.DriversWindows
             _recordText = (RecordButton.Content as StackPanel)?.Children.OfType<TextBlock>().FirstOrDefault();
             _newActionText = (NewActionButton.Content as StackPanel)?.Children.OfType<TextBlock>().FirstOrDefault();
             _themeText = (ThemeToggleButton.Content as StackPanel)?.Children.OfType<TextBlock>().FirstOrDefault();
+            _colorText = (ColorButton.Content as StackPanel)?.Children.OfType<TextBlock>().FirstOrDefault();
+        }
+
+        private readonly Color[] _consoleTextPalette =
+        [
+            Colors.LimeGreen,
+            Colors.White,
+            Color.FromRgb(0, 170, 255),
+        ];
+
+        private readonly string[] _consoleTextPaletteNames =
+        [
+            "Green",
+            "White",
+            "Blue",
+        ];
+
+        private int _consoleTextPaletteIndex = 0;
+
+        private void ApplyConsoleTextColor(Color c)
+        {
+            var brush = new SolidColorBrush(c);
+            ConsoleTextBox.Foreground = brush;
+            ConsoleTextBrush = brush;
+
+            // Also update the RichTextBox default formatting so new paragraphs inherit the chosen color.
+            ConsoleTextBox.Selection.Select(ConsoleTextBox.Document.ContentEnd, ConsoleTextBox.Document.ContentEnd);
+            ConsoleTextBox.Selection.ApplyPropertyValue(TextElement.ForegroundProperty, brush);
+
+            if (_consoleTextPaletteIndex >= 0 && _consoleTextPaletteIndex < _consoleTextPaletteNames.Length)
+            {
+                var dot = new System.Windows.Documents.Run("● ") { Foreground = brush };
+                var label = new System.Windows.Documents.Run($"Text Color: {_consoleTextPaletteNames[_consoleTextPaletteIndex]}");
+                ColorButton.Content = new TextBlock { Inlines = { dot, label } };
+            }
         }
 
         private void SetCommandPlaceholder()
@@ -190,7 +227,9 @@ namespace Ginger.Drivers.DriversWindows
                         {
                             if (sender is string)
                             {
-                                ConsoleWriteCommand((string)sender);
+                                // ConsoleBufferUpdate carries output text, not a user command.
+                                // Use ConsoleWriteText so it respects the selected text color.
+                                ConsoleWriteText((string)sender, applyFormat: true);
                             }
                                 
                         }
@@ -536,7 +575,9 @@ namespace Ginger.Drivers.DriversWindows
             ConsoleBorder.Background = new SolidColorBrush(Color.FromRgb(18, 17, 24));
             ConsoleBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(55, 50, 70));
             ConsoleTextBox.Background = ConsoleBorder.Background;
-            ConsoleTextBox.Foreground = new SolidColorBrush(Color.FromRgb(0, 170, 255));
+            ApplyConsoleTextColor(_consoleTextPalette[_consoleTextPaletteIndex]);
+            ConsoleCommandBrush = Brushes.DeepSkyBlue;
+            ConsoleErrorBrush = Brushes.Red;
             // ScrollBars dark
             ConsoleTextBox.Resources[typeof(ScrollBar)] = FindResource("DarkScrollBarStyle");
             CommandBorder.Background = new SolidColorBrush(Color.FromRgb(40, 38, 59));
@@ -557,9 +598,17 @@ namespace Ginger.Drivers.DriversWindows
             {
                 b.Style = roundStyle; b.Background = btnBG; b.BorderBrush = btnBorder; b.Foreground = btnText;
             }
+            if (ColorButton != null)
+            {
+                ColorButton.Style = roundStyle;
+                ColorButton.Background = btnBG;
+                ColorButton.BorderBrush = btnBorder;
+                ColorButton.Foreground = btnText;
+            }
             _recordText?.SetValue(TextBlock.ForegroundProperty, mRecording ? Brushes.Red : btnText);
             _newActionText?.SetValue(TextBlock.ForegroundProperty, btnText);
             _themeText?.SetValue(TextBlock.ForegroundProperty, btnText);
+            _colorText?.SetValue(TextBlock.ForegroundProperty, btnText);
             if (xStatusLabel.Content?.ToString() == "Connected")
             {
                 xStatusLabel.Foreground = new SolidColorBrush(Color.FromRgb(0, 220, 100));
@@ -581,8 +630,10 @@ namespace Ginger.Drivers.DriversWindows
             ConsoleBorder.Background = new SolidColorBrush(Color.FromRgb(18, 17, 24));
             ConsoleBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(208, 208, 208));
             ConsoleTextBox.Background = ConsoleBorder.Background;
-            // Optionally keep dark mode foreground for better contrast
-            ConsoleTextBox.Foreground = new SolidColorBrush(Color.FromRgb(0, 170, 255));
+            // Keep palette selection for better contrast on dark console background
+            ApplyConsoleTextColor(_consoleTextPalette[_consoleTextPaletteIndex]);
+            ConsoleCommandBrush = Brushes.DeepSkyBlue;
+            ConsoleErrorBrush = Brushes.Red;
             ConsoleTextBox.Resources[typeof(ScrollBar)] = FindResource("DarkScrollBarStyle");
             CommandBorder.Background = Brushes.White;
             CommandBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(208, 208, 208));
@@ -599,9 +650,17 @@ namespace Ginger.Drivers.DriversWindows
             var btnText = new SolidColorBrush(Color.FromRgb(51, 51, 51));
             foreach (var b in new[] { RecordButton, NewActionButton, ThemeToggleButton, GoButton, TopButton })
             { b.Style = roundStyle; b.Background = btnBG; b.BorderBrush = btnBorder; b.Foreground = btnText; }
+            if (ColorButton != null)
+            {
+                ColorButton.Style = roundStyle;
+                ColorButton.Background = btnBG;
+                ColorButton.BorderBrush = btnBorder;
+                ColorButton.Foreground = btnText;
+            }
             _recordText?.SetValue(TextBlock.ForegroundProperty, mRecording ? Brushes.Red : btnText);
             _newActionText?.SetValue(TextBlock.ForegroundProperty, btnText);
             _themeText?.SetValue(TextBlock.ForegroundProperty, btnText);
+            _colorText?.SetValue(TextBlock.ForegroundProperty, btnText);
             if (xStatusLabel.Content?.ToString() == "Connected")
             {
                 xStatusLabel.Foreground = Brushes.Green;
@@ -614,6 +673,17 @@ namespace Ginger.Drivers.DriversWindows
         }
 
         private void CommandLabelIfExists() { /* placeholder since label removed */ }
+
+        private void ColorButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_consoleTextPalette.Length == 0)
+            {
+                return;
+            }
+
+            _consoleTextPaletteIndex = (_consoleTextPaletteIndex + 1) % _consoleTextPalette.Length;
+            ApplyConsoleTextColor(_consoleTextPalette[_consoleTextPaletteIndex]);
+        }
     }
 }
 #endregion

@@ -21,6 +21,7 @@ using Ginger.UserControlsLib;
 using Ginger.ValidationRules;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace Ginger.Configurations
 {
@@ -61,6 +62,20 @@ namespace Ginger.Configurations
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xActivityTagsCheckBox, CheckBox.IsCheckedProperty, _VRTConfiguration, nameof(VRTConfiguration.ActivityTags));
 
             ApplyValidationRules();
+
+            if (!string.IsNullOrEmpty(_VRTConfiguration.ApiKey))  
+            {
+                xAPIKeyTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("API Key cannot be empty"));
+
+                // Now that validation is attached, remove the binding so the real key won't show
+                BindingOperations.ClearBinding(xAPIKeyTextBox.ValueTextBox, TextBox.TextProperty);
+
+                // Show a generic mask; don't leak length
+                const string masked = "••••••••••••••••••••";
+                xAPIKeyTextBox.ValueTextBox.Text = masked;
+                xAPIKeyTextBox.ValueTextBox.Tag = masked; // remember the mask marker
+            }
+
         }
 
         private void ApplyValidationRules()
@@ -86,6 +101,23 @@ namespace Ginger.Configurations
 
         private void xSaveButton_Click(object sender, RoutedEventArgs e)
         {
+            // Preserve existing key unless user edited the field
+            var apiKeyBox = xAPIKeyTextBox.ValueTextBox;
+            string masked = apiKeyBox.Tag as string;
+
+            if (!string.IsNullOrEmpty(masked) && !string.Equals(apiKeyBox.Text, masked))
+            {
+                if (string.IsNullOrWhiteSpace(apiKeyBox.Text))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "API Key cannot be empty");
+                    apiKeyBox.Text = masked;
+                    return;
+                }
+                _VRTConfiguration.ApiKey = apiKeyBox.Text;  // assign new key
+                apiKeyBox.Text = masked;                     // re-mask after save
+            }
+            // else: field untouched or no mask in use -> keep existing _VRTConfiguration.ApiKey
+
             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
         }
 

@@ -11,7 +11,7 @@ jobs:
         runs-on: macOS-latest
         steps:
             -   name: Restore static site content
-                uses: actions/cache@v4
+                uses: actions/cache@v5
                 with:
                     path: ./**
                     key: cache-site-macos-${{ github.run_number }}
@@ -26,14 +26,14 @@ jobs:
                 run: | 
                     find ./Ginger/GingerRuntime/bin/Release/net10.0/osx-x64/selenium-manager -type f -print0 | xargs -0 chmod +x
     
-            -   uses: sibiraj-s/action-archiver@v1
+            -   uses: sibiraj-s/action-archiver@v1.2.0
                 with:
                     path: './Ginger/GingerRuntime/bin/Release/net10.0/osx-x64'
                     format: tar
                     gzip: true
                     output: ./Runtime/GingerRuntime_MacOS.tar.gz
 
-            -   uses: sibiraj-s/action-archiver@v1
+            -   uses: sibiraj-s/action-archiver@v1.2.0
                 with:
                     path: './Runtime'
                     format: tar
@@ -42,7 +42,7 @@ jobs:
 
             -   name: Cache GingerRuntime_MacOS
                 id: cache
-                uses: actions/cache@v4
+                uses: actions/cache@v5
                 with:
                     path: 
                         ./GingerRuntime_MacOS-root.tar.gz
@@ -58,7 +58,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Restore static site content
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               with:
                 path: ./**
                 key: cache-site-linux-${{ github.run_number }}
@@ -74,7 +74,7 @@ jobs:
                   ls -altr
                   find ./Ginger/GingerRuntime/bin/Release/net10.0/linux-x64/selenium-manager -type f -print0 | xargs -0 chmod +x
    
-            -   uses: sibiraj-s/action-archiver@v1
+            -   uses: sibiraj-s/action-archiver@v1.2.0
                 with:
                   path: './Ginger/GingerRuntime/bin/Release/net10.0/linux-x64'
                   format: tar
@@ -91,7 +91,7 @@ jobs:
                   dos2unix -b ./Runtime/gingerInstall.sh
                   
 
-            -   uses: sibiraj-s/action-archiver@v1
+            -   uses: sibiraj-s/action-archiver@v1.2.0
                 with:
                   path: './Runtime'
                   format: tar
@@ -100,7 +100,7 @@ jobs:
 
             -   name: Cache GingerRuntime_Linux
                 id: cache
-                uses: actions/cache@v4
+                uses: actions/cache@v5
                 with:
                     path: 
                         ./GingerRuntime_Linux-root.tar.gz
@@ -116,7 +116,7 @@ jobs:
         runs-on: windows-latest     
         steps:
             -   name: Restore static site content
-                uses: actions/cache@v4
+                uses: actions/cache@v5
                 with:
                     path: ./**
                     key: cache-site-windows-${{ github.run_number }}
@@ -315,7 +315,7 @@ jobs:
                  #cert-password: ${{ secrets.PEM_PASS }}
                     
             -   name: Upload Windows Installer
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@v6
                 with:
                   name: WindowsInstaller
                   path: D:/a/Installers
