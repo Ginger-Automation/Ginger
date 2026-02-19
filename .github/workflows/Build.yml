@@ -153,7 +153,7 @@ jobs:
 
         -   name: 'Testing Ginger'
             if: success() || failure()  
-            run: dotnet test  ./Ginger/Ginger.sln --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal
+            run: dotnet test  ./Ginger --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal
   
 # ------------------------------------------------------------------------------------------------------
 # Start Testing 
