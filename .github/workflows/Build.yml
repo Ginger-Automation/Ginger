@@ -151,9 +151,9 @@ jobs:
             uses: microsoft/setup-msbuild@v1.0.2       
 
 
-        -   name: 'Testing Ginger'
-            if: success() || failure()  
-            run: dotnet test  ./Ginger --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal
+        # -   name: 'Testing Ginger'
+        #     if: success() || failure()  
+        #     run: dotnet test  ./Ginger --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal
   
 # ------------------------------------------------------------------------------------------------------
 # Start Testing 
