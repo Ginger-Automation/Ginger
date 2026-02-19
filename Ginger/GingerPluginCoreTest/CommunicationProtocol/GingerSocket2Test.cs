@@ -125,7 +125,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
             public Guid SessionID { get { return mGingerSocketClient2.SessionID; } }
 
-            public bool IsReady { get { return mGingerSocketClient2.IsConnected; } }
+            public bool IsReady { get { return mGingerSocketClient2?.IsConnected ?? false; } }
 
             public void Connect()
             {

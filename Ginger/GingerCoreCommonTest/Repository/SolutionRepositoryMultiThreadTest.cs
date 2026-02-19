@@ -44,6 +44,9 @@ namespace GingerCoreCommonTest.Repository
             TempRepositoryFolder = TestResources.GetTestTempFolder("Solutions", "SRMultiThreadTestTemp");
             Console.WriteLine("SolutionRepositoryTest folder: " + TempRepositoryFolder);
 
+            // Register MyRepositoryItem class with the serializer BEFORE creating test solution
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommonTest);
+
             Console.WriteLine("===> Creating test solution");
             CreateTestSolution();
             Console.WriteLine("===> test solution created");
@@ -59,10 +62,7 @@ namespace GingerCoreCommonTest.Repository
                                                                );
 
             NewRepositorySerializer RS = new NewRepositorySerializer();
-            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommonTest);
             mSolutionRepository.Open(TempRepositoryFolder);
-
-
 
         }
 
