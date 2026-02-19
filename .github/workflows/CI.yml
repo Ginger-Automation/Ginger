@@ -13,15 +13,15 @@ on:
 
 jobs:
     Builder:
-        name: Build Solution
+        name: Build & Test
         uses: ./.github/workflows/Build.yml
         secrets: inherit
 
-    Ginger_Unit-Test:
-        name: Execute Unit Tests
-        needs: Builder
-        uses: ./.github/workflows/Test.yml
-        secrets: inherit
+    # Ginger_Unit-Test:
+    #     name: Execute Unit Tests
+    #     needs: Builder
+    #     uses: ./.github/workflows/Test.yml
+    #     secrets: inherit
 
         
         
