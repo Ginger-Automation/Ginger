@@ -150,6 +150,11 @@ jobs:
             if: ${{github.workflow == 'Ginger Windows Test'}} 
             uses: microsoft/setup-msbuild@v1.0.2       
 
+
+        -   name: 'Testing Ginger'
+            if: success() || failure()  
+            run: dotnet test  ./Ginger/Ginger.sln --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal
+  
 # ------------------------------------------------------------------------------------------------------
 # Start Testing 
 # ------------------------------------------------------------------------------------------------------
