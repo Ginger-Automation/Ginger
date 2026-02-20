@@ -42,7 +42,6 @@ namespace Amdocs.Ginger.CoreNET.Repository
 
             // TODO: replace ~\ with ~ env.seperator !!!!!!!!!!
             SR.AddItemInfo<BusinessFlow>("*.Ginger.BusinessFlow.xml", SolutionRepository.cSolutionRootFolderSign + "BusinessFlows", true, GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), PropertyNameForFileName: nameof(BusinessFlow.Name));
-            SR.AddItemInfo<Solution>("*.Solution.xml", SolutionRepository.cSolutionRootFolderSign, true, "Solution", PropertyNameForFileName: nameof(Solution.Name));
             SR.AddItemInfo<ApplicationAPIModel>("*.Ginger.ApplicationAPIModel.xml", SolutionRepository.cSolutionRootFolderSign + "Applications Models" + Path.DirectorySeparatorChar + "API Models", true, "API Models", PropertyNameForFileName: nameof(ApplicationAPIModel.Name));
             SR.AddItemInfo<GlobalAppModelParameter>("*.Ginger.GlobalAppModelParameter.xml", SolutionRepository.cSolutionRootFolderSign + "Applications Models" + Path.DirectorySeparatorChar + "Global Models Parameters", true, "Global Model Parameters", PropertyNameForFileName: nameof(GlobalAppModelParameter.PlaceHolder));
             SR.AddItemInfo<ApplicationPOMModel>("*.Ginger.ApplicationPOMModel.xml", SolutionRepository.cSolutionRootFolderSign + "Applications Models" + Path.DirectorySeparatorChar + "POM Models", true, "POM Models", PropertyNameForFileName: nameof(ApplicationPOMModel.Name));
