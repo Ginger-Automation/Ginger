@@ -89,7 +89,7 @@
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="2025.4.0" />
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="2025.4.2.1" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="2026.3.0" />
     <PackageReference Include="GingerTestHelper" Version="2.0.2" />
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.3" />
