@@ -19,7 +19,7 @@
     <Company>Amdocs</Company>
     <Product>Ginger by Amdocs</Product>
     <Copyright>Copyright © 2014-2026 European Support Limited</Copyright>
-    <Version>2026.3</Version>
+    <Version>2026.3.0.1</Version>
     <Title>Ginger Core Common</Title>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
