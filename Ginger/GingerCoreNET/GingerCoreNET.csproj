@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <AssemblyVersion></AssemblyVersion>
     <FileVersion></FileVersion>
     <RootNamespace>Amdocs.Ginger.CoreNET</RootNamespace>
@@ -229,15 +229,15 @@
   
     <PackageReference Include="Appium.WebDriver" Version="7.2.0" />
   
-    <PackageReference Include="Azure.Identity" Version="1.12.0" />
+    <PackageReference Include="Azure.Identity" Version="1.17.1" />
   
-    <PackageReference Include="Bogus" Version="35.5.1" />
+    <PackageReference Include="Bogus" Version="35.6.5" />
   
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
   
-    <PackageReference Include="CassandraCSharpDriver" Version="3.19.5" />
+    <PackageReference Include="CassandraCSharpDriver" Version="3.22.0" />
   
-    <PackageReference Include="CliWrap" Version="3.6.6" />
+    <PackageReference Include="CliWrap" Version="3.10.0" />
   
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
   
@@ -245,11 +245,11 @@
   
     <PackageReference Include="CouchbaseNetClient" Version="2.7.11" />
   
-    <PackageReference Include="Deque.AxeCore.Commons" Version="4.9.1" />
+    <PackageReference Include="Deque.AxeCore.Commons" Version="4.11.1" />
   
-    <PackageReference Include="Deque.AxeCore.Playwright" Version="4.9.1" />
+    <PackageReference Include="Deque.AxeCore.Playwright" Version="4.11.1" />
   
-    <PackageReference Include="Deque.AxeCore.Selenium" Version="4.9.1" />
+    <PackageReference Include="Deque.AxeCore.Selenium" Version="4.11.1" />
   
     <PackageReference Include="EnterpriseLibrary.TransientFaultHandling" Version="6.0.1304" />
   
@@ -263,9 +263,9 @@
   
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="2025.4.2.1" />
   
-    <PackageReference Include="Google.Protobuf" Version="3.29.3" />
+    <PackageReference Include="Google.Protobuf" Version="3.33.5" />
     
-    <PackageReference Include="GraphQL" Version="8.3.1" />
+    <PackageReference Include="GraphQL" Version="8.8.3" />
   
     <PackageReference Include="GraphQL.Client" Version="6.1.0" />
   
@@ -273,63 +273,63 @@
    
     <PackageReference Include="Gravity.Core" Version="2021.9.12.3" />
    
-    <PackageReference Include="Grpc.Net.Client" Version="2.65.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.76.0" />
    
-    <PackageReference Include="Grpc.Tools" Version="2.66.0">
+    <PackageReference Include="Grpc.Tools" Version="2.78.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     
-    <PackageReference Include="HBaseNet" Version="0.1.0" />
+    <PackageReference Include="HBaseNet" Version="0.1.1" />
     
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
     
     <PackageReference Include="ImageDiff" Version="1.0.1" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
     <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="2.0.278" />
 	<PackageReference Include="LiteDB" Version="5.0.21" />
   
-    <PackageReference Include="DocumentFormat.OpenXml" Version="3.0.1" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.4.1" />
   
     <PackageReference Include="log4net" Version="2.0.15" />
   
-    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.10.0" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.10.2" />
   
-    <PackageReference Include="MailKit" Version="4.0.0" />
+    <PackageReference Include="MailKit" Version="4.14.1" />
   
     <PackageReference Include="MedallionShell" Version="1.6.2" />
   
-    <PackageReference Include="Meziantou.Framework.Win32.CredentialManager" Version="1.4.2" />
+    <PackageReference Include="Meziantou.Framework.Win32.CredentialManager" Version="1.7.17" />
   
-    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.25.0" />
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.57.0" />
   
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.12.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.7.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.7.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="5.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="5.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="5.0.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Graph" Version="4.51.0" />
-    <PackageReference Include="Microsoft.Playwright" Version="1.49.0" />
-    <PackageReference Include="Microsoft.Playwright.NUnit" Version="1.49.0" />
+    <PackageReference Include="Microsoft.Playwright" Version="1.58.0" />
+    <PackageReference Include="Microsoft.Playwright.NUnit" Version="1.58.0" />
     <PackageReference Include="Microsoft.NETCore.App" Version="2.1.30" />
     <PackageReference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.ServiceBus" Version="6.0.1304" />
-    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.205.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="16.205.1" />
+    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="19.225.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="19.225.2" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="MimeKit" Version="4.10.0" />
+    <PackageReference Include="MimeKit" Version="4.14.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.19.1" />
     <PackageReference Include="MySql.Data" Version="8.0.16" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Npgsql" Version="8.0.3" />
+    <PackageReference Include="Npgsql" Version="10.0.1" />
     <PackageReference Include="NPOI" Version="2.6.1" />
     <PackageReference Include="NUglify" Version="1.9.7" />
     <PackageReference Include="OWASPZAPDotNetAPI" Version="2.12.0" />
-    <PackageReference Include="protobuf-net" Version="3.2.46" />
-    <PackageReference Include="protobuf-net.Core" Version="3.2.46" />
+    <PackageReference Include="protobuf-net" Version="3.2.56" />
+    <PackageReference Include="protobuf-net.Core" Version="3.2.56" />
     <PackageReference Include="Protractor" Version="1.0.0" />
     <PackageReference Include="RestSharp" Version="112.0.0" />
     <PackageReference Include="Selenium.Support" Version="4.35.0" />
@@ -348,8 +348,8 @@
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Reflection.DispatchProxy" Version="4.7.1" />
     <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.1" />
-    <PackageReference Include="System.Text.Json" Version="9.0.1" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.3" />
+    <PackageReference Include="System.Text.Json" Version="10.0.2" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>
 

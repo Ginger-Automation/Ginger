@@ -45,11 +45,11 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 
 [Files]
-Source: "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.exe"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall:DetectAndInstallPrerequisites;
-Source: "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;
+Source: "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net10.0-windows10.0.17763.0\Ginger.exe"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall:DetectAndInstallPrerequisites;
+Source: "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net10.0-windows10.0.17763.0\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;
 Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\netcorecheck_x64.exe"; Flags: dontcopy deleteafterinstall noencryption
-Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\windowsdesktop-runtime-8.0.22-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
-Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\aspnetcore-runtime-8.0.22-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
+Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\windowsdesktop-runtime-10.0.3-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
+Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\aspnetcore-runtime-10.0.3-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
 Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\AccessDatabaseEngine_X64.exe"; DestDir: "{tmp}"; Flags: dontcopy deleteafterinstall noencryption
 Source: "D:\a\Ginger\Ginger\Ginger\SetGingerExe.bat"; DestDir: "{app}"; Flags: ignoreversion
 ;NOTE: Don't use "Flags: ignoreversion" on any shared system files
@@ -111,29 +111,29 @@ begin
   WizardForm.StatusLabel.Caption := 'Detecting required .Net runtimes...';
   WizardForm.ProgressGauge.Style := npbstMarquee;
   try
-    If not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 8.0.22') then
+    If not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 10.0.3') then
     begin
-      WizardForm.StatusLabel.Caption := 'Installing Microsoft.WindowsDesktop.App Runtime 8.0.22...';
-      if not FileExists(ExpandConstant('{tmp}\windowsdesktop-runtime-8.0.22-win-x64.exe')) then begin
-        ExtractTemporaryFile('windowsdesktop-runtime-8.0.22-win-x64.exe');
+      WizardForm.StatusLabel.Caption := 'Installing Microsoft.WindowsDesktop.App Runtime 10.0.3...';
+      if not FileExists(ExpandConstant('{tmp}\windowsdesktop-runtime-10.0.3-win-x64.exe')) then begin
+        ExtractTemporaryFile('windowsdesktop-runtime-10.0.3-win-x64.exe');
       end;
-      if not Exec(ExpandConstant('{tmp}\windowsdesktop-runtime-8.0.22-win-x64.exe'), '/q /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
+      if not Exec(ExpandConstant('{tmp}\windowsdesktop-runtime-10.0.3-win-x64.exe'), '/q /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
         begin
           { you can interact with the user that the installation failed }
-          MsgBox('.NET Desktop runtime 8.0.22 installation failed with code: ' + IntToStr(ResultCode) + '. Please install it manually.',
+          MsgBox('.NET Desktop runtime 10.0.3 installation failed with code: ' + IntToStr(ResultCode) + '. Please install it manually.',
             mbError, MB_OK);
       end;
     end;
-    If not Dependency_IsNetCoreInstalled('Microsoft.AspNetCore.App 8.0.22') then 
+    If not Dependency_IsNetCoreInstalled('Microsoft.AspNetCore.App 10.0.3') then 
     begin
-      WizardForm.StatusLabel.Caption := 'Installing Microsoft.AspNetCore.App Runtime 8.0.22...';
-      if not FileExists(ExpandConstant('{tmp}\aspnetcore-runtime-8.0.22-win-x64.exe')) then begin
-        ExtractTemporaryFile('aspnetcore-runtime-8.0.22-win-x64.exe');
+      WizardForm.StatusLabel.Caption := 'Installing Microsoft.AspNetCore.App Runtime 10.0.3...';
+      if not FileExists(ExpandConstant('{tmp}\aspnetcore-runtime-10.0.3-win-x64.exe')) then begin
+        ExtractTemporaryFile('aspnetcore-runtime-10.0.3-win-x64.exe');
       end;
-      if not Exec(ExpandConstant('{tmp}\aspnetcore-runtime-8.0.22-win-x64.exe'), '/q /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
+      if not Exec(ExpandConstant('{tmp}\aspnetcore-runtime-10.0.3-win-x64.exe'), '/q /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
         begin
           { you can interact with the user that the installation failed }
-          MsgBox('.NET ASP Net Core 8.0.22 installation failed with code: ' + IntToStr(ResultCode) + '. Please install it manually.',
+          MsgBox('.NET ASP Net Core 10.0.3 installation failed with code: ' + IntToStr(ResultCode) + '. Please install it manually.',
             mbError, MB_OK);
       end;
     end;
