@@ -466,7 +466,7 @@
       <Version>1.12.4</Version>
     </PackageReference>
     <PackageReference Include="LibGit2Sharp.NativeBinaries">
-      <Version>2.0.323</Version>
+      <Version>2.0.278</Version>
     </PackageReference>
     <PackageReference Include="log4net">
       <Version>2.0.15</Version>
