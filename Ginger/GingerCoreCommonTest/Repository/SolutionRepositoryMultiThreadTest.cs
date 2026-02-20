@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -44,6 +44,9 @@ namespace GingerCoreCommonTest.Repository
             TempRepositoryFolder = TestResources.GetTestTempFolder("Solutions", "SRMultiThreadTestTemp");
             Console.WriteLine("SolutionRepositoryTest folder: " + TempRepositoryFolder);
 
+            // Register MyRepositoryItem class with the serializer BEFORE creating test solution
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommonTest);
+
             Console.WriteLine("===> Creating test solution");
             CreateTestSolution();
             Console.WriteLine("===> test solution created");
@@ -59,10 +62,7 @@ namespace GingerCoreCommonTest.Repository
                                                                );
 
             NewRepositorySerializer RS = new NewRepositorySerializer();
-            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommonTest);
             mSolutionRepository.Open(TempRepositoryFolder);
-
-
 
         }
 
