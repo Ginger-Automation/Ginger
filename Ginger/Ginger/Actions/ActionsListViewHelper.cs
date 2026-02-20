@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -152,6 +152,15 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemNameField()
         {
+            // which is the canonical human-readable name of the action type (e.g. "Mobile/Tv Device Action")
+            if (PageViewMode == General.eRIPageViewMode.Add
+                || PageViewMode == General.eRIPageViewMode.AddFromModel
+                || PageViewMode == General.eRIPageViewMode.AddFromShardRepository)
+            {
+                return nameof(Act.ActionDescription);
+            }
+
+            // Default behavior: show the action instance Description (existing behavior)
             return nameof(Act.Description);
         }
 
@@ -234,38 +243,43 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return nameof(Act.ActionType);
         }
 
-        public List<ListItemOperation> GetListOperations()
+        public List<ListItemOperation> GetListOperations(bool AddOperationsIcon = true)
         {
             List<ListItemOperation> operationsList = [];
 
-            ListItemOperation deleteSelected = new ListItemOperation
+            if (AddOperationsIcon)
             {
-                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
-                AutomationID = "deleteSelected",
-                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete,
-                ToolTip = "Delete Selected Actions (Del)",
-                OperationHandler = DeleteSelectedHandler
-            };
-            operationsList.Add(deleteSelected);
+                ListItemOperation deleteSelected = new ListItemOperation
+                {
+                    SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                    AutomationID = "deleteSelected",
+                    ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete,
+                    ToolTip = "Delete Selected Actions (Del)",
+                    OperationHandler = DeleteSelectedHandler
+                };
+                operationsList.Add(deleteSelected);
 
-            ListItemOperation addSelected = new ListItemOperation
-            {
-                SupportedViews = [General.eRIPageViewMode.Add],
-                AutomationID = "addSelected",
-                ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft,
-                ToolTip = "Add Selected Actions",
-                OperationHandler = AddActionListView
-            };
-            operationsList.Add(addSelected);
+                ListItemOperation addSelected = new ListItemOperation
+                {
+                    SupportedViews = [General.eRIPageViewMode.Add],
+                    AutomationID = "addSelected",
+                    ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft,
+                    ToolTip = "Add Selected Actions",
+                    OperationHandler = AddActionListView
+                };
+                operationsList.Add(addSelected);
 
-            ListItemOperation addToFlow = new ListItemOperation
-            {
-                SupportedViews = [General.eRIPageViewMode.AddFromShardRepository],
-                ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft,
-                ToolTip = "Add to Flow",
-                OperationHandler = AddFromRepository
-            };
-            operationsList.Add(addToFlow);
+                ListItemOperation addToFlow = new ListItemOperation
+                {
+                    SupportedViews = [General.eRIPageViewMode.AddFromShardRepository],
+                    ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft,
+                    ToolTip = "Add to Flow",
+                    OperationHandler = AddFromRepository
+                };
+                operationsList.Add(addToFlow);
+            }
+
+     
 
             ListItemOperation editItem = new ListItemOperation
             {

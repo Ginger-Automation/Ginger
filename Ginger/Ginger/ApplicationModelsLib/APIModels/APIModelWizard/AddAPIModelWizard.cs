@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -449,7 +449,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 else
                 {
                     RepositoryFolderBase rfFolderBase = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(apiModel.ContainingFolder);
-                    rfFolderBase.AddRepositoryItem(apiModel);
+                    if (rfFolderBase != null)
+                    {
+                        rfFolderBase.AddRepositoryItem(apiModel);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to find repository folder at path: '{apiModel.ContainingFolder}'. Adding API model '{apiModel.Name}' to parent folder '{APIModelFolder?.FolderFullPath}' instead.");
+                        APIModelFolder?.AddRepositoryItem(apiModel);
+                    }
                 }
             }
         }

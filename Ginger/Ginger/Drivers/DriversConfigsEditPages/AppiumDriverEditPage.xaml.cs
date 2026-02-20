@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,9 +24,17 @@ using Ginger.UserControls;
 using Ginger.ValidationRules;
 using GingerCore;
 using GingerCore.GeneralLib;
+using RestSharp;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -133,6 +141,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             mDevicePlatformType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DevicePlatformType));
             BindingHandler.ObjFieldBinding(xAndroidRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDevicePlatformType.Android));
+            BindingHandler.ObjFieldBinding(xAndroidTvRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDevicePlatformType.AndroidTv));
             BindingHandler.ObjFieldBinding(xIOSRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDevicePlatformType.iOS));
 
             if (IsUFTCapabilityExist())
@@ -178,11 +187,17 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void SetPlatformCapabilities()
         {
-            DriverConfigParam platformName = new DriverConfigParam() { Parameter = "platformName", Description = "Which mobile OS platform to use" };
+            DriverConfigParam platformName = new DriverConfigParam() { Parameter = "platformName", Description = "Which OS platform to use" };
             DriverConfigParam automationName = new DriverConfigParam() { Parameter = "appium:automationName", Description = "Which automation engine to use" };
             if (mDevicePlatformType.Value == nameof(eDevicePlatformType.Android))
             {
                 platformName.Value = "Android";
+                automationName.Value = "UiAutomator2";
+            }
+
+            else if(mDevicePlatformType.Value == nameof(eDevicePlatformType.AndroidTv))
+            {
+                platformName.Value = "AndroidTV";
                 automationName.Value = "UiAutomator2";
             }
             else
@@ -312,6 +327,10 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             {
                 SetCurrentCapabilityValue(deviceName);
                 SetCurrentCapabilityValue(udid);
+            }
+             if (mDevicePlatformType.Value == nameof(eDevicePlatformType.AndroidTv))
+            {
+                DeleteCapabilityIfExist("appium:bundleId");
             }
             AddOrUpdateCapability(deviceName);
             AddOrUpdateCapability(udid);
@@ -467,18 +486,147 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void PlatformSelectionChanged(object sender, RoutedEventArgs e)
         {
-            if (this.IsLoaded && xAutoUpdateCapabiltiies != null && xAutoUpdateCapabiltiies.IsChecked == true)
+            if (!this.IsLoaded) return;
+
+            bool isTvSelected = xTvRdBtn?.IsChecked == true;
+            bool isMobileSelected = xMobileRdBtn?.IsChecked == true;
+
+            // 1) UI visibility & enabled state
+            // Device source (mobile labs) - for TV only "Other" should be visible/used
+            if (xUFTRdBtn != null) xUFTRdBtn.Visibility = isTvSelected ? Visibility.Collapsed : Visibility.Visible;
+            if (xKobitonRdBtn != null) xKobitonRdBtn.Visibility = isTvSelected ? Visibility.Collapsed : Visibility.Visible;
+            if (xLocalAppiumRdBtn != null) xLocalAppiumRdBtn.Visibility = Visibility.Visible; // always visible
+
+            // SubPlatforms
+            if (xAndroidRdBtn != null) xAndroidRdBtn.Visibility = isTvSelected ? Visibility.Collapsed : Visibility.Visible;
+            if (xIOSRdBtn != null) xIOSRdBtn.Visibility = isTvSelected ? Visibility.Collapsed : Visibility.Visible;
+            if (xAndroidTvRdBtn != null) xAndroidTvRdBtn.Visibility = isTvSelected ? Visibility.Visible : Visibility.Collapsed;
+
+            // Icons visibility (keep in sync)
+            if (xAndroidIconImg != null) xAndroidIconImg.Visibility = xAndroidRdBtn.Visibility;
+            if (xIosIconImg != null) xIosIconImg.Visibility = xIOSRdBtn.Visibility;
+            if (xAndroidTvIconImg != null) xAndroidTvIconImg.Visibility = xAndroidTvRdBtn.Visibility;
+
+            // App Type - for TV only Native/Hybrid allowed
+            if (xNativeHybRdBtn != null) xNativeHybRdBtn.Visibility = Visibility.Visible;
+            if (xWebRdBtn != null) xWebRdBtn.Visibility = isTvSelected ? Visibility.Collapsed : Visibility.Visible;
+
+            // 2) Force logical selections and update bound DriverConfigParam values so runtime config and capabilities reflect the UI
+            // Device platform (DevicePlatformType)
+            if (mDevicePlatformType != null)
             {
-                SetPlatformCapabilities();
-                SetApplicationCapabilities();
+                if (isTvSelected)
+                {
+                    // Set to AndroidTv for TV selection
+                    mDevicePlatformType.Value = nameof(eDevicePlatformType.AndroidTv);
+                    if (xAndroidTvRdBtn != null) xAndroidTvRdBtn.IsChecked = true;
+                }
+                else if (isMobileSelected)
+                {
+                    // If switching back to Mobile and current value was AndroidTv, pick Android as default
+                    if (mDevicePlatformType.Value == nameof(eDevicePlatformType.AndroidTv) || string.IsNullOrEmpty(mDevicePlatformType.Value))
+                    {
+                        mDevicePlatformType.Value = nameof(eDevicePlatformType.Android);
+                        if (xAndroidRdBtn != null) xAndroidRdBtn.IsChecked = true;
+                    }
+                }
+                mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.DevicePlatformType));
+            }
+
+            // Device source (DeviceSource)
+            if (mDeviceSource != null)
+            {
+                if (isTvSelected)
+                {
+                    // TV uses "LocalAppium" only
+                    mDeviceSource.Value = nameof(eDeviceSource.LocalAppium);
+                    if (xLocalAppiumRdBtn != null) xLocalAppiumRdBtn.IsChecked = true;
+                }
+                // if Mobile, keep the user's selection (no forced change)
+                mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.DeviceSource));
+            }
+
+            // App type
+            if (mAppType != null)
+            {
+                if (isTvSelected)
+                {
+                    mAppType.Value = nameof(eAppType.NativeHybride);
+                    if (xNativeHybRdBtn != null) xNativeHybRdBtn.IsChecked = true;
+                }
+                // if Mobile, keep current selection
+                mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.AppType));
+            }
+
+            // 3) Update capabilities according to the new platform selection when Auto Update is enabled
+            try
+            {
+                if (xAutoUpdateCapabiltiies != null && xAutoUpdateCapabiltiies.IsChecked == true)
+                {
+                    if (isTvSelected)
+                    {
+                        // For TV: ensure AndroidTV platform capabilities applied and device-source specific capabilities removed
+                        // Update platform & device caps
+                        SetPlatformCapabilities();
+                        SetDeviceCapabilities();
+                        SetApplicationCapabilities();
+                        SetOtherCapabilities();
+
+                        // Ensure server-specific capabilities are removed (not relevant for TV)
+                        DeleteUFTMServerCapabilities();
+                        DeleteKobitonServerCapabilities();
+                    }
+                    else
+                    {
+                        // Mobile: restore mobile defaults and add device-source capabilities if needed
+                        SetPlatformCapabilities();
+                        SetDeviceCapabilities();
+                        SetApplicationCapabilities();
+                        SetOtherCapabilities();
+                        // Device source caps reflect actual source, call SetDeviceSourceCapabilities to add/remove UFT/Kobiton caps if needed
+                        SetDeviceSourceCapabilities();
+                    }
+
+                    // Ensure grid UI shows updated capabilities
+                    xCapabilitiesGrid?.InitViewItems();
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to auto-update capabilities after platform change", ex);
+            }
+
+            // 4) If driver is running, apply the config change at runtime
+            if (mAgent?.AgentOperations != null)
+            {
+                if (mAgent.AgentOperations is GingerCore.AgentOperations ops && ops.Driver != null)
+                {
+                    System.Threading.Tasks.Task.Run(() =>
+                    {
+                        try
+                        {
+                            ops.SetDriverConfiguration();
+                            ops.WaitForAgentToBeReady();
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to apply agent driver configuration after platform change", ex);
+                        }
+                    });
+                }
             }
         }
+
 
         private void DeviceSourceSelectionChanged(object sender, RoutedEventArgs e)
         {
             if (this.IsLoaded && xAutoUpdateCapabiltiies != null && xAutoUpdateCapabiltiies.IsChecked == true)
             {
                 SetDeviceSourceCapabilities();
+                if (mDeviceSource != null && mDeviceSource.Value == nameof(eDeviceSource.MicroFoucsUFTMLab))
+                {
+                    //await FetchUFTMDevicesAsync();
+                }
             }
         }
 
@@ -517,11 +665,112 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if ((xAndroidRdBtn.IsChecked == null || xAndroidRdBtn.IsChecked == false) && (xIOSRdBtn.IsChecked == null || xIOSRdBtn.IsChecked == false))
+            if ((xAndroidRdBtn.IsChecked == null || xAndroidRdBtn.IsChecked == false) &&
+       (xIOSRdBtn.IsChecked == null || xIOSRdBtn.IsChecked == false) &&
+       (xAndroidTvRdBtn.IsChecked == null || xAndroidTvRdBtn.IsChecked == false))
             {
-                //TODO: binding lost from some reason- need to find out why
+                // binding may have been lost - rebind radio buttons
                 BindRadioButtons();
             }
+
+            // Ensure config DriverConfigParam instances are available
+            if (mDevicePlatformType == null)
+            {
+                mDevicePlatformType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DevicePlatformType));
+                // re-bind UI to param if needed
+                BindingHandler.ObjFieldBinding(xAndroidRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDevicePlatformType.Android));
+                BindingHandler.ObjFieldBinding(xAndroidTvRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDevicePlatformType.AndroidTv));
+                BindingHandler.ObjFieldBinding(xIOSRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDevicePlatformType.iOS));
+            }
+
+            if (mDeviceSource == null)
+            {
+                mDeviceSource = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceSource));
+                BindingHandler.ObjFieldBinding(xLocalAppiumRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDeviceSource.LocalAppium));
+                BindingHandler.ObjFieldBinding(xUFTRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDeviceSource.MicroFoucsUFTMLab));
+                BindingHandler.ObjFieldBinding(xKobitonRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDeviceSource.Kobiton));
+            }
+
+            if (mAppType == null)
+            {
+                mAppType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppType));
+                BindingHandler.ObjFieldBinding(xNativeHybRdBtn, RadioButton.IsCheckedProperty, mAppType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eAppType.NativeHybride));
+                BindingHandler.ObjFieldBinding(xWebRdBtn, RadioButton.IsCheckedProperty, mAppType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eAppType.Web));
+            }
+
+            // Default values (keep Mobile as default platform)
+            if (string.IsNullOrEmpty(mDevicePlatformType.Value))
+            {
+                mDevicePlatformType.Value = nameof(eDevicePlatformType.Android);
+                mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.DevicePlatformType));
+            }
+
+            // Default device source if not set
+            if (string.IsNullOrEmpty(mDeviceSource.Value))
+            {
+                mDeviceSource.Value = nameof(eDeviceSource.LocalAppium);
+                mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.DeviceSource));
+            }
+
+            // Default app type if not set
+            if (string.IsNullOrEmpty(mAppType.Value))
+            {
+                mAppType.Value = nameof(eAppType.NativeHybride);
+                mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.AppType));
+            }
+
+            // Ensure radio buttons reflect the DriverConfigParam values and then apply visibility rules
+            try
+            {
+                // Platform radios
+                if (mDevicePlatformType.Value == nameof(eDevicePlatformType.AndroidTv))
+                {
+                    xTvRdBtn.IsChecked = true;
+                    xAndroidTvRdBtn.IsChecked = true;
+                }
+                else if (mDevicePlatformType.Value == nameof(eDevicePlatformType.iOS))
+                {
+                    xMobileRdBtn.IsChecked = true;
+                    xIOSRdBtn.IsChecked = true;
+                }
+                else
+                {
+                    // default / Android
+                    xMobileRdBtn.IsChecked = true;
+                    xAndroidRdBtn.IsChecked = true;
+                }
+
+                // Device source radios
+                if (mDeviceSource.Value == nameof(eDeviceSource.MicroFoucsUFTMLab))
+                {
+                    xUFTRdBtn.IsChecked = true;
+                }
+                else if (mDeviceSource.Value == nameof(eDeviceSource.Kobiton))
+                {
+                    xKobitonRdBtn.IsChecked = true;
+                }
+                else
+                {
+                    xLocalAppiumRdBtn.IsChecked = true;
+                }
+
+                // App type radios
+                if (mAppType.Value == nameof(eAppType.Web))
+                {
+                    xWebRdBtn.IsChecked = true;
+                }
+                else
+                {
+                    xNativeHybRdBtn.IsChecked = true;
+                }
+            }
+            catch
+            {
+                // ignore individual control issues during load
+            }
+
+            // Apply visibility + capabilities according to current platform selection
+            PlatformSelectionChanged(null, null);
         }
 
         private void DeleteUFTMServerCapabilities()
@@ -565,6 +814,287 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         {
             DeleteCapabilityIfExist("uftm:installPackagedApp");
         }
+        private void FetchDevicesButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (mAppiumCapabilities?.MultiValues == null)
+            {
+                return;
+            }
+
+            var credentials = EnsureUftCredentialParams();
+            string currentDeviceName = FindExistingCapability("appium:deviceName")?.Value;
+            string currentDeviceUuid = FindExistingCapability("appium:udid")?.Value;
+
+
+
+            DriverConfigParam serverParam = mAppiumServer;
+            UFTCredentialsDialog dialog = new UFTCredentialsDialog(serverParam, credentials.clientId, credentials.clientSecret, credentials.tenantId, UFTMBasicCallAsync, currentDeviceName, currentDeviceUuid);
+
+            Window owner = Window.GetWindow(this);
+
+            bool? dialogResult = dialog.ShowDialog(owner);
+            if (dialogResult == true)
+            {
+                ApplySelectedPhoneDetails(dialog);
+            }
+        }
+
+        private void ApplySelectedPhoneDetails(UFTCredentialsDialog dialog)
+        {
+            if (dialog == null)
+            {
+                return;
+            }
+
+            bool wasUpdated = false;
+
+            // Apply the dialog selection state as-is.
+            // If user unselected the device, clear the capabilities.
+            wasUpdated |= UpdateCapabilityValue("appium:deviceName", dialog.SelectedPhoneName ?? string.Empty);
+            wasUpdated |= UpdateCapabilityValue("appium:udid", dialog.SelectedPhoneUuid ?? string.Empty);
+
+            bool platformUpdated = ApplyPlatformFromSelection(dialog.SelectedPhonePlatform);
+
+            if (wasUpdated || platformUpdated)
+            {
+                xCapabilitiesGrid.Grid?.Items.Refresh();
+            }
+        }
+
+        private bool ApplyPlatformFromSelection(string selectedPlatform)
+        {
+            if (string.IsNullOrWhiteSpace(selectedPlatform))
+            {
+                return false;
+            }
+
+            if (!TryResolvePlatformType(selectedPlatform, out eDevicePlatformType platformType))
+            {
+                return false;
+            }
+
+            string platformName = platformType == eDevicePlatformType.Android
+                ? nameof(eDevicePlatformType.Android)
+                : nameof(eDevicePlatformType.iOS);
+
+            if (string.Equals(mDevicePlatformType?.Value, platformName, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            mDevicePlatformType.Value = platformName;
+
+            if (xAutoUpdateCapabiltiies?.IsChecked == true)
+            {
+                SetPlatformCapabilities();
+                SetApplicationCapabilities();
+            }
+
+            xAndroidRdBtn.IsChecked = platformType == eDevicePlatformType.Android;
+            xIOSRdBtn.IsChecked = platformType == eDevicePlatformType.iOS;
+
+            return true;
+        }
+
+        private static bool TryResolvePlatformType(string platformValue, out eDevicePlatformType platformType)
+        {
+            platformType = eDevicePlatformType.Android;
+
+            if (string.IsNullOrWhiteSpace(platformValue))
+            {
+                return false;
+            }
+
+            string normalized = platformValue.Trim().ToLowerInvariant();
+
+            if (normalized.Contains("ios") || normalized.Contains("iphone") || normalized.Contains("ipad") || normalized.Contains("apple"))
+            {
+                platformType = eDevicePlatformType.iOS;
+                return true;
+            }
+
+            if (normalized.Contains("android"))
+            {
+                platformType = eDevicePlatformType.Android;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool UpdateCapabilityValue(string parameterName, string value)
+        {
+            if (string.IsNullOrWhiteSpace(parameterName) || value == null)
+            {
+                return false;
+            }
+
+            DriverConfigParam capability = FindExistingCapability(parameterName);
+            if (capability == null)
+            {
+                capability = new DriverConfigParam() { Parameter = parameterName };
+                mAppiumCapabilities.MultiValues.Add(capability);
+            }
+
+            if (capability.Value == value)
+            {
+                return false;
+            }
+
+            capability.Value = value;
+            return true;
+        }
+
+        private (DriverConfigParam clientId, DriverConfigParam clientSecret, DriverConfigParam tenantId) EnsureUftCredentialParams()
+        {
+            DriverConfigParam clientId = EnsureCapabilityExists("uftm:oauthClientId", "UFT Execution key Client Id");
+            DriverConfigParam clientSecret = EnsureCapabilityExists("uftm:oauthClientSecret", "UFT Execution key Client Password");
+            DriverConfigParam tenantId = EnsureCapabilityExists("uftm:tenantId", "Default value (Need to change only when using UFT shared spaces))");
+            if (string.IsNullOrEmpty(tenantId.Value))
+            {
+                tenantId.Value = "\"999999999\"";
+            }
+
+            return (clientId, clientSecret, tenantId);
+        }
+
+        private DriverConfigParam EnsureCapabilityExists(string parameter, string description)
+        {
+            DriverConfigParam capability = FindExistingCapability(parameter);
+            if (capability == null)
+            {
+                capability = new DriverConfigParam() { Parameter = parameter, Description = description };
+                mAppiumCapabilities.MultiValues.Add(capability);
+            }
+            else if (string.IsNullOrEmpty(capability.Description))
+            {
+                capability.Description = description;
+            }
+
+            return capability;
+        }
+
+        private async Task<string> UFTMBasicCallAsync(string apiSuffix)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(apiSuffix))
+                {
+                    return "Error: API suffix is empty.";
+                }
+
+                // remove the url ending after :7500
+                string baseUrl = mAppiumServer?.Value?.TrimEnd('/') ?? string.Empty;
+                if (!string.IsNullOrEmpty(baseUrl))
+                {
+                    int portIdx = baseUrl.IndexOf(":7500", StringComparison.OrdinalIgnoreCase);
+                    if (portIdx >= 0)
+                    {
+                        // keep everything up to and including ':7500'
+                        baseUrl = baseUrl.Substring(0, portIdx + 5).TrimEnd('/');
+                    }
+                }
+                if (string.IsNullOrEmpty(baseUrl))
+                {
+                    return "UFTM server URL is empty.";
+                }
+
+                string clientId = FindExistingCapability("uftm:oauthClientId")?.Value;
+                string clientSecret = FindExistingCapability("uftm:oauthClientSecret")?.Value;
+                string tenantStr = FindExistingCapability("uftm:tenantId")?.Value;
+
+                if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret) || string.IsNullOrWhiteSpace(tenantStr))
+                {
+                    return "Missing UFTM OAuth credentials (clientId/secret/tenant).";
+                }
+
+                if (tenantStr.StartsWith("\"") && tenantStr.EndsWith("\""))
+                {
+                    tenantStr = tenantStr.Trim('"');
+                }
+                if (!int.TryParse(tenantStr, out var tenantId))
+                {
+                    return "Invalid tenant id.";
+                }
+
+
+                // 1) Authenticate: POST /rest/oauth2/token (same pattern as GenericAppiumDriver)
+                var tokenUrl = baseUrl + "/rest/oauth2/token";
+                var authClient = new RestClient(tokenUrl);
+                var authRequest = new RestRequest(tokenUrl, Method.Post);
+
+                var oauthPayload = new { client = clientId, secret = clientSecret, tenant = tenantId };
+                authRequest.AddJsonBody(oauthPayload);
+
+                var authResponse = await authClient.ExecuteAsync(authRequest);
+                if (!authResponse.IsSuccessful)
+                {
+                    return $"Auth failed: {(int)authResponse.StatusCode} {authResponse.StatusDescription}\n{authResponse.Content}";
+                }
+
+                // Extract tokens from auth response
+                // 1) access token from JSON content
+                string accessToken = null;
+                try
+                {
+                    using var doc = JsonDocument.Parse(authResponse.Content ?? "{}");
+                    if (doc.RootElement.TryGetProperty("access_token", out var tokenProp))
+                    {
+                        accessToken = tokenProp.GetString();
+                    }
+                    else if (doc.RootElement.TryGetProperty("token", out var tokenProp2))
+                    {
+                        accessToken = tokenProp2.GetString();
+                    }
+                }
+                catch { }
+
+                // 2) csrf token (hp4msecret) and 3) JSESSIONID from cookies
+                string cookieHp4mSecret = authResponse.Cookies?.FirstOrDefault(c => string.Equals(c.Name, "x-hp4msecret", StringComparison.OrdinalIgnoreCase))?.Value;
+                if (string.IsNullOrEmpty(cookieHp4mSecret))
+                {
+                    // Some servers set hp4msecret as 'hp4msecret' without the 'x-'
+                    cookieHp4mSecret = authResponse.Cookies?.FirstOrDefault(c => string.Equals(c.Name, "hp4msecret", StringComparison.OrdinalIgnoreCase))?.Value;
+                }
+                string cookieSessionId = authResponse.Cookies?.FirstOrDefault(c => string.Equals(c.Name, "JSESSIONID", StringComparison.OrdinalIgnoreCase))?.Value;
+
+                string normalizedSuffix = apiSuffix.Trim();
+                if (!normalizedSuffix.StartsWith("/", StringComparison.Ordinal))
+                {
+                    normalizedSuffix = "/" + normalizedSuffix;
+                }
+
+                string url = baseUrl + normalizedSuffix;
+                var client = new RestClient(url);
+                var request = new RestRequest(url, Method.Get);
+
+                // Add required headers
+                if (!string.IsNullOrWhiteSpace(accessToken))
+                {
+                    request.AddHeader("Authorization", $"Bearer {accessToken}");
+                }
+                if (!string.IsNullOrWhiteSpace(cookieHp4mSecret))
+                {
+                    request.AddHeader("x-hp4msecret", cookieHp4mSecret);
+                }
+                if (!string.IsNullOrWhiteSpace(cookieSessionId))
+                {
+                    request.AddHeader("JSESSIONID", cookieSessionId);
+                }
+                request.AddHeader("Accept", "*/*");
+                request.AddHeader("tenant-id", tenantId.ToString());
+
+                var response = await client.ExecuteAsync(request);
+                return response.Content;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "UFTM device fetch failed", ex);
+                return $"Error: {ex.Message}";
+            }
+        }
+
+        
     }
 
 

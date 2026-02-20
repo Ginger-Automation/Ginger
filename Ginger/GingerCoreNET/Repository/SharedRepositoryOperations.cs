@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -167,7 +167,24 @@ namespace Ginger.Repository
                 }
                 else
                 {
-                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(itemCopy);
+                    // If user selected a target folder, add into that folder; otherwise fall back to default root
+                    if (!string.IsNullOrEmpty(itemToUpload.TargetFolderFullPath))
+                    {
+                        var repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(itemToUpload.TargetFolderFullPath);
+                        if (repositoryFolder != null)
+                        {
+                            repositoryFolder.AddRepositoryItem(itemCopy);
+                        }
+                        else
+                        {
+                            // Fallback: add to default location if path not found
+                            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(itemCopy);
+                        }
+                    }
+                    else
+                    {
+                        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(itemCopy);
+                    }
                 }
 
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using static Ginger.Environments.GingerOpsEnvWizardLib.GingerOpsAPIResponseInfo;
 
 namespace Ginger.Environments
@@ -119,18 +120,15 @@ namespace Ginger.Environments
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
             {
                 GridColsView =
-            [
-                new GridColView() { Field = nameof(EnvApplication.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 },
-                new GridColView() { Field = nameof(EnvApplication.Name), WidthWeight = 100 },
-                new GridColView() { Field = nameof(EnvApplication.Platform), Header="Platform Type",WidthWeight = 100 },
-                new GridColView() { Field = nameof(EnvApplication.Description), WidthWeight = 200 },
-                new GridColView() { Field = nameof(EnvApplication.AppVersion), WidthWeight = 150, Header = "Application Version" },
-                new GridColView() { Field = nameof(EnvApplication.Url), WidthWeight = 100, Header = "URL" },
-            ]
+                [ new GridColView() { Field = nameof(EnvApplication.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 },
+                  new GridColView() { Field = nameof(EnvApplication.Name), WidthWeight = 100 },
+                  // Show friendly description (e.g. "Mobile/TV")
+                  new GridColView() { Field = nameof(EnvApplication.PlatformDescription), Header = "Platform Type", WidthWeight = 100, ReadOnly = true, BindingMode = BindingMode.OneWay },
+                  new GridColView() { Field = nameof(EnvApplication.Description), WidthWeight = 200 },
+                  new GridColView() { Field = nameof(EnvApplication.AppVersion), WidthWeight = 150, Header = "Application Version" },
+                  new GridColView() { Field = nameof(EnvApplication.Url), WidthWeight = 100, Header = "URL" },
+                ]
             };
-
-            grdApps.SetAllColumnsDefaultView(view);
-            grdApps.InitViewItems();
         }
 
         private void SetGridData()

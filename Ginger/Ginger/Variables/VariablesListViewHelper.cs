@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -195,7 +195,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return nameof(VariableBase.VariableUIType);
         }
 
-        public List<ListItemOperation> GetListOperations()
+        public List<ListItemOperation> GetListOperations(bool AddOperationsIcon = true)
         {
             List<ListItemOperation> operationsList = [];
 

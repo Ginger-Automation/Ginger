@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -398,6 +398,7 @@ namespace GingerCore.Drivers.Common
             InitDeviceView();
         }
 
+       
         private System.Windows.Point GetDevicePoint(System.Windows.Point point)
         {
             System.Windows.Point p = new System.Windows.Point
@@ -408,6 +409,8 @@ namespace GingerCore.Drivers.Common
 
             return p;
         }
+
+
 
         private System.Windows.Point GetPointFromDeviceCoordinates(System.Windows.Point point)
         {
@@ -431,23 +434,31 @@ namespace GingerCore.Drivers.Common
         {
             // We set the highlighter in the DeviceScreenShotImageBK - on the screen shot
 
-            System.Windows.Point p = GetPointFromDeviceCoordinates(new System.Windows.Point(X, Y));
+            if (DeviceScreenCanvas == null || DeviceImage == null || DeviceScreenShotImageBK == null)
+            {
+                return;
+            }
 
+            // Calculate scale factor from the actual DeviceImage source (if available) and its control size
             var image = DeviceImage.Source;
+            if (image == null || DeviceImage.ActualWidth <= 0 || DeviceImage.ActualHeight <= 0)
+            {
+                return;
+            }
 
-            // since we want to maintain the aspect ratio calculate the ScaleFactor which will be used
             double hscale = (double)image.Width / DeviceImage.ActualWidth;
             double vscale = (double)image.Height / DeviceImage.ActualHeight;
             scaleFactor = Math.Max(hscale, vscale);
+            if (scaleFactor <= 0) scaleFactor = 1;
 
             rect.Width = Width / scaleFactor;
             rect.Height = Height / scaleFactor;
 
-            double leftMargin = (DeviceScreenShotGrid.ActualWidth - DeviceImage.ActualWidth) / 2;
-            double TopMargin = (DeviceScreenShotGrid.ActualHeight - DeviceImage.ActualHeight) / 2;
+            double canvasLeft = DeviceScreenCanvas.Margin.Left;
+            double canvasTop = DeviceScreenCanvas.Margin.Top;
 
-            double left = (leftMargin + X / scaleFactor);
-            double top = (TopMargin + Y / scaleFactor);
+            double left = canvasLeft + X / scaleFactor;
+            double top = canvasTop + Y / scaleFactor;
 
             rect.Margin = new Thickness(left, top, 0, 0);
         }

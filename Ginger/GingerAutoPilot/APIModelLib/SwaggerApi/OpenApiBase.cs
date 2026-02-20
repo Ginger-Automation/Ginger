@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -113,8 +113,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
             AAM.EndpointURL = path;
             AAM.APIType = ApplicationAPIUtils.eWebApiType.REST;
-            string summaryText = Convert.ToString(Operation.Summary);
-            AAM.Name = summaryText.Length > 50 ? summaryText.Substring(0, 50) : summaryText;
+            AAM.Name = Operation.Summary;
 
             if (string.IsNullOrWhiteSpace(AAM.Name))
             {

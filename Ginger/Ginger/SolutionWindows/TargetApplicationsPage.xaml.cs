@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -78,9 +78,10 @@ namespace Ginger.SolutionWindows
                 new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16, Style = FindResource("@DataGridColumn_Image") as Style },
                 new GridColView() { Field = nameof(ApplicationPlatform.AppName), Header = "Name", WidthWeight = 30 },
                 new GridColView() { Field = nameof(ApplicationPlatform.Description), Header = "Description", WidthWeight = 40 },
-                new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 15, ReadOnly = true },
+                // show description (friendly text) instead of raw enum value
+                new GridColView() { Field = nameof(ApplicationPlatform.PlatformDescription), Header="Platform", WidthWeight = 15, ReadOnly = true },
                 new GridColView() { Field = nameof(ApplicationPlatform.Guid), Header = "ID", WidthWeight = 15, ReadOnly = true },
-            ]
+    ]
             };
 
             xTargetApplicationsGrid.SetAllColumnsDefaultView(view);

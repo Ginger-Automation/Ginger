@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ namespace Ginger.Agents
                     mOriginalPlatformType = mAgent.Platform;
                     mOriginalDriverType = mAgent.DriverType.ToString();
 
-                    xPlatformTxtBox.Text = mOriginalPlatformType.ToString();
+                    xPlatformTxtBox.Text = GingerCore.General.GetEnumValueDescription(typeof(ePlatformType), mOriginalPlatformType);
                     SetDriverInformation();
                     BindingHandler.ObjFieldBinding(xDriverTypeComboBox, ComboBox.TextProperty, mAgent, nameof(Agent.DriverType));
                     xDriverTypeComboBox.SelectionChanged += driverTypeComboBox_SelectionChanged;

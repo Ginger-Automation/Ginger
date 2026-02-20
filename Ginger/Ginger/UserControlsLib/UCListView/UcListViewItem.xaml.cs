@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ extern alias UIAComWrapperNetstandard;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
+using GingerCore.Actions;
 using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Ginger.UserControlsLib.UCListView
 {
@@ -45,7 +47,44 @@ namespace Ginger.UserControlsLib.UCListView
         //~UcListViewItem()
         //{
         //    LiveListViewItemsCounter--;
+
+
         //}
+
+        private void ApplyTitleAndTooltipForAct(object item)
+        {
+            try
+            {
+                if (item is Act act)
+                {
+                    // Prefer ActionDescription; fall back to Description
+                    string displayTitle = !string.IsNullOrEmpty(act.Description)
+    ? act.Description
+    : (act.ActionDescription ?? string.Empty);
+
+                    // Update UI safely on UI thread
+                    Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                    {
+                        if (xItemNameTxtBlock != null)
+                        {
+                            xItemNameTxtBlock.Text = displayTitle;
+                            xItemNameTxtBlock.ToolTip = displayTitle;
+                        }
+                        if (xItemExtraInfoTxtBlock != null)
+                        {
+                            // keep existing extra-info behavior but make tooltip consistent
+                            xItemExtraInfoTxtBlock.ToolTip = displayTitle;
+                        }
+                        // set the overall item tooltip too
+                        this.ToolTip = displayTitle;
+                    }));
+                }
+            }
+            catch
+            {
+                // swallow any UI errors to avoid impacting list rendering
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string name)
@@ -58,6 +97,36 @@ namespace Ginger.UserControlsLib.UCListView
         }
 
         public UcListView ParentList { get; set; }
+        public class EnumValueDescriptionConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                if (value == null) return null;
+
+                try
+                {
+                    // Handle Nullable<Enum> values if any
+                    var valueType = value.GetType();
+                    var enumType = Nullable.GetUnderlyingType(valueType) ?? valueType;
+                    if (enumType.IsEnum)
+                    {
+                        // Use existing helper to get enum description (falls back to name)
+                        return GingerCore.General.GetEnumValueDescription(enumType, value);
+                    }
+                }
+                catch
+                {
+                    // ignore and fallback
+                }
+
+                return value.ToString();
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
 
         public bool IsSelected
         {
@@ -88,10 +157,14 @@ namespace Ginger.UserControlsLib.UCListView
         }
         private static void OnItemPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            UcListViewItem uli = d as UcListViewItem;
+            // existing code...
+            // ensure tooltip/title is refreshed for Act items
             if (d is UcListViewItem control && e.NewValue != null)
             {
                 control.Item = ((object)e.NewValue);
             }
+            uli?.ApplyTitleAndTooltipForAct(uli.Item);
         }
 
         public static readonly DependencyProperty ListHelperProperty = DependencyProperty.Register(nameof(ListHelper), typeof(IListViewHelper), typeof(UcListViewItem), new PropertyMetadata(null, new PropertyChangedCallback(OnItemInfoPropertyChanged)));
@@ -167,6 +240,48 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
+        private void UpdateIconToolTip()
+        {
+            try
+            {
+                if (Item == null || string.IsNullOrEmpty(mItemIconTooltipField) || xItemIcon == null)
+                    return;
+
+                var pi = Item.GetType().GetProperty(mItemIconTooltipField);
+                if (pi == null)
+                    return;
+
+                var val = pi.GetValue(Item);
+                if (val == null)
+                {
+                    // clear tooltips
+                    xItemIcon.ImageToolTip = string.Empty;
+                    xItemIcon.ToolTip = null;
+                    return;
+                }
+
+                var valueType = val.GetType();
+                var enumType = Nullable.GetUnderlyingType(valueType) ?? valueType;
+                string tip;
+                if (enumType.IsEnum)
+                {
+                    tip = GingerCore.General.GetEnumValueDescription(enumType, val);
+                }
+                else
+                {
+                    tip = val.ToString();
+                }
+
+                // Set both the ImageToolTip (so ImageMakerControl updates its inner elements)
+                // and the control ToolTip itself (framework uses this for hover).
+                xItemIcon.ImageToolTip = tip;
+                xItemIcon.ToolTip = tip;
+            }
+            catch
+            {
+                // swallow - do not break UI
+            }
+        }
         private void SetItemMainView()
         {
             if (!mMainViewWasSet)
@@ -187,15 +302,56 @@ namespace Ginger.UserControlsLib.UCListView
                         PropertyChangedEventManager.RemoveHandler(source: repositoryItemBase, handler: Item_PropertyChanged, propertyName: allProperties);
                         PropertyChangedEventManager.AddHandler(source: repositoryItemBase, handler: Item_PropertyChanged, propertyName: allProperties);
                     }
-
                     if (!string.IsNullOrEmpty(mItemIconField))
                     {
                         BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageTypeProperty, Item, mItemIconField, BindingMode: BindingMode.OneWay);
                     }
                     if (!string.IsNullOrEmpty(mItemIconTooltipField))
                     {
-                        BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageToolTipProperty, Item, mItemIconTooltipField, BindingMode: BindingMode.OneWay);
+                        // If the source property is an enum (or Nullable<enum>), use converter to show enum description (e.g., "Mobile/TV")
+                        IValueConverter tooltipConverter = null;
+                        try
+                        {
+                            var pi = Item?.GetType().GetProperty(mItemIconTooltipField);
+                            if (pi != null)
+                            {
+                                var propertyType = pi.PropertyType;
+                                var underlying = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
+                                if (underlying.IsEnum)
+                                {
+                                    tooltipConverter = new EnumValueDescriptionConverter();
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            // fallback to default binding without converter
+                            tooltipConverter = null;
+                        }
+
+                        // Bind ImageToolTipProperty (used internally by ImageMakerControl)
+                        BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageToolTipProperty, Item, mItemIconTooltipField, bindingConvertor: tooltipConverter, BindingMode: BindingMode.OneWay);
+
+                        // ALSO bind the control ToolTip itself (what shows on hover) to the same source + converter
+                        try
+                        {
+                            var tb = new System.Windows.Data.Binding
+                            {
+                                Source = Item,
+                                Path = new PropertyPath(mItemIconTooltipField),
+                                Mode = BindingMode.OneWay,
+                                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                                Converter = tooltipConverter
+                            };
+                            xItemIcon.SetBinding(System.Windows.FrameworkElement.ToolTipProperty, tb);
+                        }
+                        catch
+                        {
+                            // ignore binding errors, fallback to ImageToolTip only
+                        }
                     }
+
+
 
                     SetItemFullName();
 
@@ -678,6 +834,7 @@ namespace Ginger.UserControlsLib.UCListView
                         WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(ParentList.List, nameof(Selector.SelectionChanged), ParentList_SelectionChanged);
                     }
                     OnPropertyChanged(nameof(IsSelected));
+                    ApplyTitleAndTooltipForAct(this.Item);
                 }
                 SetItemIndex();
             });

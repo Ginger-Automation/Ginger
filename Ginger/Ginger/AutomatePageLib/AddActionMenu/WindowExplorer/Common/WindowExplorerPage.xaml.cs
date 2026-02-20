@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1124,7 +1124,7 @@ namespace Ginger.WindowExplorer
 
         public void ShowScreenShot()
         {
-            if (mWindowExplorerDriver == null || ((AgentOperations)mContext.Agent.AgentOperations).Driver.IsRunning() == false)
+            if (mWindowExplorerDriver == null || ((AgentOperations)mContext.Agent.AgentOperations).Driver == null || ((AgentOperations)mContext.Agent.AgentOperations).Driver.IsRunning() == false)
             {
                 return;
             }
@@ -1133,34 +1133,67 @@ namespace Ginger.WindowExplorer
             xScreenShotFrame.Visibility = Visibility.Collapsed;
             xRetrySSBanner.Visibility = Visibility.Collapsed;
 
-            /// UnComment later after complete Implementation of functionalities over all platforms.
-            //if(IsWebMobJavaPlatform)
-            mWindowExplorerDriver.UnHighLightElements();
+            var runtimeDriver = ((AgentOperations)mApplicationAgent.Agent.AgentOperations).Driver;
+            if (runtimeDriver is not IVisualTestingDriver visualDriver)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Screenshot is not supported for this agent driver. Verify the agent's driver implements IVisualTestingDriver (GetScreenShot).");
+                xLoadingScreenShotBanner.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            try
+            {
+                mWindowExplorerDriver.UnHighLightElements(); // keep previous behavior
+
+            }
+            catch
+            {
+                // ignore
+            }
+
             try
             {
                 LoadPageSourceDoc = mWindowExplorerDriver.SupportedViews().Contains(eTabView.PageSource);
 
                 if (!mWindowExplorerDriver.SupportedViews().Contains(eTabView.Screenshot) || SwitchToCurrentWindow() == null)
                 {
+                    Reporter.ToLog(eLogLevel.DEBUG, "ShowScreenShot: Screenshot view not supported for current IWindowExplorer implementation or no active window.");
                     return;
                 }
 
-                using (Bitmap ScreenShotBitmap = ((IVisualTestingDriver)((AgentOperations)mApplicationAgent.Agent.AgentOperations).Driver).GetScreenShot())
+                using (Bitmap ScreenShotBitmap = visualDriver.GetScreenShot())
                 {
-                    mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, (mWindowExplorerDriver as DriverBase).ScreenShotInitialZoom())
+                    if (ScreenShotBitmap == null)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "ShowScreenShot: GetScreenShot returned null.");
+                        xRetrySSBanner.Visibility = Visibility.Visible;
+                        return;
+                    }
+
+                    mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, (mWindowExplorerDriver as DriverBase)?.ScreenShotInitialZoom() ?? 0.5)
                     {
                         ImageMouseCursor = Cursors.Hand
                     };
-                    ///TODO UnComment to allow Element detection on hover
-                    //if (mPlatform.PlatformType() == ePlatformType.Web)
-                    //{
-                    //    mScreenShotViewPage.xMainImage.MouseMove += XMainImage_MouseMove;
-                    //}
 
+                    // wire up click to try to resolve element under clicked point (if driver supports IVisualTestingDriver)
                     mScreenShotViewPage.xMainImage.MouseLeftButtonDown += XMainImage_MouseLeftButtonDown;
 
                     xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
-                    //xDeviceImage.Source = General.ToBitmapSource(ScreenShotBitmap);
+
+                    // Re-apply previously selected element rectangle (if any). This preserves highlight across screenshot refreshes.
+                    try
+                    {
+                        if (currentHighlightedElement != null)
+                        {
+                            // ensure element fields are fresh for drawing
+                            try { mWindowExplorerDriver?.UpdateElementInfoFields(currentHighlightedElement); } catch { }
+                            DrawElementRectangleAsync(currentHighlightedElement);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "ShowScreenShot: failed to reapply previous highlight: " + ex.Message, ex);
+                    }
 
                     xScreenShotFrame.Visibility = Visibility.Visible;
                 }
@@ -1202,8 +1235,16 @@ namespace Ginger.WindowExplorer
 
         private async void XMainImage_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            if (!(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
+            {
+                // Nothing to do - keep currentHighlightedElement rectangle visible
+                return;
+            }
+
+            // Ctrl is pressed -> perform live lookup and update highlight rectangle
             LastSearchFinished = false;
 
+            // We intentionally remove previous rectangle as we'll draw new one for the hovered element
             RemoveElemntRectangle();
 
             System.Windows.Point pointOnImg = e.GetPosition((System.Windows.Controls.Image)sender);
@@ -1282,21 +1323,157 @@ namespace Ginger.WindowExplorer
         {
             try
             {
-                //calculate clicked point on mobile
-                System.Drawing.Point pointOnAppScreen = ((DriverBase)mWindowExplorerDriver).GetPointOnAppWindow(ClickedPoint, mScreenShotViewPage.xMainImage.Source.Width,
-                    mScreenShotViewPage.xMainImage.Source.Height, mScreenShotViewPage.xMainImage.ActualWidth, mScreenShotViewPage.xMainImage.ActualHeight);
+                // Convert mouse point on displayed Image control to source (screenshot / device) coordinates
+                // This mirrors DrawElementRectangleAsync mapping and handles Image.Stretch (Uniform/UniformToFill/Fill)
+                var img = mScreenShotViewPage?.xMainImage;
+                int srcX = 0, srcY = 0;
+                bool coordsFromImage = false;
 
-                //get the clicked element
-                ElementInfo inspectElementInfo = await ((IVisualTestingDriver)((AgentOperations)mApplicationAgent.Agent.AgentOperations).Driver).GetElementAtPoint(pointOnAppScreen.X, pointOnAppScreen.Y);
-                if (inspectElementInfo != null && inspectElementInfo != currentHighlightedElement)
+                if (img != null)
                 {
+                    try
+                    {
+                        double srcW = 0, srcH = 0;
+                        if (img.Source is System.Windows.Media.Imaging.BitmapSource bmp && bmp.PixelWidth > 0 && bmp.PixelHeight > 0)
+                        {
+                            srcW = bmp.PixelWidth;
+                            srcH = bmp.PixelHeight;
+                        }
+
+                        if (srcW <= 0) srcW = Math.Max(1.0, img.ActualWidth);
+                        if (srcH <= 0) srcH = Math.Max(1.0, img.ActualHeight);
+
+                        double dispW = Math.Max(1.0, img.ActualWidth);
+                        double dispH = Math.Max(1.0, img.ActualHeight);
+
+                        double scaleX = dispW / srcW;
+                        double scaleY = dispH / srcH;
+                        double usedScaleX = scaleX;
+                        double usedScaleY = scaleY;
+                        double offsetX = 0;
+                        double offsetY = 0;
+
+                        var stretch = img.Stretch;
+                        if (stretch == Stretch.Uniform || stretch == Stretch.UniformToFill)
+                        {
+                            double uniformScale = (stretch == Stretch.Uniform) ? Math.Min(scaleX, scaleY) : Math.Max(scaleX, scaleY);
+                            usedScaleX = usedScaleY = uniformScale;
+
+                            double renderedWidth = srcW * uniformScale;
+                            double renderedHeight = srcH * uniformScale;
+                            offsetX = (dispW - renderedWidth) / 2.0;
+                            offsetY = (dispH - renderedHeight) / 2.0;
+                        }
+
+                        // Mouse point passed in is in displayed image coords (ClickedPoint)
+                        double calcSrcX = (ClickedPoint.X - offsetX) / Math.Max(1e-6, usedScaleX);
+                        double calcSrcY = (ClickedPoint.Y - offsetY) / Math.Max(1e-6, usedScaleY);
+
+                        // Clamp to source bounds
+                        calcSrcX = Math.Max(0, Math.Min(calcSrcX, srcW - 1));
+                        calcSrcY = Math.Max(0, Math.Min(calcSrcY, srcH - 1));
+
+                        srcX = (int)Math.Round(calcSrcX);
+                        srcY = (int)Math.Round(calcSrcY);
+
+                        coordsFromImage = true;
+                    }
+                    catch (Exception exMap)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "HighlightSelectedElement: failed to convert displayed point to source coords, falling back to driver mapping: " + exMap.Message, exMap);
+                        coordsFromImage = false;
+                    }
+                }
+
+                // If we failed to compute from image, fallback to driver mapping (old behavior)
+                System.Drawing.Point pointOnAppScreen;
+                if (coordsFromImage)
+                {
+                    pointOnAppScreen = new System.Drawing.Point(srcX, srcY);
+                }
+                else
+                {
+                    // DriverBase mapping - kept as fallback
+                    pointOnAppScreen = ((DriverBase)mWindowExplorerDriver).GetPointOnAppWindow(ClickedPoint,
+                        mScreenShotViewPage?.xMainImage?.Source?.Width ?? mScreenShotViewPage?.xMainImage?.ActualWidth ?? 0,
+                        mScreenShotViewPage?.xMainImage?.Source?.Height ?? mScreenShotViewPage?.xMainImage?.ActualHeight ?? 0,
+                        mScreenShotViewPage?.xMainImage?.ActualWidth ?? 0,
+                        mScreenShotViewPage?.xMainImage?.ActualHeight ?? 0);
+                }
+
+                var runtimeDriver = ((AgentOperations)mApplicationAgent.Agent.AgentOperations).Driver;
+                if (runtimeDriver is not IVisualTestingDriver visualDriver)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Element lookup from screenshot is not supported by this driver. Driver must implement IVisualTestingDriver.GetElementAtPoint.");
+                    return;
+                }
+
+                // get the clicked element from the visual testing driver using precise source coords
+                ElementInfo inspectElementInfo = await visualDriver.GetElementAtPoint(pointOnAppScreen.X, pointOnAppScreen.Y);
+                if (inspectElementInfo == null)
+                {
+                    // nothing found at the point - hide previous rectangle / selection
+                    RemoveElemntRectangle();
+                    xUCElementDetails.SelectedElement = null;
+                    return;
+                }
+
+                // If this is the same element already highlighted, just return
+                if (inspectElementInfo == currentHighlightedElement)
+                {
+                    return;
+                }
+
+                try
+                {
+                    // Prepare element for explorer usage
+                    inspectElementInfo.WindowExplorer ??= mWindowExplorerDriver;
                     inspectElementInfo.SetLocatorsAndPropertiesCategory(((DriverBase)mWindowExplorerDriver).PomCategory);
 
-                    //mark the element bounds on image
+                    // Ensure coordinates/size are fresh (driver-specific)
+                    try
+                    {
+                        mWindowExplorerDriver?.UpdateElementInfoFields(inspectElementInfo);
+                    }
+                    catch (Exception exUpd)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "HighlightSelectedElement: UpdateElementInfoFields failed: " + exUpd.Message, exUpd);
+                    }
+
+                    // Draw rectangle in screenshot view using the element's (now fresh) bounds
                     DrawElementRectangleAsync(inspectElementInfo);
 
-                    //TODO: select the node in the xml
+                    // Keep persistent highlighted element reference for UI flows
                     currentHighlightedElement = inspectElementInfo;
+
+                    // Ask the driver to highlight the same element in the actual app - DO NOT locate by locators,
+                    // locating by locators may resolve to a different element than the exact element returned by GetElementAtPoint.
+                    try
+                    {
+                        System.Threading.Tasks.Task.Run(() =>
+                        {
+                            try
+                            {
+                                mWindowExplorerDriver?.HighLightElement(inspectElementInfo, locateElementByItLocators: false);
+                            }
+                            catch (Exception exDriver)
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, "HighlightSelectedElement: driver HighLightElement failed: " + exDriver.Message, exDriver);
+                            }
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "HighlightSelectedElement: scheduling driver highlight failed: " + ex.Message, ex);
+                    }
+
+                    // Update UI details pane
+                    mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(currentHighlightedElement);
+                    ShowCurrentControlInfo();
+                }
+                catch (Exception exInner)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "HighlightSelectedElement: processing inspectElementInfo failed", exInner);
                 }
             }
             catch (Exception ex)
@@ -1309,32 +1486,98 @@ namespace Ginger.WindowExplorer
         {
             try
             {
-                //remove previous rectangle
+                // remove previous rectangle
                 RemoveElemntRectangle();
 
-                //get the element location
+                // element bounds in source image/device coordinates
                 System.Drawing.Point ElementStartPoint = new System.Drawing.Point(clickedElementInfo.X, clickedElementInfo.Y);
                 System.Drawing.Point ElementMaxPoint = new System.Drawing.Point(clickedElementInfo.X + clickedElementInfo.Width, clickedElementInfo.Y + clickedElementInfo.Height);
 
-                //draw the rectangle
-                //mHighightRectangle = new System.Windows.Shapes.Rectangle();
+                // try to get source image size (device/screenshot) safely
+                double srcW = 0, srcH = 0;
+                try
+                {
+                    var bmpSrc = mScreenShotViewPage.xMainImage.Source as System.Windows.Media.Imaging.BitmapSource;
+                    if (bmpSrc != null && bmpSrc.PixelWidth > 0 && bmpSrc.PixelHeight > 0)
+                    {
+                        srcW = bmpSrc.PixelWidth;
+                        srcH = bmpSrc.PixelHeight;
+                    }
+                }
+                catch { /* ignore */ }
+
+                // fallback to image Actual size if source pixels not available
+                if (srcW <= 0) srcW = Math.Max(1.0, mScreenShotViewPage.xMainImage.ActualWidth);
+                if (srcH <= 0) srcH = Math.Max(1.0, mScreenShotViewPage.xMainImage.ActualHeight);
+
+                double dispW = Math.Max(1.0, mScreenShotViewPage.xMainImage.ActualWidth);
+                double dispH = Math.Max(1.0, mScreenShotViewPage.xMainImage.ActualHeight);
+
+                // Allow driver/platform to adjust rectangle (works in source coordinates)
                 double rectangleWidth = clickedElementInfo.Width;
                 double rectangleHeight = clickedElementInfo.Height;
+                try
+                {
+                    bool driverHandled = ((DriverBase)mWindowExplorerDriver).SetRectangleProperties(
+                        ref ElementStartPoint,
+                        ref ElementMaxPoint,
+                        srcW,
+                        srcH,
+                        dispW,
+                        dispH,
+                        clickedElementInfo);
 
-                if (((DriverBase)mWindowExplorerDriver).SetRectangleProperties(ref ElementStartPoint, ref ElementMaxPoint, mScreenShotViewPage.xMainImage.Source.Width, mScreenShotViewPage.xMainImage.Source.Height,
-                    mScreenShotViewPage.xMainImage.ActualWidth, mScreenShotViewPage.xMainImage.ActualHeight, clickedElementInfo))
-                {
-                    /// Driver/Platform specific calculations
-                    rectangleWidth = ElementMaxPoint.X - ElementStartPoint.X;
-                    rectangleHeight = ElementMaxPoint.Y - ElementStartPoint.Y;
+                    if (driverHandled)
+                    {
+                        rectangleWidth = ElementMaxPoint.X - ElementStartPoint.X;
+                        rectangleHeight = ElementMaxPoint.Y - ElementStartPoint.Y;
+                    }
+                    else
+                    {
+                        rectangleWidth = clickedElementInfo.Width;
+                        rectangleHeight = clickedElementInfo.Height;
+                    }
                 }
-                else
+                catch
                 {
-                    /// Regular/Common calculations
                     rectangleWidth = clickedElementInfo.Width;
                     rectangleHeight = clickedElementInfo.Height;
                 }
 
+                // Compute display scale & offsets depending on Image.Stretch
+                double scaleX = dispW / srcW;
+                double scaleY = dispH / srcH;
+                double usedScaleX = scaleX;
+                double usedScaleY = scaleY;
+                double offsetX = 0;
+                double offsetY = 0;
+
+                var stretch = mScreenShotViewPage.xMainImage.Stretch;
+                if (stretch == Stretch.Uniform || stretch == Stretch.UniformToFill)
+                {
+                    double uniformScale = (stretch == Stretch.Uniform) ? Math.Min(scaleX, scaleY) : Math.Max(scaleX, scaleY);
+                    usedScaleX = usedScaleY = uniformScale;
+
+                    double renderedWidth = srcW * uniformScale;
+                    double renderedHeight = srcH * uniformScale;
+                    offsetX = (dispW - renderedWidth) / 2.0;
+                    offsetY = (dispH - renderedHeight) / 2.0;
+                }
+                // else Fill -> keep independent scales
+
+                // Convert source coords to displayed image coords
+                double left = ElementStartPoint.X * usedScaleX + offsetX;
+                double top = ElementStartPoint.Y * usedScaleY + offsetY;
+                double right = (ElementStartPoint.X + rectangleWidth) * usedScaleX + offsetX;
+                double bottom = (ElementStartPoint.Y + rectangleHeight) * usedScaleY + offsetY;
+
+                if (right < left) { var t = left; left = right; right = t; }
+                if (bottom < top) { var t = top; top = bottom; bottom = t; }
+
+                double w = Math.Max(2, right - left);
+                double h = Math.Max(2, bottom - top);
+
+                // account for Canvas offsets of the Image control
                 double canvasLeftForMainImage = Canvas.GetLeft(mScreenShotViewPage.xMainImage);
                 if (double.IsNaN(canvasLeftForMainImage))
                     canvasLeftForMainImage = 0;
@@ -1342,13 +1585,41 @@ namespace Ginger.WindowExplorer
                 if (double.IsNaN(canvasTopForMainImage))
                     canvasTopForMainImage = 0;
 
-                mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.LeftProperty, ElementStartPoint.X + canvasLeftForMainImage);
-                mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.TopProperty, ElementStartPoint.Y + canvasTopForMainImage);
-                mScreenShotViewPage.xHighlighterBorder.Margin = new Thickness(0);
+                // apply to UI on dispatcher
+                mScreenShotViewPage.xHighlighterBorder.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.LeftProperty, left + canvasLeftForMainImage);
+                    mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.TopProperty, top + canvasTopForMainImage);
+                    mScreenShotViewPage.xHighlighterBorder.Margin = new Thickness(0);
 
-                mScreenShotViewPage.xHighlighterBorder.Width = rectangleWidth;
-                mScreenShotViewPage.xHighlighterBorder.Height = rectangleHeight;
-                mScreenShotViewPage.xHighlighterBorder.Visibility = Visibility.Visible;
+                    mScreenShotViewPage.xHighlighterBorder.Width = w;
+                    mScreenShotViewPage.xHighlighterBorder.Height = h;
+                    mScreenShotViewPage.xHighlighterBorder.Visibility = Visibility.Visible;
+                }), System.Windows.Threading.DispatcherPriority.Render);
+
+                // ask driver to highlight in the actual app as well (non-blocking)
+                try
+                {
+                    var drv = mWindowExplorerDriver;
+                    if (drv != null)
+                    {
+                        System.Threading.Tasks.Task.Run(() =>
+                        {
+                            try
+                            {
+                                drv.HighLightElement(clickedElementInfo, locateElementByItLocators: true);
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, "Driver HighLightElement failed", ex);
+                            }
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Request to driver highlight element failed", ex);
+                }
             }
             catch (Exception ex)
             {

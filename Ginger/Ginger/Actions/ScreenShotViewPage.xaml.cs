@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -267,27 +267,34 @@ namespace Ginger.Actions.UserControls
         //TODO: move to general class
         BitmapImage BitmapToImageSource(System.Drawing.Bitmap bitmap)
         {
-            using (MemoryStream memory = new MemoryStream())
+            if (bitmap == null) return null;
+
+            try
             {
-
-                try
+                // Clone to ensure the original bitmap is not locked and to use a compatible pixel format
+                using var clone = new Bitmap(bitmap.Width, bitmap.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+                using (var g = System.Drawing.Graphics.FromImage(clone))
                 {
-                    bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
-                    memory.Position = 0;
-                    BitmapImage bitmapimage = new BitmapImage();
-                    bitmapimage.BeginInit();
-                    bitmapimage.StreamSource = memory;
-                    bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmapimage.EndInit();
-
-                    return bitmapimage;
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to convert Bitmap to ImageSource", ex);
-                    return null;
+                    g.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
                 }
 
+                using var memory = new MemoryStream();
+                // Save as PNG to avoid format/encoder issues
+                clone.Save(memory, System.Drawing.Imaging.ImageFormat.Png);
+                memory.Position = 0;
+
+                var bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.StreamSource = memory;
+                bitmapImage.EndInit();
+                bitmapImage.Freeze(); // safe to use across threads
+                return bitmapImage;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to convert Bitmap to ImageSource", ex);
+                return null;
             }
         }
 

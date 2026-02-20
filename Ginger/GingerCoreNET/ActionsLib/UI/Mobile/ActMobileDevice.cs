@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,33 +23,56 @@ using Amdocs.Ginger.CoreNET.ActionsLib.UI.Mobile;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace GingerCore.Actions
 {
     public class ActMobileDevice : Act
+
+
     {
-        public override string ActionDescription { get { return "Mobile Device Action"; } }
+
+        // Add constructor to initialize Description when creating new instance
+        public ActMobileDevice()
+        {
+            // If Description not set, default it to the canonical action-level description
+            if (string.IsNullOrEmpty(this.Description) && !string.IsNullOrEmpty(this.ActionDescription))
+            {
+                this.Description = this.ActionDescription;
+            }
+        }
+        public override string ActionDescription { get { return "Mobile/Tv Device Action"; } }
         public override string ActionUserDescription { get { return "USed to performe operations on the connected mobile device"; } }
+
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
         }
 
+        public override void DoNewActionSetup()
+        {
+            base.DoNewActionSetup();
+            if (string.IsNullOrEmpty(this.Description) && !string.IsNullOrEmpty(this.ActionDescription))
+            {
+                this.Description = this.ActionDescription;
+            }
+        }
+
         public override String ToString()
         {
-            return "Mobile Device Action: " + MobileDeviceAction.ToString();
+            return "Mobile/Tv Device Action: " + MobileDeviceAction.ToString();
         }
 
         public override String ActionType
         {
             get
             {
-                return "Mobile Device Action: " + MobileDeviceAction.ToString();
+                return "Mobile/Tv Device Action: " + MobileDeviceAction.ToString();
             }
         }
 
-        public override eImageType Image { get { return eImageType.Mobile; } }
+        public override eImageType Image { get { return eImageType.MultipleScreenGrey; } }
 
         public eMobileDeviceAction MobileDeviceAction
         {
@@ -102,6 +125,21 @@ namespace GingerCore.Actions
             }
         }
 
+        public override void PostDeserialization()
+        {
+            base.PostDeserialization();
+            try
+            {
+                if (string.IsNullOrEmpty(this.Description) && !string.IsNullOrEmpty(this.ActionDescription))
+                {
+                    this.Description = this.ActionDescription;
+                }
+            }
+            catch
+            {
+                // be defensive - do not throw during deserialization
+            }
+        }
         public eUnlockType UnLockType
 
         {

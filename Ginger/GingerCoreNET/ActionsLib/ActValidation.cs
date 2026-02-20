@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -153,7 +153,11 @@ namespace GingerCore.Actions
         }
         public override void DoNewActionSetup()
         {
-            CalcEngineType = eCalcEngineType.CS;
+            base.DoNewActionSetup();
+            if (string.IsNullOrEmpty(this.Description) && !string.IsNullOrEmpty(this.ActionDescription))
+            {
+                this.Description = this.ActionDescription;
+            }
         }
     }
 }

@@ -8,18 +8,18 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Amdocs.Ginger.Common</RootNamespace>
 
-    <AssemblyVersion>25.5.0.0</AssemblyVersion>
-    <FileVersion>25.5.0.0</FileVersion>
+    <AssemblyVersion>26.3.0.0</AssemblyVersion>
+    <FileVersion>26.3.0.0</FileVersion>
 
     <PackageId>Ginger.Core.Common</PackageId>
     <Authors>Amdocs</Authors>
     <Company>Amdocs</Company>
     <Product>Ginger by Amdocs</Product>
     <Copyright>Copyright © 2014-2026 European Support Limited</Copyright>
-    <Version>2025.5.0</Version>
+    <Version>2026.3</Version>
     <Title>Ginger Core Common</Title>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
@@ -33,12 +33,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="2025.4.2.1" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="2026.3.0" />
     <PackageReference Include="Ginger.External" Version="1.0.0" />
     <PackageReference Include="LiteDB" Version="5.0.21" />
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="3.7.0" />    
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.7.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.7.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="5.0.0" />    
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="5.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NJsonSchema" Version="9.13.10" />

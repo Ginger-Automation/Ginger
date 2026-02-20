@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -573,6 +573,20 @@ namespace GingerCore.Actions
 
         public override string ToString()
         {
+            try
+            {
+                // Prefer the action-level description if provided by the derived action (e.g. "Mobile/Tv Device Action")
+                if (!string.IsNullOrWhiteSpace(this.ActionDescription))
+                {
+                    return this.ActionDescription;
+                }
+            }
+            catch
+            {
+                // in case derived class throws, fall back to description
+            }
+
+            // Fall back to stored description (legacy behavior)
             return mDescription;
         }
 

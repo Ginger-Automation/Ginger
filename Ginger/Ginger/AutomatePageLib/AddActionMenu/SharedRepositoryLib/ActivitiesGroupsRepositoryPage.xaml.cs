@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Activities;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository.AddItemToRepositoryWizard;
+using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
 using GingerCore.Activities;
 using GingerWPF.DragDropLib;
@@ -73,6 +74,8 @@ namespace Ginger.Repository
             {
                 xActivitiesGroupsRepositoryListView.DataSourceList = mActivitiesGroupFolder.GetFolderItems();
             }
+            xActivitiesGroupsRepositoryListView.SetFolderTreeRoot(new SharedActivitiesGroupsFolderTreeItem(mActivitiesGroupFolder));
+            xActivitiesGroupsRepositoryListView.IsToggleButtonVisible = true;
         }
 
         public void UpdateBusinessFlow(BusinessFlow bf)

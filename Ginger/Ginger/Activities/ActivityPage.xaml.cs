@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -95,8 +95,32 @@ namespace GingerWPF.BusinessFlowsLib
         {
             Dispatcher.Invoke(() =>
             {
+                // Set the image glyph based on Activity
                 xIconImage.ImageType = Activity.TargetApplicationPlatformImage;
-                xIconImage.ToolTip = Activity.TargetApplicationPlatformName;
+
+                // Default tooltip value (fallback)
+                string platformText = Activity.TargetApplicationPlatformName ?? string.Empty;
+
+                try
+                {
+                    // Try to get the platform enum for the Activity target app and get its description attribute value
+                    var ws = WorkSpace.Instance;
+                    if (ws?.Solution != null && !string.IsNullOrEmpty(mActivity?.TargetApplication))
+                    {
+                        var platformEnum = ws.Solution.GetApplicationPlatformForTargetApp(mActivity.TargetApplication);
+                        // Use the General helper to return the EnumValueDescription attribute when present
+                        platformText = Amdocs.Ginger.Common.GeneralLib.General.GetEnumValueDescription(platformEnum.GetType(), platformEnum);
+                    }
+                }
+                catch
+                {
+                    // keep fallback Activity.TargetApplicationPlatformName if anything goes wrong
+                }
+
+                // Set tooltip on the ImageMakerControl - ImageToolTip updates the inner image/font's ToolTip
+                xIconImage.ImageToolTip = platformText;
+                // Also set the UserControl ToolTip for safety/fallback
+                xIconImage.ToolTip = platformText;
             });
         }
 

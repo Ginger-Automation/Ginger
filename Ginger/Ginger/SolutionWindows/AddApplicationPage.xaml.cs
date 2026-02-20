@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -61,6 +61,7 @@ namespace Ginger.SolutionWindows
                 new ApplicationPlatform() { AppName = "MyJavaApp", Platform = ePlatformType.Java, Description = "Java Application" },
                 new ApplicationPlatform() { AppName = "MyWebServicesApp", Platform = ePlatformType.WebServices, Description = "WebServices Application" },
                 new ApplicationPlatform() { AppName = "MyMobileApp", Platform = ePlatformType.Mobile, Description = "Mobile Application" },
+                //new ApplicationPlatform() { AppName = "MyTvApp", Platform = ePlatformType.TV, Description = "Tv Application"},
                 new ApplicationPlatform() { AppName = "Mediation", Platform = ePlatformType.Unix, Description = "Amdocs Mediation" },
                 new ApplicationPlatform() { AppName = "MyDosApp", Platform = ePlatformType.DOS, Description = "DOS Application" },
                 new ApplicationPlatform() { AppName = "MyMainFrameApp", Platform = ePlatformType.MainFrame, Description = "MainFrame Application" },
@@ -79,13 +80,26 @@ namespace Ginger.SolutionWindows
             SelectApplicationGrid.ShowDelete = System.Windows.Visibility.Collapsed;
             SelectApplicationGrid.ShowEdit = System.Windows.Visibility.Collapsed;
             SelectApplicationGrid.ShowUpDown = System.Windows.Visibility.Collapsed;
+
+            // Get enum descriptions as ComboEnumItem list (text = description, Value = enum)
+            var platformComboItems = GingerCore.General.GetEnumValuesForCombo(typeof(ePlatformType));
+
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
             {
                 GridColsView =
-            [
-                new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 },
-                new GridColView() { Field = nameof(ApplicationPlatform.Platform), Header="Select Platform",  WidthWeight = 40 },
-            ]
+                [
+                    new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 24 },
+
+            // Use ComboBox column bound to enum list so UI shows the EnumValueDescription text
+            new GridColView()
+            {
+                Field = nameof(ApplicationPlatform.Platform),
+                Header = "Select Platform",
+                WidthWeight = 40,
+                StyleType = GridColView.eGridColStyleType.ComboBox,
+                CellValuesList = platformComboItems
+            },
+        ]
             };
 
             SelectApplicationGrid.SetAllColumnsDefaultView(view);
@@ -208,6 +222,9 @@ namespace Ginger.SolutionWindows
                 case ePlatformType.Mobile:
                     agent.DriverType = Agent.eDriverType.Appium;
                     break;
+                //case ePlatformType.TV:
+                //    agent.DriverType = Agent.eDriverType.Appium;
+                //    break;
                 case ePlatformType.PowerBuilder:
                     agent.DriverType = Agent.eDriverType.PowerBuilder;
                     break;

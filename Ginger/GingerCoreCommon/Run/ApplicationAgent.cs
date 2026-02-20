@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -112,11 +112,12 @@ namespace GingerCore.Platforms
             {
                 if (AppPlatform != null)
                 {
-                    return AppPlatform.Platform.ToString();
+                    // Return enum description (e.g. "Mobile/TV") when attribute exists, otherwise fall back to enum name
+                    return Amdocs.Ginger.Common.GeneralLib.General.GetEnumValueDescription(typeof(ePlatformType), AppPlatform.Platform);
                 }
                 else
                 {
-                    return ePlatformType.NA.ToString();
+                    return Amdocs.Ginger.Common.GeneralLib.General.GetEnumValueDescription(typeof(ePlatformType), ePlatformType.NA);
                 }
             }
         }

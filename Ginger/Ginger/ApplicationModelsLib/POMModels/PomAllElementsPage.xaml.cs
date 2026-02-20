@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -227,8 +228,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         public ElementInfo mSpyElement;
 
         private void timenow(object sender, EventArgs e)
-        {
-            // Get control info only if control key is pressed
+        { // Get control info only if control key is pressed
             try
             {
                 if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))

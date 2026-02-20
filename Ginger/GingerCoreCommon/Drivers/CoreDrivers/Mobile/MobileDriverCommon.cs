@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,14 +21,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile
     public enum eDevicePlatformType
     {
         Android = 0,
-        iOS = 1
+        iOS = 1,
+        AndroidTv = 2
     }
 
     public enum eDeviceSource
     {
         LocalAppium = 0,
         MicroFoucsUFTMLab = 1,
-        Kobiton = 2
+        Kobiton = 2,
+        AndroidTV = 3
+
     }
 
     public enum eAppType

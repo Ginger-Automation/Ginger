@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,6 +22,13 @@ using Ginger.UserControls;
 using GingerWPF.WizardLib;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using GingerCore;
+using GingerCore.Actions;
+using System.Windows.Controls.Primitives;
+using Amdocs.Ginger.UserControls;
+using GingerCore.Activities;
+using GingerCore.Variables;
 
 namespace Ginger.Repository.ItemToRepositoryWizard
 {
@@ -58,7 +65,16 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                     CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(UploadItemSelection.eActivityInstanceType)), nameof(UploadItemSelection.ReplaceType), false, false, nameof(UploadItemSelection.IsActivity), true),
                     ReadOnly = isConvertPage
                 },
-            ]
+                new GridColView()
+                {
+                    Field = nameof(UploadItemSelection.TargetFolderDisplay),
+                    Header = "Add to Folder",
+                    WidthWeight = 40,
+                    StyleType = GridColView.eGridColStyleType.Template,
+                    CellTemplate = CreateSelectFolderTemplate(),
+                    ReadOnly = false 
+                },
+                ]
             };
 
             GridColView GCWUploadType = new GridColView()
@@ -122,7 +138,6 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             //    UploadItemToRepositoryWizard.NextEnabled = true;
             //}
         }
-
         private void SetSamePartToAll(object sender, RoutedEventArgs e)
         {
             if (itemSelectionGrid.CurrentItem != null)
@@ -141,7 +156,87 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                 Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
+        private DataTemplate CreateSelectFolderTemplate()
+        {
+            var template = new DataTemplate();
 
+            var panel = new FrameworkElementFactory(typeof(StackPanel));
+            panel.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
+            panel.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
+            panel.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+
+            var txt = new FrameworkElementFactory(typeof(TextBlock));
+            txt.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
+            txt.SetValue(TextBlock.MarginProperty, new Thickness(0, 0, 6, 0));
+            txt.SetValue(TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis);
+            txt.SetValue(TextBlock.ToolTipProperty, new Binding(nameof(UploadItemSelection.TargetFolderDisplay)));
+            txt.SetBinding(TextBlock.TextProperty, new Binding(nameof(UploadItemSelection.TargetFolderDisplay)) { Mode = BindingMode.OneWay });
+            panel.AppendChild(txt);
+
+            var btn = new FrameworkElementFactory(typeof(ucButton));
+            btn.SetValue(Amdocs.Ginger.UserControls.ucButton.ButtonTypeProperty, Amdocs.Ginger.Core.eButtonType.ImageButton);
+            btn.SetValue(Amdocs.Ginger.UserControls.ucButton.ButtonImageTypeProperty, Amdocs.Ginger.Common.Enums.eImageType.Folder);
+            btn.SetValue(FrameworkElement.ToolTipProperty, "Select Shared Repository Folder");
+            btn.SetValue(FrameworkElement.WidthProperty, 30.0);
+            btn.SetValue(FrameworkElement.HeightProperty, 22.0);
+            btn.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            btn.SetValue(FrameworkElement.MarginProperty, new Thickness(2, 0, 0, 0));
+
+            // Set icon size when the control is instantiated
+            btn.AddHandler(FrameworkElement.LoadedEvent, new RoutedEventHandler(UcSelectFolderButton_Loaded), true);
+
+            // Click handler
+            btn.AddHandler(ButtonBase.ClickEvent, new RoutedEventHandler(SelectFolder_Click), true);
+
+            panel.AppendChild(btn);
+
+            template.VisualTree = panel;
+            return template;
+        }
+
+        // folder icon size
+        private void UcSelectFolderButton_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is ucButton ub)
+            {
+                ub.ButtonFontImageSize = 16;
+                ub.ButtonImageWidth = 16;
+                ub.ButtonImageHeight = 16;
+
+            }
+        }
+
+        private void SelectFolder_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is ucButton btn && btn.DataContext is UploadItemSelection row)
+            {
+                var owner = Window.GetWindow(this);
+
+                // Choose filter by item type
+                var filter = SharedRepoRootFilter.All;
+                if (row.UsageItem is ActivitiesGroup)
+                {
+                    filter = SharedRepoRootFilter.ActivitiesGroups;
+                }
+                else if (row.UsageItem is Activity)
+                {
+                    filter = SharedRepoRootFilter.Activities;
+                }
+                else if (row.UsageItem is Act)
+                {
+                    filter = SharedRepoRootFilter.Actions;
+                }
+                else if (row.UsageItem is VariableBase)
+                {
+                    filter = SharedRepoRootFilter.Variables;
+                }
+                var selectedFolder = SelectSharedRepositoryFolderPage.ShowWindow(owner, eWindowShowStyle.Dialog, filter);
+                if (selectedFolder != null)
+                {
+                    row.TargetFolderFullPath = selectedFolder.FolderFullPath;
+                }
+            }
+        }
         private void SelectUnSelectAll(bool activeStatus)
         {
             if (UploadItemSelection.mSelectedItems.Count > 0)
