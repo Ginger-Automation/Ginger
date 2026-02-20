@@ -286,7 +286,7 @@
     
     <PackageReference Include="ImageDiff" Version="1.0.1" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
-    <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="2.0.323" />
+    <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="2.0.278" />
 	<PackageReference Include="LiteDB" Version="5.0.21" />
   
     <PackageReference Include="DocumentFormat.OpenXml" Version="3.4.1" />
