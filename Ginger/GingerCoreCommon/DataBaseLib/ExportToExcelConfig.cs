@@ -16,12 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.DataSource;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.DataSource
 {
@@ -101,7 +102,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
             }
             foreach (var column in selectedColumnList)
             {
-                selectedColumn.Append(column.ColumnText.ToLower());
+                selectedColumn.Append(column.ColumnText);
                 if (selectedColumnList.Count > 1)
                 {
                     selectedColumn.Append(",");
@@ -127,92 +128,61 @@ namespace Amdocs.Ginger.CoreNET.DataSource
             return query;
         }
 
-
-        public string CreateQueryWithWhereList(List<ColumnCheckListItem> mColumnList, ObservableList<WhereConditionItem> whereConditionList, string tableName, DataSourceBase.eDSType dSType)
+        public string CreateQueryWithWhereList(List<ColumnCheckListItem> mColumnList,ObservableList<WhereConditionItem> whereConditionList,string tableName,DataSourceBase.eDSType dSType)
         {
-            var query = CreateQueryWithColumnList(mColumnList, tableName, dSType);
+            // Build column list (NO SQL, just col1,col2,col3)
+            string columnList = string.Join(",",
+                mColumnList.Where(x => x.IsSelected).Select(x => x.ColumnText));
 
-            if (whereConditionList == null)
+            // No conditions → return column list only
+            if (whereConditionList == null || whereConditionList.Count == 0)
             {
-                return query;
+                return columnList;
             }
-            var whereQuery = string.Empty;
 
+            // Build WHERE clause in Ginger format
+            string whereClause = "";
             for (int i = 0; i < whereConditionList.Count; i++)
             {
-                var wQuery = "";
-                var wCond = whereConditionList[i].Condition.ToLower();
-                var wColVal = whereConditionList[i].TableColumn.Trim();
-                var wOpr = whereConditionList[i].Opertor;
-                var wRowVal = whereConditionList[i].RowValue;
+                var item = whereConditionList[i];
 
-                if (string.IsNullOrEmpty(wRowVal))
-                {
+                if (string.IsNullOrEmpty(item.TableColumn) ||
+                    string.IsNullOrEmpty(item.RowValue))
                     continue;
+
+                string predicate = "";
+
+                switch (item.Opertor)
+                {
+                    case "Equals":
+                        predicate = $"{item.TableColumn} = \"{item.RowValue}\"";
+                        break;
+                    case "NotEquals":
+                        predicate = $"{item.TableColumn} <> \"{item.RowValue}\"";
+                        break;
+                    case "Contains":
+                        predicate = $"{item.TableColumn} Like \"%{item.RowValue}%\"";
+                        break;
+                    case "NotContains":
+                        predicate = $"{item.TableColumn} Not Like \"%{item.RowValue}%\"";
+                        break;
+                    case "StartsWith":
+                        predicate = $"{item.TableColumn} Like \"{item.RowValue}%\"";
+                        break;
+                    case "EndsWith":
+                        predicate = $"{item.TableColumn} Like \"%{item.RowValue}\"";
+                        break;
                 }
 
-                if (wCond == "empty")
-                {
-                    wCond = "";
-                }
+                if (i > 0)
+                    whereClause += " AND ";
 
-                if (wOpr == "Equals")
-                {
-                    if (wColVal == "GINGER_ID")
-                    {
-                        wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " = ", wRowVal);
-                    }
-                    else
-                    {
-                        wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " = \"", wRowVal, "\"");
-                    }
-                }
-                else if (wOpr == "NotEquals")
-                {
-                    if (wColVal == "GINGER_ID")
-                    {
-                        wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " <> ", wRowVal);
-                    }
-                    else
-                    {
-                        wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " <>  \"", wRowVal, "\"");
-                    }
-                }
-                else if (wOpr == "Contains")
-                {
-                    wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " Like ", "\"%", wRowVal, "%\"");
-                }
-                else if (wOpr == "NotContains")
-                {
-                    wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " Not Like ", "\"%", wRowVal, "%\"");
-                }
-                else if (wOpr == "StartsWith")
-                {
-                    wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " like ", "\"", wRowVal, "%\"");
-                }
-                else if (wOpr == "NotStartsWith")
-                {
-                    wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " Not Like ", "\"", wRowVal, "%\"");
-                }
-                else if (wOpr == "EndsWith")
-                {
-                    wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " like ", "\"%", wRowVal, "\"");
-                }
-                else if (wOpr == "NotEndsWith")
-                {
-                    wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " not like ", "\"%", wRowVal, "\"");
-                }
-
-
-                whereQuery = string.Concat(whereQuery, wQuery);
+                whereClause += predicate;
             }
-            if (whereQuery != string.Empty)
-            {
-                query += " Where " + whereQuery;
-            }
-            return query;
+
+            // Return Ginger expected string: "col1,col2 where condition"
+            return $"{columnList} where {whereClause}";
         }
-
         public ObservableList<GingerCore.DataSource.ActDSConditon> GetConditons(ObservableList<WhereConditionItem> conditonStringList, System.Data.DataTable mDataTable)
         {
             var dsConditionList = new ObservableList<GingerCore.DataSource.ActDSConditon>();

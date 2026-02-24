@@ -216,10 +216,17 @@ namespace Ginger.DataSource
 
         private void ExcelExportQuery_ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+
             if (mActDSTableElement != null)
             {
                 mActDSTableElement.ExcelConfig.ExportQueryValue = xExcelExportQuery.ValueTextBox.Text;
             }
+            else
+            {
+                // Add this line to persist in standalone page mode
+                mExcelConfig.ExportQueryValue = xExcelExportQuery.ValueTextBox.Text;
+            }
+
         }
 
         private void InitColumnListGrid(DataColumnCollection columns)
@@ -417,12 +424,24 @@ namespace Ginger.DataSource
 
             if (mActDSTableElement != null)
             {
-                mActDSTableElement.ExcelConfig.IsCustomExport = Convert.ToBoolean(xRdoByCustomExport.IsChecked);
-                xExcelExportQuery.ValueTextBox.Text = mExcelConfig.CreateQueryWithWhereList(mActDSTableElement.ExcelConfig.ColumnList.ToList().FindAll(x => x.IsSelected), mActDSTableElement.ExcelConfig.WhereConditionStringList, mDataTable.TableName, mDataSourceTable.DSC.DSType);
+
+                xExcelExportQuery.ValueTextBox.Text =
+                        mExcelConfig.CreateQueryWithWhereList(mActDSTableElement.ExcelConfig.ColumnList.Where(x => x.IsSelected).ToList(),
+                            mActDSTableElement.ExcelConfig.WhereConditionStringList,
+                            mDataTable.TableName,
+                            mDataSourceTable.DSC.DSType);
             }
             else
             {
-                xExcelExportQuery.ValueTextBox.Text = mExcelConfig.CreateQueryWithWhereList(mExcelConfig.ColumnList.ToList().FindAll(x => x.IsSelected), mExcelConfig.WhereConditionStringList, mDataTable.TableName, mDataSourceTable.DSC.DSType);
+                // Generate query for non-action table element
+                xExcelExportQuery.ValueTextBox.Text =
+                    mExcelConfig.CreateQueryWithWhereList(
+                        mExcelConfig.ColumnList
+                            .Where(x => x.IsSelected)
+                            .ToList(),
+                        mExcelConfig.WhereConditionStringList,
+                        mDataTable.TableName,
+                        mDataSourceTable.DSC.DSType);
             }
         }
 
