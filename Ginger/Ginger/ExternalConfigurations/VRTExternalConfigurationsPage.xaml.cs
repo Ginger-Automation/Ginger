@@ -23,6 +23,8 @@ using Ginger.ValidationRules;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using GingerCore;            // for EncryptionHandler, ValueExpression
+using System.Windows.Input;  // for KeyboardFocusChangedEventArgs
 
 namespace Ginger.Configurations
 {
@@ -63,22 +65,25 @@ namespace Ginger.Configurations
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xActivityTagsCheckBox, CheckBox.IsCheckedProperty, _VRTConfiguration, nameof(VRTConfiguration.ActivityTags));
 
             ApplyValidationRules();
-
-            if (!string.IsNullOrEmpty(_VRTConfiguration.ApiKey))  
-            {
-                xAPIKeyTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("API Key cannot be empty"));
-
-                // Now that validation is attached, remove the binding so the real key won't show
-                BindingOperations.ClearBinding(xAPIKeyTextBox.ValueTextBox, TextBox.TextProperty);
-
-                // Show a generic mask; don't leak length
-                const string masked = "••••••••••••••••••••";
-                xAPIKeyTextBox.ValueTextBox.Text = masked;
-                xAPIKeyTextBox.ValueTextBox.Tag = masked; // remember the mask marker
-            }
+            xAPIKeyTextBox.ValueTextBox.LostKeyboardFocus += xAPIKeyTextBox_LostKeyboardFocus;
 
         }
 
+        private void xAPIKeyTextBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            var tb = xAPIKeyTextBox.ValueTextBox;
+            string current = tb.Text;
+
+            // Don't touch value expressions
+            if (ValueExpression.IsThisAValueExpression(current))
+                return;  
+
+            // Encrypt if not already encrypted
+            if (!EncryptionHandler.IsStringEncrypted(current))
+            {
+                tb.Text = EncryptionHandler.EncryptwithKey(current);
+            }
+        }
         private void ApplyValidationRules()
         {
             // check if fields have been populated (font-end validation)
@@ -102,24 +107,17 @@ namespace Ginger.Configurations
 
         private void xSaveButton_Click(object sender, RoutedEventArgs e)
         {
-            // Preserve existing key unless user edited the field
-            var apiKeyBox = xAPIKeyTextBox.ValueTextBox;
-            string masked = apiKeyBox.Tag as string;
-
-            if (!string.IsNullOrEmpty(masked) && !string.Equals(apiKeyBox.Text, masked))
+            // Ensure API key is encrypted before save (belt-and-suspenders)
+            if (!string.IsNullOrWhiteSpace(_VRTConfiguration.ApiKey)
+                && !ValueExpression.IsThisAValueExpression(_VRTConfiguration.ApiKey)
+                && !EncryptionHandler.IsStringEncrypted(_VRTConfiguration.ApiKey))
             {
-                if (string.IsNullOrWhiteSpace(apiKeyBox.Text))
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "API Key cannot be empty");
-                    apiKeyBox.Text = masked;
-                    return;
-                }
-                _VRTConfiguration.ApiKey = apiKeyBox.Text;  // assign new key
-                apiKeyBox.Text = masked;                     // re-mask after save
+                _VRTConfiguration.ApiKey = EncryptionHandler.EncryptwithKey(_VRTConfiguration.ApiKey);
             }
-            // else: field untouched or no mask in use -> keep existing _VRTConfiguration.ApiKey
 
-            WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
+                WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(
+                true,
+                SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
         }
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
