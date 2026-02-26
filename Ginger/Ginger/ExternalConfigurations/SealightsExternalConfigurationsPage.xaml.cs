@@ -66,10 +66,10 @@ namespace Ginger.Configurations
             xSealighsReportedEntityLevelComboBox.BindControl(_SealightsConfiguration, nameof(SealightsConfiguration.SealightsReportedEntityLevel));
             ApplyValidationRules();
             xSealighsAgentTokenTextBox.ValueTextBox.LostKeyboardFocus += xSealighsAgentTokenTextBox_LostKeyboardFocus;
-            //if (xSealighsSessionTimeoutTextBox.ValueTextBox.Text.Trim() == "")
-            //{
-            //    xSealighsSessionTimeoutTextBox.ValueTextBox.Text = "14400";
-            //}
+            if (xSealighsSessionTimeoutTextBox.ValueTextBox.Text.Trim() == "")
+            {
+                xSealighsSessionTimeoutTextBox.ValueTextBox.Text = "14400";
+            }
             xSealightsTestRecommendationsRadioButton.Init(typeof(SealightsConfiguration.eSealightsTestRecommendations), xSealightsTestRecommendationsPanel, _SealightsConfiguration, nameof(SealightsConfiguration.SealightsTestRecommendations), SealightsTestRecommendationRadioButton_CheckedHandler);
             
         }
@@ -77,8 +77,8 @@ namespace Ginger.Configurations
 
         private void xSealighsAgentTokenTextBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            var tb = xSealighsAgentTokenTextBox.ValueTextBox;
-            string current = tb.Text;
+            var textbox = xSealighsAgentTokenTextBox.ValueTextBox;
+            string current = textbox.Text;
 
             // Skip value expressions (AskLisa behavior)
             if (ValueExpression.IsThisAValueExpression(current))
@@ -86,7 +86,7 @@ namespace Ginger.Configurations
             // Encrypt only if not already encrypted
             if (!EncryptionHandler.IsStringEncrypted(current))
             {
-                tb.Text = EncryptionHandler.EncryptwithKey(current);
+                textbox.Text = EncryptionHandler.EncryptwithKey(current);
             }
         }
 

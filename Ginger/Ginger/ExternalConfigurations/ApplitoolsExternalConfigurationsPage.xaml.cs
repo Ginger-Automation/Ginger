@@ -60,8 +60,8 @@ namespace Ginger.Configurations
 
         private void xAPIKeyTextBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            var tb = xAPIKeyTextBox.ValueTextBox;
-            string current = tb.Text;
+            var textbox = xAPIKeyTextBox.ValueTextBox;
+            string current = textbox.Text;
 
             // Do not encrypt value expressions (AskLisa rule)
             if (ValueExpression.IsThisAValueExpression(current))
@@ -70,7 +70,7 @@ namespace Ginger.Configurations
             // Encrypt only if not already encrypted
             if (!EncryptionHandler.IsStringEncrypted(current))
             {
-                tb.Text = EncryptionHandler.EncryptwithKey(current);
+                textbox.Text = EncryptionHandler.EncryptwithKey(current);
             }
         }
         private void ApplyValidationRules()
