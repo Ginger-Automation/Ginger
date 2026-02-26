@@ -20,7 +20,9 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.UserControlsLib;
 using Ginger.ValidationRules;
+using GingerCore;
 using System.Windows;
+using System.Windows.Input;
 
 namespace Ginger.Configurations
 {
@@ -51,8 +53,26 @@ namespace Ginger.Configurations
             xAPIURLTextBox.Init(mContext, _ApplitoolsConfiguration, nameof(ApplitoolsConfiguration.ApiUrl));
             xAPIKeyTextBox.Init(mContext, _ApplitoolsConfiguration, nameof(ApplitoolsConfiguration.ApiKey));
             ApplyValidationRules();
+            // Encrypt API key on blur (AskLisa/VRT style)
+            xAPIKeyTextBox.ValueTextBox.LostKeyboardFocus += xAPIKeyTextBox_LostKeyboardFocus;
+
         }
 
+        private void xAPIKeyTextBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            var tb = xAPIKeyTextBox.ValueTextBox;
+            string current = tb.Text;
+
+            // Do not encrypt value expressions (AskLisa rule)
+            if (ValueExpression.IsThisAValueExpression(current))
+                return;
+
+            // Encrypt only if not already encrypted
+            if (!EncryptionHandler.IsStringEncrypted(current))
+            {
+                tb.Text = EncryptionHandler.EncryptwithKey(current);
+            }
+        }
         private void ApplyValidationRules()
         {
             // check if fields have been populated (font-end validation)
@@ -71,6 +91,14 @@ namespace Ginger.Configurations
 
         private void xSaveButton_Click(object sender, RoutedEventArgs e)
         {
+
+            // Ensure API key is encrypted before save (defense-in-depth)
+            if (!string.IsNullOrWhiteSpace(_ApplitoolsConfiguration.ApiKey)
+                && !ValueExpression.IsThisAValueExpression(_ApplitoolsConfiguration.ApiKey)
+                && !EncryptionHandler.IsStringEncrypted(_ApplitoolsConfiguration.ApiKey))
+            {
+                _ApplitoolsConfiguration.ApiKey = EncryptionHandler.EncryptwithKey(_ApplitoolsConfiguration.ApiKey);
+            }
             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
         }
 
