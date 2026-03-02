@@ -157,7 +157,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
 
                 string predicate = "";
                 switch (item.Opertor)
-                {
+                { 
                     case "Equals":
                         predicate = $"{item.TableColumn} = \"{item.RowValue}\"";
                         break;
@@ -176,13 +176,24 @@ namespace Amdocs.Ginger.CoreNET.DataSource
                     case "EndsWith":
                         predicate = $"{item.TableColumn} Like \"%{item.RowValue}\"";
                         break;
+                    case "NotStartsWith":
+                        predicate = $"{item.TableColumn} Not Like \"{item.RowValue}%\"";
+                        break;
+                    case "NotEndsWith":
+                        predicate = $"{item.TableColumn} Not Like \"%{item.RowValue}\"";
+                        break;
+
                 }
                 if (i > 0)
                     whereClause += " AND ";
                 whereClause += predicate;
             }
-            // Return Ginger expected string: "col1,col2 where condition"
+            if (string.IsNullOrWhiteSpace(whereClause))
+            {
+                return columnList;   // return only columns, no where clause
+            }
             return $"{columnList} where {whereClause}";
+
         }
 
         public ObservableList<GingerCore.DataSource.ActDSConditon> GetConditons(ObservableList<WhereConditionItem> conditonStringList, System.Data.DataTable mDataTable)
