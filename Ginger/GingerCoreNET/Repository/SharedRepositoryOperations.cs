@@ -158,7 +158,15 @@ namespace Ginger.Repository
                 {
                     WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(itemToUpload.ExistingItem);
 
-                    RepositoryFolderBase repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(itemToUpload.ExistingItem.ContainingFolderFullPath);
+                    // Checking if user selected a different target folder, using that, otherwise using existing folder
+                    string targetFolderPath = itemToUpload.ExistingItem.ContainingFolderFullPath;
+                    if (!string.IsNullOrEmpty(itemToUpload.TargetFolderFullPath) && 
+                        itemToUpload.TargetFolderFullPath != itemToUpload.ExistingItem.ContainingFolderFullPath)
+                    {
+                        targetFolderPath = itemToUpload.TargetFolderFullPath;
+                    }
+
+                    RepositoryFolderBase repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(targetFolderPath);
                     if (repositoryFolder != null)
                     {
                         itemCopy.ItemName = itemToUpload.ExistingItem.ItemName;
