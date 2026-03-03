@@ -29,6 +29,10 @@ using System.Windows.Controls.Primitives;
 using Amdocs.Ginger.UserControls;
 using GingerCore.Activities;
 using GingerCore.Variables;
+using System;
+using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
 
 namespace Ginger.Repository.ItemToRepositoryWizard
 {
@@ -37,15 +41,99 @@ namespace Ginger.Repository.ItemToRepositoryWizard
     /// </summary>
     public partial class UploadItemsSelectionPage : Page, IWizardPage
     {
+        /// <summary>
+        /// Converter to invert boolean to visibility (true -> Collapsed, false -> Visible)
+        /// </summary>
+        private class BoolToVisibilityInvertConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                if (value is bool boolValue)
+                {
+                    return boolValue ? Visibility.Collapsed : Visibility.Visible;
+                }
+                return Visibility.Visible; // Default to visible if not a bool
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                if (value is Visibility visibility)
+                {
+                    return visibility != Visibility.Visible;
+                }
+                return false;
+            }
+        }
         public UploadItemToRepositoryWizard UploadItemToRepositoryWizard;
         public UploadItemsValidationPage itemValidate;
         bool isConvertPage = false;
+        ObservableList<UploadItemSelection> mItemsList;
+
         public UploadItemsSelectionPage(ObservableList<UploadItemSelection> items, bool isConvert)
         {
             InitializeComponent();
             isConvertPage = isConvert;
+            mItemsList = items;
             SetSelectedItemsGridView();
             itemSelectionGrid.DataSourceList = items;
+
+            // Listen to ItemUploadType changes to show/hide folder column dynamically
+            items.CollectionChanged += Items_CollectionChanged;
+            foreach (var item in items)
+            {
+                item.PropertyChanged += Item_PropertyChanged;
+            }
+
+            // Update folder column visibility after grid is loaded
+            this.Loaded += UploadItemsSelectionPage_Loaded;
+        }
+
+        private void UploadItemsSelectionPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Initial update of folder column visibility
+            UpdateFolderColumnVisibility();
+        }
+
+        private void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (UploadItemSelection item in e.NewItems)
+                {
+                    item.PropertyChanged += Item_PropertyChanged;
+                }
+            }
+            if (e.OldItems != null)
+            {
+                foreach (UploadItemSelection item in e.OldItems)
+                {
+                    item.PropertyChanged -= Item_PropertyChanged;
+                }
+            }
+            UpdateFolderColumnVisibility();
+        }
+
+        private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(UploadItemSelection.ItemUploadType) ||
+                e.PropertyName == nameof(UploadItemSelection.IsOverrite))
+            {
+                UpdateFolderColumnVisibility();
+            }
+        }
+
+        private void UpdateFolderColumnVisibility()
+        {
+            // Show folder column only if there's at least one item that is NOT overwrite
+            bool shouldShowFolderColumn = mItemsList.Any(item => !item.IsOverrite);
+
+            var folderColumn = itemSelectionGrid.grdMain.Columns.FirstOrDefault(c =>
+                c.Header != null && c.Header.ToString() == "Add to Folder");
+
+            if (folderColumn != null)
+            {
+                folderColumn.Visibility = shouldShowFolderColumn ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
 
         private void SetSelectedItemsGridView()
@@ -164,6 +252,13 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             panel.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
             panel.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
             panel.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+
+            //// Hide folder selection UI for overwrite items (folder cannot be changed during overwrite)
+            //panel.SetBinding(UIElement.VisibilityProperty, new Binding(nameof(UploadItemSelection.IsOverrite))
+            //{
+            //    Converter = new BoolToVisibilityInvertConverter(),
+            //    Mode = BindingMode.OneWay
+            //});
 
             var txt = new FrameworkElementFactory(typeof(TextBlock));
             txt.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
