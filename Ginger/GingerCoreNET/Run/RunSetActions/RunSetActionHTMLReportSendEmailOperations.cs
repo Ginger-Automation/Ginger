@@ -537,18 +537,10 @@ namespace Ginger.Run.RunSetActions
             List<KeyValuePair<int, int>> chartData = null;
             StringBuilder fieldsNamesHTMLTableCells = new StringBuilder();
             StringBuilder fieldsValuesHTMLTableCells = new StringBuilder();
-            StringBuilder fieldsNamesHTMLTableCellsm = new StringBuilder();
-            StringBuilder fieldsValuesHTMLTableCellsm = new StringBuilder();
-            GetExecGeneralDetails(liteDbRunSet, currentTemplate, fieldsNamesHTMLTableCells, fieldsValuesHTMLTableCells, fieldsNamesHTMLTableCellsm, fieldsValuesHTMLTableCellsm);
-
-            ReportHTML = ReportHTML.Replace("{GeneralDetails_Headers}", fieldsNamesHTMLTableCellsm.ToString());
-            ReportHTML = ReportHTML.Replace("{GeneralDetails_Data}", fieldsValuesHTMLTableCellsm.ToString());
-            ReportHTML = ReportHTML.Replace("{ExecutionGeneralDetails_Headers}", fieldsNamesHTMLTableCells.ToString());
-            ReportHTML = ReportHTML.Replace("{ExecutionGeneralDetails_Data}", fieldsValuesHTMLTableCells.ToString());
+            string runsetDetailsHtml = GetExecGeneralDetails(liteDbRunSet, currentTemplate);
+            ReportHTML = ReportHTML.Replace("{RunsetDetails_Content}", runsetDetailsHtml);
             ReportHTML = ReportHTML.Replace("{ReportCreated}", DateTime.Now.ToString());
             ReportHTML = ReportHTML.Replace("{ReportLevel}", "");
-            fieldsNamesHTMLTableCells.Remove(0, fieldsNamesHTMLTableCells.Length);
-            fieldsValuesHTMLTableCells.Remove(0, fieldsValuesHTMLTableCells.Length);
             foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.EmailSummaryViewFieldsToSelect.Where(x => (x.FieldType == Ginger.Reports.FieldsType.Section.ToString())))
             {
                 if (selectedField.FieldKey == RunSetReport.Fields.ExecutionStatisticsDetails)
@@ -649,6 +641,7 @@ namespace Ginger.Run.RunSetActions
             fieldsValuesHTMLTableCells = new StringBuilder();
             List<int> listOfHandledGingerRunnersReport = [];
             bool firstIteration = true;
+            int rowIdx = 0;
             foreach (LiteDbRunner GR in liteDbRunSet.RunnersColl.Where(x => x.RunStatus == nameof(eRunStatus.Failed)).OrderBy(x => x.Seq))
             {
                 foreach (LiteDbBusinessFlow br in GR.BusinessFlowsColl.Where(x => x.RunStatus == nameof(eRunStatus.Failed)))
@@ -658,18 +651,19 @@ namespace Ginger.Run.RunSetActions
                         foreach (LiteDbAction act in ac.ActionsColl.Where(x => x.RunStatus == nameof(eRunStatus.Failed)).OrderBy(x => x.Seq))
                         {
                             isFailuresDetailsExists = true;
+                            string rowBg = (rowIdx % 2 == 0) ? "#f5f5f6" : "#eaebeb";
 
                             // Ginger Runner Level
-                            fieldsValuesHTMLTableCells.Append("<tr>");
+                            fieldsValuesHTMLTableCells.Append("<tr style='background-color:" + rowBg + ";'>");
                             foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.GingerRunnerFieldsToSelect.Where(x => (x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
                             {
                                 if (selectedField_internal.FieldKey == GingerReport.Fields.Name)
                                 {
                                     if (firstIteration)
                                     {
-                                        fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                        fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                     }
-                                    fieldsValuesHTMLTableCells.Append(@"<td style='padding: 10px; border: 1px solid #dddddd'>" + GR.Name + @"</td>");
+                                    fieldsValuesHTMLTableCells.Append(@"<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + GR.Name + @"</td>");
                                 }
                             }
 
@@ -680,17 +674,17 @@ namespace Ginger.Run.RunSetActions
                                 {
                                     if (firstIteration)
                                     {
-                                        fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Sequence</td>");
+                                        fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Sequence</td>");
                                     }
-                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + br.Seq.ToString() + "</td>");
+                                    fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + br.Seq.ToString() + "</td>");
                                 }
                                 if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.Name)
                                 {
                                     if (firstIteration)
                                     {
-                                        fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                        fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                     }
-                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + br.Name + "</td>");
+                                    fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + br.Name + "</td>");
                                 }
                             }
 
@@ -702,17 +696,17 @@ namespace Ginger.Run.RunSetActions
                                 {
                                     if (firstIteration)
                                     {
-                                        fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>Activity Sequence</td>");
+                                        fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>Activity Sequence</td>");
                                     }
-                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(ac.Seq.ToString()) + "</td>");
+                                    fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + OverrideHTMLRelatedCharacters(ac.Seq.ToString()) + "</td>");
                                 }
                                 if (selectedField_internal.FieldKey == ActivityReport.Fields.ActivityName)
                                 {
                                     if (firstIteration)
                                     {
-                                        fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                        fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                     }
-                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(ac.Name) + "</td>");
+                                    fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + OverrideHTMLRelatedCharacters(ac.Name) + "</td>");
                                 }
                             }
 
@@ -724,55 +718,56 @@ namespace Ginger.Run.RunSetActions
                                 {
                                     if (firstIteration)
                                     {
-                                        fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>Action Execution Sequence</td>");
+                                        fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>Action Execution Sequence</td>");
                                     }
-                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(act.Seq.ToString()) + "</td>");
+                                    fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + OverrideHTMLRelatedCharacters(act.Seq.ToString()) + "</td>");
                                 }
                                 if (selectedField_internal.FieldKey == ActionReport.Fields.Description)
                                 {
                                     if (firstIteration)
                                     {
-                                        fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>Action Description</td>");
+                                        fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>Action Description</td>");
                                     }
-                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(act.Description) + "</td>");
+                                    fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + OverrideHTMLRelatedCharacters(act.Description) + "</td>");
                                 }
                                 if (selectedField_internal.FieldKey == ActionReport.Fields.RunDescription)
                                 {
                                     if (firstIteration)
                                     {
-                                        fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                        fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                     }
-                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(act.RunDescription) + "</td>");
+                                    fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + OverrideHTMLRelatedCharacters(act.RunDescription) + "</td>");
                                 }
                                 if (selectedField_internal.FieldKey == ActionReport.Fields.Error)
                                 {
                                     if (firstIteration)
                                     {
-                                        fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                        fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                     }
-                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd; color:red;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-break: break-all;'>" + OverrideHTMLRelatedCharacters(act.Error) + "</td>");
+                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border-bottom:1px solid #ffffff; color:red;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-break: break-all;'>" + OverrideHTMLRelatedCharacters(act.Error) + "</td>");
                                 }
                                 if (selectedField_internal.FieldKey == ActionReport.Fields.ElapsedSecs)
                                 {
                                     if (firstIteration)
                                     {
-                                        fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                        fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                     }
-                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(General.TimeConvert(Convert.ToString(act.GetType().GetProperty(fieldName).GetValue(act)))) + "</td>");
+                                    fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + OverrideHTMLRelatedCharacters(General.TimeConvert(Convert.ToString(act.GetType().GetProperty(fieldName).GetValue(act)))) + "</td>");
                                 }
                                 if ((selectedField_internal.FieldKey == ActionReport.Fields.CurrentRetryIteration) ||
                                     (selectedField_internal.FieldKey == ActionReport.Fields.ExInfo))
                                 {
                                     if (firstIteration)
                                     {
-                                        fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                        fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                     }
 
-                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(Convert.ToString(act.GetType().GetProperty(fieldName).GetValue(act))) + "</td>");
+                                    fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + OverrideHTMLRelatedCharacters(Convert.ToString(act.GetType().GetProperty(fieldName).GetValue(act))) + "</td>");
                                 }
                             }
                             fieldsValuesHTMLTableCells.Append("</tr>");
                             firstIteration = false;
+                            rowIdx++;
                         }
                     }
                 }
@@ -786,15 +781,17 @@ namespace Ginger.Run.RunSetActions
             fieldsNamesHTMLTableCells = new StringBuilder();
             fieldsValuesHTMLTableCells = new StringBuilder();
             List<int> listOfHandledGingerRunnersReport = [];
-            string tableColor = "<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>";
-            string tableStyle = @"<td style='padding: 10px; border: 1px solid #dddddd'>";
+            string tableColor = "<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>";
+            string tableStyle = @"<td style='padding:10px;border-bottom:1px solid #ffffff;'>";
             bool firstIteration = true;
+            int rowIdx = 0;
             foreach (LiteDbRunner GR in (liteDbRunSet).RunnersColl.OrderBy(x => x.Seq))
             {
                 foreach (LiteDbBusinessFlow br in GR.BusinessFlowsColl)
                 {
                     List<string> selectedRunnerFields = [GingerReport.Fields.Name, GingerReport.Fields.EnvironmentName, GingerReport.Fields.Seq];
-                    fieldsValuesHTMLTableCells.Append("<tr>");
+                    string rowBg = (rowIdx % 2 == 0) ? "#f5f5f6" : "#eaebeb";
+                    fieldsValuesHTMLTableCells.Append("<tr style='background-color:" + rowBg + ";'>");
                     foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.GingerRunnerFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString() && selectedRunnerFields.Contains(x.FieldKey))))
                     {
                         string fieldName = EmailToObjectFieldName(selectedField_internal.FieldKey);
@@ -863,7 +860,7 @@ namespace Ginger.Run.RunSetActions
                         }
                         else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.RunStatus)
                         {
-                            fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border:1px solid #dddddd;' class='Status" + (br.GetType().GetProperty(fieldName).GetValue(br)).ToString() + "'>" + br.GetType().GetProperty(fieldName).GetValue(br) + "</td>");
+                            fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;' class='Status" + (br.GetType().GetProperty(fieldName).GetValue(br)).ToString() + "'>" + br.GetType().GetProperty(fieldName).GetValue(br) + "</td>");
                         }
                         else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.ExecutionRate)
                         {
@@ -876,6 +873,7 @@ namespace Ginger.Run.RunSetActions
                     }
                     fieldsValuesHTMLTableCells.Append("</tr>");
                     firstIteration = false;
+                    rowIdx++;
                 }
             }
         }
@@ -884,8 +882,9 @@ namespace Ginger.Run.RunSetActions
         {
             List<int> listOfHandledGingerRunnersReport = [];
             bool firstActivityIteration = true;
-            string tableColor = "<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>";
-            string tableStyle = @"<td style='padding: 10px; border: 1px solid #dddddd'>";
+            string tableColor = "<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>";
+            string tableStyle = @"<td style='padding:10px;border-bottom:1px solid #ffffff;'>";
+            int rowIdx = 0;
             foreach (LiteDbRunner GR in liteDbRunSet.RunnersColl.OrderBy(x => x.Seq))
             {
                 string flowReportName = string.Empty;
@@ -894,7 +893,8 @@ namespace Ginger.Run.RunSetActions
                 foreach (LiteDbBusinessFlow br in GR.BusinessFlowsColl)
                 {
                     bool newBusinessFlow = true;
-                    fieldsValuesHTMLTableCells.Append("<tr>");
+                    string rowBg = (rowIdx % 2 == 0) ? "#f5f5f6" : "#eaebeb";
+                    fieldsValuesHTMLTableCells.Append("<tr style='background-color:" + rowBg + ";'>");
                     List<string> selectedRunnerFields = [GingerReport.Fields.Name, GingerReport.Fields.Seq];
                     foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.GingerRunnerFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString() && selectedRunnerFields.Contains(x.FieldKey))))
                     {
@@ -988,7 +988,7 @@ namespace Ginger.Run.RunSetActions
                             else if (selectedField_internal.FieldKey == ActivityReport.Fields.RunStatus)
                             {
                                 string activityRunStatusValue = ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(activityReport.GetType().GetProperty(fieldName).GetValue(activityReport)));
-                                fieldsValuesHTMLTableCells.Append("<td class='Status" + activityRunStatusValue + "' style='padding: 10px; border: 1px solid #dddddd'>" + activityRunStatusValue + "</td>");
+                                fieldsValuesHTMLTableCells.Append("<td class='Status" + activityRunStatusValue + "' style='padding:10px;border-bottom:1px solid #ffffff;'>" + activityRunStatusValue + "</td>");
                             }
                             else if (selectedField_internal.FieldKey == ActivityReport.Fields.ElapsedSecs)
                             {
@@ -1005,6 +1005,7 @@ namespace Ginger.Run.RunSetActions
                         fieldsValuesHTMLTableCells.Append("</tr>");
                         newBusinessFlow = false;
                         firstActivityIteration = false;
+                        rowIdx++;
                     }
                 }
             }
@@ -1089,58 +1090,155 @@ namespace Ginger.Run.RunSetActions
             return chartData;
         }
 
-        private static void GetExecGeneralDetails(LiteDbRunSet liteDbRunSet, HTMLReportConfiguration currentTemplate, StringBuilder fieldsNamesHTMLTableCellsRowOne, StringBuilder fieldsValuesHTMLTableCellsRowOne, StringBuilder fieldsNamesHTMLTableCellsRowTwo, StringBuilder fieldsValuesHTMLTableCellsRowTwo)
+        private static string GetExecGeneralDetails(LiteDbRunSet liteDbRunSet, HTMLReportConfiguration currentTemplate)
         {
-            string tableColor = "<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>";
-            string tableStyle = @"<td style='padding: 10px; border: 1px solid #dddddd'>";
+            var selectedFields = currentTemplate.EmailSummaryViewFieldsToSelect
+                .Where(x => x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString()
+                            && x.FieldKey != "SourceApplication" && x.FieldKey != "SourceApplicationUser")
+                .ToList();
 
-            var totalColumnCount = currentTemplate.EmailSummaryViewFieldsToSelect.Count(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString()));
-            var columnHeaderName = fieldsNamesHTMLTableCellsRowOne;
-            var columnValue = fieldsValuesHTMLTableCellsRowOne;
-            var columnCount = 0;
-            //TODO : Remove SourceApplication & SourceApplicationUser from if condition when need to add in report.
-            foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.EmailSummaryViewFieldsToSelect.Where(x => (x.IsSelected == true &&
-            x.FieldType == Ginger.Reports.FieldsType.Field.ToString() && x.FieldKey != "SourceApplication" && x.FieldKey != "SourceApplicationUser")))
+            int midPoint = (selectedFields.Count + 1) / 2;
+            var generalFields = selectedFields.Take(midPoint).ToList();
+            var executionFields = selectedFields.Skip(midPoint).ToList();
+
+            var result = new StringBuilder();
+            result.Append("<table role='presentation' align='center' class='innerTable' cellspacing='0' cellpadding='0' border='0' style='border:1px solid #dee2e6;'>");
+            result.Append("<tr>");
+            result.Append("<td style='width:50%;vertical-align:top;padding:0;'>");
+            result.Append(BuildRunsetDetailsColumn("GENERAL DETAILS", generalFields, liteDbRunSet));
+            result.Append("</td>");
+            result.Append("<td style='width:50%;vertical-align:top;padding:0;border-left:1px solid #dee2e6;'>");
+            result.Append(BuildRunsetDetailsColumn("EXECUTION DETAILS", executionFields, liteDbRunSet));
+            result.Append("</td>");
+            result.Append("</tr></table>");
+            return result.ToString();
+        }
+
+        private static string BuildRunsetDetailsColumn(string title, List<HTMLReportConfigFieldToSelect> fields, LiteDbRunSet liteDbRunSet)
+        {
+            var sb = new StringBuilder();
+            sb.Append("<table width='100%' cellspacing='0' cellpadding='0' border='0'>");
+            sb.Append("<tr><td colspan='2' style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;text-transform:uppercase;'>" + title + "</td></tr>");
+            int rowIndex = 0;
+            foreach (var field in fields)
             {
-                // change row from one to two
-                if (totalColumnCount > 6 && ++columnCount > 6)
-                {
-                    columnHeaderName = fieldsNamesHTMLTableCellsRowTwo;
-                    columnValue = fieldsValuesHTMLTableCellsRowTwo;
-                }
-                string fieldName = EmailToObjectFieldName(selectedField.FieldKey);
-                columnHeaderName.Append(string.Concat(tableColor, selectedField.FieldName, "</td>"));
+                string bgColor = (rowIndex % 2 == 0) ? "#f5f5f6" : "#eaebeb";
+                string fieldName = EmailToObjectFieldName(field.FieldKey);
+                string value;
 
-                if (liteDbRunSet.GetType().GetProperty(fieldName).GetValue(liteDbRunSet) == null)
+                if (liteDbRunSet.GetType().GetProperty(fieldName)?.GetValue(liteDbRunSet) == null)
                 {
-                    columnValue.Append(string.Concat(tableStyle, " N/A </td>"));
+                    value = "N/A";
                 }
                 else
                 {
-                    var columnDbValue = ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(liteDbRunSet.GetType().GetProperty(fieldName).GetValue(liteDbRunSet)));
+                    var rawValue = ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(liteDbRunSet.GetType().GetProperty(fieldName).GetValue(liteDbRunSet)));
 
-                    if (selectedField.FieldKey == RunSetReport.Fields.EnvironmentsDetails)
+                    if (field.FieldKey == RunSetReport.Fields.EnvironmentsDetails)
                     {
-                        StringBuilder environmentNames_str = new StringBuilder();
-                        liteDbRunSet.RunnersColl.Where(x => x.Environment != null && x.Environment != string.Empty).GroupBy(q => q.Environment).Select(q => q.First()).ToList().ForEach(x => environmentNames_str.Append(x.Environment + ", "));
-
-                        columnValue.Append(string.Concat(tableStyle, environmentNames_str.ToString().TrimEnd(',', ' '), "</td>"));
-                        environmentNames_str.Remove(0, environmentNames_str.Length);
+                        StringBuilder envNames = new StringBuilder();
+                        liteDbRunSet.RunnersColl.Where(x => x.Environment != null && x.Environment != string.Empty)
+                            .GroupBy(q => q.Environment).Select(q => q.First()).ToList()
+                            .ForEach(x => envNames.Append(x.Environment + ", "));
+                        value = envNames.ToString().TrimEnd(',', ' ');
                     }
-                    else if (selectedField.FieldKey == RunSetReport.Fields.ExecutionDuration)
+                    else if (field.FieldKey == RunSetReport.Fields.ExecutionDuration)
                     {
-                        columnValue.Append(string.Concat(tableStyle, General.TimeConvert(columnDbValue), "</td>"));
+                        value = General.TimeConvert(rawValue);
                     }
-                    else if (selectedField.FieldKey == RunSetReport.Fields.RunSetExecutionRate || selectedField.FieldKey == RunSetReport.Fields.GingerRunnersPassRate)
+                    else if (field.FieldKey == RunSetReport.Fields.RunSetExecutionRate || field.FieldKey == RunSetReport.Fields.GingerRunnersPassRate)
                     {
-                        columnValue.Append(string.Concat(tableStyle, columnDbValue, '%', "</td>"));
+                        value = rawValue + "%";
                     }
                     else
                     {
-                        columnValue.Append(string.Concat(tableStyle, columnDbValue, "</td>"));
+                        value = rawValue;
                     }
                 }
+                sb.Append("<tr><td style='background-color:" + bgColor + ";padding:10px;font-weight:700;width:40%;border-bottom:1px solid #fff;'>" + field.FieldName + "</td>");
+                sb.Append("<td style='background-color:" + bgColor + ";padding:10px;border-bottom:1px solid #fff;'>" + value + "</td></tr>");
+                rowIndex++;
             }
+            sb.Append("</table>");
+            return sb.ToString();
+        }
+
+        private static string GetExecGeneralDetailsFromReportInfo(ReportInfo RI, HTMLReportConfiguration currentTemplate)
+        {
+            var runSetReport = (RunSetReport)RI.ReportInfoRootObject;
+            var selectedFields = currentTemplate.EmailSummaryViewFieldsToSelect
+                .Where(x => x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())
+                .ToList();
+
+            int midPoint = (selectedFields.Count + 1) / 2;
+            var generalFields = selectedFields.Take(midPoint).ToList();
+            var executionFields = selectedFields.Skip(midPoint).ToList();
+
+            var result = new StringBuilder();
+            result.Append("<table role='presentation' align='center' class='innerTable' cellspacing='0' cellpadding='0' border='0' style='border:1px solid #dee2e6;'>");
+            result.Append("<tr>");
+            result.Append("<td style='width:50%;vertical-align:top;padding:0;'>");
+            result.Append(BuildRunsetDetailsColumnFromReportInfo("GENERAL DETAILS", generalFields, runSetReport));
+            result.Append("</td>");
+            result.Append("<td style='width:50%;vertical-align:top;padding:0;border-left:1px solid #dee2e6;'>");
+            result.Append(BuildRunsetDetailsColumnFromReportInfo("EXECUTION DETAILS", executionFields, runSetReport));
+            result.Append("</td>");
+            result.Append("</tr></table>");
+            return result.ToString();
+        }
+
+        private static string BuildRunsetDetailsColumnFromReportInfo(string title, List<HTMLReportConfigFieldToSelect> fields, RunSetReport runSetReport)
+        {
+            var sb = new StringBuilder();
+            sb.Append("<table width='100%' cellspacing='0' cellpadding='0' border='0'>");
+            sb.Append("<tr><td colspan='2' style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;text-transform:uppercase;'>" + title + "</td></tr>");
+            int rowIndex = 0;
+            foreach (var field in fields)
+            {
+                string bgColor = (rowIndex % 2 == 0) ? "#f5f5f6" : "#eaebeb";
+                string value;
+                var propValue = runSetReport.GetType().GetProperty(field.FieldKey.ToString())?.GetValue(runSetReport);
+
+                if (propValue == null)
+                {
+                    if (field.FieldKey == RunSetReport.Fields.EnvironmentsDetails)
+                    {
+                        StringBuilder envNames = new StringBuilder();
+                        runSetReport.GingerReports.Where(x => x.EnvironmentName != null && x.EnvironmentName != string.Empty)
+                            .GroupBy(q => q.EnvironmentName).Select(q => q.First()).ToList()
+                            .ForEach(x => envNames.Append(x.EnvironmentName + ", "));
+                        value = envNames.ToString().TrimEnd(',', ' ');
+                    }
+                    else
+                    {
+                        value = "N/A";
+                    }
+                }
+                else
+                {
+                    if (field.FieldKey == RunSetReport.Fields.ExecutionDuration)
+                    {
+                        value = ExtensionMethods.OverrideHTMLRelatedCharacters(General.TimeConvert(propValue.ToString()));
+                    }
+                    else if (field.FieldKey == RunSetReport.Fields.StartTimeStamp || field.FieldKey == RunSetReport.Fields.EndTimeStamp)
+                    {
+                        value = DateTime.Parse(propValue.ToString()).ToLocalTime().ToString();
+                    }
+                    else if (field.FieldKey == RunSetReport.Fields.RunSetExecutionRate || field.FieldKey == RunSetReport.Fields.GingerRunnersPassRate)
+                    {
+                        value = ExtensionMethods.OverrideHTMLRelatedCharacters(propValue.ToString() + "%");
+                    }
+                    else
+                    {
+                        value = ExtensionMethods.OverrideHTMLRelatedCharacters(propValue.ToString());
+                    }
+                }
+                sb.Append("<tr><td style='background-color:" + bgColor + ";padding:10px;font-weight:700;width:40%;border-bottom:1px solid #fff;'>" + field.FieldName + "</td>");
+                sb.Append("<td style='background-color:" + bgColor + ";padding:10px;border-bottom:1px solid #fff;'>" + value + "</td></tr>");
+                rowIndex++;
+            }
+            sb.Append("</table>");
+            return sb.ToString();
         }
 
         private static string EmailToObjectFieldName(string fieldName)
@@ -1192,81 +1290,10 @@ namespace Ginger.Run.RunSetActions
             List<KeyValuePair<int, int>> chartData = null;
             StringBuilder fieldsNamesHTMLTableCells = new StringBuilder();
             StringBuilder fieldsValuesHTMLTableCells = new StringBuilder();
-            StringBuilder fieldsNamesHTMLTableCellsm = new StringBuilder();
-            StringBuilder fieldsValuesHTMLTableCellsm = new StringBuilder();
-            foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.EmailSummaryViewFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
-            {
-                if (currentTemplate.EmailSummaryViewFieldsToSelect.IndexOf(selectedField) <= 6)
-                {
-                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField.FieldName + "</td>");
-
-                    if (((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)) == null)
-                    {
-                        if (selectedField.FieldKey == RunSetReport.Fields.EnvironmentsDetails)
-                        {
-                            StringBuilder environmentNames_str = new StringBuilder();
-                            ((RunSetReport)RI.ReportInfoRootObject).GingerReports.Where(x => x.EnvironmentName != null && x.EnvironmentName != string.Empty).GroupBy(q => q.EnvironmentName).Select(q => q.First()).ToList().ForEach(x => environmentNames_str.Append(x.EnvironmentName + ", "));
-                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + environmentNames_str.ToString().TrimEnd(',', ' ') + "</td>");
-                            environmentNames_str.Remove(0, environmentNames_str.Length);
-                        }
-                        else
-                        {
-                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'> N/A </td>");
-                        }
-                    }
-                    else
-                    {
-
-                        if (selectedField.FieldKey == RunSetReport.Fields.ExecutionDuration)
-                        {
-                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + ExtensionMethods.OverrideHTMLRelatedCharacters(General.TimeConvert(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString())) + "</td>");
-                        }
-                        else if ((selectedField.FieldKey == RunSetReport.Fields.StartTimeStamp) || (selectedField.FieldKey == RunSetReport.Fields.EndTimeStamp))
-                        {
-                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd' >" + DateTime.Parse(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString()).ToLocalTime().ToString() + " </td>");
-                        }
-                        else if ((selectedField.FieldKey == RunSetReport.Fields.RunSetExecutionRate) || (selectedField.FieldKey == RunSetReport.Fields.GingerRunnersPassRate))
-                        {
-                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + ExtensionMethods.OverrideHTMLRelatedCharacters(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString() + '%') + "</td>");
-                        }
-                        else
-                        {
-                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString()) + "</td>");
-                        }
-                    }
-                }
-                else
-                {
-                    fieldsNamesHTMLTableCellsm.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField.FieldName + "</td>");
-                    if (selectedField.FieldKey == RunSetReport.Fields.EnvironmentsDetails)
-                    {
-                        StringBuilder environmentNames_str2 = new StringBuilder();
-                        ((RunSetReport)RI.ReportInfoRootObject).GingerReports.Where(x => x.EnvironmentName != null && x.EnvironmentName != string.Empty).GroupBy(q => q.EnvironmentName).Select(q => q.First()).ToList().ForEach(x => environmentNames_str2.Append(x.EnvironmentName + ", "));
-                        fieldsValuesHTMLTableCellsm.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + environmentNames_str2.ToString().TrimEnd(',', ' ') + "</td>");
-                        environmentNames_str2.Remove(0, environmentNames_str2.Length);
-                    }
-                    else
-                    {
-                        if (((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)) == null)
-                        {
-                            fieldsValuesHTMLTableCellsm.Append("<td style='padding: 10px; border: 1px solid #dddddd'> N/A </td>");
-                        }
-                        else
-                        {
-                            fieldsValuesHTMLTableCellsm.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString()) + "</td>");
-                        }
-                    }
-                }
-            }
-
-            ReportHTML = ReportHTML.Replace("{GeneralDetails_Headers}", fieldsNamesHTMLTableCellsm.ToString());
-            ReportHTML = ReportHTML.Replace("{GeneralDetails_Data}", fieldsValuesHTMLTableCellsm.ToString());
-            ReportHTML = ReportHTML.Replace("{ExecutionGeneralDetails_Headers}", fieldsNamesHTMLTableCells.ToString());
-            ReportHTML = ReportHTML.Replace("{ExecutionGeneralDetails_Data}", fieldsValuesHTMLTableCells.ToString());
+            string runsetDetailsHtml = GetExecGeneralDetailsFromReportInfo(RI, currentTemplate);
+            ReportHTML = ReportHTML.Replace("{RunsetDetails_Content}", runsetDetailsHtml);
             ReportHTML = ReportHTML.Replace("{ReportCreated}", DateTime.Now.ToString());
             ReportHTML = ReportHTML.Replace("{ReportLevel}", "");
-            fieldsNamesHTMLTableCells.Remove(0, fieldsNamesHTMLTableCells.Length);
-            fieldsValuesHTMLTableCells.Remove(0, fieldsValuesHTMLTableCells.Length);
             foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.EmailSummaryViewFieldsToSelect.Where(x => (x.FieldType == Ginger.Reports.FieldsType.Section.ToString())))
             {
                 if (selectedField.FieldKey == RunSetReport.Fields.ExecutionStatisticsDetails)
@@ -1345,31 +1372,32 @@ namespace Ginger.Run.RunSetActions
                         fieldsValuesHTMLTableCells = new StringBuilder();
                         List<int> listOfHandledGingerRunnersReport = [];
                         bool firstIteration = true;
+                        int bfRowIdx = 0;
                         foreach (GingerReport GR in ((RunSetReport)RI.ReportInfoRootObject).GingerReports.OrderBy(x => x.Seq))
                         {
                             GR.AllIterationElements = currentTemplate.ShowAllIterationsElements;
                             foreach (BusinessFlowReport br in GR.BusinessFlowReports)
                             {
                                 br.AllIterationElements = currentTemplate.ShowAllIterationsElements;
-
-                                fieldsValuesHTMLTableCells.Append("<tr>");
+                                string bfRowBg = (bfRowIdx % 2 == 0) ? "#f5f5f6" : "#eaebeb";
+                                fieldsValuesHTMLTableCells.Append("<tr style='background-color:" + bfRowBg + ";'>");
                                 foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.GingerRunnerFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
                                 {
                                     if ((selectedField_internal.FieldKey == GingerReport.Fields.Name) && (currentTemplate.ReportLowerLevelToShow != HTMLReportConfiguration.ReportsLevel.SummaryViewLevel.ToString()))
                                     {
                                         if (firstIteration)
                                         {
-                                            fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                            fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                         }
-                                        fieldsValuesHTMLTableCells.Append(@"<td style='padding: 10px; border: 1px solid #dddddd'>" + GR.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(GR) + @"</td>");
+                                        fieldsValuesHTMLTableCells.Append(@"<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + GR.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(GR) + @"</td>");
                                     }
                                     else if (selectedField_internal.FieldKey == GingerReport.Fields.EnvironmentName)
                                     {
                                         if (firstIteration)
                                         {
-                                            fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                            fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                         }
-                                        fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(GR.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(GR) != null ? GR.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(GR).ToString() : string.Empty) + "</td>");
+                                        fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(GR.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(GR) != null ? GR.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(GR).ToString() : string.Empty) + "</td>");
                                     }
                                     else if (selectedField_internal.FieldKey == GingerReport.Fields.Seq)
                                     {
@@ -1390,82 +1418,83 @@ namespace Ginger.Run.RunSetActions
                                     {
                                         if (firstIteration)
                                         {
-                                            fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                            fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                         }
-                                        fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString()) + "</td>");
+                                        fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString()) + "</td>");
                                     }
                                     if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.Name)
                                     {
                                         if (firstIteration)
                                         {
-                                            fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                            fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                         }
                                         if (currentTemplate.ReportLowerLevelToShow != HTMLReportConfiguration.ReportsLevel.GingerRunnerLevel.ToString())
                                         {
-                                            fieldsValuesHTMLTableCells.Append(@"<td style='padding: 10px; border: 1px solid #dddddd'>" + br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) + @"</td>");
+                                            fieldsValuesHTMLTableCells.Append(@"<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) + @"</td>");
                                         }
                                         else
                                         {
-                                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString()) + "</td>");
+                                            fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString()) + "</td>");
                                         }
                                     }
                                     else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.Description)
                                     {
                                         if (firstIteration)
                                         {
-                                            fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                            fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                         }
                                         try
                                         {
-                                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) != null ? br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString() : string.Empty) + "</td>");
+                                            fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) != null ? br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString() : string.Empty) + "</td>");
                                         }
                                         catch
                                         {
-                                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'></td>");
+                                            fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'></td>");
                                         }
                                     }
                                     else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.RunDescription)
                                     {
                                         if (firstIteration)
                                         {
-                                            fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                            fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                         }
                                         try
                                         {
-                                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) != null ? br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString() : string.Empty) + "</td>");
+                                            fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) != null ? br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString() : string.Empty) + "</td>");
                                         }
                                         catch
                                         {
-                                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'></td>");
+                                            fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'></td>");
                                         }
                                     }
                                     else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.ExecutionDuration)
                                     {
                                         if (firstIteration)
                                         {
-                                            fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                            fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                         }
-                                        fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) != null ? General.TimeConvert(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString()) : string.Empty) + "</td>");
+                                        fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) != null ? General.TimeConvert(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString()) : string.Empty) + "</td>");
                                     }
                                     else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.RunStatus)
                                     {
                                         if (firstIteration)
                                         {
-                                            fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                            fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                         }
-                                        fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border:1px solid #dddddd;' class='Status" + (br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br)).ToString() + "'>" + br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) + "</td>");
+                                        fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;' class='Status" + (br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br)).ToString() + "'>" + br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) + "</td>");
                                     }
                                     else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.PassPercent)
                                     {
                                         if (firstIteration)
                                         {
-                                            fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                            fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                         }
-                                        fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) + " %</td>");
+                                        fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) + " %</td>");
                                     }
                                 }
                                 fieldsValuesHTMLTableCells.Append("</tr>");
                                 firstIteration = false;
+                                bfRowIdx++;
                             }
                         }
                     }
@@ -1503,6 +1532,7 @@ namespace Ginger.Run.RunSetActions
                         fieldsValuesHTMLTableCells = new StringBuilder();
                         List<int> listOfHandledGingerRunnersReport = [];
                         bool firstIteration = true;
+                        int failRowIdx = 0;
                         foreach (GingerReport GR in ((RunSetReport)RI.ReportInfoRootObject).GingerReports.Where(x => x.GingerExecutionStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).OrderBy(x => x.Seq))
                         {
                             foreach (BusinessFlowReport br in GR.BusinessFlowReports.Where(x => x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed.ToString()))
@@ -1512,18 +1542,19 @@ namespace Ginger.Run.RunSetActions
                                     foreach (ActionReport act in ac.ActionReports.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed.ToString()).OrderBy(x => x.Seq))
                                     {
                                         isFailuresDetailsExists = true;
+                                        string failBg = (failRowIdx % 2 == 0) ? "#f5f5f6" : "#eaebeb";
 
                                         // Ginger Runner Level
-                                        fieldsValuesHTMLTableCells.Append("<tr>");
+                                        fieldsValuesHTMLTableCells.Append("<tr style='background-color:" + failBg + ";'>");
                                         foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.GingerRunnerFieldsToSelect.Where(x => (x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
                                         {
                                             if (selectedField_internal.FieldKey == GingerReport.Fields.Name)
                                             {
                                                 if (firstIteration)
                                                 {
-                                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                                 }
-                                                fieldsValuesHTMLTableCells.Append(@"<td style='padding: 10px; border: 1px solid #dddddd'>" + GR.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(GR) + @"</td>");
+                                                fieldsValuesHTMLTableCells.Append(@"<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + GR.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(GR) + @"</td>");
                                             }
                                         }
 
@@ -1534,17 +1565,17 @@ namespace Ginger.Run.RunSetActions
                                             {
                                                 if (firstIteration)
                                                 {
-                                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Sequence</td>");
+                                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Sequence</td>");
                                                 }
-                                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) + "</td>");
+                                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) + "</td>");
                                             }
                                             if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.Name)
                                             {
                                                 if (firstIteration)
                                                 {
-                                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                                 }
-                                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) + "</td>");
+                                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) + "</td>");
                                             }
                                         }
 
@@ -1555,17 +1586,17 @@ namespace Ginger.Run.RunSetActions
                                             {
                                                 if (firstIteration)
                                                 {
-                                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>Activity Sequence</td>");
+                                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>Activity Sequence</td>");
                                                 }
-                                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString()) + "</td>");
+                                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + OverrideHTMLRelatedCharacters(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString()) + "</td>");
                                             }
                                             if (selectedField_internal.FieldKey == ActivityReport.Fields.ActivityName)
                                             {
                                                 if (firstIteration)
                                                 {
-                                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                                 }
-                                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString()) + "</td>");
+                                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + OverrideHTMLRelatedCharacters(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString()) + "</td>");
                                             }
                                         }
 
@@ -1576,46 +1607,47 @@ namespace Ginger.Run.RunSetActions
                                             {
                                                 if (firstIteration)
                                                 {
-                                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>Action Execution Sequence</td>");
+                                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>Action Execution Sequence</td>");
                                                 }
-                                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(act.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(act).ToString()) + "</td>");
+                                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + OverrideHTMLRelatedCharacters(act.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(act).ToString()) + "</td>");
                                             }
                                             if (selectedField_internal.FieldKey == ActionReport.Fields.Description)
                                             {
                                                 if (firstIteration)
                                                 {
-                                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>Action Description</td>");
+                                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>Action Description</td>");
                                                 }
-                                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(act.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(act).ToString()) + "</td>");
+                                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + OverrideHTMLRelatedCharacters(act.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(act).ToString()) + "</td>");
                                             }
                                             if (selectedField_internal.FieldKey == ActionReport.Fields.Error)
                                             {
                                                 if (firstIteration)
                                                 {
-                                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                                 }
-                                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd; color:red;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-break: break-all;'>" + OverrideHTMLRelatedCharacters(act.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(act).ToString()) + "</td>");
+                                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border-bottom:1px solid #ffffff; color:red;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-break: break-all;'>" + OverrideHTMLRelatedCharacters(act.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(act).ToString()) + "</td>");
                                             }
                                             if (selectedField_internal.FieldKey == ActionReport.Fields.ElapsedSecs)
                                             {
                                                 if (firstIteration)
                                                 {
-                                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                                 }
-                                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(General.TimeConvert(act.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(act).ToString())) + "</td>");
+                                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + OverrideHTMLRelatedCharacters(General.TimeConvert(act.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(act).ToString())) + "</td>");
                                             }
                                             if ((selectedField_internal.FieldKey == ActionReport.Fields.CurrentRetryIteration) ||
                                                 (selectedField_internal.FieldKey == ActionReport.Fields.ExInfo))
                                             {
                                                 if (firstIteration)
                                                 {
-                                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                                 }
-                                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(act.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(act).ToString()) + "</td>");
+                                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + OverrideHTMLRelatedCharacters(act.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(act).ToString()) + "</td>");
                                             }
                                         }
                                         fieldsValuesHTMLTableCells.Append("</tr>");
                                         firstIteration = false;
+                                        failRowIdx++;
                                     }
                                 }
                             }
@@ -1656,6 +1688,7 @@ namespace Ginger.Run.RunSetActions
         {
             List<int> listOfHandledGingerRunnersReport = [];
             bool firstActivityIteration = true;
+            int actRowIdx = 0;
             foreach (GingerReport GR in ((RunSetReport)RI.ReportInfoRootObject).GingerReports.OrderBy(x => x.Seq))
             {
                 GR.AllIterationElements = currentTemplate.ShowAllIterationsElements;
@@ -1666,17 +1699,18 @@ namespace Ginger.Run.RunSetActions
                 {
                     br.AllIterationElements = currentTemplate.ShowAllIterationsElements;
                     bool newBusinessFlow = true;
-                    fieldsValuesHTMLTableCells.Append("<tr>");
+                    string actRowBg = (actRowIdx % 2 == 0) ? "#f5f5f6" : "#eaebeb";
+                    fieldsValuesHTMLTableCells.Append("<tr style='background-color:" + actRowBg + ";'>");
                     foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.GingerRunnerFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
                     {
                         if ((selectedField_internal.FieldKey == GingerReport.Fields.Name) && (currentTemplate.ReportLowerLevelToShow != HTMLReportConfiguration.ReportsLevel.SummaryViewLevel.ToString()))
                         {
                             if (firstActivityIteration)
                             {
-                                fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                             }
                             flowReportName = Convert.ToString(GR.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(GR));
-                            fieldsValuesHTMLTableCells.Append(@"<td style='padding: 10px; border: 1px solid #dddddd'>" + flowReportName + @"</td>");
+                            fieldsValuesHTMLTableCells.Append(@"<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + flowReportName + @"</td>");
                         }
                         else if (selectedField_internal.FieldKey == GingerReport.Fields.Seq)
                         {
@@ -1697,26 +1731,26 @@ namespace Ginger.Run.RunSetActions
                         {
                             if (firstActivityIteration)
                             {
-                                fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                             }
                             executionSeq = Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString());
-                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + executionSeq + "</td>");
+                            fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + executionSeq + "</td>");
                         }
                         if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.Name)
                         {
                             if (firstActivityIteration)
                             {
-                                fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                             }
                             if (currentTemplate.ReportLowerLevelToShow != HTMLReportConfiguration.ReportsLevel.GingerRunnerLevel.ToString())
                             {
                                 businessReportName = br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString();
-                                fieldsValuesHTMLTableCells.Append(@"<td style='padding: 10px; border: 1px solid #dddddd'>" + businessReportName + @"</td>");
+                                fieldsValuesHTMLTableCells.Append(@"<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + businessReportName + @"</td>");
                             }
                             else
                             {
                                 businessReportName = Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString());
-                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + businessReportName + "</td>");
+                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + businessReportName + "</td>");
                             }
                         }
                     }
@@ -1725,9 +1759,9 @@ namespace Ginger.Run.RunSetActions
                     {
                         if (!newBusinessFlow)
                         {
-                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + flowReportName + "</td>");
-                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + executionSeq + "</td>");
-                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + businessReportName + "</td>");
+                            fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + flowReportName + "</td>");
+                            fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + executionSeq + "</td>");
+                            fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + businessReportName + "</td>");
                         }
                         foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.ActivityFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
                         {
@@ -1736,111 +1770,112 @@ namespace Ginger.Run.RunSetActions
                             {
                                 if (firstActivityIteration)
                                 {
-                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + "Activity " + selectedField_internal.FieldName + "</td>");
+                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + "Activity " + selectedField_internal.FieldName + "</td>");
                                 }
-                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport).ToString()) + "</td>");
+                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport).ToString()) + "</td>");
                             }
                             if (selectedField_internal.FieldKey == ActivityReport.Fields.ActivityGroupName)
                             {
                                 if (firstActivityIteration)
                                 {
-                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                 }
                                 string activityGroupNameValue = (activityReport.ActivityGroupName == null) ? "N/A" : Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport)));
-                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + activityGroupNameValue + "</td>");
+                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + activityGroupNameValue + "</td>");
                             }
                             if (selectedField_internal.FieldKey == ActivityReport.Fields.ActivityName)
                             {
                                 if (firstActivityIteration)
                                 {
-                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                 }
                                 if (currentTemplate.ReportLowerLevelToShow != HTMLReportConfiguration.ReportsLevel.GingerRunnerLevel.ToString())
                                 {
-                                    fieldsValuesHTMLTableCells.Append(@"<td style='padding: 10px; border: 1px solid #dddddd'>" + activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport) + @"</td>");
+                                    fieldsValuesHTMLTableCells.Append(@"<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport) + @"</td>");
                                 }
                                 else
                                 {
-                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport))) + "</td>");
+                                    fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport))) + "</td>");
                                 }
                             }
                             if (selectedField_internal.FieldKey == ActivityReport.Fields.Description)
                             {
                                 if (firstActivityIteration)
                                 {
-                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                 }
                                 string activityDescriptionValue = (activityReport.Description == null) ? "N/A" : Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport)));
-                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + activityDescriptionValue + "</td>");
+                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + activityDescriptionValue + "</td>");
                             }
                             if (selectedField_internal.FieldKey == ActivityReport.Fields.RunDescription)
                             {
                                 if (firstActivityIteration)
                                 {
-                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                 }
                                 string activityRunDescriptionValue = (activityReport.RunDescription == null) ? "N/A" : Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport)));
-                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + activityRunDescriptionValue + "</td>");
+                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + activityRunDescriptionValue + "</td>");
                             }
                             if (selectedField_internal.FieldKey == ActivityReport.Fields.StartTimeStamp)
                             {
                                 if (firstActivityIteration)
                                 {
-                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                 }
                                 string activityStartTimeStampValue = Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport)));
-                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + activityStartTimeStampValue + "</td>");
+                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + activityStartTimeStampValue + "</td>");
                             }
                             if (selectedField_internal.FieldKey == ActivityReport.Fields.EndTimeStamp)
                             {
                                 if (firstActivityIteration)
                                 {
-                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                 }
                                 string activityEndTimeStampValue = Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport)));
-                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + activityEndTimeStampValue + "</td>");
+                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + activityEndTimeStampValue + "</td>");
                             }
                             if (selectedField_internal.FieldKey == ActivityReport.Fields.ElapsedSecs)
                             {
                                 if (firstActivityIteration)
                                 {
-                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                 }
                                 string activityElapsedSecsValue = Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport)));
-                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + General.TimeConvert(activityElapsedSecsValue) + "</td>");
+                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + General.TimeConvert(activityElapsedSecsValue) + "</td>");
                             }
                             if (selectedField_internal.FieldKey == ActivityReport.Fields.RunStatus)
                             {
                                 if (firstActivityIteration)
                                 {
-                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                 }
                                 string activityRunStatusValue = Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport)));
-                                fieldsValuesHTMLTableCells.Append("<td class='Status" + activityRunStatusValue + "' style='padding: 10px; border: 1px solid #dddddd'>" + activityRunStatusValue + "</td>");
+                                fieldsValuesHTMLTableCells.Append("<td class='Status" + activityRunStatusValue + "' style='padding:10px;border-bottom:1px solid #ffffff;'>" + activityRunStatusValue + "</td>");
                             }
                             if (selectedField_internal.FieldKey == ActivityReport.Fields.NumberOfActions)
                             {
                                 if (firstActivityIteration)
                                 {
-                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                 }
                                 string activityNumberOfActionsValue = Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport)));
-                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + activityNumberOfActionsValue + "</td>");
+                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + activityNumberOfActionsValue + "</td>");
                             }
                             if (selectedField_internal.FieldKey == ActivityReport.Fields.ActionsDetails)
                             {
                                 if (firstActivityIteration)
                                 {
-                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                    fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                 }
                                 string activityActionsDetailsValue = Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport)));
-                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + activityActionsDetailsValue + "</td>");
+                                fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border-bottom:1px solid #ffffff;'>" + activityActionsDetailsValue + "</td>");
                             }
 
                         }
                         fieldsValuesHTMLTableCells.Append("</tr>");
                         newBusinessFlow = false;
                         firstActivityIteration = false;
+                        actRowIdx++;
                     }
                 }
             }
